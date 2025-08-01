@@ -92,8 +92,6 @@
 
     <include app:graph="@navigation/web_import_navigation" />
 
-    <include app:graph="@navigation/asb_creation_navigation" />
-
     <include app:graph="@navigation/remove_account_confirmation_navigation" />
 
     <include app:graph="@navigation/in_app_pin_navigation" />
@@ -302,7 +300,7 @@
         android:id="@+id/action_global_stakingFragment"
         app:destination="@id/stakingFragment"
         app:popUpTo="@id/accountsFragment"
-        app:popUpToInclusive="true"/>
+        app:popUpToInclusive="true" />
 
     <!-- Remove this action and use the one in the main navigation after Lock Screen navigation change. -->
     <action
@@ -736,9 +734,6 @@
         <action
             android:id="@+id/action_settingsFragment_to_contactsFragment"
             app:destination="@id/contactsFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_asbCreationNavigation"
-            app:destination="@id/asbCreationNavigation" />
     </fragment>
 
     <fragment

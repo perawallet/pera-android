@@ -16,6 +16,8 @@ import com.algorand.android.ui.accounts.tracker.AccountsEventTracker
 import com.algorand.android.ui.accounts.tracker.DefaultAccountsEventTracker
 import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
 import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartDataUseCase
+import com.algorand.android.ui.accounts.usecase.GetFilteredPortfolioAccountLites
+import com.algorand.android.ui.accounts.usecase.GetFilteredPortfolioAccountLitesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,4 +32,9 @@ internal object AccountsUiModule {
 
     @Provides
     fun provideAccountsEventTracker(tracker: DefaultAccountsEventTracker): AccountsEventTracker = tracker
+
+    @Provides
+    fun provideGetFilteredPortfolioAccountLites(
+        useCase: GetFilteredPortfolioAccountLitesUseCase
+    ): GetFilteredPortfolioAccountLites = useCase
 }

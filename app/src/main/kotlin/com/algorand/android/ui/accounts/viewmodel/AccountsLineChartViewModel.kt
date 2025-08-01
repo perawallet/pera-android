@@ -22,6 +22,7 @@ import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheS
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
+import com.algorand.android.ui.accounts.usecase.GetFilteredPortfolioAccountLites
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneMonth
@@ -44,7 +45,8 @@ class AccountsLineChartViewModel @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val walletWealthPeriodMapper: WalletWealthPeriodMapper,
     private val stateDelegate: StateDelegate<ViewState>,
-    private val getAccountsLineChartData: GetAccountsLineChartData
+    private val getAccountsLineChartData: GetAccountsLineChartData,
+    private val getFilteredPortfolioAccountLites: GetFilteredPortfolioAccountLites
 ) : ViewModel(), StatefulPeraLineChartViewModel {
 
     override val state: StateFlow<ViewState>
@@ -85,7 +87,7 @@ class AccountsLineChartViewModel @Inject constructor(
         selectedPeriod: PeraLineChartPeriodChip
     ) {
         stateDelegate.updateState { ViewState.Content(ContentState.Loading, selectedPeriod, PERIODS) }
-        val authAddresses = getAuthAddressesOrNull(accountLites)
+        val authAddresses = getFilteredPortfolioAccountLites(accountLites).keys.toList()
         val viewState = getAccountsLineChartData(authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
             onSuccess = {
                 ViewState.Content(ContentState.Data(it), selectedPeriod, PERIODS)
@@ -95,12 +97,6 @@ class AccountsLineChartViewModel @Inject constructor(
             }
         )
         stateDelegate.updateState { viewState }
-    }
-
-    private fun getAuthAddressesOrNull(accountLites: Map<String, AccountLite>): List<String> {
-        return accountLites.values.mapNotNull { accountLite ->
-            accountLite.address.takeIf { accountLite.registrationType.hasSignerDetails }
-        }
     }
 
     private companion object {

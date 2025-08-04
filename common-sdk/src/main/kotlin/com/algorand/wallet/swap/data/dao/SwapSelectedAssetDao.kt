@@ -30,7 +30,7 @@ internal interface SwapSelectedAssetDao {
         asset_detail.asset_id AS asset_id
     FROM asset_detail 
     LEFT JOIN asset_holding_table 
-        ON asset_detail.asset_id = asset_detail.asset_id AND asset_holding_table.algo_address = :address
+        ON asset_detail.asset_id = asset_holding_table.asset_id AND asset_holding_table.algo_address = :address
     WHERE asset_detail.asset_id = :assetId
     LIMIT 1
     """

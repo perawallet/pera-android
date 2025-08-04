@@ -12,6 +12,8 @@
 
 package com.algorand.android.core
 
+import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.algorand.android.customviews.TopToast
 
@@ -30,6 +32,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun getTag(): String {
         return activityTag
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
     }
 
     override fun onStop() {

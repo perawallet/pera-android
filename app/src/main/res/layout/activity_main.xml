@@ -14,7 +14,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:paddingVertical="56dp">
 
     <com.algorand.android.customviews.toolbar.CustomToolbar
         android:id="@+id/toolbar"
@@ -43,16 +45,12 @@
         android:layout_height="@dimen/main_bottom_navigation_height"
         android:visibility="gone"
         app:backgroundTint="@color/tab_bar_background"
-        app:elevation="@dimen/main_bottom_navigation_elevation"
         app:itemIconSize="24dp"
         app:itemIconTint="@color/navigation_item_color"
         app:itemRippleColor="@null"
         app:itemTextAppearanceActive="@style/TextAppearance.Caption.Bold"
         app:itemTextAppearanceInactive="@style/TextAppearance.Caption.Medium"
         app:itemTextColor="@color/navigation_item_color"
-        android:paddingVertical="@dimen/spacing_small"
-        app:itemPaddingBottom="1dp"
-        app:itemPaddingTop="1dp"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -12,8 +12,11 @@
 
 package com.algorand.wallet.swap.domain.usecase
 
-import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
-import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.test.peraFixture
+import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -24,37 +27,86 @@ import org.junit.Test
 
 class GetPreselectedSwapAddressUseCaseTest {
 
-    private val getAllAccountOrderIndexes: GetAllAccountOrderIndexes = mockk()
+    private val getAccountsDetails: GetAccountsDetails = mockk()
     private val swapRepository: SwapRepository = mockk(relaxed = true)
 
-    private val sut = GetPreselectedSwapAddressUseCase(getAllAccountOrderIndexes, swapRepository)
+    private val sut = GetPreselectedSwapAddressUseCase(swapRepository, getAccountsDetails)
 
     @Test
-    fun `EXPECT cached address WHEN last used address exists`() = runTest {
-        coEvery { swapRepository.getLastUsedSwapAddress() } returns ADDRESS
+    fun `EXPECT last used address WHEN exists in cache and can sign transaction`() = runTest {
+        coEvery { swapRepository.getLastUsedSwapAddress() } returns ALGO_25_ADDRESS
+        coEvery { getAccountsDetails() } returns listOf(ALGO_25_DETAIL, WATCH_DETAIL)
 
         val result = sut()
 
-        assertEquals(ADDRESS, result)
+        assertEquals(ALGO_25_ADDRESS, result)
     }
 
     @Test
-    fun `EXPECT first address to be returned and cached WHEN last used address does not exist`() = runTest {
-        val firstAddress = "firstAddress"
-        val accountOrderIndexes = listOf(
-            AccountOrderIndex(ADDRESS, 1),
-            AccountOrderIndex(firstAddress, 0)
-        )
+    fun `EXPECT first valid address WHEN last used address is not cached`() = runTest {
         coEvery { swapRepository.getLastUsedSwapAddress() } returns null
-        coEvery { getAllAccountOrderIndexes() } returns accountOrderIndexes
+        coEvery { getAccountsDetails() } returns listOf(ALGO_25_DETAIL, WATCH_DETAIL)
 
         val result = sut()
 
-        assertEquals(firstAddress, result)
-        coVerify { swapRepository.setLastUsedSwapAddress(firstAddress) }
+        assertEquals(ALGO_25_ADDRESS, result)
+        coEvery { swapRepository.setLastUsedSwapAddress(ALGO_25_ADDRESS) }
+    }
+
+    @Test
+    fun `EXPECT first valid address WHEN last used address is not valid`() = runTest {
+        coEvery { swapRepository.getLastUsedSwapAddress() } returns "INVALID_ADDRESS"
+        val algo25 = ALGO_25_DETAIL.copy(customAccountInfo = null)
+        val watch = WATCH_DETAIL.copy(customAccountInfo = WATCH_DETAIL.customAccountInfo?.copy(orderIndex = 0))
+        val ledger = peraFixture<AccountDetail>().copy(
+            address = "LEDGER_ADDRESS",
+            customAccountInfo = peraFixture<CustomAccountInfo>().copy(orderIndex = 3),
+            accountType = AccountType.LedgerBle
+        )
+        coEvery { getAccountsDetails() } returns listOf(algo25, ledger, watch)
+
+        val result = sut()
+
+        assertEquals("LEDGER_ADDRESS", result)
+        coEvery { swapRepository.setLastUsedSwapAddress("LEDGER_ADDRESS") }
+    }
+
+    @Test
+    fun `EXPECT last used address to be updated WHEN cache is not valid and there is valid address`() = runTest {
+        coEvery { swapRepository.getLastUsedSwapAddress() } returns "INVALID_ADDRESS"
+        coEvery { getAccountsDetails() } returns listOf(ALGO_25_DETAIL, WATCH_DETAIL)
+
+        val result = sut()
+
+        assertEquals(ALGO_25_ADDRESS, result)
+        coVerify { swapRepository.setLastUsedSwapAddress(ALGO_25_ADDRESS) }
+    }
+
+    @Test
+    fun `EXPECT null WHEN no valid address exists`() = runTest {
+        coEvery { swapRepository.getLastUsedSwapAddress() } returns null
+        coEvery { getAccountsDetails() } returns listOf(WATCH_DETAIL)
+
+        val result = sut()
+
+        assertEquals(null, result)
+        coVerify(exactly = 0) { swapRepository.setLastUsedSwapAddress(any()) }
     }
 
     private companion object {
-        const val ADDRESS = "address"
+
+        const val ALGO_25_ADDRESS = "ALGO_25_ADDRESS"
+        val ALGO_25_DETAIL = peraFixture<AccountDetail>().copy(
+            address = ALGO_25_ADDRESS,
+            customAccountInfo = peraFixture<CustomAccountInfo>().copy(orderIndex = 2),
+            accountType = AccountType.Algo25
+        )
+
+        const val WATCH_ADDRESS = "WATCH_ADDRESS"
+        val WATCH_DETAIL = peraFixture<AccountDetail>().copy(
+            address = WATCH_ADDRESS,
+            customAccountInfo = peraFixture<CustomAccountInfo>().copy(orderIndex = 1),
+            accountType = AccountType.NoAuth
+        )
     }
 }

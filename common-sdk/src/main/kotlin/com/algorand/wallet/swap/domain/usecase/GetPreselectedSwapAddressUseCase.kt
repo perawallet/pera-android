@@ -12,22 +12,33 @@
 
 package com.algorand.wallet.swap.domain.usecase
 
-import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import javax.inject.Inject
 
 internal class GetPreselectedSwapAddressUseCase @Inject constructor(
-    private val getAllAccountOrderIndexes: GetAllAccountOrderIndexes,
-    private val swapRepository: SwapRepository
+    private val swapRepository: SwapRepository,
+    private val getAccountsDetails: GetAccountsDetails
 ) : GetPreselectedSwapAddress {
 
-    override suspend fun invoke(): String {
+    override suspend fun invoke(): String? {
+        val sortedAuthAccountDetails = getSortedAuthAccountDetails()
         val lastUsedAddress = swapRepository.getLastUsedSwapAddress()
-        if (lastUsedAddress == null) {
-            val firstAddress = getAllAccountOrderIndexes().minBy { it.index }.address
-            swapRepository.setLastUsedSwapAddress(firstAddress)
-            return firstAddress
+        val isLastUsedAddressValid = sortedAuthAccountDetails.any { it.address == lastUsedAddress }
+
+        return if (isLastUsedAddressValid) {
+            lastUsedAddress
+        } else {
+            val firstValidAddress = sortedAuthAccountDetails.firstOrNull()?.address
+            if (firstValidAddress != null) swapRepository.setLastUsedSwapAddress(firstValidAddress)
+            firstValidAddress
         }
-        return lastUsedAddress
+    }
+
+    private suspend fun getSortedAuthAccountDetails(): List<AccountDetail> {
+        return getAccountsDetails()
+            .filter { it.canSignTransaction() && it.customAccountInfo != null }
+            .sortedBy { it.customAccountInfo!!.orderIndex }
     }
 }

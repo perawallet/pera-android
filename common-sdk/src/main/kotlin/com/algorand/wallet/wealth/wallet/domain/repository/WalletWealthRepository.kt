@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.wealth.wallet.domain.repository
 
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
-import com.algorand.wallet.foundation.PeraResult
 
 internal interface WalletWealthRepository {
     suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>

@@ -14,8 +14,8 @@ package com.algorand.android.ui.common.amount
 
 import io.mockk.every
 import io.mockk.mockk
-import kotlin.test.assertEquals
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class AmountRendererTest {
 
@@ -57,6 +57,45 @@ class AmountRendererTest {
         val result = sut.getDisplayValue()
 
         assertEquals("****", result)
+    }
+
+    @Test
+    fun `EXPECT formatted amount WHEN suffix is null`() {
+        val sut = AmountRenderer(
+            formattedAmount,
+            AmountRenderer.RenderType.Plain,
+            suffix = null
+        )
+
+        val result = sut.getDisplayValue()
+
+        assertEquals(FORMATTED_AMOUNT, result)
+    }
+
+    @Test
+    fun `EXPECT formatted amount WHEN suffix is blank`() {
+        val sut = AmountRenderer(
+            formattedAmount,
+            AmountRenderer.RenderType.Plain,
+            suffix = " "
+        )
+
+        val result = sut.getDisplayValue()
+
+        assertEquals(FORMATTED_AMOUNT, result)
+    }
+
+    @Test
+    fun `EXPECT formatted amount with suffix WHEN suffix is not blank`() {
+        val sut = AmountRenderer(
+            formattedAmount,
+            AmountRenderer.RenderType.Plain,
+            suffix = "ALGO"
+        )
+
+        val result = sut.getDisplayValue()
+
+        assertEquals("$FORMATTED_AMOUNT ALGO", result)
     }
 
     private companion object {

@@ -16,8 +16,6 @@ import com.algorand.wallet.asb.algosdk.AlgorandSdkEncryptionUtils
 import com.algorand.wallet.asb.algosdk.AlgorandSdkEncryptionUtilsImpl
 import com.algorand.wallet.asb.domain.mapper.AsbBackupDataMapper
 import com.algorand.wallet.asb.domain.mapper.AsbBackupDataMapperImpl
-import com.algorand.wallet.asb.domain.usecase.GetAsbEligibleAccounts
-import com.algorand.wallet.asb.domain.usecase.GetAsbEligibleAccountsUseCase
 import com.algorand.wallet.asb.domain.usecase.RestoreEncryptedBackupProtocolPayload
 import com.algorand.wallet.asb.domain.usecase.RestoreEncryptedBackupProtocolPayloadUseCase
 import dagger.Module
@@ -39,7 +37,4 @@ internal object AsbBackupModule {
     fun provideRestoreEncryptedBackupProtocolPayload(
         useCase: RestoreEncryptedBackupProtocolPayloadUseCase
     ): RestoreEncryptedBackupProtocolPayload = useCase
-
-    @Provides
-    fun provideGetAsbEligibleAccounts(useCase: GetAsbEligibleAccountsUseCase): GetAsbEligibleAccounts = useCase
 }

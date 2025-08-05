@@ -12,15 +12,14 @@
 
 package com.algorand.wallet.wealth.wallet.data.api
 
+import com.algorand.wallet.wealth.wallet.data.model.WalletChartRequest
 import com.algorand.wallet.wealth.wallet.data.model.WalletChartResponseResults
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 internal interface WalletWealthApiService {
-
-    @GET("v1/wallet/wealth/")
+    @POST("v1/wallet/wealth/")
     suspend fun getWalletWealth(
-        @Query("account_addresses") addresses: String,
-        @Query("period") period: String
+        @Body wealthRequest: WalletChartRequest,
     ): WalletChartResponseResults
 }

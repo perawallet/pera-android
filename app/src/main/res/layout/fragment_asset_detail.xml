@@ -97,6 +97,7 @@
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
         android:layout_marginTop="@dimen/spacing_xsmall"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Title.Large.Sans.Medium"
         app:autoSizeMaxTextSize="@dimen/text_size_36"
         app:autoSizeMinTextSize="@dimen/text_size_13"
@@ -113,6 +114,7 @@
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
         android:layout_marginTop="@dimen/spacing_xsmall"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/text_gray"
         app:layout_constraintEnd_toEndOf="parent"
@@ -120,8 +122,20 @@
         app:layout_constraintTop_toBottomOf="@id/assetPrimaryValueTextView"
         tools:text="@tools:sample/lorem[2]" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/chartSelectedItemDateTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_xlarge"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.Body.Sans"
+        android:textColor="@color/secondary_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/assetSecondaryValueTextView"
+        tools:text="$105,413.95" />
+
     <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/priceHistoryChart"
+        android:id="@+id/assetLineChart"
         android:layout_width="0dp"
         android:layout_height="172dp"
         android:layout_marginTop="@dimen/spacing_xlarge"
@@ -137,7 +151,7 @@
         android:layout_marginTop="@dimen/spacing_xxxxlarge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/priceHistoryChart" />
+        app:layout_constraintTop_toBottomOf="@id/assetLineChart" />
 
     <include
         android:id="@+id/marketInformationLayout"

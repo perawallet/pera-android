@@ -64,14 +64,6 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
         toolbarConfiguration = toolbarConfiguration
     )
 
-    private val algorandSecureBackupDescriptionVisibilityCollector: suspend (Boolean?) -> Unit = { isVisible ->
-        binding.algorandSecureBackupListItem.updateSubTitleVisibility(isVisible == true)
-    }
-
-    private val notBackedUpAccountCountsCollector: suspend (Int?) -> Unit = { notBackedUpAccountCount ->
-        binding.algorandSecureBackupListItem.updateSubTitle(getString(R.string.not_backed_up, notBackedUpAccountCount))
-    }
-
     private val firebaseInstanceIdCollector: suspend (String?) -> Unit = { firebaseId ->
         binding.firebaseIdTextView.text = getString(
             R.string.firebase_id_format,
@@ -107,7 +99,6 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             privacyPolicyListItem.setOnClickListener { onPrivacyPolicyClick() }
             developerListItem.setOnClickListener { onDeveloperSettingsClick() }
             logoutButton.setOnClickListener { onLogoutClick() }
-            algorandSecureBackupListItem.setOnClickListener { onAlgorandSecureBackupClick() }
             versionCodeTextView.text = getVersionText()
         }
     }
@@ -128,14 +119,6 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     private fun initObservers() {
         with(settingsViewModel.settingsPreviewFlow) {
-            collectLatestOnLifecycle(
-                flow = map { it?.isAlgorandSecureBackupDescriptionVisible },
-                collection = algorandSecureBackupDescriptionVisibilityCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.notBackedUpAccountCounts },
-                collection = notBackedUpAccountCountsCollector
-            )
             collectLatestOnLifecycle(
                 flow = map { it?.firebaseInstanceId },
                 collection = firebaseInstanceIdCollector
@@ -225,9 +208,5 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     private fun onPrivacyPolicyClick() {
         context?.openPrivacyPolicyUrl()
-    }
-
-    private fun onAlgorandSecureBackupClick() {
-        nav(SettingsFragmentDirections.actionSettingsFragmentToAsbCreationNavigation())
     }
 }

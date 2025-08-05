@@ -24,7 +24,7 @@ class CustomTypefaceSpan(private val font: Typeface?) : MetricAffectingSpan() {
     private fun update(tp: TextPaint?) {
         tp?.apply {
             val old = this.typeface
-            val oldStyle = old?.style ?: 0
+            val oldStyle = old?.style ?: Typeface.NORMAL
             val font = Typeface.create(font, oldStyle)
             typeface = font
         }

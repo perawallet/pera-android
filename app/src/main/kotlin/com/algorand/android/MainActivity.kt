@@ -31,6 +31,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
@@ -178,6 +181,7 @@ class MainActivity :
                 nav(MainNavigationDirections.actionGlobalLockFragmentPop())
                 mainViewModel.handlePendingIntent(true)
             }
+
             AutoLockManager.AutoLockEvent.Idle, null -> Unit
         }
     }
@@ -406,7 +410,11 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
+
         super.onCreate(savedInstanceState)
+
+        setWindowInsetsForSystemBars()
+
         mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
@@ -770,6 +778,22 @@ class MainActivity :
 
     private fun showKeyRegDeeplinkError(accountAddress: String) {
         showGlobalError(getString(R.string.you_dont_have_any, accountAddress), tag = activityTag)
+    }
+
+    private fun setWindowInsetsForSystemBars() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rootConstraintLayout) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left,
+                top = bars.top,
+                right = bars.right,
+                bottom = bars.bottom,
+            )
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     companion object {

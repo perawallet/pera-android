@@ -13,10 +13,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:paddingVertical="56dp">
+    android:fitsSystemWindows="true">
 
     <com.algorand.android.customviews.toolbar.CustomToolbar
         android:id="@+id/toolbar"
@@ -42,9 +42,11 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"
-        android:layout_height="@dimen/main_bottom_navigation_height"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/spacing_xsmall"
         android:visibility="gone"
         app:backgroundTint="@color/tab_bar_background"
+        app:elevation="@dimen/main_bottom_navigation_elevation"
         app:itemIconSize="24dp"
         app:itemIconTint="@color/navigation_item_color"
         app:itemRippleColor="@null"

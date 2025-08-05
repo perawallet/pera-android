@@ -373,3 +373,7 @@
 -dontwarn java.awt.Window
 -dontwarn net.pwall.json.pointer.JSONPointer
 -dontwarn net.pwall.json.schema.output.BasicOutput
+
+-keep class kotlin.** { *; }
+-dontwarn java.lang.reflect.AnnotatedType
+-dontwarn sun.nio.ch.**

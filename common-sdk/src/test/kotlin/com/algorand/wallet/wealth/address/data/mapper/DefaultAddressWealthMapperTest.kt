@@ -20,10 +20,10 @@ import com.algorand.wallet.wealth.wallet.data.model.WalletChartResponseResult
 import com.algorand.wallet.wealth.wallet.data.model.WalletChartResponseResults
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.time.OffsetDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigDecimal
+import java.time.OffsetDateTime
 
 class DefaultAddressWealthMapperTest {
 
@@ -88,6 +88,7 @@ class DefaultAddressWealthMapperTest {
             datetime = DATE_TIME_RESPONSE,
             usdValue = "1000.12",
             algoValue = "100.23",
+            valueInCurrency = "10099.23",
             round = 1234567
         )
 
@@ -104,6 +105,7 @@ class DefaultAddressWealthMapperTest {
             datetime = OFFSET_DATETIME,
             usdValue = BigDecimal.valueOf(1000.12),
             algoValue = BigDecimal.valueOf(100.23),
+            valueInCurrency = BigDecimal.valueOf(10099.23),
             round = 1234567
         )
     }

@@ -12,14 +12,16 @@
 
 package com.algorand.android.ui.accounts.usecase
 
-import com.algorand.android.modules.parity.domain.usecase.GetPrimaryAlgoParityValue
-import com.algorand.android.modules.parity.domain.usecase.GetSecondaryAlgoParityValue
+import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryFiatCurrencyId
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
-import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 import com.algorand.wallet.wealth.wallet.domain.usecase.GetWalletWealth
@@ -27,26 +29,56 @@ import javax.inject.Inject
 
 internal class GetAccountsLineChartDataUseCase @Inject constructor(
     private val getWalletWealth: GetWalletWealth,
-    private val getPrimaryAlgoParityValue: GetPrimaryAlgoParityValue,
-    private val getSecondaryAlgoParityValue: GetSecondaryAlgoParityValue,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val getPrimaryFiatCurrencyId: GetPrimaryFiatCurrencyId,
+    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo
 ) : GetAccountsLineChartData {
 
     override suspend fun invoke(
         addresses: List<String>,
         period: WalletWealthPeriod
     ): PeraResult<List<AccountsLineChartData>> {
-        return getWalletWealth(addresses, period).map { walletWealth ->
+        val currency = getPrimaryFiatCurrencyId()
+        return getWalletWealth(addresses, period, currency).map { walletWealth ->
             walletWealth.chartData.map { chartData ->
-                val algoAmount = chartData.algoValue.movePointRight(ALGO_DECIMALS).toBigInteger()
-                val primaryAmount = PeraAmount(getPrimaryAlgoParityValue(algoAmount).amountAsCurrency)
-                val secondaryAmount = PeraAmount(getSecondaryAlgoParityValue(algoAmount).amountAsCurrency)
+                val primaryAmount: PeraAmount
+                val secondaryAmount: PeraAmount
+                if (isPrimaryCurrencyAlgo()) {
+                    primaryAmount = PeraAmount(
+                        ParityValue(
+                            amountAsCurrency = chartData.algoValue,
+                            selectedCurrencySymbol = Currency.ALGO.symbol
+                        ).amountAsCurrency
+                    )
+                    secondaryAmount = PeraAmount(
+                        ParityValue(
+                            amountAsCurrency = chartData.usdValue,
+                            selectedCurrencySymbol = Currency.USD.symbol
+                        ).amountAsCurrency
+                    )
+                } else {
+                    primaryAmount = PeraAmount(
+                        ParityValue(
+                            amountAsCurrency = chartData.valueInCurrency,
+                            selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
+                        ).amountAsCurrency
+                    )
+                    secondaryAmount =
+                        PeraAmount(
+                            ParityValue(
+                                amountAsCurrency = chartData.algoValue,
+                                selectedCurrencySymbol = Currency.ALGO.symbol
+                            ).amountAsCurrency
+                        )
+                }
                 val primaryRenderer = getCompactPrimaryAmountRenderer(primaryAmount, Plain)
                 val secondaryRenderer = getCompactSecondaryAmountRenderer(secondaryAmount, Plain)
                 AccountsLineChartData(
                     datetime = chartData.datetime,
                     primaryValue = primaryAmount.value,
+                    valueInCurrency = chartData.valueInCurrency,
                     primaryAmountRenderer = primaryRenderer,
                     secondaryAmountRenderer = secondaryRenderer,
                     round = chartData.round

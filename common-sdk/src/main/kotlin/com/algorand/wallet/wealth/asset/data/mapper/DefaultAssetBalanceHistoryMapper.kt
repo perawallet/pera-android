@@ -30,9 +30,11 @@ internal class DefaultAssetBalanceHistoryMapper(
     private fun mapToChartData(response: AssetBalanceHistoryResponseResult): AssetBalanceHistoryChartData? {
         return with(response) {
             AssetBalanceHistoryChartData(
+                round = round ?: return null,
                 datetime = dateTimeParser.parseOffsetDateTime(datetime.orEmpty()) ?: return null,
                 usdValue = usdValue?.toBigDecimalOrNull() ?: return null,
-                amount = amount?.toBigDecimalOrNull() ?: return null
+                amount = amount?.toBigDecimalOrNull() ?: return null,
+                valueInCurrency = valueInCurrency?.toBigDecimalOrNull() ?: return null
             )
         }
     }

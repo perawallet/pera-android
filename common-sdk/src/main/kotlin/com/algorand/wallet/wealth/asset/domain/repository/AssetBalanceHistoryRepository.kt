@@ -20,6 +20,7 @@ internal interface AssetBalanceHistoryRepository {
     suspend fun getAssetBalanceHistory(
         address: String,
         assetId: Long,
-        period: WalletWealthPeriod
+        period: WalletWealthPeriod,
+        currency: String
     ): PeraResult<AssetBalanceHistory>
 }

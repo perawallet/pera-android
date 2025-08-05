@@ -41,6 +41,19 @@ class CurrencyUseCase @Inject constructor(
         return currencyRepository.getPrimaryCurrencyPreference(defaultCurrencyPreference)
     }
 
+    fun getPrimaryFiatCurrencyId(): String {
+        val primaryCurrencyId = getPrimaryCurrencyId()
+        return when (primaryCurrencyId) {
+            Currency.ALGO.id -> {
+                Currency.USD.id
+            }
+
+            else -> {
+                primaryCurrencyId
+            }
+        }
+    }
+
     fun setPrimaryCurrency(selectedCurrency: String) {
         currencyRepository.setPrimaryCurrencyPreference(selectedCurrency)
     }

@@ -16,5 +16,6 @@ import com.google.gson.annotations.SerializedName
 
 internal data class WalletChartRequest(
     @SerializedName("account_addresses") val accountAddresses: List<String>,
-    @SerializedName("period") val period: String
+    @SerializedName("period") val period: String,
+    @SerializedName("currency") val currency: String
 )

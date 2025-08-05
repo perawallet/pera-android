@@ -20,6 +20,7 @@ import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySy
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbolOrNameUseCase
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbolUseCase
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryFiatCurrencyId
 import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbol
 import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbolUseCase
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
@@ -38,6 +39,11 @@ internal object CurrencyModule {
     @Provides
     fun provideGetPrimaryCurrencyId(currencyUseCase: CurrencyUseCase): GetPrimaryCurrencyId {
         return GetPrimaryCurrencyId(currencyUseCase::getPrimaryCurrencyId)
+    }
+
+    @Provides
+    fun provideGetPrimaryFiatCurrencyId(currencyUseCase: CurrencyUseCase): GetPrimaryFiatCurrencyId {
+        return GetPrimaryFiatCurrencyId(currencyUseCase::getPrimaryFiatCurrencyId)
     }
 
     @Provides

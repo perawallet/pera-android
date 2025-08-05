@@ -39,3 +39,7 @@ fun interface IsPrimaryCurrencyAlgo {
 fun interface GetPrimaryCurrencyId {
     operator fun invoke(): String
 }
+
+fun interface GetPrimaryFiatCurrencyId {
+    operator fun invoke(): String
+}

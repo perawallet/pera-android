@@ -63,6 +63,7 @@ class DefaultAddressWealthMapperTest {
     private companion object {
         const val DATE_TIME_RESPONSE = "2023-10-01T00:00:00Z"
         val VALID_CHART_DATA_RESPONSE = AssetBalanceHistoryResponseResult(
+            round = 40471200,
             datetime = DATE_TIME_RESPONSE,
             usdValue = "1000.12",
             amount = "100.23",

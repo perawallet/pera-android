@@ -15,8 +15,9 @@ package com.algorand.wallet.wealth.wallet.data.model
 import com.google.gson.annotations.SerializedName
 
 internal data class WalletChartResponseResult(
+    @SerializedName("round") val round: Long?,
     @SerializedName("datetime") val datetime: String?,
-    @SerializedName("usd_value") val usdValue: String?,
     @SerializedName("algo_value") val algoValue: String?,
-    @SerializedName("round") val round: Long?
+    @SerializedName("usd_value") val usdValue: String?,
+    @SerializedName("value_in_currency") val valueInCurrency: String?
 )

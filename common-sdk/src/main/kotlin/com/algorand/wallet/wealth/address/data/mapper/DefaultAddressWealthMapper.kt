@@ -34,6 +34,7 @@ internal class DefaultAddressWealthMapper @Inject constructor(
                 datetime = dateTimeParser.parseOffsetDateTime(datetime.orEmpty()) ?: return null,
                 usdValue = usdValue?.toBigDecimalOrNull() ?: return null,
                 algoValue = algoValue?.toBigDecimalOrNull() ?: return null,
+                valueInCurrency = valueInCurrency?.toBigDecimalOrNull() ?: return null,
                 round = round?.toInt() ?: return null,
             )
         }

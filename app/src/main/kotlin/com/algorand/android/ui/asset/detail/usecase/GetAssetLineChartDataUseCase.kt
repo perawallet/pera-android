@@ -13,6 +13,7 @@
 package com.algorand.android.ui.asset.detail.usecase
 
 import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryFiatCurrencyId
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
@@ -37,7 +38,8 @@ class GetAssetLineChartDataUseCase @Inject constructor(
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
     private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
     private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
-    private val getAssetDetail: GetAssetDetail
+    private val getAssetDetail: GetAssetDetail,
+    private val getPrimaryFiatCurrencyId: GetPrimaryFiatCurrencyId
 ) : GetAssetLineChartData {
 
     override suspend fun invoke(
@@ -45,7 +47,8 @@ class GetAssetLineChartDataUseCase @Inject constructor(
         assetId: Long,
         period: WalletWealthPeriod
     ): PeraResult<List<AssetLineChartData>> {
-        return getAssetBalanceHistory(address, assetId, period).map { assetBalanceHistory ->
+        val currency = getPrimaryFiatCurrencyId()
+        return getAssetBalanceHistory(address, assetId, period, currency).map { assetBalanceHistory ->
             assetBalanceHistory.chartData.map { chartData ->
                 val assetSymbol = getAssetSymbol(assetId)
                 val primaryAmount = PeraAmount(chartData.amount)
@@ -59,6 +62,7 @@ class GetAssetLineChartDataUseCase @Inject constructor(
                 AssetLineChartData(
                     datetime = chartData.datetime,
                     primaryValue = primaryAmount.value,
+                    valueInCurrency = chartData.valueInCurrency,
                     primaryAmountRenderer = primaryRenderer,
                     secondaryAmountRenderer = getSecondaryAmountRenderer(assetId, chartData.usdValue),
                 )

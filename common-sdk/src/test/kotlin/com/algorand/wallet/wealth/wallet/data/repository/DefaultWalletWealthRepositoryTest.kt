@@ -41,19 +41,35 @@ class DefaultWalletWealthRepositoryTest {
 
     @Test
     fun `EXPECT Error WHEN fetching wealth fails`() = runTest {
-        coEvery { walletWealthApiService.getWalletWealth(WalletChartRequest(ADDRESSES, PERIOD_QUERY)) } throws Exception()
+        coEvery {
+            walletWealthApiService.getWalletWealth(
+                WalletChartRequest(
+                    ADDRESSES,
+                    PERIOD_QUERY,
+                    CURRENCY
+                )
+            )
+        } throws Exception()
 
-        val result = sut.getWalletWealth(ADDRESSES, PERIOD)
+        val result = sut.getWalletWealth(ADDRESSES, PERIOD, CURRENCY)
 
         assertTrue(result is PeraResult.Error)
     }
 
     @Test
     fun `EXPECT mapped result WHEN fetching succeeds`() = runTest {
-        coEvery { walletWealthApiService.getWalletWealth(WalletChartRequest(ADDRESSES, PERIOD_QUERY)) } returns WALLET_WEALTH_RESPONSE
+        coEvery {
+            walletWealthApiService.getWalletWealth(
+                WalletChartRequest(
+                    ADDRESSES,
+                    PERIOD_QUERY,
+                    CURRENCY
+                )
+            )
+        } returns WALLET_WEALTH_RESPONSE
         every { walletWealthMapper.map(WALLET_WEALTH_RESPONSE) } returns WALLET_WEALTH
 
-        val result = sut.getWalletWealth(ADDRESSES, PERIOD)
+        val result = sut.getWalletWealth(ADDRESSES, PERIOD, CURRENCY)
 
         val expected = PeraResult.Success(WALLET_WEALTH)
         assertEquals(expected, result)
@@ -63,6 +79,7 @@ class DefaultWalletWealthRepositoryTest {
         const val ADDRESS_1 = "address1"
         const val ADDRESS_2 = "address2"
 
+        const val CURRENCY = "USD"
         val ADDRESSES = listOf(ADDRESS_1, ADDRESS_2)
         val PERIOD: WalletWealthPeriod = peraFixture()
         val PERIOD_QUERY: String = peraFixture()

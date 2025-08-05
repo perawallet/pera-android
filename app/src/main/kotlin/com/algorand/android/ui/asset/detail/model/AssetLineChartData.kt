@@ -20,10 +20,11 @@ import java.time.OffsetDateTime
 data class AssetLineChartData(
     val datetime: OffsetDateTime,
     val primaryValue: BigDecimal,
+    val valueInCurrency: BigDecimal,
     val primaryAmountRenderer: AmountRenderer,
     val secondaryAmountRenderer: AmountRenderer
 ) : PeraLineChartData {
 
     override val value: Float
-        get() = primaryValue.toFloat()
+        get() = valueInCurrency.toFloat()
 }

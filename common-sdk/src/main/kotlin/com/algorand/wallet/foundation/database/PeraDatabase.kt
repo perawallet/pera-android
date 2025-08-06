@@ -24,11 +24,11 @@ import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.asset.collectible.data.database.dao.PaginatedCollectibleDao
-import com.algorand.wallet.asset.data.database.dao.PaginatedAssetCollectibleDao
 import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleTraitDao
+import com.algorand.wallet.asset.data.database.dao.PaginatedAssetCollectibleDao
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
@@ -38,6 +38,7 @@ import com.algorand.wallet.foundation.database.converters.BigIntegerTypeConverte
 import com.algorand.wallet.foundation.database.converters.CollectibleMediaTypeTypeConverter
 import com.algorand.wallet.foundation.database.converters.CollectibleStandardTypeTypeConverter
 import com.algorand.wallet.foundation.database.converters.VerificationTierTypeConverter
+import com.algorand.wallet.swap.data.dao.SwapSelectedAssetDao
 
 @TypeConverters(
     BigIntegerTypeConverter::class,
@@ -71,6 +72,7 @@ internal abstract class PeraDatabase : RoomDatabase() {
     abstract fun customHdSeedInfoDao(): CustomHdSeedInfoDao
     abstract fun paginatedAssetCollectibleDao(): PaginatedAssetCollectibleDao
     abstract fun paginatedCollectibleDao(): PaginatedCollectibleDao
+    abstract fun swapSelectedAssetDao(): SwapSelectedAssetDao
 
     companion object {
         const val DATABASE_VERSION = 4

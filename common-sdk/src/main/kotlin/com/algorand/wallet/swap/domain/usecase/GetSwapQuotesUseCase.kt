@@ -24,7 +24,8 @@ import javax.inject.Inject
 
 internal class GetSwapQuotesUseCase @Inject constructor(
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
-    private val swapRepository: SwapRepository
+    private val swapRepository: SwapRepository,
+    private val getSwapQuoteDetails: GetSwapQuoteDetails
 ) : GetSwapQuotes {
 
     override suspend fun invoke(payload: SwapQuotePayload): PeraResult<SwapQuotes> {
@@ -34,12 +35,13 @@ internal class GetSwapQuotesUseCase @Inject constructor(
         )
     }
 
-    private fun getSuccessResult(quotes: List<SwapQuote>): PeraResult<SwapQuotes> {
+    private suspend fun getSuccessResult(quotes: List<SwapQuote>): PeraResult<SwapQuotes> {
         return if (quotes.isEmpty()) {
             PeraResult.Error(IllegalStateException())
         } else {
             val bestOfferQuoteId = quotes.maxBy { it.assetOutAmount.amount }.quoteId
-            val swapQuotes = SwapQuotes(selectedQuoteId = bestOfferQuoteId, bestOfferQuoteId, quotes)
+            val quoteDetails = getSwapQuoteDetails(quotes)
+            val swapQuotes = SwapQuotes(selectedQuoteId = bestOfferQuoteId, bestOfferQuoteId, quoteDetails)
             PeraResult.Success(swapQuotes)
         }
     }

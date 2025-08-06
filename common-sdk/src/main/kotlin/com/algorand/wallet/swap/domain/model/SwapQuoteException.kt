@@ -12,11 +12,13 @@
 
 package com.algorand.wallet.swap.domain.model
 
-data class SwapQuotes(
-    val selectedQuoteId: Long,
-    val bestOfferQuoteId: Long,
-    val quotes: List<SwapQuoteDetail>
-) {
-    val selectedQuote: SwapQuoteDetail
-        get() = quotes.first { it.quote.quoteId == selectedQuoteId }
+import java.math.BigDecimal
+
+sealed interface SwapQuoteException {
+
+    data object InsufficientAlgoBalance : SwapQuoteException
+
+    data class InsufficientAssetBalance(val assetUnitName: String?) : SwapQuoteException
+
+    data class InsufficientBalanceForFee(val minRequiredBalance: BigDecimal) : SwapQuoteException
 }

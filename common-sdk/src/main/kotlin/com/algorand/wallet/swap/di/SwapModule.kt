@@ -42,6 +42,8 @@ import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddressUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetailUseCase
+import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetails
+import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
 import dagger.Module
@@ -141,4 +143,7 @@ internal object SwapModule {
     fun provideSwapApiService(@Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit): SwapApiService {
         return retrofit.create(SwapApiService::class.java)
     }
+
+    @Provides
+    fun provideGetSwapQuoteDetails(useCase: GetSwapQuoteDetailsUseCase): GetSwapQuoteDetails = useCase
 }

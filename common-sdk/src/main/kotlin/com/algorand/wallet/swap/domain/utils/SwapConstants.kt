@@ -10,13 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.wallet.swap.domain.utils
 
-data class SwapQuotes(
-    val selectedQuoteId: Long,
-    val bestOfferQuoteId: Long,
-    val quotes: List<SwapQuoteDetail>
-) {
-    val selectedQuote: SwapQuoteDetail
-        get() = quotes.first { it.quote.quoteId == selectedQuoteId }
-}
+import java.math.BigDecimal
+
+@Suppress("MagicNumber")
+val swapFeePadding: BigDecimal = BigDecimal.valueOf(0.665)

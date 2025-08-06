@@ -16,6 +16,7 @@ import com.algorand.test.peraFixture
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
@@ -36,8 +37,11 @@ class GetSwapQuotesUseCaseTest {
         every { this@mockk.invoke() } returns DEVICE_ID
     }
     private val swapRepository: SwapRepository = mockk()
+    private val getSwapQuoteDetails: GetSwapQuoteDetails = mockk {
+        coEvery { invoke(quotes = QUOTES) } returns QUOTE_DETAILS
+    }
 
-    private val sut = GetSwapQuotesUseCase(getSelectedNodeDeviceId, swapRepository)
+    private val sut = GetSwapQuotesUseCase(getSelectedNodeDeviceId, swapRepository, getSwapQuoteDetails)
 
     @Test
     fun `EXPECT error WHEN quote list is empty`() = runTest {
@@ -64,7 +68,7 @@ class GetSwapQuotesUseCaseTest {
         val result = sut(PAYLOAD)
 
         val expected = PeraResult.Success(
-            SwapQuotes(selectedQuoteId = BEST_QUOTE_ID, bestOfferQuoteId = BEST_QUOTE_ID, quotes = QUOTES)
+            SwapQuotes(selectedQuoteId = BEST_QUOTE_ID, bestOfferQuoteId = BEST_QUOTE_ID, quotes = QUOTE_DETAILS)
         )
         assertEquals(expected, result)
     }
@@ -79,7 +83,7 @@ class GetSwapQuotesUseCaseTest {
         val result = sut(PAYLOAD)
 
         val expected = PeraResult.Success(
-            SwapQuotes(selectedQuoteId = BEST_QUOTE_ID, bestOfferQuoteId = BEST_QUOTE_ID, quotes = QUOTES)
+            SwapQuotes(selectedQuoteId = BEST_QUOTE_ID, bestOfferQuoteId = BEST_QUOTE_ID, quotes = QUOTE_DETAILS)
         )
         assertEquals(expected, result)
     }
@@ -107,6 +111,7 @@ class GetSwapQuotesUseCaseTest {
             assetOutAmount = peraFixture<SwapQuote.AssetAmount>().copy(amount = BigDecimal.ONE)
         )
         val QUOTES = listOf(BEST_QUOTE, WORST_QUOTE)
+        val QUOTE_DETAILS = peraFixture<List<SwapQuoteDetail>>()
     }
 }
 

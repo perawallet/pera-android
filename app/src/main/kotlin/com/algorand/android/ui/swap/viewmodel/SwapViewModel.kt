@@ -19,6 +19,7 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
+import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_TESTNET_ID
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
@@ -36,7 +37,8 @@ class SwapViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val getPreselectedSwapAddress: GetPreselectedSwapAddress,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getAccountDisplayName: GetAccountDisplayName
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getUsdcAssetId: GetUsdcAssetId
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val _addressFlow = MutableStateFlow<String?>(null)
@@ -47,11 +49,14 @@ class SwapViewModel @Inject constructor(
     val assetInFlow: StateFlow<Long>
         get() = _assetInFlow.asStateFlow()
 
-    private val _assetOutFlow = MutableStateFlow<Long>(USDC_TESTNET_ID) // TODO apply testnet/mainnet case
+    private val _assetOutFlow = MutableStateFlow<Long>(USDC_TESTNET_ID)
     val assetOutFlow: StateFlow<Long>
         get() = _assetOutFlow.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            _assetOutFlow.value = getUsdcAssetId()
+        }
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 

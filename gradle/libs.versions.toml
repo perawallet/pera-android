@@ -25,6 +25,7 @@ coil = "3.3.0"
 compose = "1.8.2"
 compose-ui = "1.8.3"
 composeFoundation = "1.8.3"
+composeConstraintLayout = "1.1.1"
 converterGson = "3.0.0"
 core = "1.7.0"
 coreKtx = "1.16.0"
@@ -44,6 +45,7 @@ glideCompose = "1.0.0-beta01"
 googleServicesVersion = "4.4.3"
 hilt = "2.57"
 hiltCompiler = "1.2.0"
+hiltCompose = "1.2.0"
 installreferrer = "2.2"
 javaWebSocket = "1.6.0"
 junit = "4.13.2"
@@ -106,6 +108,7 @@ compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", versi
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose-ui" }
 compose-ui-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ui" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui" }
+compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "composeConstraintLayout" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -119,6 +122,7 @@ lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 dagger-hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
+dagger-hilt-compose-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompose" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }

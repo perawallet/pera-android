@@ -1535,5 +1535,9 @@
     <string name="go_to_advanced_settings">Go to Advanced Settings</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="this_signature_includes">This signature includes rekey transaction, giving control over your accounts to another address. Please make sure that you understand the implications before proceeding.</string>
+    <string name="you_pay">You pay</string>
+    <string name="you_receive">You receive</string>
+    <string name="provider">Provider</string>
+    <string name="provider_best_price_available">Provider (Best price available)</string>
 
 </resources>

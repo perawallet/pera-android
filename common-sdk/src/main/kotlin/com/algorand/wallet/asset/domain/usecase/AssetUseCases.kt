@@ -98,3 +98,7 @@ fun interface CacheAlgoAssetDetail {
 fun interface GetRecentlyAddedCollectibleUrls {
     suspend operator fun invoke(count: Int): List<String>
 }
+
+fun interface GetUsdcAssetId {
+    suspend operator fun invoke(): Long
+}

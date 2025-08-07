@@ -483,6 +483,10 @@ interface PeraColor {
         val dark: Color
     }
 
+    interface Swap {
+        val assetOutButtonBackground: Color
+    }
+
     val background: Background
     val text: Text
     val layer: Layer
@@ -512,4 +516,5 @@ interface PeraColor {
     val node: Node
     val divider: Divider
     val helper: Helper
+    val swap: Swap
 }

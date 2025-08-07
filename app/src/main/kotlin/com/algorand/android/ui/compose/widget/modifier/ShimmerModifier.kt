@@ -26,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
+// TODO Will be updated when the design is ready
 @Composable
 fun Modifier.shimmer(durationMillis: Int = 1000): Modifier {
     val transition = rememberInfiniteTransition(label = "")

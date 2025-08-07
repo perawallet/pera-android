@@ -42,6 +42,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 
 private const val MAX_ASSET_DISPLAY_CHAR = 3
+private const val SIZE_PADDING_RATIO = 5f
 
 sealed interface AssetIconDrawable {
     data object AlgoDrawable : AssetIconDrawable
@@ -61,7 +62,7 @@ fun AssetIcon(modifier: Modifier, drawable: AssetIconDrawable) {
 @Composable
 private fun BoxWithConstraintsScope.AlgoIcon() {
     val padding = with(LocalDensity.current) {
-        constraints.maxWidth.toDp().value / 5f
+        constraints.maxWidth.toDp().value / SIZE_PADDING_RATIO
     }
     Icon(
         modifier = Modifier

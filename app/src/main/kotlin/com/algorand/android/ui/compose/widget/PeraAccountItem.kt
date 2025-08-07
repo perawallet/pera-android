@@ -54,16 +54,22 @@ fun PeraAccountItem(
         modifier = modifier.then(longClickModifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AccountIcon(iconDrawablePreview)
+        AccountIcon(
+            modifier = Modifier.size(40.dp),
+            iconDrawablePreview
+        )
         Spacer(modifier = Modifier.width(16.dp))
         DisplayName(displayName)
     }
 }
 
 @Composable
-private fun AccountIcon(iconDrawablePreview: AccountIconDrawablePreview) {
+fun AccountIcon(
+    modifier: Modifier,
+    iconDrawablePreview: AccountIconDrawablePreview
+) {
     Image(
-        modifier = Modifier.size(40.dp),
+        modifier = modifier,
         bitmap = AccountIconDrawable.create(
             context = LocalContext.current,
             accountIconDrawablePreview = iconDrawablePreview,

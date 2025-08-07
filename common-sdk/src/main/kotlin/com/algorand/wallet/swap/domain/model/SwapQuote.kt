@@ -13,6 +13,7 @@
 package com.algorand.wallet.swap.domain.model
 
 import com.algorand.wallet.asset.domain.model.VerificationTier
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -30,6 +31,12 @@ data class SwapQuote(
     val fee: SwapFee,
     val slippage: Float
 ) {
+
+    val isAssetInAlgo: Boolean
+        get() = assetInDetail.assetId == ALGO_ID
+
+    val isAssetOutAlgo: Boolean
+        get() = assetOutDetail.assetId == ALGO_ID
 
     data class SwapFee(
         val peraFeeAmount: BigDecimal,

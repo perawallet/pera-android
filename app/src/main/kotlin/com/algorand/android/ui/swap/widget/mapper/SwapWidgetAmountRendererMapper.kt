@@ -10,13 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.ui.swap.widget.mapper
 
-data class SwapQuotes(
-    val selectedQuoteId: Long,
-    val bestOfferQuoteId: Long,
-    val quotes: List<SwapQuoteDetail>
-) {
-    val selectedQuote: SwapQuoteDetail
-        get() = quotes.first { it.quote.quoteId == selectedQuoteId }
+import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
+import com.algorand.wallet.swap.domain.model.SwapQuote
+
+interface SwapWidgetAmountRendererMapper {
+    fun getDefaultRenderers(): SwapWidgetViewModel.ViewState.Content.AmountRenderers
+    fun getQuoteRenderers(quote: SwapQuote): SwapWidgetViewModel.ViewState.Content.AmountRenderers
 }

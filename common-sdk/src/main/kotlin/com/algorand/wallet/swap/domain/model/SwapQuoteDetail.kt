@@ -12,11 +12,12 @@
 
 package com.algorand.wallet.swap.domain.model
 
-data class SwapQuotes(
-    val selectedQuoteId: Long,
-    val bestOfferQuoteId: Long,
-    val quotes: List<SwapQuoteDetail>
+data class SwapQuoteDetail(
+    val quote: SwapQuote,
+    val state: SwapQuoteState
 ) {
-    val selectedQuote: SwapQuoteDetail
-        get() = quotes.first { it.quote.quoteId == selectedQuoteId }
+    sealed interface SwapQuoteState {
+        data object Swappable : SwapQuoteState
+        data class NonSwappable(val exception: SwapQuoteException) : SwapQuoteState
+    }
 }

@@ -34,7 +34,7 @@ object PeraLightColor : PeraColor {
     override val layer = object : PeraColor.Layer {
         override val gray = ColorPalette.Gray.V200
         override val grayLighter = ColorPalette.Gray.V100
-        override val grayLightest = ColorPalette.White.Default
+        override val grayLightest = ColorPalette.Gray.V50
     }
 
     override val link = object : PeraColor.Link {
@@ -277,5 +277,9 @@ object PeraLightColor : PeraColor {
 
     override val divider = object : PeraColor.Divider {
         override val dark = ColorPalette.Divider.Dark
+    }
+
+    override val swap = object : PeraColor.Swap {
+        override val assetOutButtonBackground: Color = ColorPalette.Gray.V50
     }
 }

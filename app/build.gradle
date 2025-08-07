@@ -279,6 +279,7 @@ dependencies {
     implementation libs.androidx.compose.fragment
     implementation libs.compose.ui.tooling.preview
     implementation libs.compose.ui.tooling
+    implementation libs.compose.constraintlayout
 
     implementation libs.multidex
 
@@ -291,6 +292,7 @@ dependencies {
     implementation libs.review.ktx
 
     implementation libs.dagger.hilt.android
+    implementation libs.dagger.hilt.compose.navigation
     ksp libs.dagger.hilt.compiler
     ksp libs.androidx.hilt.compiler
     implementation(platform(libs.koin.bom))

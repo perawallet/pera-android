@@ -10,13 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.ui.swap.widget.viewmodel
 
-data class SwapQuotes(
-    val selectedQuoteId: Long,
-    val bestOfferQuoteId: Long,
-    val quotes: List<SwapQuoteDetail>
-) {
-    val selectedQuote: SwapQuoteDetail
-        get() = quotes.first { it.quote.quoteId == selectedQuoteId }
+import com.algorand.wallet.viewmodel.StateViewModel
+import kotlinx.coroutines.flow.Flow
+
+interface SwapButtonViewModel : StateViewModel<SwapButtonViewModel.ViewState> {
+
+    fun init(widgetViewState: Flow<SwapWidgetViewModel.ViewState>)
+
+    sealed interface ViewState {
+        data object Invisible : ViewState
+        data class Visible(val isEnabled: Boolean) : ViewState
+    }
 }

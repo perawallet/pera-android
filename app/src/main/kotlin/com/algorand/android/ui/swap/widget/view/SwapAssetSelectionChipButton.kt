@@ -13,6 +13,7 @@
 package com.algorand.android.ui.swap.widget.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -40,12 +41,13 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 
 @Composable
-fun SwapAssetSelectionChipButton(viewState: ViewState, backgroundColor: Color) {
+fun SwapAssetSelectionChipButton(viewState: ViewState, backgroundColor: Color, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .background(color = backgroundColor, shape = RoundedCornerShape(16.dp))
             .padding(horizontal = 12.dp)
-            .defaultMinSize(minHeight = 48.dp),
+            .defaultMinSize(minHeight = 48.dp)
+            .clickable { if (viewState is ViewState.Content) onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         when (viewState) {

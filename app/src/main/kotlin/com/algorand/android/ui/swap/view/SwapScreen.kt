@@ -32,6 +32,7 @@ import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.view.SwapButtonWidget
 import com.algorand.android.ui.swap.widget.view.SwapProviderWidget
 import com.algorand.android.ui.swap.widget.view.SwapWidget
+import com.algorand.android.ui.swap.widget.view.SwapWidgetListener
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapAssetSelectionViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapButtonViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapConfigurationViewModel
@@ -45,7 +46,7 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 
 @Composable
 fun SwapScreen(
-    swapViewModel: SwapViewModel = hiltViewModel(),
+    swapViewModel: SwapViewModel,
     assetInViewModel: DefaultSwapAssetSelectionViewModel = hiltViewModel(key = "assetInViewModel"),
     assetOutViewModel: DefaultSwapAssetSelectionViewModel = hiltViewModel(key = "assetOutViewModel"),
     widgetViewModel: SwapWidgetViewModel = hiltViewModel<DefaultSwapWidgetViewModel>(),
@@ -72,7 +73,8 @@ fun SwapScreen(
                         widgetViewModel = widgetViewModel,
                         configViewModel = configViewModel,
                         providerViewModel = providerViewModel,
-                        buttonViewModel = buttonViewModel
+                        buttonViewModel = buttonViewModel,
+                        listener = listener
                     )
                 }
                 SwapViewModel.ViewState.NoAccountState -> SwapNoAccountState(listener)
@@ -93,7 +95,8 @@ private fun SwapContentState(
     widgetViewModel: SwapWidgetViewModel,
     configViewModel: SwapConfigurationViewModel,
     providerViewModel: SwapProviderWidgetViewModel,
-    buttonViewModel: SwapButtonViewModel
+    buttonViewModel: SwapButtonViewModel,
+    listener: SwapWidgetListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -110,7 +113,8 @@ private fun SwapContentState(
                 widgetViewModel,
                 providerViewModel,
                 buttonViewModel,
-                configViewModel
+                configViewModel,
+                listener
             )
             SwapProviderWidget(
                 modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
@@ -135,6 +139,6 @@ private fun SwapNoAccountState(listener: SwapScreenListener) {
     }
 }
 
-interface SwapScreenListener : SwapToolbarListener {
+interface SwapScreenListener : SwapToolbarListener, SwapWidgetListener {
     fun onCreateAccountClick()
 }

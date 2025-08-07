@@ -67,6 +67,14 @@ class SwapViewModel @Inject constructor(
         _assetOutFlow.value = assetInId
     }
 
+    fun setAssetInId(assetId: Long) {
+        _assetInFlow.value = assetId
+    }
+
+    fun setAssetOutId(assetId: Long) {
+        _assetOutFlow.value = assetId
+    }
+
     fun initViewState() {
         stateDelegate.onState<ViewState.Idle> {
             viewModelScope.launch {

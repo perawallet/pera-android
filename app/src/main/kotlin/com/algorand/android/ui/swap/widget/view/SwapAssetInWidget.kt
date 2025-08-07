@@ -54,7 +54,8 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientBala
 @Composable
 fun SwapAssetInWidget(
     widgetViewModel: SwapWidgetViewModel,
-    assetSelectionViewModel: SwapAssetSelectionViewModel
+    assetSelectionViewModel: SwapAssetSelectionViewModel,
+    onAssetChipClick: () -> Unit
 ) {
     Column {
         val viewState = widgetViewModel.state.collectAsStateWithLifecycle().value
@@ -62,7 +63,8 @@ fun SwapAssetInWidget(
             title = stringResource(R.string.you_pay),
             amountContent = { AssetInAmountContent(viewState, widgetViewModel) },
             viewModel = assetSelectionViewModel,
-            assetSelectionChipBackgroundColor = PeraTheme.colors.layer.grayLightest
+            assetSelectionChipBackgroundColor = PeraTheme.colors.layer.grayLightest,
+            onAssetChipClick = onAssetChipClick
         )
         ErrorText(viewState)
     }

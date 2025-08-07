@@ -32,14 +32,16 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewSta
 @Composable
 fun SwapAssetOutWidget(
     widgetViewModel: SwapWidgetViewModel,
-    assetSelectionViewModel: SwapAssetSelectionViewModel
+    assetSelectionViewModel: SwapAssetSelectionViewModel,
+    onAssetChipClick: () -> Unit
 ) {
     val viewState = widgetViewModel.state.collectAsStateWithLifecycle().value
     SwapAssetWidget(
         title = stringResource(R.string.you_receive),
         amountContent = { AssetOutAmountContent(viewState) },
         viewModel = assetSelectionViewModel,
-        assetSelectionChipBackgroundColor = PeraTheme.colors.swap.assetOutButtonBackground
+        assetSelectionChipBackgroundColor = PeraTheme.colors.swap.assetOutButtonBackground,
+        onAssetChipClick = onAssetChipClick
     )
 }
 

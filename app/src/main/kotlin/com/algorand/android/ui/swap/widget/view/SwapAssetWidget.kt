@@ -39,6 +39,7 @@ fun SwapAssetWidget(
     amountContent: @Composable RowScope.() -> Unit,
     viewModel: SwapAssetSelectionViewModel,
     assetSelectionChipBackgroundColor: Color,
+    onAssetChipClick: () -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         val viewState = viewModel.state.collectAsStateWithLifecycle()
@@ -50,7 +51,7 @@ fun SwapAssetWidget(
         Row(modifier = Modifier.fillMaxWidth()) {
             amountContent()
             Spacer(modifier = Modifier.width(12.dp))
-            SwapAssetSelectionChipButton(viewState.value, assetSelectionChipBackgroundColor)
+            SwapAssetSelectionChipButton(viewState.value, assetSelectionChipBackgroundColor, onAssetChipClick)
         }
     }
 }

@@ -44,11 +44,12 @@ fun SwapWidget(
     widgetViewModel: SwapWidgetViewModel,
     providerWidgetViewModel: SwapProviderWidgetViewModel,
     buttonViewModel: SwapButtonViewModel,
-    configurationViewModel: SwapConfigurationViewModel
+    configurationViewModel: SwapConfigurationViewModel,
+    listener: SwapWidgetListener
 ) {
     ConstraintLayout(modifier = modifier, constraintSet = createConstraints()) {
-        AssetInContainer(widgetViewModel, assetInViewModel)
-        AssetOutContainer(widgetViewModel, assetOutViewModel)
+        AssetInContainer(widgetViewModel, assetInViewModel, listener)
+        AssetOutContainer(widgetViewModel, assetOutViewModel, listener)
         SwapConfigurationContainer(configurationViewModel)
 
         LaunchedEffect(Unit) {
@@ -67,25 +68,33 @@ fun SwapWidget(
 }
 
 @Composable
-private fun AssetInContainer(widgetViewModel: SwapWidgetViewModel, assetInViewModel: SwapAssetSelectionViewModel) {
+private fun AssetInContainer(
+    widgetViewModel: SwapWidgetViewModel,
+    assetInViewModel: SwapAssetSelectionViewModel,
+    listener: SwapWidgetListener
+) {
     Box(
         modifier = Modifier
             .layoutId(ASSET_IN_CONTAINER_ID)
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp)
     ) {
-        SwapAssetInWidget(widgetViewModel, assetInViewModel)
+        SwapAssetInWidget(widgetViewModel, assetInViewModel, listener::onAssetInChipClick)
     }
 }
 
 @Composable
-private fun AssetOutContainer(widgetViewModel: SwapWidgetViewModel, assetOutViewModel: SwapAssetSelectionViewModel) {
+private fun AssetOutContainer(
+    widgetViewModel: SwapWidgetViewModel,
+    assetOutViewModel: SwapAssetSelectionViewModel,
+    listener: SwapWidgetListener
+) {
     Box(
         modifier = Modifier
             .layoutId(ASSET_OUT_CONTAINER_ID)
             .background(color = PeraTheme.colors.layer.grayLighter, shape = RoundedCornerShape(12.dp))
             .padding(start = 16.dp, end = 16.dp, top = 40.dp, bottom = 24.dp)
     ) {
-        SwapAssetOutWidget(widgetViewModel, assetOutViewModel)
+        SwapAssetOutWidget(widgetViewModel, assetOutViewModel, listener::onAssetOutChipClick)
     }
 }
 
@@ -121,4 +130,9 @@ private fun createConstraints(): ConstraintSet {
             bottom.linkTo(assetOutContainer.top)
         }
     }
+}
+
+interface SwapWidgetListener {
+    fun onAssetInChipClick()
+    fun onAssetOutChipClick()
 }

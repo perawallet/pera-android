@@ -13,18 +13,19 @@
 package com.algorand.android.ui.swap.widget.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -52,12 +53,8 @@ fun SwapConfigurationWidget(
 @Composable
 private fun RowScope.ContentState(content: Content) {
     val chipModifier = Modifier
+        .shadow(2.dp, shape = RoundedCornerShape(40.dp))
         .background(color = PeraTheme.colors.background.primary, shape = RoundedCornerShape(40.dp))
-        .border(
-            width = 1.dp,
-            color = PeraTheme.colors.button.strokeColor,
-            shape = RoundedCornerShape(40.dp)
-        )
         .padding(vertical = 8.dp, horizontal = 12.dp)
     SwitchChipButton(chipModifier, content.isSwitchButtonEnabled)
     Spacer(modifier = Modifier.weight(1f))
@@ -83,13 +80,15 @@ private fun ConfigChip(modifier: Modifier) {
             contentDescription = null,
             tint = PeraTheme.colors.helper.positive
         )
+        Spacer(modifier = Modifier.width(12.dp))
         Box(
             modifier = Modifier
-                .padding(horizontal = 12.dp)
+                .size(width = 1.dp, height = 16.dp)
                 .background(color = PeraTheme.colors.layer.grayLighter)
         )
+        Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = stringResource(R.string.max),
+            text = stringResource(R.string.max).uppercase(),
             color = PeraTheme.colors.helper.positive,
             style = PeraTheme.typography.caption.sansBold,
         )

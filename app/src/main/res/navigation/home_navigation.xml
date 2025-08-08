@@ -1551,6 +1551,23 @@
         android:id="@+id/inviteFriendsBottomSheet"
         android:name="com.algorand.android.ui.invite.view.InviteFriendsBottomSheet"
         android:label="InviteFriendsBottomSheet" />
+    <fragment
+        android:id="@+id/swapFragment"
+        android:name="com.algorand.android.ui.swap.view.SwapFragment"
+        android:label="SwapFragment">
+        <action
+            android:id="@+id/action_swapFragment_to_swapAssetInSelectionFragment"
+            app:destination="@id/swapAssetInSelectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/swapAssetInSelectionFragment"
+        android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment"
+        android:label="SwapAssetInSelectionFragment">
+
+        <argument
+            android:name="address"
+            app:argType="string" />
+    </fragment>
 
 
 </navigation>

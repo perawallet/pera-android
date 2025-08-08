@@ -14,6 +14,10 @@ package com.algorand.android.ui.asset.di
 
 import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartData
 import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartDataUseCase
+import com.algorand.android.ui.asset.lite.usecase.GetPaginatedAssetListItems
+import com.algorand.android.ui.asset.lite.usecase.GetPaginatedAssetListItemsUseCase
+import com.algorand.android.ui.compose.widget.asset.icon.mapper.AssetIconDrawableMapper
+import com.algorand.android.ui.compose.widget.asset.icon.mapper.DefaultAssetIconDrawableMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,4 +29,12 @@ internal object AssetUiModule {
 
     @Provides
     fun provideGetAssetLineChartData(useCase: GetAssetLineChartDataUseCase): GetAssetLineChartData = useCase
+
+    @Provides
+    fun provideAssetIconDrawableMapper(mapper: DefaultAssetIconDrawableMapper): AssetIconDrawableMapper = mapper
+
+    @Provides
+    fun provideGetPaginatedAssetListItems(
+        useCase: GetPaginatedAssetListItemsUseCase
+    ): GetPaginatedAssetListItems = useCase
 }

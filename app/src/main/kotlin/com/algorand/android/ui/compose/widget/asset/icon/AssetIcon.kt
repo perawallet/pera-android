@@ -12,7 +12,7 @@
 
 @file:OptIn(ExperimentalGlideComposeApi::class)
 
-package com.algorand.android.ui.compose.widget.asset
+package com.algorand.android.ui.compose.widget.asset.icon
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.utils.PrismUrlBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -46,7 +47,15 @@ private const val SIZE_PADDING_RATIO = 5f
 
 sealed interface AssetIconDrawable {
     data object AlgoDrawable : AssetIconDrawable
-    data class AssetDrawable(val url: String, val unitName: String?) : AssetIconDrawable
+    data class AssetDrawable(private val url: String, val unitName: String?) : AssetIconDrawable {
+
+        fun getImageUrl(containerWidthPx: Int): String {
+            return PrismUrlBuilder.create(url)
+                .addWidth(containerWidthPx)
+                .addQuality(PrismUrlBuilder.DEFAULT_IMAGE_QUALITY)
+                .build()
+        }
+    }
 }
 
 @Composable
@@ -75,10 +84,11 @@ private fun BoxWithConstraintsScope.AlgoIcon() {
 }
 
 @Composable
-private fun AssetDrawableIcon(drawable: AssetIconDrawable.AssetDrawable) {
+private fun BoxWithConstraintsScope.AssetDrawableIcon(drawable: AssetIconDrawable.AssetDrawable) {
     val placeholder = placeholder { AssetNameIcon(drawable.unitName) }
+    val widthAsPx = with(LocalDensity.current) { maxWidth.toPx().toInt() }
     GlideImage(
-        model = drawable.url,
+        model = drawable.getImageUrl(widthAsPx),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         failure = placeholder,

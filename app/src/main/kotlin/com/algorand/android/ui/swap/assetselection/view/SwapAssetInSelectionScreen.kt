@@ -12,21 +12,35 @@
 
 package com.algorand.android.ui.swap.assetselection.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.asset.AssetListItem
 import com.algorand.android.ui.compose.widget.asset.PeraPagingAssetList
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
+import com.algorand.android.ui.compose.widget.textfield.PeraSlimTextField
 import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel
 import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel.ViewState.Content
 import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel.ViewState.Idle
@@ -41,10 +55,48 @@ fun SwapAssetInSelectionScreen(viewModel: SwapAssetInSelectionViewModel, listene
             startContainer = {
                 PeraToolbarIcon(
                     iconResId = R.drawable.ic_left_arrow,
-                    modifier = Modifier.clickableNoRipple(listener::onBackButtonClick)
+                    modifier = Modifier.clickableNoRipple(onClick = listener::onBackButtonClick)
                 )
             }
         )
+
+        var searchKeyword by remember { mutableStateOf("") }
+
+        LaunchedEffect(searchKeyword) {
+            viewModel.updateQuery(searchKeyword)
+        }
+
+        PeraSlimTextField(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .background(color = PeraTheme.colors.layer.grayLighter, RoundedCornerShape(4.dp)),
+            text = searchKeyword,
+            hint = stringResource(R.string.search_assets_id),
+            onTextChanged = { searchKeyword = it },
+            startIconContainer = {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(R.drawable.ic_search),
+                    tint = PeraTheme.colors.text.gray,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            },
+            endIconContainer = {
+                if (searchKeyword.isNotEmpty()) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickableNoRipple { searchKeyword = "" },
+                        painter = painterResource(R.drawable.ic_close),
+                        tint = PeraTheme.colors.text.gray,
+                        contentDescription = null
+                    )
+                }
+            }
+        )
+
         when (viewState) {
             Idle -> Unit
             is Content -> PeraPagingAssetList(

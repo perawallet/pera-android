@@ -17,9 +17,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Modifier
 
 fun Modifier.clickableNoRipple(
-    onClick: () -> Unit,
     enabled: Boolean = true,
-    interactionSource: MutableInteractionSource? = null
+    interactionSource: MutableInteractionSource? = null,
+    onClick: () -> Unit
 ): Modifier {
     return this.clickable(
         onClick = onClick,

@@ -33,12 +33,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.asset.AssetIcon
-import com.algorand.android.ui.compose.widget.asset.AssetIconDrawable.AlgoDrawable
-import com.algorand.android.ui.compose.widget.asset.AssetIconDrawable.AssetDrawable
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable.AlgoDrawable
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable.AssetDrawable
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel.ViewState
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+
+private const val MAX_UNIT_NAME_LENGTH = 6
 
 @Composable
 fun SwapAssetSelectionChipButton(viewState: ViewState, backgroundColor: Color, onClick: () -> Unit) {
@@ -72,7 +74,7 @@ private fun AssetContent(assetDetail: SwapSelectedAssetDetail) {
     )
     Spacer(modifier = Modifier.width(6.dp))
     Text(
-        text = assetDetail.unitName.orEmpty(),
+        text = assetDetail.unitName?.take(MAX_UNIT_NAME_LENGTH).orEmpty(),
         style = PeraTheme.typography.body.regular.sans,
         color = PeraTheme.colors.text.main
     )

@@ -19,10 +19,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.modules.swap.assetselection.fromasset.ui.SwapFromAssetSelectionFragment.Companion.SWAP_FROM_ASSET_ID_KEY
 import com.algorand.android.modules.swap.assetselection.toasset.ui.SwapToAssetSelectionFragment.Companion.SWAP_TO_ASSET_ID_KEY
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment.Companion.SWAP_ASSET_IN_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,7 +48,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
     }
 
     private fun initSavedStateListener() {
-        useFragmentResultListenerValue<Long>(SWAP_FROM_ASSET_ID_KEY) { assetId ->
+        useFragmentResultListenerValue<Long>(SWAP_ASSET_IN_ID_KEY) { assetId ->
             swapViewModel.setAssetInId(assetId)
         }
         useFragmentResultListenerValue<Long>(SWAP_TO_ASSET_ID_KEY) { assetId ->
@@ -69,7 +69,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
     }
 
     override fun onAssetInChipClick() {
-        // TODO
+        nav(SwapFragmentDirections.actionSwapFragmentToSwapAssetInSelectionFragment(swapViewModel.addressFlow.value!!))
     }
 
     override fun onAssetOutChipClick() {

@@ -68,7 +68,6 @@ class SwapAssetOutSelectionViewModel @Inject constructor(
                 )
             }
             .launchIn(viewModelScope)
-
     }
 
     fun updateQuery(query: String) {

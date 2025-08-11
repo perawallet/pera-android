@@ -12,41 +12,54 @@
 
 package com.algorand.android.ui.swap.assetselection.view
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.widget.asset.AssetListItem
-import com.algorand.android.ui.compose.widget.asset.PeraPagingAssetList
-import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel
-import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel.ViewState.Content
-import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel.ViewState.Idle
+import com.algorand.android.ui.compose.widget.asset.PeraAssetList
+import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
+import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetOutSelectionViewModel
 
 @Composable
-fun SwapAssetInSelectionScreen(viewModel: SwapAssetInSelectionViewModel, listener: SwapAssetInSelectionScreenListener) {
+fun SwapAssetOutSelectionScreen(
+    viewModel: SwapAssetOutSelectionViewModel,
+    listener: SwapAssetOutSelectionScreenListener
+) {
     SwapAssetSelectionScreen(
-        title = stringResource(R.string.swap_from),
+        title = stringResource(R.string.swap_to),
         onBackClick = listener::onBackButtonClick,
         onQueryUpdated = viewModel::updateQuery,
     ) {
         val viewState = viewModel.state.collectAsStateWithLifecycle().value
+
         when (viewState) {
-            Idle -> Unit
-            is Content -> PeraPagingAssetList(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                contentPadding = PaddingValues(vertical = 16.dp),
-                pagingList = viewState.assetList,
-                onAssetClick = listener::onAssetClick
-            )
+            is SwapAssetOutSelectionViewModel.ViewState.Idle -> Unit
+            SwapAssetOutSelectionViewModel.ViewState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    PeraCircularProgressIndicator()
+                }
+            }
+            is SwapAssetOutSelectionViewModel.ViewState.Content -> {
+                PeraAssetList(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    assetList = viewState.assetList,
+                    onAssetClick = listener::onAssetClick
+                )
+            }
         }
     }
 }
 
-interface SwapAssetInSelectionScreenListener {
+interface SwapAssetOutSelectionScreenListener {
     fun onAssetClick(assetListItem: AssetListItem)
     fun onBackButtonClick()
 }

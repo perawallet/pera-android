@@ -77,6 +77,8 @@ internal interface AccountInformationRepository {
 
     fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
 
+    suspend fun getAssetHoldingsLite(address: String, assetIds: List<Long>): AssetHoldingLite
+
     suspend fun getAccountAssetHoldingAmount(address: String, assetId: Long): BigInteger?
 
     suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger?

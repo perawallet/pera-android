@@ -13,6 +13,7 @@
 package com.algorand.wallet.swap.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapQuote
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
@@ -33,4 +34,8 @@ fun interface GetPreselectedSwapAddress {
 
 internal fun interface GetSwapQuoteDetails {
     suspend operator fun invoke(quotes: List<SwapQuote>): List<SwapQuoteDetail>
+}
+
+fun interface GetAvailableSwapAssets {
+    suspend operator fun invoke(assetInId: Long, query: String?): PeraResult<List<AvailableSwapAsset>>
 }

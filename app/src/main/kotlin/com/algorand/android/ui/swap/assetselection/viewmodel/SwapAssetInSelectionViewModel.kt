@@ -22,6 +22,7 @@ import com.algorand.android.ui.asset.lite.usecase.GetPaginatedAssetListItems
 import com.algorand.android.ui.compose.widget.asset.AssetListItem
 import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel.ViewState
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectibles
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutZeroAmount
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.SearchKeyword
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteSortType.NameAscending
@@ -56,7 +57,7 @@ class SwapAssetInSelectionViewModel @Inject constructor(
             AssetCollectibleLiteQuery(
                 address,
                 sortType = NameAscending,
-                filters = listOf(FilterOutZeroAmount, SearchKeyword(query))
+                filters = listOf(FilterOutZeroAmount, SearchKeyword(query), FilterOutCollectibles)
             )
         }.flatMapLatest { assetQuery ->
             getPaginatedAssetListItems(assetQuery)

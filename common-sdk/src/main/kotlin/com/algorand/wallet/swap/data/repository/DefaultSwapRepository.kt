@@ -12,17 +12,22 @@
 
 package com.algorand.wallet.swap.data.repository
 
+import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCache
+import com.algorand.wallet.swap.data.mapper.AvailableSwapAssetMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderResponseMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
 import com.algorand.wallet.swap.data.service.SwapApiService
+import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
 import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import com.algorand.wallet.swap.domain.repository.SwapRepository
@@ -34,7 +39,9 @@ internal class DefaultSwapRepository @Inject constructor(
     private val lastUsedAddressCache: PersistentCache<String>,
     private val quoteTransactionMapper: SwapQuoteTransactionMapper,
     private val quoteRequestMapper: SwapQuoteRequestBodyMapper,
-    private val quoteMapper: SwapQuoteMapper
+    private val quoteMapper: SwapQuoteMapper,
+    private val providerResponseMapper: SwapQuoteProviderResponseMapper,
+    private val availableSwapAssetMapper: AvailableSwapAssetMapper
 ) : SwapRepository {
 
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuote>> {
@@ -71,6 +78,23 @@ internal class DefaultSwapRepository @Inject constructor(
             swapApiService.updateSwapQuoteException(quoteId, SwapQuoteExceptionRequestBody(exceptionText))
         } catch (_: Exception) {
             // Fire and forget request, no need to handle the exception
+        }
+    }
+
+    override suspend fun getAvailableAssetsToSwap(
+        assetInId: Long,
+        query: String?,
+    ): PeraResult<List<AvailableSwapAsset>> {
+        return try {
+            val providersCsv = SwapQuoteProvider.entries
+                .mapNotNull { providerResponseMapper(it).value }
+                .joinToString(separator = ",")
+            val safeAssetIdForRequest = getSafeAssetIdForRequest(assetInId)
+            val response = swapApiService.getAvailableSwapAssetList(safeAssetIdForRequest, providersCsv, query)
+            val availableAssets = response.results?.mapNotNull { availableSwapAssetMapper(it) }.orEmpty()
+            if (availableAssets.isEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(availableAssets)
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
         }
     }
 

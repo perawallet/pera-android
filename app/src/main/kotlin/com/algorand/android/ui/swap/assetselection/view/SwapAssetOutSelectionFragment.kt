@@ -18,36 +18,46 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.widget.asset.AssetListItem
-import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel
+import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetOutSelectionViewModel
+import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetOutSelectionViewModel.ViewEvent
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.setFragmentNavigationResult
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SwapAssetInSelectionFragment : BaseFragment(0), SwapAssetInSelectionScreenListener {
+class SwapAssetOutSelectionFragment : BaseFragment(0), SwapAssetOutSelectionScreenListener {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    private val assetInSelectionViewModel: SwapAssetInSelectionViewModel by viewModels()
+    private val assetOutSelectionViewModel: SwapAssetOutSelectionViewModel by viewModels()
 
-    private val args by navArgs<SwapAssetInSelectionFragmentArgs>()
+    private val args by navArgs<SwapAssetOutSelectionFragmentArgs>()
+
+    private val viewEventObserver: suspend (ViewEvent) -> Unit = { viewEvent ->
+        when (viewEvent) {
+            ViewEvent.ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return createComposeView {
-            SwapAssetInSelectionScreen(assetInSelectionViewModel, listener = this)
+            SwapAssetOutSelectionScreen(assetOutSelectionViewModel, this)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        assetInSelectionViewModel.init(args.address)
+        collectLatestOnLifecycle(assetOutSelectionViewModel.viewEvent, viewEventObserver)
+        assetOutSelectionViewModel.init(args.address, args.assetId)
     }
 
     override fun onAssetClick(assetListItem: AssetListItem) {
-        setFragmentNavigationResult(SWAP_ASSET_IN_ID_KEY, assetListItem.assetId)
+        setFragmentNavigationResult(SWAP_ASSET_OUT_ID_KEY, assetListItem.assetId)
         navBack()
     }
 
@@ -56,6 +66,6 @@ class SwapAssetInSelectionFragment : BaseFragment(0), SwapAssetInSelectionScreen
     }
 
     companion object {
-        const val SWAP_ASSET_IN_ID_KEY = "swapAssetInIdKey"
+        const val SWAP_ASSET_OUT_ID_KEY = "swapAssetOutIdKey"
     }
 }

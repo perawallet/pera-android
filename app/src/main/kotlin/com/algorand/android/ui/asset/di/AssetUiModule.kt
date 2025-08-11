@@ -14,6 +14,10 @@ package com.algorand.android.ui.asset.di
 
 import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartData
 import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartDataUseCase
+import com.algorand.android.ui.asset.lite.mapper.AssetListItemBalanceMapper
+import com.algorand.android.ui.asset.lite.mapper.AssetListItemMapper
+import com.algorand.android.ui.asset.lite.mapper.DefaultAssetListItemBalanceMapper
+import com.algorand.android.ui.asset.lite.mapper.DefaultAssetListItemMapper
 import com.algorand.android.ui.asset.lite.usecase.GetPaginatedAssetListItems
 import com.algorand.android.ui.asset.lite.usecase.GetPaginatedAssetListItemsUseCase
 import com.algorand.android.ui.compose.widget.asset.icon.mapper.AssetIconDrawableMapper
@@ -37,4 +41,12 @@ internal object AssetUiModule {
     fun provideGetPaginatedAssetListItems(
         useCase: GetPaginatedAssetListItemsUseCase
     ): GetPaginatedAssetListItems = useCase
+
+    @Provides
+    fun provideAssetListItemMapper(mapper: DefaultAssetListItemMapper): AssetListItemMapper = mapper
+
+    @Provides
+    fun provideAssetListItemBalanceMapper(
+        mapper: DefaultAssetListItemBalanceMapper
+    ): AssetListItemBalanceMapper = mapper
 }

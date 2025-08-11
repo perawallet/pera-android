@@ -22,12 +22,14 @@ import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -88,11 +90,12 @@ private fun BoxWithConstraintsScope.AssetDrawableIcon(drawable: AssetIconDrawabl
     val placeholder = placeholder { AssetNameIcon(drawable.unitName) }
     val widthAsPx = with(LocalDensity.current) { maxWidth.toPx().toInt() }
     GlideImage(
+        modifier = Modifier.clip(RoundedCornerShape(8.dp)),
         model = drawable.getImageUrl(widthAsPx),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         failure = placeholder,
-        loading = placeholder,
+        loading = placeholder
     )
 }
 

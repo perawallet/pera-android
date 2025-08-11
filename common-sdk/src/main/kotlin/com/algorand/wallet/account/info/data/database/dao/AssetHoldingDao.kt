@@ -115,6 +115,15 @@ internal interface AssetHoldingDao {
     )
     fun getAssetHoldingsLiteInformationFlow(addresses: List<String>): Flow<List<AssetHoldingDto>>
 
+    @Query(
+        """
+        SELECT algo_address, asset_id, amount, asset_status 
+        FROM asset_holding_table 
+        WHERE algo_address == :address AND asset_id IN (:assetIds)
+    """
+    )
+    suspend fun getAssetHoldingsLiteInformation(address: String, assetIds: List<Long>): List<AssetHoldingDto>
+
     @Query("SELECT amount FROM asset_holding_table WHERE algo_address = :address AND asset_id = :assetId")
     suspend fun getAssetHoldingAmount(address: String, assetId: Long): BigInteger?
 

@@ -15,6 +15,8 @@ package com.algorand.wallet.swap.di
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.foundation.database.PeraDatabase
 import com.algorand.wallet.swap.data.dao.SwapSelectedAssetDao
+import com.algorand.wallet.swap.data.mapper.AvailableSwapAssetMapper
+import com.algorand.wallet.swap.data.mapper.DefaultAvailableSwapAssetMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapAssetAmountMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteMapper
@@ -38,6 +40,7 @@ import com.algorand.wallet.swap.data.repository.DefaultSwapSelectedAssetReposito
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import com.algorand.wallet.swap.domain.repository.SwapSelectedAssetRepository
+import com.algorand.wallet.swap.domain.usecase.GetAvailableSwapAssets
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddressUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
@@ -64,7 +67,9 @@ internal object SwapModule {
         persistentCacheProvider: PersistentCacheProvider,
         quoteTransactionMapper: SwapQuoteTransactionMapper,
         quoteRequestMapper: SwapQuoteRequestBodyMapper,
-        quoteMapper: SwapQuoteMapper
+        quoteMapper: SwapQuoteMapper,
+        providerResponseMapper: SwapQuoteProviderResponseMapper,
+        availableSwapAssetMapper: AvailableSwapAssetMapper
     ): SwapRepository {
         return DefaultSwapRepository(
             swapApiService = swapApiService,
@@ -74,7 +79,9 @@ internal object SwapModule {
             ),
             quoteTransactionMapper = quoteTransactionMapper,
             quoteRequestMapper = quoteRequestMapper,
-            quoteMapper = quoteMapper
+            quoteMapper = quoteMapper,
+            providerResponseMapper = providerResponseMapper,
+            availableSwapAssetMapper = availableSwapAssetMapper
         )
     }
 
@@ -146,4 +153,12 @@ internal object SwapModule {
 
     @Provides
     fun provideGetSwapQuoteDetails(useCase: GetSwapQuoteDetailsUseCase): GetSwapQuoteDetails = useCase
+
+    @Provides
+    fun provideAvailableSwapAssetMapper(mapper: DefaultAvailableSwapAssetMapper): AvailableSwapAssetMapper = mapper
+
+    @Provides
+    fun provideGetAvailableSwapAssets(repository: SwapRepository): GetAvailableSwapAssets {
+        return GetAvailableSwapAssets(repository::getAvailableAssetsToSwap)
+    }
 }

@@ -75,6 +75,13 @@ class SwapViewModel @Inject constructor(
         _assetOutFlow.value = assetId
     }
 
+    fun setAddress(address: String) {
+        _addressFlow.value = address
+        viewModelScope.launch {
+            updateContentState(address)
+        }
+    }
+
     fun initViewState() {
         stateDelegate.onState<ViewState.Idle> {
             viewModelScope.launch {
@@ -83,13 +90,17 @@ class SwapViewModel @Inject constructor(
                     stateDelegate.updateState { ViewState.NoAccountState }
                 } else {
                     _addressFlow.value = address
-                    val accountIcon = getAccountIconDrawablePreview(address)
-                    val accountDisplayName = getAccountDisplayName(address)
-                    stateDelegate.updateState {
-                        ViewState.Content(accountIcon, accountDisplayName)
-                    }
+                    updateContentState(address)
                 }
             }
+        }
+    }
+
+    private suspend fun updateContentState(address: String) {
+        val accountIcon = getAccountIconDrawablePreview(address)
+        val accountDisplayName = getAccountDisplayName(address)
+        stateDelegate.updateState {
+            ViewState.Content(accountIcon, accountDisplayName)
         }
     }
 

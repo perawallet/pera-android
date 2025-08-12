@@ -21,7 +21,7 @@ data class AssetListItem(
     val assetId: Long,
     val name: String?,
     val unitName: String?,
-    val balance: Balance,
+    val balance: Balance?,
     val verificationTier: VerificationTierConfiguration,
     val assetIcon: AssetIconDrawable
 ) {

@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.swap.data.mapper
 
+import com.algorand.wallet.swap.data.model.AvailableSwapAssetResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
@@ -19,6 +20,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
 import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.data.model.SwapTransactionPurposeResponse
+import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapQuote
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
@@ -61,4 +63,8 @@ internal fun interface SwapQuoteProviderResponseMapper {
 
 internal fun interface SwapSelectedAssetDetailMapper {
     operator fun invoke(dto: SwapSelectedAssetDto): SwapSelectedAssetDetail?
+}
+
+internal fun interface AvailableSwapAssetMapper {
+    operator fun invoke(response: AvailableSwapAssetResponse): AvailableSwapAsset?
 }

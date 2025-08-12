@@ -53,8 +53,10 @@ fun PeraAssetListItem(modifier: Modifier = Modifier, item: AssetListItem) {
                     Spacer(modifier = Modifier.width(6.dp))
                     VerificationTierIcon(item.verificationTier)
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                PrimaryAmount(item.balance.primaryAmountRenderer)
+                item.balance?.primaryAmountRenderer?.let {
+                    Spacer(modifier = Modifier.width(12.dp))
+                    PrimaryAmount(it)
+                }
             }
 
             Row(
@@ -62,8 +64,10 @@ fun PeraAssetListItem(modifier: Modifier = Modifier, item: AssetListItem) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 AssetUnitName(modifier = Modifier.weight(1f), item.unitName)
-                Spacer(modifier = Modifier.width(12.dp))
-                SecondaryAmount(item.balance.secondaryAmountRenderer)
+                item.balance?.secondaryAmountRenderer?.let {
+                    Spacer(modifier = Modifier.width(12.dp))
+                    SecondaryAmount(it)
+                }
             }
         }
     }

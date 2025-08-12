@@ -10,20 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.lite.domain.usecase
+package com.algorand.android.ui.asset.lite.mapper
 
-import com.algorand.wallet.account.lite.domain.model.AccountLiteInformation
+import com.algorand.android.ui.compose.widget.asset.AssetListItem
 import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
-import kotlinx.coroutines.flow.Flow
+import com.algorand.wallet.asset.domain.model.AssetLite
+import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 
-fun interface GetAccountsLiteInformationFlow {
-    operator fun invoke(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>>
-}
-
-fun interface GetAssetHoldingsLiteFlow {
-    operator fun invoke(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
-}
-
-fun interface GetAssetHoldingsLite {
-    suspend operator fun invoke(address: String, assetIds: List<Long>): AssetHoldingLite
+interface AssetListItemMapper {
+    operator fun invoke(assetLite: AssetLite): AssetListItem
+    operator fun invoke(assetHoldings: AssetHoldingLite, asset: AvailableSwapAsset): AssetListItem
 }

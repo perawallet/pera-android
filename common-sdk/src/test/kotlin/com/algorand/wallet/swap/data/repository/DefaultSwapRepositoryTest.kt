@@ -15,7 +15,9 @@ package com.algorand.wallet.swap.data.repository
 import com.algorand.test.peraFixture
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCache
+import com.algorand.wallet.swap.data.mapper.AvailableSwapAssetMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderResponseMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
@@ -48,13 +50,17 @@ class DefaultSwapRepositoryTest {
     private val quoteTransactionMapper: SwapQuoteTransactionMapper = mockk()
     private val quoteRequestMapper: SwapQuoteRequestBodyMapper = mockk()
     private val quoteMapper: SwapQuoteMapper = mockk()
+    private val providerResponseMapper: SwapQuoteProviderResponseMapper = mockk()
+    private val availableSwapAssetMapper: AvailableSwapAssetMapper = mockk()
 
     private val sut = DefaultSwapRepository(
         swapApiService,
         lastUsedAddressCache,
         quoteTransactionMapper,
         quoteRequestMapper,
-        quoteMapper
+        quoteMapper,
+        providerResponseMapper,
+        availableSwapAssetMapper
     )
 
     @Test

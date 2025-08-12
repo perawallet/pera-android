@@ -27,5 +27,7 @@ internal data class AvailableSwapAssetResponse(
     @SerializedName("verification_tier")
     val verificationTierResponse: VerificationTierResponse?,
     @SerializedName("usd_value")
-    val usdValue: String?
+    val usdValue: String?,
+    @SerializedName("fraction_decimals")
+    val fractionDecimals: Int?
 )

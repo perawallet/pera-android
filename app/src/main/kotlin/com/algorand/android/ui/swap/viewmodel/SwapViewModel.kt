@@ -84,7 +84,7 @@ class SwapViewModel @Inject constructor(
             val assetHolding = getAccountAssetHolding(address, _assetInFlow.value)
             if (assetHolding == null || assetHolding.amount isEqualTo BigInteger.ZERO) {
                 _assetInFlow.value = ALGO_ID
-                _assetOutFlow.value = USDC_MAINNET_ID
+                _assetOutFlow.value = getUsdcAssetId()
             }
             _addressFlow.value = address
             updateContentState(address)

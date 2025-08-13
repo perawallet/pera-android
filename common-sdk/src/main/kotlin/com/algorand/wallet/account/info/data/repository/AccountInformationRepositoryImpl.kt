@@ -256,6 +256,13 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun getAssetHoldingsLite(address: String, assetIds: List<Long>): AssetHoldingLite {
+        val assetHoldings = assetHoldingDao.getAssetHoldingsLiteInformation(address, assetIds).associate {
+            it.assetId to it.amount
+        }
+        return AssetHoldingLite(address, assetHoldings)
+    }
+
     override suspend fun getAccountAssetHoldingAmount(address: String, assetId: Long): BigInteger? {
         return assetHoldingDao.getAssetHoldingAmount(address, assetId)
     }

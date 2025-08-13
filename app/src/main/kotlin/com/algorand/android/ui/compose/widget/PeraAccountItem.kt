@@ -41,29 +41,35 @@ fun PeraAccountItem(
     modifier: Modifier = Modifier,
     iconDrawablePreview: AccountIconDrawablePreview,
     displayName: AccountDisplayName,
-    onCopyAddress: (String) -> Unit,
+    onCopyAddress: (String) -> Unit = {},
+    onAccountClick: (String) -> Unit = { }
 ) {
     val longClickModifier = Modifier.pointerInput(Unit) {
         detectTapGestures(
-            onLongPress = {
-                onCopyAddress(displayName.primaryDisplayName)
-            }
+            onLongPress = { onCopyAddress(displayName.accountAddress) },
+            onTap = { onAccountClick(displayName.accountAddress) }
         )
     }
     Row(
         modifier = modifier.then(longClickModifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AccountIcon(iconDrawablePreview)
+        AccountIcon(
+            modifier = Modifier.size(40.dp),
+            iconDrawablePreview
+        )
         Spacer(modifier = Modifier.width(16.dp))
         DisplayName(displayName)
     }
 }
 
 @Composable
-private fun AccountIcon(iconDrawablePreview: AccountIconDrawablePreview) {
+fun AccountIcon(
+    modifier: Modifier,
+    iconDrawablePreview: AccountIconDrawablePreview
+) {
     Image(
-        modifier = Modifier.size(40.dp),
+        modifier = modifier,
         bitmap = AccountIconDrawable.create(
             context = LocalContext.current,
             accountIconDrawablePreview = iconDrawablePreview,

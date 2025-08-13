@@ -1551,6 +1551,44 @@
         android:id="@+id/inviteFriendsBottomSheet"
         android:name="com.algorand.android.ui.invite.view.InviteFriendsBottomSheet"
         android:label="InviteFriendsBottomSheet" />
+    <fragment
+        android:id="@+id/swapFragment"
+        android:name="com.algorand.android.ui.swap.view.SwapFragment"
+        android:label="SwapFragment">
+        <action
+            android:id="@+id/action_swapFragment_to_swapAssetInSelectionFragment"
+            app:destination="@id/swapAssetInSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapAssetOutSelectionFragment"
+            app:destination="@id/swapAssetOutSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapAddressSelectionFragment"
+            app:destination="@id/swapAddressSelectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/swapAssetInSelectionFragment"
+        android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment"
+        android:label="SwapAssetInSelectionFragment">
+
+        <argument
+            android:name="address"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/swapAssetOutSelectionFragment"
+        android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment"
+        android:label="SwapAssetOutSelectionFragment" >
+        <argument
+            android:name="address"
+            app:argType="string" />
+        <argument
+            android:name="assetId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/swapAddressSelectionFragment"
+        android:name="com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFragment"
+        android:label="SwapAddressSelectionFragment" />
 
 
 </navigation>

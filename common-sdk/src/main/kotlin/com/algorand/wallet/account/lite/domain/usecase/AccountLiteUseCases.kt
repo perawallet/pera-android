@@ -24,3 +24,6 @@ fun interface GetAssetHoldingsLiteFlow {
     operator fun invoke(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
 }
 
+fun interface GetAssetHoldingsLite {
+    suspend operator fun invoke(address: String, assetIds: List<Long>): AssetHoldingLite
+}

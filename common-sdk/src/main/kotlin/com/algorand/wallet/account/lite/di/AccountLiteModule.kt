@@ -14,6 +14,7 @@ package com.algorand.wallet.account.lite.di
 
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.lite.domain.usecase.GetAccountsLiteInformationFlow
+import com.algorand.wallet.account.lite.domain.usecase.GetAssetHoldingsLite
 import com.algorand.wallet.account.lite.domain.usecase.GetAssetHoldingsLiteFlow
 import dagger.Module
 import dagger.Provides
@@ -33,4 +34,9 @@ internal object AccountLiteModule {
     fun provideGetAssetHoldingsLiteFlow(
         repository: AccountInformationRepository
     ): GetAssetHoldingsLiteFlow = GetAssetHoldingsLiteFlow(repository::getAssetHoldingsLiteFlow)
+
+    @Provides
+    fun provideGetAssetHoldingsLite(
+        repository: AccountInformationRepository
+    ): GetAssetHoldingsLite = GetAssetHoldingsLite(repository::getAssetHoldingsLite)
 }

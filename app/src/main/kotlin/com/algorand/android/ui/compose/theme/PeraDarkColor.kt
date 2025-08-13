@@ -278,4 +278,8 @@ object PeraDarkColor : PeraColor {
     override val divider = object : PeraColor.Divider {
         override val dark = ColorPalette.Divider.Dark
     }
+
+    override val swap = object : PeraColor.Swap {
+        override val assetOutButtonBackground: Color = ColorPalette.Gray.V700
+    }
 }

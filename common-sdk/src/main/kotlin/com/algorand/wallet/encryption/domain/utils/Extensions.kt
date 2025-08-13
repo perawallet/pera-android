@@ -17,3 +17,5 @@ fun ByteArray.clearFromMemory(): ByteArray {
     this.fill(0)
     return ByteArray(0)
 }
+
+infix fun Byte.and(mask: Int): Int = toInt() and mask

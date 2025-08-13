@@ -29,6 +29,8 @@ import com.algorand.wallet.asset.domain.usecase.GetAssetDetails
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import com.algorand.wallet.asset.domain.usecase.GetRecentlyAddedCollectibleUrls
+import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
+import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetIdUseCase
 import com.algorand.wallet.asset.domain.usecase.InitializeAssets
 import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
@@ -133,4 +135,7 @@ internal object AssetDetailUseCaseModule {
     fun provideGetRecentlyAddedCollectibleUrls(repository: AssetRepository): GetRecentlyAddedCollectibleUrls {
         return GetRecentlyAddedCollectibleUrls(repository::getRecentlyAddedCollectibleUrls)
     }
+
+    @Provides
+    fun provideGetUsdcAssetId(useCase: GetUsdcAssetIdUseCase): GetUsdcAssetId = useCase
 }

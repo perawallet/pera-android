@@ -1,0 +1,104 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.swap.data.repository
+
+import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.cache.PersistentCache
+import com.algorand.wallet.swap.data.mapper.AvailableSwapAssetMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderResponseMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
+import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
+import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
+import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
+import com.algorand.wallet.swap.data.service.SwapApiService
+import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
+import com.algorand.wallet.swap.domain.model.SwapPeraFee
+import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
+import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
+import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
+import com.algorand.wallet.swap.domain.repository.SwapRepository
+import java.math.BigInteger
+import javax.inject.Inject
+
+internal class DefaultSwapRepository @Inject constructor(
+    private val swapApiService: SwapApiService,
+    private val lastUsedAddressCache: PersistentCache<String>,
+    private val quoteTransactionMapper: SwapQuoteTransactionMapper,
+    private val quoteRequestMapper: SwapQuoteRequestBodyMapper,
+    private val quoteMapper: SwapQuoteMapper,
+    private val providerResponseMapper: SwapQuoteProviderResponseMapper,
+    private val availableSwapAssetMapper: AvailableSwapAssetMapper
+) : SwapRepository {
+
+    override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuote>> {
+        return try {
+            val response = swapApiService.getSwapQuote(quoteRequestMapper(payload))
+            val quotes = response.swapQuoteResponseList.mapNotNull { quoteMapper(it) }
+            if (quotes.isEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(quotes)
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
+    override suspend fun getPeraFee(assetInId: Long, amount: BigInteger): PeraResult<SwapPeraFee> {
+        return try {
+            val response = swapApiService.getPeraFee(SwapPeraFeeRequestBody(assetInId, amount))
+            PeraResult.Success(SwapPeraFee(response.peraFeeAmount))
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
+    override suspend fun createQuoteTransactions(quoteId: Long): PeraResult<List<SwapQuoteTransaction>> {
+        return try {
+            val response = swapApiService.getQuoteTransactions(CreateSwapQuoteTransactionsRequestBody(quoteId))
+            val transactions = response.transactionGroups?.mapNotNull { quoteTransactionMapper(it) }
+            if (transactions.isNullOrEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(transactions)
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
+    override suspend fun updateSwapQuoteException(quoteId: Long, exceptionText: String) {
+        try {
+            swapApiService.updateSwapQuoteException(quoteId, SwapQuoteExceptionRequestBody(exceptionText))
+        } catch (_: Exception) {
+            // Fire and forget request, no need to handle the exception
+        }
+    }
+
+    override suspend fun getAvailableAssetsToSwap(
+        assetInId: Long,
+        query: String?,
+    ): PeraResult<List<AvailableSwapAsset>> {
+        return try {
+            val providersCsv = SwapQuoteProvider.entries
+                .mapNotNull { providerResponseMapper(it).value }
+                .joinToString(separator = ",")
+            val safeAssetIdForRequest = getSafeAssetIdForRequest(assetInId)
+            val response = swapApiService.getAvailableSwapAssetList(safeAssetIdForRequest, providersCsv, query)
+            val availableAssets = response.results?.mapNotNull { availableSwapAssetMapper(it) }.orEmpty()
+            if (availableAssets.isEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(availableAssets)
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
+    override suspend fun setLastUsedSwapAddress(address: String) = lastUsedAddressCache.put(address)
+
+    override suspend fun getLastUsedSwapAddress(): String? = lastUsedAddressCache.get()
+}

@@ -209,16 +209,20 @@ android {
     }
 
     packagingOptions {
-        exclude 'META-INF/versions/9/OSGI-INF/MANIFEST.MF'
-        exclude 'META-INF/DEPENDENCIES.md'
-        exclude 'META-INF/NOTICE.md'
-        exclude 'META-INF/LICENSE.md'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/ASL2.0.md'
-        exclude 'lib/libnarcissus-macos-64.dylib'
-        exclude 'lib/libnarcissus-win-32.dll'
-        exclude 'lib/libnarcissus-win-64.dll'
+        resources {
+            excludes += [
+                    'META-INF/versions/9/OSGI-INF/MANIFEST.MF',
+                    'META-INF/DEPENDENCIES.md',
+                    'META-INF/NOTICE.md',
+                    'META-INF/LICENSE.md',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/NOTICE.txt',
+                    'META-INF/ASL2.0.md',
+                    'lib/libnarcissus-macos-64.dylib',
+                    'lib/libnarcissus-win-32.dll',
+                    'lib/libnarcissus-win-64.dll'
+            ]
+        }
     }
 
     configurations.configureEach {
@@ -279,18 +283,21 @@ dependencies {
     implementation libs.androidx.compose.fragment
     implementation libs.compose.ui.tooling.preview
     implementation libs.compose.ui.tooling
+    implementation libs.compose.constraintlayout
 
     implementation libs.multidex
 
     implementation libs.browser
 
     implementation libs.paging.runtime.ktx
+    implementation libs.paging.compose
 
     implementation libs.tink.android
 
     implementation libs.review.ktx
 
     implementation libs.dagger.hilt.android
+    implementation libs.dagger.hilt.compose.navigation
     ksp libs.dagger.hilt.compiler
     ksp libs.androidx.hilt.compiler
     implementation(platform(libs.koin.bom))

@@ -373,3 +373,6 @@
 -dontwarn java.awt.Window
 -dontwarn net.pwall.json.pointer.JSONPointer
 -dontwarn net.pwall.json.schema.output.BasicOutput
+
+-dontwarn java.lang.reflect.AnnotatedType
+-dontwarn sun.nio.ch.**

@@ -1,0 +1,70 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.swap.data.mapper
+
+import com.algorand.wallet.swap.data.model.AvailableSwapAssetResponse
+import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
+import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
+import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
+import com.algorand.wallet.swap.data.model.SwapQuoteResponse
+import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
+import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
+import com.algorand.wallet.swap.data.model.SwapTransactionPurposeResponse
+import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
+import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
+import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
+import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
+import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import com.algorand.wallet.swap.domain.model.SwapTransactionPurpose
+
+internal fun interface SwapQuoteMapper {
+    operator fun invoke(response: SwapQuoteResponse): SwapQuote?
+}
+
+internal fun interface SwapQuoteRequestBodyMapper {
+    operator fun invoke(payload: SwapQuoteRequestPayload): SwapQuoteRequestBody
+}
+
+internal fun interface SwapQuoteTransactionMapper {
+    operator fun invoke(response: SwapQuoteTransactionResponse): SwapQuoteTransaction?
+}
+
+internal fun interface SwapTransactionPurposeMapper {
+    operator fun invoke(response: SwapTransactionPurposeResponse?): SwapTransactionPurpose
+}
+
+internal fun interface SwapQuoteProviderMapper {
+    operator fun invoke(response: SwapQuoteProviderResponse?): SwapQuoteProvider?
+}
+
+internal interface SwapAssetAmountMapper {
+    fun mapAssetInAmount(response: SwapQuoteResponse): SwapQuote.AssetAmount?
+    fun mapAssetOutAmount(response: SwapQuoteResponse): SwapQuote.AssetAmount?
+}
+
+internal fun interface SwapAssetDetailMapper {
+    operator fun invoke(response: SwapQuoteAssetDetailResponse?): SwapQuote.AssetDetail?
+}
+
+internal fun interface SwapQuoteProviderResponseMapper {
+    operator fun invoke(provider: SwapQuoteProvider): SwapQuoteProviderResponse
+}
+
+internal fun interface SwapSelectedAssetDetailMapper {
+    operator fun invoke(dto: SwapSelectedAssetDto): SwapSelectedAssetDetail?
+}
+
+internal fun interface AvailableSwapAssetMapper {
+    operator fun invoke(response: AvailableSwapAssetResponse): AvailableSwapAsset?
+}

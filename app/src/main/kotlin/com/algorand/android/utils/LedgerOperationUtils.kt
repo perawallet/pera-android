@@ -13,7 +13,7 @@
 package com.algorand.android.utils
 
 import com.algorand.android.ledger.LedgerBleConnectionManager
-import okhttp3.internal.and
+import com.algorand.wallet.encryption.domain.utils.and
 
 private const val CHUNK_SIZE = 0xFF
 private const val BIT_COUNT = 8

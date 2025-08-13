@@ -1561,6 +1561,9 @@
         <action
             android:id="@+id/action_swapFragment_to_swapAssetOutSelectionFragment"
             app:destination="@id/swapAssetOutSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapAddressSelectionFragment"
+            app:destination="@id/swapAddressSelectionFragment" />
     </fragment>
     <fragment
         android:id="@+id/swapAssetInSelectionFragment"
@@ -1582,6 +1585,10 @@
             android:name="assetId"
             app:argType="long" />
     </fragment>
+    <fragment
+        android:id="@+id/swapAddressSelectionFragment"
+        android:name="com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFragment"
+        android:label="SwapAddressSelectionFragment" />
 
 
 </navigation>

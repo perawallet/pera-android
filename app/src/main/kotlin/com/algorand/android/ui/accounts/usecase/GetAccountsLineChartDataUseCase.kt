@@ -45,40 +45,33 @@ internal class GetAccountsLineChartDataUseCase @Inject constructor(
             walletWealth.chartData.map { chartData ->
                 val primaryAmount: PeraAmount
                 val secondaryAmount: PeraAmount
+                val algoPeraAmount = PeraAmount(
+                    ParityValue(
+                        amountAsCurrency = chartData.algoValue,
+                        selectedCurrencySymbol = Currency.ALGO.symbol
+                    ).amountAsCurrency
+                )
+
+                val valueInCurrencyPeraAmount = PeraAmount(
+                    ParityValue(
+                        amountAsCurrency = chartData.valueInCurrency,
+                        selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
+                    ).amountAsCurrency
+                )
+
                 if (isPrimaryCurrencyAlgo()) {
-                    primaryAmount = PeraAmount(
-                        ParityValue(
-                            amountAsCurrency = chartData.algoValue,
-                            selectedCurrencySymbol = Currency.ALGO.symbol
-                        ).amountAsCurrency
-                    )
-                    secondaryAmount = PeraAmount(
-                        ParityValue(
-                            amountAsCurrency = chartData.usdValue,
-                            selectedCurrencySymbol = Currency.USD.symbol
-                        ).amountAsCurrency
-                    )
+                    primaryAmount = algoPeraAmount
+                    secondaryAmount = valueInCurrencyPeraAmount
                 } else {
-                    primaryAmount = PeraAmount(
-                        ParityValue(
-                            amountAsCurrency = chartData.valueInCurrency,
-                            selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
-                        ).amountAsCurrency
-                    )
-                    secondaryAmount =
-                        PeraAmount(
-                            ParityValue(
-                                amountAsCurrency = chartData.algoValue,
-                                selectedCurrencySymbol = Currency.ALGO.symbol
-                            ).amountAsCurrency
-                        )
+                    primaryAmount = valueInCurrencyPeraAmount
+                    secondaryAmount = algoPeraAmount
                 }
+
                 val primaryRenderer = getCompactPrimaryAmountRenderer(primaryAmount, Plain)
                 val secondaryRenderer = getCompactSecondaryAmountRenderer(secondaryAmount, Plain)
                 AccountsLineChartData(
                     datetime = chartData.datetime,
-                    primaryValue = primaryAmount.value,
-                    valueInCurrency = chartData.valueInCurrency,
+                    primaryValue = chartData.valueInCurrency,
                     primaryAmountRenderer = primaryRenderer,
                     secondaryAmountRenderer = secondaryRenderer,
                     round = chartData.round

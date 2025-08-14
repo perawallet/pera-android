@@ -23,6 +23,8 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailA
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
+import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencyId
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
@@ -52,7 +54,8 @@ class AccountDetailAssetItemMapper @Inject constructor(
     private val nftAmountFormatDecider: NFTAmountFormatDecider,
     private val getPrimaryCurrencyAssetParityValue: GetPrimaryCurrencyAssetParityValue,
     private val getSecondaryCurrencyAssetParityValue: GetSecondaryCurrencyAssetParityValue,
-    private val formatAmountByCollectibleFractionalDigit: FormatAmountByCollectibleFractionalDigit
+    private val formatAmountByCollectibleFractionalDigit: FormatAmountByCollectibleFractionalDigit,
+    private val getPrimaryCurrencyId: GetPrimaryCurrencyId
 ) {
 
     fun mapToAssetListItem(
@@ -119,7 +122,8 @@ class AccountDetailAssetItemMapper @Inject constructor(
 
     private fun getAssetItemPrimaryParityValue(assetLite: AssetLite): ParityValue {
         return with(assetLite) {
-            if (isAlgo) {
+            val primaryCurrencyId = getPrimaryCurrencyId()
+            if (isAlgo && primaryCurrencyId == Currency.ALGO.id) {
                 getSecondaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
             } else {
                 getPrimaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)

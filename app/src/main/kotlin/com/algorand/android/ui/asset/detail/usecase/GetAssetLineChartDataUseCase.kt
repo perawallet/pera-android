@@ -14,8 +14,6 @@ package com.algorand.android.ui.asset.detail.usecase
 
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryFiatCurrencyId
-import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
-import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
@@ -23,7 +21,6 @@ import com.algorand.android.ui.common.amount.CompactFormattedAmount
 import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Asset
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
-import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.foundation.PeraResult
@@ -35,9 +32,6 @@ import javax.inject.Inject
 class GetAssetLineChartDataUseCase @Inject constructor(
     private val getAssetBalanceHistory: GetAssetBalanceHistory,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
-    private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
-    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
     private val getAssetDetail: GetAssetDetail,
     private val getPrimaryFiatCurrencyId: GetPrimaryFiatCurrencyId
 ) : GetAssetLineChartData {
@@ -64,7 +58,7 @@ class GetAssetLineChartDataUseCase @Inject constructor(
                     primaryValue = primaryAmount.value,
                     valueInCurrency = chartData.valueInCurrency,
                     primaryAmountRenderer = primaryRenderer,
-                    secondaryAmountRenderer = getSecondaryAmountRenderer(assetId, chartData.usdValue),
+                    secondaryAmountRenderer = getSecondaryAmountRenderer(chartData.valueInCurrency),
                 )
             }
         }
@@ -78,13 +72,8 @@ class GetAssetLineChartDataUseCase @Inject constructor(
         }
     }
 
-    private fun getSecondaryAmountRenderer(assetId: Long, usdValue: BigDecimal): AmountRenderer {
-        return if (assetId == ALGO_ID && isPrimaryCurrencyAlgo()) {
-            val secondaryAmount = PeraAmount(usdValue)
-            getCompactSecondaryAmountRenderer(secondaryAmount, Plain)
-        } else {
-            val secondaryAmount = PeraAmount(usdValue.multiply(getUsdToPrimaryCurrencyConversionRate()))
-            getCompactPrimaryAmountRenderer(secondaryAmount, Plain)
-        }
+    private fun getSecondaryAmountRenderer(valueInCurrency: BigDecimal): AmountRenderer {
+        val secondaryAmount = PeraAmount(valueInCurrency)
+        return getCompactPrimaryAmountRenderer(secondaryAmount, Plain)
     }
 }

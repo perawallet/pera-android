@@ -20,12 +20,11 @@ import java.time.OffsetDateTime
 data class AddressLineChartData(
     val datetime: OffsetDateTime,
     val primaryValue: BigDecimal,
-    val valueInCurrency: BigDecimal,
     val primaryAmountRenderer: AmountRenderer,
     val secondaryAmountRenderer: AmountRenderer,
     val round: Int
 ) : PeraLineChartData {
 
     override val value: Float
-        get() = valueInCurrency.toFloat()
+        get() = primaryValue.toFloat()
 }

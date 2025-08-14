@@ -176,7 +176,7 @@ class AssetAboutPreviewUseCase @Inject constructor(
     ): BaseAssetAboutListItem.AboutAssetItem {
         return baseAssetAboutListItemMapper.mapToAboutAssetItem(
             assetName = AssetName.create(fullName),
-            assetId = ALGO_ID,
+            assetId = null,
             assetCreatorAddress = null,
             asaUrl = asaUrl.addProtocolIfNeed(),
             displayAsaUrl = asaUrl.removeProtocolIfNeed(),

@@ -49,11 +49,12 @@ class DefaultAssetBalanceHistoryRepositoryTest {
             assetBalanceHistoryApiService.getAssetBalanceHistory(
                 ADDRESS_QUERY,
                 ASSET_ID_QUERY,
-                PERIOD_QUERY
+                PERIOD_QUERY,
+                CURRENCY_QUERY
             )
         } throws Exception()
 
-        val result = sut.getAssetBalanceHistory(ADDRESS, ASSET_ID, PERIOD)
+        val result = sut.getAssetBalanceHistory(ADDRESS, ASSET_ID, PERIOD, CURRENCY)
 
         assertTrue(result is PeraResult.Error)
     }
@@ -64,12 +65,13 @@ class DefaultAssetBalanceHistoryRepositoryTest {
             assetBalanceHistoryApiService.getAssetBalanceHistory(
                 ADDRESS_QUERY,
                 ASSET_ID_QUERY,
-                PERIOD_QUERY
+                PERIOD_QUERY,
+                CURRENCY_QUERY
             )
         } returns ASSET_BALANCE_HISTORY_RESPONSE
         every { assetBalanceHistoryMapper.map(ASSET_BALANCE_HISTORY_RESPONSE) } returns ASSET_BALANCE_HISTORY
 
-        val result = sut.getAssetBalanceHistory(ADDRESS, ASSET_ID, PERIOD)
+        val result = sut.getAssetBalanceHistory(ADDRESS, ASSET_ID, PERIOD, CURRENCY)
 
         val expected = PeraResult.Success(ASSET_BALANCE_HISTORY)
         assertEquals(expected, result)
@@ -77,8 +79,10 @@ class DefaultAssetBalanceHistoryRepositoryTest {
 
     private companion object {
         const val ADDRESS = "address1"
+        const val CURRENCY = "USD"
         const val ASSET_ID = 123L
         const val ADDRESS_QUERY = "address1"
+        const val CURRENCY_QUERY = "USD"
         const val ASSET_ID_QUERY = 123L
         val PERIOD: WalletWealthPeriod = peraFixture()
         val PERIOD_QUERY: String = peraFixture()

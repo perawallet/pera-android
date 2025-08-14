@@ -65,8 +65,8 @@ class DefaultAddressWealthMapperTest {
         val VALID_CHART_DATA_RESPONSE = AssetBalanceHistoryResponseResult(
             round = 40471200,
             datetime = DATE_TIME_RESPONSE,
-            usdValue = "1000.12",
             amount = "100.23",
+            usdValue = "1000.12",
             valueInCurrency = "1000000.23"
         )
 
@@ -79,9 +79,11 @@ class DefaultAddressWealthMapperTest {
 
         val OFFSET_DATETIME: OffsetDateTime = peraFixture()
         val VALID_CHART_DATA = AssetBalanceHistoryChartData(
+            round = 40471200,
             datetime = OFFSET_DATETIME,
-            usdValue = BigDecimal.valueOf(1000.12),
             amount = BigDecimal.valueOf(100.23),
+            usdValue = BigDecimal.valueOf(1000.12),
+            valueInCurrency = BigDecimal.valueOf(1000000.23)
         )
     }
 }

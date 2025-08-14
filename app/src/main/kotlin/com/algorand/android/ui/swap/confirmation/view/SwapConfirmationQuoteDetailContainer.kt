@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -47,7 +48,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.utils.getXmlStyledString
 
 @Composable
-fun SwapConfirmationQuoteDetailContainer(content: Content) {
+fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirmationQuoteDetailContainerListener) {
     Box(
         modifier = Modifier
             .background(color = PeraTheme.colors.layer.grayLighter)
@@ -60,16 +61,22 @@ fun SwapConfirmationQuoteDetailContainer(content: Content) {
         QuoteRowSeparator()
         Provider()
         QuoteRowSeparator()
-        SlippageTolerance(content.quote.slippage)
+        SlippageTolerance(content.quote.slippage, listener::onSlippageToleranceInfoClick)
         QuoteRowSeparator()
-        PriceImpact(content.priceImpact)
+        PriceImpact(content.priceImpact, listener::onPriceImpactInfoClick)
         QuoteRowSeparator()
         MinimumReceived(content.minReceivedAssetAmount)
         QuoteRowSeparator()
-        ExchangeFee(content.exchangeFee)
+        ExchangeFee(content.exchangeFee, listener::onExchangeFeeInfoClick)
         QuoteRowSeparator()
         PeraFee(content.peraFee)
     }
+}
+
+interface SwapConfirmationQuoteDetailContainerListener {
+    fun onSlippageToleranceInfoClick()
+    fun onPriceImpactInfoClick()
+    fun onExchangeFeeInfoClick()
 }
 
 @Composable
@@ -131,17 +138,25 @@ private fun Provider() {
 }
 
 @Composable
-private fun SlippageTolerance(slippage: Float) {
+private fun SlippageTolerance(slippage: Float, onInfoClick: () -> Unit) {
     QuoteDetailRow(
-        labelContent = { QuoteDetailLabel(textResId = R.string.slippage_tolerance) },
+        labelContent = {
+            QuoteDetailLabel(textResId = R.string.slippage_tolerance)
+            Spacer(modifier = Modifier.width(6.dp))
+            InfoIcon(onInfoClick)
+        },
         valueContent = { QuoteDetailValue(text = "${slippage}%") }
     )
 }
 
 @Composable
-private fun PriceImpact(priceImpact: SwapPriceImpact) {
+private fun PriceImpact(priceImpact: SwapPriceImpact, onInfoClick: () -> Unit) {
     QuoteDetailRow(
-        labelContent = { QuoteDetailLabel(textResId = R.string.price_impact) },
+        labelContent = {
+            QuoteDetailLabel(textResId = R.string.price_impact)
+            Spacer(modifier = Modifier.width(6.dp))
+            InfoIcon(onInfoClick)
+        },
         valueContent = { QuoteDetailValue(text = priceImpact.percentage.getDisplayValue()) }
     )
 }
@@ -155,9 +170,13 @@ private fun MinimumReceived(minReceivedAssetAmount: AmountRenderer) {
 }
 
 @Composable
-private fun ExchangeFee(exchangeFee: AmountRenderer) {
+private fun ExchangeFee(exchangeFee: AmountRenderer, onInfoClick: () -> Unit) {
     QuoteDetailRow(
-        labelContent = { QuoteDetailLabel(textResId = R.string.exchange_fee) },
+        labelContent = {
+            QuoteDetailLabel(textResId = R.string.exchange_fee)
+            Spacer(modifier = Modifier.width(6.dp))
+            InfoIcon(onInfoClick)
+        },
         valueContent = { QuoteDetailValue(text = exchangeFee.getDisplayValue()) }
     )
 }
@@ -202,5 +221,17 @@ private fun QuoteDetailValue(modifier: Modifier = Modifier, text: String) {
         text = text,
         style = PeraTheme.typography.footnote.sans,
         color = PeraTheme.colors.text.main
+    )
+}
+
+@Composable
+private fun InfoIcon(onClick: () -> Unit) {
+    Icon(
+        modifier = Modifier
+            .clickableNoRipple(onClick = onClick)
+            .size(24.dp),
+        painter = painterResource(R.drawable.ic_info),
+        tint = PeraTheme.colors.text.grayLighter,
+        contentDescription = null
     )
 }

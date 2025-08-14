@@ -25,7 +25,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SwapConfirmationFragment : BaseFragment(0) {
+class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
@@ -35,15 +35,28 @@ class SwapConfirmationFragment : BaseFragment(0) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return createComposeView {
-            SwapConfirmationScreen(
-                swapConfirmationViewModel,
-                ::navBack
-            )
+            SwapConfirmationScreen(swapConfirmationViewModel, listener = this)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         swapConfirmationViewModel.init(args.swapQuote)
+    }
+
+    override fun onNavBackClick() {
+        navBack()
+    }
+
+    override fun onSlippageToleranceInfoClick() {
+        nav(SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapSlippageToleranceInfoBottomSheet())
+    }
+
+    override fun onPriceImpactInfoClick() {
+        nav(SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapPriceImpactInfoBottomSheet())
+    }
+
+    override fun onExchangeFeeInfoClick() {
+        nav(SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapExchangeFeeInfoBottomSheet())
     }
 }

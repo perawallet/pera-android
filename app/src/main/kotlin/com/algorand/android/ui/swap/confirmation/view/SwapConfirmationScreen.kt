@@ -46,7 +46,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 @Composable
 fun SwapConfirmationScreen(
     viewModel: SwapConfirmationViewModel,
-    onBackClick: () -> Unit
+    listener: SwapConfirmationScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -54,7 +54,7 @@ fun SwapConfirmationScreen(
             when (viewState) {
                 Idle -> Unit
                 is Content -> {
-                    Toolbar(viewState.accountDisplayName, viewState.accountIconDrawable, onBackClick)
+                    Toolbar(viewState.accountDisplayName, viewState.accountIconDrawable, listener::onNavBackClick)
                     Column(
                         modifier = Modifier
                             .verticalScroll(rememberScrollState())
@@ -62,7 +62,7 @@ fun SwapConfirmationScreen(
                             .weight(1f)
                     ) {
                         AssetAmountContainer(viewState)
-                        SwapConfirmationQuoteDetailContainer(viewState)
+                        SwapConfirmationQuoteDetailContainer(viewState, listener)
                     }
                 }
             }
@@ -119,4 +119,8 @@ private fun Toolbar(
             }
         }
     }
+}
+
+interface SwapConfirmationScreenListener : SwapConfirmationQuoteDetailContainerListener {
+    fun onNavBackClick()
 }

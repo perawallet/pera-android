@@ -37,10 +37,13 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
+import com.algorand.android.ui.compose.widget.button.PeraButtonState.DISABLED
+import com.algorand.android.ui.compose.widget.button.PeraButtonState.ENABLED
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content.ButtonStatus
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 
 @Composable
@@ -49,11 +52,11 @@ fun SwapConfirmationScreen(
     listener: SwapConfirmationScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Column {
-            val viewState = viewModel.state.collectAsStateWithLifecycle().value
-            when (viewState) {
-                Idle -> Unit
-                is Content -> {
+        val viewState = viewModel.state.collectAsStateWithLifecycle().value
+        when (viewState) {
+            Idle -> Unit
+            is Content -> {
+                Column {
                     Toolbar(viewState.accountDisplayName, viewState.accountIconDrawable, listener::onNavBackClick)
                     Column(
                         modifier = Modifier
@@ -65,17 +68,17 @@ fun SwapConfirmationScreen(
                         SwapConfirmationQuoteDetailContainer(viewState, listener)
                     }
                 }
+                PeraPrimaryButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
+                        .align(Alignment.BottomCenter),
+                    onClick = {},
+                    text = stringResource(R.string.confirm_swap),
+                    state = if (viewState.buttonStatus is ButtonStatus.Disabled) DISABLED else ENABLED
+                )
             }
         }
-
-        PeraPrimaryButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
-                .align(Alignment.BottomCenter),
-            onClick = {},
-            text = stringResource(R.string.confirm_swap)
-        )
     }
 }
 

@@ -62,7 +62,8 @@ class SwapConfirmationViewModel @Inject constructor(
             val peraFee: AmountRenderer,
             val minReceivedAssetAmount: AmountRenderer,
             val assetInToOutPriceRatio: PriceRatio,
-            val assetOutToInPriceRatio: PriceRatio
+            val assetOutToInPriceRatio: PriceRatio,
+            val buttonStatus: ButtonStatus
         ) : ViewState {
 
             class AssetDetail(
@@ -78,6 +79,12 @@ class SwapConfirmationViewModel @Inject constructor(
                 val firstAssetUnitName: String,
                 val secondAssetUnitName: String
             )
+
+            sealed interface ButtonStatus {
+                data object Enabled : ButtonStatus
+                data object Disabled : ButtonStatus
+                data object PriceImpactConfirmationRequired : ButtonStatus
+            }
         }
     }
 }

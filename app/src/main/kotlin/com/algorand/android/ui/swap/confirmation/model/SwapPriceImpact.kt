@@ -22,10 +22,10 @@ data class SwapPriceImpact(
     sealed interface WarningStatus {
         data object NoWarning : WarningStatus
 
-        data object Level1 : WarningStatus
+        data class Level1(val threshold: Float) : WarningStatus
 
-        data object Level2 : WarningStatus
+        data class Level2(val threshold: Float) : WarningStatus
 
-        data object Level3 : WarningStatus
+        data class Level3(val threshold: Float) : WarningStatus
     }
 }

@@ -55,7 +55,8 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
             peraFee = getFeeRenderer(quote.fee.peraFeeAmount),
             minReceivedAssetAmount = getAmountRenderer(quote.assetOutAmount.amountWithSlippage, quote.assetOutDetail),
             assetInToOutPriceRatio = getAssetInToOutPriceRatio(quote),
-            assetOutToInPriceRatio = getAssetOutToInPriceRatio(quote)
+            assetOutToInPriceRatio = getAssetOutToInPriceRatio(quote),
+            buttonStatus = Content.ButtonStatus.Enabled
         )
     }
 

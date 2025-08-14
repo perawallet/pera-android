@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,7 +45,10 @@ import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact
+import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus
+import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.NoWarning
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
+import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 
 @Composable
@@ -70,6 +74,8 @@ fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirm
         ExchangeFee(content.exchangeFee, listener::onExchangeFeeInfoClick)
         QuoteRowSeparator()
         PeraFee(content.peraFee)
+        QuoteRowSeparator()
+        PriceImpactWarning(content.priceImpact.warningStatus, listener::onTinymanFaqPriceImpactUrlClick)
     }
 }
 
@@ -77,6 +83,7 @@ interface SwapConfirmationQuoteDetailContainerListener {
     fun onSlippageToleranceInfoClick()
     fun onPriceImpactInfoClick()
     fun onExchangeFeeInfoClick()
+    fun onTinymanFaqPriceImpactUrlClick()
 }
 
 @Composable
@@ -128,9 +135,7 @@ private fun getPriceRatioText(context: Context, priceRatio: Content.PriceRatio):
 @Composable
 private fun Provider() {
     QuoteDetailRow(
-        labelContent = {
-            QuoteDetailLabel(textResId = R.string.provider)
-        },
+        labelContent = { QuoteDetailLabel(textResId = R.string.provider) },
         valueContent = {
             QuoteDetailValue(text = "PROVIDER") // TODO replace with actual provider name when API is ready
         }
@@ -143,7 +148,7 @@ private fun SlippageTolerance(slippage: Float, onInfoClick: () -> Unit) {
         labelContent = {
             QuoteDetailLabel(textResId = R.string.slippage_tolerance)
             Spacer(modifier = Modifier.width(6.dp))
-            InfoIcon(onInfoClick)
+            InfoIcon(onClick = onInfoClick)
         },
         valueContent = { QuoteDetailValue(text = "${slippage}%") }
     )
@@ -151,13 +156,18 @@ private fun SlippageTolerance(slippage: Float, onInfoClick: () -> Unit) {
 
 @Composable
 private fun PriceImpact(priceImpact: SwapPriceImpact, onInfoClick: () -> Unit) {
+    val (labelColor, valueColor) = if (priceImpact.warningStatus is NoWarning) {
+        PeraTheme.colors.text.gray to PeraTheme.colors.text.main
+    } else {
+        PeraTheme.colors.helper.negative to PeraTheme.colors.helper.negative
+    }
     QuoteDetailRow(
         labelContent = {
-            QuoteDetailLabel(textResId = R.string.price_impact)
+            QuoteDetailLabel(textResId = R.string.price_impact, textColor = labelColor)
             Spacer(modifier = Modifier.width(6.dp))
-            InfoIcon(onInfoClick)
+            InfoIcon(onClick = onInfoClick, tintColor = labelColor)
         },
-        valueContent = { QuoteDetailValue(text = priceImpact.percentage.getDisplayValue()) }
+        valueContent = { QuoteDetailValue(text = priceImpact.percentage.getDisplayValue(), textColor = valueColor) }
     )
 }
 
@@ -175,7 +185,7 @@ private fun ExchangeFee(exchangeFee: AmountRenderer, onInfoClick: () -> Unit) {
         labelContent = {
             QuoteDetailLabel(textResId = R.string.exchange_fee)
             Spacer(modifier = Modifier.width(6.dp))
-            InfoIcon(onInfoClick)
+            InfoIcon(onClick = onInfoClick)
         },
         valueContent = { QuoteDetailValue(text = exchangeFee.getDisplayValue()) }
     )
@@ -195,7 +205,10 @@ private fun QuoteDetailRow(
     valueContent: @Composable RowScope.() -> Unit,
 ) {
     Row {
-        Row(modifier = Modifier.weight(1f)) {
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             labelContent()
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -205,33 +218,85 @@ private fun QuoteDetailRow(
 }
 
 @Composable
-private fun QuoteDetailLabel(modifier: Modifier = Modifier, textResId: Int) {
+private fun QuoteDetailLabel(
+    modifier: Modifier = Modifier,
+    textResId: Int,
+    textColor: Color = PeraTheme.colors.text.gray
+) {
     Text(
         modifier = modifier,
         text = stringResource(textResId),
         style = PeraTheme.typography.footnote.sans,
-        color = PeraTheme.colors.text.gray
+        color = textColor
     )
 }
 
 @Composable
-private fun QuoteDetailValue(modifier: Modifier = Modifier, text: String) {
+private fun QuoteDetailValue(
+    modifier: Modifier = Modifier,
+    text: String,
+    textColor: Color = PeraTheme.colors.text.main
+) {
     Text(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.footnote.sans,
-        color = PeraTheme.colors.text.main
+        color = textColor
     )
 }
 
 @Composable
-private fun InfoIcon(onClick: () -> Unit) {
+private fun InfoIcon(
+    tintColor: Color = PeraTheme.colors.text.grayLighter,
+    onClick: () -> Unit
+) {
     Icon(
         modifier = Modifier
             .clickableNoRipple(onClick = onClick)
-            .size(24.dp),
+            .size(20.dp),
         painter = painterResource(R.drawable.ic_info),
-        tint = PeraTheme.colors.text.grayLighter,
+        tint = tintColor,
         contentDescription = null
+    )
+}
+
+@Composable
+private fun PriceImpactWarning(warningStatus: WarningStatus, onTinymanPriceImpactFaqClick: () -> Unit) {
+    val annotatedString: AnnotatedString? = when (warningStatus) {
+        is WarningStatus.Level1 -> getSoftPriceImpactWarningText(warningStatus.threshold)
+        is WarningStatus.Level2 -> getSoftPriceImpactWarningText(warningStatus.threshold)
+        is WarningStatus.Level3 -> {
+            // TODO Use spannable
+            AnnotatedString(
+                R.string.this_swap_can_not_be,
+                customAnnotationList = listOf(
+                    "faq_url" to getCustomClickableSpan(R.color.link_primary) { onTinymanPriceImpactFaqClick }
+                )
+            )
+        }
+        NoWarning -> null
+    }
+    annotatedString?.let {
+        Row {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(R.drawable.ic_error),
+                tint = PeraTheme.colors.helper.negative,
+                contentDescription = null
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = LocalContext.current.getXmlStyledString(it).toString(),
+                style = PeraTheme.typography.footnote.sansMedium,
+                color = PeraTheme.colors.helper.negative
+            )
+        }
+    }
+}
+
+private fun getSoftPriceImpactWarningText(threshold: Float): AnnotatedString {
+    return AnnotatedString(
+        stringResId = R.string.caution_price_impact,
+        replacementList = listOf("price_impact_percentage" to threshold.toString())
     )
 }

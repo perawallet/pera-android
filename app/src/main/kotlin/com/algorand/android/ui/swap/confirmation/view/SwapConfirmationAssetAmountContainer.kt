@@ -14,7 +14,6 @@ package com.algorand.android.ui.swap.confirmation.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -31,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
+import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content.AssetDetail
 
@@ -56,7 +57,7 @@ fun ColumnScope.AssetAmountContainer(content: Content) {
         Column {
             AssetAmountDetail(content.assetInDetail)
             Spacer(modifier = Modifier.height(20.dp))
-            Row(horizontalArrangement = Arrangement.Center) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -77,13 +78,23 @@ fun ColumnScope.AssetAmountContainer(content: Content) {
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
-            AssetAmountDetail(content.assetOutDetail)
+            val hasPriceImpactWarning = content.priceImpact.warningStatus !is WarningStatus.NoWarning
+            if (hasPriceImpactWarning) {
+                val errorTextColor = PeraTheme.colors.helper.negative
+                AssetAmountDetail(content.assetOutDetail, errorTextColor, errorTextColor)
+            } else {
+                AssetAmountDetail(content.assetOutDetail)
+            }
         }
     }
 }
 
 @Composable
-private fun AssetAmountDetail(detail: AssetDetail) {
+private fun AssetAmountDetail(
+    detail: AssetDetail,
+    primaryTextColor: Color = PeraTheme.colors.text.main,
+    secondaryTextColor: Color = PeraTheme.colors.text.grayLighter,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -101,14 +112,14 @@ private fun AssetAmountDetail(detail: AssetDetail) {
             Text(
                 text = detail.amount.getDisplayValue(),
                 style = PeraTheme.typography.body.large.sansMedium,
-                color = PeraTheme.colors.text.main,
+                color = primaryTextColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = detail.approximateValue.getDisplayValue(),
                 style = PeraTheme.typography.footnote.sans,
-                color = PeraTheme.colors.text.grayLighter
+                color = secondaryTextColor
             )
         }
         Row(

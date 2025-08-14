@@ -23,17 +23,17 @@ internal class DefaultSwapPriceImpactWarningStatusMapper @Inject constructor() :
     override fun invoke(priceImpactPercentage: Float): SwapPriceImpact {
         val warningStatus = when {
             priceImpactPercentage < FIVE_PERCENT -> SwapPriceImpact.WarningStatus.NoWarning
-            priceImpactPercentage < TEN_PERCENT -> SwapPriceImpact.WarningStatus.Level1
-            priceImpactPercentage < FIFTEEN_PERCENT -> SwapPriceImpact.WarningStatus.Level2
-            else -> SwapPriceImpact.WarningStatus.Level3
+            priceImpactPercentage < TEN_PERCENT -> SwapPriceImpact.WarningStatus.Level1(FIVE_PERCENT)
+            priceImpactPercentage < FIFTEEN_PERCENT -> SwapPriceImpact.WarningStatus.Level2(TEN_PERCENT)
+            else -> SwapPriceImpact.WarningStatus.Level3(FIFTEEN_PERCENT)
         }
         val renderer = AmountRenderer(SimpleFormattedAmount("${priceImpactPercentage}%"), Plain)
         return SwapPriceImpact(renderer, warningStatus)
     }
 
     private companion object {
-        private const val FIVE_PERCENT = 5
-        private const val TEN_PERCENT = 10
-        private const val FIFTEEN_PERCENT = 15
+        private const val FIVE_PERCENT = 5f
+        private const val TEN_PERCENT = 10f
+        private const val FIFTEEN_PERCENT = 15f
     }
 }

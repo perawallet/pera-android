@@ -22,6 +22,7 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
+import com.algorand.android.utils.browser.openTinymanFaqPriceImpactUrl
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,5 +59,9 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
 
     override fun onExchangeFeeInfoClick() {
         nav(SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapExchangeFeeInfoBottomSheet())
+    }
+
+    override fun onTinymanFaqPriceImpactUrlClick() {
+        context?.openTinymanFaqPriceImpactUrl()
     }
 }

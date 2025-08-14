@@ -147,6 +147,13 @@ class DefaultAccountsEventTrackerTest {
     }
 
     @Test
+    fun `EXPECT retail banner click to be logged`() {
+        sut.logBannerClick(Banner.BannerType.Retail)
+
+        verify { peraAnalyticsEventTracker.logEvent("homescr_visitretail") }
+    }
+
+    @Test
     fun `EXPECT generic banner click to be logged`() {
         sut.logBannerClick(Banner.BannerType.Generic)
 

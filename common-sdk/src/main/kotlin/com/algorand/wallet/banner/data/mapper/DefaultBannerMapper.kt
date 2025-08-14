@@ -18,6 +18,7 @@ import com.algorand.wallet.banner.data.model.BannerTypeResponse.CARD
 import com.algorand.wallet.banner.data.model.BannerTypeResponse.GENERIC
 import com.algorand.wallet.banner.data.model.BannerTypeResponse.GOVERNANCE
 import com.algorand.wallet.banner.data.model.BannerTypeResponse.OTHER
+import com.algorand.wallet.banner.data.model.BannerTypeResponse.RETAIL
 import com.algorand.wallet.banner.data.model.BannerTypeResponse.STAKING
 import com.algorand.wallet.banner.domain.model.Banner
 import javax.inject.Inject
@@ -41,6 +42,7 @@ internal class DefaultBannerMapper @Inject constructor() : BannerMapper {
             GOVERNANCE -> Banner.BannerType.Governance
             STAKING -> Banner.BannerType.Staking
             CARD -> Banner.BannerType.Card
+            RETAIL -> Banner.BannerType.Retail
             OTHER -> Banner.BannerType.Generic
             null -> Banner.BannerType.Generic
         }

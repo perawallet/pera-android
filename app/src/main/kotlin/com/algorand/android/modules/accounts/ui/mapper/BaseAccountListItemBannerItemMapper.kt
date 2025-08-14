@@ -29,6 +29,7 @@ class BaseAccountListItemBannerItemMapper @Inject constructor() {
                 Banner.BannerType.Generic -> BaseAccountListItem.BannerItem.BannerType.Generic
                 Banner.BannerType.Governance -> BaseAccountListItem.BannerItem.BannerType.Governance
                 Banner.BannerType.Staking -> BaseAccountListItem.BannerItem.BannerType.Staking
+                Banner.BannerType.Retail -> BaseAccountListItem.BannerItem.BannerType.Retail
             }
             BaseAccountListItem.BannerItem(
                 bannerId = banner.bannerId,

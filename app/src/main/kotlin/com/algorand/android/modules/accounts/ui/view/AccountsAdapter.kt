@@ -20,6 +20,7 @@ import com.algorand.android.banner.ui.viewholder.BaseBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.CardsBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GenericBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GovernanceBannerViewHolder
+import com.algorand.android.banner.ui.viewholder.RetailBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.SpotBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.StakingBannerViewHolder
 import com.algorand.android.models.BaseDiffUtil
@@ -33,6 +34,7 @@ import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemTy
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.GOVERNANCE_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.HEADER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.QUICK_ACTIONS
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.RETAIL_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.SPOT_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.STAKING_BANNER
 import com.algorand.android.modules.accounts.ui.view.viewholder.AccountErrorItemViewHolder
@@ -109,6 +111,16 @@ class AccountsAdapter(
         }
     }
 
+    private val retailBaseBannerListener = object : BaseBannerViewHolder.BannerListener {
+        override fun onActionButtonClick(url: String, bannerType: BannerType) {
+            accountAdapterListener.onBannerActionButtonClick(url = url, bannerType = bannerType)
+        }
+
+        override fun onCloseBannerClick(bannerId: Long) {
+            accountAdapterListener.onBannerCloseButtonClick(bannerId)
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<BaseAccountListItem> {
         return when (viewType) {
             HEADER.ordinal -> HeaderViewHolder.create(parent, accountAdapterListener)
@@ -120,6 +132,7 @@ class AccountsAdapter(
             GENERIC_BANNER.ordinal -> GenericBannerViewHolder.create(baseBannerListener, parent)
             QUICK_ACTIONS.ordinal -> AccountsQuickActionsViewHolder.create(parent, accountAdapterListener)
             SPOT_BANNER.ordinal -> SpotBannerViewHolder.create(parent, accountAdapterListener)
+            RETAIL_BANNER.ordinal -> RetailBannerViewHolder.create(retailBaseBannerListener, parent)
             CHART.ordinal -> {
                 AccountListWalletChartViewHolder.create(parent, accountsLineChartViewModel, accountAdapterListener)
             }

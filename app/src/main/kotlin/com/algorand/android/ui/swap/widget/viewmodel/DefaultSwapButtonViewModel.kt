@@ -55,7 +55,7 @@ class DefaultSwapButtonViewModel @Inject constructor(
                     is WidgetIdleState -> Invisible
                     is WidgetQuoteState -> {
                         val isEnabled = widgetViewState.contentState.selectedQuoteDetail.state is Swappable
-                        Visible(isEnabled)
+                        Visible(isEnabled, widgetViewState.contentState.selectedQuoteDetail.quote)
                     }
                 }
             }

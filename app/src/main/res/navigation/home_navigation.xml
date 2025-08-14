@@ -1561,6 +1561,9 @@
         <action
             android:id="@+id/action_swapFragment_to_swapAssetOutSelectionFragment"
             app:destination="@id/swapAssetOutSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapConfirmationFragment"
+            app:destination="@id/swapConfirmationFragment" />
     </fragment>
     <fragment
         android:id="@+id/swapAssetInSelectionFragment"
@@ -1581,6 +1584,15 @@
         <argument
             android:name="assetId"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/swapConfirmationFragment"
+        android:name="com.algorand.android.ui.swap.confirmation.view.SwapConfirmationFragment"
+        android:label="SwapConfirmationFragment" >
+
+        <argument
+            android:name="swapQuote"
+            app:argType="com.algorand.wallet.swap.domain.model.SwapQuote" />
     </fragment>
 
 

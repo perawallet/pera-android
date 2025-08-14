@@ -10,13 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.asset.icon.mapper
+package com.algorand.android.ui.swap.confirmation.mapper
 
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
-import com.algorand.wallet.asset.domain.model.AssetLite
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
 import com.algorand.wallet.swap.domain.model.SwapQuote
 
-interface AssetIconDrawableMapper {
-    fun map(assetLite: AssetLite): AssetIconDrawable
-    fun map(assetDetail: SwapQuote.AssetDetail): AssetIconDrawable
+interface SwapConfirmationContentMapper {
+    suspend fun map(quote: SwapQuote): SwapConfirmationViewModel.ViewState.Content
 }

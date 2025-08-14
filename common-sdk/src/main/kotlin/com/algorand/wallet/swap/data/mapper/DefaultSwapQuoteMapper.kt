@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.swap.data.mapper
 
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.domain.model.SwapQuote
 import com.algorand.wallet.swap.domain.model.SwapType
@@ -42,8 +43,8 @@ internal class DefaultSwapQuoteMapper @Inject constructor(
     }
 
     private fun mapSwapFee(response: SwapQuoteResponse): SwapQuote.SwapFee {
-        val peraFee = response.peraFeeAmount ?: BigDecimal.ZERO
-        val exchangeFee = response.exchangeFeeAmount ?: BigDecimal.ZERO
+        val peraFee = response.peraFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS) ?: BigDecimal.ZERO
+        val exchangeFee = response.exchangeFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS) ?: BigDecimal.ZERO
         val totalFee = peraFee + exchangeFee
         return SwapQuote.SwapFee(peraFee, exchangeFee, totalFee)
     }

@@ -43,6 +43,7 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapButtonViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
+import com.algorand.wallet.swap.domain.model.SwapQuote
 
 @Composable
 fun SwapScreen(
@@ -96,7 +97,7 @@ private fun SwapContentState(
     configViewModel: SwapConfigurationViewModel,
     providerViewModel: SwapProviderWidgetViewModel,
     buttonViewModel: SwapButtonViewModel,
-    listener: SwapWidgetListener
+    listener: SwapScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -121,7 +122,7 @@ private fun SwapContentState(
                 providerViewModel
             )
         }
-        SwapButtonWidget(buttonViewModel) { }
+        SwapButtonWidget(buttonViewModel, listener::onSwapClick)
     }
 }
 
@@ -141,4 +142,5 @@ private fun SwapNoAccountState(listener: SwapScreenListener) {
 
 interface SwapScreenListener : SwapToolbarListener, SwapWidgetListener {
     fun onCreateAccountClick()
+    fun onSwapClick(quote: SwapQuote)
 }

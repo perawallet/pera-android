@@ -10,13 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.asset.icon.mapper
+package com.algorand.android.ui.swap.confirmation.model
 
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
-import com.algorand.wallet.asset.domain.model.AssetLite
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.android.ui.common.amount.AmountRenderer
 
-interface AssetIconDrawableMapper {
-    fun map(assetLite: AssetLite): AssetIconDrawable
-    fun map(assetDetail: SwapQuote.AssetDetail): AssetIconDrawable
+data class SwapPriceImpact(
+    val percentage: AmountRenderer,
+    val warningStatus: WarningStatus
+) {
+
+    sealed interface WarningStatus {
+        data object NoWarning : WarningStatus
+
+        data object Level1 : WarningStatus
+
+        data object Level2 : WarningStatus
+
+        data object Level3 : WarningStatus
+    }
 }

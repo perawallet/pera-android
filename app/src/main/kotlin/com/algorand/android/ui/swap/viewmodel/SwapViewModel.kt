@@ -19,13 +19,16 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
+import com.algorand.android.utils.isEqualTo
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_TESTNET_ID
+import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_MAINNET_ID
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +41,8 @@ class SwapViewModel @Inject constructor(
     private val getPreselectedSwapAddress: GetPreselectedSwapAddress,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getUsdcAssetId: GetUsdcAssetId
+    private val getUsdcAssetId: GetUsdcAssetId,
+    private val getAccountAssetHolding: GetAccountAssetHolding
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val _addressFlow = MutableStateFlow<String?>(null)
@@ -49,7 +53,7 @@ class SwapViewModel @Inject constructor(
     val assetInFlow: StateFlow<Long>
         get() = _assetInFlow.asStateFlow()
 
-    private val _assetOutFlow = MutableStateFlow<Long>(USDC_TESTNET_ID)
+    private val _assetOutFlow = MutableStateFlow<Long>(USDC_MAINNET_ID)
     val assetOutFlow: StateFlow<Long>
         get() = _assetOutFlow.asStateFlow()
 
@@ -75,6 +79,18 @@ class SwapViewModel @Inject constructor(
         _assetOutFlow.value = assetId
     }
 
+    fun setAddress(address: String) {
+        viewModelScope.launch {
+            val assetHolding = getAccountAssetHolding(address, _assetInFlow.value)
+            if (assetHolding == null || assetHolding.amount isEqualTo BigInteger.ZERO) {
+                _assetInFlow.value = ALGO_ID
+                _assetOutFlow.value = getUsdcAssetId()
+            }
+            _addressFlow.value = address
+            updateContentState(address)
+        }
+    }
+
     fun initViewState() {
         stateDelegate.onState<ViewState.Idle> {
             viewModelScope.launch {
@@ -83,13 +99,17 @@ class SwapViewModel @Inject constructor(
                     stateDelegate.updateState { ViewState.NoAccountState }
                 } else {
                     _addressFlow.value = address
-                    val accountIcon = getAccountIconDrawablePreview(address)
-                    val accountDisplayName = getAccountDisplayName(address)
-                    stateDelegate.updateState {
-                        ViewState.Content(accountIcon, accountDisplayName)
-                    }
+                    updateContentState(address)
                 }
             }
+        }
+    }
+
+    private suspend fun updateContentState(address: String) {
+        val accountIcon = getAccountIconDrawablePreview(address)
+        val accountDisplayName = getAccountDisplayName(address)
+        stateDelegate.updateState {
+            ViewState.Content(accountIcon, accountDisplayName)
         }
     }
 

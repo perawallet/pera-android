@@ -21,6 +21,7 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFragment.Companion.SWAP_ADDRESS_SELECTION_KEY
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment.Companion.SWAP_ASSET_IN_ID_KEY
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment.Companion.SWAP_ASSET_OUT_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
@@ -55,6 +56,9 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
         useFragmentResultListenerValue<Long>(SWAP_ASSET_OUT_ID_KEY) { assetId ->
             swapViewModel.setAssetOutId(assetId)
         }
+        useFragmentResultListenerValue<String>(SWAP_ADDRESS_SELECTION_KEY) { address ->
+            swapViewModel.setAddress(address)
+        }
     }
 
     override fun onCreateAccountClick() {
@@ -62,7 +66,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
     }
 
     override fun onAccountChipClick() {
-        // TODO
+        nav(SwapFragmentDirections.actionSwapFragmentToSwapAddressSelectionFragment())
     }
 
     override fun onInfoIconClick() {

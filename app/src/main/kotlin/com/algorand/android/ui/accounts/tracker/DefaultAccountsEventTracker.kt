@@ -78,6 +78,7 @@ internal class DefaultAccountsEventTracker @Inject constructor(
             Banner.BannerType.Generic -> LARGE_BANNER_GENERIC_CLICK
             Banner.BannerType.Governance -> LARGE_BANNER_GOVERNANCE_CLICK
             Banner.BannerType.Staking -> LARGE_BANNER_STAKING_CLICK
+            Banner.BannerType.Retail -> LARGE_BANNER_RETAIL_CLICK
         }
         peraAnalyticsEventTracker.logEvent(eventName)
     }
@@ -99,6 +100,7 @@ internal class DefaultAccountsEventTracker @Inject constructor(
         const val LARGE_BANNER_STAKING_CLICK = "homescr_visitstaking"
         const val LARGE_BANNER_GOVERNANCE_CLICK = "homescr_visitgovernance"
         const val LARGE_BANNER_CARD_CLICK = "homescr_visitcard"
+        const val LARGE_BANNER_RETAIL_CLICK = "homescr_visitretail"
         const val LARGE_BANNER_GENERIC_CLICK = "homescr_visitgeneric"
         const val SPOT_BANNER_NAME_KEY = "banner_name"
     }

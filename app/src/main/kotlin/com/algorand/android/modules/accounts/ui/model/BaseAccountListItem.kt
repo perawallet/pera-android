@@ -32,6 +32,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         GENERIC_BANNER,
         CARD_BANNER,
         SPOT_BANNER,
+        RETAIL_BANNER,
         CHART
     }
 
@@ -90,6 +91,11 @@ sealed interface BaseAccountListItem : RecyclerListItem {
                 override val itemType: ItemType
                     get() = ItemType.GENERIC_BANNER
             }
+
+            data object Retail : BannerType {
+                override val itemType: ItemType
+                    get() = ItemType.RETAIL_BANNER
+            }
         }
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
@@ -110,6 +116,18 @@ sealed interface BaseAccountListItem : RecyclerListItem {
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
             return other is SpotBannerItem
+        }
+    }
+
+    data class RetailBannerItem(val retailBanners: List<SpotBanner>) : BaseAccountListItem {
+        override val itemType: ItemType = ItemType.RETAIL_BANNER
+
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
+            return other is RetailBannerItem
+        }
+
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
+            return other is RetailBannerItem
         }
     }
 
@@ -183,7 +201,8 @@ sealed interface BaseAccountListItem : RecyclerListItem {
             ItemType.STAKING_BANNER.ordinal,
             ItemType.CARD_BANNER.ordinal,
             ItemType.GENERIC_BANNER.ordinal,
-            ItemType.SPOT_BANNER.ordinal
+            ItemType.SPOT_BANNER.ordinal,
+            ItemType.RETAIL_BANNER.ordinal
         )
     }
 }

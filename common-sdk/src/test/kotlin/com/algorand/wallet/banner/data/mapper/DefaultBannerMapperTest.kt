@@ -63,6 +63,16 @@ class DefaultBannerMapperTest {
     }
 
     @Test
+    fun `EXPECT retail banner type WHEN banner type is RETAIL`() {
+        val response = BANNER_RESPONSE.copy(bannerTypeResponse = BannerTypeResponse.RETAIL)
+
+        val result = sut.map(response)
+
+        val expected = BANNER.copy(type = Banner.BannerType.Retail)
+        assertEquals(expected, result)
+    }
+
+    @Test
     fun `EXPECT generic banner type WHEN banner type is GENERIC`() {
         val response = BANNER_RESPONSE.copy(bannerTypeResponse = BannerTypeResponse.GENERIC)
 

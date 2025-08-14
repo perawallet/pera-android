@@ -27,5 +27,8 @@ internal enum class BannerTypeResponse {
     @SerializedName("card")
     CARD,
 
+    @SerializedName("retail")
+    RETAIL,
+
     OTHER
 }

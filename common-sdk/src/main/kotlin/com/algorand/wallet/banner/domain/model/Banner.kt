@@ -30,5 +30,7 @@ data class Banner(
         data object Governance : BannerType
 
         data object Generic : BannerType
+
+        data object Retail : BannerType
     }
 }

@@ -127,6 +127,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
+        android:gravity="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Footnote.Sans"
         android:textColor="@color/text_gray"

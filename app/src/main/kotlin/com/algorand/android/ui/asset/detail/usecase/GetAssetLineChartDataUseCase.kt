@@ -13,7 +13,8 @@
 package com.algorand.android.ui.asset.detail.usecase
 
 import com.algorand.android.modules.currency.domain.model.Currency
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryFiatCurrencyId
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
@@ -21,6 +22,7 @@ import com.algorand.android.ui.common.amount.CompactFormattedAmount
 import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Asset
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.foundation.PeraResult
@@ -32,8 +34,10 @@ import javax.inject.Inject
 class GetAssetLineChartDataUseCase @Inject constructor(
     private val getAssetBalanceHistory: GetAssetBalanceHistory,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
     private val getAssetDetail: GetAssetDetail,
-    private val getPrimaryFiatCurrencyId: GetPrimaryFiatCurrencyId
+    private val parityUseCase: ParityUseCase,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo
 ) : GetAssetLineChartData {
 
     override suspend fun invoke(
@@ -41,24 +45,20 @@ class GetAssetLineChartDataUseCase @Inject constructor(
         assetId: Long,
         period: WalletWealthPeriod
     ): PeraResult<List<AssetLineChartData>> {
-        val currency = getPrimaryFiatCurrencyId()
-        return getAssetBalanceHistory(address, assetId, period, currency).map { assetBalanceHistory ->
+        return getAssetBalanceHistory(
+            address = address,
+            assetId = assetId,
+            period = period,
+            currency = parityUseCase.getPrimaryFiatCurrencyId()
+        ).map { assetBalanceHistory ->
             assetBalanceHistory.chartData.map { chartData ->
-                val assetSymbol = getAssetSymbol(assetId)
                 val primaryAmount = PeraAmount(chartData.amount)
-                val formattedAmount = CompactFormattedAmount(primaryAmount, Asset)
-                val primaryRenderer = AmountRenderer(
-                    formattedAmount = formattedAmount,
-                    type = Plain,
-                    suffix = assetSymbol
-                )
-
                 AssetLineChartData(
                     datetime = chartData.datetime,
                     primaryValue = primaryAmount.value,
                     valueInCurrency = chartData.valueInCurrency,
-                    primaryAmountRenderer = primaryRenderer,
-                    secondaryAmountRenderer = getSecondaryAmountRenderer(chartData.valueInCurrency),
+                    primaryAmountRenderer = getPrimaryAmountRenderer(assetId, primaryAmount),
+                    secondaryAmountRenderer = getSecondaryAmountRenderer(chartData.valueInCurrency)
                 )
             }
         }
@@ -72,8 +72,22 @@ class GetAssetLineChartDataUseCase @Inject constructor(
         }
     }
 
+    private suspend fun getPrimaryAmountRenderer(assetId: Long, primaryAmount: PeraAmount): AmountRenderer {
+        val assetSymbol = getAssetSymbol(assetId)
+        val formattedAmount = CompactFormattedAmount(primaryAmount, Asset)
+        return AmountRenderer(
+            formattedAmount = formattedAmount,
+            type = Plain,
+            suffix = assetSymbol
+        )
+    }
+
     private fun getSecondaryAmountRenderer(valueInCurrency: BigDecimal): AmountRenderer {
         val secondaryAmount = PeraAmount(valueInCurrency)
-        return getCompactPrimaryAmountRenderer(secondaryAmount, Plain)
+        return if (isPrimaryCurrencyAlgo()) {
+            getCompactSecondaryAmountRenderer(secondaryAmount, Plain)
+        } else {
+            getCompactPrimaryAmountRenderer(secondaryAmount, Plain)
+        }
     }
 }

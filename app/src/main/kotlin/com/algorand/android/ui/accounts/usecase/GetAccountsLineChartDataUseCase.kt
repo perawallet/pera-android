@@ -12,11 +12,8 @@
 
 package com.algorand.android.ui.accounts.usecase
 
-import com.algorand.android.modules.currency.domain.model.Currency
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryFiatCurrencyId
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
-import com.algorand.android.modules.parity.domain.model.ParityValue
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.PeraAmount
@@ -31,33 +28,20 @@ internal class GetAccountsLineChartDataUseCase @Inject constructor(
     private val getWalletWealth: GetWalletWealth,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
-    private val getPrimaryFiatCurrencyId: GetPrimaryFiatCurrencyId,
-    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
-    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val parityUseCase: ParityUseCase
 ) : GetAccountsLineChartData {
 
     override suspend fun invoke(
         addresses: List<String>,
         period: WalletWealthPeriod
     ): PeraResult<List<AccountsLineChartData>> {
-        val currency = getPrimaryFiatCurrencyId()
-        return getWalletWealth(addresses, period, currency).map { walletWealth ->
+        return getWalletWealth(addresses, period, parityUseCase.getPrimaryFiatCurrencyId()).map { walletWealth ->
             walletWealth.chartData.map { chartData ->
                 val primaryAmount: PeraAmount
                 val secondaryAmount: PeraAmount
-                val algoPeraAmount = PeraAmount(
-                    ParityValue(
-                        amountAsCurrency = chartData.algoValue,
-                        selectedCurrencySymbol = Currency.ALGO.symbol
-                    ).amountAsCurrency
-                )
-
-                val valueInCurrencyPeraAmount = PeraAmount(
-                    ParityValue(
-                        amountAsCurrency = chartData.valueInCurrency,
-                        selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
-                    ).amountAsCurrency
-                )
+                val algoPeraAmount = PeraAmount(chartData.algoValue)
+                val valueInCurrencyPeraAmount = PeraAmount(chartData.valueInCurrency)
 
                 if (isPrimaryCurrencyAlgo()) {
                     primaryAmount = algoPeraAmount

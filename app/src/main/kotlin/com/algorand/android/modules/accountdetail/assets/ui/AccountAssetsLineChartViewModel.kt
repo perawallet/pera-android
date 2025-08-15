@@ -15,11 +15,8 @@ package com.algorand.android.modules.accountdetail.assets.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountdetail.assets.ui.model.AddressLineChartData
-import com.algorand.android.modules.currency.domain.model.Currency
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryFiatCurrencyId
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
-import com.algorand.android.modules.parity.domain.model.ParityValue
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
@@ -51,9 +48,8 @@ class AccountAssetsLineChartViewModel @Inject constructor(
     private val getAddressWealth: GetAddressWealth,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
-    private val getPrimaryFiatCurrencyId: GetPrimaryFiatCurrencyId,
-    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
-    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val parityUseCase: ParityUseCase
 
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, StatefulPeraLineChartViewModel {
 
@@ -68,12 +64,11 @@ class AccountAssetsLineChartViewModel @Inject constructor(
             stateDelegate.updateState {
                 ViewState.Content(contentState = ContentState.Loading, INITIAL_CHART_PERIOD, PERIODS)
             }
-            val currency = getPrimaryFiatCurrencyId()
             selectedPeriodFlow.onEach { period ->
                 val viewState = getAddressWealth(
                     address = address,
                     period = walletWealthPeriodMapper(period),
-                    currency = currency
+                    currency = parityUseCase.getPrimaryFiatCurrencyId()
                 ).use(
                     onSuccess = { addressWealth ->
                         ViewState.Content(ContentState.Data(getAddressChartData(addressWealth)), period, PERIODS)
@@ -110,19 +105,8 @@ class AccountAssetsLineChartViewModel @Inject constructor(
             val primaryAmount: PeraAmount
             val secondaryAmount: PeraAmount
 
-            val algoPeraAmount = PeraAmount(
-                ParityValue(
-                    amountAsCurrency = chartData.algoValue,
-                    selectedCurrencySymbol = Currency.ALGO.symbol
-                ).amountAsCurrency
-            )
-
-            val valueInCurrencyPeraAmount = PeraAmount(
-                ParityValue(
-                    amountAsCurrency = chartData.valueInCurrency,
-                    selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
-                ).amountAsCurrency
-            )
+            val algoPeraAmount = PeraAmount(chartData.algoValue)
+            val valueInCurrencyPeraAmount = PeraAmount(chartData.valueInCurrency)
 
             if (isPrimaryCurrencyAlgo()) {
                 primaryAmount = algoPeraAmount

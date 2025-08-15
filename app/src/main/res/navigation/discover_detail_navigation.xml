@@ -16,6 +16,8 @@
     android:id="@+id/discoverDetailNavigation"
     app:startDestination="@id/discoverDetailFragment">
 
+    <include app:graph="@navigation/discover_dapp_navigation" />
+
     <fragment
         android:id="@+id/discoverDetailFragment"
         android:name="com.algorand.android.discover.detail.ui.DiscoverDetailFragment"

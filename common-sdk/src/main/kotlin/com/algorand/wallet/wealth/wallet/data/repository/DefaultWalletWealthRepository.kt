@@ -30,10 +30,11 @@ internal class DefaultWalletWealthRepository @Inject constructor(
 
     override suspend fun getWalletWealth(
         addresses: List<String>,
-        period: WalletWealthPeriod
+        period: WalletWealthPeriod,
+        currency: String
     ): PeraResult<WalletWealth> {
         return try {
-            fetchWalletWealth(addresses, period)
+            fetchWalletWealth(addresses, period, currency)
         } catch (exception: Exception) {
             PeraResult.Error(exception)
         }
@@ -41,11 +42,16 @@ internal class DefaultWalletWealthRepository @Inject constructor(
 
     private suspend fun fetchWalletWealth(
         addresses: List<String>,
-        period: WalletWealthPeriod
+        period: WalletWealthPeriod,
+        currency: String
     ): PeraResult<WalletWealth> {
         val results =
             walletWealthApiService.getWalletWealth(
-                WalletChartRequest(addresses, periodRequestMapper(period)),
+                WalletChartRequest(
+                    accountAddresses = addresses,
+                    period = periodRequestMapper(period),
+                    currency = currency
+                ),
             )
         return PeraResult.Success(walletWealthMapper.map(results))
     }

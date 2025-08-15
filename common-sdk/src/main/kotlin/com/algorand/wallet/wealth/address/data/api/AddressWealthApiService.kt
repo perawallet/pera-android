@@ -19,9 +19,10 @@ import retrofit2.http.Query
 
 internal interface AddressWealthApiService {
 
-    @GET("v1/accounts/{account_address}/wealth/")
+    @GET("v2/accounts/{account_address}/wealth/")
     suspend fun getAddressWealth(
         @Path("account_address") address: String,
-        @Query("period") period: String
+        @Query("period") period: String,
+        @Query("currency") currency: String,
     ): WalletChartResponseResults
 }

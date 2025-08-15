@@ -19,5 +19,6 @@ data class AddressWealthChartData(
     val datetime: OffsetDateTime,
     val usdValue: BigDecimal,
     val algoValue: BigDecimal,
+    val valueInCurrency: BigDecimal,
     val round: Int
 )

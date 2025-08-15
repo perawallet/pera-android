@@ -16,7 +16,9 @@ import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class AssetBalanceHistoryChartData(
+    val round: Long,
     val datetime: OffsetDateTime,
+    val amount: BigDecimal,
     val usdValue: BigDecimal,
-    val amount: BigDecimal
+    val valueInCurrency: BigDecimal
 )

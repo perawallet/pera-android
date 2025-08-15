@@ -18,7 +18,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 internal interface WalletWealthApiService {
-    @POST("v1/wallet/wealth/")
+    @POST("v2/wallet/wealth/")
     suspend fun getWalletWealth(
         @Body wealthRequest: WalletChartRequest,
     ): WalletChartResponseResults

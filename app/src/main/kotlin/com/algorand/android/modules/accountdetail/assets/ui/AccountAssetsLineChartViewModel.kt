@@ -15,8 +15,8 @@ package com.algorand.android.modules.accountdetail.assets.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountdetail.assets.ui.model.AddressLineChartData
-import com.algorand.android.modules.parity.domain.usecase.GetPrimaryAlgoParityValue
-import com.algorand.android.modules.parity.domain.usecase.GetSecondaryAlgoParityValue
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
@@ -31,26 +31,26 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Idle
-import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import com.algorand.wallet.wealth.address.domain.model.AddressWealth
 import com.algorand.wallet.wealth.address.domain.usecase.GetAddressWealth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountAssetsLineChartViewModel @Inject constructor(
     private val walletWealthPeriodMapper: WalletWealthPeriodMapper,
     private val stateDelegate: StateDelegate<ViewState>,
     private val getAddressWealth: GetAddressWealth,
-    private val getPrimaryAlgoParityValue: GetPrimaryAlgoParityValue,
-    private val getSecondaryAlgoParityValue: GetSecondaryAlgoParityValue,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val parityUseCase: ParityUseCase
+
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, StatefulPeraLineChartViewModel {
 
     init {
@@ -65,7 +65,11 @@ class AccountAssetsLineChartViewModel @Inject constructor(
                 ViewState.Content(contentState = ContentState.Loading, INITIAL_CHART_PERIOD, PERIODS)
             }
             selectedPeriodFlow.onEach { period ->
-                val viewState = getAddressWealth(address, walletWealthPeriodMapper(period)).use(
+                val viewState = getAddressWealth(
+                    address = address,
+                    period = walletWealthPeriodMapper(period),
+                    currency = parityUseCase.getPrimaryFiatCurrencyId()
+                ).use(
                     onSuccess = { addressWealth ->
                         ViewState.Content(ContentState.Data(getAddressChartData(addressWealth)), period, PERIODS)
                     },
@@ -98,12 +102,23 @@ class AccountAssetsLineChartViewModel @Inject constructor(
 
     private fun getAddressChartData(addressWealth: AddressWealth): List<PeraLineChartData> {
         return addressWealth.chartData.map { chartData ->
-            val algoAmount = chartData.algoValue.movePointRight(ALGO_DECIMALS).toBigInteger()
-            val primaryAmount = PeraAmount(getPrimaryAlgoParityValue(algoAmount).amountAsCurrency)
-            val secondaryAmount = PeraAmount(getSecondaryAlgoParityValue(algoAmount).amountAsCurrency)
+            val primaryAmount: PeraAmount
+            val secondaryAmount: PeraAmount
+
+            val algoPeraAmount = PeraAmount(chartData.algoValue)
+            val valueInCurrencyPeraAmount = PeraAmount(chartData.valueInCurrency)
+
+            if (isPrimaryCurrencyAlgo()) {
+                primaryAmount = algoPeraAmount
+                secondaryAmount = valueInCurrencyPeraAmount
+            } else {
+                primaryAmount = valueInCurrencyPeraAmount
+                secondaryAmount = algoPeraAmount
+            }
+
             AddressLineChartData(
                 datetime = chartData.datetime,
-                primaryValue = primaryAmount.value,
+                primaryValue = chartData.valueInCurrency,
                 primaryAmountRenderer = getCompactPrimaryAmountRenderer(primaryAmount, Plain),
                 secondaryAmountRenderer = getCompactSecondaryAmountRenderer(secondaryAmount, Plain),
                 round = chartData.round

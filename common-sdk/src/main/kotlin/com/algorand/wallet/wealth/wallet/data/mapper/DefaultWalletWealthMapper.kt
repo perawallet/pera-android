@@ -31,10 +31,11 @@ internal class DefaultWalletWealthMapper @Inject constructor(
     private fun mapToChartData(response: WalletChartResponseResult): WalletWealthChartData? {
         return with(response) {
             WalletWealthChartData(
-                datetime = dateTimeParser.parseOffsetDateTime(datetime.orEmpty()) ?: return null,
-                usdValue = usdValue?.toBigDecimalOrNull() ?: return null,
-                algoValue = algoValue?.toBigDecimalOrNull() ?: return null,
                 round = round?.toInt() ?: return null,
+                datetime = dateTimeParser.parseOffsetDateTime(datetime.orEmpty()) ?: return null,
+                algoValue = algoValue?.toBigDecimalOrNull() ?: return null,
+                usdValue = usdValue?.toBigDecimalOrNull() ?: return null,
+                valueInCurrency = valueInCurrency?.toBigDecimalOrNull() ?: return null,
             )
         }
     }

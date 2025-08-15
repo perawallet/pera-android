@@ -22,11 +22,11 @@ import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.isEqualTo
+import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.flow
 
 class ParityUseCase @Inject constructor(
     private val currencyUseCase: CurrencyUseCase,
@@ -139,7 +139,7 @@ class ParityUseCase @Inject constructor(
         }
     }
 
-    private fun getCurrencyToFetch(): String {
+    fun getPrimaryFiatCurrencyId(): String {
         return if (currencyUseCase.isPrimaryCurrencyAlgo()) {
             CURRENCY_TO_FETCH_WHEN_ALGO_IS_SELECTED
         } else {
@@ -148,7 +148,7 @@ class ParityUseCase @Inject constructor(
     }
 
     fun fetchSelectedCurrencyDetail() = flow {
-        parityRepository.fetchCurrencyDetailDTO(getCurrencyToFetch()).use(
+        parityRepository.fetchCurrencyDetailDTO(getPrimaryFiatCurrencyId()).use(
             onSuccess = { currencyDetailDTO ->
                 val isPrimaryCurrencyAlgo = currencyUseCase.isPrimaryCurrencyAlgo()
                 emit(

@@ -208,8 +208,8 @@ class DefaultSwapQuoteMapperTest {
             slippage = "0.01",
             price = "1.0",
             priceImpact = "0.05",
-            peraFeeAmount = BigDecimal("0.001"),
-            exchangeFeeAmount = BigDecimal("0.002")
+            peraFeeAmount = BigInteger.valueOf(1000),
+            exchangeFeeAmount = BigInteger.valueOf(2000)
         )
 
         val VALID_QUOTE = SwapQuoteV2(
@@ -225,9 +225,9 @@ class DefaultSwapQuoteMapperTest {
             priceImpact = 0.05f,
             slippage = 0.01f,
             fee = SwapQuoteV2.SwapFee(
-                peraFeeAmount = BigDecimal("0.001"),
-                exchangeFeeAmount = BigDecimal("0.002"),
-                totalFee = BigDecimal("0.003")
+                peraFeeAmount = BigDecimal("0.001000"),
+                exchangeFeeAmount = BigDecimal("0.002000"),
+                totalFee = BigDecimal("0.003000")
             )
         )
     }

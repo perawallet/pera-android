@@ -110,6 +110,8 @@
 
     <include app:graph="@navigation/security_navigation" />
 
+    <include app:graph="@navigation/discover_url_viewer_navigation" />
+
     <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
@@ -1577,7 +1579,7 @@
     <fragment
         android:id="@+id/swapAssetOutSelectionFragment"
         android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment"
-        android:label="SwapAssetOutSelectionFragment" >
+        android:label="SwapAssetOutSelectionFragment">
         <argument
             android:name="address"
             app:argType="string" />

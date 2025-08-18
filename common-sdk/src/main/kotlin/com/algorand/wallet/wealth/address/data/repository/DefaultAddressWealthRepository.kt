@@ -27,16 +27,24 @@ internal class DefaultAddressWealthRepository @Inject constructor(
     private val addressWealthMapper: AddressWealthMapper
 ) : AddressWealthRepository {
 
-    override suspend fun getAddressWealth(address: String, period: WalletWealthPeriod): PeraResult<AddressWealth> {
+    override suspend fun getAddressWealth(
+        address: String,
+        period: WalletWealthPeriod,
+        currency: String
+    ): PeraResult<AddressWealth> {
         return try {
-            fetchAddressWealth(address, period)
+            fetchAddressWealth(address, period, currency)
         } catch (exception: Exception) {
             PeraResult.Error(exception)
         }
     }
 
-    private suspend fun fetchAddressWealth(address: String, period: WalletWealthPeriod): PeraResult<AddressWealth> {
-        val results = addressWealthApiService.getAddressWealth(address, periodRequestMapper(period))
+    private suspend fun fetchAddressWealth(
+        address: String,
+        period: WalletWealthPeriod,
+        currency: String
+    ): PeraResult<AddressWealth> {
+        val results = addressWealthApiService.getAddressWealth(address, periodRequestMapper(period), currency)
         return PeraResult.Success(addressWealthMapper.map(results))
     }
 }

@@ -15,8 +15,9 @@ package com.algorand.wallet.wealth.asset.data.model
 import com.google.gson.annotations.SerializedName
 
 internal data class AssetBalanceHistoryResponseResult(
+    @SerializedName("round") val round: Long?,
+    @SerializedName("datetime") val datetime: String?,
     @SerializedName("amount") val amount: String?,
     @SerializedName("usd_value") val usdValue: String?,
-    @SerializedName("value_in_currency") val valueInCurrency: String?,
-    @SerializedName("datetime") val datetime: String?
+    @SerializedName("value_in_currency") val valueInCurrency: String?
 )

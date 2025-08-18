@@ -20,10 +20,10 @@ import com.algorand.wallet.wealth.wallet.data.model.WalletChartResponseResult
 import com.algorand.wallet.wealth.wallet.data.model.WalletChartResponseResults
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.time.OffsetDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigDecimal
+import java.time.OffsetDateTime
 
 class DefaultAddressWealthMapperTest {
 
@@ -85,10 +85,11 @@ class DefaultAddressWealthMapperTest {
     private companion object {
         const val DATE_TIME_RESPONSE = "2023-10-01T00:00:00Z"
         val VALID_CHART_DATA_RESPONSE = WalletChartResponseResult(
+            round = 1234567,
             datetime = DATE_TIME_RESPONSE,
-            usdValue = "1000.12",
             algoValue = "100.23",
-            round = 1234567
+            usdValue = "1000.12",
+            valueInCurrency = "10099.23"
         )
 
         val INVALID_DATETIME_RESPONSE = VALID_CHART_DATA_RESPONSE.copy(datetime = "invalid-datetime")
@@ -101,10 +102,11 @@ class DefaultAddressWealthMapperTest {
 
         val OFFSET_DATETIME: OffsetDateTime = peraFixture()
         val VALID_CHART_DATA = AddressWealthChartData(
+            round = 1234567,
             datetime = OFFSET_DATETIME,
-            usdValue = BigDecimal.valueOf(1000.12),
             algoValue = BigDecimal.valueOf(100.23),
-            round = 1234567
+            usdValue = BigDecimal.valueOf(1000.12),
+            valueInCurrency = BigDecimal.valueOf(10099.23)
         )
     }
 }

@@ -17,5 +17,9 @@ import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 
 internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
+    suspend fun getWalletWealth(
+        addresses: List<String>,
+        period: WalletWealthPeriod,
+        currency: String
+    ): PeraResult<WalletWealth>
 }

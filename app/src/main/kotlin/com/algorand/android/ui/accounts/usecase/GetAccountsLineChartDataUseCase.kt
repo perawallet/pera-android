@@ -12,14 +12,13 @@
 
 package com.algorand.android.ui.accounts.usecase
 
-import com.algorand.android.modules.parity.domain.usecase.GetPrimaryAlgoParityValue
-import com.algorand.android.modules.parity.domain.usecase.GetSecondaryAlgoParityValue
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
-import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 import com.algorand.wallet.wealth.wallet.domain.usecase.GetWalletWealth
@@ -27,26 +26,36 @@ import javax.inject.Inject
 
 internal class GetAccountsLineChartDataUseCase @Inject constructor(
     private val getWalletWealth: GetWalletWealth,
-    private val getPrimaryAlgoParityValue: GetPrimaryAlgoParityValue,
-    private val getSecondaryAlgoParityValue: GetSecondaryAlgoParityValue,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val parityUseCase: ParityUseCase
 ) : GetAccountsLineChartData {
 
     override suspend fun invoke(
         addresses: List<String>,
         period: WalletWealthPeriod
     ): PeraResult<List<AccountsLineChartData>> {
-        return getWalletWealth(addresses, period).map { walletWealth ->
+        return getWalletWealth(addresses, period, parityUseCase.getPrimaryFiatCurrencyId()).map { walletWealth ->
             walletWealth.chartData.map { chartData ->
-                val algoAmount = chartData.algoValue.movePointRight(ALGO_DECIMALS).toBigInteger()
-                val primaryAmount = PeraAmount(getPrimaryAlgoParityValue(algoAmount).amountAsCurrency)
-                val secondaryAmount = PeraAmount(getSecondaryAlgoParityValue(algoAmount).amountAsCurrency)
+                val primaryAmount: PeraAmount
+                val secondaryAmount: PeraAmount
+                val algoPeraAmount = PeraAmount(chartData.algoValue)
+                val valueInCurrencyPeraAmount = PeraAmount(chartData.valueInCurrency)
+
+                if (isPrimaryCurrencyAlgo()) {
+                    primaryAmount = algoPeraAmount
+                    secondaryAmount = valueInCurrencyPeraAmount
+                } else {
+                    primaryAmount = valueInCurrencyPeraAmount
+                    secondaryAmount = algoPeraAmount
+                }
+
                 val primaryRenderer = getCompactPrimaryAmountRenderer(primaryAmount, Plain)
                 val secondaryRenderer = getCompactSecondaryAmountRenderer(secondaryAmount, Plain)
                 AccountsLineChartData(
                     datetime = chartData.datetime,
-                    primaryValue = primaryAmount.value,
+                    primaryValue = chartData.valueInCurrency,
                     primaryAmountRenderer = primaryRenderer,
                     secondaryAmountRenderer = secondaryRenderer,
                     round = chartData.round

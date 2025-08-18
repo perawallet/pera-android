@@ -16,8 +16,9 @@ import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class WalletWealthChartData(
+    val round: Int,
     val datetime: OffsetDateTime,
-    val usdValue: BigDecimal,
     val algoValue: BigDecimal,
-    val round: Int
+    val usdValue: BigDecimal,
+    val valueInCurrency: BigDecimal
 )

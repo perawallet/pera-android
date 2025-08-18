@@ -20,14 +20,13 @@ import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Helper class to manage Algo price by selected currency
  * Should be provided by Hilt as Singleton
  */
-class ParityManager constructor(
+class ParityManager(
     private val parityUseCase: ParityUseCase,
     private val currencyUseCase: CurrencyUseCase
 ) : BaseCacheManager() {

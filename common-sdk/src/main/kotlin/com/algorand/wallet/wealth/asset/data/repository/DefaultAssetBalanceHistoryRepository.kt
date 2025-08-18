@@ -31,10 +31,11 @@ internal class DefaultAssetBalanceHistoryRepository @Inject constructor(
     override suspend fun getAssetBalanceHistory(
         address: String,
         assetId: Long,
-        period: WalletWealthPeriod
+        period: WalletWealthPeriod,
+        currency: String
     ): PeraResult<AssetBalanceHistory> {
         return try {
-            fetchAssetBalanceHistory(address, assetId, period)
+            fetchAssetBalanceHistory(address, assetId, period, currency)
         } catch (exception: Exception) {
             PeraResult.Error(exception)
         }
@@ -43,13 +44,15 @@ internal class DefaultAssetBalanceHistoryRepository @Inject constructor(
     private suspend fun fetchAssetBalanceHistory(
         address: String,
         assetId: Long,
-        period: WalletWealthPeriod
+        period: WalletWealthPeriod,
+        currency: String
     ): PeraResult<AssetBalanceHistory> {
         val safeAssetId = getSafeAssetIdForRequest(assetId)
         val results = assetBalanceHistoryApiService.getAssetBalanceHistory(
             address,
             safeAssetId,
-            periodRequestMapper(period)
+            periodRequestMapper(period),
+            currency
         )
         return PeraResult.Success(assetBalanceHistoryMapper.map(results))
     }

@@ -20,6 +20,7 @@ fun interface GetAssetBalanceHistory {
     suspend operator fun invoke(
         address: String,
         assetId: Long,
-        period: WalletWealthPeriod
+        period: WalletWealthPeriod,
+        currency: String
     ): PeraResult<AssetBalanceHistory>
 }

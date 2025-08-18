@@ -19,10 +19,11 @@ import retrofit2.http.Query
 
 internal interface AssetBalanceHistoryApiService {
 
-    @GET("v1/accounts/{account_address}/assets/{asset_id}/balance-history/")
+    @GET("v2/accounts/{account_address}/assets/{asset_id}/balance-history/")
     suspend fun getAssetBalanceHistory(
         @Path("account_address") address: String,
         @Path("asset_id") assetId: Long,
-        @Query("period") period: String
+        @Query("period") period: String,
+        @Query("currency") currency: String
     ): AssetBalanceHistoryResponseResults
 }

@@ -15,7 +15,7 @@ package com.algorand.wallet.swap.data.mapper
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
 import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -23,9 +23,9 @@ internal class DefaultSwapAssetDetailMapper @Inject constructor(
     private val verificationTierMapper: VerificationTierMapper
 ) : SwapAssetDetailMapper {
 
-    override fun invoke(response: SwapQuoteAssetDetailResponse?): SwapQuote.AssetDetail? {
+    override fun invoke(response: SwapQuoteAssetDetailResponse?): SwapQuoteV2.AssetDetail? {
         if (response == null) return null
-        return SwapQuote.AssetDetail(
+        return SwapQuoteV2.AssetDetail(
             assetId = getSafeAssetIdForResponse(response.assetId) ?: return null,
             logoUrl = response.logoUrl,
             name = response.name,

@@ -16,7 +16,7 @@ import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuoteException
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAlgoBalance
@@ -31,7 +31,7 @@ internal class GetSwapQuoteDetailsUseCase @Inject constructor(
     private val getAccountMinBalance: GetAccountMinBalance
 ) : GetSwapQuoteDetails {
 
-    override suspend fun invoke(quotes: List<SwapQuote>): List<SwapQuoteDetail> {
+    override suspend fun invoke(quotes: List<SwapQuoteV2>): List<SwapQuoteDetail> {
         return quotes.map { quote ->
             when {
                 !hasAccountEnoughBalanceToCompleteSwap(quote) -> getInsufficientBalanceState(quote)
@@ -41,13 +41,13 @@ internal class GetSwapQuoteDetailsUseCase @Inject constructor(
         }
     }
 
-    private suspend fun hasAccountEnoughBalanceToCompleteSwap(quote: SwapQuote): Boolean {
+    private suspend fun hasAccountEnoughBalanceToCompleteSwap(quote: SwapQuoteV2): Boolean {
         val assetInAmount = quote.assetInAmount.amount
         val userBalance = getUserBalance(quote.accountAddress, quote.assetInDetail)
         return assetInAmount <= userBalance
     }
 
-    private suspend fun hasAccountEnoughBalanceToPayFees(quote: SwapQuote): Boolean {
+    private suspend fun hasAccountEnoughBalanceToPayFees(quote: SwapQuoteV2): Boolean {
         with(quote) {
             val userAlgoBalance = getAlgoBalance(accountAddress)
             val minRequiredBalance = getMinRequiredBalance(accountAddress)
@@ -60,19 +60,19 @@ internal class GetSwapQuoteDetailsUseCase @Inject constructor(
         }
     }
 
-    private suspend fun getUserBalance(address: String, assetDetail: SwapQuote.AssetDetail): BigDecimal {
+    private suspend fun getUserBalance(address: String, assetDetail: SwapQuoteV2.AssetDetail): BigDecimal {
         val assetHolding = getAccountAssetHolding(address, assetDetail.assetId) ?: return BigDecimal.ZERO
         return assetHolding.amount.toBigDecimal().movePointLeft(assetDetail.fractionDecimals)
     }
 
-    private fun getInsufficientBalanceState(quote: SwapQuote): SwapQuoteDetail {
+    private fun getInsufficientBalanceState(quote: SwapQuoteV2): SwapQuoteDetail {
         val exception = with(quote) {
             if (isAssetInAlgo) InsufficientAlgoBalance else InsufficientAssetBalance(assetInDetail.shortName)
         }
         return SwapQuoteDetail(quote, SwapQuoteDetail.SwapQuoteState.NonSwappable(exception))
     }
 
-    private suspend fun getInsufficientBalanceForFeeState(quote: SwapQuote): SwapQuoteDetail {
+    private suspend fun getInsufficientBalanceForFeeState(quote: SwapQuoteV2): SwapQuoteDetail {
         val minRequiredBalance = getAccountMinBalance(quote.accountAddress).toBigDecimal().movePointLeft(ALGO_DECIMALS)
         val exception = SwapQuoteException.InsufficientBalanceForFee(minRequiredBalance)
         return SwapQuoteDetail(quote, SwapQuoteDetail.SwapQuoteState.NonSwappable(exception))

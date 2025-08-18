@@ -31,7 +31,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import io.mockk.coEvery
@@ -199,7 +199,7 @@ class DefaultSwapRepositoryTest {
     }
 
     private companion object {
-        val SWAP_QUOTE = peraFixture<SwapQuote>()
+        val SWAP_QUOTE = peraFixture<SwapQuoteV2>()
         val SWAP_REQUEST_PAYLOAD = peraFixture<SwapQuoteRequestPayload>()
         val SWAP_REQUEST_BODY = peraFixture<SwapQuoteRequestBody>()
         val SWAP_QUOTE_RESPONSE = peraFixture<SwapQuoteResponse>()

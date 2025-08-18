@@ -10,14 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.ui.swap.confirmation.model
 
-data class SwapQuoteDetail(
-    val quote: SwapQuoteV2,
-    val state: SwapQuoteState
+import com.algorand.android.ui.common.amount.AmountRenderer
+
+data class SwapPriceImpact(
+    val percentage: AmountRenderer,
+    val warningStatus: WarningStatus
 ) {
-    sealed interface SwapQuoteState {
-        data object Swappable : SwapQuoteState
-        data class NonSwappable(val exception: SwapQuoteException) : SwapQuoteState
+
+    sealed interface WarningStatus {
+        data object NoWarning : WarningStatus
+
+        data class Level1(val threshold: Float) : WarningStatus
+
+        data class Level2(val threshold: Float) : WarningStatus
+
+        data class Level3(val threshold: Float) : WarningStatus
     }
 }

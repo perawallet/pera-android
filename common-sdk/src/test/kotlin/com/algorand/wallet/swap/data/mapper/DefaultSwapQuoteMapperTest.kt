@@ -17,7 +17,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.data.model.SwapTypeResponse
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapType
 import io.mockk.every
@@ -147,7 +147,7 @@ class DefaultSwapQuoteMapperTest {
         val expected = VALID_QUOTE.copy(
             priceImpact = 0f,
             slippage = 0f,
-            fee = SwapQuote.SwapFee(
+            fee = SwapQuoteV2.SwapFee(
                 peraFeeAmount = BigDecimal.ZERO,
                 exchangeFeeAmount = BigDecimal.ZERO,
                 totalFee = BigDecimal.ZERO
@@ -182,14 +182,14 @@ class DefaultSwapQuoteMapperTest {
 
         val ASSET_IN_DETAIL_RESPONSE = peraFixture<SwapQuoteAssetDetailResponse>()
         val ASSET_OUT_DETAIL_RESPONSE = peraFixture<SwapQuoteAssetDetailResponse>()
-        val ASSET_IN_DETAIL = peraFixture<SwapQuote.AssetDetail>()
-        val ASSET_OUT_DETAIL = peraFixture<SwapQuote.AssetDetail>()
+        val ASSET_IN_DETAIL = peraFixture<SwapQuoteV2.AssetDetail>()
+        val ASSET_OUT_DETAIL = peraFixture<SwapQuoteV2.AssetDetail>()
 
         val QUOTE_PROVIDER_RESPONSE = peraFixture<SwapQuoteProviderResponse>()
         val QUOTE_PROVIDER = peraFixture<SwapQuoteProvider>()
 
-        val ASSET_IN_AMOUNT = peraFixture<SwapQuote.AssetAmount>()
-        val ASSET_OUT_AMOUNT = peraFixture<SwapQuote.AssetAmount>()
+        val ASSET_IN_AMOUNT = peraFixture<SwapQuoteV2.AssetAmount>()
+        val ASSET_OUT_AMOUNT = peraFixture<SwapQuoteV2.AssetAmount>()
 
         val VALID_RESPONSE = SwapQuoteResponse(
             id = 123L,
@@ -208,11 +208,11 @@ class DefaultSwapQuoteMapperTest {
             slippage = "0.01",
             price = "1.0",
             priceImpact = "0.05",
-            peraFeeAmount = BigDecimal("0.001"),
-            exchangeFeeAmount = BigDecimal("0.002")
+            peraFeeAmount = BigInteger.valueOf(1000),
+            exchangeFeeAmount = BigInteger.valueOf(2000)
         )
 
-        val VALID_QUOTE = SwapQuote(
+        val VALID_QUOTE = SwapQuoteV2(
             quoteId = 123L,
             provider = QUOTE_PROVIDER,
             swapType = SwapType.FIXED_INPUT,
@@ -224,10 +224,10 @@ class DefaultSwapQuoteMapperTest {
             price = 1.0f,
             priceImpact = 0.05f,
             slippage = 0.01f,
-            fee = SwapQuote.SwapFee(
-                peraFeeAmount = BigDecimal("0.001"),
-                exchangeFeeAmount = BigDecimal("0.002"),
-                totalFee = BigDecimal("0.003")
+            fee = SwapQuoteV2.SwapFee(
+                peraFeeAmount = BigDecimal("0.001000"),
+                exchangeFeeAmount = BigDecimal("0.002000"),
+                totalFee = BigDecimal("0.003000")
             )
         )
     }

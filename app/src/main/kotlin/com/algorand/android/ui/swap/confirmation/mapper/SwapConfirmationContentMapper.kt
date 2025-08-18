@@ -10,14 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.ui.swap.confirmation.mapper
 
-data class SwapQuoteDetail(
-    val quote: SwapQuoteV2,
-    val state: SwapQuoteState
-) {
-    sealed interface SwapQuoteState {
-        data object Swappable : SwapQuoteState
-        data class NonSwappable(val exception: SwapQuoteException) : SwapQuoteState
-    }
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+
+interface SwapConfirmationContentMapper {
+    suspend fun map(quote: SwapQuoteV2): SwapConfirmationViewModel.ViewState.Content
 }

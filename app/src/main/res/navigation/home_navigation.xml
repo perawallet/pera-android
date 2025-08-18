@@ -1566,6 +1566,9 @@
         <action
             android:id="@+id/action_swapFragment_to_swapAddressSelectionFragment"
             app:destination="@id/swapAddressSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapConfirmationFragment"
+            app:destination="@id/swapConfirmationFragment" />
     </fragment>
     <fragment
         android:id="@+id/swapAssetInSelectionFragment"
@@ -1591,6 +1594,40 @@
         android:id="@+id/swapAddressSelectionFragment"
         android:name="com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFragment"
         android:label="SwapAddressSelectionFragment" />
+    <fragment
+        android:id="@+id/swapConfirmationFragment"
+        android:name="com.algorand.android.ui.swap.confirmation.view.SwapConfirmationFragment"
+        android:label="SwapConfirmationFragment">
 
+        <argument
+            android:name="swapQuote"
+            app:argType="com.algorand.wallet.swap.domain.model.SwapQuoteV2" />
+
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapPriceImpactInfoBottomSheet"
+            app:destination="@id/swapPriceImpactInfoBottomSheet" />
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapSlippageToleranceInfoBottomSheet"
+            app:destination="@id/swapSlippageToleranceInfoBottomSheet" />
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapExchangeFeeInfoBottomSheet"
+            app:destination="@id/swapExchangeFeeInfoBottomSheet" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/swapPriceImpactInfoBottomSheet"
+        android:name="com.algorand.android.modules.swap.priceimpact.ui.PriceImpactInfoBottomSheet"
+        android:label="PriceImpactInfoBottomSheet"
+        tools:layout="@layout/bottom_sheet_base_information" />
+    <dialog
+        android:id="@+id/swapSlippageToleranceInfoBottomSheet"
+        android:name="com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceInfoBottomSheet"
+        android:label="SlippageToleranceInfoBottomSheet"
+        tools:layout="@layout/bottom_sheet_base_information" />
+    <dialog
+        android:id="@+id/swapExchangeFeeInfoBottomSheet"
+        android:name="com.algorand.android.modules.swap.confirmswap.ui.ExchangeFeeInfoBottomSheet"
+        android:label="ExchangeFeeInfoBottomSheet"
+        tools:layout="@layout/bottom_sheet_base_information" />
 
 </navigation>

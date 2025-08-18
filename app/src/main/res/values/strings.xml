@@ -1539,5 +1539,8 @@
     <string name="you_receive">You receive</string>
     <string name="provider">Provider</string>
     <string name="provider_best_price_available">Provider (Best price available)</string>
+    <string name="slide_to_confirm">Slide To Confirm</string>
+    <string name="confirming">Confirming</string>
+    <string name="confirmed">Confirmed!</string>
 
 </resources>

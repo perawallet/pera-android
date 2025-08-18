@@ -12,12 +12,16 @@
 
 package com.algorand.wallet.swap.domain.model
 
+import android.os.Parcelable
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlinx.parcelize.Parcelize
 
-data class SwapQuote(
+// TODO rename this when legacy swap quotes are removed
+@Parcelize
+data class SwapQuoteV2(
     val quoteId: Long,
     val provider: SwapQuoteProvider,
     val swapType: SwapType,
@@ -30,7 +34,7 @@ data class SwapQuote(
     val priceImpact: Float,
     val fee: SwapFee,
     val slippage: Float
-) {
+) : Parcelable {
 
     val isAssetInAlgo: Boolean
         get() = assetInDetail.assetId == ALGO_ID
@@ -38,18 +42,21 @@ data class SwapQuote(
     val isAssetOutAlgo: Boolean
         get() = assetOutDetail.assetId == ALGO_ID
 
+    @Parcelize
     data class SwapFee(
         val peraFeeAmount: BigDecimal,
         val exchangeFeeAmount: BigDecimal,
         val totalFee: BigDecimal
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class AssetAmount(
         val amount: BigDecimal,
         val amountInUsdValue: BigDecimal,
         val amountWithSlippage: BigDecimal
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class AssetDetail(
         val assetId: Long,
         val logoUrl: String?,
@@ -59,5 +66,5 @@ data class SwapQuote(
         val fractionDecimals: Int,
         val verificationTier: VerificationTier,
         val usdValue: BigDecimal
-    )
+    ) : Parcelable
 }

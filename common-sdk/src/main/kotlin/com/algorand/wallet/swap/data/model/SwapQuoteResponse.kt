@@ -50,7 +50,7 @@ internal data class SwapQuoteResponse(
     @SerializedName("price_impact")
     val priceImpact: String?,
     @SerializedName("pera_fee_amount")
-    val peraFeeAmount: BigDecimal?,
+    val peraFeeAmount: BigInteger?,
     @SerializedName("exchange_fee_amount")
-    val exchangeFeeAmount: BigDecimal?
+    val exchangeFeeAmount: BigInteger?
 )

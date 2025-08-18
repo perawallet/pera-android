@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.swap.widget.viewmodel
 
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.viewmodel.StateViewModel
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +22,6 @@ interface SwapButtonViewModel : StateViewModel<SwapButtonViewModel.ViewState> {
 
     sealed interface ViewState {
         data object Invisible : ViewState
-        data class Visible(val isEnabled: Boolean) : ViewState
+        data class Visible(val isEnabled: Boolean, val quote: SwapQuoteV2? = null) : ViewState
     }
 }

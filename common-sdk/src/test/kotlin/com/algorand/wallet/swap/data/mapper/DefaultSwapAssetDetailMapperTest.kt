@@ -16,7 +16,7 @@ import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
 import com.algorand.wallet.asset.data.model.VerificationTierResponse
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import io.mockk.every
 import io.mockk.mockk
 import java.math.BigDecimal
@@ -95,7 +95,7 @@ class DefaultSwapAssetDetailMapperTest {
             usdValue = BigDecimal.ONE
         )
 
-        val VALID_ASSET_DETAIL = SwapQuote.AssetDetail(
+        val VALID_ASSET_DETAIL = SwapQuoteV2.AssetDetail(
             assetId = 12345,
             logoUrl = "https://example.com/logo.png",
             name = "Test Asset",

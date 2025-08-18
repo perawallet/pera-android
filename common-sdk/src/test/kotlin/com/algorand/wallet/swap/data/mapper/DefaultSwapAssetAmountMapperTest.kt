@@ -15,7 +15,7 @@ package com.algorand.wallet.swap.data.mapper
 import com.algorand.test.peraFixture
 import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import java.math.BigDecimal
 import java.math.BigInteger
 import org.junit.Assert.assertEquals
@@ -166,13 +166,13 @@ class DefaultSwapAssetAmountMapperTest {
             assetOutAmountWithSlippage = BigInteger.TEN
         )
 
-        val VALID_ASSET_IN_AMOUNT = SwapQuote.AssetAmount(
+        val VALID_ASSET_IN_AMOUNT = SwapQuoteV2.AssetAmount(
             amount = BigDecimal("0.000001"),
             amountInUsdValue = BigDecimal.TEN,
             amountWithSlippage = BigDecimal("0.000010")
         )
 
-        val VALID_ASSET_OUT_AMOUNT = SwapQuote.AssetAmount(
+        val VALID_ASSET_OUT_AMOUNT = SwapQuoteV2.AssetAmount(
             amount = BigDecimal("0.000001"),
             amountInUsdValue = BigDecimal.TEN,
             amountWithSlippage = BigDecimal("0.000010")

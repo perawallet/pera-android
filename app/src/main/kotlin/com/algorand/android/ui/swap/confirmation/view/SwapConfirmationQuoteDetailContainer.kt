@@ -150,24 +150,26 @@ private fun SlippageTolerance(slippage: Float, onInfoClick: () -> Unit) {
             Spacer(modifier = Modifier.width(6.dp))
             InfoIcon(onClick = onInfoClick)
         },
-        valueContent = { QuoteDetailValue(text = "${slippage}%") }
+        valueContent = { QuoteDetailValue(text = "$slippage%") }
     )
 }
 
 @Composable
 private fun PriceImpact(priceImpact: SwapPriceImpact, onInfoClick: () -> Unit) {
-    val (labelColor, valueColor) = if (priceImpact.warningStatus is NoWarning) {
-        PeraTheme.colors.text.gray to PeraTheme.colors.text.main
-    } else {
-        PeraTheme.colors.helper.negative to PeraTheme.colors.helper.negative
-    }
+    val hasWarning = priceImpact.warningStatus !is NoWarning
+    val warningColor = PeraTheme.colors.helper.negative
     QuoteDetailRow(
         labelContent = {
+            val labelColor = if (hasWarning) warningColor else PeraTheme.colors.text.gray
+            val infoIconColor = if (hasWarning) warningColor else PeraTheme.colors.text.grayLighter
             QuoteDetailLabel(textResId = R.string.price_impact, textColor = labelColor)
             Spacer(modifier = Modifier.width(6.dp))
-            InfoIcon(onClick = onInfoClick, tintColor = labelColor)
+            InfoIcon(onClick = onInfoClick, tintColor = infoIconColor)
         },
-        valueContent = { QuoteDetailValue(text = priceImpact.percentage.getDisplayValue(), textColor = valueColor) }
+        valueContent = {
+            val valueColor = if (hasWarning) warningColor else PeraTheme.colors.text.main
+            QuoteDetailValue(text = priceImpact.percentage.getDisplayValue(), textColor = valueColor)
+        }
     )
 }
 
@@ -204,7 +206,7 @@ private fun QuoteDetailRow(
     labelContent: @Composable RowScope.() -> Unit,
     valueContent: @Composable RowScope.() -> Unit,
 ) {
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Row(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically

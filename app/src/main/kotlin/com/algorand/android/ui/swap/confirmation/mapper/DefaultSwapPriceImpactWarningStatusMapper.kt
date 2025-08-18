@@ -16,6 +16,7 @@ import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.SimpleFormattedAmount
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact
+import java.math.RoundingMode.HALF_EVEN
 import javax.inject.Inject
 
 internal class DefaultSwapPriceImpactWarningStatusMapper @Inject constructor() : SwapPriceImpactWarningStatusMapper {
@@ -27,7 +28,10 @@ internal class DefaultSwapPriceImpactWarningStatusMapper @Inject constructor() :
             priceImpactPercentage < FIFTEEN_PERCENT -> SwapPriceImpact.WarningStatus.Level2(TEN_PERCENT)
             else -> SwapPriceImpact.WarningStatus.Level3(FIFTEEN_PERCENT)
         }
-        val renderer = AmountRenderer(SimpleFormattedAmount("${priceImpactPercentage}%"), Plain)
+        val percentage = priceImpactPercentage.toBigDecimal()
+            .setScale(PRICE_IMPACT_PERCENTAGE_SCALE, HALF_EVEN)
+            .toPlainString()
+        val renderer = AmountRenderer(SimpleFormattedAmount("$percentage%"), Plain)
         return SwapPriceImpact(renderer, warningStatus)
     }
 
@@ -35,5 +39,6 @@ internal class DefaultSwapPriceImpactWarningStatusMapper @Inject constructor() :
         private const val FIVE_PERCENT = 5f
         private const val TEN_PERCENT = 10f
         private const val FIFTEEN_PERCENT = 15f
+        private const val PRICE_IMPACT_PERCENTAGE_SCALE = 4
     }
 }

@@ -27,14 +27,21 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.algorand.android.R
@@ -72,13 +79,11 @@ fun AssetIcon(modifier: Modifier, drawable: AssetIconDrawable) {
 
 @Composable
 private fun BoxWithConstraintsScope.AlgoIcon() {
-    val padding = with(LocalDensity.current) {
-        constraints.maxWidth.toDp().value / SIZE_PADDING_RATIO
-    }
+    val padding = getPaddingBySize(constraints.maxWidth, LocalDensity.current)
     Icon(
         modifier = Modifier
             .background(color = Color.Black, shape = CircleShape)
-            .padding(padding.dp),
+            .padding(padding),
         contentDescription = null,
         painter = painterResource(id = R.drawable.ic_algo),
         tint = Color.White
@@ -103,18 +108,30 @@ private fun BoxWithConstraintsScope.AssetDrawableIcon(drawable: AssetIconDrawabl
 private fun AssetNameIcon(unitName: String?) {
     val safeAssetName = if (unitName.isNullOrBlank()) stringResource(R.string.unnamed) else unitName
     val displayName = safeAssetName.take(MAX_ASSET_DISPLAY_CHAR).uppercase()
+    var padding by remember { mutableStateOf(8.dp) }
+    val density = LocalDensity.current
     Box(
         Modifier
             .fillMaxSize()
             .background(color = PeraTheme.colors.background.primary, shape = CircleShape)
             .border(1.dp, PeraTheme.colors.layer.grayLighter, shape = CircleShape)
-            .padding(horizontal = 4.dp),
+            .onSizeChanged {
+                padding = getPaddingBySize(it.width, density)
+            }
+            .padding(horizontal = padding),
         contentAlignment = Alignment.Center
     ) {
         BasicText(
             text = displayName,
             maxLines = 1,
             autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = 20.sp),
+            style = PeraTheme.typography.body.regular.sans.copy(
+                color = PeraTheme.colors.text.gray
+            )
         )
     }
+}
+
+private fun getPaddingBySize(widthPx: Int, density: Density): Dp {
+    return with(density) { (widthPx / SIZE_PADDING_RATIO).toDp() }
 }

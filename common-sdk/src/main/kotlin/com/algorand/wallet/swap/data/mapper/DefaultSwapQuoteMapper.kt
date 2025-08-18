@@ -14,7 +14,7 @@ package com.algorand.wallet.swap.data.mapper
 
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapType
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -25,8 +25,8 @@ internal class DefaultSwapQuoteMapper @Inject constructor(
     private val assetAmountMapper: SwapAssetAmountMapper
 ) : SwapQuoteMapper {
 
-    override fun invoke(response: SwapQuoteResponse): SwapQuote? {
-        return SwapQuote(
+    override fun invoke(response: SwapQuoteResponse): SwapQuoteV2? {
+        return SwapQuoteV2(
             quoteId = response.id ?: return null,
             accountAddress = response.swapperAddress ?: return null,
             provider = quoteProviderMapper(response.provider) ?: return null,
@@ -42,10 +42,10 @@ internal class DefaultSwapQuoteMapper @Inject constructor(
         )
     }
 
-    private fun mapSwapFee(response: SwapQuoteResponse): SwapQuote.SwapFee {
+    private fun mapSwapFee(response: SwapQuoteResponse): SwapQuoteV2.SwapFee {
         val peraFee = response.peraFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS) ?: BigDecimal.ZERO
         val exchangeFee = response.exchangeFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS) ?: BigDecimal.ZERO
         val totalFee = peraFee + exchangeFee
-        return SwapQuote.SwapFee(peraFee, exchangeFee, totalFee)
+        return SwapQuoteV2.SwapFee(peraFee, exchangeFee, totalFee)
     }
 }

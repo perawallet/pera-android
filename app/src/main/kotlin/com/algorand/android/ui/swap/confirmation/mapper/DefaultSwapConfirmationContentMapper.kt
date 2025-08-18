@@ -27,8 +27,8 @@ import com.algorand.android.ui.common.amount.SimpleFormattedAmount
 import com.algorand.android.ui.compose.widget.asset.icon.mapper.AssetIconDrawableMapper
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.swap.domain.model.SwapQuote
-import com.algorand.wallet.swap.domain.model.SwapQuote.AssetDetail
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2.AssetDetail
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.math.RoundingMode.FLOOR
@@ -43,7 +43,7 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
     private val swapAppxValueParityHelper: SwapAppxValueParityHelper
 ) : SwapConfirmationContentMapper {
 
-    override suspend fun map(quote: SwapQuote): Content {
+    override suspend fun map(quote: SwapQuoteV2): Content {
         return Content(
             quote = quote,
             accountDisplayName = getAccountDisplayName(quote.accountAddress),
@@ -59,7 +59,7 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
         )
     }
 
-    private fun getAssetDetail(assetDetail: AssetDetail, assetAmount: SwapQuote.AssetAmount): Content.AssetDetail {
+    private fun getAssetDetail(assetDetail: AssetDetail, assetAmount: SwapQuoteV2.AssetAmount): Content.AssetDetail {
         return with(assetDetail) {
             Content.AssetDetail(
                 amount = getAmountRenderer(assetAmount.amount, this),
@@ -82,7 +82,7 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
         )
     }
 
-    private fun getApproximateAmount(assetDetail: AssetDetail, assetAmount: SwapQuote.AssetAmount): AmountRenderer {
+    private fun getApproximateAmount(assetDetail: AssetDetail, assetAmount: SwapQuoteV2.AssetAmount): AmountRenderer {
         val usdValuePerAsset = assetAmount.amountInUsdValue.divide(assetAmount.amount, RoundingMode.HALF_EVEN)
         val formattedAmount = swapAppxValueParityHelper.getDisplayedParityCurrencyValue(
             assetAmount = assetAmount.amount.movePointRight(assetDetail.fractionDecimals).toBigInteger(),
@@ -93,7 +93,7 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
         return AmountRenderer(SimpleFormattedAmount(formattedAmount), Plain)
     }
 
-    private fun getAssetInToOutPriceRatio(quote: SwapQuote): Content.PriceRatio {
+    private fun getAssetInToOutPriceRatio(quote: SwapQuoteV2): Content.PriceRatio {
         return with(quote) {
             val ratio = assetInAmount.amount.divide(assetOutAmount.amount, assetInDetail.fractionDecimals, FLOOR)
             val formattedRatio = SimplePlainFormattedAmount(
@@ -108,7 +108,7 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
         }
     }
 
-    private fun getAssetOutToInPriceRatio(quote: SwapQuote): Content.PriceRatio {
+    private fun getAssetOutToInPriceRatio(quote: SwapQuoteV2): Content.PriceRatio {
         return with(quote) {
             val ratio = assetOutAmount.amount.divide(assetInAmount.amount, assetOutDetail.fractionDecimals, FLOOR)
             val formattedRatio = SimplePlainFormattedAmount(

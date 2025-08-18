@@ -13,9 +13,9 @@
 package com.algorand.android.ui.swap.widget.mapper
 
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
 interface SwapWidgetAmountRendererMapper {
     fun getDefaultRenderers(): SwapWidgetViewModel.ViewState.Content.AmountRenderers
-    fun getQuoteRenderers(quote: SwapQuote): SwapWidgetViewModel.ViewState.Content.AmountRenderers
+    fun getQuoteRenderers(quote: SwapQuoteV2): SwapWidgetViewModel.ViewState.Content.AmountRenderers
 }

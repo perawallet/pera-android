@@ -13,31 +13,31 @@
 package com.algorand.wallet.swap.data.mapper
 
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class DefaultSwapAssetAmountMapper @Inject constructor() : SwapAssetAmountMapper {
 
-    override fun mapAssetInAmount(response: SwapQuoteResponse): SwapQuote.AssetAmount? {
+    override fun mapAssetInAmount(response: SwapQuoteResponse): SwapQuoteV2.AssetAmount? {
         return with(response) {
             val decimal = assetInAssetDetailResponse?.fractionDecimals ?: return null
             if (assetInAmount == null || assetInAmountWithSlippage == null) return null
             val amount = assetInAmount.toBigDecimal().movePointLeft(decimal)
             val amountInUsd = assetInAmountInUsdValue ?: BigDecimal.ZERO
             val amountWithSlippage = assetInAmountWithSlippage.toBigDecimal().movePointLeft(decimal)
-            SwapQuote.AssetAmount(amount, amountInUsd, amountWithSlippage)
+            SwapQuoteV2.AssetAmount(amount, amountInUsd, amountWithSlippage)
         }
     }
 
-    override fun mapAssetOutAmount(response: SwapQuoteResponse): SwapQuote.AssetAmount? {
+    override fun mapAssetOutAmount(response: SwapQuoteResponse): SwapQuoteV2.AssetAmount? {
         return with(response) {
             val decimal = assetOutAssetDetailResponse?.fractionDecimals ?: return null
             if (assetOutAmount == null || assetOutAmountWithSlippage == null) return null
             val amount = assetOutAmount.toBigDecimal().movePointLeft(decimal)
             val amountInUsd = assetOutAmountInUsdValue ?: BigDecimal.ZERO
             val amountWithSlippage = assetOutAmountWithSlippage.toBigDecimal().movePointLeft(decimal)
-            SwapQuote.AssetAmount(amount, amountInUsd, amountWithSlippage)
+            SwapQuoteV2.AssetAmount(amount, amountInUsd, amountWithSlippage)
         }
     }
 }

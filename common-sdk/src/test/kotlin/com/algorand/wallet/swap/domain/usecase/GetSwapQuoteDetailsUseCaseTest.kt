@@ -18,7 +18,7 @@ import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail.SwapQuoteState.NonSwappable
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAlgoBalance
@@ -90,7 +90,7 @@ class GetSwapQuoteDetailsUseCaseTest {
         val ADDRESS = peraFixture<String>()
         val ASSET_ID = peraFixture<Long>()
         val ASSET_HOLDING = peraFixture<AssetHolding>()
-        val QUOTE = peraFixture<SwapQuote>().copy(
+        val QUOTE = peraFixture<SwapQuoteV2>().copy(
             accountAddress = ADDRESS
         )
     }

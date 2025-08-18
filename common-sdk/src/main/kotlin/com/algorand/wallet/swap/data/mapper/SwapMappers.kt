@@ -21,7 +21,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
 import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.data.model.SwapTransactionPurposeResponse
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
@@ -29,7 +29,7 @@ import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.model.SwapTransactionPurpose
 
 internal fun interface SwapQuoteMapper {
-    operator fun invoke(response: SwapQuoteResponse): SwapQuote?
+    operator fun invoke(response: SwapQuoteResponse): SwapQuoteV2?
 }
 
 internal fun interface SwapQuoteRequestBodyMapper {
@@ -49,12 +49,12 @@ internal fun interface SwapQuoteProviderMapper {
 }
 
 internal interface SwapAssetAmountMapper {
-    fun mapAssetInAmount(response: SwapQuoteResponse): SwapQuote.AssetAmount?
-    fun mapAssetOutAmount(response: SwapQuoteResponse): SwapQuote.AssetAmount?
+    fun mapAssetInAmount(response: SwapQuoteResponse): SwapQuoteV2.AssetAmount?
+    fun mapAssetOutAmount(response: SwapQuoteResponse): SwapQuoteV2.AssetAmount?
 }
 
 internal fun interface SwapAssetDetailMapper {
-    operator fun invoke(response: SwapQuoteAssetDetailResponse?): SwapQuote.AssetDetail?
+    operator fun invoke(response: SwapQuoteAssetDetailResponse?): SwapQuoteV2.AssetDetail?
 }
 
 internal fun interface SwapQuoteProviderResponseMapper {

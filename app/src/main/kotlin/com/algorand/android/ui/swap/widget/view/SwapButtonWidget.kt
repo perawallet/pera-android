@@ -26,10 +26,10 @@ import com.algorand.android.R
 import com.algorand.android.ui.compose.widget.button.PeraButtonState
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.swap.widget.viewmodel.SwapButtonViewModel
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
 @Composable
-fun BoxScope.SwapButtonWidget(viewModel: SwapButtonViewModel, onClick: (SwapQuote) -> Unit) {
+fun BoxScope.SwapButtonWidget(viewModel: SwapButtonViewModel, onClick: (SwapQuoteV2) -> Unit) {
     when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
         SwapButtonViewModel.ViewState.Invisible -> Unit
         is SwapButtonViewModel.ViewState.Visible -> {

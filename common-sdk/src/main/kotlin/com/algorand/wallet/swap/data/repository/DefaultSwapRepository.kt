@@ -26,7 +26,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
@@ -44,7 +44,7 @@ internal class DefaultSwapRepository @Inject constructor(
     private val availableSwapAssetMapper: AvailableSwapAssetMapper
 ) : SwapRepository {
 
-    override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuote>> {
+    override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
         return try {
             val response = swapApiService.getSwapQuote(quoteRequestMapper(payload))
             val quotes = response.swapQuoteResponseList.mapNotNull { quoteMapper(it) }

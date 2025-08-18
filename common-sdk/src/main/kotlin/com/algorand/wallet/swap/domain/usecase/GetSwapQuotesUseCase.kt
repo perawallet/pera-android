@@ -14,7 +14,7 @@ package com.algorand.wallet.swap.domain.usecase
 
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
@@ -35,7 +35,7 @@ internal class GetSwapQuotesUseCase @Inject constructor(
         )
     }
 
-    private suspend fun getSuccessResult(quotes: List<SwapQuote>): PeraResult<SwapQuotes> {
+    private suspend fun getSuccessResult(quotes: List<SwapQuoteV2>): PeraResult<SwapQuotes> {
         return if (quotes.isEmpty()) {
             PeraResult.Error(IllegalStateException())
         } else {

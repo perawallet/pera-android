@@ -15,7 +15,7 @@ package com.algorand.wallet.swap.domain.repository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import java.math.BigInteger
@@ -23,7 +23,7 @@ import java.math.BigInteger
 internal interface SwapRepository {
     suspend fun getLastUsedSwapAddress(): String?
     suspend fun setLastUsedSwapAddress(address: String)
-    suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuote>>
+    suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>>
     suspend fun getPeraFee(assetInId: Long, amount: BigInteger): PeraResult<SwapPeraFee>
     suspend fun createQuoteTransactions(quoteId: Long): PeraResult<List<SwapQuoteTransaction>>
     suspend fun updateSwapQuoteException(quoteId: Long, exceptionText: String)

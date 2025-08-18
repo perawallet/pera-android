@@ -13,7 +13,7 @@
 package com.algorand.wallet.swap.domain.model
 
 data class SwapQuoteDetail(
-    val quote: SwapQuote,
+    val quote: SwapQuoteV2,
     val state: SwapQuoteState
 ) {
     sealed interface SwapQuoteState {

@@ -13,8 +13,8 @@
 package com.algorand.android.ui.swap.confirmation.mapper
 
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
 interface SwapConfirmationContentMapper {
-    suspend fun map(quote: SwapQuote): SwapConfirmationViewModel.ViewState.Content
+    suspend fun map(quote: SwapQuoteV2): SwapConfirmationViewModel.ViewState.Content
 }

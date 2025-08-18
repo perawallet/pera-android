@@ -12,8 +12,8 @@
 
 package com.algorand.android.ui.swap.confirmation.mapper
 
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
 fun interface LegacySwapQuoteMapper {
-    operator fun invoke(swapQuote: SwapQuote): com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
+    operator fun invoke(swapQuoteV2: SwapQuoteV2): com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 }

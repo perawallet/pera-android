@@ -16,7 +16,7 @@ import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.utils.AssetName
 import com.algorand.wallet.asset.domain.model.VerificationTier
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapType
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -27,8 +27,8 @@ typealias LegacyVerificationTier = com.algorand.android.assetsearch.domain.model
 
 internal class DefaultLegacySwapQuoteMapper @Inject constructor() : LegacySwapQuoteMapper {
 
-    override fun invoke(swapQuote: SwapQuote): LegacySwapQuote {
-        return with(swapQuote) {
+    override fun invoke(swapQuoteV2: SwapQuoteV2): LegacySwapQuote {
+        return with(swapQuoteV2) {
             val assetInDecimals = assetInDetail.fractionDecimals
             val assetOutDecimals = assetOutDetail.fractionDecimals
             LegacySwapQuote(
@@ -56,7 +56,7 @@ internal class DefaultLegacySwapQuoteMapper @Inject constructor() : LegacySwapQu
         }
     }
 
-    private fun mapSwapQuoteAssetDetail(assetDetail: SwapQuote.AssetDetail): SwapQuoteAssetDetail {
+    private fun mapSwapQuoteAssetDetail(assetDetail: SwapQuoteV2.AssetDetail): SwapQuoteAssetDetail {
         return SwapQuoteAssetDetail(
             assetId = assetDetail.assetId,
             logoUrl = assetDetail.logoUrl,

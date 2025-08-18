@@ -18,7 +18,7 @@ import com.algorand.android.ui.common.amount.DecimalConfig.MinDecimalType.FixedT
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.PlainFormattedAmount.SimplePlainFormattedAmount
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ internal class DefaultSwapWidgetAmountRendererMapper @Inject constructor() : Swa
         )
     }
 
-    override fun getQuoteRenderers(quote: SwapQuote): ViewState.Content.AmountRenderers {
+    override fun getQuoteRenderers(quote: SwapQuoteV2): ViewState.Content.AmountRenderers {
         // TODO don't use fixed to max or max decimals 2 when user selects local currency
         val assetInSecondaryAmount = SimplePlainFormattedAmount(
             PeraAmount(quote.assetInAmount.amountInUsdValue),

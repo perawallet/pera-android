@@ -51,7 +51,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 import com.algorand.android.utils.DataResource
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -79,7 +79,7 @@ class SwapConfirmationViewModel @Inject constructor(
         stateDelegate.setDefaultState(Idle)
     }
 
-    fun init(quote: SwapQuote) {
+    fun init(quote: SwapQuoteV2) {
         stateDelegate.onState<Idle> {
             viewModelScope.launch {
                 val contentState = contentMapper.map(quote)
@@ -206,7 +206,7 @@ class SwapConfirmationViewModel @Inject constructor(
     sealed interface ViewState {
         data object Idle : ViewState
         data class Content(
-            val quote: SwapQuote,
+            val quote: SwapQuoteV2,
             val accountDisplayName: AccountDisplayName,
             val accountIconDrawable: AccountIconDrawablePreview,
             val priceImpact: SwapPriceImpact,

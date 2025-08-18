@@ -15,7 +15,7 @@ package com.algorand.android.ui.compose.widget.asset.icon.mapper
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import javax.inject.Inject
 
 internal class DefaultAssetIconDrawableMapper @Inject constructor() : AssetIconDrawableMapper {
@@ -27,7 +27,7 @@ internal class DefaultAssetIconDrawableMapper @Inject constructor() : AssetIconD
         }
     }
 
-    override fun map(assetDetail: SwapQuote.AssetDetail): AssetIconDrawable {
+    override fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable {
         return when (assetDetail.assetId) {
             ALGO_ID -> AssetIconDrawable.AlgoDrawable
             else -> AssetIconDrawable.AssetDrawable(assetDetail.logoUrl.orEmpty(), assetDetail.shortName)

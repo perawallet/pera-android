@@ -43,7 +43,7 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapButtonViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
 @Composable
 fun SwapScreen(
@@ -142,5 +142,5 @@ private fun SwapNoAccountState(listener: SwapScreenListener) {
 
 interface SwapScreenListener : SwapToolbarListener, SwapWidgetListener {
     fun onCreateAccountClick()
-    fun onSwapClick(quote: SwapQuote)
+    fun onSwapClick(quote: SwapQuoteV2)
 }

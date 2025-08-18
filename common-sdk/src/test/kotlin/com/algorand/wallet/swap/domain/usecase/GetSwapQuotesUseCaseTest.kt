@@ -15,7 +15,7 @@ package com.algorand.wallet.swap.domain.usecase
 import com.algorand.test.peraFixture
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.swap.domain.model.SwapQuote
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
@@ -101,14 +101,14 @@ class GetSwapQuotesUseCaseTest {
         val REQUEST = SwapQuoteRequestPayload(ADDRESS, ASSET_IN, ASSET_OUT, AMOUNT, DEVICE_ID, PROVIDERS, SLIPPAGE)
 
         const val BEST_QUOTE_ID = 1L
-        val BEST_QUOTE = peraFixture<SwapQuote>().copy(
+        val BEST_QUOTE = peraFixture<SwapQuoteV2>().copy(
             quoteId = BEST_QUOTE_ID,
-            assetOutAmount = peraFixture<SwapQuote.AssetAmount>().copy(amount = BigDecimal.TEN)
+            assetOutAmount = peraFixture<SwapQuoteV2.AssetAmount>().copy(amount = BigDecimal.TEN)
         )
         const val WORST_QUOTE_ID = 2L
-        val WORST_QUOTE = peraFixture<SwapQuote>().copy(
+        val WORST_QUOTE = peraFixture<SwapQuoteV2>().copy(
             quoteId = WORST_QUOTE_ID,
-            assetOutAmount = peraFixture<SwapQuote.AssetAmount>().copy(amount = BigDecimal.ONE)
+            assetOutAmount = peraFixture<SwapQuoteV2.AssetAmount>().copy(amount = BigDecimal.ONE)
         )
         val QUOTES = listOf(BEST_QUOTE, WORST_QUOTE)
         val QUOTE_DETAILS = peraFixture<List<SwapQuoteDetail>>()

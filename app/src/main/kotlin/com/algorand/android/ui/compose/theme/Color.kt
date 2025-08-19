@@ -283,6 +283,7 @@ interface PeraColor {
 
     interface Helper {
         val positive: Color
+        val positiveLighter: Color
         val negative: Color
         val negativeLighter: Color
     }

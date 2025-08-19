@@ -13,6 +13,7 @@
 package com.algorand.android.ui.swap.widget.viewmodel
 
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.swap.configuration.view.SwapConfigurationResult
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.viewmodel.StateViewModel
@@ -22,6 +23,10 @@ import kotlinx.coroutines.flow.Flow
 interface SwapWidgetViewModel : StateViewModel<ViewState> {
 
     fun setAmountInput(amount: BigDecimal?)
+
+    fun applyConfigurations(configuration: SwapConfigurationResult)
+
+    fun setMaxAmountInput()
 
     fun initWidget(
         addressFlow: Flow<String?>,

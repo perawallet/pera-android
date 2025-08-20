@@ -45,6 +45,10 @@ import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddressUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetailUseCase
+import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
+import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentageUseCase
+import com.algorand.wallet.swap.domain.usecase.GetSwapPeraFee
+import com.algorand.wallet.swap.domain.usecase.GetSwapPeraFeeUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetails
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
@@ -161,4 +165,10 @@ internal object SwapModule {
     fun provideGetAvailableSwapAssets(repository: SwapRepository): GetAvailableSwapAssets {
         return GetAvailableSwapAssets(repository::getAvailableAssetsToSwap)
     }
+
+    @Provides
+    fun provideGetSwapPeraFee(useCase: GetSwapPeraFeeUseCase): GetSwapPeraFee = useCase
+
+    @Provides
+    fun provideGetSwapAmountByPercentage(useCase: GetSwapAmountByPercentageUseCase): GetSwapAmountByPercentage = useCase
 }

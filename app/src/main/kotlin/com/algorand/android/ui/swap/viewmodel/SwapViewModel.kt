@@ -18,6 +18,7 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.ui.swap.configuration.view.SwapConfigurationResult
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
 import com.algorand.android.utils.isEqualTo
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
@@ -30,9 +31,13 @@ import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigInteger
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -45,48 +50,58 @@ class SwapViewModel @Inject constructor(
     private val getAccountAssetHolding: GetAccountAssetHolding
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
-    private val _addressFlow = MutableStateFlow<String?>(null)
-    val addressFlow: StateFlow<String?>
-        get() = _addressFlow.asStateFlow()
+    private val _swapDetailsFlow = MutableStateFlow<SwapDetails>(SwapDetails())
+    val swapDetailsFlow: StateFlow<SwapDetails>
+        get() = _swapDetailsFlow.asStateFlow()
 
-    private val _assetInFlow = MutableStateFlow<Long>(ALGO_ID)
-    val assetInFlow: StateFlow<Long>
-        get() = _assetInFlow.asStateFlow()
+    val addressFlow: Flow<String?>
+        get() = _swapDetailsFlow.map { it.address }.distinctUntilChanged()
 
-    private val _assetOutFlow = MutableStateFlow<Long>(USDC_MAINNET_ID)
-    val assetOutFlow: StateFlow<Long>
-        get() = _assetOutFlow.asStateFlow()
+    val assetInFlow: Flow<Long>
+        get() = _swapDetailsFlow.map { it.assetInId }.distinctUntilChanged()
+
+    val assetOutFlow: Flow<Long>
+        get() = _swapDetailsFlow.map { it.assetOutId }.distinctUntilChanged()
 
     init {
-        viewModelScope.launch {
-            _assetOutFlow.value = getUsdcAssetId()
-        }
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
     fun switchAssets() {
-        val assetInId = _assetInFlow.value
-        val assetOutId = _assetOutFlow.value
-        _assetInFlow.value = assetOutId
-        _assetOutFlow.value = assetInId
+        val currentDetails = _swapDetailsFlow.value
+        _swapDetailsFlow.value = currentDetails.copy(
+            assetInId = currentDetails.assetOutId,
+            assetOutId = currentDetails.assetInId
+        )
     }
 
+    fun getSwapDetails(): SwapDetails = swapDetailsFlow.value
+
     fun setAssetInId(assetId: Long) {
-        _assetInFlow.value = assetId
+        _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetInId = assetId)
     }
 
     fun setAssetOutId(assetId: Long) {
-        _assetOutFlow.value = assetId
+        _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetOutId = assetId)
+    }
+
+    fun applySwapConfigs(result: SwapConfigurationResult) {
+        _swapDetailsFlow.update {
+            it.copy(
+                slippage = result.slippageTolerance,
+                useLocalCurrency = result.useLocalCurrency
+            )
+        }
     }
 
     fun setAddress(address: String) {
         viewModelScope.launch {
-            val assetHolding = getAccountAssetHolding(address, _assetInFlow.value)
-            if (assetHolding == null || assetHolding.amount isEqualTo BigInteger.ZERO) {
-                _assetInFlow.value = ALGO_ID
-                _assetOutFlow.value = getUsdcAssetId()
+            val assetHolding = getAccountAssetHolding(address, _swapDetailsFlow.value.assetInId)
+            _swapDetailsFlow.value = if (assetHolding == null || assetHolding.amount isEqualTo BigInteger.ZERO) {
+                _swapDetailsFlow.value.copy(address = address, assetInId = ALGO_ID, assetOutId = getUsdcAssetId())
+            } else {
+                _swapDetailsFlow.value.copy(address = address)
             }
-            _addressFlow.value = address
             updateContentState(address)
         }
     }
@@ -98,7 +113,11 @@ class SwapViewModel @Inject constructor(
                 if (address == null) {
                     stateDelegate.updateState { ViewState.NoAccountState }
                 } else {
-                    _addressFlow.value = address
+                    _swapDetailsFlow.value = SwapDetails(
+                        address = address,
+                        assetInId = ALGO_ID,
+                        assetOutId = getUsdcAssetId()
+                    )
                     updateContentState(address)
                 }
             }
@@ -109,7 +128,7 @@ class SwapViewModel @Inject constructor(
         val accountIcon = getAccountIconDrawablePreview(address)
         val accountDisplayName = getAccountDisplayName(address)
         stateDelegate.updateState {
-            ViewState.Content(accountIcon, accountDisplayName)
+            ViewState.Content(accountIcon, accountDisplayName, swapDetailsFlow.value)
         }
     }
 
@@ -118,7 +137,16 @@ class SwapViewModel @Inject constructor(
         data object NoAccountState : ViewState
         data class Content(
             val accountIconDrawable: AccountIconDrawablePreview,
-            val accountDisplayName: AccountDisplayName
+            val accountDisplayName: AccountDisplayName,
+            val swapDetails: SwapDetails
         ) : ViewState
     }
+
+    data class SwapDetails(
+        val address: String? = null,
+        val assetInId: Long = ALGO_ID,
+        val assetOutId: Long = USDC_MAINNET_ID,
+        val slippage: Float? = null,
+        val useLocalCurrency: Boolean = false
+    )
 }

@@ -10,17 +10,6 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.widget.mapper
+package com.algorand.wallet.swap.domain.model
 
-import com.algorand.android.ui.swap.viewmodel.SwapViewModel
-import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel
-import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
-
-fun interface SwapQuoteFetchStateMapper {
-    operator fun invoke(
-        swapDetails: SwapViewModel.SwapDetails,
-        amount: String,
-        assetInState: SwapAssetSelectionViewModel.ViewState,
-        assetOutState: SwapAssetSelectionViewModel.ViewState
-    ): DefaultSwapWidgetViewModel.SwapQuoteFetchState
-}
+class InsufficientAlgoBalanceException : Exception()

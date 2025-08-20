@@ -22,9 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -45,7 +42,6 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewSta
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Loading
 import com.algorand.android.utils.getXmlStyledString
-import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAlgoBalance
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAssetBalance
@@ -72,11 +68,10 @@ fun SwapAssetInWidget(
 
 @Composable
 private fun RowScope.AssetInAmountContent(viewState: ViewState, widgetViewModel: SwapWidgetViewModel) {
-    var assetInAmount by remember { mutableStateOf("") }
+    val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle("")
     Column(modifier = Modifier.weight(1f)) {
-        AssetInAmountInputTextField(viewState, assetInAmount) {
-            assetInAmount = it
-            widgetViewModel.setAmountInput(it.toBigDecimalOrZero())
+        AssetInAmountInputTextField(viewState, assetInAmount) { input ->
+            widgetViewModel.setAmountInput(input)
         }
         SecondaryAmountText(viewState)
     }

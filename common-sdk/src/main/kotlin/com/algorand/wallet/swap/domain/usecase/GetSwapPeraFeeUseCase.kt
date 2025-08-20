@@ -10,17 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.widget.mapper
+package com.algorand.wallet.swap.domain.usecase
 
-import com.algorand.android.ui.swap.viewmodel.SwapViewModel
-import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel
-import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
+import com.algorand.wallet.foundation.PeraResult
+import java.math.BigDecimal
+import javax.inject.Inject
 
-fun interface SwapQuoteFetchStateMapper {
-    operator fun invoke(
-        swapDetails: SwapViewModel.SwapDetails,
-        amount: String,
-        assetInState: SwapAssetSelectionViewModel.ViewState,
-        assetOutState: SwapAssetSelectionViewModel.ViewState
-    ): DefaultSwapWidgetViewModel.SwapQuoteFetchState
+internal class GetSwapPeraFeeUseCase @Inject constructor() : GetSwapPeraFee {
+
+    override suspend fun invoke(assetInId: Long, amount: BigDecimal, fractionDecimals: Int): PeraResult<BigDecimal> {
+        return PeraResult.Success(BigDecimal.ZERO)
+    }
 }

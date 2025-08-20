@@ -30,7 +30,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -39,18 +38,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraBottomSheetDragIndicator
+import com.algorand.android.ui.compose.widget.PeraSwitch
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.textfield.PeraTextField
 import com.algorand.android.ui.compose.widget.textfield.PeraTextFieldColors
 import com.algorand.android.ui.swap.configuration.view.ChipOption.Companion.CUSTOM_SLIPPAGE_VALUE
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.capitalizeWords
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 data class SwapConfigurationResult(
     val balancePercentage: Float?,
@@ -67,7 +73,7 @@ private data class ChipOption(val value: Float, val text: String) {
 @Composable
 fun SwapConfigurationBottomSheet(
     sheetState: SheetState,
-    isLocalCurrencyEnabled: Boolean,
+    swapDetails: SwapViewModel.SwapDetails,
     onDismissRequest: () -> Unit,
     onApplyClick: (SwapConfigurationResult) -> Unit
 ) {
@@ -77,9 +83,9 @@ fun SwapConfigurationBottomSheet(
         containerColor = PeraTheme.colors.background.secondary,
         dragHandle = { PeraBottomSheetDragIndicator(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) }
     ) {
-        val balanceTextState = remember { mutableStateOf(emptyString()) }
-        val slippageTextState = remember { mutableStateOf(emptyString()) }
-        val localCurrencyState = remember { mutableStateOf(isLocalCurrencyEnabled) }
+        val balanceTextState = remember { mutableStateOf(TextFieldValue(emptyString())) }
+        val slippageTextState = remember { mutableStateOf(TextFieldValue(swapDetails.slippage?.toString().orEmpty())) }
+        val localCurrencyState = remember { mutableStateOf(swapDetails.useLocalCurrency) }
         Row {
             PeraToolbar(
                 text = stringResource(R.string.swap_settings),
@@ -94,8 +100,8 @@ fun SwapConfigurationBottomSheet(
                     Text(
                         modifier = Modifier.clickableNoRipple {
                             val result = SwapConfigurationResult(
-                                balancePercentage = balanceTextState.value.toFloatOrNull(),
-                                slippageTolerance = slippageTextState.value.toFloatOrNull(),
+                                balancePercentage = balanceTextState.value.text.toFloatOrNull(),
+                                slippageTolerance = slippageTextState.value.text.toFloatOrNull(),
                                 useLocalCurrency = localCurrencyState.value
                             )
                             onApplyClick(result)
@@ -119,7 +125,7 @@ fun SwapConfigurationBottomSheet(
 }
 
 @Composable
-private fun BalancePercentageInputContainer(textState: MutableState<String>) {
+private fun BalancePercentageInputContainer(textState: MutableState<TextFieldValue>) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val textInput = textState.value
         val percentageChips = getBalancePercentageChips()
@@ -137,8 +143,8 @@ private fun BalancePercentageInputContainer(textState: MutableState<String>) {
             items(percentageChips) { chip ->
                 ChipButton(
                     text = chip.text,
-                    isSelected = textInput.toFloatOrNull() == chip.value,
-                    onClick = { textState.value = chip.value.toString() }
+                    isSelected = textInput.text.toFloatOrNull() == chip.value,
+                    onClick = { textState.update(chip.value.formattedValue(0)) }
                 )
             }
         }
@@ -146,7 +152,7 @@ private fun BalancePercentageInputContainer(textState: MutableState<String>) {
 }
 
 @Composable
-private fun SlippageInputContainer(textState: MutableState<String>) {
+private fun SlippageInputContainer(textState: MutableState<TextFieldValue>) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val textInput = textState.value
         val slippageChips = getSlippageChips()
@@ -163,21 +169,33 @@ private fun SlippageInputContainer(textState: MutableState<String>) {
         ) {
             items(slippageChips) { chip ->
                 val isCustomButton = chip.value == CUSTOM_SLIPPAGE_VALUE
+                val text = textInput.text
                 val isSelected = if (isCustomButton) {
-                    textInput.isNotEmpty() && slippageChips.none { it.value == textInput.toFloatOrNull() }
+                    text.isNotEmpty() && slippageChips.none { it.value == text.toFloatOrNull() }
                 } else {
-                    textInput.toFloatOrNull() == chip.value
+                    text.toFloatOrNull() == chip.value
                 }
                 ChipButton(
                     text = chip.text,
                     isSelected = isSelected,
                     onClick = {
-                        textState.value = if (isCustomButton) emptyString() else chip.value.toString()
+                        val newText = if (isCustomButton) emptyString() else chip.value.formattedValue(1)
+                        textState.update(newText)
                     }
                 )
             }
         }
     }
+}
+
+private fun Float.formattedValue(maxDecimal: Int): String {
+    return DecimalFormat("0", DecimalFormatSymbols(Locale.getDefault())).apply {
+        maximumFractionDigits = maxDecimal
+    }.format(this)
+}
+
+private fun MutableState<TextFieldValue>.update(text: String) {
+    value = TextFieldValue(text, TextRange(text.length))
 }
 
 @Composable
@@ -198,13 +216,13 @@ private fun LocalCurrencyToggle(localCurrencyState: MutableState<Boolean>) {
                 color = PeraTheme.colors.text.main
             )
             Spacer(modifier = Modifier.weight(1f))
-            Switch(checked = localCurrencyState.value, onCheckedChange = { localCurrencyState.value = it })
+            PeraSwitch(checked = localCurrencyState.value, onCheckedChange = { localCurrencyState.value = it })
         }
     }
 }
 
 @Composable
-private fun TextInputField(title: String, hint: String, text: String, onTextChanged: (String) -> Unit) {
+private fun TextInputField(title: String, hint: String, text: TextFieldValue, onTextChanged: (TextFieldValue) -> Unit) {
     Text(
         modifier = Modifier.padding(horizontal = 24.dp),
         text = title,
@@ -216,7 +234,7 @@ private fun TextInputField(title: String, hint: String, text: String, onTextChan
         modifier = Modifier
             .padding(horizontal = 24.dp)
             .fillMaxWidth(),
-        text = text,
+        textFieldValue = text,
         onTextChanged = onTextChanged,
         hint = hint.capitalizeWords(),
         colors = PeraTextFieldColors.defaultColors().copy(

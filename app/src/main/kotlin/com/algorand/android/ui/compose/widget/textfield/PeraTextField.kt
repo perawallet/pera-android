@@ -10,6 +10,8 @@
  * limitations under the License
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.algorand.android.ui.compose.widget.textfield
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -28,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -45,36 +48,97 @@ fun PeraTextField(
     hint: String? = null,
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
-    Box(modifier = modifier, contentAlignment = Alignment.CenterStart) {
-        val textField = text.ifEmpty { " " }
+    val textField = text.ifEmpty { " " }
+    PeraTextFieldContainer(modifier, textField, hint) {
         BasicTextField(
-            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp),
-            value = text,
+            modifier = Modifier.defaultTextFieldModifier(),
+            value = textField,
             onValueChange = onTextChanged,
-            decorationBox = @Composable { innerTextField ->
-                TextFieldDefaults.DecorationBox(
-                    label = label,
-                    value = textField,
-                    innerTextField = innerTextField,
-                    trailingIcon = trailingIcon,
-                    singleLine = singleLine,
-                    enabled = enabled,
-                    visualTransformation = VisualTransformation.None,
-                    contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 4.dp),
-                    interactionSource = remember { MutableInteractionSource() },
-                    shape = RectangleShape,
-                    colors = colors
-                )
+            decorationBox = {
+                TextFieldDecorationBox(textField, it, label, trailingIcon, singleLine, enabled, colors)
             }
         )
-        if (!hint.isNullOrBlank() && text.isBlank()) {
-            Text(
-                text = hint,
-                color = PeraTheme.colors.text.grayLighter,
-                style = PeraTheme.typography.body.regular.sans
-            )
-        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PeraTextField(
+    modifier: Modifier = Modifier,
+    textFieldValue: TextFieldValue,
+    onTextChanged: (TextFieldValue) -> Unit,
+    label: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    singleLine: Boolean = true,
+    enabled: Boolean = true,
+    hint: String? = null,
+    colors: TextFieldColors = PeraTextFieldColors.defaultColors()
+) {
+    PeraTextFieldContainer(modifier, textFieldValue.text, hint) {
+        BasicTextField(
+            modifier = Modifier.defaultTextFieldModifier(),
+            value = textFieldValue,
+            onValueChange = onTextChanged,
+            decorationBox = {
+                TextFieldDecorationBox(textFieldValue.text, it, label, trailingIcon, singleLine, enabled, colors)
+            }
+        )
+    }
+}
+
+@Composable
+private fun PeraTextFieldContainer(
+    modifier: Modifier = Modifier,
+    text: String,
+    hint: String? = null,
+    basicTextField: @Composable () -> Unit
+) {
+    Box(modifier = modifier, contentAlignment = Alignment.CenterStart) {
+        val textField = text.ifEmpty { " " }
+        basicTextField()
+        HintText(hint, textField)
+    }
+}
+
+@Composable
+private fun Modifier.defaultTextFieldModifier(): Modifier = this
+    .fillMaxWidth()
+    .defaultMinSize(minHeight = 52.dp)
+
+@Composable
+private fun HintText(hint: String?, text: String) {
+    if (!hint.isNullOrBlank() && text.isBlank()) {
+        Text(
+            text = hint,
+            color = PeraTheme.colors.text.grayLighter,
+            style = PeraTheme.typography.body.regular.sans
+        )
+    }
+}
+
+@Composable
+private fun TextFieldDecorationBox(
+    text: String,
+    innerTextField: @Composable () -> Unit,
+    label: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    singleLine: Boolean = true,
+    enabled: Boolean = true,
+    colors: TextFieldColors = PeraTextFieldColors.defaultColors()
+) {
+    TextFieldDefaults.DecorationBox(
+        label = label,
+        value = text,
+        innerTextField = innerTextField,
+        trailingIcon = trailingIcon,
+        singleLine = singleLine,
+        enabled = enabled,
+        visualTransformation = VisualTransformation.None,
+        contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 4.dp),
+        interactionSource = remember { MutableInteractionSource() },
+        shape = RectangleShape,
+        colors = colors
+    )
 }
 
 object PeraTextFieldColors {

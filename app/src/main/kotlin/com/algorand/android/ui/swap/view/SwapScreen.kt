@@ -10,6 +10,8 @@
  * limitations under the License
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.algorand.android.ui.swap.view
 
 import androidx.compose.foundation.background
@@ -18,8 +20,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraSingleButtonState
+import com.algorand.android.ui.swap.configuration.view.SwapConfigurationBottomSheet
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.view.SwapButtonWidget
 import com.algorand.android.ui.swap.widget.view.SwapProviderWidget
@@ -44,6 +54,7 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import kotlinx.coroutines.launch
 
 @Composable
 fun SwapScreen(
@@ -56,6 +67,10 @@ fun SwapScreen(
     buttonViewModel: SwapButtonViewModel = hiltViewModel<DefaultSwapButtonViewModel>(),
     listener: SwapScreenListener
 ) {
+    LaunchedEffect(Unit) {
+        swapViewModel.initViewState()
+    }
+
     Box(
         modifier = Modifier
             .background(color = PeraTheme.colors.background.primary)
@@ -82,10 +97,6 @@ fun SwapScreen(
             }
         }
     }
-
-    LaunchedEffect(Unit) {
-        swapViewModel.initViewState()
-    }
 }
 
 @Composable
@@ -100,6 +111,9 @@ private fun SwapContentState(
     listener: SwapScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
+        val swapConfigurationBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        var isConfigurationBottomSheetVisible by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -115,7 +129,8 @@ private fun SwapContentState(
                 providerViewModel,
                 buttonViewModel,
                 configViewModel,
-                listener
+                listener,
+                onConfigureClick = { isConfigurationBottomSheetVisible = true }
             )
             SwapProviderWidget(
                 modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
@@ -123,6 +138,30 @@ private fun SwapContentState(
             )
         }
         SwapButtonWidget(buttonViewModel, listener::onSwapClick)
+
+        if (isConfigurationBottomSheetVisible) {
+
+            fun dismissBottomSheet() {
+                scope.launch { swapConfigurationBottomSheetState.hide() }.invokeOnCompletion {
+                    if (!swapConfigurationBottomSheetState.isVisible) {
+                        isConfigurationBottomSheetVisible = false
+                    }
+                }
+            }
+
+            SwapConfigurationBottomSheet(
+                sheetState = swapConfigurationBottomSheetState,
+                swapDetails = swapViewModel.getSwapDetails(),
+                onApplyClick = {
+                    swapViewModel.applySwapConfigs(it)
+                    if (it.balancePercentage != null) {
+                        widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), it.balancePercentage.toInt())
+                    }
+                    dismissBottomSheet()
+                },
+                onDismissRequest = { dismissBottomSheet() }
+            )
+        }
     }
 }
 

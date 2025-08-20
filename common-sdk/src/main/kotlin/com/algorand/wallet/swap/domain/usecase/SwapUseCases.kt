@@ -14,11 +14,13 @@ package com.algorand.wallet.swap.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import java.math.BigDecimal
 
 fun interface GetSwapQuotes {
     suspend operator fun invoke(payload: SwapQuotePayload): PeraResult<SwapQuotes>
@@ -38,4 +40,12 @@ internal fun interface GetSwapQuoteDetails {
 
 fun interface GetAvailableSwapAssets {
     suspend operator fun invoke(assetInId: Long, query: String?): PeraResult<List<AvailableSwapAsset>>
+}
+
+fun interface GetSwapPeraFee {
+    suspend operator fun invoke(assetInId: Long, amount: BigDecimal, fractionDecimals: Int): PeraResult<BigDecimal>
+}
+
+fun interface GetSwapAmountByPercentage {
+    suspend operator fun invoke(payload: SwapAmountByPercentagePayload): PeraResult<BigDecimal>
 }

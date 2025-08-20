@@ -44,25 +44,27 @@ fun SwapWidget(
     widgetViewModel: SwapWidgetViewModel,
     providerWidgetViewModel: SwapProviderWidgetViewModel,
     buttonViewModel: SwapButtonViewModel,
-    configurationViewModel: SwapConfigurationViewModel,
-    listener: SwapWidgetListener
+    configViewModel: SwapConfigurationViewModel,
+    listener: SwapWidgetListener,
+    onConfigureClick: () -> Unit
 ) {
     ConstraintLayout(modifier = modifier, constraintSet = createConstraints()) {
         AssetInContainer(widgetViewModel, assetInViewModel, listener)
         AssetOutContainer(widgetViewModel, assetOutViewModel, listener)
-        SwapConfigurationContainer(configurationViewModel)
+        SwapConfigurationContainer(
+            configViewModel,
+            swapViewModel::switchAssets,
+            onConfigureClick,
+            onMaxClick = { widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), 100) }
+        )
 
         LaunchedEffect(Unit) {
             assetInViewModel.initAssetDetail(swapViewModel.addressFlow, swapViewModel.assetInFlow)
             assetOutViewModel.initAssetDetail(swapViewModel.addressFlow, swapViewModel.assetOutFlow)
-            configurationViewModel.initViewState(
-                swapViewModel.addressFlow,
-                assetInViewModel.state,
-                assetOutViewModel.state
-            )
+            configViewModel.initViewState(swapViewModel.addressFlow, assetInViewModel.state, assetOutViewModel.state)
             buttonViewModel.init(widgetViewModel.state)
             providerWidgetViewModel.init(widgetViewModel.state)
-            widgetViewModel.initWidget(swapViewModel.addressFlow, assetInViewModel.state, assetOutViewModel.state)
+            widgetViewModel.initWidget(swapViewModel.swapDetailsFlow, assetInViewModel.state, assetOutViewModel.state)
         }
     }
 }
@@ -99,9 +101,20 @@ private fun AssetOutContainer(
 }
 
 @Composable
-private fun SwapConfigurationContainer(configurationViewModel: SwapConfigurationViewModel) {
+private fun SwapConfigurationContainer(
+    configurationViewModel: SwapConfigurationViewModel,
+    onSwitchAssetsClick: () -> Unit,
+    onConfigureClick: () -> Unit,
+    onMaxClick: () -> Unit
+) {
     Box(modifier = Modifier.layoutId(SWAP_CONFIGURATION_CONTAINER_ID)) {
-        SwapConfigurationWidget(modifier = Modifier.padding(horizontal = 16.dp), configurationViewModel)
+        SwapConfigurationWidget(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            configurationViewModel,
+            onSwitchAssetsClick,
+            onConfigureClick,
+            onMaxClick
+        )
     }
 }
 

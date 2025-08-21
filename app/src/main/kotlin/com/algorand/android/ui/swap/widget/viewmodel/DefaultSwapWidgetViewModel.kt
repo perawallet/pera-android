@@ -16,12 +16,17 @@ package com.algorand.android.ui.swap.widget.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem
+import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem.Auto
+import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem.Provider
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.mapper.SwapQuoteFetchStateMapper
 import com.algorand.android.ui.swap.widget.mapper.SwapWidgetAmountRendererMapper
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content.ContentState.Idle
+import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content.ContentState.Quote.QuoteSelection
+import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content.ContentState.Quote.QuoteSelection.Type
 import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
@@ -112,15 +117,37 @@ class DefaultSwapWidgetViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    override fun selectQuote(providerItem: SwapQuoteProviderSelectionItem) {
+        stateDelegate.onState<ViewState.Content> { content ->
+            val quoteState = getContentQuoteState() ?: return
+            stateDelegate.updateState {
+                val quoteSelection = when (providerItem) {
+                    Auto -> QuoteSelection(quoteId = quoteState.bestOfferQuoteId, selectionType = Type.Auto)
+                    is Provider -> QuoteSelection(quoteId = providerItem.quoteId, selectionType = Type.Manual)
+                }
+                val selectedQuote = quoteState.quotes.first { it.quote.quoteId == quoteSelection.quoteId }.quote
+                content.copy(
+                    contentState = quoteState.copy(quoteSelection = quoteSelection),
+                    amountRenderers = amountRendererMapper.getQuoteRenderers(selectedQuote),
+                )
+            }
+        }
+    }
+
+    override fun getContentQuoteState(): ContentState.Quote? {
+        return (stateDelegate.state.value as? ViewState.Content)?.contentState as? ContentState.Quote
+    }
+
     private fun updateViewState(quoteFetchState: SwapQuoteFetchState): Flow<ViewState> {
         return if (quoteFetchState is SwapQuoteFetchState.ReadyToFetch) {
             flow {
                 emit(ViewState.Loading)
                 getSwapQuotes(quoteFetchState.payload).use(
                     onSuccess = {
+                        val bestQuoteSelection = QuoteSelection(it.bestOfferQuoteId, Type.Auto)
                         val viewState = ViewState.Content(
                             amountRendererMapper.getQuoteRenderers(it.selectedQuote.quote),
-                            ContentState.Quote(it.selectedQuoteId, it.bestOfferQuoteId, it.quotes)
+                            ContentState.Quote(it.bestOfferQuoteId, bestQuoteSelection, it.quotes)
                         )
                         emit(viewState)
                     },

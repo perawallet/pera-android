@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,10 +43,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.PeraBottomSheetDragIndicator
+import com.algorand.android.ui.compose.widget.PeraModalBottomSheet
 import com.algorand.android.ui.compose.widget.PeraSwitch
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.compose.widget.PeraToolbarTextButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.textfield.PeraTextField
 import com.algorand.android.ui.compose.widget.textfield.PeraTextFieldColors
@@ -67,12 +67,7 @@ fun SwapConfigurationBottomSheet(
     onDismissRequest: () -> Unit,
     onApplyClick: (SwapConfigurationResult) -> Unit
 ) {
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        containerColor = PeraTheme.colors.background.secondary,
-        dragHandle = { PeraBottomSheetDragIndicator(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)) }
-    ) {
+    PeraModalBottomSheet(sheetState = sheetState, onDismissRequest = onDismissRequest) {
         val balanceTextState = remember { mutableStateOf(TextFieldValue(emptyString())) }
         val slippageTextState = remember { mutableStateOf(TextFieldValue(swapDetails.slippage?.toString().orEmpty())) }
         val localCurrencyState = remember { mutableStateOf(swapDetails.useLocalCurrency) }
@@ -87,19 +82,14 @@ fun SwapConfigurationBottomSheet(
                     )
                 },
                 endContainer = {
-                    Text(
-                        modifier = Modifier.clickableNoRipple {
-                            val result = SwapConfigurationResult(
-                                balancePercentage = balanceTextState.value.text.toFloatOrNull(),
-                                slippageTolerance = slippageTextState.value.text.toFloatOrNull(),
-                                useLocalCurrency = localCurrencyState.value
-                            )
-                            onApplyClick(result)
-                        },
-                        text = stringResource(R.string.apply),
-                        color = PeraTheme.colors.helper.positive,
-                        style = PeraTheme.typography.body.regular.sansMedium
-                    )
+                    PeraToolbarTextButton(text = stringResource(R.string.apply)) {
+                        val result = SwapConfigurationResult(
+                            balancePercentage = balanceTextState.value.text.toFloatOrNull(),
+                            slippageTolerance = slippageTextState.value.text.toFloatOrNull(),
+                            useLocalCurrency = localCurrencyState.value
+                        )
+                        onApplyClick(result)
+                    }
                     Spacer(modifier = Modifier.width(24.dp))
                 }
             )

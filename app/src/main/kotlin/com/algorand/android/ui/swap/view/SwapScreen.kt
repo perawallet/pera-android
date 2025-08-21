@@ -37,7 +37,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraSingleButtonState
+import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.configuration.view.SwapConfigurationBottomSheet
+import com.algorand.android.ui.swap.providers.view.SwapQuoteProvidersBottomSheet
+import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.view.SwapButtonWidget
 import com.algorand.android.ui.swap.widget.view.SwapProviderWidget
@@ -65,6 +68,7 @@ fun SwapScreen(
     configViewModel: SwapConfigurationViewModel = hiltViewModel<DefaultSwapConfigurationViewModel>(),
     providerViewModel: SwapProviderWidgetViewModel = hiltViewModel<DefaultSwapProviderWidgetViewModel>(),
     buttonViewModel: SwapButtonViewModel = hiltViewModel<DefaultSwapButtonViewModel>(),
+    quoteProvidersViewModel: SwapQuoteProvidersViewModel = hiltViewModel(),
     listener: SwapScreenListener
 ) {
     LaunchedEffect(Unit) {
@@ -90,6 +94,7 @@ fun SwapScreen(
                         configViewModel = configViewModel,
                         providerViewModel = providerViewModel,
                         buttonViewModel = buttonViewModel,
+                        quoteProvidersViewModel = quoteProvidersViewModel,
                         listener = listener
                     )
                 }
@@ -107,12 +112,15 @@ private fun SwapContentState(
     widgetViewModel: SwapWidgetViewModel,
     configViewModel: SwapConfigurationViewModel,
     providerViewModel: SwapProviderWidgetViewModel,
+    quoteProvidersViewModel: SwapQuoteProvidersViewModel,
     buttonViewModel: SwapButtonViewModel,
     listener: SwapScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val swapConfigurationBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val providerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         var isConfigurationBottomSheetVisible by remember { mutableStateOf(false) }
+        var isProviderBottomSheetVisible by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
         Column(
             modifier = Modifier
@@ -133,7 +141,14 @@ private fun SwapContentState(
                 onConfigureClick = { isConfigurationBottomSheetVisible = true }
             )
             SwapProviderWidget(
-                modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
+                modifier = Modifier
+                    .clickableNoRipple {
+                        widgetViewModel.getContentQuoteState()?.run {
+                            quoteProvidersViewModel.initProviders(quoteSelection, quotes.map { it.quote })
+                            isProviderBottomSheetVisible = true
+                        }
+                    }
+                    .padding(top = 16.dp, start = 24.dp, end = 24.dp),
                 providerViewModel
             )
         }
@@ -161,6 +176,26 @@ private fun SwapContentState(
                     dismissBottomSheet()
                 },
                 onDismissRequest = { dismissBottomSheet() }
+            )
+        }
+
+        if (isProviderBottomSheetVisible) {
+            fun dismissBottomSheet() {
+                scope.launch { providerBottomSheetState.hide() }.invokeOnCompletion {
+                    if (!providerBottomSheetState.isVisible) {
+                        isProviderBottomSheetVisible = false
+                    }
+                }
+            }
+
+            SwapQuoteProvidersBottomSheet(
+                sheetState = providerBottomSheetState,
+                onDismissRequest = { dismissBottomSheet() },
+                onProviderSelected = { selectedProvider ->
+                    widgetViewModel.selectQuote(selectedProvider)
+                    dismissBottomSheet()
+                },
+                viewModel = quoteProvidersViewModel
             )
         }
     }

@@ -13,6 +13,7 @@
 package com.algorand.android.ui.swap.widget.viewmodel
 
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
@@ -34,6 +35,10 @@ interface SwapWidgetViewModel : StateViewModel<ViewState> {
         assetOutFlow: Flow<SwapAssetSelectionViewModel.ViewState>
     )
 
+    fun selectQuote(providerItem: SwapQuoteProviderSelectionItem)
+
+    fun getContentQuoteState(): ViewState.Content.ContentState.Quote?
+
     sealed interface ViewState {
 
         data object Loading : ViewState
@@ -47,13 +52,23 @@ interface SwapWidgetViewModel : StateViewModel<ViewState> {
                 data class Error(val message: String?) : ContentState
 
                 data class Quote(
-                    val selectedQuoteId: Long,
                     val bestOfferQuoteId: Long,
+                    val quoteSelection: QuoteSelection,
                     val quotes: List<SwapQuoteDetail>
                 ) : ContentState {
 
                     val selectedQuoteDetail
-                        get() = quotes.first { it.quote.quoteId == selectedQuoteId }
+                        get() = quotes.first { it.quote.quoteId == quoteSelection.quoteId }
+
+                    data class QuoteSelection(
+                        val quoteId: Long,
+                        val selectionType: Type
+                    ) {
+                        sealed interface Type {
+                            data object Auto : Type
+                            data object Manual : Type
+                        }
+                    }
                 }
             }
 

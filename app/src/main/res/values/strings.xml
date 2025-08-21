@@ -1546,4 +1546,6 @@
     <string name="apply">Apply</string>
     <string name="primary_currency">Primary Currency</string>
     <string name="use_local_currency">Use Local Currency</string>
+    <string name="best_price_available">Best price available</string>
+    <string name="change_provider">Change Provider</string>
 </resources>

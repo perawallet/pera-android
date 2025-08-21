@@ -78,13 +78,13 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
     }
 
     override fun onAssetInChipClick() {
-        val address = swapViewModel.addressFlow.value ?: return
+        val address = swapViewModel.getAddress() ?: return
         nav(SwapFragmentDirections.actionSwapFragmentToSwapAssetInSelectionFragment(address))
     }
 
     override fun onAssetOutChipClick() {
-        val address = swapViewModel.addressFlow.value ?: return
-        val assetInId = swapViewModel.assetInFlow.value
+        val address = swapViewModel.getAddress() ?: return
+        val assetInId = swapViewModel.getAssetInId()
         nav(SwapFragmentDirections.actionSwapFragmentToSwapAssetOutSelectionFragment(address, assetInId))
     }
 }

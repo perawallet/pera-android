@@ -1,3 +1,4 @@
+@file:Suppress("LongParameterList")
 /*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +35,7 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 private const val ASSET_IN_CONTAINER_ID = "assetInContainer"
 private const val ASSET_OUT_CONTAINER_ID = "assetOutContainer"
 private const val SWAP_CONFIGURATION_CONTAINER_ID = "swapConfigurationContainer"
+private const val MAX_PERCENTAGE = 100
 
 @Composable
 fun SwapWidget(
@@ -55,7 +57,7 @@ fun SwapWidget(
             configViewModel,
             swapViewModel::switchAssets,
             onConfigureClick,
-            onMaxClick = { widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), 100) }
+            onMaxClick = { widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), MAX_PERCENTAGE) }
         )
 
         LaunchedEffect(Unit) {

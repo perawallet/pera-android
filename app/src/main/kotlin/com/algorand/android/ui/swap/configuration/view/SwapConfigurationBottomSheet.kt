@@ -11,6 +11,7 @@
  */
 
 @file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("MagicNumber")
 
 package com.algorand.android.ui.swap.configuration.view
 
@@ -50,6 +51,7 @@ import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.textfield.PeraTextField
 import com.algorand.android.ui.compose.widget.textfield.PeraTextFieldColors
+import com.algorand.android.ui.swap.configuration.model.SwapConfigurationResult
 import com.algorand.android.ui.swap.configuration.view.ChipOption.Companion.CUSTOM_SLIPPAGE_VALUE
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.utils.emptyString
@@ -57,18 +59,6 @@ import com.algorand.android.utils.extensions.capitalizeWords
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
-
-data class SwapConfigurationResult(
-    val balancePercentage: Float?,
-    val slippageTolerance: Float?,
-    val useLocalCurrency: Boolean
-)
-
-private data class ChipOption(val value: Float, val text: String) {
-    companion object {
-        const val CUSTOM_SLIPPAGE_VALUE = -1f
-    }
-}
 
 @Composable
 fun SwapConfigurationBottomSheet(
@@ -281,4 +271,10 @@ private fun getSlippageChips(): List<ChipOption> {
         ChipOption(2f, stringResource(R.string.formatted_percentage, "2")),
         ChipOption(5f, stringResource(R.string.formatted_percentage, "5"))
     )
+}
+
+private data class ChipOption(val value: Float, val text: String) {
+    companion object {
+        const val CUSTOM_SLIPPAGE_VALUE = -1f
+    }
 }

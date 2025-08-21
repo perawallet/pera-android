@@ -18,7 +18,7 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.ui.swap.configuration.view.SwapConfigurationResult
+import com.algorand.android.ui.swap.configuration.model.SwapConfigurationResult
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
 import com.algorand.android.utils.isEqualTo
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
@@ -76,6 +76,10 @@ class SwapViewModel @Inject constructor(
     }
 
     fun getSwapDetails(): SwapDetails = swapDetailsFlow.value
+
+    fun getAddress(): String? = swapDetailsFlow.value.address
+
+    fun getAssetInId(): Long = swapDetailsFlow.value.assetInId
 
     fun setAssetInId(assetId: Long) {
         _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetInId = assetId)

@@ -155,7 +155,8 @@ private fun SwapContentState(
                 onApplyClick = {
                     swapViewModel.applySwapConfigs(it)
                     if (it.balancePercentage != null) {
-                        widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), it.balancePercentage.toInt())
+                        val percentage = it.balancePercentage.toInt()
+                        widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), percentage)
                     }
                     dismissBottomSheet()
                 },

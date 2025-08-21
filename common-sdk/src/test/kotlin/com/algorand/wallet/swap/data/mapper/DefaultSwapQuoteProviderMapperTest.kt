@@ -23,65 +23,42 @@ class DefaultSwapQuoteProviderMapperTest {
     private val sut = DefaultSwapQuoteProviderMapper()
 
     @Test
-    fun `EXPECT TINYMAN WHEN response is TINYMAN`() {
-        val result = sut(SwapQuoteProviderResponse.TINYMAN)
+    fun `EXPECT null WHEN name is null`() {
+        val response = VALID_RESPONSE.copy(name = null)
 
-        assertEquals(SwapQuoteProvider.TINYMAN, result)
-    }
-
-    @Test
-    fun `EXPECT TINYMAN_V2 WHEN response is TINYMAN_V2`() {
-        val result = sut(SwapQuoteProviderResponse.TINYMAN_V2)
-
-        assertEquals(SwapQuoteProvider.TINYMAN_V2, result)
-    }
-
-    @Test
-    fun `EXPECT TINYMAN_SWAP_ROUTER WHEN response is TINYMAN_SWAP_ROUTER`() {
-        val result = sut(SwapQuoteProviderResponse.TINYMAN_SWAP_ROUTER)
-
-        assertEquals(SwapQuoteProvider.TINYMAN_SWAP_ROUTER, result)
-    }
-
-    @Test
-    fun `EXPECT VESTIGE_V3 WHEN response is VESTIGE_V3`() {
-        val result = sut(SwapQuoteProviderResponse.VESTIGE_V3)
-
-        assertEquals(SwapQuoteProvider.VESTIGE_V3, result)
-    }
-
-    @Test
-    fun `EXPECT VESTIGE_V4 WHEN response is VESTIGE_V4`() {
-        val result = sut(SwapQuoteProviderResponse.VESTIGE_V4)
-
-        assertEquals(SwapQuoteProvider.VESTIGE_V4, result)
-    }
-
-    @Test
-    fun `EXPECT FOLKS WHEN response is FOLKS_ROUTER`() {
-        val result = sut(SwapQuoteProviderResponse.FOLKS_ROUTER)
-
-        assertEquals(SwapQuoteProvider.FOLKS, result)
-    }
-
-    @Test
-    fun `EXPECT DEFLEX WHEN response is DEFLEX`() {
-        val result = sut(SwapQuoteProviderResponse.DEFLEX)
-
-        assertEquals(SwapQuoteProvider.DEFLEX, result)
-    }
-
-    @Test
-    fun `EXPECT null WHEN response is UNKNOWN`() {
-        val result = sut(SwapQuoteProviderResponse.UNKNOWN)
+        val result = sut(response)
 
         assertNull(result)
     }
 
     @Test
-    fun `EXPECT null WHEN response is null`() {
-        val result = sut(null)
+    fun `EXPECT null WHEN displayName is null`() {
+        val response = VALID_RESPONSE.copy(displayName = null)
+
+        val result = sut(response)
 
         assertNull(result)
+    }
+
+    @Test
+    fun `EXPECT mapped provider WHEN response is valid`() {
+        val result = sut(VALID_RESPONSE)
+
+        assertEquals(VALID_PROVIDER, result)
+    }
+
+    private companion object {
+
+        val VALID_RESPONSE = SwapQuoteProviderResponse(
+            name = "example",
+            displayName = "Example",
+            iconUrl = "https://example.com/icon.png"
+        )
+
+        val VALID_PROVIDER = SwapQuoteProvider(
+            name = "example",
+            displayName = "Example",
+            iconUrl = "https://example.com/icon.png"
+        )
     }
 }

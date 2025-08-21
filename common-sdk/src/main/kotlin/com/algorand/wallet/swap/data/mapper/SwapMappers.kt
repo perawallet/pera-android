@@ -21,19 +21,19 @@ import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
 import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.data.model.SwapTransactionPurposeResponse
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.model.SwapTransactionPurpose
 
 internal fun interface SwapQuoteMapper {
-    operator fun invoke(response: SwapQuoteResponse): SwapQuoteV2?
+    operator fun invoke(response: SwapQuoteResponse, providers: List<SwapQuoteProvider>): SwapQuoteV2?
 }
 
 internal fun interface SwapQuoteRequestBodyMapper {
-    operator fun invoke(payload: SwapQuoteRequestPayload): SwapQuoteRequestBody
+    operator fun invoke(payload: SwapQuoteRequestPayload, providers: List<SwapQuoteProvider>): SwapQuoteRequestBody
 }
 
 internal fun interface SwapQuoteTransactionMapper {
@@ -45,7 +45,7 @@ internal fun interface SwapTransactionPurposeMapper {
 }
 
 internal fun interface SwapQuoteProviderMapper {
-    operator fun invoke(response: SwapQuoteProviderResponse?): SwapQuoteProvider?
+    operator fun invoke(response: SwapQuoteProviderResponse): SwapQuoteProvider?
 }
 
 internal interface SwapAssetAmountMapper {
@@ -55,10 +55,6 @@ internal interface SwapAssetAmountMapper {
 
 internal fun interface SwapAssetDetailMapper {
     operator fun invoke(response: SwapQuoteAssetDetailResponse?): SwapQuoteV2.AssetDetail?
-}
-
-internal fun interface SwapQuoteProviderResponseMapper {
-    operator fun invoke(provider: SwapQuoteProvider): SwapQuoteProviderResponse
 }
 
 internal fun interface SwapSelectedAssetDetailMapper {

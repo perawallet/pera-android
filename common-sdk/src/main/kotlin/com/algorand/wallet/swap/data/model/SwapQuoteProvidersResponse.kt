@@ -10,15 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.wallet.swap.data.model
 
-import java.math.BigInteger
+import com.google.gson.annotations.SerializedName
 
-data class SwapQuoteRequestPayload(
-    val address: String,
-    val assetInId: Long,
-    val assetOutId: Long,
-    val amount: BigInteger,
-    val deviceId: String,
-    val slippage: Float? = null
+internal data class SwapQuoteProvidersResponse(
+    @SerializedName("results")
+    val results: List<SwapQuoteProviderResponse>
 )

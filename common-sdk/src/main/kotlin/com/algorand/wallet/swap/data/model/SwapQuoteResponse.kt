@@ -20,7 +20,7 @@ internal data class SwapQuoteResponse(
     @SerializedName("id")
     val id: Long?,
     @SerializedName("provider")
-    val provider: SwapQuoteProviderResponse?,
+    val provider: String?,
     @SerializedName("swap_type")
     val swapType: SwapTypeResponse?,
     @SerializedName("swapper_address")

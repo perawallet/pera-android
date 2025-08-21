@@ -14,10 +14,11 @@ package com.algorand.wallet.swap.data.repository
 
 import com.algorand.test.peraFixture
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.cache.InMemoryCachedObject
 import com.algorand.wallet.foundation.cache.PersistentCache
 import com.algorand.wallet.swap.data.mapper.AvailableSwapAssetMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
-import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderResponseMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
@@ -25,19 +26,23 @@ import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsResponse
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
+import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
+import com.algorand.wallet.swap.data.model.SwapQuoteProvidersResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.math.BigInteger
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -50,8 +55,9 @@ class DefaultSwapRepositoryTest {
     private val quoteTransactionMapper: SwapQuoteTransactionMapper = mockk()
     private val quoteRequestMapper: SwapQuoteRequestBodyMapper = mockk()
     private val quoteMapper: SwapQuoteMapper = mockk()
-    private val providerResponseMapper: SwapQuoteProviderResponseMapper = mockk()
     private val availableSwapAssetMapper: AvailableSwapAssetMapper = mockk()
+    private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>> = mockk(relaxed = true)
+    private val swapQuoteProviderMapper: SwapQuoteProviderMapper = mockk()
 
     private val sut = DefaultSwapRepository(
         swapApiService,
@@ -59,14 +65,25 @@ class DefaultSwapRepositoryTest {
         quoteTransactionMapper,
         quoteRequestMapper,
         quoteMapper,
-        providerResponseMapper,
-        availableSwapAssetMapper
+        swapQuoteProviderMapper,
+        availableSwapAssetMapper,
+        providersCache
     )
 
     @Test
+    fun `EXPECT error WHEN get swap quote is called but quote providers api call fails`() = runTest {
+        every { providersCache.get() } returns null
+
+        val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
+
+        assert(result is PeraResult.Error)
+    }
+
+    @Test
     fun `EXPECT error WHEN get swap quotes api call fails`() = runTest {
+        every { providersCache.get() } returns CACHED_PROVIDERS
         coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } throws Exception()
-        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD) } returns SWAP_REQUEST_BODY
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, CACHED_PROVIDERS) } returns SWAP_REQUEST_BODY
 
         val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
 
@@ -75,9 +92,10 @@ class DefaultSwapRepositoryTest {
 
     @Test
     fun `EXPECT error WHEN swap quotes are empty`() = runTest {
+        every { providersCache.get() } returns CACHED_PROVIDERS
         coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } returns SWAP_QUOTE_RESULT_RESPONSE
-        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD) } returns SWAP_REQUEST_BODY
-        every { quoteMapper(SWAP_QUOTE_RESPONSE) } returns null
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, CACHED_PROVIDERS) } returns SWAP_REQUEST_BODY
+        every { quoteMapper(SWAP_QUOTE_RESPONSE, CACHED_PROVIDERS) } returns null
 
         val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
 
@@ -86,13 +104,29 @@ class DefaultSwapRepositoryTest {
 
     @Test
     fun `EXPECT swap quotes WHEN api call returns valid quotes`() = runTest {
+        every { providersCache.get() } returns CACHED_PROVIDERS
         coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } returns SWAP_QUOTE_RESULT_RESPONSE
-        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD) } returns SWAP_REQUEST_BODY
-        every { quoteMapper(SWAP_QUOTE_RESPONSE) } returns SWAP_QUOTE
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, CACHED_PROVIDERS) } returns SWAP_REQUEST_BODY
+        every { quoteMapper(SWAP_QUOTE_RESPONSE, CACHED_PROVIDERS) } returns SWAP_QUOTE
 
         val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
 
         assertEquals(PeraResult.Success(listOf(SWAP_QUOTE)), result)
+    }
+
+    @Test
+    fun `EXPECT providers to be cached WHEN get swap quote is called the cache is empty`() = runTest {
+        coEvery { swapApiService.getSwapQuoteProviders() } returns PROVIDERS_RESPONSE
+        coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } returns SWAP_QUOTE_RESULT_RESPONSE
+        every { providersCache.get() } returnsMany listOf(null, listOf(PROVIDER))
+        every { swapQuoteProviderMapper.invoke(PROVIDER_RESPONSE) } returns PROVIDER
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, listOf(PROVIDER)) } returns SWAP_REQUEST_BODY
+        every { quoteMapper(SWAP_QUOTE_RESPONSE, listOf(PROVIDER)) } returns SWAP_QUOTE
+
+        val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
+
+        assertEquals(PeraResult.Success(listOf(SWAP_QUOTE)), result)
+        verify { providersCache.put(listOf(PROVIDER)) }
     }
 
     @Test
@@ -214,5 +248,9 @@ class DefaultSwapRepositoryTest {
         val QUOTE_TXN_RESPONSE = peraFixture<SwapQuoteTransactionResponse>()
         val CREATE_QUOTE_RESPONSE = CreateSwapQuoteTransactionsResponse(listOf(QUOTE_TXN_RESPONSE))
         val QUOTE_TRANSACTION = peraFixture<SwapQuoteTransaction>()
+        val CACHED_PROVIDERS = peraFixture<List<SwapQuoteProvider>>()
+        val PROVIDER_RESPONSE = peraFixture<SwapQuoteProviderResponse>()
+        val PROVIDERS_RESPONSE = peraFixture<SwapQuoteProvidersResponse>().copy(results = listOf(PROVIDER_RESPONSE))
+        val PROVIDER = peraFixture<SwapQuoteProvider>()
     }
 }

@@ -43,7 +43,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.PeraModalBottomSheet
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraModalBottomSheet
 import com.algorand.android.ui.compose.widget.PeraSwitch
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon

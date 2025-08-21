@@ -10,6 +10,8 @@
  * limitations under the License
  */
 
+@file:OptIn(ExperimentalGlideComposeApi::class)
+
 package com.algorand.android.ui.swap.confirmation.view
 
 import android.content.Context
@@ -50,6 +52,9 @@ import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningSt
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
 fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirmationQuoteDetailContainerListener) {
@@ -63,7 +68,7 @@ fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirm
     Column(modifier = Modifier.padding(24.dp)) {
         Price(content)
         QuoteRowSeparator()
-        Provider()
+        Provider(content.quote.provider)
         QuoteRowSeparator()
         SlippageTolerance(content.quote.slippage, listener::onSlippageToleranceInfoClick)
         QuoteRowSeparator()
@@ -133,11 +138,17 @@ private fun getPriceRatioText(context: Context, priceRatio: Content.PriceRatio):
 }
 
 @Composable
-private fun Provider() {
+private fun Provider(provider: SwapQuoteProvider) {
     QuoteDetailRow(
         labelContent = { QuoteDetailLabel(textResId = R.string.provider) },
         valueContent = {
-            QuoteDetailValue(text = "PROVIDER") // TODO replace with actual provider name when API is ready
+            GlideImage(
+                model = provider.iconUrl,
+                modifier = Modifier.size(16.dp),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            QuoteDetailValue(text = provider.displayName)
         }
     )
 }

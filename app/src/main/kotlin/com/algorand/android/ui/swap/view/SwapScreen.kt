@@ -11,6 +11,7 @@
  */
 
 @file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("LongMethod")
 
 package com.algorand.android.ui.swap.view
 
@@ -21,14 +22,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraSingleButtonState
+import com.algorand.android.ui.compose.widget.bottomsheet.rememberPeraSheetState
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.configuration.view.SwapConfigurationBottomSheet
 import com.algorand.android.ui.swap.providers.view.SwapQuoteProvidersBottomSheet
@@ -57,7 +54,6 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
-import kotlinx.coroutines.launch
 
 @Composable
 fun SwapScreen(
@@ -117,11 +113,9 @@ private fun SwapContentState(
     listener: SwapScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        val swapConfigurationBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        val providerBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        var isConfigurationBottomSheetVisible by remember { mutableStateOf(false) }
-        var isProviderBottomSheetVisible by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
+        val providerBottomSheetState = rememberPeraSheetState(scope)
+        val swapConfigurationBottomSheetState = rememberPeraSheetState(scope)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -138,14 +132,14 @@ private fun SwapContentState(
                 buttonViewModel,
                 configViewModel,
                 listener,
-                onConfigureClick = { isConfigurationBottomSheetVisible = true }
+                onConfigureClick = { swapConfigurationBottomSheetState.show() }
             )
             SwapProviderWidget(
                 modifier = Modifier
                     .clickableNoRipple {
                         widgetViewModel.getContentQuoteState()?.run {
                             quoteProvidersViewModel.initProviders(quoteSelection, quotes.map { it.quote })
-                            isProviderBottomSheetVisible = true
+                            providerBottomSheetState.show()
                         }
                     }
                     .padding(top = 16.dp, start = 24.dp, end = 24.dp),
@@ -154,18 +148,10 @@ private fun SwapContentState(
         }
         SwapButtonWidget(buttonViewModel, listener::onSwapClick)
 
-        if (isConfigurationBottomSheetVisible) {
-
-            fun dismissBottomSheet() {
-                scope.launch { swapConfigurationBottomSheetState.hide() }.invokeOnCompletion {
-                    if (!swapConfigurationBottomSheetState.isVisible) {
-                        isConfigurationBottomSheetVisible = false
-                    }
-                }
-            }
-
+        swapConfigurationBottomSheetState.SheetContent {
             SwapConfigurationBottomSheet(
-                sheetState = swapConfigurationBottomSheetState,
+                sheetState = swapConfigurationBottomSheetState.sheetState,
+                onDismissRequest = swapConfigurationBottomSheetState::hide,
                 swapDetails = swapViewModel.getSwapDetails(),
                 onApplyClick = {
                     swapViewModel.applySwapConfigs(it)
@@ -173,29 +159,20 @@ private fun SwapContentState(
                         val percentage = it.balancePercentage.toInt()
                         widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), percentage)
                     }
-                    dismissBottomSheet()
-                },
-                onDismissRequest = { dismissBottomSheet() }
+                    swapConfigurationBottomSheetState.hide()
+                }
             )
         }
 
-        if (isProviderBottomSheetVisible) {
-            fun dismissBottomSheet() {
-                scope.launch { providerBottomSheetState.hide() }.invokeOnCompletion {
-                    if (!providerBottomSheetState.isVisible) {
-                        isProviderBottomSheetVisible = false
-                    }
-                }
-            }
-
+        providerBottomSheetState.SheetContent {
             SwapQuoteProvidersBottomSheet(
-                sheetState = providerBottomSheetState,
-                onDismissRequest = { dismissBottomSheet() },
+                sheetState = providerBottomSheetState.sheetState,
+                onDismissRequest = providerBottomSheetState::hide,
+                viewModel = quoteProvidersViewModel,
                 onProviderSelected = { selectedProvider ->
                     widgetViewModel.selectQuote(selectedProvider)
-                    dismissBottomSheet()
-                },
-                viewModel = quoteProvidersViewModel
+                    providerBottomSheetState.hide()
+                }
             )
         }
     }

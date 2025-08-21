@@ -12,7 +12,7 @@
 
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.algorand.android.ui.compose.widget
+package com.algorand.android.ui.compose.widget.bottomsheet
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding

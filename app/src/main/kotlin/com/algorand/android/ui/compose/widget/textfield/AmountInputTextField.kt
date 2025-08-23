@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -36,8 +37,8 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 @Composable
 fun AmountInputTextField(
     modifier: Modifier = Modifier,
-    text: String,
-    onTextChanged: (String) -> Unit = {},
+    textFieldValue: TextFieldValue,
+    onTextChanged: (TextFieldValue) -> Unit,
     hint: String? = null,
     enabled: Boolean = true,
     textStyle: TextStyle,
@@ -47,7 +48,7 @@ fun AmountInputTextField(
     Box {
         BasicTextField(
             modifier = modifier,
-            value = text,
+            value = textFieldValue,
             onValueChange = onTextChanged,
             visualTransformation = DecimalFormattedVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -56,7 +57,7 @@ fun AmountInputTextField(
             decorationBox = {
                 TextFieldDefaults.DecorationBox(
                     label = null,
-                    value = text,
+                    value = textFieldValue.text,
                     innerTextField = it,
                     singleLine = true,
                     enabled = enabled,
@@ -74,7 +75,7 @@ fun AmountInputTextField(
                 )
             }
         )
-        if (!hint.isNullOrBlank() && text.isBlank()) {
+        if (!hint.isNullOrBlank() && textFieldValue.text.isBlank()) {
             Text(
                 text = hint,
                 color = PeraTheme.colors.text.grayLighter,

@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
@@ -70,19 +72,23 @@ fun SwapAssetInWidget(
 private fun RowScope.AssetInAmountContent(viewState: ViewState, widgetViewModel: SwapWidgetViewModel) {
     val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle("")
     Column(modifier = Modifier.weight(1f)) {
-        AssetInAmountInputTextField(viewState, assetInAmount) { input ->
-            widgetViewModel.setAmountInput(input)
+        AssetInAmountInputTextField(viewState, TextFieldValue(assetInAmount, TextRange(assetInAmount.length))) {
+            widgetViewModel.setAmountInput(it.text)
         }
         SecondaryAmountText(viewState)
     }
 }
 
 @Composable
-private fun AssetInAmountInputTextField(viewState: ViewState, text: String, onTextChange: (String) -> Unit) {
+private fun AssetInAmountInputTextField(
+    viewState: ViewState,
+    textFieldValue: TextFieldValue,
+    onTextChanged: (TextFieldValue) -> Unit,
+) {
     AmountInputTextField(
-        text = text,
+        textFieldValue = textFieldValue,
         hint = (viewState as? Content)?.amountRenderers?.assetInPrimaryAmountHint?.getDisplayValue(),
-        onTextChanged = onTextChange,
+        onTextChanged = onTextChanged,
         textStyle = PeraTheme.typography.body.large.sansMedium,
         visualTransformation = DecimalFormattedVisualTransformation()
     )

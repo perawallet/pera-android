@@ -153,7 +153,10 @@ private fun getErrorMessage(quoteState: SwapQuoteDetail.SwapQuoteState.NonSwappa
             val minBalance = (quoteState.exception as InsufficientBalanceForFee).minRequiredBalance
             val annotatedString = AnnotatedString(
                 stringResId = R.string.algo_balance_is_too_low,
-                replacementList = listOf("min_balance" to "${Currency.ALGO.symbol} $minBalance")
+                replacementList = listOf(
+                    "algo_icon" to Currency.ALGO.symbol,
+                    "min_balance" to minBalance.stripTrailingZeros().toPlainString()
+                )
             )
             LocalContext.current.getXmlStyledString(annotatedString).toString()
         }

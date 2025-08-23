@@ -53,7 +53,7 @@ fun SwapConfigurationWidget(
                     .shadow(2.dp, shape = RoundedCornerShape(40.dp))
                     .background(color = PeraTheme.colors.background.primary, shape = RoundedCornerShape(40.dp))
                     .padding(vertical = 8.dp, horizontal = 12.dp)
-                SwitchChipButton(chipModifier.clickableNoRipple(state.isSwitchButtonEnabled) { onSwitchAssetsClick })
+                SwitchChipButton(chipModifier.clickableNoRipple(state.isSwitchButtonEnabled) { onSwitchAssetsClick() })
                 Spacer(modifier = Modifier.weight(1f))
                 ConfigChip(chipModifier, onConfigureClick, onMaxClick)
             }

@@ -35,17 +35,12 @@ import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
 import com.algorand.android.ui.swap.confirmation.mapper.LegacySwapQuoteMapper
 import com.algorand.android.ui.swap.confirmation.mapper.SwapConfirmationContentMapper
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact
-import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level1
-import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level2
-import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level3
-import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.NoWarning
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError.ErrorType
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError.ErrorType.Api
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError.ErrorType.Generic
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError.ErrorType.Local
-import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToPriceImpactConfirmation
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToTransactionStatus
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content.ContentState
@@ -84,21 +79,6 @@ class SwapConfirmationViewModel @Inject constructor(
             viewModelScope.launch {
                 val contentState = contentMapper.map(quote)
                 stateDelegate.updateState { contentState }
-            }
-        }
-    }
-
-    fun confirmSwapWithCheckingPriceImpact() {
-        stateDelegate.onState<ViewState.Content> { contentState ->
-            val status = contentState.priceImpact.warningStatus
-            when (status) {
-                NoWarning -> confirmSwap()
-                is Level1 -> confirmSwap()
-                is Level2 -> {
-                    val event = NavigateToPriceImpactConfirmation(status.threshold.toLong())
-                    eventDelegate.sendEvent(viewModelScope, event)
-                }
-                is Level3 -> Unit
             }
         }
     }
@@ -249,7 +229,6 @@ class SwapConfirmationViewModel @Inject constructor(
 
         data object DisplayLedgerNotFoundDialog : ViewEvent
         data class NavigateToLedgerWaitingForApprovalDialog(val payload: LedgerDialogPayload) : ViewEvent
-        data class NavigateToPriceImpactConfirmation(val priceImpactPercentage: Long) : ViewEvent
         data class DisplayError(val errorType: ErrorType) : ViewEvent {
             sealed interface ErrorType {
                 data object Generic : ErrorType

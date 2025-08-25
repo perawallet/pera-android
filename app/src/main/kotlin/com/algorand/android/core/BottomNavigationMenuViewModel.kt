@@ -18,20 +18,16 @@ import com.algorand.android.R
 import com.algorand.android.core.BottomNavigationMenuViewModel.ViewEvent
 import com.algorand.android.core.BottomNavigationMenuViewModel.ViewState
 import com.algorand.android.core.bottomnav.model.BottomNavMenuItem
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.utils.isStagingApp
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.node.domain.usecase.IsSelectedNodeTestnet
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -52,13 +48,14 @@ class BottomNavigationMenuViewModel @Inject constructor(
             viewModelScope.launch {
                 val menuItems = getMenuItems()
                 stateDelegate.updateState { ViewState.Content(menuItems) }
-                if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
-                    getAccountLiteCacheFlow().collectLatest { cacheStatus ->
-                        val accountLites = (cacheStatus as? AccountLiteCacheStatus.Data)?.accountLites?.values
-                        val isSwapEnabled = accountLites?.any { it.cachedInfo?.type?.canSignTransaction() == true }
-                        eventDelegate.sendEvent(ViewEvent.SetItemEnabled(R.id.swapFragment, isSwapEnabled == true))
-                    }
-                }
+//                TODO Enable swap when feature is ready
+//                if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+//                    getAccountLiteCacheFlow().collectLatest { cacheStatus ->
+//                        val accountLites = (cacheStatus as? AccountLiteCacheStatus.Data)?.accountLites?.values
+//                        val isSwapEnabled = accountLites?.any { it.cachedInfo?.type?.canSignTransaction() == true }
+//                        eventDelegate.sendEvent(ViewEvent.SetItemEnabled(R.id.swapFragment, isSwapEnabled == true))
+//                    }
+//                }
             }
         }
     }
@@ -73,13 +70,8 @@ class BottomNavigationMenuViewModel @Inject constructor(
         return buildList {
             add(getHomeItem())
             add(getDiscoverItem())
-            if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
-                add(getSwapItem())
-                add(getStakingItem())
-            } else {
-                add(getStakingItem())
-                add(getNftsItem())
-            }
+            add(getStakingItem())
+            add(getNftsItem())
             add(getMenuItem())
         }
     }

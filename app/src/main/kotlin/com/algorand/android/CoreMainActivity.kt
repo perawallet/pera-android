@@ -46,7 +46,6 @@ import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.isStagingApp
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
@@ -181,11 +180,6 @@ abstract class CoreMainActivity : BaseActivity() {
 
     fun handleNavigationButtonsForChosenNetwork() {
         bottomNavMenuViewModel.updateBottomNavOnNodeChange()
-        binding.bottomNavigationView.menu.forEach { menuItem ->
-            if (menuItem.itemId == R.id.discoverHomeNavigation) {
-                menuItem.isEnabled = isConnectedToTestNet.not() || isStagingApp()
-            }
-        }
     }
 
     fun checkIfConnectedToTestNet(activeNode: Node?) {

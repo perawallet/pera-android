@@ -10,20 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.confirmation.model
+package com.algorand.android.core.bottomnav.model
 
-import com.algorand.android.ui.common.amount.AmountRenderer
-
-data class SwapPriceImpact(
-    val percentage: AmountRenderer,
-    val warningStatus: WarningStatus
-) {
-
-    sealed interface WarningStatus {
-        data object NoWarning : WarningStatus
-
-        data class Level1(val threshold: Float) : WarningStatus
-
-        data class Level2(val threshold: Float) : WarningStatus
-    }
-}
+data class BottomNavMenuItem(
+    val id: Int,
+    val titleResId: Int,
+    val iconResId: Int,
+    val enabled: Boolean
+)

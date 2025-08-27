@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Idle
-import com.algorand.android.ui.compose.widget.PeraBottomSheetDragIndicator
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
 
 @Composable
 fun AccountStatusBottomSheetScreen(

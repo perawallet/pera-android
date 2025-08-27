@@ -33,7 +33,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.PeraBottomSheetDragIndicator
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
 

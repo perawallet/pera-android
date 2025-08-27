@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 
 @Composable
 fun PeraToolbar(
@@ -56,10 +57,26 @@ fun PeraToolbar(
 @Composable
 fun PeraToolbarIcon(modifier: Modifier = Modifier, @DrawableRes iconResId: Int) {
     Icon(
-        modifier = modifier.size(40.dp).padding(8.dp),
+        modifier = modifier
+            .size(40.dp)
+            .padding(8.dp),
         painter = painterResource(iconResId),
         tint = PeraTheme.colors.text.gray,
         contentDescription = null
+    )
+}
+
+@Composable
+fun PeraToolbarTextButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit
+) {
+    Text(
+        modifier = modifier.clickableNoRipple { onClick() },
+        text = text,
+        color = PeraTheme.colors.helper.positive,
+        style = PeraTheme.typography.body.regular.sansMedium
     )
 }
 

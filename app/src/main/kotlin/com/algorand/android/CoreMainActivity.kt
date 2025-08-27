@@ -19,6 +19,7 @@ import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
+import androidx.core.view.isEmpty
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +32,8 @@ import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeCoreManagers
 import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeHomeNavigation
 import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeLoginNavigation
 import com.algorand.android.core.BaseActivity
+import com.algorand.android.core.BottomNavigationMenuViewModel
+import com.algorand.android.core.bottomnav.model.BottomNavMenuItem
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.ActivityMainBinding
 import com.algorand.android.models.Node
@@ -43,15 +46,14 @@ import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.isStagingApp
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
 import com.algorand.android.utils.viewbinding.viewBinding
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
+import kotlinx.coroutines.launch
 
 abstract class CoreMainActivity : BaseActivity() {
 
@@ -70,6 +72,8 @@ abstract class CoreMainActivity : BaseActivity() {
     lateinit var navController: NavController
 
     private val coreMainViewModel: CoreMainViewModel by viewModels()
+
+    private val bottomNavMenuViewModel: BottomNavigationMenuViewModel by viewModels()
 
     var isBottomBarNavigationVisible by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -100,6 +104,23 @@ abstract class CoreMainActivity : BaseActivity() {
         }
     }
 
+    private val bottomNavMenuStateCollector: suspend (BottomNavigationMenuViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BottomNavigationMenuViewModel.ViewState.Content -> initBottomNavMenu(state.menuItems)
+            BottomNavigationMenuViewModel.ViewState.Idle -> Unit
+        }
+    }
+
+    private val bottomNavMenuEventCollector: suspend (BottomNavigationMenuViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is BottomNavigationMenuViewModel.ViewEvent.SetItemEnabled -> {
+                binding.bottomNavigationView.menu.forEach { menuItem ->
+                    if (menuItem.itemId == event.itemId) menuItem.isEnabled = event.enabled
+                }
+            }
+        }
+    }
+
     protected val binding by viewBinding(ActivityMainBinding::inflate)
 
     private var isConnectedToTestNet: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
@@ -123,6 +144,7 @@ abstract class CoreMainActivity : BaseActivity() {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
         initializeActivity()
+        bottomNavMenuViewModel.initBottomNavState()
     }
 
     private fun initializeActivity() {
@@ -139,6 +161,16 @@ abstract class CoreMainActivity : BaseActivity() {
             collection = viewEventCollector,
             state = Lifecycle.State.CREATED
         )
+        collectLatestOnLifecycle(
+            flow = bottomNavMenuViewModel.state,
+            collection = bottomNavMenuStateCollector,
+            state = Lifecycle.State.CREATED
+        )
+        collectLatestOnLifecycle(
+            flow = bottomNavMenuViewModel.viewEvent,
+            collection = bottomNavMenuEventCollector,
+            state = Lifecycle.State.CREATED
+        )
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
@@ -147,11 +179,7 @@ abstract class CoreMainActivity : BaseActivity() {
     }
 
     fun handleNavigationButtonsForChosenNetwork() {
-        binding.bottomNavigationView.menu.forEach { menuItem ->
-            if (menuItem.itemId == R.id.discoverHomeNavigation) {
-                menuItem.isEnabled = isConnectedToTestNet.not() || isStagingApp()
-            }
-        }
+        bottomNavMenuViewModel.updateBottomNavOnNodeChange()
     }
 
     fun checkIfConnectedToTestNet(activeNode: Node?) {
@@ -223,6 +251,20 @@ abstract class CoreMainActivity : BaseActivity() {
                 showLightStatusBarIcons()
             } else {
                 showDarkStatusBarIcons()
+            }
+        }
+    }
+
+    private fun initBottomNavMenu(items: List<BottomNavMenuItem>) {
+        binding.bottomNavigationView.menu.apply {
+            if (isEmpty()) {
+                items.forEachIndexed { index, item ->
+                    add(0, item.id, index, item.titleResId).apply {
+                        setIcon(item.iconResId)
+                        isEnabled = item.enabled
+                        isCheckable = true
+                    }
+                }
             }
         }
     }

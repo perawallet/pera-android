@@ -14,11 +14,10 @@ package com.algorand.wallet.swap.data.mapper
 
 import com.algorand.test.peraFixture
 import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
-import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.data.model.SwapTypeResponse
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapType
 import io.mockk.every
 import io.mockk.mockk
@@ -30,9 +29,6 @@ import org.junit.Test
 
 class DefaultSwapQuoteMapperTest {
 
-    private val quoteProviderMapper: SwapQuoteProviderMapper = mockk {
-        every { invoke(response = QUOTE_PROVIDER_RESPONSE) } returns QUOTE_PROVIDER
-    }
     private val assetDetailMapper: SwapAssetDetailMapper = mockk {
         every { invoke(response = ASSET_IN_DETAIL_RESPONSE) } returns ASSET_IN_DETAIL
         every { invoke(response = ASSET_OUT_DETAIL_RESPONSE) } returns ASSET_OUT_DETAIL
@@ -42,13 +38,13 @@ class DefaultSwapQuoteMapperTest {
         every { mapAssetOutAmount(response = VALID_RESPONSE) } returns ASSET_OUT_AMOUNT
     }
 
-    private val sut = DefaultSwapQuoteMapper(quoteProviderMapper, assetDetailMapper, assetAmountMapper)
+    private val sut = DefaultSwapQuoteMapper(assetDetailMapper, assetAmountMapper)
 
     @Test
     fun `EXPECT null WHEN response id id null`() {
         val response = VALID_RESPONSE.copy(id = null)
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
@@ -57,16 +53,16 @@ class DefaultSwapQuoteMapperTest {
     fun `EXPECT null WHEN address is null`() {
         val response = VALID_RESPONSE.copy(swapperAddress = null)
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
 
     @Test
     fun `EXPECT null WHEN provider is null`() {
-        every { quoteProviderMapper(response = QUOTE_PROVIDER_RESPONSE) } returns null
+        val randomProvider = peraFixture<SwapQuoteProvider>().copy(name = "invalid-provider")
 
-        val result = sut(VALID_RESPONSE)
+        val result = sut(VALID_RESPONSE, listOf(randomProvider))
 
         assertNull(result)
     }
@@ -76,7 +72,7 @@ class DefaultSwapQuoteMapperTest {
         every { assetDetailMapper(response = ASSET_IN_DETAIL_RESPONSE) } returns null
         val response = VALID_RESPONSE.copy(assetInAssetDetailResponse = ASSET_IN_DETAIL_RESPONSE)
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
@@ -86,7 +82,7 @@ class DefaultSwapQuoteMapperTest {
         every { assetDetailMapper(response = ASSET_OUT_DETAIL_RESPONSE) } returns null
         val response = VALID_RESPONSE.copy(assetOutAssetDetailResponse = ASSET_OUT_DETAIL_RESPONSE)
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
@@ -95,7 +91,7 @@ class DefaultSwapQuoteMapperTest {
     fun `EXPECT null WHEN asset in amount is null`() {
         every { assetAmountMapper.mapAssetInAmount(response = VALID_RESPONSE) } returns null
 
-        val result = sut(VALID_RESPONSE)
+        val result = sut(VALID_RESPONSE, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
@@ -104,7 +100,7 @@ class DefaultSwapQuoteMapperTest {
     fun `EXPECT null WHEN asset out amount is null`() {
         every { assetAmountMapper.mapAssetOutAmount(response = VALID_RESPONSE) } returns null
 
-        val result = sut(VALID_RESPONSE)
+        val result = sut(VALID_RESPONSE, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
@@ -115,7 +111,7 @@ class DefaultSwapQuoteMapperTest {
         every { assetAmountMapper.mapAssetInAmount(response) } returns ASSET_IN_AMOUNT
         every { assetAmountMapper.mapAssetOutAmount(response) } returns ASSET_OUT_AMOUNT
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
@@ -126,7 +122,7 @@ class DefaultSwapQuoteMapperTest {
         every { assetAmountMapper.mapAssetInAmount(response) } returns ASSET_IN_AMOUNT
         every { assetAmountMapper.mapAssetOutAmount(response) } returns ASSET_OUT_AMOUNT
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         assertNull(result)
     }
@@ -142,7 +138,7 @@ class DefaultSwapQuoteMapperTest {
         every { assetAmountMapper.mapAssetInAmount(response) } returns ASSET_IN_AMOUNT
         every { assetAmountMapper.mapAssetOutAmount(response) } returns ASSET_OUT_AMOUNT
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         val expected = VALID_QUOTE.copy(
             priceImpact = 0f,
@@ -165,7 +161,7 @@ class DefaultSwapQuoteMapperTest {
         every { assetAmountMapper.mapAssetInAmount(response) } returns ASSET_IN_AMOUNT
         every { assetAmountMapper.mapAssetOutAmount(response) } returns ASSET_OUT_AMOUNT
 
-        val result = sut(response)
+        val result = sut(response, QUOTE_PROVIDERS)
 
         val expected = VALID_QUOTE.copy(priceImpact = 0f, slippage = 0f)
         assertEquals(expected, result)
@@ -173,7 +169,7 @@ class DefaultSwapQuoteMapperTest {
 
     @Test
     fun `EXPECT mapped swap quote`() {
-        val result = sut(VALID_RESPONSE)
+        val result = sut(VALID_RESPONSE, listOf(QUOTE_PROVIDER))
 
         assertEquals(VALID_QUOTE, result)
     }
@@ -185,8 +181,9 @@ class DefaultSwapQuoteMapperTest {
         val ASSET_IN_DETAIL = peraFixture<SwapQuoteV2.AssetDetail>()
         val ASSET_OUT_DETAIL = peraFixture<SwapQuoteV2.AssetDetail>()
 
-        val QUOTE_PROVIDER_RESPONSE = peraFixture<SwapQuoteProviderResponse>()
-        val QUOTE_PROVIDER = peraFixture<SwapQuoteProvider>()
+        val QUOTE_PROVIDER_RESPONSE = peraFixture<String>()
+        val QUOTE_PROVIDER = peraFixture<SwapQuoteProvider>().copy(name = QUOTE_PROVIDER_RESPONSE)
+        val QUOTE_PROVIDERS = listOf(QUOTE_PROVIDER)
 
         val ASSET_IN_AMOUNT = peraFixture<SwapQuoteV2.AssetAmount>()
         val ASSET_OUT_AMOUNT = peraFixture<SwapQuoteV2.AssetAmount>()

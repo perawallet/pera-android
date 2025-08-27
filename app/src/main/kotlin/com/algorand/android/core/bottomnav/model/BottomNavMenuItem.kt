@@ -10,15 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.core.bottomnav.model
 
-import java.math.BigInteger
-
-data class SwapQuoteRequestPayload(
-    val address: String,
-    val assetInId: Long,
-    val assetOutId: Long,
-    val amount: BigInteger,
-    val deviceId: String,
-    val slippage: Float? = null
+data class BottomNavMenuItem(
+    val id: Int,
+    val titleResId: Int,
+    val iconResId: Int,
+    val enabled: Boolean
 )

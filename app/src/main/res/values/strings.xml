@@ -1063,7 +1063,10 @@
     <string name="it_appears_that_you_formatted">It appears that you are trying to confirm a Swap with a Price impact greater than <annotation replacement="price_impact_percentage">priceImpactPercentagePlaceholder</annotation>%.\n\nTo learn more about Price impact, how it is calculated or how it can affect your swap\'s overall value, please visit Tinyman\'s <annotation custom="faq_url">FAQ section</annotation>.</string>
     <string name="the_signing_account_has">The signing account has been rekeyed to an account that is not in your wallet or is misconfigured. Please ensure the authorising account is added to your wallet, and if it is a Ledger account ensure it is correctly connected.</string>
     <string name="caution_price_impact">Caution! Price impact is greater than <annotation replacement="price_impact_percentage">priceImpactPercentagePlaceholder</annotation>%, meaning there might be low liquidity with this pool. Please make sure you understand the consequences before confirming the swap.</string>
+    <string name="caution_price_impact_greater">Caution! Price impact is greater than 5%, meaning there might be low liquidity with this pool. Please make sure you understand the consequences before confirming the swap.</string>
     <string name="this_swap_can_not_be">This swap cannot be executed because the price impact is too large. Find out more about price impact and how it works <annotation custom="faq_url">here</annotation>.</string>
+    <string name="this_swap_can_not_be_executed">This swap cannot be executed because the price impact is too large. Find out more about price impact and how it works here.</string>
+    <string name="here">here</string>
 
     <plurals name="requested_permission">
         <item quantity="one">Requested permissions</item>
@@ -1546,4 +1549,6 @@
     <string name="apply">Apply</string>
     <string name="primary_currency">Primary Currency</string>
     <string name="use_local_currency">Use Local Currency</string>
+    <string name="best_price_available">Best price available</string>
+    <string name="change_provider">Change Provider</string>
 </resources>

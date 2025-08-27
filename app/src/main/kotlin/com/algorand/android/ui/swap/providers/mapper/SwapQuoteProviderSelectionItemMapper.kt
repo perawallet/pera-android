@@ -10,15 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.ui.swap.providers.mapper
 
-import java.math.BigInteger
+import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
-data class SwapQuoteRequestPayload(
-    val address: String,
-    val assetInId: Long,
-    val assetOutId: Long,
-    val amount: BigInteger,
-    val deviceId: String,
-    val slippage: Float? = null
-)
+fun interface SwapQuoteProviderSelectionItemMapper {
+    operator fun invoke(swapQuote: SwapQuoteV2): SwapQuoteProviderSelectionItem.Provider
+}

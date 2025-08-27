@@ -46,7 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.PeraBottomSheetDragIndicator
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
 import com.algorand.android.ui.compose.widget.PeraCheckbox
 import com.algorand.android.ui.compose.widget.button.PeraButtonState
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton

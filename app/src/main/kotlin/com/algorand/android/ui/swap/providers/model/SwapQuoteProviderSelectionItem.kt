@@ -10,15 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.ui.swap.providers.model
 
-import java.math.BigInteger
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 
-data class SwapQuoteRequestPayload(
-    val address: String,
-    val assetInId: Long,
-    val assetOutId: Long,
-    val amount: BigInteger,
-    val deviceId: String,
-    val slippage: Float? = null
-)
+sealed interface SwapQuoteProviderSelectionItem {
+
+    data object Auto : SwapQuoteProviderSelectionItem
+
+    data class Provider(
+        val quoteId: Long,
+        val provider: SwapQuoteProvider,
+        val swapAmountRenderer: AmountRenderer,
+        val selectedCurrencyValueRenderer: AmountRenderer
+    ) : SwapQuoteProviderSelectionItem
+}

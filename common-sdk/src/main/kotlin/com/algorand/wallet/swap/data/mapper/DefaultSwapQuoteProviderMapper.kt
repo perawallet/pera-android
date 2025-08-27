@@ -18,17 +18,11 @@ import javax.inject.Inject
 
 internal class DefaultSwapQuoteProviderMapper @Inject constructor() : SwapQuoteProviderMapper {
 
-    override fun invoke(response: SwapQuoteProviderResponse?): SwapQuoteProvider? {
-        if (response == null) return null
-        return when (response) {
-            SwapQuoteProviderResponse.TINYMAN -> SwapQuoteProvider.TINYMAN
-            SwapQuoteProviderResponse.TINYMAN_V2 -> SwapQuoteProvider.TINYMAN_V2
-            SwapQuoteProviderResponse.TINYMAN_SWAP_ROUTER -> SwapQuoteProvider.TINYMAN_SWAP_ROUTER
-            SwapQuoteProviderResponse.VESTIGE_V3 -> SwapQuoteProvider.VESTIGE_V3
-            SwapQuoteProviderResponse.VESTIGE_V4 -> SwapQuoteProvider.VESTIGE_V4
-            SwapQuoteProviderResponse.FOLKS_ROUTER -> SwapQuoteProvider.FOLKS
-            SwapQuoteProviderResponse.DEFLEX -> SwapQuoteProvider.DEFLEX
-            SwapQuoteProviderResponse.UNKNOWN -> null
-        }
+    override fun invoke(response: SwapQuoteProviderResponse): SwapQuoteProvider? {
+        return SwapQuoteProvider(
+            name = response.name ?: return null,
+            displayName = response.displayName ?: return null,
+            iconUrl = response.iconUrl
+        )
     }
 }

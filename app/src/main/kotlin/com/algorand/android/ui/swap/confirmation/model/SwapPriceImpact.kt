@@ -25,7 +25,5 @@ data class SwapPriceImpact(
         data class Level1(val threshold: Float) : WarningStatus
 
         data class Level2(val threshold: Float) : WarningStatus
-
-        data class Level3(val threshold: Float) : WarningStatus
     }
 }

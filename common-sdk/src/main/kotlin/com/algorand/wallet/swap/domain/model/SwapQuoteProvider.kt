@@ -12,12 +12,12 @@
 
 package com.algorand.wallet.swap.domain.model
 
-enum class SwapQuoteProvider {
-    TINYMAN,
-    TINYMAN_V2,
-    TINYMAN_SWAP_ROUTER,
-    VESTIGE_V3,
-    VESTIGE_V4,
-    FOLKS,
-    DEFLEX
-}
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class SwapQuoteProvider(
+    val name: String,
+    val displayName: String,
+    val iconUrl: String?
+) : Parcelable

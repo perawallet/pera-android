@@ -36,11 +36,12 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 
 @Composable
 fun StatefulPeraLineChart(
+    modifier: Modifier = Modifier,
     viewModel: StatefulPeraLineChartViewModel,
     listener: StatefulPeraLineChartListener
 ) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
         when (val state = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             Loading -> PeraLineChartLoadingState()

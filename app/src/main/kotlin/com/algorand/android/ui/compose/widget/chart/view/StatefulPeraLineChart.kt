@@ -77,6 +77,7 @@ private fun ColumnScope.Chart(
     viewModel: StatefulPeraLineChartViewModel,
     listener: StatefulPeraLineChartListener
 ) {
+    listener.onChartDataUpdated(state.chartData)
     PeraLineChart(
         modifier = Modifier
             .weight(1f)
@@ -97,4 +98,5 @@ interface StatefulPeraLineChartListener {
     fun onItemSelected(item: PeraLineChartData)
     fun onItemDeselected()
     fun onChartTap() {}
+    fun onChartDataUpdated(items: List<PeraLineChartData>) {}
 }

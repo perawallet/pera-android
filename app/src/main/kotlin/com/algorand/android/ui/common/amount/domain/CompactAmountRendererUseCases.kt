@@ -14,6 +14,7 @@ package com.algorand.android.ui.common.amount.domain
 
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.PeraAmount
+import java.math.BigDecimal
 
 fun interface GetCompactPrimaryAmountRenderer {
     operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
@@ -21,4 +22,8 @@ fun interface GetCompactPrimaryAmountRenderer {
 
 fun interface GetCompactSecondaryAmountRenderer {
     operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+}
+
+fun interface GetPrimaryFiatAmountRenderer {
+    operator fun invoke(usdValue: BigDecimal, amount: BigDecimal, renderType: AmountRenderer.RenderType): AmountRenderer
 }

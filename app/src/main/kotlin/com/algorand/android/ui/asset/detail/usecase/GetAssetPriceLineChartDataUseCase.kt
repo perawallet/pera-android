@@ -12,17 +12,12 @@
 
 package com.algorand.android.ui.asset.detail.usecase
 
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbolOrName
-import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbol
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToSecondaryCurrencyConversionRate
 import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryChartData
-import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
-import com.algorand.android.ui.common.amount.DecimalConfig
-import com.algorand.android.ui.common.amount.PeraAmount
-import com.algorand.android.ui.common.amount.PlainFormattedAmount
+import com.algorand.android.ui.common.amount.domain.GetPrimaryFiatAmountRenderer
 import com.algorand.wallet.asset.pricehistory.domain.usecase.GetAssetPriceHistory
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
@@ -34,8 +29,7 @@ internal class GetAssetPriceLineChartDataUseCase @Inject constructor(
     private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
     private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
     private val getUsdToSecondaryCurrencyConversionRate: GetUsdToSecondaryCurrencyConversionRate,
-    private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName,
-    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
+    private val getPrimaryFiatAmountRenderer: GetPrimaryFiatAmountRenderer
 ) : GetAssetPriceLineChartData {
 
     override suspend fun invoke(
@@ -43,35 +37,22 @@ internal class GetAssetPriceLineChartDataUseCase @Inject constructor(
         period: WalletWealthPeriod
     ): PeraResult<List<AssetPriceHistoryChartData>> {
         return getAssetPriceHistory(assetId, period).map { priceHistory ->
-            val isPrimaryCurrencyAlgo = isPrimaryCurrencyAlgo()
-            val currencyConversionRate = getCurrencyConversionRate(isPrimaryCurrencyAlgo)
-            val currencySymbol = getCurrencySymbol(isPrimaryCurrencyAlgo)
+            val currencyConversionRate = getCurrencyConversionRate()
             priceHistory.map { chartData ->
-                val amountInSelectedCurrency = chartData.price.multiply(currencyConversionRate)
-                val primaryAmount = PeraAmount(amountInSelectedCurrency)
-                val formattedAmount = PlainFormattedAmount.SimplePlainFormattedAmount(primaryAmount, DecimalConfig(2))
                 AssetPriceHistoryChartData(
                     datetime = chartData.datetime,
-                    primaryValue = primaryAmount.value,
-                    primaryAmountRenderer = AmountRenderer(formattedAmount, Plain, prefix = currencySymbol)
+                    primaryValue = chartData.price.multiply(currencyConversionRate),
+                    primaryAmountRenderer = getPrimaryFiatAmountRenderer(chartData.price, BigDecimal.ONE, Plain)
                 )
             }
         }
     }
 
-    private fun getCurrencyConversionRate(isPrimaryCurrencyAlgo: Boolean): BigDecimal {
-        return if (isPrimaryCurrencyAlgo) {
+    private fun getCurrencyConversionRate(): BigDecimal {
+        return if (isPrimaryCurrencyAlgo()) {
             getUsdToSecondaryCurrencyConversionRate()
         } else {
             getUsdToPrimaryCurrencyConversionRate()
-        }
-    }
-
-    private fun getCurrencySymbol(isPrimaryCurrencyAlgo: Boolean): String {
-        return if (isPrimaryCurrencyAlgo) {
-            getSecondaryCurrencySymbol()
-        } else {
-            getPrimaryCurrencySymbolOrName()
         }
     }
 }

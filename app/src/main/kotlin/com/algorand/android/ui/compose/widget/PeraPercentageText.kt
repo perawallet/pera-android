@@ -53,7 +53,7 @@ fun PeraPercentageText(modifier: Modifier = Modifier, percentage: Float) {
             }
         }
         Text(
-            text = formattedText,
+            text = "$formattedText%",
             style = PeraTheme.typography.body.regular.sansMedium,
             color = textColor
         )

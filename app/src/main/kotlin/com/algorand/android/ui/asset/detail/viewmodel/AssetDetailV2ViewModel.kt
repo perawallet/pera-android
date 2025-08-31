@@ -45,23 +45,33 @@ class AssetDetailV2ViewModel @Inject constructor(
 
     fun initViewState(address: String, assetId: Long) {
         stateDelegate.onState<ViewState.Idle> {
-            stateDelegate.updateState { ViewState.Loading }
-            viewModelScope.launch {
-                val asset = getAsset(assetId) ?: fetchAsset(assetId).getDataOrNull()
-                val viewState = if (asset == null) {
-                    ViewState.Error
-                } else {
-                    Content(asset, address, getAccountDisplayName(address), getAccountIconDrawablePreview(address))
-                }
-                stateDelegate.updateState { viewState }
+            loadViewState(address, assetId)
+        }
+    }
+
+    fun reloadViewState() {
+        stateDelegate.onState<ViewState.Error> {
+            loadViewState(it.address, it.assetId)
+        }
+    }
+
+    private fun loadViewState(address: String, assetId: Long) {
+        stateDelegate.updateState { ViewState.Loading }
+        viewModelScope.launch {
+            val asset = getAsset(assetId) ?: fetchAsset(assetId).getDataOrNull()
+            val viewState = if (asset == null) {
+                ViewState.Error(address, assetId)
+            } else {
+                Content(asset, address, getAccountDisplayName(address), getAccountIconDrawablePreview(address))
             }
+            stateDelegate.updateState { viewState }
         }
     }
 
     sealed interface ViewState {
         data object Idle : ViewState
         data object Loading : ViewState
-        data object Error : ViewState
+        data class Error(val address: String, val assetId: Long) : ViewState
         data class Content(
             val asset: Asset,
             val address: String,

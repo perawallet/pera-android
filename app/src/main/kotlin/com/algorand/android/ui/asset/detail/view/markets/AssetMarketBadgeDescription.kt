@@ -36,9 +36,10 @@ import com.algorand.android.R
 import com.algorand.android.ui.asset.detail.model.AssetMarketsDetail
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
+import com.algorand.android.utils.browser.ASA_VERIFICATION_URL
 
 @Composable
-fun AssetMarketBadgeDescription(description: AssetMarketsDetail.BadgeDescription, onLearnMoreClick: () -> Unit) {
+fun AssetMarketBadgeDescription(description: AssetMarketsDetail.BadgeDescription, onLearnMoreClick: (String) -> Unit) {
     Column {
         Row(
             modifier = Modifier
@@ -75,7 +76,7 @@ fun AssetMarketBadgeDescription(description: AssetMarketsDetail.BadgeDescription
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                modifier = Modifier.clickableNoRipple { onLearnMoreClick() },
+                modifier = Modifier.clickableNoRipple { onLearnMoreClick(ASA_VERIFICATION_URL) },
                 text = stringResource(R.string.learn_more_about_asa_verification),
                 style = PeraTheme.typography.body.regular.sans,
                 color = PeraTheme.colors.helper.positive

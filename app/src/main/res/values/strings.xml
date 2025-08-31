@@ -1542,5 +1542,6 @@
     <string name="slide_to_confirm">Slide To Confirm</string>
     <string name="confirming">Confirming</string>
     <string name="confirmed">Confirmed!</string>
+    <string name="holdings">Holdings</string>
 
 </resources>

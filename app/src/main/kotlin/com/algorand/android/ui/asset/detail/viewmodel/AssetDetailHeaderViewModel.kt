@@ -21,7 +21,7 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewState.Idle
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
 import com.algorand.android.ui.compose.widget.asset.icon.mapper.AssetIconDrawableMapper
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AssetDetailHeaderViewModel @Inject constructor(
-    private val getAssetDetail: GetAssetDetail,
     private val assetIconDrawableMapper: AssetIconDrawableMapper,
     private val verificationTierMapper: VerificationTierConfigurationDecider,
     private val stateDelegate: StateDelegate<ViewState>
@@ -40,18 +39,17 @@ class AssetDetailHeaderViewModel @Inject constructor(
         stateDelegate.setDefaultState(Idle)
     }
 
-    fun init(assetId: Long) {
+    fun init(asset: Asset) {
         stateDelegate.onState<Idle> {
             viewModelScope.launch {
-                val assetDetail = getAssetDetail(assetId) ?: return@launch
                 val viewState = Content(
-                    assetId = assetDetail.id,
-                    assetIconDrawable = assetIconDrawableMapper.map(assetDetail),
-                    assetName = assetDetail.fullName.orEmpty(),
+                    assetId = asset.id,
+                    assetIconDrawable = assetIconDrawableMapper.map(asset),
+                    assetName = asset.fullName.orEmpty(),
                     isFavorite = false, // TODO
                     isNotificationsEnabled = false, // TODO
                     verificationTierConfiguration = verificationTierMapper
-                        .decideVerificationTierConfiguration(assetDetail.verificationTier)
+                        .decideVerificationTierConfiguration(asset.verificationTier)
                 )
                 stateDelegate.updateState { viewState }
             }

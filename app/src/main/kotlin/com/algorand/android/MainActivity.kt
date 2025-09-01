@@ -122,7 +122,7 @@ class MainActivity :
                 event.notificationMetadata
             )
 
-            is MainViewModel.ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+            is MainViewModel.ViewEvent.ShowDeeplinkAccountNotFoundError -> showDeeplinkAccountNotFoundError()
 
             is MainViewModel.ViewEvent.NavToWalletConnectArbitraryDataRequestNavigation ->
                 navToWalletConnectArbitraryDataRequestNavigation(event.wcRequestId)
@@ -285,11 +285,11 @@ class MainActivity :
         }
 
         override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
-            // TODO show error after discussing with the team
+            showInvalidDeeplinkError()
         }
 
         override fun onDeepLinkNotHandled(deepLink: DeepLink) {
-            // TODO show error after discussing with the team
+            showInvalidDeeplinkError()
         }
 
         override fun onDiscoverBrowserDeepLink(webUrl: String): Boolean {
@@ -942,8 +942,12 @@ class MainActivity :
         showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
     }
 
-    private fun showGlobalNotificationError() {
+    private fun showDeeplinkAccountNotFoundError() {
         showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
+    }
+
+    private fun showInvalidDeeplinkError() {
+        showGlobalError(errorMessage = getString(R.string.invalid_link_found), tag = activityTag)
     }
 
     private fun setWindowInsetsForSystemBars() {

@@ -962,7 +962,7 @@
     </plurals>
 
     <string name="you_cannot_optin">You cannot opt-in for this account: It\'s a read-only Watch Account.</string>
-    <string name="you_cannot_take">You cannot take actions for this account: It was removed from this device.</string>
+    <string name="you_cannot_take">You cannot take actions for this account.</string>
 
     <string name="this_is_the_fee_charged">This is the fee charged to you by the decentralized exchange. It\'s automatically deducted from the amount you send and factored into the minimum received amount. It won\'t be an additional charge on top.</string>
     <string name="we_encountered_an_unexpected">We encountered an unexpected error, try again later.</string>
@@ -1542,5 +1542,6 @@
     <string name="slide_to_confirm">Slide To Confirm</string>
     <string name="confirming">Confirming</string>
     <string name="confirmed">Confirmed!</string>
+    <string name="invalid_link_found">Invalid link found</string>
 
 </resources>

@@ -195,7 +195,7 @@ class MainViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (!isThereAnyAccountWithAddress(accountAddress)) {
-                eventDelegate.sendEvent(ViewEvent.ShowGlobalNotificationError)
+                eventDelegate.sendEvent(ViewEvent.ShowDeeplinkAccountNotFoundError)
                 return@launch
             }
 
@@ -221,7 +221,7 @@ class MainViewModel @Inject constructor(
                 if (isThereAnyAccountWithAddress(accountAddress) && isAssetOptedInByAccount(accountAddress, assetId)) {
                     ViewEvent.NavToAssetDetailFragment(accountAddress, assetId)
                 } else {
-                    ViewEvent.ShowGlobalNotificationError
+                    ViewEvent.ShowDeeplinkAccountNotFoundError
                 }
             )
         }
@@ -233,7 +233,7 @@ class MainViewModel @Inject constructor(
                 if (isThereAnyAccountWithAddress(accountAddress)) {
                     ViewEvent.NavToAccountDetailFragment(accountAddress)
                 } else {
-                    ViewEvent.ShowGlobalNotificationError
+                    ViewEvent.ShowDeeplinkAccountNotFoundError
                 }
             )
         }
@@ -392,7 +392,7 @@ class MainViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (!isThereAnyAccountWithAddress(deeplink.address)) {
-                eventDelegate.sendEvent(ViewEvent.ShowGlobalNotificationError)
+                eventDelegate.sendEvent(ViewEvent.ShowDeeplinkAccountNotFoundError)
                 return@launch
             }
 
@@ -414,7 +414,7 @@ class MainViewModel @Inject constructor(
         } else if (accountType != null) {
             ViewEvent.NavToAccountDetailFragment(accountAddress)
         } else {
-            ViewEvent.ShowGlobalNotificationError
+            ViewEvent.ShowDeeplinkAccountNotFoundError
         }
     }
 
@@ -432,7 +432,7 @@ class MainViewModel @Inject constructor(
         data class ShowKeyRegDeeplinkError(val address: String) : ViewEvent
 
         data object ShowMaxAccountLimitExceededError : ViewEvent
-        data object ShowGlobalNotificationError : ViewEvent
+        data object ShowDeeplinkAccountNotFoundError : ViewEvent
         data object StartInAppReview : ViewEvent
         data object ShowLockSuggestion : ViewEvent
         data object ProcessNodeChange : ViewEvent

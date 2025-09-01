@@ -38,6 +38,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.ui.asset.detail.view.holdings.AssetHoldingScreen
+import com.algorand.android.ui.asset.detail.view.holdings.AssetHoldingScreenListener
 import com.algorand.android.ui.asset.detail.view.markets.AssetMarketsScreen
 import com.algorand.android.ui.asset.detail.view.markets.AssetMarketsScreenListener
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel

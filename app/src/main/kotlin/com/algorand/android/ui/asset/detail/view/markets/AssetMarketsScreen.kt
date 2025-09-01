@@ -48,6 +48,7 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetPriceLineChartViewMod
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraPercentageText
+import com.algorand.android.ui.compose.widget.chart.extensions.getChangePercentage
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
@@ -99,7 +100,7 @@ fun AssetMarketsScreen(
                         selectedDateText = ""
                         isChangePercentageVisible = true
                     },
-                    onChartDataUpdated = { changePercentage = getChangePercentage(it) }
+                    onChartDataUpdated = { changePercentage = it.getChangePercentage() }
                 )
                 if (viewState.isAvailableOnDiscover) {
                     Spacer(modifier = Modifier.height(32.dp))
@@ -148,16 +149,6 @@ private fun AssetPriceHistoryChart(
         }
     }
     StatefulPeraLineChart(modifier = Modifier.height(172.dp), chartViewModel, chartListener)
-}
-
-private fun getChangePercentage(items: List<PeraLineChartData>): Float? {
-    return if (items.size > 2) {
-        val newValue = items.last().value
-        val oldValue = items.first().value
-        (newValue - oldValue) / oldValue * 100
-    } else {
-        null
-    }
 }
 
 @Composable

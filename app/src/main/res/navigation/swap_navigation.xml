@@ -23,25 +23,25 @@
         android:name="com.algorand.android.modules.swap.assetswap.ui.AssetSwapFragment"
         android:label="AssetSwapFragment"
         tools:layout="@layout/fragment_asset_swap">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="fromAssetId"
+            android:defaultValue="-1L"
+            app:argType="long" />
         <action
             android:id="@+id/action_assetSwapFragment_to_swapFromAssetSelectionFragment"
             app:destination="@id/swapFromAssetSelectionFragment" />
         <action
             android:id="@+id/action_assetSwapFragment_to_swapToAssetSelectionFragment"
             app:destination="@id/swapToAssetSelectionFragment" />
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
         <action
             android:id="@+id/action_assetSwapFragment_to_confirmSwapFragment"
             app:destination="@id/confirmSwapFragment" />
         <action
             android:id="@+id/action_assetSwapFragment_to_balancePercentageBottomSheet"
             app:destination="@id/balancePercentageBottomSheet" />
-        <argument
-            android:name="fromAssetId"
-            android:defaultValue="-1L"
-            app:argType="long" />
     </fragment>
 
     <fragment

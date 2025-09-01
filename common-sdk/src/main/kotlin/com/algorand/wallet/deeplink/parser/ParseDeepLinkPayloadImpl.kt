@@ -54,7 +54,8 @@ internal class ParseDeepLinkPayloadImpl(
             type = peraUri.getQueryParam(TYPE_QUERY_KEY),
             path = peraUri.getQueryParam(PATH_KEY),
             host = peraUri.host,
-            rawDeepLinkUri = url
+            rawDeepLinkUri = url,
+            lastPathSegment = peraUri.host
         )
     }
 

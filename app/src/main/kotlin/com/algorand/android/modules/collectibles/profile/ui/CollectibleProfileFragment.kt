@@ -101,6 +101,7 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
                         true
                     }
                 }
+
                 is AsaStatusPreview.RemovalStatus.CollectibleRemovalStatus -> {
                     show()
                     text = asaStatusPreview.accountName.getDisplayAddress()
@@ -116,12 +117,15 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
                         true
                     }
                 }
+
                 is AsaStatusPreview.AccountSelectionStatus -> {
                     // Account should be already selected in this fragment. Nothing to do until a flow change
                 }
+
                 is AsaStatusPreview.TransferStatus -> {
                     // No transfer action for collectible profile screen
                 }
+
                 is AsaStatusPreview.RemovalStatus.AssetRemovalStatus -> {
                     // No action for asset removal status case
                 }
@@ -150,6 +154,7 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
             is AsaStatusPreview.AccountSelectionStatus -> {
                 // Account should be already selected in this fragment. Nothing to do until a flow change
             }
+
             is AsaStatusPreview.TransferStatus -> {
                 // No transfer action for collectible profile screen
             }
@@ -215,7 +220,7 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
     private fun setCollectibleAssetIdClickListener(collectibleAssetId: Long, address: String) {
         binding.assetIdTextView.setOnClickListener {
             nav(
-                CollectibleProfileFragmentDirections.actionCollectibleProfileFragmentToAssetProfileNavigation(
+                CollectibleProfileFragmentDirections.actionCollectibleProfileFragmentToAssetDetailNavigation(
                     assetId = collectibleAssetId,
                     accountAddress = address
                 )

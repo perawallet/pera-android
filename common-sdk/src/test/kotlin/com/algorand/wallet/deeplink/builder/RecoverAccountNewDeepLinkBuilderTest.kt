@@ -14,51 +14,43 @@ package com.algorand.wallet.deeplink.builder
 
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class MnemonicDeepLinkBuilderTest {
+class RecoverAccountNewDeepLinkBuilderTest {
 
-    private val sut = MnemonicDeepLinkBuilder()
-
-    @Test
-    fun `EXPECT false WHEN deep link requirements do not meet`() {
-        val invalidDeepLink = VALID_DEEP_LINK.copy(accountAddress = "accountAddress")
-
-        val result = sut.doesDeeplinkMeetTheRequirements(invalidDeepLink)
-
-        assertFalse(result)
-    }
+    private val sut = RecoverAccountNewDeepLinkBuilder()
 
     @Test
-    fun `EXPECT true WHEN deep link requirements meet`() {
-        val result = sut.doesDeeplinkMeetTheRequirements(VALID_DEEP_LINK)
+    fun `EXPECT true WHEN deeplink requirements match`() {
+        val result = sut.createDeepLink(VALID_DEEP_LINK) != null
 
         assertTrue(result)
     }
 
     @Test
-    fun `EXPECT mnemonic deep link`() {
+    fun `EXPECT false WHEN deeplink requirements do not match`() {
+        val invalidDeepLink = VALID_DEEP_LINK.copy(mnemonic = null)
+
+        val result = sut.createDeepLink(invalidDeepLink) != null
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `EXPECT recover account deeplink`() {
         val result = sut.createDeepLink(VALID_DEEP_LINK)
 
-        val expected = DeepLink.Mnemonic("mnemonic")
+        val expected = DeepLink.RecoverAccount(
+            mnemonic = "mnemonic",
+        )
         assertEquals(expected, result)
     }
 
     private companion object {
         val VALID_DEEP_LINK = DeepLinkPayload(
-            accountAddress = null,
-            assetId = null,
-            amount = null,
-            walletConnectUrl = null,
-            url = null,
-            note = null,
-            xnote = null,
-            label = null,
-            webImportQrCode = null,
-            notificationGroupType = null,
             mnemonic = "mnemonic",
             rawDeepLinkUri = ""
         )

@@ -19,17 +19,21 @@ import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import com.algorand.android.utils.toBigIntegerOrZero
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
-import com.algorand.wallet.asset.domain.util.AssetConstants
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
+import com.algorand.wallet.deeplink.parser.CreateNewDeepLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@Suppress("TooManyFunctions")
 class DeeplinkHandler @Inject constructor(
     private val isAssetOptedInByAnyLocalAccount: IsAssetOptedInByAnyLocalAccount,
-    private val createDeepLink: CreateDeepLink
+    private val createDeepLink: CreateDeepLink,
+    private val createNewDeepLink: CreateNewDeepLink
 ) {
 
     private var listener: Listener? = null
@@ -38,9 +42,17 @@ class DeeplinkHandler @Inject constructor(
         this.listener = listener
     }
 
+    fun parseDeeplink(uri: String): DeepLink {
+        return if (isNewDeeplink(uri)) {
+            createNewDeepLink(uri)
+        } else {
+            createDeepLink(uri)
+        }
+    }
+
     suspend fun handleDeepLink(uri: String) {
         withContext(Dispatchers.Main) {
-            val parsedDeepLink = createDeepLink(uri)
+            val parsedDeepLink = parseDeeplink(uri)
             handleDeepLink(parsedDeepLink)
         }
     }
@@ -48,11 +60,11 @@ class DeeplinkHandler @Inject constructor(
     private suspend fun handleDeepLink(deepLink: DeepLink) {
         val isDeeplinkHandled: Boolean = when (deepLink) {
             is DeepLink.AccountAddress -> handleAccountAddressDeepLink(deepLink)
-            is DeepLink.AssetOptIn -> handleAssetOptInDeepLink(deepLink.assetId)
+            is DeepLink.AssetOptIn -> handleAssetOptInDeepLink(deepLink)
             is DeepLink.AssetTransfer -> handleAssetTransferDeepLink(deepLink)
             is DeepLink.DiscoverBrowser -> handleDiscoverBrowserDeepLink(deepLink)
             is DeepLink.Discover -> handleDiscoverDeepLink(deepLink)
-            is DeepLink.Mnemonic -> handleMnemonicDeepLink(deepLink)
+            is DeepLink.RecoverAccount -> handleRecoverAccountDeepLink(deepLink)
             is DeepLink.Notification -> handleNotificationDeepLink(deepLink)
             is DeepLink.Undefined -> handleUndefinedDeepLink(deepLink)
             is DeepLink.WalletConnectConnection -> handleWalletConnectConnectionDeepLink(deepLink)
@@ -61,6 +73,17 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.AssetInbox -> handleAssetInboxDeepLink(deepLink)
             is DeepLink.Cards -> handleCardsDeepLink(deepLink)
             is DeepLink.Staking -> handleStakingDeepLink(deepLink)
+            is DeepLink.AccountDetail -> handleAccountDetailDeepLink(deepLink)
+            is DeepLink.AddContact -> handleAddContactDeepLink(deepLink)
+            is DeepLink.EditContact -> handleEditContactDeepLink(deepLink)
+            is DeepLink.AddWatchAccount -> handleAddWatchAccountDeepLink(deepLink)
+            is DeepLink.ReceiverAccountSelection -> handleReceiverAccountSelectionDeepLink(deepLink)
+            is DeepLink.AddressActions -> handleAddressActionsDeepLink(deepLink)
+            is DeepLink.AssetDetail -> handleAssetDetailDeepLink(deepLink)
+            is DeepLink.Sell -> handleSellDeepLink(deepLink)
+            is DeepLink.Buy -> handleBuyDeepLink(deepLink)
+            is DeepLink.InternalBrowser -> handleInternalBrowserDeepLink(deepLink)
+            is DeepLink.Swap -> handleSwapDeepLink(deepLink)
         }
         if (!isDeeplinkHandled) listener?.onDeepLinkNotHandled(deepLink)
     }
@@ -69,13 +92,13 @@ class DeeplinkHandler @Inject constructor(
         return triggerListener { it.onAccountAddressDeeplink(deepLink.address, deepLink.label) }
     }
 
-    private fun handleAssetOptInDeepLink(assetId: Long): Boolean {
-        val assetAction = AssetAction(assetId = assetId)
+    private fun handleAssetOptInDeepLink(deeplink: DeepLink.AssetOptIn): Boolean {
+        val assetAction = AssetAction(assetId = deeplink.assetId, publicKey = deeplink.address)
         return triggerListener { it.onAssetOptInDeepLink(assetAction) }
     }
 
-    private fun handleMnemonicDeepLink(deepLink: DeepLink.Mnemonic): Boolean {
-        return triggerListener { it.onImportAccountDeepLink(deepLink.mnemonic) }
+    private fun handleRecoverAccountDeepLink(deepLink: DeepLink.RecoverAccount): Boolean {
+        return triggerListener { it.onRecoverAccountDeepLink(deepLink.mnemonic) }
     }
 
     private fun handleWalletConnectConnectionDeepLink(deepLink: DeepLink.WalletConnectConnection): Boolean {
@@ -115,31 +138,31 @@ class DeeplinkHandler @Inject constructor(
     }
 
     private suspend fun handleAssetTransferDeepLink(deepLink: DeepLink.AssetTransfer): Boolean {
-        val assetId = deepLink.assetId
-        val isAssetOptedInByAnyLocalAccount = if (assetId == AssetConstants.ALGO_ID) {
+        val safeAssetId = getSafeAssetIdForResponse(deepLink.assetId) ?: ALGO_ID
+        val isAssetOptedInByAnyLocalAccount = if (safeAssetId == ALGO_ID) {
             true
         } else {
             withContext(Dispatchers.IO) {
-                isAssetOptedInByAnyLocalAccount(deepLink.assetId)
+                isAssetOptedInByAnyLocalAccount(safeAssetId)
             }
         }
         return if (isAssetOptedInByAnyLocalAccount) {
             with(deepLink) {
                 val assetTransaction = AssetTransaction(
-                    assetId = assetId,
+                    assetId = safeAssetId,
                     note = note, // normal note
                     xnote = xnote, // locked note
                     amount = amount.toBigIntegerOrZero(),
                     receiverUser = User(
-                        publicKey = receiverAccountAddress,
-                        name = label ?: receiverAccountAddress.toShortenedAddress(),
+                        publicKey = receiverAddress,
+                        name = label ?: receiverAddress.toShortenedAddress(),
                         imageUriAsString = null
                     )
                 )
                 triggerListener { it.onAssetTransferDeepLink(assetTransaction) }
             }
         } else {
-            triggerListener { it.onAssetTransferWithNotOptInDeepLink(assetId) }
+            triggerListener { it.onAssetTransferWithNotOptInDeepLink(safeAssetId) }
         }
     }
 
@@ -156,8 +179,57 @@ class DeeplinkHandler @Inject constructor(
     private fun handleAssetInboxDeepLink(deepLink: DeepLink.AssetInbox): Boolean {
         return triggerListener {
             it.onAssetInboxDeepLink(
-                accountAddress = deepLink.address,
-                notificationGroupType = deepLink.notificationGroupType
+                accountAddress = deepLink.address
+            )
+        }
+    }
+
+    private fun handleAccountDetailDeepLink(deepLink: DeepLink.AccountDetail): Boolean {
+        return triggerListener { it.onAccountDetailDeepLink(deepLink.address) }
+    }
+
+    private fun handleAddContactDeepLink(deepLink: DeepLink.AddContact): Boolean {
+        return triggerListener { it.onAddContactDeepLink(deepLink.address, deepLink.label) }
+    }
+
+    private fun handleEditContactDeepLink(deepLink: DeepLink.EditContact): Boolean {
+        return triggerListener { it.onEditContactDeepLink(deepLink.address, deepLink.label) }
+    }
+
+    private fun handleAddWatchAccountDeepLink(deepLink: DeepLink.AddWatchAccount): Boolean {
+        return triggerListener { it.onAddWatchAccountDeepLink(deepLink.address, deepLink.label) }
+    }
+
+    private fun handleAddressActionsDeepLink(deepLink: DeepLink.AddressActions): Boolean {
+        return triggerListener { it.onAddressActionsDeepLink(deepLink.address, deepLink.label) }
+    }
+
+    private fun handleAssetDetailDeepLink(deepLink: DeepLink.AssetDetail): Boolean {
+        return triggerListener { it.onAssetDetailDeepLink(deepLink.address, deepLink.assetId) }
+    }
+
+    private fun handleSellDeepLink(deepLink: DeepLink.Sell): Boolean {
+        return triggerListener { it.onSellDeepLink(deepLink.address) }
+    }
+
+    private fun handleBuyDeepLink(deepLink: DeepLink.Buy): Boolean {
+        return triggerListener { it.onBuyDeepLink(deepLink.address) }
+    }
+
+    private fun handleInternalBrowserDeepLink(deepLink: DeepLink.InternalBrowser): Boolean {
+        return triggerListener { it.onInternalBrowserDeepLink(deepLink.url) }
+    }
+
+    private fun handleReceiverAccountSelectionDeepLink(deepLink: DeepLink.ReceiverAccountSelection): Boolean {
+        return triggerListener { it.onReceiverAccountSelectionDeepLink(deepLink.address) }
+    }
+
+    private fun handleSwapDeepLink(deepLink: DeepLink.Swap): Boolean {
+        return triggerListener {
+            it.onSwapDeepLink(
+                deepLink.address,
+                deepLink.assetInId,
+                deepLink.assetOutId
             )
         }
     }
@@ -166,11 +238,20 @@ class DeeplinkHandler @Inject constructor(
         return listener?.run(action) ?: false
     }
 
+    private fun isNewDeeplink(uri: String): Boolean {
+        return uri.startsWith(NEW_APPLINK_PREFIX) || uri.startsWith(NEW_DEEPLINK_PREFIX)
+    }
+
+    private companion object {
+        private const val NEW_APPLINK_PREFIX = "https://perawallet.app/qr/perawallet/app"
+        private const val NEW_DEEPLINK_PREFIX = "perawallet://app"
+    }
+
     interface Listener {
         fun onAssetTransferDeepLink(assetTransaction: AssetTransaction): Boolean = false
         fun onAssetOptInDeepLink(assetAction: AssetAction): Boolean = false
-        fun onImportAccountDeepLink(mnemonic: String): Boolean = false
-        fun onAccountAddressDeeplink(accountAddress: String, label: String?): Boolean = false
+        fun onRecoverAccountDeepLink(mnemonic: String): Boolean = false
+        fun onAccountAddressDeeplink(address: String, label: String?): Boolean = false
         fun onWalletConnectConnectionDeeplink(wcUrl: String): Boolean = false
         fun onAssetTransferWithNotOptInDeepLink(assetId: Long): Boolean = false
         fun onWebImportQrCodeDeepLink(webImportQrCode: WebImportQrCode): Boolean = false
@@ -182,10 +263,21 @@ class DeeplinkHandler @Inject constructor(
 
         fun onDiscoverBrowserDeepLink(webUrl: String): Boolean = false
         fun onDiscoverDeepLink(path: String): Boolean = false
-        fun onAssetInboxDeepLink(accountAddress: String, notificationGroupType: NotificationGroupType): Boolean = false
+        fun onAssetInboxDeepLink(accountAddress: String): Boolean = false
         fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean = false
         fun onCardsDeepLink(path: String?): Boolean = false
         fun onStakingDeepLink(path: String?): Boolean = false
+        fun onAddContactDeepLink(address: String, label: String?): Boolean = false
+        fun onReceiverAccountSelectionDeepLink(address: String): Boolean = false
+        fun onAccountDetailDeepLink(address: String): Boolean = false
+        fun onEditContactDeepLink(address: String, label: String?): Boolean = false
+        fun onAddWatchAccountDeepLink(address: String, label: String?): Boolean = false
+        fun onAddressActionsDeepLink(address: String, label: String?): Boolean = false
+        fun onAssetDetailDeepLink(address: String, assetId: Long): Boolean = false
+        fun onBuyDeepLink(address: String): Boolean = false
+        fun onSellDeepLink(address: String): Boolean = false
+        fun onInternalBrowserDeepLink(url: String): Boolean = false
+        fun onSwapDeepLink(address: String, assetInId: Long?, assetOutId: Long?): Boolean = false
         fun onUndefinedDeepLink(deepLink: DeepLink.Undefined)
         fun onDeepLinkNotHandled(deepLink: DeepLink)
     }

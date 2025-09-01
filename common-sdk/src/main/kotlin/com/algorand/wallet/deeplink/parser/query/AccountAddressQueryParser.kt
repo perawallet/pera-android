@@ -14,6 +14,7 @@ package com.algorand.wallet.deeplink.parser.query
 
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import com.algorand.wallet.deeplink.model.PeraUri
+import com.algorand.wallet.deeplink.utils.getCoinbaseAddress
 import com.algorand.wallet.deeplink.utils.isCoinbaseDeepLink
 
 internal class AccountAddressQueryParser(
@@ -23,7 +24,7 @@ internal class AccountAddressQueryParser(
     override fun parseQuery(peraUri: PeraUri): String? {
         return when {
             peraUri.isAppLink() -> getAddressFromAppLink(peraUri)
-            isCoinbaseDeepLink(peraUri) -> getAccountAddressForCoinbase(peraUri)
+            isCoinbaseDeepLink(peraUri.rawUri) -> getCoinbaseAddress(peraUri.rawUri)
             else -> peraUri.getQueryParam(ACCOUNT_ID_QUERY_KEY) ?: peraUri.host
         }?.takeIf { algoSdkAddress.isValid(it) } ?: peraUri.rawUri.takeIf { algoSdkAddress.isValid(it) }
     }
@@ -32,22 +33,10 @@ internal class AccountAddressQueryParser(
         return uri.path
             ?.split("/")
             ?.firstOrNull { algoSdkAddress.isValid(it) }
-    }
-
-    private fun getAccountAddressForCoinbase(uri: PeraUri): String? {
-        // algo:31566704/transfer?address=KG2HXWIOQSBOBGJEXSIBNEVNTRD4G4EFIJGRKBG2ZOT7NQ
-        val regexAddress = COINBASE_ACCOUNT_ADDRESS_WITH_ASSET_ID_REGEX.toRegex()
-        regexAddress.find(uri.rawUri)?.destructured?.component1()?.let { return it }
-
-        // algo:Z7HJOZWPBM76GNERLD56IUMNMA7TNFMERU4KSDDXLUYGFBRLLVVGKGULCE
-        val regexWithoutAssetId = COINBASE_ACCOUNT_ADDRESS_REGEX.toRegex()
-        regexWithoutAssetId.find(uri.rawUri)?.destructured?.component1()?.let { return it }
-        return null
+            ?: uri.getQueryParam(ACCOUNT_ID_QUERY_KEY)
     }
 
     private companion object {
-        const val COINBASE_ACCOUNT_ADDRESS_WITH_ASSET_ID_REGEX = """address=([A-Z0-9]+)"""
-        const val COINBASE_ACCOUNT_ADDRESS_REGEX = """algo:([A-Z0-9]+)"""
         const val ACCOUNT_ID_QUERY_KEY = "account"
     }
 }

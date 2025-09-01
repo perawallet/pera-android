@@ -37,6 +37,13 @@ internal data class DeepLinkPayload(
     val host: String? = null,
     val path: String? = null,
     val rawDeepLinkUri: String,
+    val assetInId: Long? = null,
+    val assetOutId: Long? = null,
+    val backupId: String? = null,
+    val encryptionKey: String? = null,
+    val action: String? = null,
+    val receiverAddress: String? = null,
+    val lastPathSegment: String? = null,
 )
 
 enum class NotificationGroupType {

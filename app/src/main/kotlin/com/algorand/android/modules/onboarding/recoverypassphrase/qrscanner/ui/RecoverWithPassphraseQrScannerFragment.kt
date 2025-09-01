@@ -36,9 +36,9 @@ class RecoverWithPassphraseQrScannerFragment : BaseQrScannerFragment(R.id.recove
 
     private val recoverWithPassphraseQrScannerViewModel: RecoverWithPassphraseQrScannerViewModel by viewModels()
 
-    override fun onImportAccountDeepLink(mnemonic: String): Boolean {
+    override fun onRecoverAccountDeepLink(mnemonic: String): Boolean {
         return true.also {
-            recoverWithPassphraseQrScannerViewModel.onImportAccountDeepLink(mnemonic)
+            recoverWithPassphraseQrScannerViewModel.onRecoverAccountDeepLink(mnemonic)
         }
     }
 

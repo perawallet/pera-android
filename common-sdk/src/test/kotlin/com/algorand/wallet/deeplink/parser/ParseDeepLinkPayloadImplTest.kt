@@ -90,7 +90,7 @@ class ParseDeepLinkPayloadImplTest {
             encryptionKey = null,
             action = null,
             receiverAddress = null,
-            lastPathSegment = "perawallet.app"
+            lastPathSegment = null
         )
         assertEquals(expected, result)
     }

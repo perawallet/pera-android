@@ -81,7 +81,6 @@ import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
-import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -188,10 +187,6 @@ class MainActivity :
         it?.consume()?.let { transactionData ->
             sendAssetOperationTransaction(transactionData)
         }
-    }
-
-    private val appCacheStatusCollector: suspend (AppCacheStatus) -> Unit = {
-        mainViewModel.isAssetSetupCompleted = it == AppCacheStatus.INITIALIZED
     }
 
     private val newNotificationObserver = Observer<Event<NotificationMetadata>> {
@@ -812,11 +807,6 @@ class MainActivity :
         )
 
         transactionManager.transactionManagerResultLiveData.observe(this, transactionManagerResultObserver)
-
-        collectLatestOnLifecycle(
-            flow = mainViewModel.appCacheStatusFlow,
-            collection = appCacheStatusCollector
-        )
 
         walletConnectViewModel.walletConnectRequestLiveData.observe(this, ::handleWalletConnectRequest)
 

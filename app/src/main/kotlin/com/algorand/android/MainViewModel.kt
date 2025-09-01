@@ -27,6 +27,8 @@ import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationU
 import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Node
 import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManager
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
@@ -52,7 +54,6 @@ import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
-import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
@@ -67,6 +68,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -100,11 +103,10 @@ class MainViewModel @Inject constructor(
     private val bottomNavigationEventTracker: BottomNavigationEventTracker,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
-    getAppCacheStatusFlow: GetAppCacheStatusFlow
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
     BottomNavigationEventTracker by bottomNavigationEventTracker {
 
-    val appCacheStatusFlow = getAppCacheStatusFlow()
     val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
     val swapNavigationResultFlow: StateFlow<Event<NavDirections>?>
         get() = _swapNavigationResultFlow
@@ -124,6 +126,7 @@ class MainViewModel @Inject constructor(
         initActiveNodeFlow()
         initializeNodeInterceptor()
         initializeTutorial()
+        initializeAppCacheStatus()
     }
 
     fun initializeApp(lifecycle: Lifecycle) {
@@ -349,6 +352,13 @@ class MainViewModel @Inject constructor(
 
     private suspend fun migrateDeviceIdIfNeed() {
         deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
+    }
+
+    private fun initializeAppCacheStatus() {
+        getAccountLiteCacheFlow().onEach { accountLiteCache ->
+            isAssetSetupCompleted =
+                accountLiteCache != AccountLiteCacheStatus.Idle && accountLiteCache != AccountLiteCacheStatus.Loading
+        }.launchIn(viewModelScope)
     }
 
     private fun startInAppReview() {

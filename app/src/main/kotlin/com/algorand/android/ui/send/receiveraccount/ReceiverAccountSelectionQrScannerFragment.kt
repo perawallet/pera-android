@@ -29,13 +29,20 @@ class ReceiverAccountSelectionQrScannerFragment : BaseQrScannerFragment(
         showGlobalError(getString(R.string.the_scanned_qr_is_not))
     }
 
-    override fun onAccountAddressDeeplink(accountAddress: String, label: String?): Boolean {
-        setNavigationResult(ACCOUNT_ADDRESS_SCAN_RESULT_KEY, accountAddress)
-        return true.also { navBack() }
+    override fun onAccountAddressDeeplink(address: String, label: String?): Boolean {
+        return navBackWithResult(address)
+    }
+
+    override fun onReceiverAccountSelectionDeepLink(address: String): Boolean {
+        return navBackWithResult(address)
     }
 
     override fun onAssetTransferDeepLink(assetTransaction: AssetTransaction): Boolean {
-        setNavigationResult(ACCOUNT_ADDRESS_SCAN_RESULT_KEY, assetTransaction.receiverUser?.publicKey)
+        return navBackWithResult(assetTransaction.receiverUser?.publicKey)
+    }
+
+    private fun navBackWithResult(address: String?): Boolean {
+        setNavigationResult(ACCOUNT_ADDRESS_SCAN_RESULT_KEY, address)
         return true.also { navBack() }
     }
 

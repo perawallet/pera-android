@@ -30,15 +30,15 @@ class PeraUriParserImplTest {
             host = null,
             path = null,
             queryParams = emptyMap(),
-            fragment = null,
-            rawUri = ""
+            rawUri = "",
+            lastPathSegment = null
         )
         assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT scheme host path queryParams and fragment WHEN uri has all components`() {
-        val uri = "pera://host/path?query1=value1&query2=value2#fragment"
+    fun `EXPECT scheme host path queryParams WHEN uri has all components`() {
+        val uri = "pera://host/path?query1=value1&query2=value2"
 
         val result = sut.parseUri(uri)
 
@@ -46,11 +46,10 @@ class PeraUriParserImplTest {
         assertEquals("host", result.host)
         assertEquals("path", result.path)
         assertEquals(mapOf("query1" to "value1", "query2" to "value2"), result.queryParams)
-        assertEquals("fragment", result.fragment)
     }
 
     @Test
-    fun `EXPECT PeraUri with raw uri only WHEN uri has no host path queryParams and fragment`() {
+    fun `EXPECT PeraUri with raw uri only WHEN uri has no host path queryParams`() {
         val uri = "pera:"
 
         val result = sut.parseUri(uri)
@@ -60,14 +59,14 @@ class PeraUriParserImplTest {
             host = null,
             path = null,
             queryParams = emptyMap(),
-            fragment = null,
-            rawUri = uri
+            rawUri = uri,
+            lastPathSegment = null
         )
         assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT scheme and host only WHEN uri has no path queryParams and fragment`() {
+    fun `EXPECT scheme and host only WHEN uri has no path queryParams`() {
         val uri = "pera://host"
 
         val result = sut.parseUri(uri)
@@ -76,11 +75,10 @@ class PeraUriParserImplTest {
         assertEquals("host", result.host)
         assertNull(result.path)
         assertEquals(result.queryParams, emptyMap<String, String?>())
-        assertNull(result.fragment)
     }
 
     @Test
-    fun `EXPECT scheme host path only WHEN uri has no queryParams and fragment`() {
+    fun `EXPECT scheme host path only WHEN uri has no queryParams`() {
         val uri = "pera://host/path"
 
         val result = sut.parseUri(uri)
@@ -89,11 +87,10 @@ class PeraUriParserImplTest {
         assertEquals("host", result.host)
         assertEquals("path", result.path)
         assertEquals(result.queryParams, emptyMap<String, String?>())
-        assertNull(result.fragment)
     }
 
     @Test
-    fun `EXPECT scheme host path queryParams only WHEN uri has no fragment`() {
+    fun `EXPECT scheme host path queryParams only WHEN uri has query params`() {
         val uri = "pera://host/path?query1=value1&query2=value2"
 
         val result = sut.parseUri(uri)
@@ -102,12 +99,11 @@ class PeraUriParserImplTest {
         assertEquals("host", result.host)
         assertEquals("path", result.path)
         assertEquals(mapOf("query1" to "value1", "query2" to "value2"), result.queryParams)
-        assertNull(result.fragment)
     }
 
     @Test
-    fun `EXPECT scheme host fragment only WHEN uri has no path queryParams`() {
-        val uri = "pera://host#fragment"
+    fun `EXPECT scheme host only WHEN uri has no path queryParams`() {
+        val uri = "pera://host"
 
         val result = sut.parseUri(uri)
 
@@ -115,12 +111,11 @@ class PeraUriParserImplTest {
         assertEquals("host", result.host)
         assertNull(result.path)
         assertEquals(result.queryParams, emptyMap<String, String?>())
-        assertEquals("fragment", result.fragment)
     }
 
     @Test
     fun `EXPECT PeraUri with raw uri only WHEN uri has no scheme`() {
-        val uri = "host/path?query1=value1&query2=value2#fragment"
+        val uri = "host/path?query1=value1&query2=value2"
 
         val result = sut.parseUri(uri)
 
@@ -129,15 +124,15 @@ class PeraUriParserImplTest {
             host = null,
             path = null,
             queryParams = emptyMap(),
-            fragment = null,
-            rawUri = uri
+            rawUri = uri,
+            lastPathSegment = null
         )
         assertEquals(expected, result)
     }
 
     @Test
     fun `EXPECT PeraUri with raw uri only WHEN uri has no host`() {
-        val uri = "pera:/path?query1=value1&query2=value2#fragment"
+        val uri = "pera:/path?query1=value1&query2=value2"
 
         val result = sut.parseUri(uri)
 
@@ -146,8 +141,8 @@ class PeraUriParserImplTest {
             host = null,
             path = null,
             queryParams = emptyMap(),
-            fragment = null,
-            rawUri = uri
+            rawUri = uri,
+            lastPathSegment = null
         )
         assertEquals(expected, result)
     }

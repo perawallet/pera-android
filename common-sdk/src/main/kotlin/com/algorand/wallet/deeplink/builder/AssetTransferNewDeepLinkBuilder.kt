@@ -12,28 +12,22 @@
 
 package com.algorand.wallet.deeplink.builder
 
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 
-internal class MnemonicDeepLinkBuilder : DeepLinkBuilder {
+internal class AssetTransferNewDeepLinkBuilder : NewDeepLinkBuilder {
 
-    override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
-        return with(payload) {
-            mnemonic != null &&
-                accountAddress == null &&
-                assetId == null &&
-                amount == null &&
-                walletConnectUrl == null &&
-                url == null &&
-                note == null &&
-                xnote == null &&
-                label == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null
+    override fun createDeepLink(payload: DeepLinkPayload): DeepLink? {
+        return payload.receiverAddress?.let { receiverAddress ->
+            DeepLink.AssetTransfer(
+                receiverAddress = receiverAddress,
+                amount = payload.amount ?: "0",
+                note = payload.note,
+                xnote = payload.xnote,
+                assetId = payload.assetId ?: ALGO_ID,
+                label = payload.label
+            )
         }
-    }
-
-    override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
-        return DeepLink.Mnemonic(payload.mnemonic.orEmpty())
     }
 }

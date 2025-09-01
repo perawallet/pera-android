@@ -57,13 +57,6 @@ class NotificationDeepLinkBuilderTest {
             accountAddress = "address",
             assetId = 1234,
             notificationGroupType = NotificationGroupType.TRANSACTIONS,
-            amount = null,
-            walletConnectUrl = null,
-            url = null,
-            note = null,
-            xnote = null,
-            label = null,
-            webImportQrCode = null,
             rawDeepLinkUri = ""
         )
     }

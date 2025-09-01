@@ -55,6 +55,7 @@ class WebImportResultFragment : BaseFragment(R.layout.fragment_web_import_result
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
         initUi()
         initObservers()
+        webImportResultViewModel.initializePreview()
     }
 
     private fun initUi() {

@@ -113,6 +113,52 @@
     <include app:graph="@navigation/discover_url_viewer_navigation" />
 
     <action
+        android:id="@+id/action_global_registerWatchAccountNavigation"
+        app:destination="@id/registerWatchAccountNavigation"
+        app:popUpTo="@id/accountsAddressScanActionBottomSheet"
+        app:popUpToInclusive="true">
+        <argument
+            android:name="accountAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </action>
+
+    <action
+        android:id="@+id/action_global_meldNavigation"
+        app:destination="@id/meldNavigation">
+        <argument
+            android:name="accountAddress"
+            app:argType="string"
+            app:nullable="true" />
+    </action>
+
+    <action
+        android:id="@+id/action_global_bidaliNavigation"
+        app:destination="@id/bidaliNavigation">
+        <argument
+            android:name="accountAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </action>
+
+    <action
+        android:id="@+id/action_global_recoverWithPassphraseNavigation"
+        app:destination="@id/recoverWithPassphraseNavigation">
+        <argument
+            android:name="mnemonic"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="onboardingAccountType"
+            android:defaultValue="@null"
+            app:argType="com.algorand.android.models.OnboardingAccountType"
+            app:nullable="true" />
+    </action>
+
+    <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
         <argument
@@ -124,7 +170,7 @@
     </action>
 
     <action
-        android:id="@+id/action_global_assetProfileNavigation"
+        android:id="@+id/action_global_assetDetailNavigation"
         app:destination="@id/assetDetailNavigation">
         <argument
             android:name="assetId"
@@ -251,10 +297,6 @@
     <action
         android:id="@+id/action_global_buySellActionsBottomSheet"
         app:destination="@id/buySellActionsBottomSheet" />
-
-    <action
-        android:id="@+id/action_global_bidaliNavigation"
-        app:destination="@id/bidaliNavigation" />
 
     <action
         android:id="@+id/action_global_webImportNavigation"
@@ -439,7 +481,7 @@
                 app:argType="string" />
         </action>
         <action
-            android:id="@+id/action_collectibleDetailFragment_to_assetProfileNavigation"
+            android:id="@+id/action_collectibleDetailFragment_to_assetDetailNavigation"
             app:destination="@id/assetDetailNavigation">
             <argument
                 android:name="assetId"
@@ -542,7 +584,7 @@
             android:id="@+id/action_accountsFragment_to_bidaliNavigation"
             app:destination="@id/bidaliNavigation" />
         <action
-            android:id="@+id/action_accountsFragment_to_assetProfileNavigation"
+            android:id="@+id/action_accountsFragment_to_assetDetailNavigation"
             app:destination="@id/assetDetailNavigation">
             <argument
                 android:name="assetId"
@@ -942,7 +984,7 @@
                 app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
         </action>
         <action
-            android:id="@+id/action_accountDetailFragment_to_assetProfileNavigation"
+            android:id="@+id/action_accountDetailFragment_to_assetDetailNavigation"
             app:destination="@id/assetDetailNavigation">
             <argument
                 android:name="assetId"
@@ -1135,51 +1177,7 @@
         android:id="@+id/accountsQrScannerFragment"
         android:name="com.algorand.android.ui.accounts.AccountsQrScannerFragment"
         android:label="AccountsQrScannerFragment"
-        tools:layout="@layout/fragment_qr_code_scanner">
-        <action
-            android:id="@+id/action_accountsQrScannerFragment_to_unsupportedAddAssetTryLaterBottomSheet"
-            app:destination="@id/unsupportedAddAssetTryLaterBottomSheet"
-            app:popUpTo="@id/accountsQrScannerFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_accountsQrScannerFragment_to_sendAlgoNavigation"
-            app:destination="@id/sendAlgoNavigation"
-            app:popUpTo="@id/accountsQrScannerFragment"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="assetTransaction"
-                app:argType="com.algorand.android.models.AssetTransaction"
-                app:nullable="true" />
-        </action>
-        <action
-            android:id="@+id/action_accountsQrScannerFragment_to_accountsAddressScanActionBottomSheet"
-            app:destination="@id/accountsAddressScanActionBottomSheet"
-            app:popUpTo="@id/accountsQrScannerFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_accountsQrScannerFragment_to_recoverWithPassphraseNavigation"
-            app:destination="@id/recoverWithPassphraseNavigation"
-            app:popUpTo="@id/accountsQrScannerFragment"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="mnemonic"
-                android:defaultValue="@null"
-                app:argType="string"
-                app:nullable="true" />
-        </action>
-        <action
-            android:id="@+id/action_accountsQrScannerFragment_to_addAssetAccountSelectionFragment"
-            app:destination="@id/addAssetAccountSelectionFragment"
-            app:popUpTo="@id/accountsQrScannerFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_accountsQrScannerFragment_discoverUrlViewerNavigation"
-            app:destination="@id/discoverUrlViewerNavigation">
-            <argument
-                android:name="webUrl"
-                app:argType="string" />
-        </action>
-    </fragment>
+        tools:layout="@layout/fragment_qr_code_scanner" />
 
     <dialog
         android:id="@+id/walletConnectSessionsBottomSheet"
@@ -1350,17 +1348,6 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_accountsAddressScanActionBottomSheet_to_registerWatchAccountNavigation"
-            app:destination="@id/registerWatchAccountNavigation"
-            app:popUpTo="@id/accountsAddressScanActionBottomSheet"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="accountAddress"
-                android:defaultValue="@null"
-                app:argType="string"
-                app:nullable="true" />
-        </action>
     </dialog>
 
     <dialog
@@ -1503,22 +1490,6 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_buySellActionsBottomSheet_to_meldNavigation"
-            app:destination="@id/meldNavigation">
-            <argument
-                android:name="walletAddress"
-                app:argType="string"
-                app:nullable="true" />
-        </action>
-        <action
-            android:id="@+id/action_buySellActionsBottomSheet_to_bidaliNavigation"
-            app:destination="@id/bidaliNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string"
-                app:nullable="true" />
-        </action>
     </dialog>
 
     <dialog

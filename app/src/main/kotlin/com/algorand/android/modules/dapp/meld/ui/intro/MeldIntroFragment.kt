@@ -74,16 +74,16 @@ class MeldIntroFragment : BaseFragment(R.layout.fragment_meld_intro) {
             showGlobalError(getString(R.string.you_can_not_purchase), getString(R.string.not_available))
             return
         }
-        if (args.walletAddress == null) {
+        if (args.accountAddress == null) {
             navToAccountSelectionFragment()
         } else {
-            navToMeld(args.walletAddress)
+            navToMeld(args.accountAddress)
         }
     }
 
-    private fun navToMeld(publicKey: String?) {
-        if (publicKey != null) {
-            context?.openExternalBrowserApp(meldIntroViewModel.getMeldUrl(publicKey))
+    private fun navToMeld(accountAddress: String?) {
+        if (accountAddress != null) {
+            context?.openExternalBrowserApp(meldIntroViewModel.getMeldUrl(accountAddress))
         }
     }
 

@@ -19,15 +19,16 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.customviews.AlgorandInputLayout
 import com.algorand.android.customviews.toolbar.CustomToolbar
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OperationState
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.User
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet
 import com.algorand.android.ui.contacts.BaseAddEditContactFragment
 import com.algorand.android.ui.contacts.editcontact.EditContactQrScannerFragment.Companion.ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY
+import com.algorand.android.ui.contacts.editcontact.EditContactQrScannerFragment.Companion.ACCOUNT_LABEL_QR_SCAN_RESULT_KEY
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.show
@@ -75,6 +76,9 @@ class EditContactFragment : BaseAddEditContactFragment() {
             }
             useSavedStateValue<String>(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY) { accountAddress ->
                 setContactAddressInputLayoutText(accountAddress)
+            }
+            useSavedStateValue<String?>(ACCOUNT_LABEL_QR_SCAN_RESULT_KEY) { label ->
+                setContactNameInputLayoutText(label)
             }
         }
     }

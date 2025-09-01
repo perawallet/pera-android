@@ -32,7 +32,7 @@ internal class AssetTransferDeepLinkBuilder : DeepLinkBuilder {
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return DeepLink.AssetTransfer(
-            receiverAccountAddress = payload.accountAddress.orEmpty(),
+            receiverAddress = payload.accountAddress.orEmpty(),
             amount = payload.amount ?: "0",
             note = payload.note,
             xnote = payload.xnote,

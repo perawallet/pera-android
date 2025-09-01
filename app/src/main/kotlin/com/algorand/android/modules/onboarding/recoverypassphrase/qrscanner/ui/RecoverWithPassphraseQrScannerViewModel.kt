@@ -27,7 +27,7 @@ class RecoverWithPassphraseQrScannerViewModel @Inject constructor(
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
 ) : BaseViewModel(), EventViewModel<RecoverWithPassphraseQrScannerViewModel.ViewEvent> by eventDelegate {
 
-    fun onImportAccountDeepLink(mnemonic: String) {
+    fun onRecoverAccountDeepLink(mnemonic: String) {
         viewModelScope.launchIO {
             eventDelegate.sendEvent(
                 if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {

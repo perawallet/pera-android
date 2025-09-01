@@ -147,7 +147,7 @@ class AccountDetailFragment :
 
     override fun onAssetClick(assetId: Long) {
         nav(
-            AccountDetailFragmentDirections.actionAccountDetailFragmentToAssetProfileNavigation(
+            AccountDetailFragmentDirections.actionAccountDetailFragmentToAssetDetailNavigation(
                 assetId = assetId,
                 accountAddress = accountDetailViewModel.accountAddress
             )

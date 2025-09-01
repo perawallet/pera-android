@@ -50,15 +50,6 @@ class DiscoverBrowserDeepLinkBuilderTest {
     private companion object {
         val VALID_DEEP_LINK = DeepLinkPayload(
             url = "url",
-            walletConnectUrl = null,
-            assetId = null,
-            amount = null,
-            note = null,
-            xnote = null,
-            accountAddress = null,
-            label = null,
-            notificationGroupType = null,
-            webImportQrCode = null,
             rawDeepLinkUri = ""
         )
     }

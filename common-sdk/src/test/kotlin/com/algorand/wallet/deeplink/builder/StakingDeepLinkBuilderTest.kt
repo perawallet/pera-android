@@ -59,16 +59,6 @@ class StakingDeepLinkBuilderTest {
 
     private companion object {
         val VALID_DEEP_LINK = DeepLinkPayload(
-            accountAddress = null,
-            walletConnectUrl = null,
-            assetId = null,
-            amount = null,
-            note = null,
-            xnote = null,
-            url = null,
-            label = null,
-            webImportQrCode = null,
-            notificationGroupType = null,
             rawDeepLinkUri = "",
             host = "staking"
         )

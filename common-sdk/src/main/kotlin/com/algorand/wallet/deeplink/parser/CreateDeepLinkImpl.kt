@@ -20,7 +20,7 @@ internal class CreateDeepLinkImpl(
     private val accountAddressDeepLinkBuilder: DeepLinkBuilder,
     private val assetOptInDeepLinkBuilder: DeepLinkBuilder,
     private val assetTransferDeepLinkBuilder: DeepLinkBuilder,
-    private val mnemonicDeepLinkBuilder: DeepLinkBuilder,
+    private val recoverAccountDeepLinkBuilder: DeepLinkBuilder,
     private val walletConnectConnectionDeepLinkBuilder: DeepLinkBuilder,
     private val webImportQrCodeDeepLinkBuilder: DeepLinkBuilder,
     private val notificationGroupDeepLinkBuilder: DeepLinkBuilder,
@@ -39,42 +39,55 @@ internal class CreateDeepLinkImpl(
             accountAddressDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 accountAddressDeepLinkBuilder.createDeepLink(payload)
             }
+
             assetOptInDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 assetOptInDeepLinkBuilder.createDeepLink(payload)
             }
+
             assetTransferDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 assetTransferDeepLinkBuilder.createDeepLink(payload)
             }
+
             keyRegTransactionDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 keyRegTransactionDeepLinkBuilder.createDeepLink(payload)
             }
+
             walletConnectConnectionDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 walletConnectConnectionDeepLinkBuilder.createDeepLink(payload)
             }
-            mnemonicDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
-                mnemonicDeepLinkBuilder.createDeepLink(payload)
+
+            recoverAccountDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                recoverAccountDeepLinkBuilder.createDeepLink(payload)
             }
+
             webImportQrCodeDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 webImportQrCodeDeepLinkBuilder.createDeepLink(payload)
             }
+
             discoverBrowserDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 discoverBrowserDeepLinkBuilder.createDeepLink(payload)
             }
+
             discoverDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 discoverDeepLinkBuilder.createDeepLink(payload)
             }
+
             notificationGroupDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 notificationGroupDeepLinkBuilder.createDeepLink(payload)
             }
+
             assetInboxDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 assetInboxDeepLinkBuilder.createDeepLink(payload)
             }
+
             cardsDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 cardsDeepLinkBuilder.createDeepLink(payload)
             }
+
             stakingDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 stakingDeepLinkBuilder.createDeepLink(payload)
             }
+
             else -> DeepLink.Undefined(url)
         }
     }

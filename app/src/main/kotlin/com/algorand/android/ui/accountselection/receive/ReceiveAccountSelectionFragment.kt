@@ -59,6 +59,6 @@ class ReceiveAccountSelectionFragment : BaseAccountSelectionFragment() {
     }
 
     interface ReceiveAccountSelectionFragmentListener {
-        fun onAccountSelected(publicKey: String)
+        fun onAccountSelected(address: String)
     }
 }

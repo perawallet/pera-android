@@ -34,7 +34,7 @@ internal class AssetOptInDeepLinkBuilder : DeepLinkBuilder {
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return payload.assetId?.let { safeAssetId ->
-            DeepLink.AssetOptIn(safeAssetId)
+            DeepLink.AssetOptIn(safeAssetId, payload.accountAddress)
         } ?: DeepLink.Undefined(payload.rawDeepLinkUri)
     }
 }

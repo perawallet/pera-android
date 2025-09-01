@@ -18,9 +18,7 @@ import com.algorand.wallet.deeplink.model.DeepLinkPayload
 internal class DiscoverDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
-        return with(payload) {
-            host == DISCOVER_HOST_NAME && path != null
-        }
+        return (payload.lastPathSegment ?: payload.host) == DISCOVER_HOST_NAME
     }
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {

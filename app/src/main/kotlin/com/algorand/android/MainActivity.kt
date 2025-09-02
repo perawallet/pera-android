@@ -168,7 +168,7 @@ class MainActivity :
         when (it.consume()) {
             AutoLockManager.AutoLockEvent.Lock -> navToLockFragment()
             AutoLockManager.AutoLockEvent.Unlock -> {
-                navToLockFragment()
+                navToLockFragmentPop()
                 mainViewModel.handlePendingIntent(true)
             }
 
@@ -705,6 +705,10 @@ class MainActivity :
 
     private fun navToLockFragment() {
         nav(MainNavigationDirections.actionGlobalLockFragment())
+    }
+
+    private fun navToLockFragmentPop() {
+        nav(MainNavigationDirections.actionGlobalLockFragmentPop())
     }
 
     private fun navToAssetAdditionActionNavigation(assetAction: AssetAction) {

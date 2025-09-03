@@ -28,7 +28,7 @@ internal class KeyRegTransactionDeepLinkBuilder : DeepLinkBuilder {
                 fee = fee,
                 note = note,
                 xnote = xnote,
-                voteKey = votekey,
+                votekey = votekey,
                 selkey = selkey,
                 sprfkey = sprfkey,
                 votefst = votefst,

@@ -14,10 +14,8 @@ package com.algorand.android.ui.swap.widget.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel.ViewEvent
 import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel.ViewState
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
-import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigInteger
@@ -33,7 +31,6 @@ private typealias AssetContentState = SwapAssetSelectionViewModel.ViewState.Cont
 @HiltViewModel
 class DefaultSwapConfigurationViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
-    private val eventDelegate: EventDelegate<ViewEvent>,
     private val getAccountAssetHolding: GetAccountAssetHolding
 ) : ViewModel(), SwapConfigurationViewModel {
 
@@ -43,8 +40,6 @@ class DefaultSwapConfigurationViewModel @Inject constructor(
 
     override val state: StateFlow<ViewState>
         get() = stateDelegate.state
-    override val viewEvent: Flow<ViewEvent>
-        get() = eventDelegate.viewEvent
 
     override fun initViewState(
         addressFlow: Flow<String?>,
@@ -69,13 +64,5 @@ class DefaultSwapConfigurationViewModel @Inject constructor(
             }
             else -> ViewState.Idle
         }
-    }
-
-    override fun setMaxAmount() {
-        // TODO
-    }
-
-    override fun switchAssets() {
-        // TODO
     }
 }

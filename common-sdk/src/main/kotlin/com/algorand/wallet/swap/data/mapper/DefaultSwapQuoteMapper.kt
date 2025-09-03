@@ -14,22 +14,22 @@ package com.algorand.wallet.swap.data.mapper
 
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapType
 import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class DefaultSwapQuoteMapper @Inject constructor(
-    private val quoteProviderMapper: SwapQuoteProviderMapper,
     private val assetDetailMapper: SwapAssetDetailMapper,
     private val assetAmountMapper: SwapAssetAmountMapper
 ) : SwapQuoteMapper {
 
-    override fun invoke(response: SwapQuoteResponse): SwapQuoteV2? {
+    override fun invoke(response: SwapQuoteResponse, providers: List<SwapQuoteProvider>): SwapQuoteV2? {
         return SwapQuoteV2(
             quoteId = response.id ?: return null,
             accountAddress = response.swapperAddress ?: return null,
-            provider = quoteProviderMapper(response.provider) ?: return null,
+            provider = providers.find { it.name == response.provider } ?: return null,
             swapType = SwapType.FIXED_INPUT,
             assetInDetail = assetDetailMapper(response.assetInAssetDetailResponse) ?: return null,
             assetOutDetail = assetDetailMapper(response.assetOutAssetDetailResponse) ?: return null,

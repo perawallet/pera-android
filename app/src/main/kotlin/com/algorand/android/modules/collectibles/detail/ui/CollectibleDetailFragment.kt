@@ -155,7 +155,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
     private fun setCollectibleAssetIdClickListener(collectibleAssetId: Long, address: String) {
         binding.assetIdTextView.setOnClickListener {
             nav(
-                CollectibleDetailFragmentDirections.actionCollectibleDetailFragmentToAssetProfileNavigation(
+                CollectibleDetailFragmentDirections.actionCollectibleDetailFragmentToAssetDetailNavigation(
                     assetId = collectibleAssetId,
                     accountAddress = address
                 )

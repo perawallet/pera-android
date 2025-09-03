@@ -37,4 +37,8 @@ sealed class PlainFormattedAmount : FormattedAmount {
         override val amount: PeraAmount,
         override val decimalConfig: DecimalConfig
     ) : PlainFormattedAmount()
+
+    data class FiatPlainFormattedAmount(override val amount: PeraAmount) : PlainFormattedAmount() {
+        override val decimalConfig: DecimalConfig = DecimalConfig(maxDecimals = 2)
+    }
 }

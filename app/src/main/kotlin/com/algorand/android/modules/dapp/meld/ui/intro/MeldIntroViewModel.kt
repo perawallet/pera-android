@@ -31,10 +31,10 @@ class MeldIntroViewModel @Inject constructor(
     private val meldAlgoBuyTapEventTracker: MeldAlgoBuyTapEventTracker
 ) : BaseViewModel() {
 
-    fun getMeldUrl(walletAddress: String): String {
+    fun getMeldUrl(accountAddress: String): String {
         val path = "/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="
         val baseUrl = if (isConnectedToTestnet()) MELD_TESTNET_URL else MELD_MAINNET_URL
-        return baseUrl + path + walletAddress
+        return baseUrl + path + accountAddress
     }
 
     fun isMainNet(): Boolean {

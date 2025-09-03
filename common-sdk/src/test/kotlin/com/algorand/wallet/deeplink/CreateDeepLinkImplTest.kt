@@ -37,7 +37,7 @@ class CreateDeepLinkImplTest {
     private val assetTransferDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
-    private val mnemonicDeepLinkBuilder: DeepLinkBuilder = mockk {
+    private val recoverAccountDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
     private val walletConnectConnectionDeepLinkBuilder: DeepLinkBuilder = mockk {
@@ -73,7 +73,7 @@ class CreateDeepLinkImplTest {
         accountAddressDeepLinkBuilder,
         assetOptInDeepLinkBuilder,
         assetTransferDeepLinkBuilder,
-        mnemonicDeepLinkBuilder,
+        recoverAccountDeepLinkBuilder,
         walletConnectConnectionDeepLinkBuilder,
         webImportQrCodeDeepLinkBuilder,
         notificationGroupDeepLinkBuilder,
@@ -99,7 +99,7 @@ class CreateDeepLinkImplTest {
 
     @Test
     fun `EXPECT asset opt in deep link`() {
-        val deepLink = DeepLink.AssetOptIn(1234)
+        val deepLink = DeepLink.AssetOptIn(1234, "accountAddress")
         every { assetOptInDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
         every { assetOptInDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
         every { parseDeepLinkPayload("assetOptInDeepLink") } returns DEEP_LINK_PAYLOAD
@@ -116,7 +116,7 @@ class CreateDeepLinkImplTest {
             amount = "100",
             note = "note",
             xnote = "xnote",
-            receiverAccountAddress = "receiverAccountAddress",
+            receiverAddress = "receiverAccountAddress",
             label = null
         )
         every { assetTransferDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
@@ -153,13 +153,13 @@ class CreateDeepLinkImplTest {
     }
 
     @Test
-    fun `EXPECT mnemonic deep link`() {
-        val deepLink = DeepLink.Mnemonic("mnemonic")
-        every { mnemonicDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
-        every { mnemonicDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
-        every { parseDeepLinkPayload("mnemonicDeepLink") } returns DEEP_LINK_PAYLOAD
+    fun `EXPECT recover account deep link`() {
+        val deepLink = DeepLink.RecoverAccount("mnemonic")
+        every { recoverAccountDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
+        every { recoverAccountDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
+        every { parseDeepLinkPayload("recoverAccountDeepLink") } returns DEEP_LINK_PAYLOAD
 
-        val result = sut("mnemonicDeepLink")
+        val result = sut("recoverAccountDeepLink")
 
         assertEquals(deepLink, result)
     }
@@ -202,7 +202,7 @@ class CreateDeepLinkImplTest {
 
     @Test
     fun `EXPECT asset inbox deep link`() {
-        val deepLink = DeepLink.AssetInbox("address", NotificationGroupType.ASSET_INBOX)
+        val deepLink = DeepLink.AssetInbox("address")
         every { parseDeepLinkPayload("assetInboxDeepLink") } returns DEEP_LINK_PAYLOAD
         every { assetInboxDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
         every { assetInboxDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink

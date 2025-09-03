@@ -12,14 +12,11 @@
 
 package com.algorand.android.ui.swap.widget.viewmodel
 
-import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel.ViewEvent
 import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel.ViewState
-import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateViewModel
-import java.math.BigDecimal
 import kotlinx.coroutines.flow.Flow
 
-interface SwapConfigurationViewModel : StateViewModel<ViewState>, EventViewModel<ViewEvent> {
+interface SwapConfigurationViewModel : StateViewModel<ViewState> {
 
     fun initViewState(
         addressFlow: Flow<String?>,
@@ -27,17 +24,8 @@ interface SwapConfigurationViewModel : StateViewModel<ViewState>, EventViewModel
         assetOutFlow: Flow<SwapAssetSelectionViewModel.ViewState>
     )
 
-    fun setMaxAmount()
-
-    fun switchAssets()
-
     sealed interface ViewState {
         data object Idle : ViewState
         data class Content(val isSwitchButtonEnabled: Boolean) : ViewState
-    }
-
-    sealed interface ViewEvent {
-        data class SetMaxAmount(val amount: BigDecimal) : ViewEvent
-        data class SwitchAssets(val assetInId: Long, val assetOutId: Long) : ViewEvent
     }
 }

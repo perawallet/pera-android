@@ -83,7 +83,7 @@
                 app:argType="com.algorand.android.models.AssetAction" />
         </action>
         <action
-            android:id="@+id/action_collectibleProfileFragment_to_assetProfileNavigation"
+            android:id="@+id/action_collectibleProfileFragment_to_assetDetailNavigation"
             app:destination="@id/asaProfileNavigation">
             <argument
                 android:name="assetId"

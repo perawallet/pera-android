@@ -141,6 +141,12 @@ abstract class BaseAddEditContactFragment : DaggerBaseFragment(R.layout.fragment
         binding.addressCustomInputLayout.text = text
     }
 
+    protected fun setContactNameInputLayoutText(text: String?) {
+        if (text != null) {
+            binding.contactNameCustomInputLayout.text = text
+        }
+    }
+
     private fun removeAllInputLayoutFocuses() {
         binding.contactNameCustomInputLayout.clearFocus()
         binding.addressCustomInputLayout.clearFocus()

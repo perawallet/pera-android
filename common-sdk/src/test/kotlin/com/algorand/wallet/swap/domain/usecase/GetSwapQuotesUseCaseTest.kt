@@ -15,11 +15,10 @@ package com.algorand.wallet.swap.domain.usecase
 import com.algorand.test.peraFixture
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
-import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import io.mockk.coEvery
@@ -95,10 +94,9 @@ class GetSwapQuotesUseCaseTest {
         val ASSET_OUT = peraFixture<Long>()
         val AMOUNT = peraFixture<BigInteger>()
         val SLIPPAGE = peraFixture<Float?>()
-        val PROVIDERS = SwapQuoteProvider.entries
 
         val PAYLOAD = SwapQuotePayload(ADDRESS, ASSET_IN, ASSET_OUT, AMOUNT, SLIPPAGE)
-        val REQUEST = SwapQuoteRequestPayload(ADDRESS, ASSET_IN, ASSET_OUT, AMOUNT, DEVICE_ID, PROVIDERS, SLIPPAGE)
+        val REQUEST = SwapQuoteRequestPayload(ADDRESS, ASSET_IN, ASSET_OUT, AMOUNT, DEVICE_ID, SLIPPAGE)
 
         const val BEST_QUOTE_ID = 1L
         val BEST_QUOTE = peraFixture<SwapQuoteV2>().copy(
@@ -114,11 +112,3 @@ class GetSwapQuotesUseCaseTest {
         val QUOTE_DETAILS = peraFixture<List<SwapQuoteDetail>>()
     }
 }
-
-/*
-val address: String,
-    val assetInId: Long,
-    val assetOutId: Long,
-    val amount: BigInteger,
-    val slippage: Float?
- */

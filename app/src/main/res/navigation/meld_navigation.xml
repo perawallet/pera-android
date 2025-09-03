@@ -11,7 +11,7 @@
         android:label="MeldIntroFragment"
         tools:layout="@layout/fragment_meld_intro">
         <argument
-            android:name="walletAddress"
+            android:name="accountAddress"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

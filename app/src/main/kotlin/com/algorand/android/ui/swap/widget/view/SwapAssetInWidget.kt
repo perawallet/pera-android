@@ -22,14 +22,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
@@ -45,7 +44,6 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewSta
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Loading
 import com.algorand.android.utils.getXmlStyledString
-import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAlgoBalance
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAssetBalance
@@ -72,22 +70,25 @@ fun SwapAssetInWidget(
 
 @Composable
 private fun RowScope.AssetInAmountContent(viewState: ViewState, widgetViewModel: SwapWidgetViewModel) {
-    var assetInAmount by remember { mutableStateOf("") }
+    val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle("")
     Column(modifier = Modifier.weight(1f)) {
-        AssetInAmountInputTextField(viewState, assetInAmount) {
-            assetInAmount = it
-            widgetViewModel.setAmountInput(it.toBigDecimalOrZero())
+        AssetInAmountInputTextField(viewState, TextFieldValue(assetInAmount, TextRange(assetInAmount.length))) {
+            widgetViewModel.setAmountInput(it.text)
         }
         SecondaryAmountText(viewState)
     }
 }
 
 @Composable
-private fun AssetInAmountInputTextField(viewState: ViewState, text: String, onTextChange: (String) -> Unit) {
+private fun AssetInAmountInputTextField(
+    viewState: ViewState,
+    textFieldValue: TextFieldValue,
+    onTextChanged: (TextFieldValue) -> Unit,
+) {
     AmountInputTextField(
-        text = text,
+        textFieldValue = textFieldValue,
         hint = (viewState as? Content)?.amountRenderers?.assetInPrimaryAmountHint?.getDisplayValue(),
-        onTextChanged = onTextChange,
+        onTextChanged = onTextChanged,
         textStyle = PeraTheme.typography.body.large.sansMedium,
         visualTransformation = DecimalFormattedVisualTransformation()
     )
@@ -152,7 +153,10 @@ private fun getErrorMessage(quoteState: SwapQuoteDetail.SwapQuoteState.NonSwappa
             val minBalance = (quoteState.exception as InsufficientBalanceForFee).minRequiredBalance
             val annotatedString = AnnotatedString(
                 stringResId = R.string.algo_balance_is_too_low,
-                replacementList = listOf("min_balance" to "${Currency.ALGO.symbol} $minBalance")
+                replacementList = listOf(
+                    "algo_icon" to Currency.ALGO.symbol,
+                    "min_balance" to minBalance.stripTrailingZeros().toPlainString()
+                )
             )
             LocalContext.current.getXmlStyledString(annotatedString).toString()
         }

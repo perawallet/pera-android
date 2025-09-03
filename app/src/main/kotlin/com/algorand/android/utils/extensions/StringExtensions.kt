@@ -81,6 +81,12 @@ fun String.capitalizeFirstChar(): String {
         }
 }
 
+fun String.capitalizeWords(): String = split(" ").joinToString(" ") { word ->
+    word.replaceFirstChar { letter ->
+        if (letter.isLowerCase()) letter.titlecase(Locale.getDefault()) else letter.toString()
+    }
+}
+
 fun String.addHashtagToStart(): String {
     return "#$this"
 }

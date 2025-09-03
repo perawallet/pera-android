@@ -18,6 +18,7 @@ import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsResponse
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
+import com.algorand.wallet.swap.data.model.SwapQuoteProvidersResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
 import retrofit2.http.Body
@@ -52,4 +53,7 @@ internal interface SwapApiService {
         @Path("quote_id") quoteId: Long,
         @Body swapQuoteExceptionRequestBody: SwapQuoteExceptionRequestBody
     )
+
+    @GET("v2/dex-swap/providers/")
+    suspend fun getSwapQuoteProviders(): SwapQuoteProvidersResponse
 }

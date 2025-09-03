@@ -10,6 +10,9 @@
  * limitations under the License
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("LongMethod")
+
 package com.algorand.android.ui.swap.view
 
 import androidx.compose.foundation.background
@@ -18,8 +21,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +33,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraSingleButtonState
+import com.algorand.android.ui.compose.widget.bottomsheet.rememberPeraSheetState
+import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
+import com.algorand.android.ui.swap.configuration.view.SwapConfigurationBottomSheet
+import com.algorand.android.ui.swap.providers.view.SwapQuoteProvidersBottomSheet
+import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.view.SwapButtonWidget
 import com.algorand.android.ui.swap.widget.view.SwapProviderWidget
@@ -54,8 +64,13 @@ fun SwapScreen(
     configViewModel: SwapConfigurationViewModel = hiltViewModel<DefaultSwapConfigurationViewModel>(),
     providerViewModel: SwapProviderWidgetViewModel = hiltViewModel<DefaultSwapProviderWidgetViewModel>(),
     buttonViewModel: SwapButtonViewModel = hiltViewModel<DefaultSwapButtonViewModel>(),
+    quoteProvidersViewModel: SwapQuoteProvidersViewModel = hiltViewModel(),
     listener: SwapScreenListener
 ) {
+    LaunchedEffect(Unit) {
+        swapViewModel.initViewState()
+    }
+
     Box(
         modifier = Modifier
             .background(color = PeraTheme.colors.background.primary)
@@ -75,16 +90,13 @@ fun SwapScreen(
                         configViewModel = configViewModel,
                         providerViewModel = providerViewModel,
                         buttonViewModel = buttonViewModel,
+                        quoteProvidersViewModel = quoteProvidersViewModel,
                         listener = listener
                     )
                 }
                 SwapViewModel.ViewState.NoAccountState -> SwapNoAccountState(listener)
             }
         }
-    }
-
-    LaunchedEffect(Unit) {
-        swapViewModel.initViewState()
     }
 }
 
@@ -96,10 +108,14 @@ private fun SwapContentState(
     widgetViewModel: SwapWidgetViewModel,
     configViewModel: SwapConfigurationViewModel,
     providerViewModel: SwapProviderWidgetViewModel,
+    quoteProvidersViewModel: SwapQuoteProvidersViewModel,
     buttonViewModel: SwapButtonViewModel,
     listener: SwapScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
+        val scope = rememberCoroutineScope()
+        val providerBottomSheetState = rememberPeraSheetState(scope)
+        val swapConfigurationBottomSheetState = rememberPeraSheetState(scope)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -115,14 +131,50 @@ private fun SwapContentState(
                 providerViewModel,
                 buttonViewModel,
                 configViewModel,
-                listener
+                listener,
+                onConfigureClick = { swapConfigurationBottomSheetState.show() }
             )
             SwapProviderWidget(
-                modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
+                modifier = Modifier
+                    .clickableNoRipple {
+                        widgetViewModel.getContentQuoteState()?.run {
+                            quoteProvidersViewModel.initProviders(quoteSelection, quotes.map { it.quote })
+                            providerBottomSheetState.show()
+                        }
+                    }
+                    .padding(top = 16.dp, start = 24.dp, end = 24.dp),
                 providerViewModel
             )
         }
         SwapButtonWidget(buttonViewModel, listener::onSwapClick)
+
+        swapConfigurationBottomSheetState.SheetContent {
+            SwapConfigurationBottomSheet(
+                sheetState = swapConfigurationBottomSheetState.sheetState,
+                onDismissRequest = swapConfigurationBottomSheetState::hide,
+                swapDetails = swapViewModel.getSwapDetails(),
+                onApplyClick = {
+                    swapViewModel.applySwapConfigs(it)
+                    if (it.balancePercentage != null) {
+                        val percentage = it.balancePercentage.toInt()
+                        widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), percentage)
+                    }
+                    swapConfigurationBottomSheetState.hide()
+                }
+            )
+        }
+
+        providerBottomSheetState.SheetContent {
+            SwapQuoteProvidersBottomSheet(
+                sheetState = providerBottomSheetState.sheetState,
+                onDismissRequest = providerBottomSheetState::hide,
+                viewModel = quoteProvidersViewModel,
+                onProviderSelected = { selectedProvider ->
+                    widgetViewModel.selectQuote(selectedProvider)
+                    providerBottomSheetState.hide()
+                }
+            )
+        }
     }
 }
 

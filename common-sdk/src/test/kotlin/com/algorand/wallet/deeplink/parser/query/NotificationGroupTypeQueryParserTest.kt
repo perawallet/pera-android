@@ -24,7 +24,7 @@ class NotificationGroupTypeQueryParserTest {
     @Test
     fun `EXPECT transaction WHEN deep link is for transaction`() {
         val uri = PeraUriBuilder.create(
-            host = "asset",
+            rawUri = "asset/transactions",
             path = "transactions"
         )
         val result = sut.parseQuery(uri)
@@ -35,7 +35,7 @@ class NotificationGroupTypeQueryParserTest {
     @Test
     fun `EXPECT opt-in WHEN deep link is for opt-in`() {
         val uri = PeraUriBuilder.create(
-            host = "asset",
+            rawUri = "asset/opt-in",
             path = "opt-in"
         )
         val result = sut.parseQuery(uri)
@@ -46,6 +46,7 @@ class NotificationGroupTypeQueryParserTest {
     @Test
     fun `EXPECT asset inbox WHEN deep link is for asset inbox`() {
         val uri = PeraUriBuilder.create(
+            rawUri = "asset-inbox",
             host = "asset-inbox"
         )
         val result = sut.parseQuery(uri)
@@ -56,7 +57,7 @@ class NotificationGroupTypeQueryParserTest {
     @Test
     fun `EXPECT null WHEN deep link is not for any notification group type`() {
         val uri = PeraUriBuilder.create(
-            host = "asset",
+            rawUri = "asset/opt-out",
             path = "opt-out"
         )
         val result = sut.parseQuery(uri)

@@ -14,10 +14,11 @@ package com.algorand.wallet.swap.data.repository
 
 import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.cache.InMemoryCachedObject
 import com.algorand.wallet.foundation.cache.PersistentCache
 import com.algorand.wallet.swap.data.mapper.AvailableSwapAssetMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
-import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderResponseMapper
+import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
@@ -26,10 +27,10 @@ import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import java.math.BigInteger
 import javax.inject.Inject
@@ -40,14 +41,16 @@ internal class DefaultSwapRepository @Inject constructor(
     private val quoteTransactionMapper: SwapQuoteTransactionMapper,
     private val quoteRequestMapper: SwapQuoteRequestBodyMapper,
     private val quoteMapper: SwapQuoteMapper,
-    private val providerResponseMapper: SwapQuoteProviderResponseMapper,
-    private val availableSwapAssetMapper: AvailableSwapAssetMapper
+    private val swapQuoteProviderMapper: SwapQuoteProviderMapper,
+    private val availableSwapAssetMapper: AvailableSwapAssetMapper,
+    private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>>
 ) : SwapRepository {
 
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
         return try {
-            val response = swapApiService.getSwapQuote(quoteRequestMapper(payload))
-            val quotes = response.swapQuoteResponseList.mapNotNull { quoteMapper(it) }
+            val providers = getSwapQuoteProviders().getDataOrNull() ?: return PeraResult.Error(Exception())
+            val response = swapApiService.getSwapQuote(quoteRequestMapper(payload, providers))
+            val quotes = response.swapQuoteResponseList.mapNotNull { quoteMapper(it, providers) }
             if (quotes.isEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(quotes)
         } catch (exception: Exception) {
             PeraResult.Error(exception)
@@ -86,9 +89,8 @@ internal class DefaultSwapRepository @Inject constructor(
         query: String?,
     ): PeraResult<List<AvailableSwapAsset>> {
         return try {
-            val providersCsv = SwapQuoteProvider.entries
-                .mapNotNull { providerResponseMapper(it).value }
-                .joinToString(separator = ",")
+            val providers = getSwapQuoteProviders().getDataOrNull() ?: return PeraResult.Error(Exception())
+            val providersCsv = providers.joinToString(separator = ",") { it.name }
             val safeAssetIdForRequest = getSafeAssetIdForRequest(assetInId)
             val response = swapApiService.getAvailableSwapAssetList(safeAssetIdForRequest, providersCsv, query)
             val availableAssets = response.results?.mapNotNull { availableSwapAssetMapper(it) }.orEmpty()
@@ -101,4 +103,20 @@ internal class DefaultSwapRepository @Inject constructor(
     override suspend fun setLastUsedSwapAddress(address: String) = lastUsedAddressCache.put(address)
 
     override suspend fun getLastUsedSwapAddress(): String? = lastUsedAddressCache.get()
+
+    private suspend fun getSwapQuoteProviders(): PeraResult<List<SwapQuoteProvider>> {
+        return try {
+            val cachedProviders = providersCache.get()
+            if (cachedProviders != null) {
+                PeraResult.Success(cachedProviders)
+            } else {
+                val response = swapApiService.getSwapQuoteProviders()
+                val providers = response.results.mapNotNull { swapQuoteProviderMapper(it) }
+                providersCache.put(providers)
+                PeraResult.Success(providers)
+            }
+        } catch (e: Exception) {
+            PeraResult.Error(e)
+        }
+    }
 }

@@ -10,6 +10,8 @@
  * limitations under the License
  */
 
+@file:OptIn(ExperimentalGlideComposeApi::class)
+
 package com.algorand.android.ui.swap.confirmation.view
 
 import android.content.Context
@@ -38,6 +40,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
@@ -46,10 +51,14 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus
+import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level1
+import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level2
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.NoWarning
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
-import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
 fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirmationQuoteDetailContainerListener) {
@@ -63,7 +72,7 @@ fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirm
     Column(modifier = Modifier.padding(24.dp)) {
         Price(content)
         QuoteRowSeparator()
-        Provider()
+        Provider(content.quote.provider)
         QuoteRowSeparator()
         SlippageTolerance(content.quote.slippage, listener::onSlippageToleranceInfoClick)
         QuoteRowSeparator()
@@ -133,11 +142,17 @@ private fun getPriceRatioText(context: Context, priceRatio: Content.PriceRatio):
 }
 
 @Composable
-private fun Provider() {
+private fun Provider(provider: SwapQuoteProvider) {
     QuoteDetailRow(
         labelContent = { QuoteDetailLabel(textResId = R.string.provider) },
         valueContent = {
-            QuoteDetailValue(text = "PROVIDER") // TODO replace with actual provider name when API is ready
+            GlideImage(
+                model = provider.iconUrl,
+                modifier = Modifier.size(16.dp),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            QuoteDetailValue(text = provider.displayName)
         }
     )
 }
@@ -264,18 +279,9 @@ private fun InfoIcon(
 
 @Composable
 private fun PriceImpactWarning(warningStatus: WarningStatus, onTinymanPriceImpactFaqClick: () -> Unit) {
-    val annotatedString: AnnotatedString? = when (warningStatus) {
-        is WarningStatus.Level1 -> getSoftPriceImpactWarningText(warningStatus.threshold)
-        is WarningStatus.Level2 -> getSoftPriceImpactWarningText(warningStatus.threshold)
-        is WarningStatus.Level3 -> {
-            // TODO Use spannable
-            AnnotatedString(
-                R.string.this_swap_can_not_be,
-                customAnnotationList = listOf(
-                    "faq_url" to getCustomClickableSpan(R.color.link_primary) { onTinymanPriceImpactFaqClick }
-                )
-            )
-        }
+    val annotatedString: androidx.compose.ui.text.AnnotatedString? = when (warningStatus) {
+        is Level1 -> buildAnnotatedString { append(stringResource(R.string.caution_price_impact_greater)) }
+        is Level2 -> getBlockedPriceImpactWarningText(onTinymanPriceImpactFaqClick)
         NoWarning -> null
     }
     annotatedString?.let {
@@ -288,7 +294,7 @@ private fun PriceImpactWarning(warningStatus: WarningStatus, onTinymanPriceImpac
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = LocalContext.current.getXmlStyledString(it).toString(),
+                text = annotatedString,
                 style = PeraTheme.typography.footnote.sansMedium,
                 color = PeraTheme.colors.helper.negative
             )
@@ -296,9 +302,25 @@ private fun PriceImpactWarning(warningStatus: WarningStatus, onTinymanPriceImpac
     }
 }
 
-private fun getSoftPriceImpactWarningText(threshold: Float): AnnotatedString {
-    return AnnotatedString(
-        stringResId = R.string.caution_price_impact,
-        replacementList = listOf("price_impact_percentage" to threshold.toString())
-    )
+@Composable
+private fun getBlockedPriceImpactWarningText(onUrlClick: () -> Unit): androidx.compose.ui.text.AnnotatedString {
+    val description = stringResource(R.string.this_swap_can_not_be_executed)
+    val linkString = stringResource(id = R.string.here)
+    return buildAnnotatedString {
+        append(description)
+        val startIndex = description.indexOf(linkString)
+        if (startIndex != -1) {
+            val endIndex = startIndex + linkString.length
+            addStyle(
+                style = SpanStyle(color = PeraTheme.colors.link.primary),
+                start = startIndex,
+                end = endIndex
+            )
+            addLink(
+                clickable = LinkAnnotation.Clickable(tag = "url", linkInteractionListener = { onUrlClick() }),
+                start = startIndex,
+                end = endIndex
+            )
+        }
+    }
 }

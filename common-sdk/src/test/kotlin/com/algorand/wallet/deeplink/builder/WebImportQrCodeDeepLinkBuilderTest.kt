@@ -53,17 +53,7 @@ class WebImportQrCodeDeepLinkBuilderTest {
 
     private companion object {
         val VALID_DEEP_LINK = DeepLinkPayload(
-            accountAddress = null,
-            assetId = null,
-            amount = null,
-            walletConnectUrl = null,
-            url = null,
-            note = null,
-            xnote = null,
-            label = null,
             webImportQrCode = WebImportQrCode(backupId = "backupId", encryptionKey = "encryptionKey"),
-            notificationGroupType = null,
-            mnemonic = null,
             rawDeepLinkUri = ""
         )
     }

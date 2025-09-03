@@ -25,6 +25,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.User
 import com.algorand.android.ui.contacts.BaseAddEditContactFragment
 import com.algorand.android.ui.contacts.addcontact.AddContactQrScannerFragment.Companion.ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY
+import com.algorand.android.ui.contacts.addcontact.AddContactQrScannerFragment.Companion.ACCOUNT_LABEL_QR_SCAN_RESULT_KEY
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.alertDialog
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -62,6 +63,7 @@ class AddContactFragment : BaseAddEditContactFragment() {
                         onContactSave()
                     }
                 }
+
                 else -> {
                     sendErrorLog("Unhandled else case in contractSearchingCollector")
                 }
@@ -79,6 +81,7 @@ class AddContactFragment : BaseAddEditContactFragment() {
                         navBack()
                     }
                 }
+
                 else -> {
                     sendErrorLog("Unhandled else case in contactOperationCollector")
                 }
@@ -101,6 +104,9 @@ class AddContactFragment : BaseAddEditContactFragment() {
         startSavedStateListener(R.id.addContactFragment) {
             useSavedStateValue<String>(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY) { accountAddress ->
                 setContactAddressInputLayoutText(accountAddress)
+            }
+            useSavedStateValue<String?>(ACCOUNT_LABEL_QR_SCAN_RESULT_KEY) { label ->
+                setContactNameInputLayoutText(label)
             }
         }
     }

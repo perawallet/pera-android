@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.swap.widget.view
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -30,22 +31,24 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
 @Composable
 fun BoxScope.SwapButtonWidget(viewModel: SwapButtonViewModel, onClick: (SwapQuoteV2) -> Unit) {
-    when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
-        SwapButtonViewModel.ViewState.Invisible -> Unit
-        is SwapButtonViewModel.ViewState.Visible -> {
-            val buttonState = if (viewState.isEnabled) PeraButtonState.ENABLED else PeraButtonState.DISABLED
-            PeraPrimaryButton(
-                modifier = Modifier
-                    .imePadding()
-                    .padding(8.dp)
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                text = stringResource(R.string.swap),
-                onClick = {
-                    viewState.quote?.let(onClick)
-                },
-                state = buttonState
-            )
+    Box(
+        modifier = Modifier
+            .imePadding()
+            .padding(8.dp)
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter)
+    ) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
+            SwapButtonViewModel.ViewState.Invisible -> Unit
+            is SwapButtonViewModel.ViewState.Visible -> {
+                val buttonState = if (viewState.isEnabled) PeraButtonState.ENABLED else PeraButtonState.DISABLED
+                PeraPrimaryButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.swap),
+                    onClick = { viewState.quote?.let(onClick) },
+                    state = buttonState
+                )
+            }
         }
     }
 }

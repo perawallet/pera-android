@@ -31,7 +31,7 @@ sealed interface DeepLink {
      *  - algorand://?amount=0&asset=776191503
      *  - perawallet://?amount=0&asset=77619150
      */
-    data class AssetOptIn(val assetId: Long) : DeepLink
+    data class AssetOptIn(val assetId: Long, val address: String?) : DeepLink
 
     /**
      * ALGO transfer (public key, empty asset id, amount, note, xnote)
@@ -45,7 +45,7 @@ sealed interface DeepLink {
      */
     data class AssetTransfer(
         val assetId: Long,
-        val receiverAccountAddress: String,
+        val receiverAddress: String,
         val amount: String,
         val note: String?,
         val xnote: String?,
@@ -59,7 +59,7 @@ sealed interface DeepLink {
      */
     data class WalletConnectConnection(val uri: String) : DeepLink
 
-    data class Mnemonic(val mnemonic: String) : DeepLink
+    data class RecoverAccount(val mnemonic: String) : DeepLink
 
     data class WebImportQrCode(val backupId: String, val encryptionKey: String) : DeepLink
 
@@ -78,8 +78,7 @@ sealed interface DeepLink {
     ) : DeepLink
 
     data class AssetInbox(
-        val address: String,
-        val notificationGroupType: NotificationGroupType
+        val address: String
     ) : DeepLink
 
     /**
@@ -99,7 +98,7 @@ sealed interface DeepLink {
     data class KeyReg(
         val senderAddress: String,
         val type: String,
-        val voteKey: String?,
+        val votekey: String?,
         val selkey: String?,
         val sprfkey: String?,
         val votefst: String?,
@@ -110,5 +109,27 @@ sealed interface DeepLink {
         val xnote: String?
     ) : DeepLink
 
-    data class Undefined(val url: String) : DeepLink
+    data class AddContact(val address: String, val label: String?) : DeepLink
+
+    data class EditContact(val address: String, val label: String?) : DeepLink
+
+    data class AddWatchAccount(val address: String, val label: String?) : DeepLink
+
+    data class ReceiverAccountSelection(val address: String) : DeepLink
+
+    data class AddressActions(val address: String, val label: String?) : DeepLink
+
+    data class AssetDetail(val address: String, val assetId: Long) : DeepLink
+
+    data class AccountDetail(val address: String) : DeepLink
+
+    data class Swap(val address: String, val assetInId: Long?, val assetOutId: Long?) : DeepLink
+
+    data class Buy(val address: String) : DeepLink
+
+    data class Sell(val address: String) : DeepLink
+
+    data class InternalBrowser(val url: String) : DeepLink
+
+    data class Undefined(val url: String?) : DeepLink
 }

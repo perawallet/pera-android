@@ -1,34 +1,19 @@
 package com.algorand.android.ui.accounts
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.BaseViewModel
-import com.algorand.android.usecase.IsAccountLimitExceedUseCase
-import com.algorand.android.utils.launchIO
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
-@HiltViewModel
-class AccountsQrScannerViewModel @Inject constructor(
-    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
-    private val eventDelegate: EventDelegate<ViewEvent>
-) : BaseViewModel(), EventViewModel<AccountsQrScannerViewModel.ViewEvent> by eventDelegate {
+class AccountsQrScannerViewModel : ViewModel() {
 
-    fun onImportAccountDeepLink(mnemonic: String) {
-        viewModelScope.launchIO {
-            eventDelegate.sendEvent(
-                if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
-                    ViewEvent.ShowMaxAccountLimitExceededError
-                } else {
-                    ViewEvent.NavToRecoverWithPassphraseNavigation(mnemonic)
-                }
-            )
+    private val _isQrCodeInProgressFlow = MutableSharedFlow<Boolean>()
+    val isQrCodeInProgressFlow: SharedFlow<Boolean> = _isQrCodeInProgressFlow
+
+    fun setQrCodeInProgress(isInProgress: Boolean) {
+        viewModelScope.launch {
+            _isQrCodeInProgressFlow.emit(isInProgress)
         }
-    }
-
-    sealed interface ViewEvent {
-        data class NavToRecoverWithPassphraseNavigation(val mnemonic: String) : ViewEvent
-        data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

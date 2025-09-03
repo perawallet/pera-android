@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.swap.widget.mapper
 
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel.SwapQuoteFetchState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
 import com.algorand.android.utils.isGreaterThan
@@ -24,22 +25,23 @@ private typealias AssetContentViewState = SwapAssetSelectionViewModel.ViewState.
 internal class DefaultSwapQuoteFetchStateMapper @Inject constructor() : SwapQuoteFetchStateMapper {
 
     override fun invoke(
-        address: String?,
-        amount: BigDecimal?,
-        slippage: Float?,
+        swapDetails: SwapViewModel.SwapDetails,
+        amount: String,
         assetInState: SwapAssetSelectionViewModel.ViewState,
         assetOutState: SwapAssetSelectionViewModel.ViewState
     ): SwapQuoteFetchState {
-        val isAmountValid = amount != null && amount isGreaterThan BigDecimal.ZERO
+        val address = swapDetails.address
+        val amountAsBigDecimal = amount.toBigDecimalOrNull()
+        val isAmountValid = amountAsBigDecimal != null && amountAsBigDecimal isGreaterThan BigDecimal.ZERO
         val areAssetsReady = assetInState is AssetContentViewState && assetOutState is AssetContentViewState
         val isAddressValid = !address.isNullOrBlank()
         return if (isAmountValid && areAssetsReady && isAddressValid) {
             val payload = SwapQuotePayload(
-                address = address!!,
-                assetInId = (assetInState as AssetContentViewState).assetDetail.assetId,
-                assetOutId = (assetOutState as AssetContentViewState).assetDetail.assetId,
-                amount = amount!!.movePointRight(assetOutState.assetDetail.decimal).toBigInteger(),
-                slippage = slippage
+                address = address,
+                assetInId = assetInState.assetDetail.assetId,
+                assetOutId = assetOutState.assetDetail.assetId,
+                amount = amountAsBigDecimal.movePointRight(assetInState.assetDetail.decimal).toBigInteger(),
+                slippage = swapDetails.slippage
             )
             SwapQuoteFetchState.ReadyToFetch(payload)
         } else {

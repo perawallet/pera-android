@@ -18,12 +18,22 @@ import com.algorand.android.utils.setNavigationResult
 
 class EditContactQrScannerFragment : BaseQrScannerFragment(R.id.editContactQrScannerFragment) {
 
-    override fun onAccountAddressDeeplink(accountAddress: String, label: String?): Boolean {
-        setNavigationResult(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY, accountAddress)
+    override fun onAccountAddressDeeplink(address: String, label: String?): Boolean {
+        return navBackWithResult(address, label)
+    }
+
+    override fun onEditContactDeepLink(address: String, label: String?): Boolean {
+        return navBackWithResult(address, label)
+    }
+
+    private fun navBackWithResult(address: String, label: String?): Boolean {
+        setNavigationResult(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY, address)
+        setNavigationResult(ACCOUNT_LABEL_QR_SCAN_RESULT_KEY, label)
         return true.also { navBack() }
     }
 
     companion object {
         const val ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY = "account_address_qr_scan_result"
+        const val ACCOUNT_LABEL_QR_SCAN_RESULT_KEY = "account_label_qr_scan_result"
     }
 }

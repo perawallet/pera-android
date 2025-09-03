@@ -85,7 +85,7 @@ class AccountsAddressScanActionBottomSheet : BaseBottomSheet(
     private fun navToRegisterWatchAccountNavigation(accountAddress: String) {
         nav(
             AccountsAddressScanActionBottomSheetDirections
-                .actionAccountsAddressScanActionBottomSheetToRegisterWatchAccountNavigation(accountAddress)
+                .actionGlobalRegisterWatchAccountNavigation(accountAddress)
         )
     }
 

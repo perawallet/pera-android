@@ -15,19 +15,22 @@ package com.algorand.android.ui.register.watch
 import com.algorand.android.R
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import com.algorand.android.utils.setNavigationResult
-import com.algorand.wallet.deeplink.model.DeepLink
 
 class RegisterWatchAccountQrScannerFragment : BaseQrScannerFragment(R.id.registerWatchAccountQrScannerFragment) {
 
     override val titleTextResId: Int
         get() = R.string.scan_an_algorand
 
-    override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
-        showGlobalError(getString(R.string.the_scanned_qr_is_not))
+    override fun onAccountAddressDeeplink(address: String, label: String?): Boolean {
+        return navBackWithResult(address)
     }
 
-    override fun onAccountAddressDeeplink(accountAddress: String, label: String?): Boolean {
-        setNavigationResult(ACCOUNT_ADDRESS_SCAN_RESULT_KEY, accountAddress)
+    override fun onAddWatchAccountDeepLink(address: String, label: String?): Boolean {
+        return navBackWithResult(address)
+    }
+
+    private fun navBackWithResult(address: String): Boolean {
+        setNavigationResult(ACCOUNT_ADDRESS_SCAN_RESULT_KEY, address)
         return true.also { navBack() }
     }
 

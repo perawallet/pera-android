@@ -24,13 +24,20 @@ internal class PeraUriParserImpl @Inject constructor() : PeraUriParser {
             host = getHost(matchResult),
             path = getPath(matchResult),
             queryParams = getQueryParams(matchResult),
-            fragment = getFragment(matchResult),
-            rawUri = uri
+            rawUri = uri,
+            lastPathSegment = getLastPathSegment(matchResult)
         )
     }
 
     private fun createUriOnly(uri: String): PeraUri {
-        return PeraUri(scheme = null, host = null, path = null, queryParams = emptyMap(), fragment = null, rawUri = uri)
+        return PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            rawUri = uri,
+            lastPathSegment = null
+        )
     }
 
     private fun getScheme(matchResult: MatchResult): String? {
@@ -45,8 +52,8 @@ internal class PeraUriParserImpl @Inject constructor() : PeraUriParser {
         return matchResult.groups[3]?.value?.removePrefix("/")
     }
 
-    private fun getFragment(matchResult: MatchResult): String? {
-        return matchResult.groups[5]?.value?.removePrefix("#")
+    private fun getLastPathSegment(matchResult: MatchResult): String? {
+        return matchResult.groups[3]?.value?.split("/")?.lastOrNull()
     }
 
     private fun getQueryParams(matchResult: MatchResult): Map<String, String?> {
@@ -64,6 +71,6 @@ internal class PeraUriParserImpl @Inject constructor() : PeraUriParser {
     }
 
     private companion object {
-        val URI_REGEX = Regex("""^([a-zA-Z][a-zA-Z\d+.-]*):\/\/([^\/?#]+)(\/[^?#]*)?(\?[^#]*)?(#.*)?$""")
+        val URI_REGEX = Regex("""^([a-zA-Z][a-zA-Z\d+.-]*):\/\/([^\/?#]*)?(\/[^?#]*)?(\?[^#]*)?(#.*)?$""")
     }
 }

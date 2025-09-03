@@ -15,34 +15,14 @@ package com.algorand.android.modules.qrscanning
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
-import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.utils.launchIO
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
-import com.algorand.wallet.deeplink.model.DeepLink
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class QrScannerViewModel @Inject constructor(
     private val deeplinkHandler: DeeplinkHandler,
-    private val getAccountType: GetAccountType,
-    private val eventDelegate: EventDelegate<ViewEvent>
-) : BaseViewModel(), EventViewModel<QrScannerViewModel.ViewEvent> by eventDelegate {
-
-    private val _isQrCodeInProgressFlow = MutableSharedFlow<Boolean>()
-    val isQrCodeInProgressFlow: SharedFlow<Boolean> = _isQrCodeInProgressFlow
-
-    fun setQrCodeInProgress(isInProgress: Boolean) {
-        viewModelScope.launch {
-            _isQrCodeInProgressFlow.emit(isInProgress)
-        }
-    }
+) : BaseViewModel() {
 
     fun setDeeplinkHandlerListener(listener: DeeplinkHandler.Listener) {
         deeplinkHandler.setListener(listener)
@@ -56,38 +36,5 @@ class QrScannerViewModel @Inject constructor(
 
     fun removeDeeplinkHandlerListener() {
         deeplinkHandler.setListener(null)
-    }
-
-    fun handleKeyRegDeepLink(deepLink: DeepLink.KeyReg) {
-        val txnDetail = KeyRegTransactionDetail(
-            address = deepLink.senderAddress,
-            type = deepLink.type,
-            voteKey = deepLink.voteKey,
-            selectionPublicKey = deepLink.selkey,
-            sprfkey = deepLink.sprfkey,
-            voteFirstRound = deepLink.votefst,
-            voteLastRound = deepLink.votelst,
-            voteKeyDilution = deepLink.votekd,
-            fee = deepLink.fee?.toBigIntegerOrNull(),
-            note = deepLink.note,
-            xnote = deepLink.xnote
-        )
-
-        viewModelScope.launchIO {
-            val canSignTransaction = getAccountType(txnDetail.address)?.canSignTransaction() == true
-
-            val viewEvent = if (canSignTransaction) {
-                ViewEvent.NavigateToKeyRegTransactionFragment(txnDetail)
-            } else {
-                ViewEvent.ShowKeyRegDeeplinkError(txnDetail.address)
-            }
-
-            eventDelegate.sendEvent(viewEvent)
-        }
-    }
-
-    interface ViewEvent {
-        data class NavigateToKeyRegTransactionFragment(val transactionDetail: KeyRegTransactionDetail) : ViewEvent
-        data class ShowKeyRegDeeplinkError(val address: String) : ViewEvent
     }
 }

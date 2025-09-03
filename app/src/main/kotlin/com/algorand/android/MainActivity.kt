@@ -61,13 +61,14 @@ import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
-import com.algorand.android.modules.qrscanning.QrScannerViewModel
 import com.algorand.android.modules.transaction.refactor.ui.AssetOperationViewModel
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
+import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import com.algorand.android.notification.domain.model.NotificationMetadata
+import com.algorand.android.ui.accounts.AccountsQrScannerViewModel
 import com.algorand.android.ui.accountselection.receive.ReceiveAccountSelectionFragment
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase.Companion.MAX_NUMBER_OF_ACCOUNTS
 import com.algorand.android.utils.Event
@@ -76,12 +77,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.getSafeParcelableExtra
 import com.algorand.android.utils.inappreview.InAppReviewManager
-import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
-import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -98,14 +97,16 @@ class MainActivity :
 
     private val mainViewEventCollector: suspend (MainViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            is MainViewModel.ViewEvent.HandleAssetTransactionDeepLink -> navToAssetProfileNavigation(
+            is MainViewModel.ViewEvent.HandleAssetTransactionDeepLink -> navToAssetDetailNavigation(
                 event.address,
                 event.assetId
             )
 
-            is MainViewModel.ViewEvent.HandleAssetOptInRequestDeepLink -> navToAssetAdditionActionNavigation(
-                event.address,
-                event.assetId
+            is MainViewModel.ViewEvent.HandleAssetOptInRequestDeepLink -> handleOptInDeeplink(
+                AssetAction(
+                    assetId = event.assetId,
+                    publicKey = event.address
+                )
             )
 
             is MainViewModel.ViewEvent.NavToAssetInboxOneAccountNavigation -> navToAssetInboxOneAccountNavigation(
@@ -120,7 +121,7 @@ class MainActivity :
                 event.notificationMetadata
             )
 
-            is MainViewModel.ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+            is MainViewModel.ViewEvent.ShowDeeplinkAccountNotFoundError -> showDeeplinkAccountNotFoundError()
 
             is MainViewModel.ViewEvent.NavToWalletConnectArbitraryDataRequestNavigation ->
                 navToWalletConnectArbitraryDataRequestNavigation(event.wcRequestId)
@@ -132,37 +133,26 @@ class MainActivity :
 
             is MainViewModel.ViewEvent.StartInAppReview -> startInAppReview()
             is MainViewModel.ViewEvent.ProcessNodeChange -> onNewNodeActivated()
-        }
-    }
+            is MainViewModel.ViewEvent.NavToRecoverWithPassphraseNavigation ->
+                navToRecoverWithPassphraseNavigation(event.mnemonic)
 
-    private fun startInAppReview() {
-        val isStarted = inAppReviewManager.start(this@MainActivity)
-        if (!isStarted) {
-            mainViewModel.startAutoLockSuggestion()
-        }
-    }
+            MainViewModel.ViewEvent.ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
+            is MainViewModel.ViewEvent.NavToKeyRegTransactionFragment ->
+                navToKeyRegTransactionFragment(event.transactionDetail)
 
-    private fun showLockSuggestion() {
-        nav(actionToLockPreferenceNavigation())
-    }
-
-    private val qrScannerViewEventCollector: suspend (QrScannerViewModel.ViewEvent) -> Unit = { event ->
-        when (event) {
-            is QrScannerViewModel.ViewEvent.NavigateToKeyRegTransactionFragment -> navToKeyRegTransactionFragment(
-                event.transactionDetail
-            )
-
-            is QrScannerViewModel.ViewEvent.ShowKeyRegDeeplinkError -> showKeyRegDeeplinkError(
-                event.address
+            is MainViewModel.ViewEvent.ShowKeyRegDeeplinkError -> showKeyRegDeeplinkError(event.address)
+            is MainViewModel.ViewEvent.NavToAssetDetailFragment -> navToAssetDetailNavigation(
+                event.address,
+                event.assetId
             )
         }
     }
 
     val mainViewModel: MainViewModel by viewModels()
+
     val assetOperationViewModel: AssetOperationViewModel by viewModels()
     private val walletConnectViewModel: WalletConnectViewModel by viewModels()
-    private val qrScannerViewModel: QrScannerViewModel by viewModels()
-
+    private val accountsQrScannerViewModel: AccountsQrScannerViewModel by viewModels()
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
 
     @Inject
@@ -176,9 +166,9 @@ class MainActivity :
 
     private val autoLockManagerCollector: suspend (Event<AutoLockManager.AutoLockEvent>) -> Unit = {
         when (it.consume()) {
-            AutoLockManager.AutoLockEvent.Lock -> nav(MainNavigationDirections.actionGlobalLockFragment())
+            AutoLockManager.AutoLockEvent.Lock -> navToLockFragment()
             AutoLockManager.AutoLockEvent.Unlock -> {
-                nav(MainNavigationDirections.actionGlobalLockFragmentPop())
+                navToLockFragmentPop()
                 mainViewModel.handlePendingIntent(true)
             }
 
@@ -199,10 +189,6 @@ class MainActivity :
         }
     }
 
-    private val appCacheStatusCollector: suspend (AppCacheStatus) -> Unit = {
-        mainViewModel.isAssetSetupCompleted = it == AppCacheStatus.INITIALIZED
-    }
-
     private val newNotificationObserver = Observer<Event<NotificationMetadata>> {
         it.consume()?.let { newNotificationData ->
             if (!mainViewModel.isAppUnlocked()) {
@@ -213,7 +199,7 @@ class MainActivity :
     }
 
     private val invalidTransactionCauseObserver = Observer<Event<Resource.Error.Local>> { cause ->
-        cause.consume()?.let { onInvalidWalletConnectTransacitonReceived(it) }
+        cause.consume()?.let { onInvalidWalletConnectTransactionReceived(it) }
     }
 
     private val swapNavigationDirectionCollector: suspend (Event<NavDirections>?) -> Unit = {
@@ -227,7 +213,7 @@ class MainActivity :
         }
 
         override fun onInvalidWalletConnectUrl(errorResId: Int) {
-            qrScannerViewModel.setQrCodeInProgress(false)
+            accountsQrScannerViewModel.setQrCodeInProgress(false)
             showGlobalError(errorMessage = getString(errorResId), tag = activityTag)
         }
     }
@@ -244,15 +230,19 @@ class MainActivity :
 
         override fun onAssetTransferDeepLink(assetTransaction: AssetTransaction): Boolean {
             return true.also {
-                navController.navigateSafe(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))
+                navToSendAlgoNavigation(assetTransaction)
             }
         }
 
-        override fun onAccountAddressDeeplink(accountAddress: String, label: String?): Boolean {
+        override fun onAddContactDeepLink(address: String, label: String?): Boolean {
             return true.also {
-                navController.navigateSafe(
-                    HomeNavigationDirections.actionGlobalAccountsAddressScanActionBottomSheet(accountAddress, label)
-                )
+                navToContactAdditionNavigation(address, label)
+            }
+        }
+
+        override fun onAccountAddressDeeplink(address: String, label: String?): Boolean {
+            return true.also {
+                navToAccountsAddressScanActionBottomSheet(address, label)
             }
         }
 
@@ -262,20 +252,21 @@ class MainActivity :
             }
         }
 
+        override fun onWebImportQrCodeDeepLink(webImportQrCode: WebImportQrCode): Boolean {
+            return true.also {
+                navToWebImportNavigation(webImportQrCode)
+            }
+        }
+
         override fun onAssetTransferWithNotOptInDeepLink(assetId: Long): Boolean {
             return true.also {
-                val assetAction = AssetAction(assetId = assetId)
-                navController.navigateSafe(
-                    HomeNavigationDirections.actionGlobalUnsupportedAddAssetTryLaterBottomSheet(assetAction)
-                )
+                navToAddAssetTryLaterBottomSheet(AssetAction(assetId))
             }
         }
 
         override fun onAssetOptInDeepLink(assetAction: AssetAction): Boolean {
             return true.also {
-                navController.navigateSafe(
-                    HomeNavigationDirections.actionGlobalAddAssetAccountSelectionFragment(assetAction.assetId)
-                )
+                handleOptInDeeplink(assetAction)
             }
         }
 
@@ -284,16 +275,16 @@ class MainActivity :
             assetId: Long,
             notificationGroupType: NotificationGroupType
         ): Boolean {
-            mainViewModel.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
+            handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
             return true
         }
 
         override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
-            // TODO show error after discussing with the team
+            showInvalidDeeplinkError()
         }
 
         override fun onDeepLinkNotHandled(deepLink: DeepLink) {
-            // TODO show error after discussing with the team
+            showInvalidDeeplinkError()
         }
 
         override fun onDiscoverBrowserDeepLink(webUrl: String): Boolean {
@@ -316,28 +307,59 @@ class MainActivity :
             return true
         }
 
-        override fun onAssetInboxDeepLink(
-            accountAddress: String,
-            notificationGroupType: NotificationGroupType
-        ): Boolean {
-            return true.also {
-                mainViewModel.handleAssetInboxDeepLink(accountAddress)
-            }
+        override fun onAssetInboxDeepLink(accountAddress: String): Boolean {
+            handleAssetInboxDeepLink(accountAddress)
+            return true
         }
 
         override fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean {
-            return true.also {
-                qrScannerViewModel.handleKeyRegDeepLink(deepLink)
-            }
+            handleKeyRegDeepLink(deepLink)
+            return true
         }
-    }
 
-    private fun navToAccountDetailFragment(accountAddress: String) {
-        navController.navigateSafe(
-            HomeNavigationDirections.actionGlobalAccountDetailFragment(
-                accountAddress
+        override fun onRecoverAccountDeepLink(mnemonic: String): Boolean {
+            handleRecoverAccountDeeplink(mnemonic)
+            return true
+        }
+
+        override fun onAccountDetailDeepLink(address: String): Boolean {
+            handleAccountDetailDeeplink(address)
+            return true
+        }
+
+        override fun onAddWatchAccountDeepLink(address: String, label: String?): Boolean {
+            navToRegisterWatchAccountNavigation(address)
+            return true
+        }
+
+        override fun onAddressActionsDeepLink(address: String, label: String?): Boolean {
+            navToAccountsAddressScanActionBottomSheet(address, label)
+            return true
+        }
+
+        override fun onAssetDetailDeepLink(address: String, assetId: Long): Boolean {
+            mainViewModel.handleAssetDetailDeeplink(address, assetId)
+            return true
+        }
+
+        override fun onBuyDeepLink(address: String): Boolean {
+            navToMeldNavigation(address)
+            return true
+        }
+
+        override fun onSellDeepLink(address: String): Boolean {
+            navToBidaliNavigation(address)
+            return true
+        }
+
+        override fun onSwapDeepLink(address: String, assetInId: Long?, assetOutId: Long?): Boolean {
+            navToSwapNavigation(
+                address = address,
+                assetInId = assetInId,
+                assetOutId = assetOutId
             )
-        )
+            return true
+        }
     }
 
     private val transactionManagerResultObserver = Observer<Event<TransactionManagerResult>?> {
@@ -374,7 +396,7 @@ class MainActivity :
                 is TransactionManagerResult.Loading -> showProgress()
                 is TransactionManagerResult.LedgerScanFailed -> {
                     hideLedgerLoadingDialog()
-                    navigateToConnectionIssueBottomSheet()
+                    navToLedgerConnectionIssueBottomSheet()
                 }
 
                 else -> {
@@ -446,9 +468,9 @@ class MainActivity :
         )
     }
 
-    override fun onAccountSelected(publicKey: String) {
+    override fun onAccountSelected(address: String) {
         val qrCodeTitle = getString(R.string.qr_code)
-        nav(HomeNavigationDirections.actionGlobalShowQrNavigation(qrCodeTitle, publicKey))
+        navToShowQrNavigation(qrCodeTitle, address)
     }
 
     override fun onSessionRequestResult(wCSessionRequestResult: WCSessionRequestResult) {
@@ -465,11 +487,47 @@ class MainActivity :
         mainViewModel.handleDeepLink(uri)
     }
 
+    fun handleAssetInboxDeepLink(accountAddress: String) {
+        mainViewModel.handleAssetInboxDeepLink(accountAddress)
+    }
+
+    fun handleNotificationDeepLink(
+        accountAddress: String,
+        assetId: Long,
+        notificationGroupType: NotificationGroupType
+    ) {
+        mainViewModel.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
+    }
+
     fun handleWalletConnectUrl(walletConnectUrl: String) {
         walletConnectViewModel.handleWalletConnectUrl(
             url = walletConnectUrl,
             listener = walletConnectUrlHandlerListener
         )
+    }
+
+    fun handleKeyRegDeepLink(deepLink: DeepLink.KeyReg) {
+        mainViewModel.handleKeyRegDeepLink(deepLink)
+    }
+
+    fun handleRecoverAccountDeeplink(mnemonic: String) {
+        mainViewModel.onRecoverAccountDeepLink(mnemonic)
+    }
+
+    fun handleOptInDeeplink(assetAction: AssetAction) {
+        if (assetAction.publicKey != null) {
+            navToAssetAdditionActionNavigation(assetAction)
+        } else {
+            navToAddAssetAccountSelectionFragment(assetAction.assetId)
+        }
+    }
+
+    fun handleAssetDetailDeeplink(address: String, assetId: Long) {
+        mainViewModel.handleAssetDetailDeeplink(address, assetId)
+    }
+
+    fun handleAccountDetailDeeplink(address: String) {
+        mainViewModel.handleAccountDetailDeeplink(address)
     }
 
     fun isBasePeraWebViewFragmentActive(): Boolean {
@@ -485,15 +543,6 @@ class MainActivity :
         assetOperationViewModel.createRemoveAssetTransaction(assetActionResult)
     }
 
-    fun navToCardsFragment(path: String? = null) {
-        nav(HomeNavigationDirections.actionGlobalCardsFragment(path))
-    }
-
-    fun navToStakingFragment(path: String? = null) {
-        binding.bottomNavigationView.menu.findItem(R.id.stakingFragment).isChecked = true
-        nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
-    }
-
     fun showMaxAccountLimitExceededError() {
         showGlobalError(
             title = getString(R.string.too_many_accounts),
@@ -505,10 +554,225 @@ class MainActivity :
     fun navToDiscoverWithPath(path: String) {
         binding.apply {
             bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
-            navController.navigateSafe(
+            nav(
                 actionGlobalDiscoverHomeNavigation(mainViewModel.getDiscoverUrlWithPath(path))
             )
         }
+    }
+
+    fun navToContactAdditionNavigation(address: String, label: String?) {
+        nav(
+            HomeNavigationDirections.actionGlobalContactAdditionNavigation(
+                contactPublicKey = address,
+                contactName = label
+            )
+        )
+    }
+
+    fun navToSendAlgoNavigation(assetTransaction: AssetTransaction) {
+        nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))
+    }
+
+    fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
+                AssetInboxOneAccountNavArgs(
+                    accountAddress
+                )
+            )
+        )
+    }
+
+    fun navToAccountDetailFragment(address: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalAccountDetailFragment(address)
+        )
+    }
+
+    fun navToRegisterWatchAccountNavigation(address: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalRegisterWatchAccountNavigation(address)
+        )
+    }
+
+    fun navToAccountsAddressScanActionBottomSheet(address: String, label: String?) {
+        nav(
+            HomeNavigationDirections
+                .actionGlobalAccountsAddressScanActionBottomSheet(address, label)
+        )
+    }
+
+    fun navToMeldNavigation(address: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalMeldNavigation(address)
+        )
+    }
+
+    fun navToBidaliNavigation(address: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalBidaliNavigation(address)
+        )
+    }
+
+    fun navToInternalBrowser(url: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(url)
+        )
+    }
+
+    fun navToSwapNavigation(address: String, assetInId: Long?, assetOutId: Long?) {
+        // @Sinan TODO: assetInId and assetOutId are not used in the navigation, consider using them with swap v2
+        nav(
+            HomeNavigationDirections.actionGlobalSwapNavigation(address)
+        )
+    }
+
+    fun navToCardsFragment(path: String? = null) {
+        nav(HomeNavigationDirections.actionGlobalCardsFragment(path))
+    }
+
+    fun navToStakingFragment(path: String? = null) {
+        binding.bottomNavigationView.menu.findItem(R.id.stakingFragment).isChecked = true
+        nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
+    }
+
+    fun navToRecoverWithPassphraseNavigation(mnemonic: String) {
+        nav(HomeNavigationDirections.actionGlobalRecoverWithPassphraseNavigation(mnemonic))
+    }
+
+    fun navToKeyRegTransactionFragment(transactionDetail: KeyRegTransactionDetail) {
+        nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(transactionDetail))
+    }
+
+    fun navToAddAssetTryLaterBottomSheet(assetAction: AssetAction) {
+        nav(
+            HomeNavigationDirections.actionGlobalUnsupportedAddAssetTryLaterBottomSheet(assetAction)
+        )
+    }
+
+    fun navToDiscoverUrlViewerNavigation(webUrl: String) {
+        nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
+    }
+
+    fun navToWebImportNavigation(webImportQrCode: WebImportQrCode) {
+        nav(
+            HomeNavigationDirections.actionGlobalWebImportNavigation(webImportQrCode)
+        )
+    }
+
+    private fun navToAssetDetailNavigation(accountAddress: String, assetId: Long) {
+        nav(
+            HomeNavigationDirections.actionGlobalAssetDetailNavigation(
+                assetId = assetId,
+                accountAddress = accountAddress
+            )
+        )
+    }
+
+    private fun navToLockPreferenceNavigation() {
+        nav(actionToLockPreferenceNavigation())
+    }
+
+    private fun showKeyRegDeeplinkError(accountAddress: String) {
+        showGlobalError(
+            errorMessage = getString(R.string.you_dont_have_any, accountAddress),
+            tag = activityTag
+        )
+    }
+
+    private fun startInAppReview() {
+        val isStarted = inAppReviewManager.start(this@MainActivity)
+        if (!isStarted) {
+            mainViewModel.startAutoLockSuggestion()
+        }
+    }
+
+    private fun showLockSuggestion() {
+        navToLockPreferenceNavigation()
+    }
+
+    private fun navToAddAssetAccountSelectionFragment(assetId: Long) {
+        nav(
+            HomeNavigationDirections.actionGlobalAddAssetAccountSelectionFragment(assetId)
+        )
+    }
+
+    private fun navToShowQrNavigation(qrCodeTitle: String, address: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalShowQrNavigation(qrCodeTitle, address)
+        )
+    }
+
+    private fun navToLockFragment() {
+        nav(MainNavigationDirections.actionGlobalLockFragment())
+    }
+
+    private fun navToLockFragmentPop() {
+        nav(MainNavigationDirections.actionGlobalLockFragmentPop())
+    }
+
+    private fun navToAssetAdditionActionNavigation(assetAction: AssetAction) {
+        nav(
+            HomeNavigationDirections.actionGlobalAssetAdditionActionNavigation(assetAction)
+        )
+    }
+
+    private fun navToGlobalSingleButtonBottomSheet(annotatedDescriptionErrorString: AnnotatedString) {
+        nav(
+            MainNavigationDirections.actionGlobalSingleButtonBottomSheet(
+                titleAnnotatedString = AnnotatedString(R.string.uh_oh_something),
+                drawableResId = R.drawable.ic_error,
+                drawableTintResId = R.color.error_tint_color,
+                descriptionAnnotatedString = annotatedDescriptionErrorString,
+                isDraggable = false
+            )
+        )
+    }
+
+    private fun navToWalletConnectTransactionRequestNavigation(wcRequestId: Long) {
+        nav(
+            directions = MainNavigationDirections.actionGlobalWalletConnectTransactionRequestNavigation(
+                shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
+            ),
+            onError = { saveWcTransactionToPendingIntent(wcRequestId) }
+        )
+    }
+
+    private fun navToWalletConnectArbitraryDataRequestNavigation(wcRequestId: Long) {
+        nav(
+            directions = MainNavigationDirections.actionGlobalWalletConnectArbitraryDataRequestNavigation(
+                shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
+            ),
+            onError = { saveWcTransactionToPendingIntent(wcRequestId) }
+        )
+    }
+
+    private fun navToWalletConnectSessionTimeoutDialog() {
+        hideProgress()
+        nav(
+            MainNavigationDirections.actionGlobalSingleButtonBottomSheet(
+                titleAnnotatedString = AnnotatedString(R.string.connection_failed),
+                drawableResId = R.drawable.ic_error,
+                drawableTintResId = R.color.error_tint_color,
+                descriptionAnnotatedString = AnnotatedString(R.string.we_are_sorry_but_the),
+            )
+        )
+    }
+
+    private fun navToWalletConnectSessionScamDialog() {
+        hideProgress()
+        nav(
+            MainNavigationDirections.actionGlobalSingleButtonBottomSheet(
+                titleAnnotatedString = AnnotatedString(R.string.malicious_website_blocked),
+                drawableResId = R.drawable.ic_error,
+                drawableTintResId = R.color.error_tint_color,
+                descriptionAnnotatedString = AnnotatedString(R.string.you_attempted_to_connect_malicious_website),
+            )
+        )
+    }
+
+    private fun navToLedgerConnectionIssueBottomSheet() {
+        nav(HomeNavigationDirections.actionGlobalLedgerConnectionIssueBottomSheet())
     }
 
     private fun retryLatestAssetAdditionTransaction() {
@@ -522,7 +786,7 @@ class MainActivity :
     }
 
     private fun onSessionFailed(error: Resource.Error) {
-        qrScannerViewModel.setQrCodeInProgress(false)
+        accountsQrScannerViewModel.setQrCodeInProgress(false)
         val errorMessage = error.parse(this)
         showGlobalError(errorMessage = errorMessage, tag = activityTag)
     }
@@ -547,11 +811,6 @@ class MainActivity :
         )
 
         transactionManager.transactionManagerResultLiveData.observe(this, transactionManagerResultObserver)
-
-        collectLatestOnLifecycle(
-            flow = mainViewModel.appCacheStatusFlow,
-            collection = appCacheStatusCollector
-        )
 
         walletConnectViewModel.walletConnectRequestLiveData.observe(this, ::handleWalletConnectRequest)
 
@@ -583,31 +842,14 @@ class MainActivity :
             mainViewModel.viewEvent,
             mainViewEventCollector
         )
-
-        collectLatestOnLifecycle(
-            qrScannerViewModel.viewEvent,
-            qrScannerViewEventCollector
-        )
     }
 
-    private fun navigateToConnectionIssueBottomSheet() {
-        nav(HomeNavigationDirections.actionGlobalLedgerConnectionIssueBottomSheet())
-    }
-
-    private fun onInvalidWalletConnectTransacitonReceived(error: Resource.Error) {
+    private fun onInvalidWalletConnectTransactionReceived(error: Resource.Error) {
         val annotatedDescriptionErrorString = AnnotatedString(
             stringResId = R.string.your_walletconnect_request_failed,
             replacementList = listOf("error_message" to error.parse(this).toString())
         )
-        nav(
-            MainNavigationDirections.actionGlobalSingleButtonBottomSheet(
-                titleAnnotatedString = AnnotatedString(R.string.uh_oh_something),
-                drawableResId = R.drawable.ic_error,
-                drawableTintResId = R.color.error_tint_color,
-                descriptionAnnotatedString = annotatedDescriptionErrorString,
-                isDraggable = false
-            )
-        )
+        navToGlobalSingleButtonBottomSheet(annotatedDescriptionErrorString)
     }
 
     private fun handleWalletConnectRequest(requestEvent: Event<Resource<WalletConnectRequest>>?) {
@@ -628,24 +870,6 @@ class MainActivity :
         } else {
             saveWcTransactionToPendingIntent(wcRequest.requestId)
         }
-    }
-
-    private fun navToWalletConnectTransactionRequestNavigation(wcRequestId: Long) {
-        nav(
-            directions = MainNavigationDirections.actionGlobalWalletConnectTransactionRequestNavigation(
-                shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
-            ),
-            onError = { saveWcTransactionToPendingIntent(wcRequestId) }
-        )
-    }
-
-    private fun navToWalletConnectArbitraryDataRequestNavigation(wcRequestId: Long) {
-        nav(
-            directions = MainNavigationDirections.actionGlobalWalletConnectArbitraryDataRequestNavigation(
-                shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
-            ),
-            onError = { saveWcTransactionToPendingIntent(wcRequestId) }
-        )
     }
 
     private fun saveWcTransactionToPendingIntent(transactionRequestId: Long) {
@@ -695,34 +919,6 @@ class MainActivity :
         navToWalletConnectSessionTimeoutDialog()
     }
 
-    private fun navToWalletConnectSessionTimeoutDialog() {
-        hideProgress()
-        nav(
-            MainNavigationDirections.actionGlobalSingleButtonBottomSheet(
-                titleAnnotatedString = AnnotatedString(R.string.connection_failed),
-                drawableResId = R.drawable.ic_error,
-                drawableTintResId = R.color.error_tint_color,
-                descriptionAnnotatedString = AnnotatedString(R.string.we_are_sorry_but_the),
-            )
-        )
-    }
-
-    private fun navToWalletConnectSessionScamDialog() {
-        hideProgress()
-        nav(
-            MainNavigationDirections.actionGlobalSingleButtonBottomSheet(
-                titleAnnotatedString = AnnotatedString(R.string.malicious_website_blocked),
-                drawableResId = R.drawable.ic_error,
-                drawableTintResId = R.color.error_tint_color,
-                descriptionAnnotatedString = AnnotatedString(R.string.you_attempted_to_connect_malicious_website),
-            )
-        )
-    }
-
-    private fun navToDiscoverUrlViewerNavigation(webUrl: String) {
-        nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
-    }
-
     private fun hideLedgerLoadingDialog() {
         hideProgress()
         ledgerLoadingDialog?.dismissAllowingStateLoss()
@@ -736,48 +932,16 @@ class MainActivity :
         }
     }
 
-    private fun navToAssetProfileNavigation(accountAddress: String, assetId: Long) {
-        nav(
-            HomeNavigationDirections.actionGlobalAssetProfileNavigation(
-                assetId = assetId,
-                accountAddress = accountAddress
-            )
-        )
-    }
-
-    private fun navToAssetAdditionActionNavigation(accountAddress: String, assetId: Long) {
-        val assetAction = AssetAction(publicKey = accountAddress, assetId = assetId)
-        nav(
-            HomeNavigationDirections.actionGlobalAssetAdditionActionNavigation(
-                assetAction = assetAction
-            )
-        )
-    }
-
-    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
-        navController.navigateSafe(
-            HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                AssetInboxOneAccountNavArgs(
-                    accountAddress
-                )
-            )
-        )
-    }
-
     private fun showForegroundNotification(newNotificationData: NotificationMetadata) {
         showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
     }
 
-    private fun showGlobalNotificationError() {
+    private fun showDeeplinkAccountNotFoundError() {
         showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
     }
 
-    private fun navToKeyRegTransactionFragment(transactionDetail: KeyRegTransactionDetail) {
-        nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(transactionDetail))
-    }
-
-    private fun showKeyRegDeeplinkError(accountAddress: String) {
-        showGlobalError(getString(R.string.you_dont_have_any, accountAddress), tag = activityTag)
+    private fun showInvalidDeeplinkError() {
+        showGlobalError(errorMessage = getString(R.string.invalid_link_found), tag = activityTag)
     }
 
     private fun setWindowInsetsForSystemBars() {
@@ -807,7 +971,7 @@ class MainActivity :
         }
 
         const val DEEPLINK_KEY = "deeplinkKey"
-        const val DEEPLINK_AND_NAVIGATION_INTENT = "deeplinknavIntent"
+        const val DEEPLINK_AND_NAVIGATION_INTENT = "deeplinkNavIntent"
         const val WC_TRANSACTION_ID_INTENT_KEY = "wcTransactionId"
         const val WC_ARBITRARY_DATA_ID_INTENT_KEY = "wcArbitraryDataId"
     }

@@ -26,8 +26,7 @@ internal class AssetInboxDeepLinkBuilder : DeepLinkBuilder {
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return DeepLink.AssetInbox(
-            address = payload.accountAddress.orEmpty(),
-            notificationGroupType = payload.notificationGroupType ?: NotificationGroupType.DEFAULT
+            address = payload.accountAddress.orEmpty()
         )
     }
 }

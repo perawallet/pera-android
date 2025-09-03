@@ -19,20 +19,16 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.algorand.android.HomeNavigationDirections
-import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentQrCodeScannerBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
-import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
-import com.algorand.android.modules.qrscanning.QrScannerViewModel.ViewEvent
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.utils.CAMERA_PERMISSION
 import com.algorand.android.utils.CAMERA_PERMISSION_REQUEST_CODE
 import com.algorand.android.utils.SingleButtonBottomSheet
-import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.isPermissionGranted
 import com.algorand.android.utils.requestPermissionFromUser
@@ -61,18 +57,6 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
 abstract class BaseQrScannerFragment(
     private val fragmentId: Int
 ) : BaseFragment(R.layout.fragment_qr_code_scanner), DeeplinkHandler.Listener {
-
-    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
-        when (event) {
-            is ViewEvent.NavigateToKeyRegTransactionFragment -> navToKeyRegTransactionFragment(
-                event.transactionDetail
-            )
-
-            is ViewEvent.ShowKeyRegDeeplinkError -> showKeyRegDeeplinkError(
-                event.address
-            )
-        }
-    }
 
     private val isCameraPermissionGranted: Boolean
         get() = view?.context?.isPermissionGranted(CAMERA_PERMISSION) ?: false
@@ -163,26 +147,6 @@ abstract class BaseQrScannerFragment(
         showGlobalError(getString(R.string.scanned_qr_is_not_valid))
     }
 
-    override fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean {
-        qrScannerViewModel.handleKeyRegDeepLink(deepLink)
-        return true
-    }
-
-    override fun onDiscoverDeepLink(path: String): Boolean {
-        (activity as? MainActivity)?.navToDiscoverWithPath(path)
-        return true
-    }
-
-    override fun onCardsDeepLink(path: String?): Boolean {
-        (activity as? MainActivity)?.navToCardsFragment(path)
-        return true
-    }
-
-    override fun onStakingDeepLink(path: String?): Boolean {
-        (activity as? MainActivity)?.navToStakingFragment(path)
-        return true
-    }
-
     private fun initUi() {
         with(binding) {
             titleTextView.text = getString(titleTextResId)
@@ -198,15 +162,14 @@ abstract class BaseQrScannerFragment(
                 ::onGetLocalSessionsSuccess
             )
         }
-        viewLifecycleOwner.collectLatestOnLifecycle(
-            qrScannerViewModel.isQrCodeInProgressFlow,
-            ::onQrCodeProgressChanged
-        )
+    }
 
-        collectLatestOnLifecycle(
-            qrScannerViewModel.viewEvent,
-            viewEventCollector
-        )
+    fun onQrCodeProgressChanged(isQrCodeInProgress: Boolean) {
+        if (isQrCodeInProgress) {
+            binding.cameraPreview.pause()
+        } else {
+            resumeCameraIfPossibleOrPause()
+        }
     }
 
     private fun onLeftArrowButtonClicked() {
@@ -239,14 +202,6 @@ abstract class BaseQrScannerFragment(
         }
     }
 
-    private fun onQrCodeProgressChanged(isQrCodeInProgress: Boolean) {
-        if (isQrCodeInProgress) {
-            binding.cameraPreview.pause()
-        } else {
-            resumeCameraIfPossibleOrPause()
-        }
-    }
-
     private fun resumeCameraIfPossibleOrPause() {
         with(binding.cameraPreview) {
             view?.let {
@@ -260,13 +215,5 @@ abstract class BaseQrScannerFragment(
             }
             pause()
         }
-    }
-
-    private fun navToKeyRegTransactionFragment(transactionDetail: KeyRegTransactionDetail) {
-        nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(transactionDetail))
-    }
-
-    private fun showKeyRegDeeplinkError(accountAddress: String) {
-        showGlobalError(getString(R.string.you_dont_have_any, accountAddress))
     }
 }

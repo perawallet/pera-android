@@ -46,11 +46,11 @@ class BuySellActionsBottomSheet : BaseBottomSheet(
 
     private fun navToMeldNavigation() {
         buySellActionsBottomSheetViewModel.logEvent(PeraClickEvent.TAP_MELD_SCREEN_ALGO_SELECT_WALLET)
-        nav(BuySellActionsBottomSheetDirections.actionBuySellActionsBottomSheetToMeldNavigation(args.accountAddress))
+        nav(BuySellActionsBottomSheetDirections.actionGlobalMeldNavigation(args.accountAddress))
     }
 
     private fun navToBidaliNavigation() {
         buySellActionsBottomSheetViewModel.logEvent(PeraClickEvent.TAP_BIDALI_SCREEN_ALGO_SELL)
-        nav(BuySellActionsBottomSheetDirections.actionBuySellActionsBottomSheetToBidaliNavigation(args.accountAddress))
+        nav(BuySellActionsBottomSheetDirections.actionGlobalBidaliNavigation(args.accountAddress))
     }
 }

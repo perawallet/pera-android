@@ -21,9 +21,9 @@ internal object PeraUriBuilder {
         host: String? = null,
         path: String? = null,
         queryParams: Map<String, String?> = emptyMap(),
-        fragment: String? = null,
-        rawUri: String = ""
+        rawUri: String = "",
+        lastPathSegment: String? = null
     ): PeraUri {
-        return PeraUri(scheme, host, path, queryParams, fragment, rawUri)
+        return PeraUri(scheme, host, path, queryParams, rawUri, lastPathSegment)
     }
 }

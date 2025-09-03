@@ -83,7 +83,14 @@ class ParseDeepLinkPayloadImplTest {
             type = "type",
             host = "perawallet.app",
             path = "path",
-            rawDeepLinkUri = URI
+            rawDeepLinkUri = URI,
+            assetInId = null,
+            assetOutId = null,
+            backupId = null,
+            encryptionKey = null,
+            action = null,
+            receiverAddress = null,
+            lastPathSegment = null
         )
         assertEquals(expected, result)
     }
@@ -111,8 +118,7 @@ class ParseDeepLinkPayloadImplTest {
                 "path" to "path",
                 "fee" to "1"
             ),
-            fragment = "",
-            rawUri = ""
+            rawUri = URI
         )
     }
 }

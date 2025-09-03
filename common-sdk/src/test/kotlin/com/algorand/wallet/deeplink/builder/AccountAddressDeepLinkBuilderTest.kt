@@ -53,15 +53,7 @@ class AccountAddressDeepLinkBuilderTest {
     private companion object {
         val VALID_DEEP_LINK = DeepLinkPayload(
             accountAddress = "accountAddress",
-            walletConnectUrl = null,
-            assetId = null,
-            amount = null,
-            note = null,
-            xnote = null,
-            url = null,
             label = "label",
-            webImportQrCode = null,
-            notificationGroupType = null,
             rawDeepLinkUri = ""
         )
     }

@@ -17,8 +17,8 @@ internal data class PeraUri(
     val host: String?,
     val path: String?,
     val queryParams: Map<String, String?>,
-    val fragment: String?,
-    val rawUri: String
+    val rawUri: String,
+    val lastPathSegment: String?
 ) {
 
     fun isAppLink(): Boolean {

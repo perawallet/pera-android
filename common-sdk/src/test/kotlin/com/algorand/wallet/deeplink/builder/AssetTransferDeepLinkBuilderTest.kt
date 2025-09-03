@@ -44,7 +44,7 @@ class AssetTransferDeepLinkBuilderTest {
         val result = sut.createDeepLink(VALID_DEEP_LINK)
 
         val expected = DeepLink.AssetTransfer(
-            receiverAccountAddress = "accountAddress",
+            receiverAddress = "accountAddress",
             amount = "123",
             note = "note",
             xnote = "xnote",
@@ -59,10 +59,6 @@ class AssetTransferDeepLinkBuilderTest {
             amount = "123",
             assetId = 12345L,
             accountAddress = "accountAddress",
-            walletConnectUrl = null,
-            webImportQrCode = null,
-            notificationGroupType = null,
-            url = null,
             note = "note",
             xnote = "xnote",
             label = "label",

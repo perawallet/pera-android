@@ -12,10 +12,23 @@
 
 package com.algorand.wallet.deeplink.utils
 
-import com.algorand.wallet.deeplink.model.PeraUri
-
 private const val COINBASE_DEEPLINK_ROOT = "algo:"
+private val COINBASE_QUERY_ADDRESS_REGEX = Regex("""(?<=\baddress=)[^&#]*""")
+private val COINBASE_PATH_ADDRESS_REGEX = Regex("""^algo:([^/?#]+)""")
+private val COINBASE_ASSET_ID_REGEX = Regex("""algo:([^/]+)""")
 
-internal fun isCoinbaseDeepLink(uri: PeraUri): Boolean {
-    return uri.rawUri.startsWith(COINBASE_DEEPLINK_ROOT, ignoreCase = true)
+internal fun isCoinbaseDeepLink(uri: String): Boolean {
+    return uri.startsWith(COINBASE_DEEPLINK_ROOT, ignoreCase = true)
+}
+
+internal fun getCoinbaseAddress(uri: String): String? {
+    var address = COINBASE_QUERY_ADDRESS_REGEX.find(uri)?.value
+    if (address != null) return address
+
+    address = COINBASE_PATH_ADDRESS_REGEX.find(uri)?.groupValues?.get(1)
+    return address
+}
+
+internal fun getCoinbaseAssetId(s: String): String? {
+    return COINBASE_ASSET_ID_REGEX.find(s)?.groupValues?.get(1)
 }

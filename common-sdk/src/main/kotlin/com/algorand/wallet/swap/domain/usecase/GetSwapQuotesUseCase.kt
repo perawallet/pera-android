@@ -14,10 +14,9 @@ package com.algorand.wallet.swap.domain.usecase
 
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
-import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import javax.inject.Inject
@@ -53,7 +52,6 @@ internal class GetSwapQuotesUseCase @Inject constructor(
             assetOutId = payload.assetOutId,
             amount = payload.amount,
             deviceId = getSelectedNodeDeviceId().orEmpty(),
-            providers = SwapQuoteProvider.entries,
             slippage = payload.slippage
         )
     }

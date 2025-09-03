@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget
+package com.algorand.android.ui.compose.widget.bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

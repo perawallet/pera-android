@@ -41,7 +41,7 @@ import com.algorand.android.ui.compose.widget.button.PeraButtonState.DISABLED
 import com.algorand.android.ui.compose.widget.button.PeraButtonState.ENABLED
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
-import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level3
+import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level2
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
@@ -73,9 +73,9 @@ fun SwapConfirmationScreen(
                         .fillMaxWidth()
                         .padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
                         .align(Alignment.BottomCenter),
-                    onClick = { viewModel.confirmSwapWithCheckingPriceImpact() },
+                    onClick = { viewModel.confirmSwap() },
                     text = stringResource(R.string.confirm_swap),
-                    state = if (viewState.priceImpact.warningStatus is Level3) DISABLED else ENABLED
+                    state = if (viewState.priceImpact.warningStatus is Level2) DISABLED else ENABLED
                 )
             }
         }
@@ -98,7 +98,7 @@ private fun Toolbar(
                 .size(40.dp)
                 .clickableNoRipple(onClick = onBackClick)
                 .padding(8.dp),
-            painter = painterResource(R.drawable.ic_left_arrow),
+            painter = painterResource(R.drawable.ic_close),
             tint = PeraTheme.colors.text.main,
             contentDescription = null
         )

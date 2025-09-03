@@ -12,15 +12,14 @@
 
 package com.algorand.android.ui.swap.widget.mapper
 
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
-import java.math.BigDecimal
 
 fun interface SwapQuoteFetchStateMapper {
     operator fun invoke(
-        address: String?,
-        amount: BigDecimal?,
-        slippage: Float?,
+        swapDetails: SwapViewModel.SwapDetails,
+        amount: String,
         assetInState: SwapAssetSelectionViewModel.ViewState,
         assetOutState: SwapAssetSelectionViewModel.ViewState
     ): DefaultSwapWidgetViewModel.SwapQuoteFetchState

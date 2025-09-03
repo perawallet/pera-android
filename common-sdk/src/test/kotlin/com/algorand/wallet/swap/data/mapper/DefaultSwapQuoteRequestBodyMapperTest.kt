@@ -12,29 +12,22 @@
 
 package com.algorand.wallet.swap.data.mapper
 
-import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
+import com.algorand.test.peraFixture
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapTypeResponse
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
-import io.mockk.every
-import io.mockk.mockk
 import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DefaultSwapQuoteRequestBodyMapperTest {
 
-    private val providerResponseMapper: SwapQuoteProviderResponseMapper = mockk {
-        every { invoke(provider = SwapQuoteProvider.TINYMAN) } returns SwapQuoteProviderResponse.TINYMAN
-        every { invoke(provider = SwapQuoteProvider.TINYMAN_V2) } returns SwapQuoteProviderResponse.TINYMAN_V2
-    }
-
-    private val sut = DefaultSwapQuoteRequestBodyMapper(providerResponseMapper)
+    private val sut = DefaultSwapQuoteRequestBodyMapper()
 
     @Test
     fun `EXPECT mapped request body`() {
-        val result = sut(PAYLOAD)
+        val result = sut(PAYLOAD, PROVIDERS)
 
         assertEquals(REQUEST_BODY, result)
     }
@@ -43,7 +36,7 @@ class DefaultSwapQuoteRequestBodyMapperTest {
     fun `EXPECT asset in id to be zero WHEN asset in is ALGO`() {
         val payload = PAYLOAD.copy(assetInId = -7)
 
-        val result = sut(payload)
+        val result = sut(payload, PROVIDERS)
 
         val expected = REQUEST_BODY.copy(assetInId = 0L)
         assertEquals(expected, result)
@@ -53,21 +46,24 @@ class DefaultSwapQuoteRequestBodyMapperTest {
     fun `EXPECT asset out id to be zero WHEN asset out is ALGO`() {
         val payload = PAYLOAD.copy(assetOutId = -7)
 
-        val result = sut(payload)
+        val result = sut(payload, PROVIDERS)
 
         val expected = REQUEST_BODY.copy(assetOutId = 0L)
         assertEquals(expected, result)
     }
 
     private companion object {
+        val PROVIDER_1 = peraFixture<SwapQuoteProvider>().copy(name = "provider1")
+        val PROVIDER_2 = peraFixture<SwapQuoteProvider>().copy(name = "provider2")
+        val PROVIDERS = listOf(PROVIDER_1, PROVIDER_2)
+
         val PAYLOAD = SwapQuoteRequestPayload(
             address = "address",
             deviceId = "deviceId",
             assetInId = 1L,
             assetOutId = 2L,
             amount = BigInteger.valueOf(10_000),
-            slippage = 0.01f,
-            providers = listOf(SwapQuoteProvider.TINYMAN, SwapQuoteProvider.TINYMAN_V2)
+            slippage = 0.01f
         )
 
         val REQUEST_BODY = SwapQuoteRequestBody(
@@ -77,7 +73,7 @@ class DefaultSwapQuoteRequestBodyMapperTest {
             assetOutId = 2L,
             amount = BigInteger.valueOf(10_000),
             slippage = 0.01f,
-            providers = listOf(SwapQuoteProviderResponse.TINYMAN, SwapQuoteProviderResponse.TINYMAN_V2),
+            providers = listOf("provider1", "provider2"),
             swapType = SwapTypeResponse.FIXED_INPUT
         )
     }

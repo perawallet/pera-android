@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.compose.widget.textfield
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,9 +22,17 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 @Preview(showBackground = true)
 @Composable
 fun PeraTextFieldPreview() {
-    PeraTextField(
-        modifier = Modifier,
-        text = "Text Field Input",
-        onTextChanged = {}
-    )
+    Column {
+        PeraTextField(
+            modifier = Modifier,
+            text = "Text Field Input",
+            onTextChanged = {}
+        )
+        PeraTextField(
+            modifier = Modifier,
+            text = "",
+            onTextChanged = {},
+            hint = "Hint Text",
+        )
+    }
 }

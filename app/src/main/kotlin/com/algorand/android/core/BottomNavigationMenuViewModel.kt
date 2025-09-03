@@ -18,10 +18,8 @@ import com.algorand.android.R
 import com.algorand.android.core.BottomNavigationMenuViewModel.ViewEvent
 import com.algorand.android.core.BottomNavigationMenuViewModel.ViewState
 import com.algorand.android.core.bottomnav.model.BottomNavMenuItem
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.utils.isStagingApp
 import com.algorand.wallet.node.domain.usecase.IsSelectedNodeTestnet
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -32,9 +30,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BottomNavigationMenuViewModel @Inject constructor(
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val isSelectedNodeTestnet: IsSelectedNodeTestnet,
-    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -48,14 +44,6 @@ class BottomNavigationMenuViewModel @Inject constructor(
             viewModelScope.launch {
                 val menuItems = getMenuItems()
                 stateDelegate.updateState { ViewState.Content(menuItems) }
-//                TODO Enable swap when feature is ready
-//                if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
-//                    getAccountLiteCacheFlow().collectLatest { cacheStatus ->
-//                        val accountLites = (cacheStatus as? AccountLiteCacheStatus.Data)?.accountLites?.values
-//                        val isSwapEnabled = accountLites?.any { it.cachedInfo?.type?.canSignTransaction() == true }
-//                        eventDelegate.sendEvent(ViewEvent.SetItemEnabled(R.id.swapFragment, isSwapEnabled == true))
-//                    }
-//                }
             }
         }
     }

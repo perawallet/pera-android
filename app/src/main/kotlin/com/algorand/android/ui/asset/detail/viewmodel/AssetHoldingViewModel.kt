@@ -30,6 +30,9 @@ import com.algorand.android.ui.common.amount.PlainFormattedAmount
 import com.algorand.android.ui.common.amount.SimpleFormattedAmount
 import com.algorand.android.ui.common.amount.domain.GetSecondaryCurrencyAmountRenderer
 import com.algorand.android.ui.compose.widget.chart.extensions.getChangePercentage
+import com.algorand.android.utils.MINUS_SIGN
+import com.algorand.android.utils.PLUS_SIGN
+import com.algorand.android.utils.emptyString
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingFlow
 import com.algorand.wallet.asset.domain.model.Asset
@@ -89,11 +92,7 @@ class AssetHoldingViewModel @Inject constructor(
 
     private fun getBalanceChangeRenderer(asset: Asset, balanceChange: Float): AmountRenderer {
         val prefix = getDisplayedCurrencySymbol(asset)
-        val sign = when {
-            balanceChange < 0f -> "-"
-            balanceChange > 0f -> "+"
-            else -> ""
-        }
+        val sign = PLUS_SIGN.takeIf { balanceChange > 0f } ?: MINUS_SIGN.takeIf { balanceChange < 0f } ?: emptyString()
         val formattedChange = DecimalFormat().apply { maximumFractionDigits = 2 }.format(balanceChange.absoluteValue)
         return AmountRenderer(
             formattedAmount = SimpleFormattedAmount(formattedChange),

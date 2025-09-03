@@ -41,7 +41,6 @@ class AssetPriceLineChartViewModel @Inject constructor(
     private val getAssetPriceLineChartData: GetAssetPriceLineChartData
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, StatefulPeraLineChartViewModel {
 
-
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
     }

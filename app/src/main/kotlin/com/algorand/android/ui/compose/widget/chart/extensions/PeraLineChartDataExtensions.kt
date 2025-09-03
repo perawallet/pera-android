@@ -14,11 +14,13 @@ package com.algorand.android.ui.compose.widget.chart.extensions
 
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 
+private const val PERCENTAGE_MULTIPLIER = 100
+
 fun List<PeraLineChartData>.getChangePercentage(): Float? {
     return if (size > 2) {
         val newValue = last().value
         val oldValue = first().value
-        (newValue - oldValue) / oldValue * 100
+        (newValue - oldValue) / oldValue * PERCENTAGE_MULTIPLIER
     } else {
         null
     }

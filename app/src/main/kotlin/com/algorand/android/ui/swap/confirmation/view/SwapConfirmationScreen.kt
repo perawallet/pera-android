@@ -98,7 +98,7 @@ private fun Toolbar(
                 .size(40.dp)
                 .clickableNoRipple(onClick = onBackClick)
                 .padding(8.dp),
-            painter = painterResource(R.drawable.ic_left_arrow),
+            painter = painterResource(R.drawable.ic_close),
             tint = PeraTheme.colors.text.main,
             contentDescription = null
         )

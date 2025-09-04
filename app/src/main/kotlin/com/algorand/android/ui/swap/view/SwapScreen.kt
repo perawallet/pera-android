@@ -11,7 +11,7 @@
  */
 
 @file:OptIn(ExperimentalMaterial3Api::class)
-@file:Suppress("LongMethod")
+@file:Suppress("LongMethod", "LongParameterList")
 
 package com.algorand.android.ui.swap.view
 

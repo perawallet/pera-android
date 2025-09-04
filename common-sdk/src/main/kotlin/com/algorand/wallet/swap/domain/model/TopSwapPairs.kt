@@ -10,15 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.asset.icon.mapper
+package com.algorand.wallet.swap.domain.model
 
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
-import com.algorand.wallet.asset.domain.model.AssetLite
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
-import com.algorand.wallet.swap.domain.model.TopSwapPairs
+import java.math.BigDecimal
 
-interface AssetIconDrawableMapper {
-    fun map(assetLite: AssetLite): AssetIconDrawable
-    fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable
-    fun map(assetDetail: TopSwapPairs.AssetDetail): AssetIconDrawable
+data class TopSwapPairs(
+    val details: List<Detail>
+) {
+
+    data class Detail(
+        val assetA: AssetDetail,
+        val assetB: AssetDetail,
+        val volumeUsd: BigDecimal
+    )
+
+    data class AssetDetail(
+        val id: Long,
+        val logoUrl: String?,
+        val shortName: String?
+    )
 }

@@ -21,6 +21,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteProvidersResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
+import com.algorand.wallet.swap.data.model.TopSwapPairsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -56,4 +57,7 @@ internal interface SwapApiService {
 
     @GET("v2/dex-swap/providers/")
     suspend fun getSwapQuoteProviders(): SwapQuoteProvidersResponse
+
+    @GET("v2/dex-swap/top-pairs/")
+    suspend fun getTopSwapPairs(): TopSwapPairsResponse
 }

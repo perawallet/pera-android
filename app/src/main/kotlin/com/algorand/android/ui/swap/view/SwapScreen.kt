@@ -18,8 +18,10 @@ package com.algorand.android.ui.swap.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -38,6 +40,9 @@ import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.configuration.view.SwapConfigurationBottomSheet
 import com.algorand.android.ui.swap.providers.view.SwapQuoteProvidersBottomSheet
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
+import com.algorand.android.ui.swap.topfive.view.TopSwapPairsContainer
+import com.algorand.android.ui.swap.topfive.viewmodel.DefaultTopSwapPairsViewModel
+import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.view.SwapButtonWidget
 import com.algorand.android.ui.swap.widget.view.SwapProviderWidget
@@ -65,6 +70,7 @@ fun SwapScreen(
     providerViewModel: SwapProviderWidgetViewModel = hiltViewModel<DefaultSwapProviderWidgetViewModel>(),
     buttonViewModel: SwapButtonViewModel = hiltViewModel<DefaultSwapButtonViewModel>(),
     quoteProvidersViewModel: SwapQuoteProvidersViewModel = hiltViewModel(),
+    topSwapPairsViewModel: TopSwapPairsViewModel = hiltViewModel<DefaultTopSwapPairsViewModel>(),
     listener: SwapScreenListener
 ) {
     LaunchedEffect(Unit) {
@@ -91,6 +97,7 @@ fun SwapScreen(
                         providerViewModel = providerViewModel,
                         buttonViewModel = buttonViewModel,
                         quoteProvidersViewModel = quoteProvidersViewModel,
+                        topSwapPairsViewModel = topSwapPairsViewModel,
                         listener = listener
                     )
                 }
@@ -110,6 +117,7 @@ private fun SwapContentState(
     providerViewModel: SwapProviderWidgetViewModel,
     quoteProvidersViewModel: SwapQuoteProvidersViewModel,
     buttonViewModel: SwapButtonViewModel,
+    topSwapPairsViewModel: TopSwapPairsViewModel,
     listener: SwapScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -131,6 +139,7 @@ private fun SwapContentState(
                 providerViewModel,
                 buttonViewModel,
                 configViewModel,
+                topSwapPairsViewModel,
                 listener,
                 onConfigureClick = { swapConfigurationBottomSheetState.show() }
             )
@@ -145,6 +154,8 @@ private fun SwapContentState(
                     .padding(top = 16.dp, start = 24.dp, end = 24.dp),
                 providerViewModel
             )
+            Spacer(modifier = Modifier.height(24.dp))
+            TopSwapPairsContainer(topSwapPairsViewModel)
         }
         SwapButtonWidget(buttonViewModel, listener::onSwapClick)
 

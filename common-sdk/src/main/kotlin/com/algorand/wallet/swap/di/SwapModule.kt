@@ -26,6 +26,7 @@ import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapSelectedAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapTransactionPurposeMapper
+import com.algorand.wallet.swap.data.mapper.DefaultTopSwapPairsMapper
 import com.algorand.wallet.swap.data.mapper.SwapAssetAmountMapper
 import com.algorand.wallet.swap.data.mapper.SwapAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
@@ -34,6 +35,7 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.mapper.SwapSelectedAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.SwapTransactionPurposeMapper
+import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.repository.DefaultSwapRepository
 import com.algorand.wallet.swap.data.repository.DefaultSwapSelectedAssetRepository
 import com.algorand.wallet.swap.data.service.SwapApiService
@@ -52,6 +54,7 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetails
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
+import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,7 +77,8 @@ internal object SwapModule {
         quoteMapper: SwapQuoteMapper,
         availableSwapAssetMapper: AvailableSwapAssetMapper,
         swapQuoteProviderMapper: SwapQuoteProviderMapper,
-        inMemoryCacheProvider: InMemoryCacheProvider
+        inMemoryCacheProvider: InMemoryCacheProvider,
+        topSwapPairsMapper: TopSwapPairsMapper
     ): SwapRepository {
         return DefaultSwapRepository(
             swapApiService = swapApiService,
@@ -87,7 +91,8 @@ internal object SwapModule {
             quoteMapper = quoteMapper,
             swapQuoteProviderMapper = swapQuoteProviderMapper,
             availableSwapAssetMapper = availableSwapAssetMapper,
-            providersCache = inMemoryCacheProvider.getInMemoryCache()
+            providersCache = inMemoryCacheProvider.getInMemoryCache(),
+            topSwapPairsMapper = topSwapPairsMapper
         )
     }
 
@@ -168,4 +173,12 @@ internal object SwapModule {
 
     @Provides
     fun provideGetSwapAmountByPercentage(useCase: GetSwapAmountByPercentageUseCase): GetSwapAmountByPercentage = useCase
+
+    @Provides
+    fun provideTopSwapPairsMapper(mapper: DefaultTopSwapPairsMapper): TopSwapPairsMapper = mapper
+
+    @Provides
+    fun provideGetTopSwapPairs(repository: SwapRepository): GetTopSwapPairs {
+        return GetTopSwapPairs(repository::getTopSwapPairs)
+    }
 }

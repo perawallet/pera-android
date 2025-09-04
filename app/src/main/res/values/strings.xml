@@ -1552,4 +1552,8 @@
     <string name="use_local_currency">Use Local Currency</string>
     <string name="best_price_available">Best price available</string>
     <string name="change_provider">Change Provider</string>
+    <string name="top_five_swaps">Top 5 Swaps</string>
+    <string name="volume_24h">Volume (24H)</string>
+    <string name="asset_to_asset_formatted">%1$s to %2$s</string>
+    <string name="unable_to_load_top_five">Unable to load Top 5 Swaps</string>
 </resources>

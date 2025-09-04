@@ -21,6 +21,7 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
+import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
@@ -31,6 +32,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import java.math.BigInteger
 import javax.inject.Inject
@@ -43,7 +45,8 @@ internal class DefaultSwapRepository @Inject constructor(
     private val quoteMapper: SwapQuoteMapper,
     private val swapQuoteProviderMapper: SwapQuoteProviderMapper,
     private val availableSwapAssetMapper: AvailableSwapAssetMapper,
-    private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>>
+    private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>>,
+    private val topSwapPairsMapper: TopSwapPairsMapper
 ) : SwapRepository {
 
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
@@ -115,6 +118,15 @@ internal class DefaultSwapRepository @Inject constructor(
                 providersCache.put(providers)
                 PeraResult.Success(providers)
             }
+        } catch (e: Exception) {
+            PeraResult.Error(e)
+        }
+    }
+
+    override suspend fun getTopSwapPairs(): PeraResult<TopSwapPairs> {
+        return try {
+            val response = swapApiService.getTopSwapPairs()
+            PeraResult.Success(topSwapPairsMapper(response))
         } catch (e: Exception) {
             PeraResult.Error(e)
         }

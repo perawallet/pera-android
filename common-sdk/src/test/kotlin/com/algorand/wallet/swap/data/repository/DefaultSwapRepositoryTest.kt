@@ -21,6 +21,7 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
+import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsResponse
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
@@ -32,12 +33,14 @@ import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
+import com.algorand.wallet.swap.data.model.TopSwapPairsResponse
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -46,6 +49,7 @@ import io.mockk.verify
 import java.math.BigInteger
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DefaultSwapRepositoryTest {
@@ -58,6 +62,7 @@ class DefaultSwapRepositoryTest {
     private val availableSwapAssetMapper: AvailableSwapAssetMapper = mockk()
     private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>> = mockk(relaxed = true)
     private val swapQuoteProviderMapper: SwapQuoteProviderMapper = mockk()
+    private val topSwapPairsMapper: TopSwapPairsMapper = mockk()
 
     private val sut = DefaultSwapRepository(
         swapApiService,
@@ -67,7 +72,8 @@ class DefaultSwapRepositoryTest {
         quoteMapper,
         swapQuoteProviderMapper,
         availableSwapAssetMapper,
-        providersCache
+        providersCache,
+        topSwapPairsMapper
     )
 
     @Test
@@ -230,6 +236,27 @@ class DefaultSwapRepositoryTest {
         val address = sut.getLastUsedSwapAddress()
 
         assertEquals(null, address)
+    }
+
+    @Test
+    fun `EXPECT error WHEN top swap pairs api call fails`() = runTest {
+        coEvery { swapApiService.getTopSwapPairs() } throws Exception()
+
+        val result = sut.getTopSwapPairs()
+
+        assertTrue(result is PeraResult.Error)
+    }
+
+    @Test
+    fun `EXPECT top swap pairs WHEN top swap pairs api call is successful`() = runTest {
+        val response = peraFixture<TopSwapPairsResponse>()
+        val topSwapPairs = peraFixture<TopSwapPairs>()
+        coEvery { swapApiService.getTopSwapPairs() } returns response
+        every { topSwapPairsMapper(response) } returns topSwapPairs
+
+        val result = sut.getTopSwapPairs()
+
+        assertEquals(PeraResult.Success(topSwapPairs), result)
     }
 
     private companion object {

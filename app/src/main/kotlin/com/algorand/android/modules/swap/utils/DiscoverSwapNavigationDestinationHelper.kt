@@ -14,9 +14,12 @@ package com.algorand.android.modules.swap.utils
 
 import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatureIntroductionPageShownUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.SetSwapFeatureRedDotVisibilityUseCase
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import javax.inject.Inject
 
 class DiscoverSwapNavigationDestinationHelper @Inject constructor(
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     isSwapFeatureIntroductionPageShownUseCase: IsSwapFeatureIntroductionPageShownUseCase,
     setSwapFeatureRedDotVisibilityUseCase: SetSwapFeatureRedDotVisibilityUseCase
 ) : BaseSwapNavigationDestinationHelper(
@@ -26,11 +29,16 @@ class DiscoverSwapNavigationDestinationHelper @Inject constructor(
 
     suspend fun getSwapNavigationDestination(
         onNavToIntroduction: () -> Unit,
-        onNavToAccountSelection: (() -> Unit)
+        onNavToAccountSelection: (() -> Unit),
+        onNavToSwapV2: () -> Unit
     ) {
-        handleNavigationDestination(
-            navToIntroduction = { onNavToIntroduction() },
-            handleDestinationWithAccount = { onNavToAccountSelection() }
-        )
+        if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+            onNavToSwapV2()
+        } else {
+            handleNavigationDestination(
+                navToIntroduction = { onNavToIntroduction() },
+                handleDestinationWithAccount = { onNavToAccountSelection() }
+            )
+        }
     }
 }

@@ -25,16 +25,19 @@ import com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFr
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment.Companion.SWAP_ASSET_IN_ID_KEY
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment.Companion.SWAP_ASSET_OUT_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SwapFragment : BaseFragment(0), SwapScreenListener {
+class SwapFragment : BaseFragment(0), SwapScreenListener,
+    BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
     private val swapViewModel: SwapViewModel by viewModels()
 
-    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
@@ -42,6 +45,11 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
                 SwapScreen(swapViewModel, listener = this)
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        registerBottomNavBarFragmentDelegation(this)
     }
 
     override fun onStart() {

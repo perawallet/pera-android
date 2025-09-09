@@ -35,7 +35,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
 import com.algorand.android.MainNavigationDirections.Companion.actionToLockPreferenceNavigation
@@ -200,10 +199,6 @@ class MainActivity :
 
     private val invalidTransactionCauseObserver = Observer<Event<Resource.Error.Local>> { cause ->
         cause.consume()?.let { onInvalidWalletConnectTransactionReceived(it) }
-    }
-
-    private val swapNavigationDirectionCollector: suspend (Event<NavDirections>?) -> Unit = {
-        it?.consume()?.let { navDirection -> nav(navDirection) }
     }
 
     private val walletConnectUrlHandlerListener = object : WalletConnectUrlHandler.Listener {
@@ -815,11 +810,6 @@ class MainActivity :
         walletConnectViewModel.walletConnectRequestLiveData.observe(this, ::handleWalletConnectRequest)
 
         walletConnectViewModel.invalidTransactionCauseLiveData.observe(this, invalidTransactionCauseObserver)
-
-        collectLatestOnLifecycle(
-            mainViewModel.swapNavigationResultFlow,
-            swapNavigationDirectionCollector
-        )
 
         collectOnLifecycle(
             flow = walletConnectViewModel.sessionResultFlow,

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swapV2Navigation"
+    app:startDestination="@id/swapFragment">
+
+    <fragment
+        android:id="@+id/swapFragment"
+        android:name="com.algorand.android.ui.swap.view.SwapFragment"
+        android:label="SwapFragment">
+        <action
+            android:id="@+id/action_swapFragment_to_swapAssetInSelectionFragment"
+            app:destination="@id/swapAssetInSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapAssetOutSelectionFragment"
+            app:destination="@id/swapAssetOutSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapAddressSelectionFragment"
+            app:destination="@id/swapAddressSelectionFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapConfirmationFragment"
+            app:destination="@id/swapConfirmationFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/swapAssetInSelectionFragment"
+        android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment"
+        android:label="SwapAssetInSelectionFragment">
+
+        <argument
+            android:name="address"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/swapAssetOutSelectionFragment"
+        android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment"
+        android:label="SwapAssetOutSelectionFragment">
+        <argument
+            android:name="address"
+            app:argType="string" />
+        <argument
+            android:name="assetId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/swapAddressSelectionFragment"
+        android:name="com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFragment"
+        android:label="SwapAddressSelectionFragment" />
+
+    <fragment
+        android:id="@+id/swapConfirmationFragment"
+        android:name="com.algorand.android.ui.swap.confirmation.view.SwapConfirmationFragment"
+        android:label="SwapConfirmationFragment">
+
+        <argument
+            android:name="swapQuote"
+            app:argType="com.algorand.wallet.swap.domain.model.SwapQuoteV2" />
+
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapPriceImpactInfoBottomSheet"
+            app:destination="@id/swapPriceImpactInfoBottomSheet" />
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapSlippageToleranceInfoBottomSheet"
+            app:destination="@id/swapSlippageToleranceInfoBottomSheet" />
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapExchangeFeeInfoBottomSheet"
+            app:destination="@id/swapExchangeFeeInfoBottomSheet" />
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapFragment"
+            app:destination="@id/swapFragment"
+            app:popUpTo="@id/swapFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/swapPriceImpactInfoBottomSheet"
+        android:name="com.algorand.android.modules.swap.priceimpact.ui.PriceImpactInfoBottomSheet"
+        android:label="PriceImpactInfoBottomSheet"
+        tools:layout="@layout/bottom_sheet_base_information" />
+    <dialog
+        android:id="@+id/swapSlippageToleranceInfoBottomSheet"
+        android:name="com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceInfoBottomSheet"
+        android:label="SlippageToleranceInfoBottomSheet"
+        tools:layout="@layout/bottom_sheet_base_information" />
+    <dialog
+        android:id="@+id/swapExchangeFeeInfoBottomSheet"
+        android:name="com.algorand.android.modules.swap.confirmswap.ui.ExchangeFeeInfoBottomSheet"
+        android:label="ExchangeFeeInfoBottomSheet"
+        tools:layout="@layout/bottom_sheet_base_information" />
+</navigation>

@@ -32,6 +32,8 @@
 
     <include app:graph="@navigation/swap_navigation" />
 
+    <include app:graph="@navigation/swap_v2_navigation" />
+
     <include app:graph="@navigation/swap_introduction_navigation" />
 
     <include app:graph="@navigation/account_status_detail_navigation" />
@@ -164,6 +166,14 @@
             <argument
                 android:name="accountAddress"
                 app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailFragment_to_swapV2Navigation"
+            app:destination="@id/swapV2Navigation">
+            <argument
+                android:name="accountAddress"
+                app:argType="string"
+                app:nullable="true" />
         </action>
     </fragment>
 

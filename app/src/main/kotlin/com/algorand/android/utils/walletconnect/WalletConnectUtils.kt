@@ -111,7 +111,7 @@ fun WalletConnectTransaction.isFutureTransaction(): Boolean {
 
 fun WalletConnectTransaction.isRekeyTransaction(): Boolean {
     return transactionList.flatten().any {
-        it.getRekeyToAccountAddress() != null
+        it.isRekeyTransaction
     }
 }
 

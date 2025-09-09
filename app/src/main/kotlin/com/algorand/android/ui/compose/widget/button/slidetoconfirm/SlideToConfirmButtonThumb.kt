@@ -56,9 +56,9 @@ fun BoxWithConstraintsScope.SlideToConfirmButtonThumb(
         targetValue = dragOffset,
         animationSpec = spring(stiffness = springAnimationStiffness)
     )
-    val endThreshold = remember { constraints.maxWidth * .95f }
     val density = LocalDensity.current
     val endOffset = remember { constraints.maxWidth - thumbSizeAsPx }
+    val endThreshold = remember { endOffset * .95f }
     LaunchedEffect(dragOffsetAnimator.value) {
         onDragChanged(dragOffsetAnimator.value)
     }

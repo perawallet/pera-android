@@ -12,10 +12,8 @@
 
 package com.algorand.android.ui.swap.confirmation.di
 
-import com.algorand.android.ui.swap.confirmation.mapper.DefaultLegacySwapQuoteMapper
 import com.algorand.android.ui.swap.confirmation.mapper.DefaultSwapConfirmationContentMapper
 import com.algorand.android.ui.swap.confirmation.mapper.DefaultSwapPriceImpactWarningStatusMapper
-import com.algorand.android.ui.swap.confirmation.mapper.LegacySwapQuoteMapper
 import com.algorand.android.ui.swap.confirmation.mapper.SwapConfirmationContentMapper
 import com.algorand.android.ui.swap.confirmation.mapper.SwapPriceImpactWarningStatusMapper
 import dagger.Module
@@ -36,7 +34,4 @@ internal object SwapConfirmationUiModule {
     fun provideSwapPriceImpactWarningStatusMapper(
         mapper: DefaultSwapPriceImpactWarningStatusMapper
     ): SwapPriceImpactWarningStatusMapper = mapper
-
-    @Provides
-    fun provideLegacySwapQuoteMapper(mapper: DefaultLegacySwapQuoteMapper): LegacySwapQuoteMapper = mapper
 }

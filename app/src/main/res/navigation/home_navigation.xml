@@ -1583,6 +1583,11 @@
         <action
             android:id="@+id/action_swapConfirmationFragment_to_swapExchangeFeeInfoBottomSheet"
             app:destination="@id/swapExchangeFeeInfoBottomSheet" />
+        <action
+            android:id="@+id/action_swapConfirmationFragment_to_swapFragment"
+            app:destination="@id/swapFragment"
+            app:popUpTo="@id/swapFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <dialog

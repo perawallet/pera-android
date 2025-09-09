@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
@@ -70,7 +71,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     }
 
     override fun onCreateAccountClick() {
-        // TODO
+        nav(MainNavigationDirections.actionGlobalLoginNavigation())
     }
 
     override fun onAccountChipClick() {

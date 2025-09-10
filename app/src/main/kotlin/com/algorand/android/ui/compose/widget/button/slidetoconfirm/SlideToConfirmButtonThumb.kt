@@ -42,6 +42,8 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirm.ButtonState
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirm.ButtonState.Idle
 
+private const val CONFIRMATION_THRESHOLD = .95f
+
 @Composable
 fun BoxWithConstraintsScope.SlideToConfirmButtonThumb(
     modifier: Modifier = Modifier,
@@ -58,7 +60,7 @@ fun BoxWithConstraintsScope.SlideToConfirmButtonThumb(
     )
     val density = LocalDensity.current
     val endOffset = remember { constraints.maxWidth - thumbSizeAsPx }
-    val endThreshold = remember { endOffset * .95f }
+    val endThreshold = remember { endOffset * CONFIRMATION_THRESHOLD }
     LaunchedEffect(dragOffsetAnimator.value) {
         onDragChanged(dragOffsetAnimator.value)
     }

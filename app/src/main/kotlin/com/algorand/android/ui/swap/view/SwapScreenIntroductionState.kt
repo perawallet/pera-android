@@ -10,11 +10,14 @@
  * limitations under the License
  */
 
+@file:Suppress("MagicNumber")
+
 package com.algorand.android.ui.swap.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +54,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -62,19 +66,7 @@ fun SwapScreenIntroductionState(modifier: Modifier = Modifier, listener: SwapScr
         val density = LocalDensity.current
         var bottomContainerHeight by remember { mutableStateOf(0.dp) }
         Column {
-            Image(
-                modifier = Modifier
-                    .background(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Color(0xFF18181B), Color(0xFF242427), Color(0xFF18181B)),
-                            radius = 1f
-                        )
-                    )
-                    .fillMaxWidth()
-                    .aspectRatio(1.5f),
-                painter = painterResource(R.drawable.swap_introduction),
-                contentDescription = null
-            )
+            ImageContainer()
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
@@ -106,43 +98,68 @@ fun SwapScreenIntroductionState(modifier: Modifier = Modifier, listener: SwapScr
                 )
             }
         }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-                .align(Alignment.BottomCenter)
-                .onSizeChanged {
-                    bottomContainerHeight = with(density) { it.height.toDp() }
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(R.string.powered_by),
-                    style = PeraTheme.typography.footnote.sans,
-                    color = PeraTheme.colors.text.grayLighter
+        BottomButtonContainer(listener) {
+            bottomContainerHeight = with(density) { it.height.toDp() }
+        }
+    }
+}
+
+@Composable
+private fun ImageContainer() {
+    Image(
+        modifier = Modifier
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color(0xFF18181B), Color(0xFF242427), Color(0xFF18181B)),
+                    radius = 1f
                 )
-                Spacer(modifier = Modifier.width(10.dp))
-                Image(
-                    modifier = Modifier.height(16.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_vestige),
-                    contentDescription = null
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            PeraPrimaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.start_swapping),
-                onClick = { listener.onStartSwappingClick() },
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            .fillMaxWidth()
+            .aspectRatio(1.5f),
+        painter = painterResource(R.drawable.swap_introduction),
+        contentDescription = null
+    )
+}
+
+@Composable
+private fun BoxScope.BottomButtonContainer(
+    listener: SwapScreenIntroductionStateListener,
+    onSizeChanged: (IntSize) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+            .align(Alignment.BottomCenter)
+            .onSizeChanged { onSizeChanged(it) },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = getTermsOfServiceText(listener::onTermsOfServiceClick),
+                text = stringResource(R.string.powered_by),
                 style = PeraTheme.typography.footnote.sans,
-                color = PeraTheme.colors.text.gray,
-                textAlign = TextAlign.Center
+                color = PeraTheme.colors.text.grayLighter
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Image(
+                modifier = Modifier.height(16.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_vestige),
+                contentDescription = null
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        PeraPrimaryButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.start_swapping),
+            onClick = { listener.onStartSwappingClick() },
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = getTermsOfServiceText(listener::onTermsOfServiceClick),
+            style = PeraTheme.typography.footnote.sans,
+            color = PeraTheme.colors.text.gray,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

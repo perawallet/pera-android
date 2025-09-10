@@ -179,7 +179,7 @@ class SwapConfirmationViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Content> { contentState ->
             viewModelScope.launch {
                 stateDelegate.updateState { contentState.copy(contentState = ContentState.Error) }
-                delay(2000L)
+                delay(SWAP_ERROR_DISPLAY_DURATION)
                 stateDelegate.updateState { contentState.copy(contentState = ContentState.Idle) }
             }
         }
@@ -187,7 +187,7 @@ class SwapConfirmationViewModel @Inject constructor(
 
     private suspend fun displaySuccessState(content: ViewState.Content) {
         stateDelegate.updateState { content.copy(contentState = ContentState.Success) }
-        delay(2000L)
+        delay(SWAP_SUCCESS_DISPLAY_DURATION)
         stateDelegate.updateState { content.copy(contentState = ContentState.Idle) }
     }
 
@@ -252,5 +252,10 @@ class SwapConfirmationViewModel @Inject constructor(
                 data class Local(val description: AnnotatedString, val title: AnnotatedString? = null) : ErrorType
             }
         }
+    }
+
+    private companion object {
+        const val SWAP_SUCCESS_DISPLAY_DURATION = 2000L
+        const val SWAP_ERROR_DISPLAY_DURATION = 2000L
     }
 }

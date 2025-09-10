@@ -47,8 +47,8 @@ import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfi
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirm.ButtonState.Loading
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirm.ButtonState.Success
 
-private val BACKGROUND_SHAPE = RoundedCornerShape(24.dp)
-private val THUMB_SIZE = 52.dp
+private val backgroundShape = RoundedCornerShape(24.dp)
+private val thumbSize = 52.dp
 
 @Composable
 fun SlideToConfirmButton(
@@ -62,14 +62,14 @@ fun SlideToConfirmButton(
             .height(52.dp)
     ) {
         val density = LocalDensity.current
-        val thumbSizeAsPx = remember { with(density) { THUMB_SIZE.toPx() } }
+        val thumbSizeAsPx = remember { with(density) { thumbSize.toPx() } }
         val dragOffset = remember { mutableFloatStateOf(0f) }
         MainBackground()
         BackgroundOverlay(buttonState, dragOffset, thumbSizeAsPx)
         ButtonText(buttonState)
         SlideToConfirmButtonIcon(buttonState)
         SlideToConfirmButtonThumb(
-            modifier = Modifier.size(THUMB_SIZE),
+            modifier = Modifier.size(thumbSize),
             buttonState = buttonState,
             onDragChanged = { dragOffset.floatValue = it },
             thumbSizeAsPx = thumbSizeAsPx,
@@ -99,7 +99,7 @@ private fun MainBackground() {
     Box(
         modifier = Modifier
             .padding(vertical = 2.dp)
-            .background(color = PeraTheme.colors.layer.grayLighter, shape = BACKGROUND_SHAPE)
+            .background(color = PeraTheme.colors.layer.grayLighter, shape = backgroundShape)
             .fillMaxSize()
     )
 }
@@ -110,7 +110,7 @@ private fun BackgroundOverlay(buttonState: State<ButtonState>, dragOffsetAnimato
     Box(
         modifier = Modifier
             .padding(vertical = 2.dp)
-            .background(color = getBackgroundColor(buttonState).value, shape = BACKGROUND_SHAPE)
+            .background(color = getBackgroundColor(buttonState).value, shape = backgroundShape)
             .width(with(density) { dragOffsetAnimator.value.toDp() + thumbSizeAsPx.toDp() })
             .fillMaxHeight()
     )

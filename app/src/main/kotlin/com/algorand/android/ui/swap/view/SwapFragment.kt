@@ -26,6 +26,7 @@ import com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFr
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment.Companion.SWAP_ASSET_IN_ID_KEY
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment.Companion.SWAP_ASSET_OUT_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.utils.browser.openVestigeTermsOfServiceUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.useFragmentResultListenerValue
@@ -95,5 +96,13 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
         val address = swapViewModel.getAddress() ?: return
         val assetInId = swapViewModel.getAssetInId()
         nav(SwapFragmentDirections.actionSwapFragmentToSwapAssetOutSelectionFragment(address, assetInId))
+    }
+
+    override fun onStartSwappingClick() {
+        swapViewModel.acceptTermsOfService()
+    }
+
+    override fun onTermsOfServiceClick() {
+        context?.openVestigeTermsOfServiceUrl()
     }
 }

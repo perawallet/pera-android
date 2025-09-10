@@ -30,6 +30,7 @@ import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewMo
 import com.algorand.android.ui.swap.topfive.viewmodel.DefaultTopSwapPairsViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState.Introduction
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState.NoAccountState
 import com.algorand.android.ui.swap.widget.view.SwapWidgetListener
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapAssetSelectionViewModel
@@ -66,11 +67,11 @@ fun SwapScreen(
             .fillMaxSize()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            SwapToolbar(swapViewModel, listener)
             val viewState = swapViewModel.state.collectAsStateWithLifecycle()
             when (viewState.value) {
                 SwapViewModel.ViewState.Idle -> Unit
                 is SwapViewModel.ViewState.Content -> {
+                    SwapToolbar(swapViewModel, listener)
                     SwapScreenContentState(
                         swapViewModel = swapViewModel,
                         assetInViewModel = assetInViewModel,
@@ -84,13 +85,17 @@ fun SwapScreen(
                         listener = listener
                     )
                 }
-                NoAccountState -> SwapScreenNoAccountState(topSwapPairsViewModel, listener::onCreateAccountClick)
+                NoAccountState -> {
+                    SwapToolbar(swapViewModel, listener)
+                    SwapScreenNoAccountState(topSwapPairsViewModel, listener::onCreateAccountClick)
+                }
+                Introduction -> SwapScreenIntroductionState(listener = listener)
             }
         }
     }
 }
 
-interface SwapScreenListener : SwapToolbarListener, SwapWidgetListener {
+interface SwapScreenListener : SwapToolbarListener, SwapWidgetListener, SwapScreenIntroductionStateListener {
     fun onCreateAccountClick()
     fun onSwapClick(quote: SwapQuoteV2)
 }

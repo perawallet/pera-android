@@ -274,7 +274,7 @@ class MainActivity :
             return true
         }
 
-        override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
+        override fun onUndefinedDeepLink() {
             showInvalidDeeplinkError()
         }
 
@@ -353,6 +353,11 @@ class MainActivity :
                 assetInId = assetInId,
                 assetOutId = assetOutId
             )
+            return true
+        }
+
+        override fun onHomeDeeplink(): Boolean {
+            handleHomeDeeplink()
             return true
         }
     }
@@ -482,6 +487,10 @@ class MainActivity :
         mainViewModel.handleDeepLink(uri)
     }
 
+    fun handleHomeDeeplink() {
+        navToHome()
+    }
+
     fun handleAssetInboxDeepLink(accountAddress: String) {
         mainViewModel.handleAssetInboxDeepLink(accountAddress)
     }
@@ -552,6 +561,13 @@ class MainActivity :
             nav(
                 actionGlobalDiscoverHomeNavigation(mainViewModel.getDiscoverUrlWithPath(path))
             )
+        }
+    }
+
+    fun navToHome() {
+        if (navController.graph.last().id != R.id.homeNavigation) {
+            binding.bottomNavigationView.menu.findItem(R.id.accountsFragment).isChecked = true
+            nav(MainNavigationDirections.actionGlobalMainNavigation())
         }
     }
 

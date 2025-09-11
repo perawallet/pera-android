@@ -15,7 +15,6 @@ package com.algorand.android.ui.accounts
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetTransaction
@@ -30,9 +29,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFragment) {
 
     private val accountsQrScannerViewModel: AccountsQrScannerViewModel by viewModels()
-
-    private val mainActivity: MainActivity?
-        get() = activity as? MainActivity
 
     override val shouldShowWcSessionsButton: Boolean
         get() = true

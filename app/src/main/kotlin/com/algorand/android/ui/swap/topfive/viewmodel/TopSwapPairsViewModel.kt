@@ -22,6 +22,8 @@ interface TopSwapPairsViewModel : StateViewModel<ViewState> {
 
     fun init(swapWidgetViewState: Flow<SwapWidgetViewModel.ViewState>)
 
+    fun init()
+
     sealed interface ViewState {
         data object Idle : ViewState
         data object Loading : ViewState

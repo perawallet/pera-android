@@ -24,6 +24,7 @@ import com.algorand.android.modules.swap.confirmswap.domain.SwapTransactionSignM
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
 import com.algorand.android.modules.swap.confirmswap.domain.usecase.CreateSwapQuoteTransactionsUseCase
 import com.algorand.android.modules.swap.ledger.signwithledger.ui.model.LedgerDialogPayload
+import com.algorand.android.modules.swap.transactionstatus.domain.SendSwapTransactionsManager
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.LedgerScanFailed
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.LedgerWaitingForApproval
@@ -32,7 +33,6 @@ import com.algorand.android.modules.transaction.signmanager.ExternalTransactionS
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.TransactionCancelled
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
-import com.algorand.android.ui.swap.confirmation.mapper.LegacySwapQuoteMapper
 import com.algorand.android.ui.swap.confirmation.mapper.SwapConfirmationContentMapper
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent
@@ -41,7 +41,6 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError.ErrorType.Api
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError.ErrorType.Generic
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError.ErrorType.Local
-import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToTransactionStatus
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
@@ -55,6 +54,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -63,7 +63,7 @@ class SwapConfirmationViewModel @Inject constructor(
     private val contentMapper: SwapConfirmationContentMapper,
     private val createSwapQuoteTransactions: CreateSwapQuoteTransactionsUseCase,
     private val swapTransactionSignManager: SwapTransactionSignManager,
-    private val legacySwapQuoteMapper: LegacySwapQuoteMapper,
+    private val sendSwapTransactionsManager: SendSwapTransactionsManager,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -111,7 +111,7 @@ class SwapConfirmationViewModel @Inject constructor(
         swapTransactionSignManager.signSwapQuoteTransaction(transactions)
         swapTransactionSignManager.swapTransactionSignResultFlow.collectLatest { result ->
             when (result) {
-                is Success<*> -> navigateToTransactionStatusFragment(result)
+                is Success<*> -> sendSignTransactions(result)
                 LedgerScanFailed -> displayLedgerNotFoundDialog()
                 is LedgerWaitingForApproval -> displayLedgerWaitingForApprovalDialog(result)
                 Loading -> stateDelegate.onState<ViewState.Content> { contentState ->
@@ -132,27 +132,36 @@ class SwapConfirmationViewModel @Inject constructor(
     }
 
     private suspend fun displayError(errorType: ErrorType) {
-        hideLoading()
+        displayErrorState()
         eventDelegate.sendEvent(DisplayError(errorType))
     }
 
-    private suspend fun navigateToTransactionStatusFragment(result: Success<*>) {
+    private suspend fun sendSignTransactions(result: Success<*>) {
         stateDelegate.onState<ViewState.Content> { content ->
-            hideLoading()
             val signedTxns = result.signedTransaction as? List<SwapQuoteTransaction>
-            val event = if (signedTxns != null) {
-                val legacySwapQuote = legacySwapQuoteMapper(content.quote)
-                NavigateToTransactionStatus(legacySwapQuote, signedTxns)
+            if (signedTxns != null) {
+                sendSwapTransactionsManager.sendSwapTransactions(
+                    signedTransactions = signedTxns.toMutableList(),
+                    onSendTransactionsSuccess = {
+                        displaySuccessState(content)
+                        val assetInShortName = content.quote.assetInDetail.shortName.orEmpty()
+                        val assetOutShortName = content.quote.assetOutDetail.shortName.orEmpty()
+                        eventDelegate.sendEvent(ViewEvent.NavigateToSwapScreen(assetInShortName, assetOutShortName))
+                    },
+                    onSendTransactionsFailed = {
+                        displayErrorState()
+                        eventDelegate.sendEvent(DisplayError(Generic))
+                    }
+                )
             } else {
-                DisplayError(Generic)
+                displayErrorState()
+                eventDelegate.sendEvent(DisplayError(Generic))
             }
-            stateDelegate.updateState { content.copy(contentState = ContentState.Idle) }
-            eventDelegate.sendEvent(event)
         }
     }
 
     private suspend fun displayFailedToCreateTxnError(error: DataResource.Error<List<SwapQuoteTransaction>>) {
-        hideLoading()
+        displayErrorState()
         val errorType = if (error.exception is IOException) {
             Local(AnnotatedString(R.string.the_internet_connection))
         } else {
@@ -162,12 +171,27 @@ class SwapConfirmationViewModel @Inject constructor(
     }
 
     private suspend fun displayLedgerNotFoundDialog() {
-        hideLoading()
+        displayErrorState()
         eventDelegate.sendEvent(ViewEvent.DisplayLedgerNotFoundDialog)
     }
 
+    private fun displayErrorState() {
+        stateDelegate.onState<ViewState.Content> { contentState ->
+            viewModelScope.launch {
+                stateDelegate.updateState { contentState.copy(contentState = ContentState.Error) }
+                delay(SWAP_ERROR_DISPLAY_DURATION)
+                stateDelegate.updateState { contentState.copy(contentState = ContentState.Idle) }
+            }
+        }
+    }
+
+    private suspend fun displaySuccessState(content: ViewState.Content) {
+        stateDelegate.updateState { content.copy(contentState = ContentState.Success) }
+        delay(SWAP_SUCCESS_DISPLAY_DURATION)
+        stateDelegate.updateState { content.copy(contentState = ContentState.Idle) }
+    }
+
     private suspend fun displayLedgerWaitingForApprovalDialog(result: LedgerWaitingForApproval) {
-        hideLoading()
         val ledgerPayload = LedgerDialogPayload(
             result.ledgerName,
             result.currentTransactionIndex,
@@ -175,12 +199,6 @@ class SwapConfirmationViewModel @Inject constructor(
             result.isTransactionIndicatorVisible
         )
         eventDelegate.sendEvent(ViewEvent.NavigateToLedgerWaitingForApprovalDialog(ledgerPayload))
-    }
-
-    private fun hideLoading() {
-        stateDelegate.onState<ViewState.Content> { contentState ->
-            stateDelegate.updateState { contentState.copy(contentState = ContentState.Idle) }
-        }
     }
 
     sealed interface ViewState {
@@ -203,6 +221,8 @@ class SwapConfirmationViewModel @Inject constructor(
             sealed interface ContentState {
                 data object Idle : ContentState
                 data object Loading : ContentState
+                data object Success : ContentState
+                data object Error : ContentState
             }
 
             class AssetDetail(
@@ -222,11 +242,7 @@ class SwapConfirmationViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data class NavigateToTransactionStatus(
-            val legacySwapQuote: com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote,
-            val swapQuoteTransactions: List<SwapQuoteTransaction>
-        ) : ViewEvent
-
+        data class NavigateToSwapScreen(val assetInShortName: String, val assetOutShortName: String) : ViewEvent
         data object DisplayLedgerNotFoundDialog : ViewEvent
         data class NavigateToLedgerWaitingForApprovalDialog(val payload: LedgerDialogPayload) : ViewEvent
         data class DisplayError(val errorType: ErrorType) : ViewEvent {
@@ -236,5 +252,10 @@ class SwapConfirmationViewModel @Inject constructor(
                 data class Local(val description: AnnotatedString, val title: AnnotatedString? = null) : ErrorType
             }
         }
+    }
+
+    private companion object {
+        const val SWAP_SUCCESS_DISPLAY_DURATION = 2000L
+        const val SWAP_ERROR_DISPLAY_DURATION = 2000L
     }
 }

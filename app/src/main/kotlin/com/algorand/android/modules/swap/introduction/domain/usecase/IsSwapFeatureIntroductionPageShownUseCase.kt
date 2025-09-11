@@ -21,6 +21,10 @@ class IsSwapFeatureIntroductionPageShownUseCase @Inject constructor(
     private val swapFeatureIntroductionPageRepository: SwapFeatureIntroductionPageRepository
 ) {
 
+    suspend operator fun invoke(): Boolean {
+        return isSwapFeatureIntroductionPageShown()
+    }
+
     suspend fun isSwapFeatureIntroductionPageShown(): Boolean {
         return !swapFeatureIntroductionPageRepository.getSwapFeatureIntroductionPageVisibility()
     }

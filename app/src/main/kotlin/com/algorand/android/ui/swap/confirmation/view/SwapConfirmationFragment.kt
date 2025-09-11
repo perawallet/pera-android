@@ -30,7 +30,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayLedgerNotFoundDialog
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToLedgerWaitingForApprovalDialog
-import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToTransactionStatus
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToSwapScreen
 import com.algorand.android.utils.browser.openTinymanFaqPriceImpactUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getXmlStyledString
@@ -54,7 +54,10 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
             is DisplayError -> displayError(viewEvent.errorType)
             is NavigateToLedgerWaitingForApprovalDialog -> showLedgerWaitingForApprovalBottomSheet(viewEvent.payload)
             DisplayLedgerNotFoundDialog -> nav(HomeNavigationDirections.actionGlobalLedgerConnectionIssueBottomSheet())
-            is NavigateToTransactionStatus -> navigateToTransactionStatus(viewEvent)
+            is NavigateToSwapScreen -> {
+                displaySuccessAlert(viewEvent)
+                navigateToSwapScreen()
+            }
         }
     }
 
@@ -127,12 +130,18 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
         showGlobalError(message)
     }
 
-    private fun navigateToTransactionStatus(navData: NavigateToTransactionStatus) {
-//        nav(
-//            SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapTransactionStatusFragment(
-//                navData.legacySwapQuote,
-//                navData.swapQuoteTransactions.toTypedArray()
-//            )
-//        )
+    private fun displaySuccessAlert(event: NavigateToSwapScreen) {
+        showAlertSuccess(
+            title = getString(
+                R.string.swap_successfully_completed_formatted,
+                event.assetInShortName,
+                event.assetOutShortName
+            ),
+            tag = baseActivityTag
+        )
+    }
+
+    private fun navigateToSwapScreen() {
+        nav(SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapFragment())
     }
 }

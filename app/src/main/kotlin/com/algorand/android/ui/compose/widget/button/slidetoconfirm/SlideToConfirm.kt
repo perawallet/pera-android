@@ -10,10 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.confirmation.mapper
+package com.algorand.android.ui.compose.widget.button.slidetoconfirm
 
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+object SlideToConfirm {
 
-fun interface LegacySwapQuoteMapper {
-    operator fun invoke(swapQuoteV2: SwapQuoteV2): com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
+    enum class ButtonState {
+        Idle,
+        Loading,
+        Success,
+        Error
+    }
 }

@@ -16,4 +16,5 @@ sealed interface SwapNavigationDestination {
     data object Introduction : SwapNavigationDestination
     data object AccountSelection : SwapNavigationDestination
     data class Swap(val address: String) : SwapNavigationDestination
+    data class SwapV2(val address: String?) : SwapNavigationDestination
 }

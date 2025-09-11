@@ -13,6 +13,7 @@
 package com.algorand.android.modules.accounts.ui.viewmodel
 
 import androidx.navigation.NavDirections
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.CurrencyCachingError
@@ -120,6 +121,9 @@ class AccountsPreviewUseCase @Inject constructor(
             },
             onNavToSwap = { accountAddress ->
                 swapNavDirection = AccountsFragmentDirections.actionAccountsFragmentToSwapNavigation(accountAddress)
+            },
+            onNavToSwapV2 = { accountAddress ->
+                swapNavDirection = HomeNavigationDirections.actionGlobalSwapV2Navigation(accountAddress)
             }
         )
         return swapNavDirection

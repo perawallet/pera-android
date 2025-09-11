@@ -138,13 +138,26 @@ abstract class CoreMainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         initObservers()
-        navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
-            .navController
+        setNavController()
         if (savedInstanceState != null) {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
         initializeActivity()
         bottomNavMenuViewModel.initBottomNavState()
+    }
+
+    private fun setNavController() {
+        navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
+            .navController
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.swapFragment) {
+                binding.bottomNavigationView.menu.forEach { menuItem ->
+                    if (menuItem.itemId == R.id.swapV2Navigation) {
+                        menuItem.isChecked = true
+                    }
+                }
+            }
+        }
     }
 
     private fun initializeActivity() {

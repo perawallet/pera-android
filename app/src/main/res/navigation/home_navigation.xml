@@ -112,6 +112,8 @@
 
     <include app:graph="@navigation/discover_url_viewer_navigation" />
 
+    <include app:graph="@navigation/swap_v2_navigation" />
+
     <action
         android:id="@+id/action_global_registerWatchAccountNavigation"
         app:destination="@id/registerWatchAccountNavigation"
@@ -241,6 +243,15 @@
         <argument
             android:name="accountAddress"
             app:argType="string" />
+    </action>
+
+    <action
+        android:id="@+id/action_global_swapV2Navigation"
+        app:destination="@id/swapV2Navigation">
+        <argument
+            android:name="accountAddress"
+            app:argType="string"
+            app:nullable="true" />
     </action>
 
     <action
@@ -1028,6 +1039,13 @@
                 app:argType="string" />
         </action>
         <action
+            android:id="@+id/action_accountDetailFragment_to_swapV2Navigation"
+            app:destination="@id/swapV2Navigation">
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
+        <action
             android:id="@+id/action_accountDetailFragment_to_requiredMinimumBalanceInformationBottomSheet"
             app:destination="@id/requiredMinimumBalanceInformationBottomSheet" />
         <action
@@ -1524,81 +1542,5 @@
         android:id="@+id/inviteFriendsBottomSheet"
         android:name="com.algorand.android.ui.invite.view.InviteFriendsBottomSheet"
         android:label="InviteFriendsBottomSheet" />
-    <fragment
-        android:id="@+id/swapFragment"
-        android:name="com.algorand.android.ui.swap.view.SwapFragment"
-        android:label="SwapFragment">
-        <action
-            android:id="@+id/action_swapFragment_to_swapAssetInSelectionFragment"
-            app:destination="@id/swapAssetInSelectionFragment" />
-        <action
-            android:id="@+id/action_swapFragment_to_swapAssetOutSelectionFragment"
-            app:destination="@id/swapAssetOutSelectionFragment" />
-        <action
-            android:id="@+id/action_swapFragment_to_swapAddressSelectionFragment"
-            app:destination="@id/swapAddressSelectionFragment" />
-        <action
-            android:id="@+id/action_swapFragment_to_swapConfirmationFragment"
-            app:destination="@id/swapConfirmationFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/swapAssetInSelectionFragment"
-        android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment"
-        android:label="SwapAssetInSelectionFragment">
-
-        <argument
-            android:name="address"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/swapAssetOutSelectionFragment"
-        android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment"
-        android:label="SwapAssetOutSelectionFragment">
-        <argument
-            android:name="address"
-            app:argType="string" />
-        <argument
-            android:name="assetId"
-            app:argType="long" />
-    </fragment>
-    <fragment
-        android:id="@+id/swapAddressSelectionFragment"
-        android:name="com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFragment"
-        android:label="SwapAddressSelectionFragment" />
-    <fragment
-        android:id="@+id/swapConfirmationFragment"
-        android:name="com.algorand.android.ui.swap.confirmation.view.SwapConfirmationFragment"
-        android:label="SwapConfirmationFragment">
-
-        <argument
-            android:name="swapQuote"
-            app:argType="com.algorand.wallet.swap.domain.model.SwapQuoteV2" />
-
-        <action
-            android:id="@+id/action_swapConfirmationFragment_to_swapPriceImpactInfoBottomSheet"
-            app:destination="@id/swapPriceImpactInfoBottomSheet" />
-        <action
-            android:id="@+id/action_swapConfirmationFragment_to_swapSlippageToleranceInfoBottomSheet"
-            app:destination="@id/swapSlippageToleranceInfoBottomSheet" />
-        <action
-            android:id="@+id/action_swapConfirmationFragment_to_swapExchangeFeeInfoBottomSheet"
-            app:destination="@id/swapExchangeFeeInfoBottomSheet" />
-    </fragment>
-
-    <dialog
-        android:id="@+id/swapPriceImpactInfoBottomSheet"
-        android:name="com.algorand.android.modules.swap.priceimpact.ui.PriceImpactInfoBottomSheet"
-        android:label="PriceImpactInfoBottomSheet"
-        tools:layout="@layout/bottom_sheet_base_information" />
-    <dialog
-        android:id="@+id/swapSlippageToleranceInfoBottomSheet"
-        android:name="com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceInfoBottomSheet"
-        android:label="SlippageToleranceInfoBottomSheet"
-        tools:layout="@layout/bottom_sheet_base_information" />
-    <dialog
-        android:id="@+id/swapExchangeFeeInfoBottomSheet"
-        android:name="com.algorand.android.modules.swap.confirmswap.ui.ExchangeFeeInfoBottomSheet"
-        android:label="ExchangeFeeInfoBottomSheet"
-        tools:layout="@layout/bottom_sheet_base_information" />
 
 </navigation>

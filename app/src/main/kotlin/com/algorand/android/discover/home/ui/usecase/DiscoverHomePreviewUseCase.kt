@@ -40,10 +40,10 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.google.gson.Gson
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 class DiscoverHomePreviewUseCase @Inject constructor(
     private val discoverSearchAssetUseCase: DiscoverSearchAssetUseCase,
@@ -115,9 +115,9 @@ class DiscoverHomePreviewUseCase @Inject constructor(
             if (isLoading.not()) previousState.handleQueryChangeForScrollEvent?.consume()?.run { Event(Unit) } else null
         return previousState.copy(
             isListEmpty = isListEmpty &&
-                    !isCurrentStateError &&
-                    !isLoading &&
-                    previousState.isSearchActivated,
+                !isCurrentStateError &&
+                !isLoading &&
+                previousState.isSearchActivated,
             scrollToTopEvent = scrollToTopEvent
         )
     }
@@ -224,6 +224,9 @@ class DiscoverHomePreviewUseCase @Inject constructor(
                                 fromAssetId = buySellActionRequest.assetInId ?: -1L,
                                 toAssetId = buySellActionRequest.assetOutId ?: -1L
                             )
+                    },
+                    onNavToSwapV2 = {
+                        swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToSwapV2Navigation()
                     }
                 )
             }

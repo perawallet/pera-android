@@ -52,6 +52,7 @@ import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Introduction
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
+import com.algorand.android.modules.swap.model.SwapNavigationDestination.SwapV2
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
@@ -498,6 +499,7 @@ class AccountDetailFragment :
                     val destination = when (swapNavigationDestination) {
                         is Introduction -> actionAccountDetailFragmentToSwapIntroductionNavigation(accountAddress)
                         is Swap -> actionAccountDetailFragmentToSwapNavigation(accountAddress)
+                        is SwapV2 -> actionAccountDetailFragmentToSwapV2Navigation(accountAddress)
                         else -> null
                     }
                     if (destination != null) nav(destination)

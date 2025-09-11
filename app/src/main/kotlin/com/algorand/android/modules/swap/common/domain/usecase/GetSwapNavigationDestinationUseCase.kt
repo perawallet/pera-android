@@ -16,17 +16,27 @@ import com.algorand.android.modules.swap.common.ui.helper.SwapNavDestinationHelp
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.AccountSelection
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
+import com.algorand.android.modules.swap.model.SwapNavigationDestination.SwapV2
+import com.algorand.android.modules.swap.reddot.domain.usecase.SetSwapFeatureRedDotVisibilityUseCase
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import javax.inject.Inject
 
 internal class GetSwapNavigationDestinationUseCase @Inject constructor(
     private val getAccountsDetail: GetAccountsDetails,
-    private val swapNavDestinationHelper: SwapNavDestinationHelper
+    private val swapNavDestinationHelper: SwapNavDestinationHelper,
+    private val setSwapFeatureRedDotVisibilityUseCase: SetSwapFeatureRedDotVisibilityUseCase,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : GetSwapNavigationDestination {
 
     override suspend fun invoke(address: String?): SwapNavigationDestination {
-        return swapNavDestinationHelper {
-            getDestinationWithAccount(address)
+        return if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+            getSwapV2Destination(address)
+        } else {
+            swapNavDestinationHelper {
+                getDestinationWithAccount(address)
+            }
         }
     }
 
@@ -36,6 +46,15 @@ internal class GetSwapNavigationDestinationUseCase @Inject constructor(
         } else {
             getDestinationWithCheckingAuthAccounts()
         }
+    }
+
+    private suspend fun getSwapV2Destination(address: String?): SwapV2 {
+        hideSwapButtonRedDot()
+        return SwapV2(address)
+    }
+
+    private suspend fun hideSwapButtonRedDot() {
+        setSwapFeatureRedDotVisibilityUseCase.setSwapFeatureRedDotVisibility(isVisible = false)
     }
 
     private suspend fun getDestinationWithCheckingAuthAccounts(): SwapNavigationDestination {

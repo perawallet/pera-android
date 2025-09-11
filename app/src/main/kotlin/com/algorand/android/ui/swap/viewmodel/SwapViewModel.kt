@@ -18,6 +18,8 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatureIntroductionPageShownUseCase
+import com.algorand.android.modules.swap.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibilityUseCase
 import com.algorand.android.ui.swap.configuration.model.SwapConfigurationResult
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
 import com.algorand.android.utils.isEqualTo
@@ -47,7 +49,9 @@ class SwapViewModel @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getUsdcAssetId: GetUsdcAssetId,
-    private val getAccountAssetHolding: GetAccountAssetHolding
+    private val getAccountAssetHolding: GetAccountAssetHolding,
+    private val setSwapFeatureIntroductionPageVisibility: SetSwapFeatureIntroductionPageVisibilityUseCase,
+    private val isSwapFeatureIntroductionPageShown: IsSwapFeatureIntroductionPageShownUseCase
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val _swapDetailsFlow = MutableStateFlow<SwapDetails>(SwapDetails())
@@ -113,18 +117,33 @@ class SwapViewModel @Inject constructor(
     fun initViewState() {
         stateDelegate.onState<ViewState.Idle> {
             viewModelScope.launch {
-                val address = getPreselectedSwapAddress()
-                if (address == null) {
-                    stateDelegate.updateState { ViewState.NoAccountState }
+                if (isSwapFeatureIntroductionPageShown()) {
+                    initSwapViewState()
                 } else {
-                    _swapDetailsFlow.value = SwapDetails(
-                        address = address,
-                        assetInId = ALGO_ID,
-                        assetOutId = getUsdcAssetId()
-                    )
-                    updateContentState(address)
+                    stateDelegate.updateState { ViewState.Introduction }
                 }
             }
+        }
+    }
+
+    fun acceptTermsOfService() {
+        viewModelScope.launch {
+            setSwapFeatureIntroductionPageVisibility(false)
+            initSwapViewState()
+        }
+    }
+
+    private suspend fun initSwapViewState() {
+        val address = getPreselectedSwapAddress()
+        if (address == null) {
+            stateDelegate.updateState { ViewState.NoAccountState }
+        } else {
+            _swapDetailsFlow.value = SwapDetails(
+                address = address,
+                assetInId = ALGO_ID,
+                assetOutId = getUsdcAssetId()
+            )
+            updateContentState(address)
         }
     }
 
@@ -139,6 +158,7 @@ class SwapViewModel @Inject constructor(
     sealed interface ViewState {
         data object Idle : ViewState
         data object NoAccountState : ViewState
+        data object Introduction : ViewState
         data class Content(
             val accountIconDrawable: AccountIconDrawablePreview,
             val accountDisplayName: AccountDisplayName,

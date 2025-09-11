@@ -28,6 +28,7 @@ fun interface GetCompactSecondaryAmountRenderer {
 
 fun interface GetCompactPrimaryFiatAmountRenderer {
     operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+}
 
 fun interface GetPrimaryFiatAmountRenderer {
     operator fun invoke(usdValue: BigDecimal, amount: BigDecimal, renderType: AmountRenderer.RenderType): AmountRenderer

@@ -30,14 +30,15 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
-import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import com.algorand.android.utils.MAINNET_NETWORK_SLUG
 import com.algorand.android.utils.extensions.appendAt
 import com.algorand.android.utils.recordException
 
 const val PRIVACY_POLICY_URL = "https://perawallet.app/privacy-policy/"
 const val TERMS_AND_SERVICES_URL = "https://perawallet.app/terms-and-services/"
+const val DISPENSER_URL = "https://lora.algokit.io/testnet/fund"
 private const val PERA_EXPLORER_URL = "explorer.perawallet.app"
 private const val MARKET_PAGE_URL = "https://play.google.com/store/apps/details?id=com.algorand.android"
 private const val SUPPORT_CENTER_URL = "https://perawallet.app/support/"
@@ -45,18 +46,14 @@ private const val TRANSACTION_INFO_URL = "https://perawallet.app/support/transac
 private const val RECOVERY_PASSPHRASE_SUPPORT_URL = "https://perawallet.app/support/passphrase/"
 private const val WATCH_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/watch-accounts/"
 private const val WC_ADVANCED_PERMISSIONS_URL = "https://perawallet.app/support/walletconnect-advanced-options"
-private const val PERA_INTRODUCTION_URL = "https://perawallet.app/blog/launch-announcement/"
-private const val DISPENSER_URL = "https://dispenser.testnet.aws.algodev.network/"
 private const val VESTIGE_TERMS_OF_SERVICE_URL = "https://about.vestige.fi/disclaimer/terms-of-service"
 private const val TINYMAN_FAQ_PRICE_IMPACT_URL = "https://docs.tinyman.org/faq#what-is-a-price-impact"
 
 const val RECOVER_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/recover-account/"
 const val LEDGER_SUPPORT_URL = "https://perawallet.app/support/ledger/"
-const val PERA_SUPPORT_URL = "https://perawallet.app/support/"
 const val ASA_VERIFICATION_URL = "https://explorer.perawallet.app/asa-verification/"
 const val BASE_TWITTER_URL = "https://twitter.com/"
 const val BLANK_URL = "about:blank"
-const val ASB_SUPPORT_URL = "https://perawallet.app/support/asb/"
 const val REKEY_SUPPORT_URL = "https://perawallet.app/support/rekey/"
 const val ASSET_INBOX_SUPPORT_URL = "https://perawallet.app/support/asset-inbox/"
 const val WATCH_SUPPORT_URL = "https://perawallet.app/support/watch-accounts/"
@@ -67,14 +64,6 @@ const val RECOVER_OR_IMPORT_ACCOUNT_SUPPORT_URL =
 
 const val HTTPS_PROTOCOL = "https://"
 const val HTTP_PROTOCOL = "http://"
-
-fun Context.openPeraIntroductionBlog() {
-    openUrl(PERA_INTRODUCTION_URL)
-}
-
-@SuppressWarnings("MaxLineLength")
-const val LEDGER_BLUETOOTH_SUPPORT_URL =
-    "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?support=true)"
 
 fun Context.openTermsAndServicesUrl() {
     openUrl(TERMS_AND_SERVICES_URL)
@@ -96,7 +85,7 @@ fun Context.openUrl(url: String) {
     try {
         CustomTabsIntent.Builder()
             .build()
-            .launchUrl(this, Uri.parse(url))
+            .launchUrl(this, url.toUri())
     } catch (runtimeException: RuntimeException) {
         recordException(runtimeException)
     }
@@ -118,12 +107,6 @@ fun Context.openAccountAddressInPeraExplorer(accountAddress: String, networkSlug
     openUrl("https://$subDomain$PERA_EXPLORER_URL/address/$accountAddress/")
 }
 
-// TODO: 4.03.2022 The site is not supporting test net yet, so it's not tested on MainNet
-fun Context.showAssetOnNftExplorer(assetId: Long, networkSlug: String?) {
-    val subDomain = createSubDomainWithNetworkSlug(networkSlug)
-    openUrl("https://www.nftexplorer.app/asset/$assetId")
-}
-
 fun Context.openApplicationInPeraExplorer(applicationId: Long?, networkSlug: String?) {
     val subDomain = createSubDomainWithNetworkSlug(networkSlug)
     openUrl("https://$subDomain$PERA_EXPLORER_URL/application/$applicationId/")
@@ -136,7 +119,7 @@ fun Context.openAssetUrl(assetUrl: String?) {
 fun Context.openExternalBrowserApp(url: String) {
     try {
         startActivity(
-            Intent(ACTION_VIEW, Uri.parse(url))
+            Intent(ACTION_VIEW, url.toUri())
         )
     } catch (activityNotFoundException: ActivityNotFoundException) {
         recordException(activityNotFoundException)
@@ -146,7 +129,7 @@ fun Context.openExternalBrowserApp(url: String) {
 fun Context.openApplicationPageOnStore() {
     try {
         startActivity(
-            Intent(ACTION_VIEW, Uri.parse(MARKET_PAGE_URL))
+            Intent(ACTION_VIEW, MARKET_PAGE_URL.toUri())
                 .apply { setPackage("com.android.vending") }
         )
     } catch (activityNotFoundException: ActivityNotFoundException) {
@@ -162,17 +145,8 @@ fun Context.openWatchAccountSupportUrl() {
     openUrl(WATCH_ACCOUNT_SUPPORT_URL)
 }
 
-fun Context.openPeraSupportUrl() {
-    openUrl(PERA_SUPPORT_URL)
-}
-
 fun Context.openWalletConnectAdvancedPermissionsUrl() {
     openUrl(WC_ADVANCED_PERMISSIONS_URL)
-}
-
-fun Context.openDispenserUrl(accountAddress: String?) {
-    val accountParameter = accountAddress?.let { "?account=$it" }.orEmpty()
-    openUrl("$DISPENSER_URL$accountParameter")
 }
 
 fun Context.openASAVerificationUrl() {

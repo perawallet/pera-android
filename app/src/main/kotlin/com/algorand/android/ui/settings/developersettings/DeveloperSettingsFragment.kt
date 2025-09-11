@@ -22,7 +22,7 @@ import com.algorand.android.databinding.FragmentDeveloperSettingsBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
-import com.algorand.android.utils.browser.openDispenserUrl
+import com.algorand.android.utils.browser.DISPENSER_URL
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,7 +61,14 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
     }
 
     private fun onDispenserClick() {
-        context?.openDispenserUrl(accountAddress = developerSettingsViewModel.firstAccountAddress)
+        nav(
+            DeveloperSettingsFragmentDirections.actionDeveloperSettingsFragmentToDiscoverDappNavigation(
+                dappUrl = DISPENSER_URL,
+                dappTitle = "",
+                favorites = null,
+                showFavorites = false
+            )
+        )
     }
 
     private fun onMigrationViewerClick() {

@@ -847,6 +847,25 @@
                 app:argType="com.algorand.android.models.AccountCreation"
                 app:nullable="true" />
         </action>
+        <action
+            android:id="@+id/action_developerSettingsFragment_to_discoverDappNavigation"
+            app:destination="@id/discoverDappNavigation">
+            <argument
+                android:name="dappUrl"
+                app:argType="string" />
+            <argument
+                android:name="dappTitle"
+                app:argType="string" />
+            <argument
+                android:name="favorites"
+                app:argType="com.algorand.android.discover.common.ui.model.DappFavoriteElement[]"
+                app:nullable="true" />
+            <argument
+                android:name="showFavorites"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+
     </fragment>
 
     <fragment

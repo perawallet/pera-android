@@ -33,6 +33,8 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
+import java.math.BigDecimal
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -43,8 +45,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
-import javax.inject.Inject
 
 internal class AssetRepositoryImpl @Inject constructor(
     private val assetDetailApi: AssetDetailApiService,
@@ -147,11 +147,7 @@ internal class AssetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAsset(assetId: Long): Asset? {
-        return if (assetId == ALGO_ID) {
-            algoAssetDetailMapper()
-        } else {
-            assetDetailCacheHelper.getAsset(assetId)
-        }
+        return assetDetailCacheHelper.getAsset(assetId)
     }
 
     override suspend fun fetchCollectibleDetail(collectibleAssetId: Long): PeraResult<CollectibleDetail> {

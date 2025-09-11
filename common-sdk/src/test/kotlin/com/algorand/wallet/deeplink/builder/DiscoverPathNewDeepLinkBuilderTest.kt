@@ -15,7 +15,6 @@ package com.algorand.wallet.deeplink.builder
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Test
 
 class DiscoverPathNewDeepLinkBuilderTest {
@@ -38,6 +37,7 @@ class DiscoverPathNewDeepLinkBuilderTest {
 
         val result = sut.createDeepLink(payload)
 
-        assertNull(result)
+        val expected = DeepLink.Discover("")
+        assertEquals(expected, result)
     }
 }

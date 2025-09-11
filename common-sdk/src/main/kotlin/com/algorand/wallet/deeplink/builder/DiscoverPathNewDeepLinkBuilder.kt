@@ -18,8 +18,6 @@ import com.algorand.wallet.deeplink.model.DeepLinkPayload
 internal class DiscoverPathNewDeepLinkBuilder : NewDeepLinkBuilder {
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink? {
-        return payload.path?.let {
-            DeepLink.Discover(it)
-        }
+        return DeepLink.Discover(payload.path.orEmpty())
     }
 }

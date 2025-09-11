@@ -1,3 +1,4 @@
+@file:Suppress("MagicNumber")
 /*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,44 +13,87 @@
 
 package com.algorand.android.ui.common.amount
 
-import com.mitsinsar.peracompactdecimalformat.PeraCompactDecimalFormat
-import com.mitsinsar.peracompactdecimalformat.PeraCompactDecimalFormatBuilder
-import com.mitsinsar.peracompactdecimalformat.locals.EnglishLocale
-import com.mitsinsar.peracompactdecimalformat.utils.fractionaldigit.AssetFractionalDigit
-import com.mitsinsar.peracompactdecimalformat.utils.fractionaldigit.CollectibleFractionalDigit
-import com.mitsinsar.peracompactdecimalformat.utils.fractionaldigit.FiatFractionalDigit
-import com.mitsinsar.peracompactdecimalformat.utils.fractionaldigit.FractionalDigit
-import com.mitsinsar.peracompactdecimalformat.utils.toPeraDecimal
+import android.icu.text.CompactDecimalFormat
+import android.icu.text.NumberFormat
+import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Asset.getMaxFractionalDigit
+import com.algorand.android.utils.isLesserThan
+import java.math.BigDecimal
+import java.math.BigDecimal.ONE
+import java.math.BigDecimal.TEN
+import java.util.Locale
 
 data class CompactFormattedAmount(
     private val amount: PeraAmount,
-    private val type: FractionalType
+    private val fractionalType: FractionalType,
+    private val compactType: CompactType = CompactType.SHORT
 ) : FormattedAmount {
 
     override fun getFormattedValue(): String {
-        return getFormatter()
-            .format(amount.value.toPeraDecimal())
-            .formattedNumberWithSuffix
+        return getFormatter().format(amount.value)
     }
 
-    private fun getFormatter(): PeraCompactDecimalFormat {
-        return PeraCompactDecimalFormatBuilder.getInstance()
-            .setLocale(EnglishLocale)
-            .setFractionalDigitCreator(getFractionalDigitCreator())
-            .build()
+    private fun getFormatter(): NumberFormat {
+        return CompactDecimalFormat
+            .getInstance(Locale.getDefault(), getCompactStyle())
+            .apply {
+                maximumFractionDigits = fractionalType.getMaxFractionalDigit(amount)
+                minimumFractionDigits = getMinFractionalDigit()
+            }
     }
 
-    private fun getFractionalDigitCreator(): FractionalDigit.FractionalDigitCreator {
-        return when (type) {
-            is FractionalType.Fiat -> FiatFractionalDigit
-            is FractionalType.Asset -> AssetFractionalDigit
-            is FractionalType.Collectible -> CollectibleFractionalDigit
+    private fun getCompactStyle(): CompactDecimalFormat.CompactStyle {
+        return when (compactType) {
+            CompactType.SHORT -> CompactDecimalFormat.CompactStyle.SHORT
+            CompactType.LONG -> CompactDecimalFormat.CompactStyle.LONG
         }
     }
 
+    private fun getMinFractionalDigit(): Int {
+        val minFractionalDigit = 2.takeIf { amount.value isLesserThan fractionalType.minDecimalThreshold }
+        return if (minFractionalDigit == null) 0 else minOf(getMaxFractionalDigit(amount), minFractionalDigit)
+    }
+
     sealed interface FractionalType {
-        data object Fiat : FractionalType
-        data object Asset : FractionalType
-        data object Collectible : FractionalType
+
+        val minDecimalThreshold: BigDecimal
+
+        fun getMaxFractionalDigit(amount: PeraAmount): Int
+
+        data object Fiat : FractionalType {
+
+            override val minDecimalThreshold: BigDecimal
+                get() = BigDecimal(1_000_000)
+
+            override fun getMaxFractionalDigit(amount: PeraAmount): Int {
+                return if (amount.value isLesserThan ONE) 6 else 2
+            }
+        }
+
+        data object Asset : FractionalType {
+
+            override val minDecimalThreshold: BigDecimal
+                get() = BigDecimal(1_000_000)
+
+            override fun getMaxFractionalDigit(amount: PeraAmount): Int {
+                return when {
+                    amount.value isLesserThan ONE -> 6
+                    amount.value isLesserThan TEN -> 4
+                    else -> 2
+                }
+            }
+        }
+
+        data object Collectible : FractionalType {
+
+            override val minDecimalThreshold: BigDecimal
+                get() = BigDecimal.ZERO
+
+            override fun getMaxFractionalDigit(amount: PeraAmount): Int = 1
+        }
+    }
+
+    enum class CompactType {
+        SHORT,
+        LONG
     }
 }

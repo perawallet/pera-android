@@ -85,6 +85,8 @@ class AssetDetailPreviewUseCase @Inject constructor(
                     .actionAssetDetailFragmentToSwapIntroductionNavigation(accountAddress)
                 is SwapNavigationDestination.Swap -> AssetDetailFragmentDirections
                     .actionAssetDetailFragmentToSwapNavigation(accountAddress, assetId)
+                is SwapNavigationDestination.SwapV2 -> AssetDetailFragmentDirections
+                    .actionAssetDetailFragmentToSwapV2Navigation(accountAddress)
             }
             val safeDirection = swapNavDirection ?: return preview
             preview?.copy(onNavigationEvent = Event(safeDirection))

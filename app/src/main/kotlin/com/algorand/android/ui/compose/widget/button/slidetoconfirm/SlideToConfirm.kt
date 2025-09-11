@@ -10,11 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.model
+package com.algorand.android.ui.compose.widget.button.slidetoconfirm
 
-sealed interface SwapNavigationDestination {
-    data object Introduction : SwapNavigationDestination
-    data object AccountSelection : SwapNavigationDestination
-    data class Swap(val address: String) : SwapNavigationDestination
-    data class SwapV2(val address: String?) : SwapNavigationDestination
+object SlideToConfirm {
+
+    enum class ButtonState {
+        Idle,
+        Loading,
+        Success,
+        Error
+    }
 }

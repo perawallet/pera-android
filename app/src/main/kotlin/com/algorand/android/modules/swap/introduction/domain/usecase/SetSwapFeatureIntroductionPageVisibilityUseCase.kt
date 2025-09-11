@@ -21,6 +21,10 @@ class SetSwapFeatureIntroductionPageVisibilityUseCase @Inject constructor(
     private val swapFeatureIntroductionPageRepository: SwapFeatureIntroductionPageRepository
 ) {
 
+    suspend operator fun invoke(isVisible: Boolean) {
+        setSwapFeatureIntroductionPageVisibility(isVisible)
+    }
+
     suspend fun setSwapFeatureIntroductionPageVisibility(isVisible: Boolean) {
         swapFeatureIntroductionPageRepository.setSwapFeatureIntroductionPageVisibility(isVisible)
     }

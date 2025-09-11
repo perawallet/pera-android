@@ -14,6 +14,8 @@ package com.algorand.android.ui.common.amount.di
 
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryFiatAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryFiatAmountRendererUseCase
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRendererUseCase
 import com.algorand.android.ui.common.amount.domain.GetPrimaryCurrencyAmountRenderer
@@ -45,6 +47,11 @@ internal object AmountUiModule {
     fun provideGetCompactSecondaryAmountRenderer(
         useCase: GetCompactSecondaryAmountRendererUseCase
     ): GetCompactSecondaryAmountRenderer = useCase
+
+    @Provides
+    fun provideGetCompactPrimaryFiatAmountRenderer(
+        useCase: GetCompactPrimaryFiatAmountRendererUseCase
+    ): GetCompactPrimaryFiatAmountRenderer = useCase
 
     @Provides
     fun provideGetPrimaryFiatAmountRenderer(

@@ -20,6 +20,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
 import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.data.model.SwapTransactionPurposeResponse
+import com.algorand.wallet.swap.data.model.TopSwapPairsResponse
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
@@ -27,6 +28,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.model.SwapTransactionPurpose
+import com.algorand.wallet.swap.domain.model.TopSwapPairs
 
 internal fun interface SwapQuoteMapper {
     operator fun invoke(response: SwapQuoteResponse, providers: List<SwapQuoteProvider>): SwapQuoteV2?
@@ -63,4 +65,8 @@ internal fun interface SwapSelectedAssetDetailMapper {
 
 internal fun interface AvailableSwapAssetMapper {
     operator fun invoke(response: AvailableSwapAssetResponse): AvailableSwapAsset?
+}
+
+internal fun interface TopSwapPairsMapper {
+    operator fun invoke(response: TopSwapPairsResponse): TopSwapPairs
 }

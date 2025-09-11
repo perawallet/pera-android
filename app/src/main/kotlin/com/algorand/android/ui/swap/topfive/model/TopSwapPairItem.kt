@@ -10,11 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.model
+package com.algorand.android.ui.swap.topfive.model
 
-sealed interface SwapNavigationDestination {
-    data object Introduction : SwapNavigationDestination
-    data object AccountSelection : SwapNavigationDestination
-    data class Swap(val address: String) : SwapNavigationDestination
-    data class SwapV2(val address: String?) : SwapNavigationDestination
-}
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
+
+data class TopSwapPairItem(
+    val assetInId: Long,
+    val assetInShortName: String?,
+    val assetInIconDrawable: AssetIconDrawable,
+    val assetOutId: Long,
+    val assetOutShortName: String?,
+    val assetOutIconDrawable: AssetIconDrawable,
+    val volume: AmountRenderer
+)

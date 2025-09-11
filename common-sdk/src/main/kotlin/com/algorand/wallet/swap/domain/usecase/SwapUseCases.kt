@@ -20,6 +20,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import java.math.BigDecimal
 
 fun interface GetSwapQuotes {
@@ -48,4 +49,8 @@ fun interface GetSwapPeraFee {
 
 fun interface GetSwapAmountByPercentage {
     suspend operator fun invoke(payload: SwapAmountByPercentagePayload): PeraResult<BigDecimal>
+}
+
+fun interface GetTopSwapPairs {
+    suspend operator fun invoke(): PeraResult<TopSwapPairs>
 }

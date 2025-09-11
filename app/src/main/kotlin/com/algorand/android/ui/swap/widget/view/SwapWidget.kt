@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapButtonViewModel
@@ -47,6 +48,7 @@ fun SwapWidget(
     providerWidgetViewModel: SwapProviderWidgetViewModel,
     buttonViewModel: SwapButtonViewModel,
     configViewModel: SwapConfigurationViewModel,
+    topSwapPairsViewModel: TopSwapPairsViewModel,
     listener: SwapWidgetListener,
     onConfigureClick: () -> Unit
 ) {
@@ -66,6 +68,7 @@ fun SwapWidget(
             configViewModel.initViewState(swapViewModel.addressFlow, assetInViewModel.state, assetOutViewModel.state)
             buttonViewModel.init(widgetViewModel.state)
             providerWidgetViewModel.init(widgetViewModel.state)
+            topSwapPairsViewModel.init(widgetViewModel.state)
             widgetViewModel.initWidget(swapViewModel.swapDetailsFlow, assetInViewModel.state, assetOutViewModel.state)
         }
     }

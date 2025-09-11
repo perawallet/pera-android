@@ -14,13 +14,16 @@ package com.algorand.android.modules.swap.utils
 
 import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatureIntroductionPageShownUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.SetSwapFeatureRedDotVisibilityUseCase
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import javax.inject.Inject
 
 class SwapNavigationDestinationHelper @Inject constructor(
     private val getAccountsDetails: GetAccountsDetails,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     isSwapFeatureIntroductionPageShownUseCase: IsSwapFeatureIntroductionPageShownUseCase,
     setSwapFeatureRedDotVisibilityUseCase: SetSwapFeatureRedDotVisibilityUseCase
 ) : BaseSwapNavigationDestinationHelper(
@@ -32,10 +35,14 @@ class SwapNavigationDestinationHelper @Inject constructor(
         accountAddress: String? = null,
         onNavToIntroduction: () -> Unit,
         onNavToSwap: (accountAddress: String) -> Unit,
-        onNavToAccountSelection: (() -> Unit)? = null
+        onNavToAccountSelection: (() -> Unit)? = null,
+        onNavToSwapV2: (accountAddress: String?) -> Unit
     ) {
+        if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+            onNavToSwapV2(accountAddress)
+            return
+        }
         val authorizedAccounts = getAccountsDetails().filter { it.accountType?.canSignTransaction() == true }
-
         handleNavigationDestination(
             navToIntroduction = { onNavToIntroduction() },
             handleDestinationWithAccount = {

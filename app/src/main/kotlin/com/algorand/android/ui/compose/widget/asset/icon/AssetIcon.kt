@@ -52,6 +52,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 
 private const val MAX_ASSET_DISPLAY_CHAR = 3
+private const val SMALL_ICON_MAX_ASSET_DISPLAY_CHAR = 1
 private const val SIZE_PADDING_RATIO = 5f
 
 sealed interface AssetIconDrawable {
@@ -92,7 +93,7 @@ private fun BoxWithConstraintsScope.AlgoIcon() {
 
 @Composable
 private fun BoxWithConstraintsScope.AssetDrawableIcon(drawable: AssetIconDrawable.AssetDrawable) {
-    val placeholder = placeholder { AssetNameIcon(drawable.unitName) }
+    val placeholder = placeholder { AssetNameIcon(maxWidth, drawable.unitName) }
     val widthAsPx = with(LocalDensity.current) { maxWidth.toPx().toInt() }
     GlideImage(
         modifier = Modifier.clip(RoundedCornerShape(8.dp)),
@@ -105,9 +106,10 @@ private fun BoxWithConstraintsScope.AssetDrawableIcon(drawable: AssetIconDrawabl
 }
 
 @Composable
-private fun AssetNameIcon(unitName: String?) {
+private fun AssetNameIcon(maxWidth: Dp, unitName: String?) {
     val safeAssetName = if (unitName.isNullOrBlank()) stringResource(R.string.unnamed) else unitName
-    val displayName = safeAssetName.take(MAX_ASSET_DISPLAY_CHAR).uppercase()
+    val charCount = if (maxWidth < 32.dp) SMALL_ICON_MAX_ASSET_DISPLAY_CHAR else MAX_ASSET_DISPLAY_CHAR
+    val displayName = safeAssetName.take(charCount).uppercase()
     var padding by remember { mutableStateOf(8.dp) }
     val density = LocalDensity.current
     Box(

@@ -50,6 +50,9 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
                 onNavToIntroduction = {
                     swapNavDirection = AccountQuickActionsBottomSheetDirections
                         .actionAccountQuickActionsBottomSheetToSwapIntroductionNavigation()
+                },
+                onNavToSwapV2 = { accountAddress ->
+                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapV2Navigation(accountAddress)
                 }
             )
             val safeDirection = swapNavDirection ?: return preview

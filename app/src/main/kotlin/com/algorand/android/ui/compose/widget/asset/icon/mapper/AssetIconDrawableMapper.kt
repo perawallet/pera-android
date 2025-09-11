@@ -16,9 +16,11 @@ import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.TopSwapPairs
 
 interface AssetIconDrawableMapper {
     fun map(assetLite: AssetLite): AssetIconDrawable
     fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable
+    fun map(assetDetail: TopSwapPairs.AssetDetail): AssetIconDrawable
     fun map(asset: Asset): AssetIconDrawable
 }

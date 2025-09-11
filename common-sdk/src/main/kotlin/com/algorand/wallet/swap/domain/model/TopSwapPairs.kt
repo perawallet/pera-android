@@ -10,11 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.model
+package com.algorand.wallet.swap.domain.model
 
-sealed interface SwapNavigationDestination {
-    data object Introduction : SwapNavigationDestination
-    data object AccountSelection : SwapNavigationDestination
-    data class Swap(val address: String) : SwapNavigationDestination
-    data class SwapV2(val address: String?) : SwapNavigationDestination
+import java.math.BigDecimal
+
+data class TopSwapPairs(
+    val details: List<Detail>
+) {
+
+    data class Detail(
+        val assetA: AssetDetail,
+        val assetB: AssetDetail,
+        val volumeUsd: BigDecimal
+    )
+
+    data class AssetDetail(
+        val id: Long,
+        val logoUrl: String?,
+        val shortName: String?
+    )
 }

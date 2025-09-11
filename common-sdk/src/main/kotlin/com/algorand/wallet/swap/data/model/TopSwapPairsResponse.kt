@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.confirmation.mapper
+package com.algorand.wallet.swap.data.model
 
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.google.gson.annotations.SerializedName
 
-fun interface LegacySwapQuoteMapper {
-    operator fun invoke(swapQuoteV2: SwapQuoteV2): com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
-}
+internal data class TopSwapPairsResponse(
+    @SerializedName("results")
+    val results: List<TopSwapPairDetailResponse>
+)

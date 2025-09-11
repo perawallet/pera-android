@@ -10,15 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.asset.icon.mapper
+package com.algorand.android.ui.asset.detail.view.markets
 
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
-import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetLite
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import com.algorand.android.ui.compose.theme.PeraTheme
 
-interface AssetIconDrawableMapper {
-    fun map(assetLite: AssetLite): AssetIconDrawable
-    fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable
-    fun map(asset: Asset): AssetIconDrawable
+@Composable
+fun AssetMarketsSectionTitle(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = PeraTheme.typography.footnote.sansMedium,
+        color = PeraTheme.colors.text.grayLighter
+    )
 }

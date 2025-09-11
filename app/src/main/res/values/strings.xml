@@ -1545,6 +1545,7 @@
     <string name="slide_to_confirm">Slide To Confirm</string>
     <string name="confirming">Confirming</string>
     <string name="confirmed">Confirmed!</string>
+    <string name="holdings">Holdings</string>
     <string name="invalid_link_found">Invalid link found</string>
     <string name="swap_settings">Swap Settings</string>
     <string name="apply">Apply</string>

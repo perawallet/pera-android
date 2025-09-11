@@ -10,15 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.asset.icon.mapper
+package com.algorand.android.ui.asset.detail.usecase
 
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
+import com.algorand.android.ui.asset.detail.model.AssetMarketsDetail
 import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetLite
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
-interface AssetIconDrawableMapper {
-    fun map(assetLite: AssetLite): AssetIconDrawable
-    fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable
-    fun map(asset: Asset): AssetIconDrawable
+fun interface GetAssetMarketsDetail {
+    operator fun invoke(asset: Asset): List<AssetMarketsDetail>
 }

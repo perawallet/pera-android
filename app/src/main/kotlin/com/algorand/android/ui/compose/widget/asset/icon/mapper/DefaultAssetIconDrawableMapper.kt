@@ -13,6 +13,7 @@
 package com.algorand.android.ui.compose.widget.asset.icon.mapper
 
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
+import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
@@ -31,6 +32,13 @@ internal class DefaultAssetIconDrawableMapper @Inject constructor() : AssetIconD
         return when (assetDetail.assetId) {
             ALGO_ID -> AssetIconDrawable.AlgoDrawable
             else -> AssetIconDrawable.AssetDrawable(assetDetail.logoUrl.orEmpty(), assetDetail.shortName)
+        }
+    }
+
+    override fun map(asset: Asset): AssetIconDrawable {
+        return when (asset.id) {
+            ALGO_ID -> AssetIconDrawable.AlgoDrawable
+            else -> AssetIconDrawable.AssetDrawable(asset.logoUri.orEmpty(), asset.shortName)
         }
     }
 }

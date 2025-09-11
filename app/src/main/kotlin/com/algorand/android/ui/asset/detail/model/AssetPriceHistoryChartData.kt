@@ -10,15 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.asset.icon.mapper
+package com.algorand.android.ui.asset.detail.model
 
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
-import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetLite
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
+import java.math.BigDecimal
+import java.time.OffsetDateTime
 
-interface AssetIconDrawableMapper {
-    fun map(assetLite: AssetLite): AssetIconDrawable
-    fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable
-    fun map(asset: Asset): AssetIconDrawable
+data class AssetPriceHistoryChartData(
+    val datetime: OffsetDateTime,
+    val primaryValue: BigDecimal,
+    val primaryAmountRenderer: AmountRenderer
+) : PeraLineChartData {
+
+    override val value: Float
+        get() = primaryValue.toFloat()
 }

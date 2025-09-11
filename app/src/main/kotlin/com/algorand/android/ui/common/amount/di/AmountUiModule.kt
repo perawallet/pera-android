@@ -16,6 +16,12 @@ import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRende
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRendererUseCase
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetPrimaryCurrencyAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetPrimaryCurrencyAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetPrimaryFiatAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetPrimaryFiatAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetSecondaryCurrencyAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetSecondaryCurrencyAmountRendererUseCase
 import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
 import com.algorand.android.ui.common.amount.mapper.DefaultAmountRendererTypeMapper
 import dagger.Module
@@ -39,4 +45,19 @@ internal object AmountUiModule {
     fun provideGetCompactSecondaryAmountRenderer(
         useCase: GetCompactSecondaryAmountRendererUseCase
     ): GetCompactSecondaryAmountRenderer = useCase
+
+    @Provides
+    fun provideGetPrimaryFiatAmountRenderer(
+        useCase: GetPrimaryFiatAmountRendererUseCase
+    ): GetPrimaryFiatAmountRenderer = useCase
+
+    @Provides
+    fun provideGetPrimaryCurrencyAmountRenderer(
+        useCase: GetPrimaryCurrencyAmountRendererUseCase
+    ): GetPrimaryCurrencyAmountRenderer = useCase
+
+    @Provides
+    fun provideGetSecondaryCurrencyAmountRenderer(
+        useCase: GetSecondaryCurrencyAmountRendererUseCase
+    ): GetSecondaryCurrencyAmountRenderer = useCase
 }

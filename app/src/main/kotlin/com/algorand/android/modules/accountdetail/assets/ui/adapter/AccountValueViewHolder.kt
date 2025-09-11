@@ -93,7 +93,7 @@ class AccountValueViewHolder(
             if (item.displayChart) {
                 setContent {
                     PeraTheme {
-                        StatefulPeraLineChart(viewModel, getChartListener(item))
+                        StatefulPeraLineChart(viewModel = viewModel, listener = getChartListener(item))
                     }
                 }
                 show()

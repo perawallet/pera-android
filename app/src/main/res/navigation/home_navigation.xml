@@ -1601,4 +1601,20 @@
         android:label="ExchangeFeeInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_base_information" />
 
+    <fragment
+        android:id="@+id/assetDetailV2Fragment"
+        android:name="com.algorand.android.ui.asset.detail.view.AssetDetailV2Fragment"
+        android:label="AssetDetailV2Fragment">
+        <argument
+            android:name="assetId"
+            app:argType="long" />
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="isQuickActionButtonsVisible"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
+
 </navigation>

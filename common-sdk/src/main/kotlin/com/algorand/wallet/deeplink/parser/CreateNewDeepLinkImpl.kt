@@ -25,6 +25,7 @@ import com.algorand.wallet.deeplink.builder.CardsPathNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.DiscoverBrowserNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.DiscoverPathNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.EditContactNewDeepLinkBuilder
+import com.algorand.wallet.deeplink.builder.HomeNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.InternalBrowserNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.KeyRegNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.ReceiverAccountSelectionNewDeepLinkBuilder
@@ -60,6 +61,7 @@ internal class CreateNewDeepLinkImpl(
     private val stakingPathNewDeepLinkBuilder: StakingPathNewDeepLinkBuilder,
     private val accountDetailNewDeepLinkBuilder: AccountDetailNewDeepLinkBuilder,
     private val internalBrowserNewDeepLinkBuilder: InternalBrowserNewDeepLinkBuilder,
+    private val homeNewDeepLinkBuilder: HomeNewDeepLinkBuilder,
 ) : CreateNewDeepLink {
 
     override fun invoke(url: String): DeepLink {
@@ -89,6 +91,7 @@ internal class CreateNewDeepLinkImpl(
             "staking-path" -> stakingPathNewDeepLinkBuilder.createDeepLink(payload)
             "account-detail" -> accountDetailNewDeepLinkBuilder.createDeepLink(payload)
             "internal-browser" -> internalBrowserNewDeepLinkBuilder.createDeepLink(payload)
+            "app", "", null -> homeNewDeepLinkBuilder.createDeepLink(payload)
             else -> null
         }
 

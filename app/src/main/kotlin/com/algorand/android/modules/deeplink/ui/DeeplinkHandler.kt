@@ -66,7 +66,7 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.Discover -> handleDiscoverDeepLink(deepLink)
             is DeepLink.RecoverAccount -> handleRecoverAccountDeepLink(deepLink)
             is DeepLink.Notification -> handleNotificationDeepLink(deepLink)
-            is DeepLink.Undefined -> handleUndefinedDeepLink(deepLink)
+            is DeepLink.Undefined -> handleUndefinedDeepLink()
             is DeepLink.WalletConnectConnection -> handleWalletConnectConnectionDeepLink(deepLink)
             is DeepLink.WebImportQrCode -> handleWebImportQrCodeDeepLink(deepLink)
             is DeepLink.KeyReg -> handleKeyRegDeepLink(deepLink)
@@ -84,8 +84,13 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.Buy -> handleBuyDeepLink(deepLink)
             is DeepLink.InternalBrowser -> handleInternalBrowserDeepLink(deepLink)
             is DeepLink.Swap -> handleSwapDeepLink(deepLink)
+            is DeepLink.Home -> handleHomeDeepLink()
         }
-        if (!isDeeplinkHandled) listener?.onDeepLinkNotHandled(deepLink)
+        if (isDeeplinkHandled) {
+            listener?.onDeepLinkHandled()
+        } else {
+            listener?.onDeepLinkNotHandled(deepLink)
+        }
     }
 
     private fun handleAccountAddressDeepLink(deepLink: DeepLink.AccountAddress): Boolean {
@@ -107,8 +112,8 @@ class DeeplinkHandler @Inject constructor(
         }
     }
 
-    private fun handleUndefinedDeepLink(deepLink: DeepLink.Undefined): Boolean {
-        return triggerListener { it.onUndefinedDeepLink(deepLink); true }
+    private fun handleUndefinedDeepLink(): Boolean {
+        return triggerListener { it.onUndefinedDeepLink(); true }
     }
 
     private fun handleKeyRegDeepLink(deepLink: DeepLink.KeyReg): Boolean {
@@ -234,6 +239,12 @@ class DeeplinkHandler @Inject constructor(
         }
     }
 
+    private fun handleHomeDeepLink(): Boolean {
+        return triggerListener {
+            it.onHomeDeeplink()
+        }
+    }
+
     private fun triggerListener(action: (Listener) -> Boolean): Boolean {
         return listener?.run(action) ?: false
     }
@@ -278,7 +289,9 @@ class DeeplinkHandler @Inject constructor(
         fun onSellDeepLink(address: String): Boolean = false
         fun onInternalBrowserDeepLink(url: String): Boolean = false
         fun onSwapDeepLink(address: String, assetInId: Long?, assetOutId: Long?): Boolean = false
-        fun onUndefinedDeepLink(deepLink: DeepLink.Undefined)
+        fun onHomeDeeplink(): Boolean = false
+        fun onDeepLinkHandled() = false
+        fun onUndefinedDeepLink()
         fun onDeepLinkNotHandled(deepLink: DeepLink)
     }
 }

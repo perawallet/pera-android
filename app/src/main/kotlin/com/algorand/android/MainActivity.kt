@@ -31,9 +31,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
@@ -434,8 +431,6 @@ class MainActivity :
         setTheme(R.style.AppTheme)
 
         super.onCreate(savedInstanceState)
-
-        setWindowInsetsForSystemBars()
 
         mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
@@ -948,22 +943,6 @@ class MainActivity :
 
     private fun showInvalidDeeplinkError() {
         showGlobalError(errorMessage = getString(R.string.invalid_link_found), tag = activityTag)
-    }
-
-    private fun setWindowInsetsForSystemBars() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.rootConstraintLayout) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
-                left = bars.left,
-                top = bars.top,
-                right = bars.right,
-                bottom = bars.bottom,
-            )
-            WindowInsetsCompat.CONSUMED
-        }
     }
 
     companion object {

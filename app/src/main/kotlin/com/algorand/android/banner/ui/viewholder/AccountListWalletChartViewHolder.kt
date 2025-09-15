@@ -46,7 +46,7 @@ class AccountListWalletChartViewHolder(
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
                     PeraTheme {
-                        StatefulPeraLineChart(viewModel, getChartListener(listener))
+                        StatefulPeraLineChart(viewModel = viewModel, listener = getChartListener(listener))
                     }
                 }
             }

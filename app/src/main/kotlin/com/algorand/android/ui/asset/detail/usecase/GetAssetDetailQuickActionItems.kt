@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.confirmation.mapper
+package com.algorand.android.ui.asset.detail.usecase
 
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 
-fun interface LegacySwapQuoteMapper {
-    operator fun invoke(swapQuoteV2: SwapQuoteV2): com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
+fun interface GetAssetDetailQuickActionItems {
+    suspend operator fun invoke(address: String, assetId: Long): List<AssetDetailQuickActionItem>
 }

@@ -53,6 +53,9 @@ class SwapIntroductionPreviewUseCase @Inject constructor(
                     fromAssetId = fromAssetId ?: defaultFromAssetIdArg,
                     toAssetId = toAssetId ?: defaultToAssetIdArg
                 )
+            },
+            onNavToSwapV2 = {
+                // This case can be ignored since we will not display this screen when swap v2 is enabled
             }
         )
 

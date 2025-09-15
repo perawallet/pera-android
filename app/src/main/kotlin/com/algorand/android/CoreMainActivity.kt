@@ -18,9 +18,13 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.core.view.isEmpty
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -51,9 +55,9 @@ import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
 import com.algorand.android.utils.viewbinding.viewBinding
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
-import kotlinx.coroutines.launch
 
 abstract class CoreMainActivity : BaseActivity() {
 
@@ -136,15 +140,30 @@ abstract class CoreMainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setWindowInsetsForSystemBars()
         setContentView(binding.root)
         initObservers()
-        navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
-            .navController
+        setNavController()
         if (savedInstanceState != null) {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
         initializeActivity()
         bottomNavMenuViewModel.initBottomNavState()
+    }
+
+    private fun setNavController() {
+        navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
+            .navController
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.swapFragment) {
+                binding.bottomNavigationView.menu.forEach { menuItem ->
+                    if (menuItem.itemId == R.id.swapV2Navigation) {
+                        menuItem.isChecked = true
+                    }
+                }
+            }
+        }
     }
 
     private fun initializeActivity() {
@@ -239,7 +258,27 @@ abstract class CoreMainActivity : BaseActivity() {
                 statusBarConfiguration.backgroundColor
             }
 
-        window?.statusBarColor = ContextCompat.getColor(this, intendedStatusBarColor)
+        val statusBarColor = ContextCompat.getColor(this, intendedStatusBarColor)
+        binding.statusBarBackgroundView.setBackgroundColor(statusBarColor)
+    }
+
+    private fun setWindowInsetsForSystemBars() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rootConstraintLayout) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left,
+                top = 0,
+                right = bars.right,
+                bottom = bars.bottom,
+            )
+            binding.statusBarBackgroundView.updateLayoutParams {
+                height = bars.top
+            }
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun handleStatusBarIconColorChanges(

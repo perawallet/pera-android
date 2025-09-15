@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
@@ -25,16 +26,20 @@ import com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFr
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment.Companion.SWAP_ASSET_IN_ID_KEY
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment.Companion.SWAP_ASSET_OUT_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.utils.browser.openVestigeTermsOfServiceUrl
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SwapFragment : BaseFragment(0), SwapScreenListener {
+class SwapFragment : BaseFragment(0), SwapScreenListener,
+    BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
     private val swapViewModel: SwapViewModel by viewModels()
 
-    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
@@ -42,6 +47,11 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
                 SwapScreen(swapViewModel, listener = this)
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        registerBottomNavBarFragmentDelegation(this)
     }
 
     override fun onStart() {
@@ -62,7 +72,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
     }
 
     override fun onCreateAccountClick() {
-        // TODO
+        nav(MainNavigationDirections.actionGlobalLoginNavigation())
     }
 
     override fun onAccountChipClick() {
@@ -86,5 +96,13 @@ class SwapFragment : BaseFragment(0), SwapScreenListener {
         val address = swapViewModel.getAddress() ?: return
         val assetInId = swapViewModel.getAssetInId()
         nav(SwapFragmentDirections.actionSwapFragmentToSwapAssetOutSelectionFragment(address, assetInId))
+    }
+
+    override fun onStartSwappingClick() {
+        swapViewModel.acceptTermsOfService()
+    }
+
+    override fun onTermsOfServiceClick() {
+        context?.openVestigeTermsOfServiceUrl()
     }
 }

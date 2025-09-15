@@ -19,6 +19,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentQrCodeScannerBinding
@@ -65,6 +66,9 @@ abstract class BaseQrScannerFragment(
     private val qrScannerViewModel: QrScannerViewModel by activityViewModels()
 
     private val binding by viewBinding(FragmentQrCodeScannerBinding::bind)
+
+    protected val mainActivity: MainActivity?
+        get() = activity as? MainActivity
 
     @StringRes
     open val titleTextResId: Int = R.string.find_a_code_to_scan
@@ -139,8 +143,14 @@ abstract class BaseQrScannerFragment(
         }
     }
 
-    override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
+    override fun onUndefinedDeepLink() {
         showGlobalError(getString(R.string.scanned_qr_is_not_valid))
+    }
+
+    override fun onHomeDeeplink(): Boolean {
+        return true.also {
+            mainActivity?.handleHomeDeeplink()
+        }
     }
 
     override fun onDeepLinkNotHandled(deepLink: DeepLink) {

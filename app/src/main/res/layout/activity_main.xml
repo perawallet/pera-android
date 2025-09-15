@@ -18,6 +18,14 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <View
+        android:id="@+id/statusBarBackgroundView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.algorand.android.customviews.toolbar.CustomToolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
@@ -25,7 +33,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/statusBarBackgroundView"
         tools:visibility="visible" />
 
     <androidx.fragment.app.FragmentContainerView

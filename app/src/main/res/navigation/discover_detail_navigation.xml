@@ -83,6 +83,16 @@
                 android:defaultValue="-1L"
                 app:argType="long" />
         </action>
+
+        <action
+            android:id="@+id/action_discoverDetailFragment_to_swapV2Navigation"
+            app:destination="@id/swapV2Navigation">
+            <argument
+                android:name="accountAddress"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+        </action>
         <action
             android:id="@+id/action_discoverDetailFragment_to_discoverDappNavigation"
             app:destination="@id/discoverDappNavigation">

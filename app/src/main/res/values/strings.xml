@@ -884,6 +884,8 @@
     <string name="powered_by">Powered by</string>
     <string name="new_text">New</string>
     <string name="legacy_text">Legacy</string>
+    <string name="by_continuing_you_agree">By continuing, you agree to our\nswap partner\'s</string>
+    <string name="terms_of_service">Terms of Service</string>
 
     <string name="this_account_doesn_t_have">This account doesn\'t have the required minimum balance of <annotation replacement="minimum_balance">minimumBalancePlaceholder</annotation> for a swap operation.</string>
     <string name="minimum_balance">Minimum Balance</string>
@@ -1545,6 +1547,7 @@
     <string name="slide_to_confirm">Slide To Confirm</string>
     <string name="confirming">Confirming</string>
     <string name="confirmed">Confirmed!</string>
+    <string name="holdings">Holdings</string>
     <string name="invalid_link_found">Invalid link found</string>
     <string name="swap_settings">Swap Settings</string>
     <string name="apply">Apply</string>
@@ -1556,4 +1559,7 @@
     <string name="volume_24h">Volume (24H)</string>
     <string name="asset_to_asset_formatted">%1$s to %2$s</string>
     <string name="unable_to_load_top_five">Unable to load Top 5 Swaps</string>
+    <string name="swap_successfully_completed_formatted">%1$s to %2$s swap successfully completed</string>
+    <string name="create_an_account_to_get">Create an account to get swapping</string>
+    <string name="create_account">Create Account</string>
 </resources>

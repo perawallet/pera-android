@@ -31,11 +31,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
 import com.algorand.android.MainNavigationDirections.Companion.actionToLockPreferenceNavigation
@@ -202,10 +198,6 @@ class MainActivity :
         cause.consume()?.let { onInvalidWalletConnectTransactionReceived(it) }
     }
 
-    private val swapNavigationDirectionCollector: suspend (Event<NavDirections>?) -> Unit = {
-        it?.consume()?.let { navDirection -> nav(navDirection) }
-    }
-
     private val walletConnectUrlHandlerListener = object : WalletConnectUrlHandler.Listener {
         override fun onValidWalletConnectUrl(url: String) {
             if (!isBasePeraWebViewFragmentActive()) showProgress()
@@ -279,7 +271,7 @@ class MainActivity :
             return true
         }
 
-        override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
+        override fun onUndefinedDeepLink() {
             showInvalidDeeplinkError()
         }
 
@@ -360,6 +352,11 @@ class MainActivity :
             )
             return true
         }
+
+        override fun onHomeDeeplink(): Boolean {
+            handleHomeDeeplink()
+            return true
+        }
     }
 
     private val transactionManagerResultObserver = Observer<Event<TransactionManagerResult>?> {
@@ -435,8 +432,6 @@ class MainActivity :
 
         super.onCreate(savedInstanceState)
 
-        setWindowInsetsForSystemBars()
-
         mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
@@ -485,6 +480,10 @@ class MainActivity :
 
     fun handleDeepLink(uri: String) {
         mainViewModel.handleDeepLink(uri)
+    }
+
+    fun handleHomeDeeplink() {
+        navToHome()
     }
 
     fun handleAssetInboxDeepLink(accountAddress: String) {
@@ -557,6 +556,13 @@ class MainActivity :
             nav(
                 actionGlobalDiscoverHomeNavigation(mainViewModel.getDiscoverUrlWithPath(path))
             )
+        }
+    }
+
+    fun navToHome() {
+        if (navController.graph.last().id != R.id.homeNavigation) {
+            binding.bottomNavigationView.menu.findItem(R.id.accountsFragment).isChecked = true
+            nav(MainNavigationDirections.actionGlobalMainNavigation())
         }
     }
 
@@ -816,11 +822,6 @@ class MainActivity :
 
         walletConnectViewModel.invalidTransactionCauseLiveData.observe(this, invalidTransactionCauseObserver)
 
-        collectLatestOnLifecycle(
-            mainViewModel.swapNavigationResultFlow,
-            swapNavigationDirectionCollector
-        )
-
         collectOnLifecycle(
             flow = walletConnectViewModel.sessionResultFlow,
             collection = sessionResultFlowCollector
@@ -942,22 +943,6 @@ class MainActivity :
 
     private fun showInvalidDeeplinkError() {
         showGlobalError(errorMessage = getString(R.string.invalid_link_found), tag = activityTag)
-    }
-
-    private fun setWindowInsetsForSystemBars() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.rootConstraintLayout) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
-                left = bars.left,
-                top = bars.top,
-                right = bars.right,
-                bottom = bars.bottom,
-            )
-            WindowInsetsCompat.CONSUMED
-        }
     }
 
     companion object {

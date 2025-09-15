@@ -36,11 +36,12 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 
 @Composable
 fun StatefulPeraLineChart(
+    modifier: Modifier = Modifier,
     viewModel: StatefulPeraLineChartViewModel,
     listener: StatefulPeraLineChartListener
 ) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
         when (val state = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             Loading -> PeraLineChartLoadingState()
@@ -76,6 +77,7 @@ private fun ColumnScope.Chart(
     viewModel: StatefulPeraLineChartViewModel,
     listener: StatefulPeraLineChartListener
 ) {
+    listener.onChartDataUpdated(state.chartData)
     PeraLineChart(
         modifier = Modifier
             .weight(1f)
@@ -96,4 +98,5 @@ interface StatefulPeraLineChartListener {
     fun onItemSelected(item: PeraLineChartData)
     fun onItemDeselected()
     fun onChartTap() {}
+    fun onChartDataUpdated(items: List<PeraLineChartData>) {}
 }

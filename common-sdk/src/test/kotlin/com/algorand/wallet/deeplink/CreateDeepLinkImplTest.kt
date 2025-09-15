@@ -67,6 +67,10 @@ class CreateDeepLinkImplTest {
     private val stakingDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
+    
+    private val homeDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
 
     private val sut = CreateDeepLinkImpl(
         parseDeepLinkPayload,
@@ -82,7 +86,8 @@ class CreateDeepLinkImplTest {
         assetInboxDeepLinkBuilder,
         keyRegTransactionDeepLinkBuilder,
         cardsDeepLinkBuilder,
-        stakingDeepLinkBuilder
+        stakingDeepLinkBuilder,
+        homeDeepLinkBuilder
     )
 
     @Test

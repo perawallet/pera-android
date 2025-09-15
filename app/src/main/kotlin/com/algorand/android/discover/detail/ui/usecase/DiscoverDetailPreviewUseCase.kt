@@ -123,6 +123,10 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
                                 fromAssetId = buySellActionRequest.assetInId ?: -1L,
                                 toAssetId = buySellActionRequest.assetOutId ?: -1L
                             )
+                    },
+                    onNavToSwapV2 = {
+                        swapNavDirection = DiscoverDetailFragmentDirections
+                            .actionDiscoverDetailFragmentToSwapV2Navigation()
                     }
                 )
             }

@@ -55,7 +55,7 @@
     </action>
 
     <action
-        android:id="@+id/action_to_mainNavigation"
+        android:id="@+id/action_global_mainNavigation"
         app:destination="@id/mainNavigation"
         app:popUpTo="@id/mainNavigation"
         app:popUpToInclusive="true" />
@@ -232,7 +232,7 @@
         android:name="com.algorand.android.modules.baseledgersearch.instruction.step.openapp.ui.OpenAppOnLedgerBottomSheet"
         android:label="OpenAppOnLedgerInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_ledger_pair_info" />
-    
+
     <dialog
         android:id="@+id/confirmationBottomSheet"
         android:name="com.algorand.android.ui.confirmation.ConfirmationBottomSheet"

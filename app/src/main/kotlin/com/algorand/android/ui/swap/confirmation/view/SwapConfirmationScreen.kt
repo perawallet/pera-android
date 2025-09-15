@@ -26,6 +26,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,13 +40,12 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
-import com.algorand.android.ui.compose.widget.button.PeraButtonState.DISABLED
-import com.algorand.android.ui.compose.widget.button.PeraButtonState.ENABLED
-import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirm.ButtonState
+import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirmButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
-import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact.WarningStatus.Level2
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 
 @Composable
@@ -68,17 +70,29 @@ fun SwapConfirmationScreen(
                         SwapConfirmationQuoteDetailContainer(viewState, listener)
                     }
                 }
-                PeraPrimaryButton(
+                SlideToConfirmButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
                         .align(Alignment.BottomCenter),
-                    onClick = { viewModel.confirmSwap() },
-                    text = stringResource(R.string.confirm_swap),
-                    state = if (viewState.priceImpact.warningStatus is Level2) DISABLED else ENABLED
+                    buttonState = getSlideToConfirmState(viewState),
+                    onConfirmed = viewModel::confirmSwap
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun getSlideToConfirmState(viewState: Content): State<ButtonState> {
+    return remember(viewState.contentState) {
+        val state = when (viewState.contentState) {
+            ContentState.Error -> ButtonState.Error
+            ContentState.Idle -> ButtonState.Idle
+            ContentState.Loading -> ButtonState.Loading
+            ContentState.Success -> ButtonState.Success
+        }
+        mutableStateOf(state)
     }
 }
 

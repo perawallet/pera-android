@@ -111,7 +111,7 @@
                 android:defaultValue="-1L"
                 app:argType="long" />
         </action>
-        
+
         <action
             android:id="@+id/action_discoverHomeFragment_to_swapIntroductionNavigation"
             app:destination="@id/swapIntroductionNavigation">
@@ -123,6 +123,17 @@
                 android:name="toAssetId"
                 android:defaultValue="-1L"
                 app:argType="long" />
+        </action>
+
+
+        <action
+            android:id="@+id/action_discoverHomeFragment_to_swapV2Navigation"
+            app:destination="@id/swapV2Navigation">
+            <argument
+                android:name="accountAddress"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
         </action>
     </fragment>
 

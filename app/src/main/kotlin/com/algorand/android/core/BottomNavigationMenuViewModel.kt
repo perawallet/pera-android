@@ -20,6 +20,8 @@ import com.algorand.android.core.BottomNavigationMenuViewModel.ViewState
 import com.algorand.android.core.bottomnav.model.BottomNavMenuItem
 import com.algorand.android.utils.isStagingApp
 import com.algorand.wallet.node.domain.usecase.IsSelectedNodeTestnet
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -32,6 +34,7 @@ import kotlinx.coroutines.launch
 class BottomNavigationMenuViewModel @Inject constructor(
     private val isSelectedNodeTestnet: IsSelectedNodeTestnet,
     private val stateDelegate: StateDelegate<ViewState>,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
@@ -58,8 +61,13 @@ class BottomNavigationMenuViewModel @Inject constructor(
         return buildList {
             add(getHomeItem())
             add(getDiscoverItem())
-            add(getStakingItem())
-            add(getNftsItem())
+            if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+                add(getSwapItem())
+                add(getStakingItem())
+            } else {
+                add(getStakingItem())
+                add(getNftsItem())
+            }
             add(getMenuItem())
         }
     }
@@ -86,10 +94,10 @@ class BottomNavigationMenuViewModel @Inject constructor(
 
     private fun getSwapItem(): BottomNavMenuItem {
         return BottomNavMenuItem(
-            id = R.id.swapFragment,
+            id = R.id.swapV2Navigation,
             titleResId = R.string.swap,
             iconResId = R.drawable.ic_swap,
-            enabled = false
+            enabled = true
         )
     }
 

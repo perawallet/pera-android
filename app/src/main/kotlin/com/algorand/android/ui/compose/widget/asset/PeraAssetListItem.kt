@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.compose.widget.asset
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,15 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.VerificationTierIcon
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
 
 @Composable
@@ -51,7 +48,7 @@ fun PeraAssetListItem(modifier: Modifier = Modifier, item: AssetListItem) {
                 ) {
                     AssetName(modifier = Modifier.weight(1f, false), item.name)
                     Spacer(modifier = Modifier.width(6.dp))
-                    VerificationTierIcon(item.verificationTier)
+                    VerificationTierIcon(Modifier.size(16.dp), item.verificationTier)
                 }
                 item.balance?.primaryAmountRenderer?.let {
                     Spacer(modifier = Modifier.width(12.dp))
@@ -113,15 +110,4 @@ private fun SecondaryAmount(amountRenderer: AmountRenderer) {
         style = PeraTheme.typography.footnote.sans,
         color = PeraTheme.colors.text.gray
     )
-}
-
-@Composable
-private fun VerificationTierIcon(verificationTier: VerificationTierConfiguration) {
-    verificationTier.drawableResId?.let { drawableResId ->
-        Image(
-            modifier = Modifier.size(16.dp),
-            imageVector = ImageVector.vectorResource(drawableResId),
-            contentDescription = null
-        )
-    }
 }

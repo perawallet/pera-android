@@ -16,7 +16,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavDirections
 import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
 import com.algorand.android.MainActivity.Companion.WC_ARBITRARY_DATA_ID_INTENT_KEY
@@ -45,7 +44,6 @@ import com.algorand.android.repository.NodeRepository
 import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.ui.main.tracker.BottomNavigationEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
@@ -63,6 +61,8 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,8 +71,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlin.properties.Delegates
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -108,8 +106,6 @@ class MainViewModel @Inject constructor(
     BottomNavigationEventTracker by bottomNavigationEventTracker {
 
     val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
-    val swapNavigationResultFlow: StateFlow<Event<NavDirections>?>
-        get() = _swapNavigationResultFlow
 
     var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue && newValue && isAppUnlocked()) {
@@ -117,7 +113,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
     private val _activeNodeFlow = MutableStateFlow<Node?>(null)
 
     private var refreshBalanceJob: Job? = null
@@ -155,26 +150,6 @@ class MainViewModel @Inject constructor(
     fun increaseAppOpeningCount() {
         viewModelScope.launch {
             increaseAppOpeningCountUseCase.increaseAppOpeningCount()
-        }
-    }
-
-    fun onSwapActionButtonClick() {
-        viewModelScope.launch {
-            var swapNavDirection: NavDirections? = null
-            swapNavigationDestinationHelper.getSwapNavigationDestination(
-                onNavToIntroduction = {
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapIntroductionNavigation()
-                },
-                onNavToAccountSelection = {
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapAccountSelectionNavigation()
-                },
-                onNavToSwap = { accountAddress ->
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapNavigation(accountAddress)
-                }
-            )
-            swapNavDirection?.let { direction ->
-                _swapNavigationResultFlow.emit(Event(direction))
-            }
         }
     }
 

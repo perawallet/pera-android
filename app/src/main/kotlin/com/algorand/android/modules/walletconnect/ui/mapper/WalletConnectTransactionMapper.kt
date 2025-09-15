@@ -29,6 +29,7 @@ import com.algorand.android.modules.transaction.common.data.model.TransactionTyp
 import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.PAY_TRANSACTION
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.utils.walletconnect.getTransactionRequest
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.google.gson.Gson
 import javax.inject.Inject
 
@@ -40,6 +41,7 @@ class WalletConnectTransactionMapper @Inject constructor(
     private val keyRegTransactionMapper: KeyRegTransactionMapper,
     private val peerMetaMapper: WalletConnectPeerMetaMapper,
     private val sessionIdentifierMapper: WalletConnectSessionIdentifierMapper,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val gson: Gson
 ) {
 
@@ -78,7 +80,7 @@ class WalletConnectTransactionMapper @Inject constructor(
     ): BaseWalletConnectTransaction? {
         val transactionRequest = rawTxn.getTransactionRequest(gson)
         val walletConnectPeerMeta = peerMetaMapper.mapToPeerMeta(peerMeta)
-        return when (transactionRequest.transactionType) {
+        val transaction = when (transactionRequest.transactionType) {
             PAY_TRANSACTION -> {
                 paymentTransactionMapper.createTransaction(walletConnectPeerMeta, transactionRequest, rawTxn)
             }
@@ -101,6 +103,20 @@ class WalletConnectTransactionMapper @Inject constructor(
 
             else -> null
         }
+
+        transaction?.isRekeyTransaction = isRekeyTransaction(
+            transaction.senderAddress.decodedAddress,
+            transaction.formattedRekeyToAccountAddress
+        )
+        return transaction
+    }
+
+    private suspend fun isRekeyTransaction(senderAddress: String?, rekeyAddress: String): Boolean {
+        if (senderAddress.isNullOrBlank() || rekeyAddress.isBlank()) {
+            return false
+        }
+
+        return isThereAnyAccountWithAddress(senderAddress)
     }
 
     fun mapToWalletConnectSession(session: WalletConnect.SessionDetail): WalletConnectSession {

@@ -10,18 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.asset.icon.mapper
+package com.algorand.android.ui.swap.history.model
 
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
-import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetLite
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
-import com.algorand.wallet.swap.domain.model.TopSwapPairs
 
-interface AssetIconDrawableMapper {
-    fun map(assetLite: AssetLite): AssetIconDrawable
-    fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable
-    fun map(assetDetail: TopSwapPairs.AssetDetail): AssetIconDrawable
-    fun map(asset: Asset): AssetIconDrawable
-    fun map(id: Long, logoUrl: String?, shortName: String?): AssetIconDrawable
-}
+data class SwapHistoryItem(
+    val id: Long,
+    val assetInShortName: String?,
+    val assetInDrawable: AssetIconDrawable,
+    val assetOutShortName: String?,
+    val assetOutDrawable: AssetIconDrawable,
+    val amountIn: String,
+    val amountOut: String,
+    val datetime: String?
+)

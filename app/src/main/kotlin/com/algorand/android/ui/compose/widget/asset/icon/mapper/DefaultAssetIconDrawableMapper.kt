@@ -40,13 +40,20 @@ internal class DefaultAssetIconDrawableMapper @Inject constructor() : AssetIconD
         return when (assetDetail.id) {
             ALGO_ID -> AssetIconDrawable.AlgoDrawable
             else -> AssetIconDrawable.AssetDrawable(assetDetail.logoUrl.orEmpty(), assetDetail.shortName)
-      }
+        }
     }
 
     override fun map(asset: Asset): AssetIconDrawable {
         return when (asset.id) {
             ALGO_ID -> AssetIconDrawable.AlgoDrawable
             else -> AssetIconDrawable.AssetDrawable(asset.logoUri.orEmpty(), asset.shortName)
+        }
+    }
+
+    override fun map(id: Long, logoUrl: String?, shortName: String?): AssetIconDrawable {
+        return when (id) {
+            ALGO_ID -> AssetIconDrawable.AlgoDrawable
+            else -> AssetIconDrawable.AssetDrawable(logoUrl.orEmpty(), shortName)
         }
     }
 }

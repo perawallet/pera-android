@@ -32,12 +32,13 @@ import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 
 @Composable
 fun PeraToolbar(
+    modifier: Modifier = Modifier,
     text: String,
     startContainer: @Composable RowScope.() -> Unit = {},
     endContainer: @Composable RowScope.() -> Unit = {}
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 44.dp)
     ) {

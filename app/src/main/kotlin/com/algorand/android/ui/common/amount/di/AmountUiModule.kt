@@ -54,11 +54,6 @@ internal object AmountUiModule {
     ): GetCompactPrimaryFiatAmountRenderer = useCase
 
     @Provides
-    fun provideGetCompactPrimaryFiatAmountRenderer(
-        useCase: GetCompactPrimaryFiatAmountRendererUseCase
-    ): GetCompactPrimaryFiatAmountRenderer = useCase
-
-    @Provides
     fun provideGetPrimaryFiatAmountRenderer(
         useCase: GetPrimaryFiatAmountRendererUseCase
     ): GetPrimaryFiatAmountRenderer = useCase

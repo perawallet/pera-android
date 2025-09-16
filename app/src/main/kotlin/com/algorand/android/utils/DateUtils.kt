@@ -206,3 +206,8 @@ fun formatDateToChartDateString(date: OffsetDateTime): String {
     val zonedOffsetDateTime = date.atZoneSameInstant(ZoneId.systemDefault()).toOffsetDateTime()
     return zonedOffsetDateTime.format(DateTimeFormatter.ofPattern(TXN_DATE_AND_TIME_PATTERN))
 }
+
+fun OffsetDateTime.format(pattern: String): String {
+    val zonedOffsetDateTime = atZoneSameInstant(ZoneId.systemDefault()).toOffsetDateTime()
+    return zonedOffsetDateTime.format(DateTimeFormatter.ofPattern(pattern))
+}

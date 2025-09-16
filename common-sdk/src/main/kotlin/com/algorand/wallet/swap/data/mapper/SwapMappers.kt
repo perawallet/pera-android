@@ -13,6 +13,8 @@
 package com.algorand.wallet.swap.data.mapper
 
 import com.algorand.wallet.swap.data.model.AvailableSwapAssetResponse
+import com.algorand.wallet.swap.data.model.SwapHistoryResponse
+import com.algorand.wallet.swap.data.model.SwapHistoryStatusResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
@@ -22,6 +24,8 @@ import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.data.model.SwapTransactionPurposeResponse
 import com.algorand.wallet.swap.data.model.TopSwapPairsResponse
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
+import com.algorand.wallet.swap.domain.model.SwapHistory
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
@@ -69,4 +73,13 @@ internal fun interface AvailableSwapAssetMapper {
 
 internal fun interface TopSwapPairsMapper {
     operator fun invoke(response: TopSwapPairsResponse): TopSwapPairs
+}
+
+internal fun interface SwapHistoryMapper {
+    operator fun invoke(response: SwapHistoryResponse): SwapHistory?
+}
+
+internal interface SwapHistoryStatusMapper {
+    operator fun invoke(response: SwapHistoryStatusResponse): SwapHistoryStatus
+    operator fun invoke(status: SwapHistoryStatus): SwapHistoryStatusResponse
 }

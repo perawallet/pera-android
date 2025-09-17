@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.swap.widget.viewmodel
 
+import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.viewmodel.StateViewModel
 import kotlinx.coroutines.flow.Flow
 
@@ -22,7 +23,7 @@ interface SwapProviderWidgetViewModel : StateViewModel<SwapProviderWidgetViewMod
     sealed interface ViewState {
         data object Idle : ViewState
         data class Content(
-            val providerName: String,
+            val provider: SwapQuoteProvider,
             val assetInShortName: String,
             val assetOutShortName: String,
             val unitPrice: String,

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
@@ -72,6 +73,7 @@ fun PeraTextField(
     singleLine: Boolean = true,
     enabled: Boolean = true,
     hint: String? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
     PeraTextFieldContainer(modifier, textFieldValue.text, hint) {
@@ -79,6 +81,7 @@ fun PeraTextField(
             modifier = Modifier.defaultTextFieldModifier(),
             value = textFieldValue,
             onValueChange = onTextChanged,
+            keyboardOptions = keyboardOptions,
             decorationBox = {
                 TextFieldDecorationBox(textFieldValue.text, it, label, trailingIcon, singleLine, enabled, colors)
             }
@@ -149,5 +152,6 @@ object PeraTextFieldColors {
         unfocusedContainerColor = Color.Transparent,
         unfocusedTextColor = PeraTheme.colors.text.main,
         focusedTextColor = PeraTheme.colors.text.main,
+        cursorColor = PeraTheme.colors.text.main
     )
 }

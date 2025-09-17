@@ -72,6 +72,7 @@ fun PagingSwapHistoryList(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun SwapHistoryListItem(item: SwapHistoryItem, onClick: (SwapHistoryItem) -> Unit) {
     Row(modifier = Modifier.clickableNoRipple { onClick(item) }, verticalAlignment = Alignment.CenterVertically) {

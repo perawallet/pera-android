@@ -155,7 +155,7 @@ private fun ErrorState() {
 private fun EmptyState() {
     Text(
         modifier = Modifier.padding(horizontal = 24.dp),
-        text = "There is no swap history yet.", // TODO
+        text = stringResource(R.string.your_swap_history_will_appear),
         color = PeraTheme.colors.text.gray,
         style = PeraTheme.typography.footnote.sansMedium
     )

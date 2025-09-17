@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 private val SHIMMER_BG_COLOR = Color(0xFFF2F2F3)
 private val SHIMMER_COLOR = Color(0xFFE4E4E7)
 private const val SHIMMER_WIDTH = 300f
-private val CORNER_RADIUS = 4.dp
+private val CORNER_RADIUS = 16.dp
 
 @Composable
 fun Modifier.shimmer(durationMillis: Int = 1500): Modifier {

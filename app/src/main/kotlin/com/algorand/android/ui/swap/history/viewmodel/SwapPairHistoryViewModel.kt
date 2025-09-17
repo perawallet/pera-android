@@ -18,7 +18,9 @@ import com.algorand.android.ui.swap.history.mapper.SwapPairHistoryItemMapper
 import com.algorand.android.ui.swap.history.model.SwapPairHistoryItem
 import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel.ViewState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
-import com.algorand.wallet.swap.domain.model.SwapHistoryStatus
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Completed
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Failed
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Pending
 import com.algorand.wallet.swap.domain.usecase.GetSwapPairHistory
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
@@ -61,7 +63,7 @@ class SwapPairHistoryViewModel @Inject constructor(
         addressFlow.onEach { address ->
             viewStateFlow.value = ViewState.Loading
             if (address.isNullOrBlank()) return@onEach
-            viewStateFlow.value = getSwapPairHistory(address, listOf(SwapHistoryStatus.Completed)).use(
+            viewStateFlow.value = getSwapPairHistory(address, listOf(Completed, Failed, Pending)).use(
                 onSuccess = { pairs ->
                     if (pairs.isEmpty()) {
                         ViewState.Empty

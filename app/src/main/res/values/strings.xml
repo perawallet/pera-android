@@ -1566,4 +1566,5 @@
     <string name="swapped_asset_for_asset_formatted">Swapped %1$s for %2$s</string>
     <string name="swap_history">Swap History</string>
     <string name="see_all">See all</string>
+    <string name="your_swap_history_will_appear">Your swap history will appear here once you\'ve completed a swap.</string>
 </resources>

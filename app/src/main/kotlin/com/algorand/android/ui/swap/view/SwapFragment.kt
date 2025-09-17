@@ -26,6 +26,8 @@ import com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFr
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment.Companion.SWAP_ASSET_IN_ID_KEY
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment.Companion.SWAP_ASSET_OUT_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.utils.browser.SWAP_INFO_SUPPORT_URL
+import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.browser.openVestigeTermsOfServiceUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
@@ -80,7 +82,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     }
 
     override fun onInfoIconClick() {
-        // TODO
+        context?.openUrl(SWAP_INFO_SUPPORT_URL)
     }
 
     override fun onSwapClick(quote: SwapQuoteV2) {

@@ -286,6 +286,7 @@ interface PeraColor {
         val positiveLighter: Color
         val negative: Color
         val negativeLighter: Color
+        val success: Color
     }
 
     interface ButtonStyle {

@@ -47,6 +47,7 @@ object PeraDarkColor : PeraColor {
         override val positiveLighter: Color = ColorPalette.Turquoise.V600
         override val negative: Color = ColorPalette.Salmon.V500
         override val negativeLighter: Color = ColorPalette.Salmon.V500Alpha12
+        override val success: Color = ColorPalette.Yellow.V400
     }
 
     override val button = object : PeraColor.Button {

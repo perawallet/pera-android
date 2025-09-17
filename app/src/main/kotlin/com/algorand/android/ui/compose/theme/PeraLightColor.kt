@@ -284,4 +284,9 @@ object PeraLightColor : PeraColor {
     override val swap = object : PeraColor.Swap {
         override val assetOutButtonBackground: Color = ColorPalette.Gray.V50
     }
+
+    override val shimmer = object : PeraColor.Shimmer {
+        override val base = ColorPalette.Shimmer.BaseLight
+        override val highlight = ColorPalette.Shimmer.HighlightLight
+    }
 }

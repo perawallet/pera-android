@@ -32,15 +32,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
+import com.algorand.android.ui.compose.theme.PeraTheme
 
-private val SHIMMER_BG_COLOR = Color(0xFFF2F2F3)
-private val SHIMMER_COLOR = Color(0xFFE4E4E7)
 private const val SHIMMER_WIDTH = 300f
 private val CORNER_RADIUS = 16.dp
 
 @Composable
 fun Modifier.shimmer(durationMillis: Int = 1500): Modifier {
     val transition = rememberInfiniteTransition(label = "")
+    val backgroundColor = PeraTheme.colors.shimmer.base
+    val highlightColor = PeraTheme.colors.shimmer.highlight
 
     val size = LocalWindowInfo.current.containerSize.width
     var targetValue by remember {
@@ -62,16 +63,16 @@ fun Modifier.shimmer(durationMillis: Int = 1500): Modifier {
         if (cornerRadius == 0f) {
             cornerRadius = CORNER_RADIUS.toPx()
         }
-        drawRoundRect(color = SHIMMER_BG_COLOR, size = this.size, cornerRadius = CornerRadius(cornerRadius))
+        drawRoundRect(color = backgroundColor, size = this.size, cornerRadius = CornerRadius(cornerRadius))
         drawRoundRect(
             brush = Brush.linearGradient(
                 colors = listOf(
                     Color.Transparent,
-                    SHIMMER_COLOR.copy(alpha = .2f),
-                    SHIMMER_COLOR.copy(alpha = .5f),
-                    SHIMMER_COLOR,
-                    SHIMMER_COLOR.copy(alpha = .5f),
-                    SHIMMER_COLOR.copy(alpha = .2f),
+                    highlightColor.copy(alpha = .2f),
+                    highlightColor.copy(alpha = .5f),
+                    highlightColor,
+                    highlightColor.copy(alpha = .5f),
+                    highlightColor.copy(alpha = .2f),
                     Color.Transparent
                 ),
                 start = Offset(x = translateAnimation - SHIMMER_WIDTH, y = translateAnimation),

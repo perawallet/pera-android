@@ -135,6 +135,14 @@ object ColorPalette {
         val TrustedIconBackgroundOpacity = Color(0xFF291A304A)
     }
 
+    object Shimmer {
+        val HighlightLight = Color(0xFFE4E4E7)
+        val BaseLight = Color(0xFFF2F2F3)
+
+        val HighlightDark = Color(0xFF1F1F23)
+        val BaseDark = Color(0xFF25252A)
+    }
+
     object Yellow {
         val V600 = Color(0xFFC77700)
         val V500 = Color(0xFFEDB21C)
@@ -489,6 +497,11 @@ interface PeraColor {
         val assetOutButtonBackground: Color
     }
 
+    interface Shimmer {
+        val highlight: Color
+        val base: Color
+    }
+
     val background: Background
     val text: Text
     val layer: Layer
@@ -519,4 +532,5 @@ interface PeraColor {
     val divider: Divider
     val helper: Helper
     val swap: Swap
+    val shimmer: Shimmer
 }

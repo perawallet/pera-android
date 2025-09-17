@@ -222,6 +222,7 @@ private fun TextInputField(title: String, hint: String, text: TextFieldValue, on
         onTextChanged = onTextChanged,
         hint = hint.capitalizeWords(),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        textStyle = PeraTheme.typography.body.large.sansMedium.copy(color = PeraTheme.colors.text.main),
         colors = PeraTextFieldColors.defaultColors().copy(
             focusedIndicatorColor = PeraTheme.colors.text.grayLighter,
             unfocusedIndicatorColor = PeraTheme.colors.text.grayLighter

@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -74,6 +75,7 @@ fun PeraTextField(
     enabled: Boolean = true,
     hint: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    textStyle: TextStyle = TextStyle.Default,
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
     PeraTextFieldContainer(modifier, textFieldValue.text, hint) {
@@ -82,6 +84,7 @@ fun PeraTextField(
             value = textFieldValue,
             onValueChange = onTextChanged,
             keyboardOptions = keyboardOptions,
+            textStyle = textStyle,
             decorationBox = {
                 TextFieldDecorationBox(textFieldValue.text, it, label, trailingIcon, singleLine, enabled, colors)
             }

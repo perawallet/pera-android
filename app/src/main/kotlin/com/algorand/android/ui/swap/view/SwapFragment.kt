@@ -87,6 +87,11 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
         nav(SwapFragmentDirections.actionSwapFragmentToSwapConfirmationFragment(quote))
     }
 
+    override fun onSwapHistorySeeAllClick() {
+        val address = swapViewModel.getAddress() ?: return
+        nav(SwapFragmentDirections.actionSwapFragmentToSwapHistoryFragment(address))
+    }
+
     override fun onAssetInChipClick() {
         val address = swapViewModel.getAddress() ?: return
         nav(SwapFragmentDirections.actionSwapFragmentToSwapAssetInSelectionFragment(address))

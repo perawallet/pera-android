@@ -21,7 +21,10 @@ import com.algorand.android.ui.swap.history.mapper.SwapHistoryItemMapper
 import com.algorand.android.ui.swap.history.model.SwapHistoryItem
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewState
 import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
-import com.algorand.wallet.swap.domain.model.SwapHistoryStatus
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Completed
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Failed
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.InProgress
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Pending
 import com.algorand.wallet.swap.domain.usecase.GetSwapHistory
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
@@ -45,12 +48,7 @@ class SwapHistoryViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Idle> {
             val pagingData = SwapHistoryPagingData(
                 address = address,
-                statuses = listOf(
-                    SwapHistoryStatus.Pending,
-                    SwapHistoryStatus.Failed,
-                    SwapHistoryStatus.InProgress,
-                    SwapHistoryStatus.Completed
-                ),
+                statuses = listOf(Pending, Failed, InProgress, Completed),
                 nextUrl = null,
                 previousUrl = null
             )

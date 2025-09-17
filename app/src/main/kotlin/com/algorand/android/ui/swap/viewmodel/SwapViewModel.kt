@@ -93,6 +93,10 @@ class SwapViewModel @Inject constructor(
         _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetOutId = assetId)
     }
 
+    fun setAssetInAndOutIds(assetInId: Long, assetOutId: Long) {
+        _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetOutId = assetOutId, assetInId = assetInId)
+    }
+
     fun applySwapConfigs(result: SwapConfigurationResult) {
         _swapDetailsFlow.update {
             it.copy(

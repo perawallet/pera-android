@@ -10,20 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.repository
+package com.algorand.android.ui.swap.history.mapper
 
-import androidx.paging.PagingData
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.swap.domain.model.SwapHistory
-import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
-import com.algorand.wallet.swap.domain.model.SwapHistoryStatus
+import com.algorand.android.ui.swap.history.model.SwapPairHistoryItem
 import com.algorand.wallet.swap.domain.model.SwapPairHistory
-import kotlinx.coroutines.flow.Flow
 
-internal interface SwapHistoryRepository {
-    fun getSwapHistory(pagingData: SwapHistoryPagingData): Flow<PagingData<SwapHistory>>
-    suspend fun getSwapPairHistory(
-        address: String,
-        statuses: List<SwapHistoryStatus>
-    ): PeraResult<List<SwapPairHistory>>
+interface SwapPairHistoryItemMapper {
+    operator fun invoke(swapPairHistory: SwapPairHistory): SwapPairHistoryItem
 }

@@ -1559,9 +1559,11 @@
     <string name="volume_24h">Volume (24H)</string>
     <string name="asset_to_asset_formatted">%1$s to %2$s</string>
     <string name="unable_to_load_top_five">Unable to load Top 5 Swaps</string>
+    <string name="unable_to_load_swap_history">Unable to load swap history</string>
     <string name="swap_successfully_completed_formatted">%1$s to %2$s swap successfully completed</string>
     <string name="create_an_account_to_get">Create an account to get swapping</string>
     <string name="create_account">Create Account</string>
     <string name="swapped_asset_for_asset_formatted">Swapped %1$s for %2$s</string>
     <string name="swap_history">Swap History</string>
+    <string name="see_all">See all</string>
 </resources>

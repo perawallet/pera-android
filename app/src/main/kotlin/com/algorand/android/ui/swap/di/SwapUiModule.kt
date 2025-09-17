@@ -13,7 +13,9 @@
 package com.algorand.android.ui.swap.di
 
 import com.algorand.android.ui.swap.history.mapper.DefaultSwapHistoryItemMapper
+import com.algorand.android.ui.swap.history.mapper.DefaultSwapPairHistoryItemMapper
 import com.algorand.android.ui.swap.history.mapper.SwapHistoryItemMapper
+import com.algorand.android.ui.swap.history.mapper.SwapPairHistoryItemMapper
 import com.algorand.android.ui.swap.widget.mapper.DefaultSwapQuoteFetchStateMapper
 import com.algorand.android.ui.swap.widget.mapper.DefaultSwapWidgetAmountRendererMapper
 import com.algorand.android.ui.swap.widget.mapper.SwapQuoteFetchStateMapper
@@ -39,4 +41,7 @@ internal object SwapUiModule {
 
     @Provides
     fun provideSwapHistoryItemMapper(mapper: DefaultSwapHistoryItemMapper): SwapHistoryItemMapper = mapper
+
+    @Provides
+    fun provideSwapPairHistoryItemMapper(mapper: DefaultSwapPairHistoryItemMapper): SwapPairHistoryItemMapper = mapper
 }

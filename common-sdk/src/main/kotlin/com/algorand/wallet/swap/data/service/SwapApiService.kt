@@ -16,6 +16,7 @@ import com.algorand.wallet.swap.data.model.AvailableSwapAssetListResponse
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsResponse
 import com.algorand.wallet.swap.data.model.SwapHistoriesResponse
+import com.algorand.wallet.swap.data.model.SwapPairHistoriesResponse
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
@@ -69,4 +70,10 @@ internal interface SwapApiService {
         @Query("limit") limit: Int,
         @Query("statuses") statuses: String?
     ): SwapHistoriesResponse
+
+    @GET("v2/dex-swap/distinct-pairs-history/")
+    suspend fun getSwapPairsHistory(
+        @Query("address") address: String,
+        @Query("statuses") statuses: String?
+    ): SwapPairHistoriesResponse
 }

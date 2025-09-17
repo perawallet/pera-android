@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.DefaultTopSwapPairsViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
@@ -55,6 +56,7 @@ fun SwapScreen(
     buttonViewModel: SwapButtonViewModel = hiltViewModel<DefaultSwapButtonViewModel>(),
     quoteProvidersViewModel: SwapQuoteProvidersViewModel = hiltViewModel(),
     topSwapPairsViewModel: TopSwapPairsViewModel = hiltViewModel<DefaultTopSwapPairsViewModel>(),
+    swapPairHistoryViewModel: SwapPairHistoryViewModel = hiltViewModel<SwapPairHistoryViewModel>(),
     listener: SwapScreenListener
 ) {
     LaunchedEffect(Unit) {
@@ -82,6 +84,7 @@ fun SwapScreen(
                         buttonViewModel = buttonViewModel,
                         quoteProvidersViewModel = quoteProvidersViewModel,
                         topSwapPairsViewModel = topSwapPairsViewModel,
+                        swapPairHistoryViewModel = swapPairHistoryViewModel,
                         listener = listener
                     )
                 }
@@ -98,4 +101,5 @@ fun SwapScreen(
 interface SwapScreenListener : SwapToolbarListener, SwapWidgetListener, SwapScreenIntroductionStateListener {
     fun onCreateAccountClick()
     fun onSwapClick(quote: SwapQuoteV2)
+    fun onSwapHistorySeeAllClick()
 }

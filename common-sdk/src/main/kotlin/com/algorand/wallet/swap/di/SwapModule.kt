@@ -23,6 +23,7 @@ import com.algorand.wallet.swap.data.mapper.DefaultSwapAssetAmountMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapHistoryMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapHistoryStatusMapper
+import com.algorand.wallet.swap.data.mapper.DefaultSwapPairHistoryMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteRequestBodyMapper
@@ -34,6 +35,7 @@ import com.algorand.wallet.swap.data.mapper.SwapAssetAmountMapper
 import com.algorand.wallet.swap.data.mapper.SwapAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.SwapHistoryMapper
 import com.algorand.wallet.swap.data.mapper.SwapHistoryStatusMapper
+import com.algorand.wallet.swap.data.mapper.SwapPairHistoryMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
@@ -59,6 +61,7 @@ import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetailUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentageUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapHistory
+import com.algorand.wallet.swap.domain.usecase.GetSwapPairHistory
 import com.algorand.wallet.swap.domain.usecase.GetSwapPeraFee
 import com.algorand.wallet.swap.domain.usecase.GetSwapPeraFeeUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetails
@@ -214,4 +217,12 @@ internal object SwapModule {
 
     @Provides
     fun provideSwapHistoryStatusMapper(mapper: DefaultSwapHistoryStatusMapper): SwapHistoryStatusMapper = mapper
+
+    @Provides
+    fun provideSwapPairHistoryMapper(mapper: DefaultSwapPairHistoryMapper): SwapPairHistoryMapper = mapper
+
+    @Provides
+    fun provideGetSwapPairHistory(repository: SwapHistoryRepository): GetSwapPairHistory {
+        return GetSwapPairHistory(repository::getSwapPairHistory)
+    }
 }

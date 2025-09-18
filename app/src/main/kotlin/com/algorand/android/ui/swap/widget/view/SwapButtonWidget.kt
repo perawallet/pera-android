@@ -46,6 +46,7 @@ fun BoxScope.SwapButtonWidget(viewModel: SwapButtonViewModel, onClick: (SwapQuot
     val bottomPadding by rememberBottomPadding()
     Box(
         modifier = Modifier
+            .background(color = PeraTheme.colors.background.primary)
             .padding(bottom = bottomPadding)
             .fillMaxWidth()
             .align(Alignment.BottomCenter)

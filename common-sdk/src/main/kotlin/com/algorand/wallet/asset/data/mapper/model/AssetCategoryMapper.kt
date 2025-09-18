@@ -10,14 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain.repository
+package com.algorand.wallet.asset.data.mapper.model
 
-import androidx.paging.PagingData
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
-import com.algorand.wallet.asset.domain.model.AssetLite
-import kotlinx.coroutines.flow.Flow
+import com.algorand.wallet.asset.data.database.model.AssetCategoryEntity
+import com.algorand.wallet.asset.domain.model.AssetCategory
 
-internal interface AssetCollectibleLiteRepository {
-    fun getPaginatedAssetCollectibleLiteItems(query: AssetCollectibleLiteQuery): Flow<PagingData<AssetLite>>
-    fun getSwappableAssetLitesFlow(address: String, searchKeyword: String?): Flow<PagingData<AssetLite>>
+internal interface AssetCategoryMapper {
+    operator fun invoke(category: Int?): AssetCategory?
+    operator fun invoke(category: AssetCategoryEntity?): AssetCategory?
 }

@@ -13,6 +13,7 @@
 package com.algorand.wallet.swap.di
 
 import androidx.paging.PagingSource
+import com.algorand.wallet.asset.data.database.dao.PaginatedSwappableAssetDao
 import com.algorand.wallet.foundation.cache.InMemoryCacheProvider
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.foundation.database.PeraDatabase
@@ -117,6 +118,11 @@ internal object SwapModule {
     @Provides
     fun provideSwapSelectedAssetDao(database: PeraDatabase): SwapSelectedAssetDao {
         return database.swapSelectedAssetDao()
+    }
+
+    @Provides
+    fun providePaginatedSwappableAssetDao(database: PeraDatabase): PaginatedSwappableAssetDao {
+        return database.paginatedSwappableAssetDao()
     }
 
     @Provides

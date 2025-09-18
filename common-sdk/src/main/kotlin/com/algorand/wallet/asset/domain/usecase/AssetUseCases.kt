@@ -12,8 +12,10 @@
 
 package com.algorand.wallet.asset.domain.usecase
 
+import androidx.paging.PagingData
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.foundation.PeraResult
 import java.math.BigDecimal
@@ -101,4 +103,8 @@ fun interface GetRecentlyAddedCollectibleUrls {
 
 fun interface GetUsdcAssetId {
     suspend operator fun invoke(): Long
+}
+
+fun interface GetSwappableAssetLitesFlow {
+    operator fun invoke(address: String, searchKeyword: String?): Flow<PagingData<AssetLite>>
 }

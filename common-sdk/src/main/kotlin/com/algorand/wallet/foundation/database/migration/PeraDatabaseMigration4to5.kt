@@ -10,14 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain.repository
+package com.algorand.wallet.foundation.database.migration
 
-import androidx.paging.PagingData
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
-import com.algorand.wallet.asset.domain.model.AssetLite
-import kotlinx.coroutines.flow.Flow
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity.Companion.ASSET_DETAIL_TABLE_NAME
 
-internal interface AssetCollectibleLiteRepository {
-    fun getPaginatedAssetCollectibleLiteItems(query: AssetCollectibleLiteQuery): Flow<PagingData<AssetLite>>
-    fun getSwappableAssetLitesFlow(address: String, searchKeyword: String?): Flow<PagingData<AssetLite>>
+internal object PeraDatabaseMigration4to5 : Migration(4, 5) {
+
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE $ASSET_DETAIL_TABLE_NAME ADD COLUMN category TEXT")
+    }
 }

@@ -59,7 +59,8 @@ sealed interface Asset {
         val description: String?,
         val supply: Supply?,
         val url: String?,
-        val isAvailableOnDiscoverMobile: Boolean?
+        val isAvailableOnDiscoverMobile: Boolean?,
+        val category: AssetCategory?
     )
 
     data class Name(

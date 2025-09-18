@@ -101,8 +101,8 @@ private fun PeraTextFieldContainer(
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.CenterStart) {
         val textField = text.ifEmpty { " " }
-        basicTextField()
         HintText(hint, textField)
+        basicTextField()
     }
 }
 

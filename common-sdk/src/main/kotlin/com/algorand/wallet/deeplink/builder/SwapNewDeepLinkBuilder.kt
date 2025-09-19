@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.deeplink.builder
 
+import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 
@@ -20,7 +21,11 @@ internal class SwapNewDeepLinkBuilder : NewDeepLinkBuilder {
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink? {
 
         return payload.accountAddress?.let { address ->
-            DeepLink.Swap(address, payload.assetInId, payload.assetOutId)
+            DeepLink.Swap(
+                address = address,
+                assetInId = getSafeAssetIdForResponse(payload.assetInId),
+                assetOutId = getSafeAssetIdForResponse(payload.assetOutId)
+            )
         }
     }
 }

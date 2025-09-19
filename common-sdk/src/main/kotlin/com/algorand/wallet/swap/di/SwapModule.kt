@@ -70,6 +70,7 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
+import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import com.algorand.wallet.utils.date.parser.ISO8601DateTimeParser
 import dagger.Module
 import dagger.Provides
@@ -230,5 +231,10 @@ internal object SwapModule {
     @Provides
     fun provideGetSwapPairHistory(repository: SwapHistoryRepository): GetSwapPairHistory {
         return GetSwapPairHistory(repository::getSwapPairHistory)
+    }
+
+    @Provides
+    fun provideSetLastUsedSwapAddress(repository: SwapRepository): SetLastUsedSwapAddress {
+        return SetLastUsedSwapAddress(repository::setLastUsedSwapAddress)
     }
 }

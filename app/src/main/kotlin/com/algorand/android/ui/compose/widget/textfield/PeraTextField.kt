@@ -11,6 +11,7 @@
  */
 
 @file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("LongParameterList")
 
 package com.algorand.android.ui.compose.widget.textfield
 

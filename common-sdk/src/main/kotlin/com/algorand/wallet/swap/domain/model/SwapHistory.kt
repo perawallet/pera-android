@@ -19,7 +19,8 @@ data class SwapHistory(
     val id: Long,
     val assetInDetail: AssetDetail,
     val assetOutDetail: AssetDetail,
-    val datetime: OffsetDateTime?
+    val datetime: OffsetDateTime?,
+    val txnGroupId: String?
 ) {
     data class AssetDetail(
         val shortName: String?,

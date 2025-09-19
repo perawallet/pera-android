@@ -36,7 +36,8 @@ internal class DefaultSwapHistoryItemMapper @Inject constructor(
                 assetOutDrawable = assetIconDrawableMapper.map(id, assetOutDetail.logoUrl, assetOutDetail.shortName),
                 amountIn = getFormattedAmount(assetInDetail),
                 amountOut = getFormattedAmount(assetOutDetail),
-                datetime = swapHistory.datetime?.format(TXN_DATE_PATTERN)
+                datetime = swapHistory.datetime?.format(TXN_DATE_PATTERN),
+                txnGroupId = txnGroupId
             )
         }
     }

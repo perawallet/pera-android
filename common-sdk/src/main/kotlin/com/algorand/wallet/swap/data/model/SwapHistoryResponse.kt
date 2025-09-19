@@ -35,5 +35,7 @@ internal data class SwapHistoryResponse(
     @SerializedName("amount_in_usd_value")
     val amountInUsdValue: BigDecimal?,
     @SerializedName("amount_out_usd_value")
-    val amountOutUsdValue: BigDecimal?
+    val amountOutUsdValue: BigDecimal?,
+    @SerializedName("transaction_group_id")
+    val txnGroupId: String?
 )

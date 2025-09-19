@@ -35,7 +35,8 @@ internal class DefaultSwapHistoryMapper(
                 decimal = response.assetOut?.fractionDecimals ?: 0,
                 amount = response.amountOut ?: return null
             ),
-            datetime = dateTimeParser.parseOffsetDateTime(response.completedDatetime.orEmpty())
+            datetime = dateTimeParser.parseOffsetDateTime(response.completedDatetime.orEmpty()),
+            txnGroupId = response.txnGroupId
         )
     }
 }

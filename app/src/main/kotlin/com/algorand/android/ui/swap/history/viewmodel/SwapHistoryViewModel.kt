@@ -20,6 +20,7 @@ import androidx.paging.map
 import com.algorand.android.ui.swap.history.mapper.SwapHistoryItemMapper
 import com.algorand.android.ui.swap.history.model.SwapHistoryItem
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewState
+import com.algorand.android.usecase.NetworkSlugUseCase
 import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
 import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Completed
 import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Failed
@@ -37,6 +38,7 @@ import kotlinx.coroutines.flow.map
 class SwapHistoryViewModel @Inject constructor(
     private val getSwapHistory: GetSwapHistory,
     private val swapHistoryItemMapper: SwapHistoryItemMapper,
+    private val networkSlugUseCase: NetworkSlugUseCase,
     private val stateDelegate: StateDelegate<ViewState>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
@@ -61,6 +63,8 @@ class SwapHistoryViewModel @Inject constructor(
             }
         }
     }
+
+    fun getSelectedNetworkSlug() = networkSlugUseCase.getActiveNodeSlug()
 
     sealed interface ViewState {
         data object Idle : ViewState

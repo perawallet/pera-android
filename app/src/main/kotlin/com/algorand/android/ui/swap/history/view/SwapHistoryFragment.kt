@@ -24,6 +24,7 @@ import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.swap.history.model.SwapHistoryItem
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel
+import com.algorand.android.utils.browser.openGroupTransactionInPeraExplorer
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,7 +49,8 @@ class SwapHistoryFragment : BaseFragment(0), SwapHistoryScreenListener {
     }
 
     override fun onSwapItemClick(swapHistoryItem: SwapHistoryItem) {
-        // TODO
+        val networkSlug = swapHistoryViewModel.getSelectedNetworkSlug()
+        context?.openGroupTransactionInPeraExplorer(swapHistoryItem.txnGroupId, networkSlug)
     }
 
     override fun onNavBackClick() {

@@ -22,5 +22,6 @@ data class SwapHistoryItem(
     val assetOutDrawable: AssetIconDrawable,
     val amountIn: String,
     val amountOut: String,
-    val datetime: String?
+    val datetime: String?,
+    val txnGroupId: String?
 )

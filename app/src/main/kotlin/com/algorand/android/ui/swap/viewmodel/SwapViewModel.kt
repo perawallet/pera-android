@@ -34,6 +34,8 @@ import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_MAINNET_ID
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
+import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
+import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -59,7 +61,9 @@ class SwapViewModel @Inject constructor(
     private val setSwapFeatureIntroductionPageVisibility: SetSwapFeatureIntroductionPageVisibilityUseCase,
     private val isSwapFeatureIntroductionPageShown: IsSwapFeatureIntroductionPageShownUseCase,
     private val getAccountLite: GetAccountLite,
-    private val isAssetOptedInByAccount: IsAssetOptedInByAccount
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
+    private val getSwapUseLocalCurrencyPreference: GetSwapUseLocalCurrencyPreference,
+    private val setSwapUseLocalCurrencyPreference: SetSwapUseLocalCurrencyPreference
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val _swapDetailsFlow = MutableStateFlow<SwapDetails>(SwapDetails())
@@ -118,8 +122,13 @@ class SwapViewModel @Inject constructor(
     }
 
     fun applySwapConfigs(result: SwapConfigurationResult) {
-        _swapDetailsFlow.update {
-            it.copy(
+        _swapDetailsFlow.update { currentConfig ->
+            if (currentConfig.useLocalCurrency != result.useLocalCurrency) {
+                viewModelScope.launch {
+                    setSwapUseLocalCurrencyPreference(result.useLocalCurrency)
+                }
+            }
+            currentConfig.copy(
                 slippage = result.slippageTolerance,
                 useLocalCurrency = result.useLocalCurrency
             )
@@ -154,7 +163,8 @@ class SwapViewModel @Inject constructor(
             _swapDetailsFlow.value = SwapDetails(
                 address = address,
                 assetInId = assetInId,
-                assetOutId = getAssetOutId(assetInId, arg.assetOutId)
+                assetOutId = getAssetOutId(assetInId, arg.assetOutId),
+                useLocalCurrency = getSwapUseLocalCurrencyPreference()
             )
             updateContentState(address)
         }

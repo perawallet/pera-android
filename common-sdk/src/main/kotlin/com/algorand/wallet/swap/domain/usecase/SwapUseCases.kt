@@ -72,3 +72,11 @@ fun interface GetSwapPairHistory {
 fun interface SetLastUsedSwapAddress {
     suspend operator fun invoke(address: String)
 }
+
+fun interface GetSwapUseLocalCurrencyPreference {
+    suspend operator fun invoke(): Boolean
+}
+
+fun interface SetSwapUseLocalCurrencyPreference {
+    suspend operator fun invoke(useLocalCurrency: Boolean)
+}

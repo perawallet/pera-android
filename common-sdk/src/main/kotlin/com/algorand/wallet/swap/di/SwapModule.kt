@@ -69,8 +69,10 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetails
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
+import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
+import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.utils.date.parser.ISO8601DateTimeParser
 import dagger.Module
 import dagger.Provides
@@ -109,7 +111,11 @@ internal object SwapModule {
             swapQuoteProviderMapper = swapQuoteProviderMapper,
             availableSwapAssetMapper = availableSwapAssetMapper,
             providersCache = inMemoryCacheProvider.getInMemoryCache(),
-            topSwapPairsMapper = topSwapPairsMapper
+            topSwapPairsMapper = topSwapPairsMapper,
+            useLocalCurrencyCache = persistentCacheProvider.getPersistentCache<Boolean>(
+                type = Boolean::class.java,
+                key = "swap_use_local_currency_preference",
+            )
         )
     }
 
@@ -236,5 +242,15 @@ internal object SwapModule {
     @Provides
     fun provideSetLastUsedSwapAddress(repository: SwapRepository): SetLastUsedSwapAddress {
         return SetLastUsedSwapAddress(repository::setLastUsedSwapAddress)
+    }
+
+    @Provides
+    fun provideGetSwapUseLocalCurrencyPreference(repository: SwapRepository): GetSwapUseLocalCurrencyPreference {
+        return GetSwapUseLocalCurrencyPreference(repository::getUseLocalCurrencyPreference)
+    }
+
+    @Provides
+    fun provideSetSwapUseLocalCurrencyPreference(repository: SwapRepository): SetSwapUseLocalCurrencyPreference {
+        return SetSwapUseLocalCurrencyPreference(repository::setUseLocalCurrencyPreference)
     }
 }

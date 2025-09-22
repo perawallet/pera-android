@@ -32,6 +32,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
+import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -57,11 +58,14 @@ class DefaultSwapWidgetViewModel @Inject constructor(
     private val swapQuoteFetchStateMapper: SwapQuoteFetchStateMapper,
     private val amountRendererMapper: SwapWidgetAmountRendererMapper,
     private val getSwapAmountByPercentage: GetSwapAmountByPercentage,
-    private val stateDelegate: StateDelegate<ViewState>
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val getSwapUseLocalCurrencyPreference: GetSwapUseLocalCurrencyPreference
 ) : ViewModel(), SwapWidgetViewModel {
 
     init {
-        stateDelegate.setDefaultState(getIdleState(false))
+        viewModelScope.launch {
+            stateDelegate.setDefaultState(getIdleState(getSwapUseLocalCurrencyPreference()))
+        }
     }
 
     override val state: StateFlow<ViewState>

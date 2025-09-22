@@ -12,54 +12,92 @@
 
 package com.algorand.android.ui.swap.widget.mapper
 
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbol
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
+import com.algorand.android.modules.parity.domain.usecase.GetUsdToSecondaryCurrencyConversionRate
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.DecimalConfig
 import com.algorand.android.ui.common.amount.DecimalConfig.MinDecimalType.FixedToMax
+import com.algorand.android.ui.common.amount.FormattedAmount
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.PlainFormattedAmount.SimplePlainFormattedAmount
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
+import com.algorand.android.utils.emptyString
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2.AssetAmount
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2.AssetDetail
 import java.math.BigDecimal
 import javax.inject.Inject
 
-internal class DefaultSwapWidgetAmountRendererMapper @Inject constructor() : SwapWidgetAmountRendererMapper {
+internal class DefaultSwapWidgetAmountRendererMapper @Inject constructor(
+    private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName,
+    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
+    private val getUsdToSecondaryCurrencyConversionRate: GetUsdToSecondaryCurrencyConversionRate
+) : SwapWidgetAmountRendererMapper {
 
-    override fun getDefaultRenderers(): ViewState.Content.AmountRenderers {
-        val defaultAmountRenderer = getDefaultAmountRenderer()
+    override fun getDefaultRenderers(useLocalCurrency: Boolean): ViewState.Content.AmountRenderers {
+        val localCurrencyAmountRenderer = getDefaultAmountRenderer(useLocalCurrency = true)
+        val assetAmountRenderer = getDefaultAmountRenderer(useLocalCurrency = false)
+        val primaryAmountRenderer = if (useLocalCurrency) localCurrencyAmountRenderer else assetAmountRenderer
+        val secondaryAmountRenderer = if (useLocalCurrency) assetAmountRenderer else localCurrencyAmountRenderer
         return ViewState.Content.AmountRenderers(
-            assetInPrimaryAmountHint = defaultAmountRenderer,
-            assetInSecondaryAmount = defaultAmountRenderer,
-            assetOutPrimaryAmount = defaultAmountRenderer,
-            assetOutSecondaryAmount = defaultAmountRenderer
+            assetInPrimaryAmountHint = primaryAmountRenderer,
+            assetInSecondaryAmount = secondaryAmountRenderer,
+            assetOutPrimaryAmount = primaryAmountRenderer,
+            assetOutSecondaryAmount = secondaryAmountRenderer
         )
     }
 
-    override fun getQuoteRenderers(quote: SwapQuoteV2): ViewState.Content.AmountRenderers {
-        // TODO don't use fixed to max or max decimals 2 when user selects local currency
-        val assetInSecondaryAmount = SimplePlainFormattedAmount(
-            PeraAmount(quote.assetInAmount.amountInUsdValue),
-            DecimalConfig(2, FixedToMax)
-        )
-        val assetOutPrimaryAmount = SimplePlainFormattedAmount(
-            PeraAmount(quote.assetOutAmount.amount),
-            DecimalConfig(quote.assetOutDetail.fractionDecimals)
-        )
-        // TODO don't use fixed to max or max decimals 2 when user selects local currency
-        val assetOutSecondaryAmount = SimplePlainFormattedAmount(
-            PeraAmount(quote.assetOutAmount.amountInUsdValue),
-            DecimalConfig(2, FixedToMax)
-        )
+    override fun getQuoteRenderers(quote: SwapQuoteV2, useLocalCurrency: Boolean): ViewState.Content.AmountRenderers {
+        val assetInSecondaryAmount = getFormattedAmount(useLocalCurrency, quote.assetInAmount, quote.assetInDetail)
+        val assetOutPrimaryAmount = getFormattedAmount(!useLocalCurrency, quote.assetOutAmount, quote.assetOutDetail)
+        val assetOutSecondaryAmount = getFormattedAmount(useLocalCurrency, quote.assetOutAmount, quote.assetOutDetail)
+        val primaryAmountRendererPrefix = getAmountRendererPrefix(useLocalCurrency)
+        val secondaryAmountRendererPrefix = getAmountRendererPrefix(!useLocalCurrency)
         return ViewState.Content.AmountRenderers(
-            assetInPrimaryAmountHint = getDefaultAmountRenderer(),
-            assetInSecondaryAmount = AmountRenderer(assetInSecondaryAmount, AmountRenderer.RenderType.Plain),
-            assetOutPrimaryAmount = AmountRenderer(assetOutPrimaryAmount, AmountRenderer.RenderType.Plain),
-            assetOutSecondaryAmount = AmountRenderer(assetOutSecondaryAmount, AmountRenderer.RenderType.Plain)
+            assetInPrimaryAmountHint = getDefaultAmountRenderer(useLocalCurrency),
+            assetInSecondaryAmount = AmountRenderer(assetInSecondaryAmount, Plain, secondaryAmountRendererPrefix),
+            assetOutPrimaryAmount = AmountRenderer(assetOutPrimaryAmount, Plain, primaryAmountRendererPrefix),
+            assetOutSecondaryAmount = AmountRenderer(assetOutSecondaryAmount, Plain, secondaryAmountRendererPrefix)
         )
     }
 
-    private fun getDefaultAmountRenderer(): AmountRenderer {
+    private fun getFormattedAmount(useCurrency: Boolean, amount: AssetAmount, detail: AssetDetail): FormattedAmount {
+        return if (useCurrency) {
+            SimplePlainFormattedAmount(PeraAmount(amount.amount), DecimalConfig(detail.fractionDecimals))
+        } else {
+            SimplePlainFormattedAmount(
+                PeraAmount(amount.amountInUsdValue.multiply(getUsdToSelectedCurrencyConversionRate())),
+                DecimalConfig(2, FixedToMax)
+            )
+        }
+    }
+
+    private fun getAmountRendererPrefix(useLocalCurrency: Boolean): String {
+        return if (useLocalCurrency) {
+            if (isPrimaryCurrencyAlgo()) getSecondaryCurrencySymbol() else getPrimaryCurrencySymbolOrName()
+        } else {
+            emptyString()
+        }
+    }
+
+    private fun getUsdToSelectedCurrencyConversionRate(): BigDecimal {
+        return if (isPrimaryCurrencyAlgo()) {
+            getUsdToSecondaryCurrencyConversionRate()
+        } else {
+            getUsdToPrimaryCurrencyConversionRate()
+        }
+    }
+
+    private fun getDefaultAmountRenderer(useLocalCurrency: Boolean): AmountRenderer {
+        val prefix = getAmountRendererPrefix(useLocalCurrency)
         val zeroAmount = PeraAmount(BigDecimal.ZERO)
         val formattedAmount = SimplePlainFormattedAmount(zeroAmount, DecimalConfig(2, FixedToMax))
-        return AmountRenderer(formattedAmount, AmountRenderer.RenderType.Plain)
+        return AmountRenderer(formattedAmount, Plain, prefix = prefix)
     }
 }

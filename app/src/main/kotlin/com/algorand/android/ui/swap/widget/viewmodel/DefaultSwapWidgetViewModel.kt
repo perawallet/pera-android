@@ -29,6 +29,7 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewSta
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content.ContentState.Quote.QuoteSelection.Type
 import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
+import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -60,7 +61,7 @@ class DefaultSwapWidgetViewModel @Inject constructor(
 ) : ViewModel(), SwapWidgetViewModel {
 
     init {
-        stateDelegate.setDefaultState(getIdleState())
+        stateDelegate.setDefaultState(getIdleState(false))
     }
 
     override val state: StateFlow<ViewState>
@@ -88,11 +89,12 @@ class DefaultSwapWidgetViewModel @Inject constructor(
                 onFailed = { _, _ ->
                     stateDelegate.updateState {
                         val amountRenderers = (currentState as? ViewState.Content)?.amountRenderers
-                            ?: amountRendererMapper.getDefaultRenderers()
+                            ?: amountRendererMapper.getDefaultRenderers(swapDetails.useLocalCurrency)
                         // TODO implement insufficient balance exception based on backend fee decision
                         ViewState.Content(
                             amountRenderers = amountRenderers,
-                            contentState = ContentState.Error("Failed to calculate amount by percentage")
+                            contentState = ContentState.Error("Failed to calculate amount by percentage"),
+                            useLocalCurrency = swapDetails.useLocalCurrency
                         )
                     }
                 }
@@ -128,7 +130,7 @@ class DefaultSwapWidgetViewModel @Inject constructor(
                 val selectedQuote = quoteState.quotes.first { it.quote.quoteId == quoteSelection.quoteId }.quote
                 content.copy(
                     contentState = quoteState.copy(quoteSelection = quoteSelection),
-                    amountRenderers = amountRendererMapper.getQuoteRenderers(selectedQuote),
+                    amountRenderers = amountRendererMapper.getQuoteRenderers(selectedQuote, content.useLocalCurrency),
                 )
             }
         }
@@ -139,37 +141,47 @@ class DefaultSwapWidgetViewModel @Inject constructor(
     }
 
     private fun updateViewState(quoteFetchState: SwapQuoteFetchState): Flow<ViewState> {
-        return if (quoteFetchState is SwapQuoteFetchState.ReadyToFetch) {
+        return if (quoteFetchState.fetchState is SwapQuoteFetchState.State.ReadyToFetch) {
             flow {
                 emit(ViewState.Loading)
-                getSwapQuotes(quoteFetchState.payload).use(
-                    onSuccess = {
-                        val bestQuoteSelection = QuoteSelection(it.bestOfferQuoteId, Type.Auto)
-                        val viewState = ViewState.Content(
-                            amountRendererMapper.getQuoteRenderers(it.selectedQuote.quote),
-                            ContentState.Quote(it.bestOfferQuoteId, bestQuoteSelection, it.quotes)
-                        )
-                        emit(viewState)
-                    },
-                    onFailed = { exception, _ ->
-                        val viewState = ViewState.Content(
-                            amountRendererMapper.getDefaultRenderers(),
-                            ContentState.Error(exception.message)
-                        )
-                        emit(viewState)
-                    }
+                val viewState = getSwapQuotes(quoteFetchState.fetchState.payload).use(
+                    onSuccess = { getSwapQuoteContentState(quoteFetchState, it) },
+                    onFailed = { exception, _ -> getContentErrorState(quoteFetchState, exception) }
                 )
+                emit(viewState)
             }
         } else {
-            flowOf(getIdleState())
+            flowOf(getIdleState(quoteFetchState.useLocalCurrency))
         }
     }
 
-    private fun getIdleState(): ViewState = ViewState.Content(amountRendererMapper.getDefaultRenderers(), Idle)
+    private fun getSwapQuoteContentState(quoteFetchState: SwapQuoteFetchState, quotes: SwapQuotes): ViewState.Content {
+        val bestQuoteSelection = QuoteSelection(quotes.bestOfferQuoteId, Type.Auto)
+        return ViewState.Content(
+            amountRendererMapper.getQuoteRenderers(quotes.selectedQuote.quote, quoteFetchState.useLocalCurrency),
+            ContentState.Quote(quotes.bestOfferQuoteId, bestQuoteSelection, quotes.quotes),
+            quoteFetchState.useLocalCurrency
+        )
+    }
 
-    sealed interface SwapQuoteFetchState {
-        data object Idle : SwapQuoteFetchState
-        data class ReadyToFetch(val payload: SwapQuotePayload) : SwapQuoteFetchState
+    private fun getContentErrorState(quoteFetchState: SwapQuoteFetchState, exception: Exception): ViewState.Content {
+        return ViewState.Content(
+            amountRendererMapper.getDefaultRenderers(quoteFetchState.useLocalCurrency),
+            ContentState.Error(exception.message),
+            quoteFetchState.useLocalCurrency
+        )
+    }
+
+    private fun getIdleState(useLocalCurrency: Boolean): ViewState {
+        return ViewState.Content(amountRendererMapper.getDefaultRenderers(useLocalCurrency), Idle, useLocalCurrency)
+    }
+
+    data class SwapQuoteFetchState(val useLocalCurrency: Boolean, val fetchState: State) {
+
+        sealed interface State {
+            data object Idle : State
+            data class ReadyToFetch(val payload: SwapQuotePayload) : State
+        }
     }
 
     private companion object {

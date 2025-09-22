@@ -44,7 +44,8 @@ interface SwapWidgetViewModel : StateViewModel<ViewState> {
         data object Loading : ViewState
         data class Content(
             val amountRenderers: AmountRenderers,
-            val contentState: ContentState
+            val contentState: ContentState,
+            val useLocalCurrency: Boolean
         ) : ViewState {
             sealed interface ContentState {
                 data object Idle : ContentState

@@ -12,17 +12,28 @@
 
 package com.algorand.android.ui.swap.widget.mapper
 
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
+import com.algorand.android.modules.parity.domain.usecase.GetUsdToSecondaryCurrencyConversionRate
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel.SwapQuoteFetchState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.android.utils.orZero
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
+import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import java.math.BigDecimal
+import java.math.BigInteger
+import java.math.RoundingMode
 import javax.inject.Inject
 
 private typealias AssetContentViewState = SwapAssetSelectionViewModel.ViewState.Content
 
-internal class DefaultSwapQuoteFetchStateMapper @Inject constructor() : SwapQuoteFetchStateMapper {
+internal class DefaultSwapQuoteFetchStateMapper @Inject constructor(
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
+    private val getUsdToSecondaryCurrencyConversionRate: GetUsdToSecondaryCurrencyConversionRate
+) : SwapQuoteFetchStateMapper {
 
     override fun invoke(
         swapDetails: SwapViewModel.SwapDetails,
@@ -36,16 +47,51 @@ internal class DefaultSwapQuoteFetchStateMapper @Inject constructor() : SwapQuot
         val areAssetsReady = assetInState is AssetContentViewState && assetOutState is AssetContentViewState
         val isAddressValid = !address.isNullOrBlank()
         return if (isAmountValid && areAssetsReady && isAddressValid) {
+            val assetAmount = getAssetInAmount(swapDetails, amountAsBigDecimal, assetInState.assetDetail)
             val payload = SwapQuotePayload(
                 address = address,
                 assetInId = assetInState.assetDetail.assetId,
                 assetOutId = assetOutState.assetDetail.assetId,
-                amount = amountAsBigDecimal.movePointRight(assetInState.assetDetail.decimal).toBigInteger(),
+                amount = assetAmount,
                 slippage = swapDetails.slippage
             )
-            SwapQuoteFetchState.ReadyToFetch(payload)
+            SwapQuoteFetchState(swapDetails.useLocalCurrency, SwapQuoteFetchState.State.ReadyToFetch(payload))
         } else {
-            SwapQuoteFetchState.Idle
+            SwapQuoteFetchState(swapDetails.useLocalCurrency, SwapQuoteFetchState.State.Idle)
+        }
+    }
+
+    private fun getAssetInAmount(
+        details: SwapViewModel.SwapDetails,
+        amount: BigDecimal,
+        assetInDetail: SwapSelectedAssetDetail
+    ): BigInteger {
+        return if (details.useLocalCurrency) {
+            getLocalCurrencyEquivalentAmount(amount, assetInDetail)
+        } else {
+            amount.movePointRight(assetInDetail.decimal).toBigInteger()
+        }
+    }
+
+    private fun getLocalCurrencyEquivalentAmount(
+        amountInput: BigDecimal,
+        assetInDetail: SwapSelectedAssetDetail
+    ): BigInteger {
+        val assetUsdValue = assetInDetail.usdValue.orZero()
+        val usdToLocalCurrencyRate = getUsdConversionRate()
+        if (assetUsdValue == BigDecimal.ZERO || usdToLocalCurrencyRate == BigDecimal.ZERO) return BigInteger.ZERO
+        val localCurrencyValue = assetUsdValue.multiply(usdToLocalCurrencyRate)
+        return amountInput
+            .divide(localCurrencyValue, assetInDetail.decimal, RoundingMode.DOWN)
+            .movePointRight(assetInDetail.decimal)
+            .toBigInteger()
+    }
+
+    private fun getUsdConversionRate(): BigDecimal {
+        return if (isPrimaryCurrencyAlgo()) {
+            getUsdToSecondaryCurrencyConversionRate()
+        } else {
+            getUsdToPrimaryCurrencyConversionRate()
         }
     }
 }

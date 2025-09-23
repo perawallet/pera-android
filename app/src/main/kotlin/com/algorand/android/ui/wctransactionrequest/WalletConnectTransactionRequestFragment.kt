@@ -60,6 +60,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.isBluetoothEnabled
+import com.algorand.android.utils.navigateBackSafe
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
@@ -99,7 +100,7 @@ class WalletConnectTransactionRequestFragment :
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (!walletConnectNavController.navigateUp()) {
+            if (!walletConnectNavController.navigateBackSafe()) {
                 rejectRequest()
             }
         }
@@ -435,7 +436,7 @@ class WalletConnectTransactionRequestFragment :
     }
 
     override fun onNavigateBack() {
-        walletConnectNavController.navigateUp()
+        walletConnectNavController.navigateBackSafe()
     }
 
     override fun showButtons() {

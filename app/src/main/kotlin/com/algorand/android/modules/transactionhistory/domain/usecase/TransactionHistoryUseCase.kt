@@ -137,7 +137,10 @@ class TransactionHistoryUseCase @Inject constructor(
                     is BaseTransaction.Transaction.AssetConfiguration -> it.assetId?.let { safeId -> add(safeId) }
                     is BaseTransaction.Transaction.AssetTransfer -> add(it.assetId)
                     else -> {
-                        sendErrorLog("Unhandled else case in TransactionHistoryUseCase.getAssetIdsFromTransactions")
+                        sendErrorLog(
+                            "Unhandled transaction type: ${it::class.simpleName} " +
+                                    "in TransactionHistoryUseCase.getAssetIdsFromTransactions"
+                        )
                     }
                 }
             }

@@ -18,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.BuildConfig.STAKING_URL
 import com.algorand.android.R
@@ -45,10 +44,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
-import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
+import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
@@ -56,7 +55,8 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
     BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
-        isBottomBarNeeded = true
+        isBottomBarNeeded = true,
+        firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
     private val args: StakingFragmentArgs by navArgs()
@@ -173,7 +173,7 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
 
     override fun closeWebView() {
         binding.root.post {
-            findNavController().navigateUp()
+            navBack()
         }
     }
 
@@ -224,5 +224,6 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
 
     private companion object {
         const val STAKING_STANDALONE_VERSION = "5"
+        private const val FIREBASE_EVENT_SCREEN_ID = "screen_staking"
     }
 }

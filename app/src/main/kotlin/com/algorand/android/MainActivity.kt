@@ -429,9 +429,10 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
-
         super.onCreate(savedInstanceState)
+    }
 
+    override fun initializeMainActivity(savedInstanceState: Bundle?) {
         mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
@@ -552,7 +553,6 @@ class MainActivity :
 
     fun navToDiscoverWithPath(path: String) {
         binding.apply {
-            bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
             nav(
                 actionGlobalDiscoverHomeNavigation(mainViewModel.getDiscoverUrlWithPath(path))
             )
@@ -560,8 +560,7 @@ class MainActivity :
     }
 
     fun navToHome() {
-        if (navController.graph.last().id != R.id.homeNavigation) {
-            binding.bottomNavigationView.menu.findItem(R.id.accountsFragment).isChecked = true
+        if (navController.currentDestination?.id != R.id.accountsFragment) {
             nav(MainNavigationDirections.actionGlobalMainNavigation())
         }
     }
@@ -638,7 +637,6 @@ class MainActivity :
     }
 
     fun navToStakingFragment(path: String? = null) {
-        binding.bottomNavigationView.menu.findItem(R.id.stakingFragment).isChecked = true
         nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
     }
 

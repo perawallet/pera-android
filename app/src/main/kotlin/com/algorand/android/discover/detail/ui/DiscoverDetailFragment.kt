@@ -55,7 +55,8 @@ class DiscoverDetailFragment :
 
     override val fragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false
+        isBottomBarNeeded = false,
+        firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
     private val discoverDetailPreviewCollector: suspend (DiscoverDetailPreview) -> Unit = { preview ->
@@ -209,5 +210,9 @@ class DiscoverDetailFragment :
                 showFavorites = true
             )
         )
+    }
+
+    private companion object {
+        private const val FIREBASE_EVENT_SCREEN_ID = "screen_discover_detail"
     }
 }

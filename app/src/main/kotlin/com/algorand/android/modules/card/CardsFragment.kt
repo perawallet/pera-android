@@ -18,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.algorand.android.R
 import com.algorand.android.databinding.FragmentCardsBinding
 import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
@@ -159,13 +158,13 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
 
     override fun closePeraCards() {
         binding.root.post {
-            findNavController().navigateUp()
+            navBack()
         }
     }
 
     override fun closeWebView() {
         binding.root.post {
-            findNavController().navigateUp()
+            navBack()
         }
     }
 

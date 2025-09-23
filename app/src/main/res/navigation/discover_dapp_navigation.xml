@@ -15,6 +15,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/discoverDappNavigation"
     app:startDestination="@id/discoverDappFragment">
+    
+    <include app:graph="@navigation/single_button_bottom_sheet_navigation" />
 
     <fragment
         android:id="@+id/discoverDappFragment"

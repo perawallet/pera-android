@@ -27,14 +27,13 @@ import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.utils.copyToClipboard
-import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.toShortenedAddress
 
 abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(layoutResId) {
 
     abstract val fragmentConfiguration: FragmentConfiguration
 
-    private val fragmentTag: String = this::class.simpleName.orEmpty()
+    protected val fragmentTag: String = this::class.simpleName.orEmpty()
     protected val baseActivityTag: String
         get() = (activity as? BaseActivity)?.getTag().orEmpty()
 
@@ -86,11 +85,6 @@ abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(
 
     fun navBack() {
         (activity as? CoreMainActivity)?.navBack()
-    }
-
-    fun navBackHidingKeyboard() {
-        view?.hideKeyboard()
-        navBack()
     }
 
     fun nav(directions: NavDirections) {

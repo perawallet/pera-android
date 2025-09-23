@@ -13,6 +13,7 @@
 package com.algorand.android
 
 import android.content.SharedPreferences
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.CoreMainViewModel.ViewEvent
@@ -21,11 +22,11 @@ import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CoreMainViewModel @Inject constructor(
@@ -37,13 +38,14 @@ class CoreMainViewModel @Inject constructor(
     private val _viewEvent = MutableSharedFlow<ViewEvent>(extraBufferCapacity = VIEW_EVENT_BUFFER_CAPACITY)
     override val viewEvent: Flow<ViewEvent> = _viewEvent.asSharedFlow()
 
-    fun initialize() {
+    fun initialize(savedInstanceState: Bundle?) {
         viewModelScope.launch {
             if (isThereAnyLocalAccount() || sharedPref.getRegisterSkip()) {
                 _viewEvent.emit(ViewEvent.InitializeHomeNavigation)
             } else {
                 _viewEvent.emit(ViewEvent.InitializeLoginNavigation)
             }
+            _viewEvent.emit(ViewEvent.InitializeMainActivity(savedInstanceState))
             _viewEvent.emit(ViewEvent.InitializeCoreManagers)
         }
     }
@@ -53,6 +55,7 @@ class CoreMainViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
+        data class InitializeMainActivity(val savedInstanceState: Bundle?) : ViewEvent
         data object InitializeHomeNavigation : ViewEvent
         data object InitializeLoginNavigation : ViewEvent
         data object InitializeCoreManagers : ViewEvent

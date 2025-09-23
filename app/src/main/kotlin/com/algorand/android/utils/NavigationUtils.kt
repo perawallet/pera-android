@@ -114,6 +114,15 @@ fun NavController.navigateSafe(directions: NavDirections, onError: (() -> Unit)?
     }
 }
 
+fun NavController.navigateBackSafe(): Boolean {
+    return try {
+        navigateUp()
+    } catch (exception: IllegalArgumentException) {
+        recordException(exception)
+        false
+    }
+}
+
 fun NavController.navigateSafe(@IdRes resId: Int, args: Bundle?, navOptions: NavOptions) {
     try {
         navigate(resId, args, navOptions)

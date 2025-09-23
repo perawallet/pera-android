@@ -57,6 +57,7 @@ import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
+import com.algorand.android.utils.navigateBackSafe
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
@@ -94,7 +95,7 @@ class WalletConnectArbitraryDataRequestFragment :
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (!walletConnectNavController.navigateUp()) {
+            if (!walletConnectNavController.navigateBackSafe()) {
                 rejectRequest()
             }
         }
@@ -153,8 +154,8 @@ class WalletConnectArbitraryDataRequestFragment :
 
     private fun initNavController() {
         walletConnectNavController = (
-            childFragmentManager.findFragmentById(binding.walletConnectNavigationHostFragment.id) as NavHostFragment
-            ).navController
+                childFragmentManager.findFragmentById(binding.walletConnectNavigationHostFragment.id) as NavHostFragment
+                ).navController
     }
 
     private fun handleNextNavigation() {
@@ -354,7 +355,7 @@ class WalletConnectArbitraryDataRequestFragment :
     }
 
     override fun onNavigateBack() {
-        walletConnectNavController.navigateUp()
+        walletConnectNavController.navigateBackSafe()
     }
 
     override fun showButtons() {

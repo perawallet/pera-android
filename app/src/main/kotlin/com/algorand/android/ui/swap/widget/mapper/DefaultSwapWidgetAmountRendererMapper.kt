@@ -12,11 +12,10 @@
 
 package com.algorand.android.ui.swap.widget.mapper
 
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbolOrName
-import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbol
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToSecondaryCurrencyConversionRate
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.DecimalConfig
@@ -33,11 +32,10 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class DefaultSwapWidgetAmountRendererMapper @Inject constructor(
-    private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName,
-    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
     private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
     private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
-    private val getUsdToSecondaryCurrencyConversionRate: GetUsdToSecondaryCurrencyConversionRate
+    private val getUsdToSecondaryCurrencyConversionRate: GetUsdToSecondaryCurrencyConversionRate,
+    private val parityUseCase: ParityUseCase
 ) : SwapWidgetAmountRendererMapper {
 
     override fun getDefaultRenderers(useLocalCurrency: Boolean): ViewState.Content.AmountRenderers {
@@ -79,11 +77,7 @@ internal class DefaultSwapWidgetAmountRendererMapper @Inject constructor(
     }
 
     private fun getAmountRendererPrefix(useLocalCurrency: Boolean): String {
-        return if (useLocalCurrency) {
-            if (isPrimaryCurrencyAlgo()) getSecondaryCurrencySymbol() else getPrimaryCurrencySymbolOrName()
-        } else {
-            emptyString()
-        }
+        return if (useLocalCurrency) parityUseCase.getDisplayedCurrencySymbol() else emptyString()
     }
 
     private fun getUsdToSelectedCurrencyConversionRate(): BigDecimal {

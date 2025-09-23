@@ -43,6 +43,7 @@ import com.algorand.android.ui.compose.widget.ShimmerTextBox
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.textfield.AmountInputTextField
 import com.algorand.android.ui.compose.widget.textfield.DecimalFormattedVisualTransformation
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
@@ -56,6 +57,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientBala
 
 @Composable
 fun SwapAssetInWidget(
+    swapViewModel: SwapViewModel,
     widgetViewModel: SwapWidgetViewModel,
     assetSelectionViewModel: SwapAssetSelectionViewModel,
     onAssetChipClick: () -> Unit
@@ -64,7 +66,7 @@ fun SwapAssetInWidget(
         val viewState = widgetViewModel.state.collectAsStateWithLifecycle().value
         SwapAssetWidget(
             title = stringResource(R.string.you_pay),
-            amountContent = { AssetInAmountContent(viewState, widgetViewModel) },
+            amountContent = { AssetInAmountContent(swapViewModel, viewState, widgetViewModel) },
             viewModel = assetSelectionViewModel,
             assetSelectionChipBackgroundColor = PeraTheme.colors.layer.grayLightest,
             onAssetChipClick = onAssetChipClick
@@ -74,15 +76,30 @@ fun SwapAssetInWidget(
 }
 
 @Composable
-private fun RowScope.AssetInAmountContent(viewState: ViewState, widgetViewModel: SwapWidgetViewModel) {
+private fun RowScope.AssetInAmountContent(
+    swapViewModel: SwapViewModel,
+    viewState: ViewState,
+    widgetViewModel: SwapWidgetViewModel
+) {
     val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle("")
     val focusRequester = remember { FocusRequester() }
-    Column(modifier = Modifier
-        .clickableNoRipple { focusRequester.requestFocus() }
-        .weight(1f)) {
+    Column(
+        modifier = Modifier
+            .clickableNoRipple { focusRequester.requestFocus() }
+            .weight(1f)) {
         val textFieldValue = TextFieldValue(assetInAmount, TextRange(assetInAmount.length))
-        AssetInAmountInputTextField(viewState, focusRequester, textFieldValue) {
-            widgetViewModel.setAmountInput(it.text)
+        Row {
+            val swapDetails = swapViewModel.swapDetailsFlow.collectAsStateWithLifecycle().value
+            if (textFieldValue.text.isNotBlank() && swapDetails.useLocalCurrency) {
+                Text(
+                    text = swapDetails.primaryCurrencySymbol,
+                    style = PeraTheme.typography.body.large.sansMedium,
+                    color = PeraTheme.colors.text.main,
+                )
+            }
+            AssetInAmountInputTextField(viewState, focusRequester, textFieldValue) {
+                widgetViewModel.setAmountInput(it.text)
+            }
         }
         SecondaryAmountText(viewState)
     }

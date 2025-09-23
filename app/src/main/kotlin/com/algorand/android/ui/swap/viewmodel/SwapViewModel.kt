@@ -21,11 +21,13 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatureIntroductionPageShownUseCase
 import com.algorand.android.modules.swap.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibilityUseCase
 import com.algorand.android.ui.swap.configuration.model.SwapConfigurationResult
 import com.algorand.android.ui.swap.view.SwapFragmentArgs
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
+import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.isEqualTo
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
@@ -63,7 +65,8 @@ class SwapViewModel @Inject constructor(
     private val getAccountLite: GetAccountLite,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getSwapUseLocalCurrencyPreference: GetSwapUseLocalCurrencyPreference,
-    private val setSwapUseLocalCurrencyPreference: SetSwapUseLocalCurrencyPreference
+    private val setSwapUseLocalCurrencyPreference: SetSwapUseLocalCurrencyPreference,
+    private val parityUseCase: ParityUseCase
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val _swapDetailsFlow = MutableStateFlow<SwapDetails>(SwapDetails())
@@ -160,14 +163,20 @@ class SwapViewModel @Inject constructor(
             stateDelegate.updateState { ViewState.NoAccountState }
         } else {
             val assetInId = getAssetInId(address, arg.assetInId)
+            val useLocalCurrency = getSwapUseLocalCurrencyPreference()
             _swapDetailsFlow.value = SwapDetails(
                 address = address,
                 assetInId = assetInId,
                 assetOutId = getAssetOutId(assetInId, arg.assetOutId),
-                useLocalCurrency = getSwapUseLocalCurrencyPreference()
+                useLocalCurrency = useLocalCurrency,
+                primaryCurrencySymbol = getPrimaryCurrencySymbol(useLocalCurrency)
             )
             updateContentState(address)
         }
+    }
+
+    private fun getPrimaryCurrencySymbol(useLocalCurrency: Boolean): String {
+        return if (useLocalCurrency) parityUseCase.getDisplayedCurrencySymbol() else emptyString()
     }
 
     private suspend fun getSwapAddress(arg: SwapFragmentArgs): String? {
@@ -215,6 +224,7 @@ class SwapViewModel @Inject constructor(
         val assetInId: Long = ALGO_ID,
         val assetOutId: Long = USDC_MAINNET_ID,
         val slippage: Float? = null,
-        val useLocalCurrency: Boolean = false
+        val useLocalCurrency: Boolean = false,
+        val primaryCurrencySymbol: String = ""
     )
 }

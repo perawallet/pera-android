@@ -218,6 +218,12 @@ internal class AssetRepositoryImpl @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
+    override suspend fun getAssetLiteInformation(assetId: Long): AssetLiteInformation? {
+        return assetDetailDao.getLiteInformation(assetId)?.let {
+            AssetLiteInformation(it.id, it.usdValue, it.decimals)
+        }
+    }
+
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {
         val assetDetail = assetMapper(assetResponse)
         return if (assetDetail == null) {

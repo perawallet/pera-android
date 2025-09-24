@@ -46,7 +46,8 @@ internal class DefaultSwapRepository @Inject constructor(
     private val swapQuoteProviderMapper: SwapQuoteProviderMapper,
     private val availableSwapAssetMapper: AvailableSwapAssetMapper,
     private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>>,
-    private val topSwapPairsMapper: TopSwapPairsMapper
+    private val topSwapPairsMapper: TopSwapPairsMapper,
+    private val useLocalCurrencyCache: PersistentCache<Boolean>,
 ) : SwapRepository {
 
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
@@ -130,5 +131,13 @@ internal class DefaultSwapRepository @Inject constructor(
         } catch (e: Exception) {
             PeraResult.Error(e)
         }
+    }
+
+    override suspend fun getUseLocalCurrencyPreference(): Boolean {
+        return useLocalCurrencyCache.get() ?: false
+    }
+
+    override suspend fun setUseLocalCurrencyPreference(useLocalCurrency: Boolean) {
+        useLocalCurrencyCache.put(useLocalCurrency)
     }
 }

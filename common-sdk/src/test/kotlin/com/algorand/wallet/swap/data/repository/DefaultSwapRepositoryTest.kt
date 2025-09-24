@@ -63,6 +63,7 @@ class DefaultSwapRepositoryTest {
     private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>> = mockk(relaxed = true)
     private val swapQuoteProviderMapper: SwapQuoteProviderMapper = mockk()
     private val topSwapPairsMapper: TopSwapPairsMapper = mockk()
+    private val useLocalCurrencyCache: PersistentCache<Boolean> = mockk(relaxed = true)
 
     private val sut = DefaultSwapRepository(
         swapApiService,
@@ -73,7 +74,8 @@ class DefaultSwapRepositoryTest {
         swapQuoteProviderMapper,
         availableSwapAssetMapper,
         providersCache,
-        topSwapPairsMapper
+        topSwapPairsMapper,
+        useLocalCurrencyCache
     )
 
     @Test

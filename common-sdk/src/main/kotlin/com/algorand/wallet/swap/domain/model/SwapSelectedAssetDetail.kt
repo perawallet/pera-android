@@ -13,6 +13,7 @@
 package com.algorand.wallet.swap.domain.model
 
 import com.algorand.wallet.asset.domain.model.VerificationTier
+import java.math.BigDecimal
 import java.math.BigInteger
 
 data class SwapSelectedAssetDetail(
@@ -22,7 +23,8 @@ data class SwapSelectedAssetDetail(
     val decimal: Int,
     val imageUrl: String?,
     val amount: BigInteger,
-    val optInState: OptInState
+    val optInState: OptInState,
+    val usdValue: BigDecimal?
 ) {
 
     sealed interface OptInState {

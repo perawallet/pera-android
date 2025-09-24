@@ -13,39 +13,58 @@
 package com.algorand.android.ui.swap.widget.mapper
 
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.ui.swap.widget.model.SwapAmountInput
+import com.algorand.android.ui.swap.widget.usecase.GetSwapAmountFromLocalCurrencyInput
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel.SwapQuoteFetchState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
 import com.algorand.android.utils.isGreaterThan
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
+import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 private typealias AssetContentViewState = SwapAssetSelectionViewModel.ViewState.Content
 
-internal class DefaultSwapQuoteFetchStateMapper @Inject constructor() : SwapQuoteFetchStateMapper {
+internal class DefaultSwapQuoteFetchStateMapper @Inject constructor(
+    private val getSwapAmountFromLocalCurrencyInput: GetSwapAmountFromLocalCurrencyInput
+) : SwapQuoteFetchStateMapper {
 
     override fun invoke(
         swapDetails: SwapViewModel.SwapDetails,
-        amount: String,
+        amountInput: SwapAmountInput.Input,
         assetInState: SwapAssetSelectionViewModel.ViewState,
         assetOutState: SwapAssetSelectionViewModel.ViewState
     ): SwapQuoteFetchState {
         val address = swapDetails.address
-        val amountAsBigDecimal = amount.toBigDecimalOrNull()
+        val amountAsBigDecimal = amountInput.amountAsBigDecimal
         val isAmountValid = amountAsBigDecimal != null && amountAsBigDecimal isGreaterThan BigDecimal.ZERO
         val areAssetsReady = assetInState is AssetContentViewState && assetOutState is AssetContentViewState
         val isAddressValid = !address.isNullOrBlank()
         return if (isAmountValid && areAssetsReady && isAddressValid) {
+            val assetAmount = getAssetInAmount(swapDetails, amountAsBigDecimal, assetInState.assetDetail)
             val payload = SwapQuotePayload(
                 address = address,
                 assetInId = assetInState.assetDetail.assetId,
                 assetOutId = assetOutState.assetDetail.assetId,
-                amount = amountAsBigDecimal.movePointRight(assetInState.assetDetail.decimal).toBigInteger(),
+                amount = assetAmount,
                 slippage = swapDetails.slippage
             )
-            SwapQuoteFetchState.ReadyToFetch(payload)
+            SwapQuoteFetchState(swapDetails.useLocalCurrency, SwapQuoteFetchState.State.ReadyToFetch(payload))
         } else {
-            SwapQuoteFetchState.Idle
+            SwapQuoteFetchState(swapDetails.useLocalCurrency, SwapQuoteFetchState.State.Idle)
+        }
+    }
+
+    private fun getAssetInAmount(
+        details: SwapViewModel.SwapDetails,
+        amount: BigDecimal,
+        assetInDetail: SwapSelectedAssetDetail
+    ): BigInteger {
+        return if (details.useLocalCurrency) {
+            getSwapAmountFromLocalCurrencyInput(amount, assetInDetail)
+        } else {
+            amount.movePointRight(assetInDetail.decimal).toBigInteger()
         }
     }
 }

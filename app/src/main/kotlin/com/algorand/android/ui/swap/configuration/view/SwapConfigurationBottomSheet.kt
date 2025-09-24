@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -223,6 +224,7 @@ private fun TextInputField(title: String, hint: String, text: TextFieldValue, on
         hint = hint.capitalizeWords(),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         textStyle = PeraTheme.typography.body.large.sansMedium.copy(color = PeraTheme.colors.text.main),
+        cursorBrush = SolidColor(PeraTheme.colors.text.main),
         colors = PeraTextFieldColors.defaultColors().copy(
             focusedIndicatorColor = PeraTheme.colors.text.grayLighter,
             unfocusedIndicatorColor = PeraTheme.colors.text.grayLighter

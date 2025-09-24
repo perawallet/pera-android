@@ -56,6 +56,10 @@ fun interface GetUsdToSecondaryCurrencyConversionRate {
     operator fun invoke(): BigDecimal
 }
 
+fun interface GetUsdToPrimaryFiatConversionRate {
+    operator fun invoke(): BigDecimal
+}
+
 internal fun interface CalculateParityValue {
     operator fun invoke(
         assetUsdValue: BigDecimal,

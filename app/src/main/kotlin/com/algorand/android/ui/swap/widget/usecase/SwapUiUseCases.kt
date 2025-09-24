@@ -10,15 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.widget.mapper
+package com.algorand.android.ui.swap.widget.usecase
 
-import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import java.math.BigDecimal
+import java.math.BigInteger
 
-interface SwapWidgetAmountRendererMapper {
-    fun getDefaultRenderers(useLocalCurrency: Boolean): SwapWidgetViewModel.ViewState.Content.AmountRenderers
-    fun getQuoteRenderers(
-        quote: SwapQuoteV2,
-        useLocalCurrency: Boolean
-    ): SwapWidgetViewModel.ViewState.Content.AmountRenderers
+fun interface GetSwapAmountFromLocalCurrencyInput {
+    operator fun invoke(amountInput: BigDecimal, assetInDetail: SwapSelectedAssetDetail): BigInteger
+}
+
+fun interface GetSwapLocalCurrencyAmountFromAssetInput {
+    suspend operator fun invoke(amountInput: BigDecimal, assetId: Long): BigDecimal
 }

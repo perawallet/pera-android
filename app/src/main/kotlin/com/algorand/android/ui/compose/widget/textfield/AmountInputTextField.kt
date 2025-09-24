@@ -58,7 +58,7 @@ fun AmountInputTextField(
             modifier = modifier,
             value = textFieldValue,
             onValueChange = onTextChanged,
-            visualTransformation = DecimalFormattedVisualTransformation(),
+            visualTransformation = visualTransformation,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             keyboardActions = keyboardActions,
             textStyle = textStyle.copy(color = PeraTheme.colors.text.main),

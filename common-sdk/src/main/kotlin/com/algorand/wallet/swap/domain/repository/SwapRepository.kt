@@ -30,4 +30,6 @@ internal interface SwapRepository {
     suspend fun updateSwapQuoteException(quoteId: Long, exceptionText: String)
     suspend fun getAvailableAssetsToSwap(assetInId: Long, query: String?): PeraResult<List<AvailableSwapAsset>>
     suspend fun getTopSwapPairs(): PeraResult<TopSwapPairs>
+    suspend fun getUseLocalCurrencyPreference(): Boolean
+    suspend fun setUseLocalCurrencyPreference(useLocalCurrency: Boolean)
 }

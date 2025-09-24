@@ -20,6 +20,7 @@ import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import io.mockk.every
 import io.mockk.mockk
+import java.math.BigDecimal
 import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -95,7 +96,8 @@ class DefaultSwapSelectedAssetDetailMapperTest {
             verificationTier = VERIFICATION_TIER_ENTITY,
             imageUrl = "https://example.com/image.png",
             assetHoldingAmount = 1000.toBigInteger(),
-            decimal = 6
+            decimal = 6,
+            usdValue = BigDecimal.TEN
         )
 
         val VALID_DETAIL = SwapSelectedAssetDetail(
@@ -105,7 +107,8 @@ class DefaultSwapSelectedAssetDetailMapperTest {
             decimal = 6,
             imageUrl = "https://example.com/image.png",
             amount = 1000.toBigInteger(),
-            optInState = SwapSelectedAssetDetail.OptInState.OptedIn
+            optInState = SwapSelectedAssetDetail.OptInState.OptedIn,
+            usdValue = BigDecimal.TEN
         )
     }
 }

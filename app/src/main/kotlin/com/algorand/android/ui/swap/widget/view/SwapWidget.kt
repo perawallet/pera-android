@@ -55,7 +55,7 @@ fun SwapWidget(
     onConfigureClick: () -> Unit
 ) {
     ConstraintLayout(modifier = modifier, constraintSet = createConstraints()) {
-        AssetInContainer(widgetViewModel, assetInViewModel, listener)
+        AssetInContainer(swapViewModel, widgetViewModel, assetInViewModel, listener)
         AssetOutContainer(widgetViewModel, assetOutViewModel, listener)
         SwapConfigurationContainer(
             configViewModel,
@@ -79,6 +79,7 @@ fun SwapWidget(
 
 @Composable
 private fun AssetInContainer(
+    swapViewModel: SwapViewModel,
     widgetViewModel: SwapWidgetViewModel,
     assetInViewModel: SwapAssetSelectionViewModel,
     listener: SwapWidgetListener
@@ -88,7 +89,7 @@ private fun AssetInContainer(
             .layoutId(ASSET_IN_CONTAINER_ID)
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp)
     ) {
-        SwapAssetInWidget(widgetViewModel, assetInViewModel, listener::onAssetInChipClick)
+        SwapAssetInWidget(swapViewModel, widgetViewModel, assetInViewModel, listener::onAssetInChipClick)
     }
 }
 

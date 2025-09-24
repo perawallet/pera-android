@@ -41,7 +41,7 @@ internal fun interface SwapQuoteMapper {
 }
 
 internal fun interface SwapQuoteRequestBodyMapper {
-    operator fun invoke(payload: SwapQuoteRequestPayload, providers: List<SwapQuoteProvider>): SwapQuoteRequestBody
+    operator fun invoke(payload: SwapQuoteRequestPayload): SwapQuoteRequestBody
 }
 
 internal fun interface SwapQuoteTransactionMapper {

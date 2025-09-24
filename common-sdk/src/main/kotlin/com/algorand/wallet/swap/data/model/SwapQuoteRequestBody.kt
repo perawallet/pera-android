@@ -16,8 +16,6 @@ import com.google.gson.annotations.SerializedName
 import java.math.BigInteger
 
 internal data class SwapQuoteRequestBody(
-    @SerializedName("providers")
-    val providers: List<String>,
     @SerializedName("swapper_address")
     val swapperAddress: String,
     @SerializedName("swap_type")

@@ -53,7 +53,7 @@ internal class DefaultSwapRepository @Inject constructor(
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
         return try {
             val providers = getSwapQuoteProviders().getDataOrNull() ?: return PeraResult.Error(Exception())
-            val response = swapApiService.getSwapQuote(quoteRequestMapper(payload, providers))
+            val response = swapApiService.getSwapQuote(quoteRequestMapper(payload))
             val quotes = response.swapQuoteResponseList.mapNotNull { quoteMapper(it, providers) }
             if (quotes.isEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(quotes)
         } catch (exception: Exception) {

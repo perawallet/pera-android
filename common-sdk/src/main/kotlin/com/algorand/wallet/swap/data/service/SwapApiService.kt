@@ -40,13 +40,13 @@ internal interface SwapApiService {
         @Query("q") query: String?
     ): AvailableSwapAssetListResponse
 
-    @POST("v1/dex-swap/quotes/")
+    @POST("v2/dex-swap/quotes/")
     suspend fun getSwapQuote(@Body requestBody: SwapQuoteRequestBody): SwapQuoteResultResponse
 
     @POST("v1/dex-swap/calculate-pera-fee/")
     suspend fun getPeraFee(@Body requestBody: SwapPeraFeeRequestBody): SwapPeraFeeResponse
 
-    @POST("v1/dex-swap/prepare-transactions/")
+    @POST("v2/dex-swap/prepare-transactions/")
     suspend fun getQuoteTransactions(
         @Body requestBody: CreateSwapQuoteTransactionsRequestBody
     ): CreateSwapQuoteTransactionsResponse

@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -59,10 +58,6 @@ fun SwapScreen(
     swapPairHistoryViewModel: SwapPairHistoryViewModel = hiltViewModel<SwapPairHistoryViewModel>(),
     listener: SwapScreenListener
 ) {
-    LaunchedEffect(Unit) {
-        swapViewModel.initViewState()
-    }
-
     Box(
         modifier = Modifier
             .background(color = PeraTheme.colors.background.primary)

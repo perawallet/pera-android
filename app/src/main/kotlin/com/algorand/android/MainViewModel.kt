@@ -58,6 +58,8 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -101,7 +103,8 @@ class MainViewModel @Inject constructor(
     private val bottomNavigationEventTracker: BottomNavigationEventTracker,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
-    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
     BottomNavigationEventTracker by bottomNavigationEventTracker {
 
@@ -165,6 +168,8 @@ class MainViewModel @Inject constructor(
             else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
         }
     }
+
+    fun isSwapV2Enabled(): Boolean = isFeatureToggleEnabled(SWAP_V2_TOGGLE)
 
     fun handleNotificationDeepLink(
         accountAddress: String,

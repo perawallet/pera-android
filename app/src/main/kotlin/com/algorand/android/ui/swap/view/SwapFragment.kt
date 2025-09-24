@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
@@ -43,6 +44,8 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
+    private val args: SwapFragmentArgs by navArgs()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             PeraTheme {
@@ -54,6 +57,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         registerBottomNavBarFragmentDelegation(this)
+        swapViewModel.initViewState(args)
     }
 
     override fun onStart() {
@@ -106,7 +110,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     }
 
     override fun onStartSwappingClick() {
-        swapViewModel.acceptTermsOfService()
+        swapViewModel.acceptTermsOfService(args)
     }
 
     override fun onTermsOfServiceClick() {

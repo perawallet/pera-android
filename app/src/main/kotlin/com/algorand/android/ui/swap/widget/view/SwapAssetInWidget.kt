@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,13 +85,16 @@ private fun RowScope.AssetInAmountContent(
 ) {
     val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
+    val isCurrencySymbolVisible by remember(assetInAmount.rawInput, swapDetails.useLocalCurrency) {
+        mutableStateOf(assetInAmount.rawInput.isNotBlank() && swapDetails.useLocalCurrency)
+    }
     Column(
         modifier = Modifier
             .clickableNoRipple { focusRequester.requestFocus() }
             .weight(1f)) {
         val textFieldValue = TextFieldValue(assetInAmount.rawInput, TextRange(assetInAmount.rawInput.length))
-        Row {
-            if (textFieldValue.text.isNotBlank() && swapDetails.useLocalCurrency) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (isCurrencySymbolVisible) {
                 Text(
                     text = swapDetails.primaryCurrencySymbol,
                     style = PeraTheme.typography.body.large.sansMedium,

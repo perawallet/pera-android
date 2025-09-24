@@ -64,9 +64,10 @@ fun SwapAssetInWidget(
 ) {
     Column {
         val viewState = widgetViewModel.state.collectAsStateWithLifecycle().value
+        val swapDetails = swapViewModel.swapDetailsFlow.collectAsStateWithLifecycle().value
         SwapAssetWidget(
             title = stringResource(R.string.you_pay),
-            amountContent = { AssetInAmountContent(swapViewModel, viewState, widgetViewModel) },
+            amountContent = { AssetInAmountContent(swapDetails, viewState, widgetViewModel) },
             viewModel = assetSelectionViewModel,
             assetSelectionChipBackgroundColor = PeraTheme.colors.layer.grayLightest,
             onAssetChipClick = onAssetChipClick
@@ -77,7 +78,7 @@ fun SwapAssetInWidget(
 
 @Composable
 private fun RowScope.AssetInAmountContent(
-    swapViewModel: SwapViewModel,
+    swapDetails: SwapViewModel.SwapDetails,
     viewState: ViewState,
     widgetViewModel: SwapWidgetViewModel
 ) {
@@ -89,7 +90,6 @@ private fun RowScope.AssetInAmountContent(
             .weight(1f)) {
         val textFieldValue = TextFieldValue(assetInAmount, TextRange(assetInAmount.length))
         Row {
-            val swapDetails = swapViewModel.swapDetailsFlow.collectAsStateWithLifecycle().value
             if (textFieldValue.text.isNotBlank() && swapDetails.useLocalCurrency) {
                 Text(
                     text = swapDetails.primaryCurrencySymbol,

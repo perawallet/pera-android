@@ -18,14 +18,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.algorand.android.ui.asset.lite.usecase.GetPaginatedAssetListItems
+import androidx.paging.map
+import com.algorand.android.ui.asset.lite.mapper.AssetListItemMapper
 import com.algorand.android.ui.compose.widget.asset.AssetListItem
 import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetInSelectionViewModel.ViewState
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectibles
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutZeroAmount
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.SearchKeyword
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteSortType.NameAscending
+import com.algorand.wallet.asset.domain.usecase.GetSwappableAssetLitesFlow
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,11 +35,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 
 @HiltViewModel
 class SwapAssetInSelectionViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
-    private val getPaginatedAssetListItems: GetPaginatedAssetListItems
+    private val getSwappableAssetLitesFlow: GetSwappableAssetLitesFlow,
+    private val assetListItemMapper: AssetListItemMapper
 ) : ViewModel(), StateViewModel<ViewState> {
 
     init {
@@ -54,13 +53,11 @@ class SwapAssetInSelectionViewModel @Inject constructor(
 
     private val assetPagingItems: Flow<PagingData<AssetListItem>> =
         combine(addressFlow.filterNotNull(), queryFlow) { address, query ->
-            AssetCollectibleLiteQuery(
-                address,
-                sortType = NameAscending,
-                filters = listOf(FilterOutZeroAmount, SearchKeyword(query), FilterOutCollectibles)
-            )
-        }.flatMapLatest { assetQuery ->
-            getPaginatedAssetListItems(assetQuery)
+            address to query
+        }.flatMapLatest { (address, query) ->
+            getSwappableAssetLitesFlow(address, query).map { pagingData ->
+                pagingData.map { assetLite -> assetListItemMapper(assetLite) }
+            }
         }.cachedIn(viewModelScope)
 
     override val state: StateFlow<ViewState>

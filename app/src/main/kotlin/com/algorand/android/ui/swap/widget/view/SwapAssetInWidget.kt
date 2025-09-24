@@ -16,14 +16,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +40,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.ShimmerTextBox
+import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.textfield.AmountInputTextField
 import com.algorand.android.ui.compose.widget.textfield.DecimalFormattedVisualTransformation
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
@@ -71,8 +76,12 @@ fun SwapAssetInWidget(
 @Composable
 private fun RowScope.AssetInAmountContent(viewState: ViewState, widgetViewModel: SwapWidgetViewModel) {
     val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle("")
-    Column(modifier = Modifier.weight(1f)) {
-        AssetInAmountInputTextField(viewState, TextFieldValue(assetInAmount, TextRange(assetInAmount.length))) {
+    val focusRequester = remember { FocusRequester() }
+    Column(modifier = Modifier
+        .clickableNoRipple { focusRequester.requestFocus() }
+        .weight(1f)) {
+        val textFieldValue = TextFieldValue(assetInAmount, TextRange(assetInAmount.length))
+        AssetInAmountInputTextField(viewState, focusRequester, textFieldValue) {
             widgetViewModel.setAmountInput(it.text)
         }
         SecondaryAmountText(viewState)
@@ -82,10 +91,14 @@ private fun RowScope.AssetInAmountContent(viewState: ViewState, widgetViewModel:
 @Composable
 private fun AssetInAmountInputTextField(
     viewState: ViewState,
+    focusRequester: FocusRequester,
     textFieldValue: TextFieldValue,
     onTextChanged: (TextFieldValue) -> Unit,
 ) {
     AmountInputTextField(
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .fillMaxWidth(),
         textFieldValue = textFieldValue,
         hint = (viewState as? Content)?.amountRenderers?.assetInPrimaryAmountHint?.getDisplayValue(),
         onTextChanged = onTextChanged,

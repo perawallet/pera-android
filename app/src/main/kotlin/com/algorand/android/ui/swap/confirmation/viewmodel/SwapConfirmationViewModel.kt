@@ -46,6 +46,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 import com.algorand.android.utils.DataResource
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -64,6 +65,7 @@ class SwapConfirmationViewModel @Inject constructor(
     private val createSwapQuoteTransactions: CreateSwapQuoteTransactionsUseCase,
     private val swapTransactionSignManager: SwapTransactionSignManager,
     private val sendSwapTransactionsManager: SendSwapTransactionsManager,
+    private val setLastUsedSwapAddress: SetLastUsedSwapAddress,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -143,6 +145,7 @@ class SwapConfirmationViewModel @Inject constructor(
                 sendSwapTransactionsManager.sendSwapTransactions(
                     signedTransactions = signedTxns.toMutableList(),
                     onSendTransactionsSuccess = {
+                        setLastUsedSwapAddress(content.accountDisplayName.accountAddress)
                         displaySuccessState(content)
                         val assetInShortName = content.quote.assetInDetail.shortName.orEmpty()
                         val assetOutShortName = content.quote.assetOutDetail.shortName.orEmpty()

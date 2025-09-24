@@ -29,7 +29,7 @@ fun PeraRadioButton(
         selected = selected,
         onClick = onClick,
         colors = RadioButtonDefaults.colors().copy(
-            selectedColor = PeraTheme.colors.helper.positive,
+            selectedColor = PeraTheme.colors.helper.success,
             unselectedColor = PeraTheme.colors.layer.gray
         )
     )

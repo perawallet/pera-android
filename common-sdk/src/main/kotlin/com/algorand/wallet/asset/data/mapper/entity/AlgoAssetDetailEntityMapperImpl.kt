@@ -32,7 +32,8 @@ internal class AlgoAssetDetailEntityMapperImpl @Inject constructor() : AlgoAsset
             assetCreatorId = null,
             assetCreatorAddress = null,
             isVerifiedAssetCreator = true,
-            verificationTier = VerificationTierEntity.TRUSTED
+            verificationTier = VerificationTierEntity.TRUSTED,
+            category = null
         )
     }
 }

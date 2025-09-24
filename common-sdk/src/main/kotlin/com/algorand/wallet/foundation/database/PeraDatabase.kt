@@ -29,10 +29,12 @@ import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleTraitDao
 import com.algorand.wallet.asset.data.database.dao.PaginatedAssetCollectibleDao
+import com.algorand.wallet.asset.data.database.dao.PaginatedSwappableAssetDao
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
+import com.algorand.wallet.foundation.database.converters.AssetCategoryEntityTypeConverter
 import com.algorand.wallet.foundation.database.converters.BigDecimalTypeConverter
 import com.algorand.wallet.foundation.database.converters.BigIntegerTypeConverter
 import com.algorand.wallet.foundation.database.converters.CollectibleMediaTypeTypeConverter
@@ -45,7 +47,8 @@ import com.algorand.wallet.swap.data.dao.SwapSelectedAssetDao
     BigDecimalTypeConverter::class,
     CollectibleMediaTypeTypeConverter::class,
     CollectibleStandardTypeTypeConverter::class,
-    VerificationTierTypeConverter::class
+    VerificationTierTypeConverter::class,
+    AssetCategoryEntityTypeConverter::class
 )
 @Database(
     entities = [
@@ -73,9 +76,10 @@ internal abstract class PeraDatabase : RoomDatabase() {
     abstract fun paginatedAssetCollectibleDao(): PaginatedAssetCollectibleDao
     abstract fun paginatedCollectibleDao(): PaginatedCollectibleDao
     abstract fun swapSelectedAssetDao(): SwapSelectedAssetDao
+    abstract fun paginatedSwappableAssetDao(): PaginatedSwappableAssetDao
 
     companion object {
-        const val DATABASE_VERSION = 4
+        const val DATABASE_VERSION = 5
         const val DATABASE_NAME = "pera_database"
     }
 }

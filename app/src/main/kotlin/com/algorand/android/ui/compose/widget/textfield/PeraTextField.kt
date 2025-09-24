@@ -11,6 +11,7 @@
  */
 
 @file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("LongParameterList")
 
 package com.algorand.android.ui.compose.widget.textfield
 
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
@@ -30,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -72,6 +75,8 @@ fun PeraTextField(
     singleLine: Boolean = true,
     enabled: Boolean = true,
     hint: String? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    textStyle: TextStyle = TextStyle.Default,
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
     PeraTextFieldContainer(modifier, textFieldValue.text, hint) {
@@ -79,6 +84,8 @@ fun PeraTextField(
             modifier = Modifier.defaultTextFieldModifier(),
             value = textFieldValue,
             onValueChange = onTextChanged,
+            keyboardOptions = keyboardOptions,
+            textStyle = textStyle,
             decorationBox = {
                 TextFieldDecorationBox(textFieldValue.text, it, label, trailingIcon, singleLine, enabled, colors)
             }
@@ -95,8 +102,8 @@ private fun PeraTextFieldContainer(
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.CenterStart) {
         val textField = text.ifEmpty { " " }
-        basicTextField()
         HintText(hint, textField)
+        basicTextField()
     }
 }
 
@@ -149,5 +156,6 @@ object PeraTextFieldColors {
         unfocusedContainerColor = Color.Transparent,
         unfocusedTextColor = PeraTheme.colors.text.main,
         focusedTextColor = PeraTheme.colors.text.main,
+        cursorColor = PeraTheme.colors.text.main
     )
 }

@@ -19,7 +19,9 @@ import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetCreator
 import javax.inject.Inject
 
-internal class AssetInfoMapperImpl @Inject constructor() : AssetInfoMapper {
+internal class AssetInfoMapperImpl @Inject constructor(
+    private val assetCategoryMapper: AssetCategoryMapper
+) : AssetInfoMapper {
 
     override fun invoke(assetResponse: AssetResponse): Asset.AssetInfo {
         return Asset.AssetInfo(
@@ -34,7 +36,8 @@ internal class AssetInfoMapperImpl @Inject constructor() : AssetInfoMapper {
             description = assetResponse.description,
             supply = assetResponse.mapToSupply(),
             url = assetResponse.url,
-            isAvailableOnDiscoverMobile = assetResponse.isAvailableOnDiscoverMobile
+            isAvailableOnDiscoverMobile = assetResponse.isAvailableOnDiscoverMobile,
+            category = assetCategoryMapper(assetResponse.category)
         )
     }
 
@@ -51,7 +54,8 @@ internal class AssetInfoMapperImpl @Inject constructor() : AssetInfoMapper {
             description = entity.description,
             supply = entity.mapToSupply(),
             url = entity.url,
-            isAvailableOnDiscoverMobile = entity.availableOnDiscoverMobile
+            isAvailableOnDiscoverMobile = entity.availableOnDiscoverMobile,
+            category = assetCategoryMapper(entity.category)
         )
     }
 
@@ -74,7 +78,8 @@ internal class AssetInfoMapperImpl @Inject constructor() : AssetInfoMapper {
             social = null,
             description = null,
             url = null,
-            isAvailableOnDiscoverMobile = null
+            isAvailableOnDiscoverMobile = null,
+            category = null
         )
     }
 

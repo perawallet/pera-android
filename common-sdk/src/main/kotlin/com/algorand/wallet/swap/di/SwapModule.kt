@@ -13,6 +13,7 @@
 package com.algorand.wallet.swap.di
 
 import androidx.paging.PagingSource
+import com.algorand.wallet.asset.data.database.dao.PaginatedSwappableAssetDao
 import com.algorand.wallet.foundation.cache.InMemoryCacheProvider
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.foundation.database.PeraDatabase
@@ -69,6 +70,7 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
+import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import com.algorand.wallet.utils.date.parser.ISO8601DateTimeParser
 import dagger.Module
 import dagger.Provides
@@ -117,6 +119,11 @@ internal object SwapModule {
     @Provides
     fun provideSwapSelectedAssetDao(database: PeraDatabase): SwapSelectedAssetDao {
         return database.swapSelectedAssetDao()
+    }
+
+    @Provides
+    fun providePaginatedSwappableAssetDao(database: PeraDatabase): PaginatedSwappableAssetDao {
+        return database.paginatedSwappableAssetDao()
     }
 
     @Provides
@@ -224,5 +231,10 @@ internal object SwapModule {
     @Provides
     fun provideGetSwapPairHistory(repository: SwapHistoryRepository): GetSwapPairHistory {
         return GetSwapPairHistory(repository::getSwapPairHistory)
+    }
+
+    @Provides
+    fun provideSetLastUsedSwapAddress(repository: SwapRepository): SetLastUsedSwapAddress {
+        return SetLastUsedSwapAddress(repository::setLastUsedSwapAddress)
     }
 }

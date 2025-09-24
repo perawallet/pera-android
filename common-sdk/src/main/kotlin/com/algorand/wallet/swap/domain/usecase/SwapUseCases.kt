@@ -68,3 +68,7 @@ fun interface GetSwapHistory {
 fun interface GetSwapPairHistory {
     suspend operator fun invoke(address: String, statuses: List<SwapHistoryStatus>): PeraResult<List<SwapPairHistory>>
 }
+
+fun interface SetLastUsedSwapAddress {
+    suspend operator fun invoke(address: String)
+}

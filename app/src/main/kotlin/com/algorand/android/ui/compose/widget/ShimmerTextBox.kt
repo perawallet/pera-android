@@ -14,6 +14,7 @@ package com.algorand.android.ui.compose.widget
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.widget.modifier.shimmer
 
 @Composable
@@ -31,6 +33,7 @@ fun ShimmerTextBox(textStyle: TextStyle, width: Dp) {
         modifier = Modifier
             .height(textHeight)
             .width(width)
+            .padding(vertical = 4.dp)
             .shimmer()
     )
 }

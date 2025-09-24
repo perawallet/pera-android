@@ -20,6 +20,7 @@ import com.algorand.wallet.asset.data.mapper.model.AssetLiteMapperImpl
 import com.algorand.wallet.asset.data.repository.AssetCollectibleLiteRepositoryImpl
 import com.algorand.wallet.asset.domain.repository.AssetCollectibleLiteRepository
 import com.algorand.wallet.asset.domain.usecase.GetAssetCollectibleLitesFlow
+import com.algorand.wallet.asset.domain.usecase.GetSwappableAssetLitesFlow
 import com.algorand.wallet.foundation.database.PeraDatabase
 import dagger.Module
 import dagger.Provides
@@ -54,4 +55,9 @@ internal object AssetLiteModule {
     fun provideAssetCollectibleLiteRepository(
         impl: AssetCollectibleLiteRepositoryImpl
     ): AssetCollectibleLiteRepository = impl
+
+    @Provides
+    fun provideGetSwappableAssetLitesFlow(
+        repository: AssetCollectibleLiteRepository
+    ): GetSwappableAssetLitesFlow = GetSwappableAssetLitesFlow(repository::getSwappableAssetLitesFlow)
 }

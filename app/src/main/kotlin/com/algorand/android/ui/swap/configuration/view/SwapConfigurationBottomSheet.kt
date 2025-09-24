@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -39,15 +40,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.bottomsheet.PeraModalBottomSheet
 import com.algorand.android.ui.compose.widget.PeraSwitch
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.PeraToolbarTextButton
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraModalBottomSheet
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.textfield.PeraTextField
 import com.algorand.android.ui.compose.widget.textfield.PeraTextFieldColors
@@ -113,7 +115,7 @@ private fun BalancePercentageInputContainer(textState: MutableState<TextFieldVal
             title = stringResource(R.string.balance_percentage),
             hint = stringResource(R.string.set_custom_percentage),
             text = textInput,
-            onTextChanged = { textState.value = it }
+            onTextChanged = { textState.value = it.copy(text = it.text.replaceCommaWithDot()) }
         )
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
@@ -140,7 +142,7 @@ private fun SlippageInputContainer(textState: MutableState<TextFieldValue>) {
             title = stringResource(R.string.slippage_tolerance),
             hint = stringResource(R.string.set_custom_slippage),
             text = textInput,
-            onTextChanged = { textState.value = it }
+            onTextChanged = { textState.value = it.copy(text = it.text.replaceCommaWithDot()) }
         )
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
@@ -167,6 +169,8 @@ private fun SlippageInputContainer(textState: MutableState<TextFieldValue>) {
         }
     }
 }
+
+private fun String.replaceCommaWithDot(): String = this.replace(",", ".")
 
 private fun Float.formattedValue(maxDecimal: Int): String {
     return DecimalFormat("0", DecimalFormatSymbols(Locale.getDefault())).apply {
@@ -217,6 +221,8 @@ private fun TextInputField(title: String, hint: String, text: TextFieldValue, on
         textFieldValue = text,
         onTextChanged = onTextChanged,
         hint = hint.capitalizeWords(),
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        textStyle = PeraTheme.typography.body.large.sansMedium.copy(color = PeraTheme.colors.text.main),
         colors = PeraTextFieldColors.defaultColors().copy(
             focusedIndicatorColor = PeraTheme.colors.text.grayLighter,
             unfocusedIndicatorColor = PeraTheme.colors.text.grayLighter
@@ -227,7 +233,7 @@ private fun TextInputField(title: String, hint: String, text: TextFieldValue, on
 @Composable
 private fun ChipButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val (textColor, backgroundColor) = if (isSelected) {
-        PeraTheme.colors.helper.positive to PeraTheme.colors.helper.positiveLighter
+        PeraTheme.colors.helper.positive to PeraTheme.colors.helper.positiveLighter.copy(alpha = 0.12f)
     } else {
         PeraTheme.colors.button.secondary.text to PeraTheme.colors.button.secondary.background
     }

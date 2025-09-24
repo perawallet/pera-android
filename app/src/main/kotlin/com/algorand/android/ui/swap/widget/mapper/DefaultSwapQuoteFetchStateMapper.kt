@@ -16,6 +16,7 @@ import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlg
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToSecondaryCurrencyConversionRate
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.ui.swap.widget.model.SwapAmountInput
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel.SwapQuoteFetchState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
 import com.algorand.android.utils.isGreaterThan
@@ -37,12 +38,12 @@ internal class DefaultSwapQuoteFetchStateMapper @Inject constructor(
 
     override fun invoke(
         swapDetails: SwapViewModel.SwapDetails,
-        amount: String,
+        amountInput: SwapAmountInput.Input,
         assetInState: SwapAssetSelectionViewModel.ViewState,
         assetOutState: SwapAssetSelectionViewModel.ViewState
     ): SwapQuoteFetchState {
         val address = swapDetails.address
-        val amountAsBigDecimal = amount.toBigDecimalOrNull()
+        val amountAsBigDecimal = amountInput.amountAsBigDecimal
         val isAmountValid = amountAsBigDecimal != null && amountAsBigDecimal isGreaterThan BigDecimal.ZERO
         val areAssetsReady = assetInState is AssetContentViewState && assetOutState is AssetContentViewState
         val isAddressValid = !address.isNullOrBlank()

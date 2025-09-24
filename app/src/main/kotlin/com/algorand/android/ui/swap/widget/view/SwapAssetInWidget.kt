@@ -82,13 +82,13 @@ private fun RowScope.AssetInAmountContent(
     viewState: ViewState,
     widgetViewModel: SwapWidgetViewModel
 ) {
-    val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle("")
+    val assetInAmount by widgetViewModel.getAmountInputFlow().collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
     Column(
         modifier = Modifier
             .clickableNoRipple { focusRequester.requestFocus() }
             .weight(1f)) {
-        val textFieldValue = TextFieldValue(assetInAmount, TextRange(assetInAmount.length))
+        val textFieldValue = TextFieldValue(assetInAmount.rawInput, TextRange(assetInAmount.rawInput.length))
         Row {
             if (textFieldValue.text.isNotBlank() && swapDetails.useLocalCurrency) {
                 Text(

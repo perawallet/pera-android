@@ -22,6 +22,8 @@ import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionIt
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.mapper.SwapQuoteFetchStateMapper
 import com.algorand.android.ui.swap.widget.mapper.SwapWidgetAmountRendererMapper
+import com.algorand.android.ui.swap.widget.model.SwapAmountInput
+import com.algorand.android.ui.swap.widget.usecase.GetSwapLocalCurrencyAmountFromAssetInput
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState.Content.ContentState.Idle
@@ -35,13 +37,12 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -59,7 +60,8 @@ class DefaultSwapWidgetViewModel @Inject constructor(
     private val amountRendererMapper: SwapWidgetAmountRendererMapper,
     private val getSwapAmountByPercentage: GetSwapAmountByPercentage,
     private val stateDelegate: StateDelegate<ViewState>,
-    private val getSwapUseLocalCurrencyPreference: GetSwapUseLocalCurrencyPreference
+    private val getSwapUseLocalCurrencyPreference: GetSwapUseLocalCurrencyPreference,
+    private val getSwapLocalCurrencyAmountFromAssetInput: GetSwapLocalCurrencyAmountFromAssetInput
 ) : ViewModel(), SwapWidgetViewModel {
 
     init {
@@ -71,13 +73,13 @@ class DefaultSwapWidgetViewModel @Inject constructor(
     override val state: StateFlow<ViewState>
         get() = stateDelegate.state
 
-    private val amountInputFlow = MutableStateFlow<String>("")
+    private val swapAmountInput = SwapAmountInput()
 
     override fun setAmountInput(amountInput: String) {
-        amountInputFlow.value = amountInput
+        swapAmountInput.setInput(amountInput)
     }
 
-    override fun getAmountInputFlow(): StateFlow<String> = amountInputFlow.asStateFlow()
+    override fun getAmountInputFlow(): StateFlow<SwapAmountInput.Input> = swapAmountInput.amountInputFlow
 
     override fun setAmountByPercentage(swapDetails: SwapViewModel.SwapDetails, percentage: Int) {
         viewModelScope.launch {
@@ -88,7 +90,7 @@ class DefaultSwapWidgetViewModel @Inject constructor(
             }
             getSwapAmountByPercentage(payload).use(
                 onSuccess = {
-                    amountInputFlow.value = it.toPlainString()
+                    setAmountInputByPercentage(currentState, swapDetails, it)
                 },
                 onFailed = { _, _ ->
                     stateDelegate.updateState {
@@ -106,6 +108,22 @@ class DefaultSwapWidgetViewModel @Inject constructor(
         }
     }
 
+    private suspend fun setAmountInputByPercentage(
+        currentState: ViewState,
+        swapDetails: SwapViewModel.SwapDetails,
+        amount: BigDecimal
+    ) {
+        val currentRawInput = swapAmountInput.amountInputFlow.value.rawInput
+        if (swapDetails.useLocalCurrency) {
+            val amountInput = getSwapLocalCurrencyAmountFromAssetInput(amount, swapDetails.assetInId)
+            swapAmountInput.setInput(amountInput)
+        } else {
+            swapAmountInput.setInput(amount)
+        }
+        val newRawInput = swapAmountInput.amountInputFlow.value.rawInput
+        if (currentRawInput == newRawInput) stateDelegate.updateState { currentState }
+    }
+
     override fun initWidget(
         swapDetailsFlow: Flow<SwapViewModel.SwapDetails>,
         assetInFlow: Flow<SwapAssetSelectionViewModel.ViewState>,
@@ -113,7 +131,7 @@ class DefaultSwapWidgetViewModel @Inject constructor(
     ) {
         combine(
             flow = swapDetailsFlow.distinctUntilChanged(),
-            flow2 = amountInputFlow.debounce(AMOUNT_UPDATE_DEBOUNCE),
+            flow2 = swapAmountInput.amountInputFlow.debounce(AMOUNT_UPDATE_DEBOUNCE),
             flow3 = assetInFlow,
             flow4 = assetOutFlow,
             transform = swapQuoteFetchStateMapper::invoke

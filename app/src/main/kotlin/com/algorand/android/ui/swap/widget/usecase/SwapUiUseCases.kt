@@ -10,15 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.lite.domain.usecase
+package com.algorand.android.ui.swap.widget.usecase
 
-import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
-import kotlinx.coroutines.flow.Flow
+import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import java.math.BigDecimal
+import java.math.BigInteger
 
-fun interface GetAssetsLiteInformationFlow {
-    operator fun invoke(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>>
+fun interface GetSwapAmountFromLocalCurrencyInput {
+    operator fun invoke(amountInput: BigDecimal, assetInDetail: SwapSelectedAssetDetail): BigInteger
 }
 
-fun interface GetAssetLiteInformation {
-    suspend operator fun invoke(assetId: Long): AssetLiteInformation?
+fun interface GetSwapLocalCurrencyAmountFromAssetInput {
+    suspend operator fun invoke(amountInput: BigDecimal, assetId: Long): BigDecimal
 }

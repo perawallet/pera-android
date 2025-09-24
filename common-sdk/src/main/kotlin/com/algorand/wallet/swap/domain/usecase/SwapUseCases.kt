@@ -12,9 +12,14 @@
 
 package com.algorand.wallet.swap.domain.usecase
 
+import androidx.paging.PagingData
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
+import com.algorand.wallet.swap.domain.model.SwapHistory
+import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
+import com.algorand.wallet.swap.domain.model.SwapHistoryStatus
+import com.algorand.wallet.swap.domain.model.SwapPairHistory
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
@@ -22,6 +27,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import java.math.BigDecimal
+import kotlinx.coroutines.flow.Flow
 
 fun interface GetSwapQuotes {
     suspend operator fun invoke(payload: SwapQuotePayload): PeraResult<SwapQuotes>
@@ -53,4 +59,16 @@ fun interface GetSwapAmountByPercentage {
 
 fun interface GetTopSwapPairs {
     suspend operator fun invoke(): PeraResult<TopSwapPairs>
+}
+
+fun interface GetSwapHistory {
+    operator fun invoke(data: SwapHistoryPagingData): Flow<PagingData<SwapHistory>>
+}
+
+fun interface GetSwapPairHistory {
+    suspend operator fun invoke(address: String, statuses: List<SwapHistoryStatus>): PeraResult<List<SwapPairHistory>>
+}
+
+fun interface SetLastUsedSwapAddress {
+    suspend operator fun invoke(address: String)
 }

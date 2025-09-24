@@ -627,10 +627,11 @@ class MainActivity :
     }
 
     fun navToSwapNavigation(address: String, assetInId: Long?, assetOutId: Long?) {
-        // @Sinan TODO: assetInId and assetOutId are not used in the navigation, consider using them with swap v2
-        nav(
-            HomeNavigationDirections.actionGlobalSwapNavigation(address)
-        )
+        if (mainViewModel.isSwapV2Enabled()) {
+            nav(HomeNavigationDirections.actionGlobalSwapV2Navigation(address, assetInId ?: -1L, assetOutId ?: -1L))
+        } else {
+            nav(HomeNavigationDirections.actionGlobalSwapNavigation(address))
+        }
     }
 
     fun navToCardsFragment(path: String? = null) {

@@ -12,12 +12,13 @@
 
 package com.algorand.wallet.asset.data.mapper.entity
 
-import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
+import com.algorand.wallet.asset.data.model.AssetResponse
 import javax.inject.Inject
 
 internal class AssetDetailEntityMapperImpl @Inject constructor(
-    private val verificationTierEntityMapper: VerificationTierEntityMapper
+    private val verificationTierEntityMapper: VerificationTierEntityMapper,
+    private val assetCategoryEntityMapper: AssetCategoryEntityMapper
 ) : AssetDetailEntityMapper {
 
     override fun invoke(response: AssetResponse): AssetDetailEntity? {
@@ -45,7 +46,8 @@ internal class AssetDetailEntityMapperImpl @Inject constructor(
                 verificationTier = verificationTierEntityMapper(verificationTier),
                 assetCreatorAddress = assetCreator?.publicKey,
                 assetCreatorId = assetCreator?.id,
-                isVerifiedAssetCreator = assetCreator?.isVerifiedAssetCreator
+                isVerifiedAssetCreator = assetCreator?.isVerifiedAssetCreator,
+                category = assetCategoryEntityMapper(category)
             )
         }
     }

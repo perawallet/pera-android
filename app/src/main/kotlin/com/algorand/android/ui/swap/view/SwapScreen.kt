@@ -21,11 +21,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.DefaultTopSwapPairsViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
@@ -55,12 +55,9 @@ fun SwapScreen(
     buttonViewModel: SwapButtonViewModel = hiltViewModel<DefaultSwapButtonViewModel>(),
     quoteProvidersViewModel: SwapQuoteProvidersViewModel = hiltViewModel(),
     topSwapPairsViewModel: TopSwapPairsViewModel = hiltViewModel<DefaultTopSwapPairsViewModel>(),
+    swapPairHistoryViewModel: SwapPairHistoryViewModel = hiltViewModel<SwapPairHistoryViewModel>(),
     listener: SwapScreenListener
 ) {
-    LaunchedEffect(Unit) {
-        swapViewModel.initViewState()
-    }
-
     Box(
         modifier = Modifier
             .background(color = PeraTheme.colors.background.primary)
@@ -82,6 +79,7 @@ fun SwapScreen(
                         buttonViewModel = buttonViewModel,
                         quoteProvidersViewModel = quoteProvidersViewModel,
                         topSwapPairsViewModel = topSwapPairsViewModel,
+                        swapPairHistoryViewModel = swapPairHistoryViewModel,
                         listener = listener
                     )
                 }
@@ -98,4 +96,5 @@ fun SwapScreen(
 interface SwapScreenListener : SwapToolbarListener, SwapWidgetListener, SwapScreenIntroductionStateListener {
     fun onCreateAccountClick()
     fun onSwapClick(quote: SwapQuoteV2)
+    fun onSwapHistorySeeAllClick()
 }

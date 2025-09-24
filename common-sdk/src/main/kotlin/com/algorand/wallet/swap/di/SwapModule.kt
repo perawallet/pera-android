@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.swap.di
 
+import androidx.paging.PagingSource
+import com.algorand.wallet.asset.data.database.dao.PaginatedSwappableAssetDao
 import com.algorand.wallet.foundation.cache.InMemoryCacheProvider
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.foundation.database.PeraDatabase
@@ -20,6 +22,9 @@ import com.algorand.wallet.swap.data.mapper.AvailableSwapAssetMapper
 import com.algorand.wallet.swap.data.mapper.DefaultAvailableSwapAssetMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapAssetAmountMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapAssetDetailMapper
+import com.algorand.wallet.swap.data.mapper.DefaultSwapHistoryMapper
+import com.algorand.wallet.swap.data.mapper.DefaultSwapHistoryStatusMapper
+import com.algorand.wallet.swap.data.mapper.DefaultSwapPairHistoryMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteRequestBodyMapper
@@ -29,6 +34,9 @@ import com.algorand.wallet.swap.data.mapper.DefaultSwapTransactionPurposeMapper
 import com.algorand.wallet.swap.data.mapper.DefaultTopSwapPairsMapper
 import com.algorand.wallet.swap.data.mapper.SwapAssetAmountMapper
 import com.algorand.wallet.swap.data.mapper.SwapAssetDetailMapper
+import com.algorand.wallet.swap.data.mapper.SwapHistoryMapper
+import com.algorand.wallet.swap.data.mapper.SwapHistoryStatusMapper
+import com.algorand.wallet.swap.data.mapper.SwapPairHistoryMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
@@ -36,9 +44,14 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.mapper.SwapSelectedAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.SwapTransactionPurposeMapper
 import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
+import com.algorand.wallet.swap.data.repository.DefaultSwapHistoryPagingSource
+import com.algorand.wallet.swap.data.repository.DefaultSwapHistoryRepository
 import com.algorand.wallet.swap.data.repository.DefaultSwapRepository
 import com.algorand.wallet.swap.data.repository.DefaultSwapSelectedAssetRepository
 import com.algorand.wallet.swap.data.service.SwapApiService
+import com.algorand.wallet.swap.domain.model.SwapHistory
+import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
+import com.algorand.wallet.swap.domain.repository.SwapHistoryRepository
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import com.algorand.wallet.swap.domain.repository.SwapSelectedAssetRepository
 import com.algorand.wallet.swap.domain.usecase.GetAvailableSwapAssets
@@ -48,6 +61,8 @@ import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetailUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentageUseCase
+import com.algorand.wallet.swap.domain.usecase.GetSwapHistory
+import com.algorand.wallet.swap.domain.usecase.GetSwapPairHistory
 import com.algorand.wallet.swap.domain.usecase.GetSwapPeraFee
 import com.algorand.wallet.swap.domain.usecase.GetSwapPeraFeeUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetails
@@ -55,6 +70,8 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
+import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
+import com.algorand.wallet.utils.date.parser.ISO8601DateTimeParser
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -102,6 +119,11 @@ internal object SwapModule {
     @Provides
     fun provideSwapSelectedAssetDao(database: PeraDatabase): SwapSelectedAssetDao {
         return database.swapSelectedAssetDao()
+    }
+
+    @Provides
+    fun providePaginatedSwappableAssetDao(database: PeraDatabase): PaginatedSwappableAssetDao {
+        return database.paginatedSwappableAssetDao()
     }
 
     @Provides
@@ -180,5 +202,39 @@ internal object SwapModule {
     @Provides
     fun provideGetTopSwapPairs(repository: SwapRepository): GetTopSwapPairs {
         return GetTopSwapPairs(repository::getTopSwapPairs)
+    }
+
+    @Provides
+    fun provideSwapHistoryPagingSource(
+        pagingSource: DefaultSwapHistoryPagingSource
+    ): PagingSource<SwapHistoryPagingData, SwapHistory> = pagingSource
+
+    @Provides
+    fun provideSwapHistoryMapper(dateTimeParser: ISO8601DateTimeParser): SwapHistoryMapper {
+        return DefaultSwapHistoryMapper(dateTimeParser)
+    }
+
+    @Provides
+    fun provideSwapHistoryRepository(repository: DefaultSwapHistoryRepository): SwapHistoryRepository = repository
+
+    @Provides
+    fun provideGetSwapHistory(repository: SwapHistoryRepository): GetSwapHistory {
+        return GetSwapHistory(repository::getSwapHistory)
+    }
+
+    @Provides
+    fun provideSwapHistoryStatusMapper(mapper: DefaultSwapHistoryStatusMapper): SwapHistoryStatusMapper = mapper
+
+    @Provides
+    fun provideSwapPairHistoryMapper(mapper: DefaultSwapPairHistoryMapper): SwapPairHistoryMapper = mapper
+
+    @Provides
+    fun provideGetSwapPairHistory(repository: SwapHistoryRepository): GetSwapPairHistory {
+        return GetSwapPairHistory(repository::getSwapPairHistory)
+    }
+
+    @Provides
+    fun provideSetLastUsedSwapAddress(repository: SwapRepository): SetLastUsedSwapAddress {
+        return SetLastUsedSwapAddress(repository::setLastUsedSwapAddress)
     }
 }

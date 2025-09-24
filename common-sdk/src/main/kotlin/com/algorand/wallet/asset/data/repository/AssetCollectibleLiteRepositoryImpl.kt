@@ -18,7 +18,10 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.map
 import com.algorand.wallet.asset.data.database.dao.PaginatedAssetCollectibleDao
+import com.algorand.wallet.asset.data.database.dao.PaginatedSwappableAssetDao
+import com.algorand.wallet.asset.data.database.model.AssetCategoryEntity
 import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleItemDto
+import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
 import com.algorand.wallet.asset.data.mapper.model.AssetCollectibleLiteSortTypeQueryMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetLiteMapper
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
@@ -35,13 +38,32 @@ import kotlinx.coroutines.flow.map
 internal class AssetCollectibleLiteRepositoryImpl @Inject constructor(
     private val assetCollectibleLiteSortTypeQueryMapper: AssetCollectibleLiteSortTypeQueryMapper,
     private val assetLiteMapper: AssetLiteMapper,
-    private val paginatedAssetCollectibleDao: PaginatedAssetCollectibleDao
+    private val paginatedAssetCollectibleDao: PaginatedAssetCollectibleDao,
+    private val paginatedSwappableAssetDao: PaginatedSwappableAssetDao
 ) : AssetCollectibleLiteRepository {
 
     override fun getPaginatedAssetCollectibleLiteItems(query: AssetCollectibleLiteQuery): Flow<PagingData<AssetLite>> {
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE),
             pagingSourceFactory = { getPagingSource(query) }
+        ).flow.map { pagingData ->
+            pagingData.map { pagedItem ->
+                assetLiteMapper(pagedItem)
+            }
+        }
+    }
+
+    override fun getSwappableAssetLitesFlow(address: String, searchKeyword: String?): Flow<PagingData<AssetLite>> {
+        return Pager(
+            config = PagingConfig(pageSize = PAGE_SIZE),
+            pagingSourceFactory = {
+                paginatedSwappableAssetDao.getPaginatedAssetCollectibleItems(
+                    address = address,
+                    searchKeyword = searchKeyword,
+                    verificationTiers = listOf(VerificationTierEntity.TRUSTED, VerificationTierEntity.VERIFIED),
+                    categories = listOf(AssetCategoryEntity.RUG_NINJA)
+                )
+            }
         ).flow.map { pagingData ->
             pagingData.map { pagedItem ->
                 assetLiteMapper(pagedItem)

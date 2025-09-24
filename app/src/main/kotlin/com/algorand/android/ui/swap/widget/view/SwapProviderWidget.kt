@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.swap.providers.view.SwapProviderIcon
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel.ViewState.Content
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel.ViewState.Idle
@@ -61,11 +62,13 @@ private fun ProviderTitle(content: Content) {
 @Composable
 private fun ProviderDetails(content: Content) {
     Row(verticalAlignment = Alignment.CenterVertically) {
+        SwapProviderIcon(modifier = Modifier.size(16.dp), url = content.provider.iconUrl)
+        Spacer(Modifier.width(4.dp))
         Text(
             modifier = Modifier.weight(1f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            text = content.providerName,
+            text = content.provider.displayName,
             style = PeraTheme.typography.body.regular.sans,
             color = PeraTheme.colors.text.main
         )

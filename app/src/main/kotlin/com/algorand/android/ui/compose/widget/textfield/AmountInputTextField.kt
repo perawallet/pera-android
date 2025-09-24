@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -46,6 +47,13 @@ fun AmountInputTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     Box {
+        if (!hint.isNullOrBlank() && textFieldValue.text.isBlank()) {
+            Text(
+                text = hint,
+                color = PeraTheme.colors.text.grayLighter,
+                style = PeraTheme.typography.body.large.sansMedium
+            )
+        }
         BasicTextField(
             modifier = modifier,
             value = textFieldValue,
@@ -54,6 +62,7 @@ fun AmountInputTextField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             keyboardActions = keyboardActions,
             textStyle = textStyle.copy(color = PeraTheme.colors.text.main),
+            cursorBrush = SolidColor(PeraTheme.colors.text.main),
             decorationBox = {
                 TextFieldDefaults.DecorationBox(
                     label = null,
@@ -75,12 +84,5 @@ fun AmountInputTextField(
                 )
             }
         )
-        if (!hint.isNullOrBlank() && textFieldValue.text.isBlank()) {
-            Text(
-                text = hint,
-                color = PeraTheme.colors.text.grayLighter,
-                style = PeraTheme.typography.body.large.sansMedium
-            )
-        }
     }
 }

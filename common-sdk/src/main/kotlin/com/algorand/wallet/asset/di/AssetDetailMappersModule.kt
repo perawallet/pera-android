@@ -14,6 +14,7 @@ package com.algorand.wallet.asset.di
 
 import com.algorand.wallet.asset.data.mapper.entity.AlgoAssetDetailEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.AlgoAssetDetailEntityMapperImpl
+import com.algorand.wallet.asset.data.mapper.entity.AssetCategoryEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.AssetDetailEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.AssetDetailEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleEntityMapper
@@ -26,10 +27,12 @@ import com.algorand.wallet.asset.data.mapper.entity.CollectibleStandardTypeEntit
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleStandardTypeEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleTraitEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleTraitEntityMapperImpl
+import com.algorand.wallet.asset.data.mapper.entity.DefaultAssetCategoryEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.VerificationTierEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.VerificationTierEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapperImpl
+import com.algorand.wallet.asset.data.mapper.model.AssetCategoryMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetCreatorMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetCreatorMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.AssetDetailMapper
@@ -40,6 +43,7 @@ import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapperImpl
+import com.algorand.wallet.asset.data.mapper.model.DefaultAssetCategoryMapper
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.collectible.AudioCollectibleDetailMapper
@@ -168,4 +172,10 @@ internal object AssetDetailMappersModule {
 
     @Provides
     fun provideAlgoAssetDetailEntityMapper(impl: AlgoAssetDetailEntityMapperImpl): AlgoAssetDetailEntityMapper = impl
+
+    @Provides
+    fun provideAssetCategoryMapper(mapper: DefaultAssetCategoryMapper): AssetCategoryMapper = mapper
+
+    @Provides
+    fun provideAssetCategoryEntityMapper(mapper: DefaultAssetCategoryEntityMapper): AssetCategoryEntityMapper = mapper
 }

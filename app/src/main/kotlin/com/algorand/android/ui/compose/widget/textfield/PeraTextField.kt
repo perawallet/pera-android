@@ -30,8 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
@@ -49,6 +51,7 @@ fun PeraTextField(
     singleLine: Boolean = true,
     enabled: Boolean = true,
     hint: String? = null,
+    cursorBrush: Brush = SolidColor(Color.Black),
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
     val textField = text.ifEmpty { " " }
@@ -57,6 +60,7 @@ fun PeraTextField(
             modifier = Modifier.defaultTextFieldModifier(),
             value = textField,
             onValueChange = onTextChanged,
+            cursorBrush = cursorBrush,
             decorationBox = {
                 TextFieldDecorationBox(textField, it, label, trailingIcon, singleLine, enabled, colors)
             }
@@ -77,6 +81,7 @@ fun PeraTextField(
     hint: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     textStyle: TextStyle = TextStyle.Default,
+    cursorBrush: Brush = SolidColor(Color.Black),
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
     PeraTextFieldContainer(modifier, textFieldValue.text, hint) {
@@ -86,6 +91,7 @@ fun PeraTextField(
             onValueChange = onTextChanged,
             keyboardOptions = keyboardOptions,
             textStyle = textStyle,
+            cursorBrush = cursorBrush,
             decorationBox = {
                 TextFieldDecorationBox(textFieldValue.text, it, label, trailingIcon, singleLine, enabled, colors)
             }

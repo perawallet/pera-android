@@ -19,10 +19,10 @@ import com.algorand.wallet.swap.data.model.SwapHistoriesResponse
 import com.algorand.wallet.swap.data.model.SwapPairHistoriesResponse
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeResponse
-import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteProvidersResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
+import com.algorand.wallet.swap.data.model.SwapUpdateStatusRequestBody
 import com.algorand.wallet.swap.data.model.TopSwapPairsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -51,10 +51,10 @@ internal interface SwapApiService {
         @Body requestBody: CreateSwapQuoteTransactionsRequestBody
     ): CreateSwapQuoteTransactionsResponse
 
-    @PATCH("v1/dex-swap/quotes/{quote_id}/")
-    suspend fun updateSwapQuoteException(
-        @Path("quote_id") quoteId: Long,
-        @Body swapQuoteExceptionRequestBody: SwapQuoteExceptionRequestBody
+    @PATCH("v2/dex-swap/swaps/{swap_id}/")
+    suspend fun updateSwapStatus(
+        @Path("swap_id") quoteId: Long,
+        @Body swapUpdateStatusRequestBody: SwapUpdateStatusRequestBody
     )
 
     @GET("v2/dex-swap/providers/")

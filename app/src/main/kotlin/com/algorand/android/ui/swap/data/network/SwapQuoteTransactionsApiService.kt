@@ -10,13 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.confirmswap.data.model
+package com.algorand.android.ui.swap.data.network
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.modules.swap.confirmswap.data.model.CreateSwapQuoteTransactionsRequestBody
+import com.algorand.android.modules.swap.confirmswap.data.model.CreateSwapQuoteTransactionsResponse
+import retrofit2.http.Body
+import retrofit2.http.POST
 
-data class CreateSwapQuoteTransactionsResponse(
-    @SerializedName("transaction_groups")
-    val transactionGroups: List<SwapQuoteTransactionResponse>?,
-    @SerializedName("swap_id")
-    val swapId: Long?
-)
+internal interface SwapQuoteTransactionsApiService {
+
+    @POST("v2/dex-swap/prepare-transactions/")
+    suspend fun getQuoteTransactions(
+        @Body requestBody: CreateSwapQuoteTransactionsRequestBody
+    ): CreateSwapQuoteTransactionsResponse
+}

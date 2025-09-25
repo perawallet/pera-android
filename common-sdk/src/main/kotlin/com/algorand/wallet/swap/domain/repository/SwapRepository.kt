@@ -33,5 +33,5 @@ internal interface SwapRepository {
     suspend fun getUseLocalCurrencyPreference(): Boolean
     suspend fun setUseLocalCurrencyPreference(useLocalCurrency: Boolean)
     suspend fun setSwapStatusFailed(quoteId: Long, reason: SwapStatusFailureReason)
-    suspend fun setSwapStatusInProgress(quoteId: Long, submittedTxnIds: List<String>)
+    suspend fun setSwapStatusInProgress(quoteId: Long)
 }

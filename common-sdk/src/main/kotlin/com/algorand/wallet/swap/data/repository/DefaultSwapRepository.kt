@@ -82,9 +82,9 @@ internal class DefaultSwapRepository @Inject constructor(
         }
     }
 
-    override suspend fun setSwapStatusInProgress(quoteId: Long, submittedTxnIds: List<String>) {
+    override suspend fun setSwapStatusInProgress(quoteId: Long) {
         try {
-            val body = swapUpdateStatusRequestBodyMapper.mapToInProgress(submittedTxnIds)
+            val body = swapUpdateStatusRequestBodyMapper.mapToInProgress()
             swapApiService.updateSwapStatus(quoteId, body)
         } catch (e: Exception) {
             // Fire and forget request, no need to handle the exception

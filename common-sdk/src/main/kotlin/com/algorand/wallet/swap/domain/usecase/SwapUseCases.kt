@@ -83,7 +83,7 @@ fun interface SetSwapUseLocalCurrencyPreference {
 }
 
 fun interface SetSwapStatusInProgress {
-    suspend operator fun invoke(quoteId: Long, submittedTxnIds: List<String>)
+    suspend operator fun invoke(quoteId: Long)
 }
 
 fun interface SetSwapStatusFailed {

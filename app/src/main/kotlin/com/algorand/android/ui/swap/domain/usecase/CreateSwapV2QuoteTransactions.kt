@@ -10,13 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.confirmswap.data.model
+package com.algorand.android.ui.swap.domain.usecase
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
+import com.algorand.wallet.foundation.PeraResult
 
-data class CreateSwapQuoteTransactionsResponse(
-    @SerializedName("transaction_groups")
-    val transactionGroups: List<SwapQuoteTransactionResponse>?,
-    @SerializedName("swap_id")
-    val swapId: Long?
-)
+fun interface CreateSwapV2QuoteTransactions {
+    suspend operator fun invoke(quoteId: Long, accountAddress: String): PeraResult<SwapQuoteTransactions>
+}

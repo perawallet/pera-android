@@ -20,11 +20,8 @@ import javax.inject.Inject
 
 internal class DefaultSwapUpdateStatusRequestBodyMapper @Inject constructor() : SwapUpdateStatusRequestBodyMapper {
 
-    override fun mapToInProgress(submittedTxnIds: List<String>): SwapUpdateStatusRequestBody {
-        return SwapUpdateStatusRequestBody(
-            status = SwapStatusResponse.IN_PROGRESS,
-            submittedTransactionIds = submittedTxnIds
-        )
+    override fun mapToInProgress(): SwapUpdateStatusRequestBody {
+        return SwapUpdateStatusRequestBody(status = SwapStatusResponse.IN_PROGRESS)
     }
 
     override fun mapToFailed(reason: SwapStatusFailureReason): SwapUpdateStatusRequestBody {

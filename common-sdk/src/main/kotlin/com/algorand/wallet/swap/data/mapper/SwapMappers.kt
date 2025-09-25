@@ -93,6 +93,6 @@ internal fun interface SwapPairHistoryMapper {
 }
 
 internal interface SwapUpdateStatusRequestBodyMapper {
-    fun mapToInProgress(submittedTxnIds: List<String>): SwapUpdateStatusRequestBody
+    fun mapToInProgress(): SwapUpdateStatusRequestBody
     fun mapToFailed(reason: SwapStatusFailureReason): SwapUpdateStatusRequestBody
 }

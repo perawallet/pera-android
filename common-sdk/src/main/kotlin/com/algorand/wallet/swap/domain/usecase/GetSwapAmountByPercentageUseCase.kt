@@ -20,7 +20,6 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.InsufficientAlgoBalanceException
 import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
-import com.algorand.wallet.swap.domain.utils.swapFeePadding
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
@@ -29,7 +28,8 @@ internal class GetSwapAmountByPercentageUseCase @Inject constructor(
     private val getAccountMinBalance: GetAccountMinBalance,
     private val getAccountAssetHolding: GetAssetHoldingsLite,
     private val getSwapPeraFee: GetSwapPeraFee,
-    private val getSelectedSwapAssetDetail: GetSelectedSwapAssetDetail
+    private val getSelectedSwapAssetDetail: GetSelectedSwapAssetDetail,
+    private val getSwapFeePadding: GetSwapFeePadding
 ) : GetSwapAmountByPercentage {
 
     override suspend fun invoke(payload: SwapAmountByPercentagePayload): PeraResult<BigDecimal> {
@@ -51,7 +51,7 @@ internal class GetSwapAmountByPercentageUseCase @Inject constructor(
         val percentageCalculatedAlgoAmount = algoBalance.multiply(percentage).divide(percentageDivider)
         return getSwapPeraFee(ALGO_ID, percentageCalculatedAlgoAmount, ALGO_DECIMALS).use(
             onSuccess = { peraFee ->
-                val remainingBalance = algoBalance.minus(minRequiredBalance).minus(swapFeePadding).minus(peraFee)
+                val remainingBalance = algoBalance.minus(minRequiredBalance).minus(getSwapFeePadding()).minus(peraFee)
                 when {
                     remainingBalance < BigDecimal.ZERO -> PeraResult.Error(InsufficientAlgoBalanceException())
                     remainingBalance < percentageCalculatedAlgoAmount -> PeraResult.Success(remainingBalance)
@@ -67,7 +67,7 @@ internal class GetSwapAmountByPercentageUseCase @Inject constructor(
         minRequiredBalance: BigDecimal,
         payload: SwapAmountByPercentagePayload
     ): PeraResult<BigDecimal> {
-        val remainingBalanceAfterFees = algoBalance.minus(minRequiredBalance).minus(swapFeePadding)
+        val remainingBalanceAfterFees = algoBalance.minus(minRequiredBalance).minus(getSwapFeePadding())
         return if (remainingBalanceAfterFees < BigDecimal.ZERO) {
             PeraResult.Error(InsufficientAlgoBalanceException())
         } else {

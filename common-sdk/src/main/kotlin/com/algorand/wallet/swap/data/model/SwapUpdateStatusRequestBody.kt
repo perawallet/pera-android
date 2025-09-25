@@ -17,16 +17,8 @@ import com.google.gson.annotations.SerializedName
 internal data class SwapUpdateStatusRequestBody(
     @SerializedName("status")
     val status: SwapStatusResponse,
-    @SerializedName("submitted_transaction_ids")
-    val submittedTransactionIds: List<String>? = null,
     @SerializedName("reason")
     val reason: SwapStatusFailureReasonResponse? = null,
-    @SerializedName("app_version")
-    val appVersion: String? = null,
-    @SerializedName("platform")
-    val platform: String? = null,
-    @SerializedName("country_code")
-    val countryCode: String? = null,
     @SerializedName("swap_version")
     val swapVersion: String = "v2"
 )

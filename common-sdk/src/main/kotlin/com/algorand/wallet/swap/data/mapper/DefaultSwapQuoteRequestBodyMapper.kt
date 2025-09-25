@@ -15,13 +15,12 @@ package com.algorand.wallet.swap.data.mapper
 import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapTypeResponse
-import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import javax.inject.Inject
 
 internal class DefaultSwapQuoteRequestBodyMapper @Inject constructor() : SwapQuoteRequestBodyMapper {
 
-    override fun invoke(payload: SwapQuoteRequestPayload, providers: List<SwapQuoteProvider>): SwapQuoteRequestBody {
+    override fun invoke(payload: SwapQuoteRequestPayload): SwapQuoteRequestBody {
         return with(payload) {
             SwapQuoteRequestBody(
                 swapperAddress = address,
@@ -30,7 +29,6 @@ internal class DefaultSwapQuoteRequestBodyMapper @Inject constructor() : SwapQuo
                 assetOutId = getSafeAssetIdForRequest(assetOutId),
                 amount = amount,
                 slippage = slippage,
-                providers = providers.map { it.name },
                 swapType = SwapTypeResponse.FIXED_INPUT
             )
         }

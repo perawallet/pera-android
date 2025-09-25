@@ -10,13 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.confirmswap.data.model
+package com.algorand.wallet.swap.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CreateSwapQuoteTransactionsResponse(
-    @SerializedName("transaction_groups")
-    val transactionGroups: List<SwapQuoteTransactionResponse>?,
-    @SerializedName("swap_id")
-    val swapId: Long?
-)
+internal enum class SwapStatusResponse {
+    @SerializedName("pending")
+    PENDING,
+    @SerializedName("in_progress")
+    IN_PROGRESS,
+    @SerializedName("completed")
+    COMPLETED,
+    @SerializedName("failed")
+    FAILED
+}

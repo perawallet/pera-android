@@ -10,13 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.confirmswap.data.model
+package com.algorand.wallet.swap.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CreateSwapQuoteTransactionsResponse(
-    @SerializedName("transaction_groups")
-    val transactionGroups: List<SwapQuoteTransactionResponse>?,
-    @SerializedName("swap_id")
-    val swapId: Long?
-)
+internal enum class SwapStatusFailureReasonResponse {
+    @SerializedName("other")
+    OTHER,
+
+    @SerializedName("user_cancelled")
+    USER_CANCELLED,
+
+    @SerializedName("invalid_submission")
+    INVALID_SUBMISSION,
+
+    @SerializedName("blockchain_error")
+    BLOCKCHAIN_ERROR
+}

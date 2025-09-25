@@ -21,10 +21,10 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
+import com.algorand.wallet.swap.data.mapper.SwapUpdateStatusRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
-import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SwapPeraFee
@@ -32,6 +32,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import java.math.BigInteger
@@ -47,13 +48,14 @@ internal class DefaultSwapRepository @Inject constructor(
     private val availableSwapAssetMapper: AvailableSwapAssetMapper,
     private val providersCache: InMemoryCachedObject<List<SwapQuoteProvider>>,
     private val topSwapPairsMapper: TopSwapPairsMapper,
+    private val swapUpdateStatusRequestBodyMapper: SwapUpdateStatusRequestBodyMapper,
     private val useLocalCurrencyCache: PersistentCache<Boolean>,
 ) : SwapRepository {
 
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
         return try {
             val providers = getSwapQuoteProviders().getDataOrNull() ?: return PeraResult.Error(Exception())
-            val response = swapApiService.getSwapQuote(quoteRequestMapper(payload, providers))
+            val response = swapApiService.getSwapQuote(quoteRequestMapper(payload))
             val quotes = response.swapQuoteResponseList.mapNotNull { quoteMapper(it, providers) }
             if (quotes.isEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(quotes)
         } catch (exception: Exception) {
@@ -80,10 +82,20 @@ internal class DefaultSwapRepository @Inject constructor(
         }
     }
 
-    override suspend fun updateSwapQuoteException(quoteId: Long, exceptionText: String) {
+    override suspend fun setSwapStatusInProgress(quoteId: Long) {
         try {
-            swapApiService.updateSwapQuoteException(quoteId, SwapQuoteExceptionRequestBody(exceptionText))
-        } catch (_: Exception) {
+            val body = swapUpdateStatusRequestBodyMapper.mapToInProgress()
+            swapApiService.updateSwapStatus(quoteId, body)
+        } catch (e: Exception) {
+            // Fire and forget request, no need to handle the exception
+        }
+    }
+
+    override suspend fun setSwapStatusFailed(quoteId: Long, reason: SwapStatusFailureReason) {
+        try {
+            val body = swapUpdateStatusRequestBodyMapper.mapToFailed(reason)
+            swapApiService.updateSwapStatus(quoteId, body)
+        } catch (e: Exception) {
             // Fire and forget request, no need to handle the exception
         }
     }

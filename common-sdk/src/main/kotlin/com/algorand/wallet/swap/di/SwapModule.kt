@@ -31,6 +31,7 @@ import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapSelectedAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.DefaultSwapTransactionPurposeMapper
+import com.algorand.wallet.swap.data.mapper.DefaultSwapUpdateStatusRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.DefaultTopSwapPairsMapper
 import com.algorand.wallet.swap.data.mapper.SwapAssetAmountMapper
 import com.algorand.wallet.swap.data.mapper.SwapAssetDetailMapper
@@ -43,6 +44,7 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.mapper.SwapSelectedAssetDetailMapper
 import com.algorand.wallet.swap.data.mapper.SwapTransactionPurposeMapper
+import com.algorand.wallet.swap.data.mapper.SwapUpdateStatusRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.repository.DefaultSwapHistoryPagingSource
 import com.algorand.wallet.swap.data.repository.DefaultSwapHistoryRepository
@@ -72,6 +74,8 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
+import com.algorand.wallet.swap.domain.usecase.SetSwapStatusFailed
+import com.algorand.wallet.swap.domain.usecase.SetSwapStatusInProgress
 import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.utils.date.parser.ISO8601DateTimeParser
 import dagger.Module
@@ -97,7 +101,8 @@ internal object SwapModule {
         availableSwapAssetMapper: AvailableSwapAssetMapper,
         swapQuoteProviderMapper: SwapQuoteProviderMapper,
         inMemoryCacheProvider: InMemoryCacheProvider,
-        topSwapPairsMapper: TopSwapPairsMapper
+        topSwapPairsMapper: TopSwapPairsMapper,
+        swapUpdateStatusRequestBodyMapper: SwapUpdateStatusRequestBodyMapper
     ): SwapRepository {
         return DefaultSwapRepository(
             swapApiService = swapApiService,
@@ -112,6 +117,7 @@ internal object SwapModule {
             availableSwapAssetMapper = availableSwapAssetMapper,
             providersCache = inMemoryCacheProvider.getInMemoryCache(),
             topSwapPairsMapper = topSwapPairsMapper,
+            swapUpdateStatusRequestBodyMapper = swapUpdateStatusRequestBodyMapper,
             useLocalCurrencyCache = persistentCacheProvider.getPersistentCache<Boolean>(
                 type = Boolean::class.java,
                 key = "swap_use_local_currency_preference",
@@ -252,5 +258,20 @@ internal object SwapModule {
     @Provides
     fun provideSetSwapUseLocalCurrencyPreference(repository: SwapRepository): SetSwapUseLocalCurrencyPreference {
         return SetSwapUseLocalCurrencyPreference(repository::setUseLocalCurrencyPreference)
+    }
+
+    @Provides
+    fun provideSwapUpdateStatusRequestBodyMapper(
+        mapper: DefaultSwapUpdateStatusRequestBodyMapper
+    ): SwapUpdateStatusRequestBodyMapper = mapper
+
+    @Provides
+    fun provideSetSwapStatusFailed(repository: SwapRepository): SetSwapStatusFailed {
+        return SetSwapStatusFailed(repository::setSwapStatusFailed)
+    }
+
+    @Provides
+    fun provideSetSwapStatusInProgress(repository: SwapRepository): SetSwapStatusInProgress {
+        return SetSwapStatusInProgress(repository::setSwapStatusInProgress)
     }
 }

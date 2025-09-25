@@ -10,13 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.confirmswap.data.model
+package com.algorand.android.ui.swap.domain.model
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
 
-data class CreateSwapQuoteTransactionsResponse(
-    @SerializedName("transaction_groups")
-    val transactionGroups: List<SwapQuoteTransactionResponse>?,
-    @SerializedName("swap_id")
-    val swapId: Long?
+data class SwapQuoteTransactions(
+    val transactions: List<SwapQuoteTransaction>,
+    val swapId: Long
 )

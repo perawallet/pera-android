@@ -25,6 +25,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import java.math.BigDecimal
 import kotlinx.coroutines.flow.Flow
@@ -79,4 +80,12 @@ fun interface GetSwapUseLocalCurrencyPreference {
 
 fun interface SetSwapUseLocalCurrencyPreference {
     suspend operator fun invoke(useLocalCurrency: Boolean)
+}
+
+fun interface SetSwapStatusInProgress {
+    suspend operator fun invoke(quoteId: Long)
+}
+
+fun interface SetSwapStatusFailed {
+    suspend operator fun invoke(quoteId: Long, reason: SwapStatusFailureReason)
 }

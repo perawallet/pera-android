@@ -21,12 +21,12 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteProviderMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
+import com.algorand.wallet.swap.data.mapper.SwapUpdateStatusRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsResponse
 import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
 import com.algorand.wallet.swap.data.model.SwapPeraFeeResponse
-import com.algorand.wallet.swap.data.model.SwapQuoteExceptionRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteProvidersResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
@@ -64,6 +64,7 @@ class DefaultSwapRepositoryTest {
     private val swapQuoteProviderMapper: SwapQuoteProviderMapper = mockk()
     private val topSwapPairsMapper: TopSwapPairsMapper = mockk()
     private val useLocalCurrencyCache: PersistentCache<Boolean> = mockk(relaxed = true)
+    private val swapUpdateStatusRequestBodyMapper: SwapUpdateStatusRequestBodyMapper = mockk(relaxed = true)
 
     private val sut = DefaultSwapRepository(
         swapApiService,
@@ -75,6 +76,7 @@ class DefaultSwapRepositoryTest {
         availableSwapAssetMapper,
         providersCache,
         topSwapPairsMapper,
+        swapUpdateStatusRequestBodyMapper,
         useLocalCurrencyCache
     )
 
@@ -91,7 +93,7 @@ class DefaultSwapRepositoryTest {
     fun `EXPECT error WHEN get swap quotes api call fails`() = runTest {
         every { providersCache.get() } returns CACHED_PROVIDERS
         coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } throws Exception()
-        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, CACHED_PROVIDERS) } returns SWAP_REQUEST_BODY
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD) } returns SWAP_REQUEST_BODY
 
         val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
 
@@ -102,7 +104,7 @@ class DefaultSwapRepositoryTest {
     fun `EXPECT error WHEN swap quotes are empty`() = runTest {
         every { providersCache.get() } returns CACHED_PROVIDERS
         coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } returns SWAP_QUOTE_RESULT_RESPONSE
-        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, CACHED_PROVIDERS) } returns SWAP_REQUEST_BODY
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD) } returns SWAP_REQUEST_BODY
         every { quoteMapper(SWAP_QUOTE_RESPONSE, CACHED_PROVIDERS) } returns null
 
         val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
@@ -114,7 +116,7 @@ class DefaultSwapRepositoryTest {
     fun `EXPECT swap quotes WHEN api call returns valid quotes`() = runTest {
         every { providersCache.get() } returns CACHED_PROVIDERS
         coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } returns SWAP_QUOTE_RESULT_RESPONSE
-        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, CACHED_PROVIDERS) } returns SWAP_REQUEST_BODY
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD) } returns SWAP_REQUEST_BODY
         every { quoteMapper(SWAP_QUOTE_RESPONSE, CACHED_PROVIDERS) } returns SWAP_QUOTE
 
         val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
@@ -128,7 +130,7 @@ class DefaultSwapRepositoryTest {
         coEvery { swapApiService.getSwapQuote(SWAP_REQUEST_BODY) } returns SWAP_QUOTE_RESULT_RESPONSE
         every { providersCache.get() } returnsMany listOf(null, listOf(PROVIDER))
         every { swapQuoteProviderMapper.invoke(PROVIDER_RESPONSE) } returns PROVIDER
-        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD, listOf(PROVIDER)) } returns SWAP_REQUEST_BODY
+        every { quoteRequestMapper(SWAP_REQUEST_PAYLOAD) } returns SWAP_REQUEST_BODY
         every { quoteMapper(SWAP_QUOTE_RESPONSE, listOf(PROVIDER)) } returns SWAP_QUOTE
 
         val result = sut.getSwapQuotes(SWAP_REQUEST_PAYLOAD)
@@ -203,16 +205,6 @@ class DefaultSwapRepositoryTest {
         val result = sut.createQuoteTransactions(CREATE_QUOTE_ID)
 
         assertEquals(PeraResult.Success(listOf(QUOTE_TRANSACTION)), result)
-    }
-
-    @Test
-    fun `EXPECT no crash WHEN update quote exception api call fails`() = runTest {
-        val body = SwapQuoteExceptionRequestBody("message")
-        coEvery { swapApiService.updateSwapQuoteException(CREATE_QUOTE_ID, body) } throws Exception()
-
-        val result = sut.updateSwapQuoteException(CREATE_QUOTE_ID, "message")
-
-        assertEquals(Unit, result)
     }
 
     @Test

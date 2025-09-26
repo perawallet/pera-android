@@ -61,6 +61,7 @@ const val HD_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/hd-wallets/"
 const val ALGO25_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/create-new-account/"
 const val RECOVER_OR_IMPORT_ACCOUNT_SUPPORT_URL =
     "https://support.perawallet.app/en/article/recover-or-import-an-algorand-account-with-recovery-passphrase-11gdh1y/"
+const val SWAP_INFO_SUPPORT_URL = "https://support.perawallet.app/en/article/pera-swap-swapping-with-pera-1ep84ky/"
 
 const val HTTPS_PROTOCOL = "https://"
 const val HTTP_PROTOCOL = "http://"

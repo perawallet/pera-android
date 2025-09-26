@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.algorand.android.ui.swap.providers.view
 
@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.bottomsheet.PeraModalBottomSheet
 import com.algorand.android.ui.compose.widget.PeraRadioButton
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.PeraToolbarTextButton
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraModalBottomSheet
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem
 import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem.Auto
@@ -52,8 +52,6 @@ import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionIt
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel.ViewState.Content
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel.ViewState.Idle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
 fun SwapQuoteProvidersBottomSheet(
@@ -107,11 +105,7 @@ private fun ProviderItem(item: Provider, isSelected: Boolean, onClick: () -> Uni
         modifier = Modifier.clickableNoRipple { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        GlideImage(
-            model = item.provider.iconUrl,
-            modifier = Modifier.size(40.dp),
-            contentDescription = null,
-        )
+        SwapProviderIcon(modifier = Modifier.size(40.dp), url = item.provider.iconUrl)
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = item.provider.displayName,

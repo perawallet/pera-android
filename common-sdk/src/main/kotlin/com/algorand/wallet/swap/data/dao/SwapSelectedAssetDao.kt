@@ -27,7 +27,8 @@ internal interface SwapSelectedAssetDao {
         COALESCE(asset_detail.logo_url, asset_detail.logo_svg_url) AS image_url,
         asset_holding_table.amount AS amount,
         asset_detail.decimals AS decimals,
-        asset_detail.asset_id AS asset_id
+        asset_detail.asset_id AS asset_id,
+        asset_detail.usd_value AS usd_value
     FROM asset_detail 
     LEFT JOIN asset_holding_table 
         ON asset_detail.asset_id = asset_holding_table.asset_id AND asset_holding_table.algo_address = :address

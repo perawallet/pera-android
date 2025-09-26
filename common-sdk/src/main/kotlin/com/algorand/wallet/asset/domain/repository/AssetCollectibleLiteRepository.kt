@@ -19,4 +19,5 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface AssetCollectibleLiteRepository {
     fun getPaginatedAssetCollectibleLiteItems(query: AssetCollectibleLiteQuery): Flow<PagingData<AssetLite>>
+    fun getSwappableAssetLitesFlow(address: String, searchKeyword: String?): Flow<PagingData<AssetLite>>
 }

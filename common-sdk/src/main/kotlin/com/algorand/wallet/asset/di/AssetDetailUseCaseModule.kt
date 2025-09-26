@@ -34,6 +34,7 @@ import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetIdUseCase
 import com.algorand.wallet.asset.domain.usecase.InitializeAssets
 import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetLiteInformation
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetsLiteInformationFlow
 import dagger.Module
 import dagger.Provides
@@ -114,6 +115,11 @@ internal object AssetDetailUseCaseModule {
         repository: AssetRepository
     ): GetAssetsLiteInformationFlow {
         return GetAssetsLiteInformationFlow(repository::getAssetsLiteInformationFlow)
+    }
+
+    @Provides
+    fun provideGetAssetLiteInformation(repository: AssetRepository): GetAssetLiteInformation {
+        return GetAssetLiteInformation(repository::getAssetLiteInformation)
     }
 
     @Provides

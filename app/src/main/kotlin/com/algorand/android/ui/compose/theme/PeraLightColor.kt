@@ -47,6 +47,7 @@ object PeraLightColor : PeraColor {
         override val positiveLighter: Color = ColorPalette.Turquoise.V100
         override val negative: Color = ColorPalette.Salmon.V600
         override val negativeLighter: Color = ColorPalette.Salmon.V100
+        override val success: Color = ColorPalette.Turquoise.V600
     }
 
     override val button = object : PeraColor.Button {
@@ -282,5 +283,10 @@ object PeraLightColor : PeraColor {
 
     override val swap = object : PeraColor.Swap {
         override val assetOutButtonBackground: Color = ColorPalette.Gray.V50
+    }
+
+    override val shimmer = object : PeraColor.Shimmer {
+        override val base = ColorPalette.Shimmer.BaseLight
+        override val highlight = ColorPalette.Shimmer.HighlightLight
     }
 }

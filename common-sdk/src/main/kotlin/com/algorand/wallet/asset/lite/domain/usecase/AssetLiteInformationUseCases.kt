@@ -18,3 +18,7 @@ import kotlinx.coroutines.flow.Flow
 fun interface GetAssetsLiteInformationFlow {
     operator fun invoke(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>>
 }
+
+fun interface GetAssetLiteInformation {
+    suspend operator fun invoke(assetId: Long): AssetLiteInformation?
+}

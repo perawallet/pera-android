@@ -37,7 +37,8 @@ internal class DefaultSwapSelectedAssetDetailMapper @Inject constructor(
                     SwapSelectedAssetDetail.OptInState.OptedIn
                 } else {
                     SwapSelectedAssetDetail.OptInState.NotOptedIn
-                }
+                },
+                usdValue = usdValue
             )
         }
     }

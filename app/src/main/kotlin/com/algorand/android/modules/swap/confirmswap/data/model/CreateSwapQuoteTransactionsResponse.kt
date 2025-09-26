@@ -16,5 +16,7 @@ import com.google.gson.annotations.SerializedName
 
 data class CreateSwapQuoteTransactionsResponse(
     @SerializedName("transaction_groups")
-    val transactionGroups: List<SwapQuoteTransactionResponse>?
+    val transactionGroups: List<SwapQuoteTransactionResponse>?,
+    @SerializedName("swap_id")
+    val swapId: Long?
 )

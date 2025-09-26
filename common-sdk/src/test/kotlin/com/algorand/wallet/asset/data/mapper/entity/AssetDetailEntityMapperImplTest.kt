@@ -13,6 +13,7 @@
 package com.algorand.wallet.asset.data.mapper.entity
 
 import com.algorand.test.peraFixture
+import com.algorand.wallet.asset.data.database.model.AssetCategoryEntity
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
 import com.algorand.wallet.asset.data.model.AssetCreatorResponse
@@ -28,8 +29,11 @@ import org.junit.Test
 internal class AssetDetailEntityMapperImplTest {
 
     private val verificationTierEntityMapper: VerificationTierEntityMapper = mockk()
+    private val assetCategoryEntityMapper: AssetCategoryEntityMapper = mockk {
+        every { invoke(category = 1) } returns AssetCategoryEntity.RUG_NINJA
+    }
 
-    private val sut = AssetDetailEntityMapperImpl(verificationTierEntityMapper)
+    private val sut = AssetDetailEntityMapperImpl(verificationTierEntityMapper, assetCategoryEntityMapper)
 
     @Test
     fun `EXPECT response to be mapped to entity successfully`() {
@@ -51,13 +55,15 @@ internal class AssetDetailEntityMapperImplTest {
     @Test
     fun `EXPECT default values when optional fields are null`() {
         every { verificationTierEntityMapper(null) } returns VerificationTierEntity.UNKNOWN
+        every { assetCategoryEntityMapper(null) } returns null
         val assetDetailResponse = peraFixture<AssetResponse>().copy(
             assetId = 1L,
             isAvailableOnDiscoverMobile = null,
             maxSupply = null,
             totalSupply = null,
             fractionDecimals = null,
-            verificationTier = null
+            verificationTier = null,
+            category = null
         )
 
         val result = sut(assetDetailResponse)
@@ -95,7 +101,8 @@ internal class AssetDetailEntityMapperImplTest {
                 id = 1L,
                 isVerifiedAssetCreator = true
             ),
-            collectible = null
+            collectible = null,
+            category = 1
         )
 
         private val ASSET_DETAIL_ENTITY = AssetDetailEntity(
@@ -121,7 +128,8 @@ internal class AssetDetailEntityMapperImplTest {
             verificationTier = VerificationTierEntity.UNKNOWN,
             assetCreatorAddress = "publicKey",
             assetCreatorId = 1L,
-            isVerifiedAssetCreator = true
+            isVerifiedAssetCreator = true,
+            category = AssetCategoryEntity.RUG_NINJA
         )
     }
 }

@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.widget.bottomsheet.rememberPeraSheetState
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.configuration.view.SwapConfigurationBottomSheet
+import com.algorand.android.ui.swap.history.view.SwapPairHistoryWidget
+import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel
 import com.algorand.android.ui.swap.providers.view.SwapQuoteProvidersBottomSheet
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.topfive.view.TopSwapPairsContainer
@@ -55,6 +57,7 @@ fun SwapScreenContentState(
     quoteProvidersViewModel: SwapQuoteProvidersViewModel,
     buttonViewModel: SwapButtonViewModel,
     topSwapPairsViewModel: TopSwapPairsViewModel,
+    swapPairHistoryViewModel: SwapPairHistoryViewModel,
     listener: SwapScreenListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -77,6 +80,7 @@ fun SwapScreenContentState(
                 buttonViewModel,
                 configViewModel,
                 topSwapPairsViewModel,
+                swapPairHistoryViewModel,
                 listener,
                 onConfigureClick = { swapConfigurationBottomSheetState.show() }
             )
@@ -90,6 +94,12 @@ fun SwapScreenContentState(
                     }
                     .padding(top = 16.dp, start = 24.dp, end = 24.dp),
                 providerViewModel
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            SwapPairHistoryWidget(
+                swapPairHistoryViewModel,
+                listener::onSwapHistorySeeAllClick,
+                swapViewModel::setAssetInAndOutIds
             )
             Spacer(modifier = Modifier.height(24.dp))
             TopSwapPairsContainer(topSwapPairsViewModel)

@@ -15,6 +15,7 @@ package com.algorand.android.ui.swap.widget.viewmodel
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionItem
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.ui.swap.widget.model.SwapAmountInput
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel.ViewState
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.viewmodel.StateViewModel
@@ -25,7 +26,7 @@ interface SwapWidgetViewModel : StateViewModel<ViewState> {
 
     fun setAmountInput(amountInput: String)
 
-    fun getAmountInputFlow(): StateFlow<String>
+    fun getAmountInputFlow(): StateFlow<SwapAmountInput.Input>
 
     fun setAmountByPercentage(swapDetails: SwapViewModel.SwapDetails, percentage: Int)
 
@@ -44,7 +45,8 @@ interface SwapWidgetViewModel : StateViewModel<ViewState> {
         data object Loading : ViewState
         data class Content(
             val amountRenderers: AmountRenderers,
-            val contentState: ContentState
+            val contentState: ContentState,
+            val useLocalCurrency: Boolean
         ) : ViewState {
             sealed interface ContentState {
                 data object Idle : ContentState

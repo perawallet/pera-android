@@ -22,7 +22,6 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.confirmswap.domain.SwapTransactionSignManager
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
-import com.algorand.android.modules.swap.confirmswap.domain.usecase.CreateSwapQuoteTransactionsUseCase
 import com.algorand.android.modules.swap.ledger.signwithledger.ui.model.LedgerDialogPayload
 import com.algorand.android.modules.swap.transactionstatus.domain.SendSwapTransactionsManager
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
@@ -44,8 +43,14 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
-import com.algorand.android.utils.DataResource
+import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
+import com.algorand.android.ui.swap.domain.usecase.CreateSwapV2QuoteTransactions
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.OTHER
+import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.USER_CANCELLED
+import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
+import com.algorand.wallet.swap.domain.usecase.SetSwapStatusFailed
+import com.algorand.wallet.swap.domain.usecase.SetSwapStatusInProgress
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -61,9 +66,12 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SwapConfirmationViewModel @Inject constructor(
     private val contentMapper: SwapConfirmationContentMapper,
-    private val createSwapQuoteTransactions: CreateSwapQuoteTransactionsUseCase,
     private val swapTransactionSignManager: SwapTransactionSignManager,
     private val sendSwapTransactionsManager: SendSwapTransactionsManager,
+    private val setLastUsedSwapAddress: SetLastUsedSwapAddress,
+    private val setSwapStatusInProgress: SetSwapStatusInProgress,
+    private val setSwapStatusFailed: SetSwapStatusFailed,
+    private val createSwapV2QuoteTransactions: CreateSwapV2QuoteTransactions,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -93,8 +101,10 @@ class SwapConfirmationViewModel @Inject constructor(
             confirmTransactionJob = viewModelScope.launch {
                 val quoteId = contentState.quote.quoteId
                 val accountAddress = contentState.quote.accountAddress
-                createSwapQuoteTransactions.createQuoteTransactions(quoteId, accountAddress)
-                    .useSuspended(onSuccess = ::signTransactions, onFailed = ::displayFailedToCreateTxnError)
+                createSwapV2QuoteTransactions(quoteId, accountAddress).use(
+                    onSuccess = ::signTransactions,
+                    onFailed = ::displayFailedToCreateTxnError
+                )
             }
         }
     }
@@ -107,21 +117,31 @@ class SwapConfirmationViewModel @Inject constructor(
         swapTransactionSignManager.stopAllResources()
     }
 
-    private suspend fun signTransactions(transactions: List<SwapQuoteTransaction>) {
-        swapTransactionSignManager.signSwapQuoteTransaction(transactions)
+    private suspend fun signTransactions(transactions: SwapQuoteTransactions) {
+        swapTransactionSignManager.signSwapQuoteTransaction(transactions.transactions)
         swapTransactionSignManager.swapTransactionSignResultFlow.collectLatest { result ->
             when (result) {
-                is Success<*> -> sendSignTransactions(result)
-                LedgerScanFailed -> displayLedgerNotFoundDialog()
+                is Success<*> -> sendSignTransactions(transactions, result)
+                LedgerScanFailed -> {
+                    setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
+                    displayLedgerNotFoundDialog()
+                }
                 is LedgerWaitingForApproval -> displayLedgerWaitingForApprovalDialog(result)
                 Loading -> stateDelegate.onState<ViewState.Content> { contentState ->
                     if (contentState.contentState != ContentState.Loading) {
                         stateDelegate.updateState { contentState.copy(contentState = ContentState.Loading) }
                     }
                 }
-                is ExternalTransactionSignResult.Error.Api -> displayError(Api(result.errorMessage))
-                is ExternalTransactionSignResult.Error.Defined -> displayError(Local(result.description))
+                is ExternalTransactionSignResult.Error.Api -> {
+                    setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
+                    displayError(Api(result.errorMessage))
+                }
+                is ExternalTransactionSignResult.Error.Defined -> {
+                    setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
+                    displayError(Local(result.description))
+                }
                 is TransactionCancelled -> {
+                    setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
                     val error = (result.error as? ExternalTransactionSignResult.Error.Defined)?.description
                     val errorType = if (error != null) Local(error) else Generic
                     displayError(errorType)
@@ -136,19 +156,22 @@ class SwapConfirmationViewModel @Inject constructor(
         eventDelegate.sendEvent(DisplayError(errorType))
     }
 
-    private suspend fun sendSignTransactions(result: Success<*>) {
+    private suspend fun sendSignTransactions(transactions: SwapQuoteTransactions, result: Success<*>) {
         stateDelegate.onState<ViewState.Content> { content ->
             val signedTxns = result.signedTransaction as? List<SwapQuoteTransaction>
             if (signedTxns != null) {
                 sendSwapTransactionsManager.sendSwapTransactions(
                     signedTransactions = signedTxns.toMutableList(),
                     onSendTransactionsSuccess = {
+                        setSwapStatusInProgress(transactions.swapId)
+                        setLastUsedSwapAddress(content.accountDisplayName.accountAddress)
                         displaySuccessState(content)
                         val assetInShortName = content.quote.assetInDetail.shortName.orEmpty()
                         val assetOutShortName = content.quote.assetOutDetail.shortName.orEmpty()
                         eventDelegate.sendEvent(ViewEvent.NavigateToSwapScreen(assetInShortName, assetOutShortName))
                     },
                     onSendTransactionsFailed = {
+                        setSwapStatusFailed(transactions.swapId, OTHER)
                         displayErrorState()
                         eventDelegate.sendEvent(DisplayError(Generic))
                     }
@@ -160,9 +183,9 @@ class SwapConfirmationViewModel @Inject constructor(
         }
     }
 
-    private suspend fun displayFailedToCreateTxnError(error: DataResource.Error<List<SwapQuoteTransaction>>) {
+    private suspend fun displayFailedToCreateTxnError(exception: Exception, code: Int?) {
         displayErrorState()
-        val errorType = if (error.exception is IOException) {
+        val errorType = if (exception is IOException) {
             Local(AnnotatedString(R.string.the_internet_connection))
         } else {
             Generic

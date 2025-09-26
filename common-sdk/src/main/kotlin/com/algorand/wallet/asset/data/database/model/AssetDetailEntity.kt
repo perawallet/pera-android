@@ -88,7 +88,10 @@ internal data class AssetDetailEntity(
     val isVerifiedAssetCreator: Boolean?,
 
     @ColumnInfo("verification_tier")
-    val verificationTier: VerificationTierEntity
+    val verificationTier: VerificationTierEntity,
+
+    @ColumnInfo("category")
+    val category: AssetCategoryEntity?
 ) {
 
     internal companion object {

@@ -18,6 +18,7 @@ import com.algorand.wallet.swap.domain.model.SwapPeraFee
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import java.math.BigInteger
 
@@ -27,7 +28,10 @@ internal interface SwapRepository {
     suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>>
     suspend fun getPeraFee(assetInId: Long, amount: BigInteger): PeraResult<SwapPeraFee>
     suspend fun createQuoteTransactions(quoteId: Long): PeraResult<List<SwapQuoteTransaction>>
-    suspend fun updateSwapQuoteException(quoteId: Long, exceptionText: String)
     suspend fun getAvailableAssetsToSwap(assetInId: Long, query: String?): PeraResult<List<AvailableSwapAsset>>
     suspend fun getTopSwapPairs(): PeraResult<TopSwapPairs>
+    suspend fun getUseLocalCurrencyPreference(): Boolean
+    suspend fun setUseLocalCurrencyPreference(useLocalCurrency: Boolean)
+    suspend fun setSwapStatusFailed(quoteId: Long, reason: SwapStatusFailureReason)
+    suspend fun setSwapStatusInProgress(quoteId: Long)
 }

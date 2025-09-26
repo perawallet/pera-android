@@ -14,6 +14,7 @@ package com.algorand.wallet.swap.data.model
 
 import androidx.room.ColumnInfo
 import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
+import java.math.BigDecimal
 import java.math.BigInteger
 
 internal data class SwapSelectedAssetDto(
@@ -33,5 +34,8 @@ internal data class SwapSelectedAssetDto(
     val assetHoldingAmount: BigInteger?,
 
     @ColumnInfo("decimals")
-    val decimal: Int?
+    val decimal: Int?,
+
+    @ColumnInfo("usd_value")
+    val usdValue: BigDecimal?
 )

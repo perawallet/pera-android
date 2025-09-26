@@ -54,7 +54,7 @@ class DefaultSwapProviderWidgetViewModel @Inject constructor(
     private fun getContentState(quoteState: SwapWidgetViewModel.ViewState.Content.ContentState.Quote): Content {
         val selectedQuote = quoteState.selectedQuoteDetail.quote
         return Content(
-            providerName = selectedQuote.provider.displayName,
+            provider = selectedQuote.provider,
             assetInShortName = selectedQuote.assetInDetail.shortName.orEmpty(),
             assetOutShortName = selectedQuote.assetOutDetail.shortName.orEmpty(),
             unitPrice = selectedQuote.price.toString(),

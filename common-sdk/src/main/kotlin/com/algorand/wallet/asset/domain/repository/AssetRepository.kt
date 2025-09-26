@@ -50,6 +50,8 @@ internal interface AssetRepository {
 
     fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>>
 
+    suspend fun getAssetLiteInformation(assetId: Long): AssetLiteInformation?
+
     suspend fun getAssetCreatorAddress(assetId: Long): String?
 
     suspend fun cacheAlgoAssetDetail(usdValue: BigDecimal?)

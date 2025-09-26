@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
@@ -26,6 +27,8 @@ import com.algorand.android.ui.swap.accountselection.view.SwapAddressSelectionFr
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment.Companion.SWAP_ASSET_IN_ID_KEY
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment.Companion.SWAP_ASSET_OUT_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import com.algorand.android.utils.browser.SWAP_INFO_SUPPORT_URL
+import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.browser.openVestigeTermsOfServiceUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
@@ -41,6 +44,8 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
+    private val args: SwapFragmentArgs by navArgs()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             PeraTheme {
@@ -52,6 +57,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         registerBottomNavBarFragmentDelegation(this)
+        swapViewModel.initViewState(args)
     }
 
     override fun onStart() {
@@ -80,11 +86,16 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     }
 
     override fun onInfoIconClick() {
-        // TODO
+        context?.openUrl(SWAP_INFO_SUPPORT_URL)
     }
 
     override fun onSwapClick(quote: SwapQuoteV2) {
         nav(SwapFragmentDirections.actionSwapFragmentToSwapConfirmationFragment(quote))
+    }
+
+    override fun onSwapHistorySeeAllClick() {
+        val address = swapViewModel.getAddress() ?: return
+        nav(SwapFragmentDirections.actionSwapFragmentToSwapHistoryFragment(address))
     }
 
     override fun onAssetInChipClick() {
@@ -99,7 +110,7 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     }
 
     override fun onStartSwappingClick() {
-        swapViewModel.acceptTermsOfService()
+        swapViewModel.acceptTermsOfService(args)
     }
 
     override fun onTermsOfServiceClick() {

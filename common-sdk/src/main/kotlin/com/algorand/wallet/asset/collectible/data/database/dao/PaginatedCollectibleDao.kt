@@ -41,7 +41,7 @@ internal interface PaginatedCollectibleDao {
         collectible.title AS title,
         collectible.primary_image_url AS primary_image_url,
         collectible.collection_name AS collection_name,
-    
+        collectible.media_type AS media_type,
         holding.opted_in_at_round AS opted_in_at_round
     FROM collectible
     INNER JOIN asset_detail AS asset

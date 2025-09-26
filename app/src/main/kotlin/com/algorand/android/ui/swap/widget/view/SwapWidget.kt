@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
@@ -49,11 +50,12 @@ fun SwapWidget(
     buttonViewModel: SwapButtonViewModel,
     configViewModel: SwapConfigurationViewModel,
     topSwapPairsViewModel: TopSwapPairsViewModel,
+    swapPairHistoryViewModel: SwapPairHistoryViewModel,
     listener: SwapWidgetListener,
     onConfigureClick: () -> Unit
 ) {
     ConstraintLayout(modifier = modifier, constraintSet = createConstraints()) {
-        AssetInContainer(widgetViewModel, assetInViewModel, listener)
+        AssetInContainer(swapViewModel, widgetViewModel, assetInViewModel, listener)
         AssetOutContainer(widgetViewModel, assetOutViewModel, listener)
         SwapConfigurationContainer(
             configViewModel,
@@ -69,6 +71,7 @@ fun SwapWidget(
             buttonViewModel.init(widgetViewModel.state)
             providerWidgetViewModel.init(widgetViewModel.state)
             topSwapPairsViewModel.init(widgetViewModel.state)
+            swapPairHistoryViewModel.init(swapViewModel.addressFlow, widgetViewModel.state)
             widgetViewModel.initWidget(swapViewModel.swapDetailsFlow, assetInViewModel.state, assetOutViewModel.state)
         }
     }
@@ -76,6 +79,7 @@ fun SwapWidget(
 
 @Composable
 private fun AssetInContainer(
+    swapViewModel: SwapViewModel,
     widgetViewModel: SwapWidgetViewModel,
     assetInViewModel: SwapAssetSelectionViewModel,
     listener: SwapWidgetListener
@@ -85,7 +89,7 @@ private fun AssetInContainer(
             .layoutId(ASSET_IN_CONTAINER_ID)
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp)
     ) {
-        SwapAssetInWidget(widgetViewModel, assetInViewModel, listener::onAssetInChipClick)
+        SwapAssetInWidget(swapViewModel, widgetViewModel, assetInViewModel, listener::onAssetInChipClick)
     }
 }
 

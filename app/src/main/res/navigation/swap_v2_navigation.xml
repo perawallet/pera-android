@@ -20,6 +20,20 @@
         android:id="@+id/swapFragment"
         android:name="com.algorand.android.ui.swap.view.SwapFragment"
         android:label="SwapFragment">
+        <argument
+            android:name="address"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="assetInId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+        <argument
+            android:name="assetOutId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+
         <action
             android:id="@+id/action_swapFragment_to_swapAssetInSelectionFragment"
             app:destination="@id/swapAssetInSelectionFragment" />
@@ -32,6 +46,9 @@
         <action
             android:id="@+id/action_swapFragment_to_swapConfirmationFragment"
             app:destination="@id/swapConfirmationFragment" />
+        <action
+            android:id="@+id/action_swapFragment_to_swapHistoryFragment"
+            app:destination="@id/swapHistoryFragment" />
     </fragment>
 
 
@@ -84,6 +101,16 @@
             app:destination="@id/swapFragment"
             app:popUpTo="@id/swapFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/swapHistoryFragment"
+        android:name="com.algorand.android.ui.swap.history.view.SwapHistoryFragment"
+        android:label="SwapHistoryFragment">
+
+        <argument
+            android:name="address"
+            app:argType="string" />
     </fragment>
 
     <dialog

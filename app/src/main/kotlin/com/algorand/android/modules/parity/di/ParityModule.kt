@@ -33,6 +33,8 @@ import com.algorand.android.modules.parity.domain.usecase.GetUsdToAlgoConversion
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToAlgoConversionRateUseCase
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRateUseCase
+import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryFiatConversionRate
+import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryFiatConversionRateUseCase
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToSecondaryCurrencyConversionRate
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToSecondaryCurrencyConversionRateUseCase
 import com.algorand.android.modules.parity.domain.usecase.PrimaryCurrencyParityCalculationUseCase
@@ -105,4 +107,9 @@ internal object ParityModule {
 
     @Provides
     fun provideGetParityDisplayValue(useCase: GetParityDisplayValueUseCase): GetParityDisplayValue = useCase
+
+    @Provides
+    fun provideGetUsdToPrimaryFiatConversionRate(
+        useCase: GetUsdToPrimaryFiatConversionRateUseCase
+    ): GetUsdToPrimaryFiatConversionRate = useCase
 }

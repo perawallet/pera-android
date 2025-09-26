@@ -13,7 +13,6 @@
 package com.algorand.android.ui.swap.topfive.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,9 +21,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIcons
 import com.algorand.android.ui.compose.widget.modifier.shimmer
 import com.algorand.android.ui.swap.topfive.model.TopSwapPairItem
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
@@ -119,18 +116,7 @@ private fun SwapPairItem(index: Int, detail: TopSwapPairItem) {
             style = PeraTheme.typography.body.large.sans,
             color = PeraTheme.colors.text.gray
         )
-        Box(modifier = Modifier.padding(2.dp)) {
-            val iconModifier = Modifier
-                .size(24.dp)
-                .border(width = 2.dp, color = PeraTheme.colors.background.primary, shape = CircleShape)
-            AssetIcon(iconModifier, detail.assetInIconDrawable)
-            AssetIcon(
-                modifier = Modifier
-                    .padding(start = 14.dp, top = 14.dp)
-                    .then(iconModifier),
-                drawable = detail.assetOutIconDrawable
-            )
-        }
+        AssetIcons(firstDrawable = detail.assetInIconDrawable, secondDrawable = detail.assetOutIconDrawable)
         Spacer(modifier = Modifier.width(8.dp))
         Row(modifier = Modifier.weight(1f)) {
             Text(

@@ -10,6 +10,8 @@
  * limitations under the License
  */
 
+@file:Suppress("LongParameterList")
+
 package com.algorand.android.ui.swap.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -18,16 +20,24 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatureIntroductionPageShownUseCase
 import com.algorand.android.modules.swap.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibilityUseCase
 import com.algorand.android.ui.swap.configuration.model.SwapConfigurationResult
+import com.algorand.android.ui.swap.view.SwapFragmentArgs
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
+import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.isEqualTo
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_MAINNET_ID
 import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
+import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
+import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,7 +61,12 @@ class SwapViewModel @Inject constructor(
     private val getUsdcAssetId: GetUsdcAssetId,
     private val getAccountAssetHolding: GetAccountAssetHolding,
     private val setSwapFeatureIntroductionPageVisibility: SetSwapFeatureIntroductionPageVisibilityUseCase,
-    private val isSwapFeatureIntroductionPageShown: IsSwapFeatureIntroductionPageShownUseCase
+    private val isSwapFeatureIntroductionPageShown: IsSwapFeatureIntroductionPageShownUseCase,
+    private val getAccountLite: GetAccountLite,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
+    private val getSwapUseLocalCurrencyPreference: GetSwapUseLocalCurrencyPreference,
+    private val setSwapUseLocalCurrencyPreference: SetSwapUseLocalCurrencyPreference,
+    private val parityUseCase: ParityUseCase
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val _swapDetailsFlow = MutableStateFlow<SwapDetails>(SwapDetails())
@@ -69,6 +84,18 @@ class SwapViewModel @Inject constructor(
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
+    }
+
+    fun initViewState(arg: SwapFragmentArgs) {
+        stateDelegate.onState<ViewState.Idle> {
+            viewModelScope.launch {
+                if (isSwapFeatureIntroductionPageShown()) {
+                    initSwapViewState(arg)
+                } else {
+                    stateDelegate.updateState { ViewState.Introduction }
+                }
+            }
+        }
     }
 
     fun switchAssets() {
@@ -93,9 +120,18 @@ class SwapViewModel @Inject constructor(
         _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetOutId = assetId)
     }
 
+    fun setAssetInAndOutIds(assetInId: Long, assetOutId: Long) {
+        _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetOutId = assetOutId, assetInId = assetInId)
+    }
+
     fun applySwapConfigs(result: SwapConfigurationResult) {
-        _swapDetailsFlow.update {
-            it.copy(
+        _swapDetailsFlow.update { currentConfig ->
+            if (currentConfig.useLocalCurrency != result.useLocalCurrency) {
+                viewModelScope.launch {
+                    setSwapUseLocalCurrencyPreference(result.useLocalCurrency)
+                }
+            }
+            currentConfig.copy(
                 slippage = result.slippageTolerance,
                 useLocalCurrency = result.useLocalCurrency
             )
@@ -114,37 +150,54 @@ class SwapViewModel @Inject constructor(
         }
     }
 
-    fun initViewState() {
-        stateDelegate.onState<ViewState.Idle> {
-            viewModelScope.launch {
-                if (isSwapFeatureIntroductionPageShown()) {
-                    initSwapViewState()
-                } else {
-                    stateDelegate.updateState { ViewState.Introduction }
-                }
-            }
-        }
-    }
-
-    fun acceptTermsOfService() {
+    fun acceptTermsOfService(arg: SwapFragmentArgs) {
         viewModelScope.launch {
             setSwapFeatureIntroductionPageVisibility(false)
-            initSwapViewState()
+            initSwapViewState(arg)
         }
     }
 
-    private suspend fun initSwapViewState() {
-        val address = getPreselectedSwapAddress()
+    private suspend fun initSwapViewState(arg: SwapFragmentArgs) {
+        val address = getSwapAddress(arg)
         if (address == null) {
             stateDelegate.updateState { ViewState.NoAccountState }
         } else {
+            val assetInId = getAssetInId(address, arg.assetInId)
+            val useLocalCurrency = getSwapUseLocalCurrencyPreference()
             _swapDetailsFlow.value = SwapDetails(
                 address = address,
-                assetInId = ALGO_ID,
-                assetOutId = getUsdcAssetId()
+                assetInId = assetInId,
+                assetOutId = getAssetOutId(assetInId, arg.assetOutId),
+                useLocalCurrency = useLocalCurrency,
+                primaryCurrencySymbol = getPrimaryCurrencySymbol(useLocalCurrency)
             )
             updateContentState(address)
         }
+    }
+
+    private fun getPrimaryCurrencySymbol(useLocalCurrency: Boolean): String {
+        return if (useLocalCurrency) parityUseCase.getDisplayedCurrencySymbol() else emptyString()
+    }
+
+    private suspend fun getSwapAddress(arg: SwapFragmentArgs): String? {
+        val deeplinkAddress = arg.address
+        if (!deeplinkAddress.isNullOrBlank()) {
+            val canSignTxn = getAccountLite(deeplinkAddress)?.cachedInfo?.type?.canSignTransaction() == true
+            if (canSignTxn) return deeplinkAddress
+        }
+        return getPreselectedSwapAddress()
+    }
+
+    private suspend fun getAssetInId(address: String, assetInIdArg: Long): Long {
+        return if (assetInIdArg != -1L && isAssetOptedInByAccount(address, assetInIdArg)) {
+            assetInIdArg
+        } else {
+            ALGO_ID
+        }
+    }
+
+    private suspend fun getAssetOutId(assetInId: Long, assetOutIdArg: Long): Long {
+        return if (assetOutIdArg != -1L && assetInId != assetOutIdArg) assetOutIdArg else getUsdcAssetId()
     }
 
     private suspend fun updateContentState(address: String) {
@@ -171,6 +224,7 @@ class SwapViewModel @Inject constructor(
         val assetInId: Long = ALGO_ID,
         val assetOutId: Long = USDC_MAINNET_ID,
         val slippage: Float? = null,
-        val useLocalCurrency: Boolean = false
+        val useLocalCurrency: Boolean = false,
+        val primaryCurrencySymbol: String = ""
     )
 }

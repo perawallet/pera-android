@@ -23,4 +23,5 @@ interface AssetIconDrawableMapper {
     fun map(assetDetail: SwapQuoteV2.AssetDetail): AssetIconDrawable
     fun map(assetDetail: TopSwapPairs.AssetDetail): AssetIconDrawable
     fun map(asset: Asset): AssetIconDrawable
+    fun map(id: Long, logoUrl: String?, shortName: String?): AssetIconDrawable
 }

@@ -16,19 +16,19 @@ import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuoteException
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAlgoBalance
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAssetBalance
-import com.algorand.wallet.swap.domain.utils.swapFeePadding
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
 internal class GetSwapQuoteDetailsUseCase @Inject constructor(
     private val getAccountAssetHolding: GetAccountAssetHolding,
-    private val getAccountMinBalance: GetAccountMinBalance
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getSwapFeePadding: GetSwapFeePadding
 ) : GetSwapQuoteDetails {
 
     override suspend fun invoke(quotes: List<SwapQuoteV2>): List<SwapQuoteDetail> {
@@ -55,7 +55,7 @@ internal class GetSwapQuoteDetailsUseCase @Inject constructor(
                 isAssetInAlgo -> assetInAmount.amount.add(minRequiredBalance)
                 isAssetOutAlgo -> minRequiredBalance.minus(assetOutAmount.amountWithSlippage)
                 else -> minRequiredBalance
-            }.add(fee.peraFeeAmount).add(swapFeePadding)
+            }.add(fee.peraFeeAmount).add(getSwapFeePadding())
             return requiredBalance <= userAlgoBalance
         }
     }

@@ -10,9 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.utils
+package com.algorand.wallet.swap.domain.usecase
 
+import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigService
 import java.math.BigDecimal
+import javax.inject.Inject
 
-@Suppress("MagicNumber")
-val swapFeePadding: BigDecimal = BigDecimal.valueOf(0.665)
+internal class GetSwapFeePaddingUseCase @Inject constructor(
+    private val firebaseRemoteConfigService: FirebaseRemoteConfigService
+) : GetSwapFeePadding {
+
+    override fun invoke(): BigDecimal {
+        val feePadding = firebaseRemoteConfigService.getDouble(SWAP_FEE_PADDING_KEY)
+        return BigDecimal.valueOf(feePadding)
+    }
+
+    private companion object {
+        const val SWAP_FEE_PADDING_KEY = "swap_fee_padding"
+    }
+}

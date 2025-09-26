@@ -89,3 +89,7 @@ fun interface SetSwapStatusInProgress {
 fun interface SetSwapStatusFailed {
     suspend operator fun invoke(quoteId: Long, reason: SwapStatusFailureReason)
 }
+
+fun interface GetSwapFeePadding {
+    operator fun invoke(): BigDecimal
+}

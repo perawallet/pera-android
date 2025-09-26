@@ -18,13 +18,14 @@ import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail.SwapQuoteState.NonSwappable
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAlgoBalance
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientAssetBalance
 import com.algorand.wallet.swap.domain.model.SwapQuoteException.InsufficientBalanceForFee
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -36,8 +37,11 @@ class GetSwapQuoteDetailsUseCaseTest {
 
     private val getAccountAssetHolding: GetAccountAssetHolding = mockk(relaxed = true)
     private val getAccountMinBalance: GetAccountMinBalance = mockk(relaxed = true)
+    private val getSwapFeePadding: GetSwapFeePadding = mockk {
+        every { this@mockk.invoke() } returns BigDecimal.valueOf(0.665)
+    }
 
-    private val sut = GetSwapQuoteDetailsUseCase(getAccountAssetHolding, getAccountMinBalance)
+    private val sut = GetSwapQuoteDetailsUseCase(getAccountAssetHolding, getAccountMinBalance, getSwapFeePadding)
 
     @Test
     fun `EXPECT insufficient algo balance WHEN account does not have enough algo for txn`() = runTest {

@@ -16,4 +16,5 @@ internal interface FirebaseRemoteConfigService {
     suspend fun fetchRemoteConfig()
 
     fun getBoolean(key: String): Boolean
+    fun getDouble(key: String): Double
 }

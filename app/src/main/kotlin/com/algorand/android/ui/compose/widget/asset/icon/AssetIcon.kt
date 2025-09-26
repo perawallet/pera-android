@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -70,11 +71,11 @@ sealed interface AssetIconDrawable {
 }
 
 @Composable
-fun AssetIcon(modifier: Modifier, drawable: AssetIconDrawable) {
+fun AssetIcon(modifier: Modifier, drawable: AssetIconDrawable, shape: Shape = RoundedCornerShape(8.dp)) {
     BoxWithConstraints(modifier = modifier) {
         when (drawable) {
             AssetIconDrawable.AlgoDrawable -> AlgoIcon()
-            is AssetIconDrawable.AssetDrawable -> AssetDrawableIcon(drawable)
+            is AssetIconDrawable.AssetDrawable -> AssetDrawableIcon(drawable, shape)
         }
     }
 }
@@ -86,12 +87,13 @@ fun AssetIcons(modifier: Modifier = Modifier, firstDrawable: AssetIconDrawable, 
             .size(25.dp)
             .border(width = 2.dp, color = PeraTheme.colors.background.primary, shape = CircleShape)
             .padding(1.dp)
-        AssetIcon(iconModifier, firstDrawable)
+        AssetIcon(iconModifier, firstDrawable, shape = CircleShape)
         AssetIcon(
             modifier = Modifier
                 .padding(start = 14.dp, top = 14.dp)
                 .then(iconModifier),
-            drawable = secondDrawable
+            drawable = secondDrawable,
+            shape = CircleShape
         )
     }
 }
@@ -110,11 +112,11 @@ private fun BoxWithConstraintsScope.AlgoIcon() {
 }
 
 @Composable
-private fun BoxWithConstraintsScope.AssetDrawableIcon(drawable: AssetIconDrawable.AssetDrawable) {
+private fun BoxWithConstraintsScope.AssetDrawableIcon(drawable: AssetIconDrawable.AssetDrawable, shape: Shape) {
     val placeholder = placeholder { AssetNameIcon(maxWidth, drawable.unitName) }
     val widthAsPx = with(LocalDensity.current) { maxWidth.toPx().toInt() }
     GlideImage(
-        modifier = Modifier.clip(RoundedCornerShape(8.dp)),
+        modifier = Modifier.clip(shape),
         model = drawable.getImageUrl(widthAsPx),
         contentDescription = null,
         contentScale = ContentScale.Crop,

@@ -13,6 +13,7 @@
 package com.algorand.android.ui.swap.widget.model
 
 import java.math.BigDecimal
+import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +21,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class SwapAmountInput {
 
     val amountInputFlow = MutableStateFlow<Input>(Input("", null))
+    private val symbols = DecimalFormatSymbols.getInstance(Locale.getDefault())
 
     fun setInput(input: String) {
         val amountAsBigDecimal = getInputAsBigDecimal(input)
-        amountInputFlow.value = Input(input, amountAsBigDecimal)
+        val normalizedInput = input.replace(symbols.groupingSeparator, symbols.decimalSeparator)
+        amountInputFlow.value = Input(normalizedInput, amountAsBigDecimal)
     }
 
     fun setInput(amount: BigDecimal) {

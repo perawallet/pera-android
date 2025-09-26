@@ -12,13 +12,18 @@
 
 package com.algorand.wallet.swap.domain.usecase
 
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.swap.domain.repository.SwapRepository
 import java.math.BigDecimal
 import javax.inject.Inject
 
-internal class GetSwapPeraFeeUseCase @Inject constructor() : GetSwapPeraFee {
+internal class GetSwapPeraFeeUseCase @Inject constructor(private val swapRepository: SwapRepository) : GetSwapPeraFee {
 
     override suspend fun invoke(assetInId: Long, amount: BigDecimal, fractionDecimals: Int): PeraResult<BigDecimal> {
-        return PeraResult.Success(BigDecimal.ZERO)
+        val amountAsMicro = amount.movePointRight(fractionDecimals).toBigInteger()
+        return swapRepository.getPeraFee(assetInId, amountAsMicro).map {
+            it.fee?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS) ?: BigDecimal.ZERO
+        }
     }
 }

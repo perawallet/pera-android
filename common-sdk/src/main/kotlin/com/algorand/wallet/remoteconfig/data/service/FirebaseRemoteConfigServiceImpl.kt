@@ -46,6 +46,10 @@ internal class FirebaseRemoteConfigServiceImpl @Inject constructor() : FirebaseR
         return remoteConfig.getBoolean(key)
     }
 
+    override fun getDouble(key: String): Double {
+        return remoteConfig.getDouble(key)
+    }
+
     private fun getFirebaseRemoteConfigSettings(): FirebaseRemoteConfigSettings {
         return FirebaseRemoteConfigSettings.Builder()
             .setMinimumFetchIntervalInSeconds(if (BuildConfig.DEBUG) 0L else FETCH_INTERVAL_IN_SECS)

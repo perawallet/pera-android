@@ -65,7 +65,8 @@ internal class DefaultSwapRepository @Inject constructor(
 
     override suspend fun getPeraFee(assetInId: Long, amount: BigInteger): PeraResult<SwapPeraFee> {
         return try {
-            val response = swapApiService.getPeraFee(SwapPeraFeeRequestBody(assetInId, amount))
+            val requestAssetId = getSafeAssetIdForRequest(assetInId)
+            val response = swapApiService.getPeraFee(SwapPeraFeeRequestBody(requestAssetId, amount))
             PeraResult.Success(SwapPeraFee(response.peraFeeAmount))
         } catch (exception: Exception) {
             PeraResult.Error(exception)

@@ -84,14 +84,14 @@ class SwapAmountInputTest {
             Input("1", BigDecimal.valueOf(1)),
             Input("", null),
             Input(".", null),
-            Input(".1", BigDecimal("0.1")),
+            Input(".1", BigDecimal.valueOf(0.1)),
             Input(".", null),
             Input("", null),
             Input("0", BigDecimal.valueOf(0)),
             Input("0.", BigDecimal.valueOf(0)),
-            Input("0.1", BigDecimal("0.1")),
-            Input("0.12", BigDecimal("0.12")),
-            Input("0.123", BigDecimal("0.123"))
+            Input("0.1", BigDecimal.valueOf(0.1)),
+            Input("0.12", BigDecimal.valueOf(0.12)),
+            Input("0.123", BigDecimal.valueOf(0.123))
         )
     }
 
@@ -111,12 +111,12 @@ class SwapAmountInputTest {
         amountObserver.assertValueHistory(
             Input("", null),
             Input(",", null),
-            Input(",1", BigDecimal("0.1")),
+            Input(",1", BigDecimal.valueOf(0.1)),
             Input(",", null),
             Input("", null),
             Input("0", BigDecimal.valueOf(0)),
             Input("0,", BigDecimal.valueOf(0)),
-            Input("0,1", BigDecimal("0.1"))
+            Input("0,1", BigDecimal.valueOf(0.1))
         )
     }
 }

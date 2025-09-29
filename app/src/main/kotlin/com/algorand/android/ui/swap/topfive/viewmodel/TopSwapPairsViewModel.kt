@@ -28,6 +28,7 @@ interface TopSwapPairsViewModel : StateViewModel<ViewState> {
         data object Idle : ViewState
         data object Loading : ViewState
         data object Error : ViewState
+        data object Empty : ViewState
         data class Content(val topSwapPairItems: List<TopSwapPairItem>) : ViewState
     }
 }

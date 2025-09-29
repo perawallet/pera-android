@@ -38,6 +38,7 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigDecimal
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -73,7 +74,7 @@ class DefaultSwapWidgetViewModel @Inject constructor(
     override val state: StateFlow<ViewState>
         get() = stateDelegate.state
 
-    private val swapAmountInput = SwapAmountInput()
+    private val swapAmountInput = SwapAmountInput(Locale.getDefault())
 
     override fun setAmountInput(amountInput: String) {
         swapAmountInput.setInput(amountInput)

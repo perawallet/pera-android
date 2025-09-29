@@ -80,7 +80,7 @@ class DefaultTopSwapPairsViewModel @Inject constructor(
             getTopSwapPairs().use(
                 onSuccess = { result ->
                     val items = result.details.map { mapToTopSwapPairItem(it) }
-                    viewStateFlow.value = if (items.isEmpty()) ViewState.Error else ViewState.Content(items)
+                    viewStateFlow.value = if (items.isEmpty()) ViewState.Empty else ViewState.Content(items)
                 },
                 onFailed = { _, _ ->
                     viewStateFlow.value = ViewState.Error

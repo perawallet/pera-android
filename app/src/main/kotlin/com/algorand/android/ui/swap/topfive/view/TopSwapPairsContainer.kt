@@ -55,6 +55,7 @@ fun TopSwapPairsContainer(viewModel: TopSwapPairsViewModel) {
             ViewState.Idle -> Unit
             ViewState.Error -> ErrorState()
             ViewState.Loading -> LoadingState()
+            ViewState.Empty -> EmptyState()
             is ViewState.Content -> ContentState(viewState.topSwapPairItems)
         }
     }
@@ -75,6 +76,15 @@ private fun ErrorState() {
             style = PeraTheme.typography.footnote.sansMedium
         )
     }
+}
+
+@Composable
+private fun EmptyState() {
+    Text(
+        text = stringResource(R.string.no_swap_activity_in_the),
+        color = PeraTheme.colors.text.gray,
+        style = PeraTheme.typography.footnote.sansMedium
+    )
 }
 
 @Composable

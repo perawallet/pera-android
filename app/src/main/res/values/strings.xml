@@ -1567,4 +1567,5 @@
     <string name="swap_history">Swap History</string>
     <string name="see_all">See all</string>
     <string name="your_swap_history_will_appear">Your swap history will appear here once you\'ve completed a swap.</string>
+    <string name="no_swap_activity_in_the">No swap activity in the last 24 hours</string>
 </resources>

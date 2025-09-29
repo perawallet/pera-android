@@ -14,6 +14,7 @@ package com.algorand.android.ui.swap.history.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -92,7 +93,7 @@ fun SwapPairHistoryWidget(
 
 @Composable
 private fun ContentState(pairs: List<SwapPairHistoryItem>, onSwapPairClick: (Long, Long) -> Unit) {
-    LazyRow(contentPadding = PaddingValues(horizontal = 24.dp)) {
+    LazyRow(contentPadding = PaddingValues(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         items(pairs) { pair ->
             val assetPairText = stringResource(
                 R.string.asset_to_asset_formatted,

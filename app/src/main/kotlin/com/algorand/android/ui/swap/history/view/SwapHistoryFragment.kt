@@ -22,9 +22,11 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.swap.history.model.SwapHistoryItem
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel
+import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewEvent
+import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewEvent.DisplayTxnInPeraExplorer
 import com.algorand.android.utils.browser.openGroupTransactionInPeraExplorer
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,6 +35,12 @@ class SwapHistoryFragment : BaseFragment(0), SwapHistoryScreenListener {
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val swapHistoryViewModel by viewModels<SwapHistoryViewModel>()
+
+    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
+        when (event) {
+            is DisplayTxnInPeraExplorer -> context?.openGroupTransactionInPeraExplorer(event.txnGroupId, event.nodeSlug)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return createComposeView {
@@ -45,12 +53,8 @@ class SwapHistoryFragment : BaseFragment(0), SwapHistoryScreenListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val address = navArgs<SwapHistoryFragmentArgs>().value.address
+        collectLatestOnLifecycle(swapHistoryViewModel.viewEvent, viewEventCollector)
         swapHistoryViewModel.init(address)
-    }
-
-    override fun onSwapItemClick(swapHistoryItem: SwapHistoryItem) {
-        val networkSlug = swapHistoryViewModel.getSelectedNetworkSlug()
-        context?.openGroupTransactionInPeraExplorer(swapHistoryItem.txnGroupId, networkSlug)
     }
 
     override fun onNavBackClick() {

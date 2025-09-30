@@ -35,13 +35,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIcons
+import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.modifier.shimmer
 import com.algorand.android.ui.swap.topfive.model.TopSwapPairItem
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel.ViewState
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun TopSwapPairsContainer(viewModel: TopSwapPairsViewModel) {
+fun TopSwapPairsContainer(scope: CoroutineScope, swapViewModel: SwapViewModel, viewModel: TopSwapPairsViewModel) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
     if (viewState is ViewState.Idle) return
     Column(
@@ -56,7 +60,7 @@ fun TopSwapPairsContainer(viewModel: TopSwapPairsViewModel) {
             ViewState.Error -> ErrorState()
             ViewState.Loading -> LoadingState()
             ViewState.Empty -> EmptyState()
-            is ViewState.Content -> ContentState(viewState.topSwapPairItems)
+            is ViewState.Content -> ContentState(scope, swapViewModel, viewModel, viewState.topSwapPairItems)
         }
     }
 }
@@ -101,10 +105,24 @@ private fun LoadingState() {
 }
 
 @Composable
-private fun ContentState(topSwapPairItems: List<TopSwapPairItem>) {
+private fun ContentState(
+    scope: CoroutineScope,
+    swapViewModel: SwapViewModel,
+    viewModel: TopSwapPairsViewModel,
+    topSwapPairItems: List<TopSwapPairItem>
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         topSwapPairItems.forEachIndexed { index, detail ->
-            SwapPairItem(index, detail)
+            SwapPairItem(
+                modifier = Modifier.clickableNoRipple {
+                    scope.launch {
+                        viewModel.logPairSelected(detail.assetInShortName.orEmpty(), detail.assetOutShortName.orEmpty())
+                        swapViewModel.setAssetInAndOutIds(detail.assetInId, detail.assetOutId)
+                    }
+                },
+                index,
+                detail
+            )
             if (index < topSwapPairItems.size - 1) {
                 Box(
                     modifier = Modifier
@@ -118,8 +136,8 @@ private fun ContentState(topSwapPairItems: List<TopSwapPairItem>) {
 }
 
 @Composable
-private fun SwapPairItem(index: Int, detail: TopSwapPairItem) {
-    Row(modifier = Modifier.padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+private fun SwapPairItem(modifier: Modifier, index: Int, detail: TopSwapPairItem) {
+    Row(modifier = modifier.padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(
             modifier = Modifier.defaultMinSize(minWidth = 36.dp),
             text = "${index + 1}.",

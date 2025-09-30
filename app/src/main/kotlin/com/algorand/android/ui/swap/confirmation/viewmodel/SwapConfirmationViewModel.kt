@@ -1,3 +1,4 @@
+@file:Suppress("LongParameterList")
 /*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,6 +46,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
 import com.algorand.android.ui.swap.domain.usecase.CreateSwapV2QuoteTransactions
+import com.algorand.android.ui.swap.tracking.SwapConfirmationEventTracker
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.OTHER
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.USER_CANCELLED
@@ -72,6 +74,7 @@ class SwapConfirmationViewModel @Inject constructor(
     private val setSwapStatusInProgress: SetSwapStatusInProgress,
     private val setSwapStatusFailed: SetSwapStatusFailed,
     private val createSwapV2QuoteTransactions: CreateSwapV2QuoteTransactions,
+    private val swapConfirmationEventTracker: SwapConfirmationEventTracker,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -99,6 +102,7 @@ class SwapConfirmationViewModel @Inject constructor(
             stateDelegate.updateState { contentState.copy(contentState = ContentState.Loading) }
             swapTransactionSignManager.manualStopAllResources()
             confirmTransactionJob = viewModelScope.launch {
+                swapConfirmationEventTracker.logSwapConfirmation()
                 val quoteId = contentState.quote.quoteId
                 val accountAddress = contentState.quote.accountAddress
                 createSwapV2QuoteTransactions(quoteId, accountAddress).use(

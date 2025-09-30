@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -65,10 +66,11 @@ fun SwapScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             val viewState = swapViewModel.state.collectAsStateWithLifecycle()
+            val scope = rememberCoroutineScope()
             when (viewState.value) {
                 SwapViewModel.ViewState.Idle -> Unit
                 is SwapViewModel.ViewState.Content -> {
-                    SwapToolbar(swapViewModel, listener)
+                    SwapToolbar(scope, swapViewModel, listener)
                     SwapScreenContentState(
                         swapViewModel = swapViewModel,
                         assetInViewModel = assetInViewModel,
@@ -80,12 +82,18 @@ fun SwapScreen(
                         quoteProvidersViewModel = quoteProvidersViewModel,
                         topSwapPairsViewModel = topSwapPairsViewModel,
                         swapPairHistoryViewModel = swapPairHistoryViewModel,
+                        scope = scope,
                         listener = listener
                     )
                 }
                 NoAccountState -> {
-                    SwapToolbar(swapViewModel, listener)
-                    SwapScreenNoAccountState(topSwapPairsViewModel, listener::onCreateAccountClick)
+                    SwapToolbar(scope, swapViewModel, listener)
+                    SwapScreenNoAccountState(
+                        scope,
+                        swapViewModel,
+                        topSwapPairsViewModel,
+                        listener::onCreateAccountClick
+                    )
                 }
                 Introduction -> SwapScreenIntroductionState(listener = listener)
             }

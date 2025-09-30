@@ -16,6 +16,16 @@ import com.algorand.android.ui.swap.history.mapper.DefaultSwapHistoryItemMapper
 import com.algorand.android.ui.swap.history.mapper.DefaultSwapPairHistoryItemMapper
 import com.algorand.android.ui.swap.history.mapper.SwapHistoryItemMapper
 import com.algorand.android.ui.swap.history.mapper.SwapPairHistoryItemMapper
+import com.algorand.android.ui.swap.tracking.DefaultSwapConfirmationEventTracker
+import com.algorand.android.ui.swap.tracking.DefaultSwapHistoryEventTracker
+import com.algorand.android.ui.swap.tracking.DefaultSwapHistoryWidgetEventTracker
+import com.algorand.android.ui.swap.tracking.DefaultSwapScreenEventTracker
+import com.algorand.android.ui.swap.tracking.DefaultSwapTopPairsEventTracker
+import com.algorand.android.ui.swap.tracking.SwapConfirmationEventTracker
+import com.algorand.android.ui.swap.tracking.SwapHistoryEventTracker
+import com.algorand.android.ui.swap.tracking.SwapHistoryWidgetEventTracker
+import com.algorand.android.ui.swap.tracking.SwapScreenEventTracker
+import com.algorand.android.ui.swap.tracking.SwapTopPairsEventTracker
 import com.algorand.android.ui.swap.widget.mapper.DefaultSwapQuoteFetchStateMapper
 import com.algorand.android.ui.swap.widget.mapper.DefaultSwapWidgetAmountRendererMapper
 import com.algorand.android.ui.swap.widget.mapper.SwapQuoteFetchStateMapper
@@ -44,4 +54,23 @@ internal object SwapUiModule {
 
     @Provides
     fun provideSwapPairHistoryItemMapper(mapper: DefaultSwapPairHistoryItemMapper): SwapPairHistoryItemMapper = mapper
+
+    @Provides
+    fun provideSwapHistoryWidgetEventTracker(
+        tracker: DefaultSwapHistoryWidgetEventTracker
+    ): SwapHistoryWidgetEventTracker = tracker
+
+    @Provides
+    fun provideSwapTopPairsEventTracker(tracker: DefaultSwapTopPairsEventTracker): SwapTopPairsEventTracker = tracker
+
+    @Provides
+    fun provideSwapScreenEventTracker(tracker: DefaultSwapScreenEventTracker): SwapScreenEventTracker = tracker
+
+    @Provides
+    fun provideSwapHistoryEventTracker(tracker: DefaultSwapHistoryEventTracker): SwapHistoryEventTracker = tracker
+
+    @Provides
+    fun provideSwapConfirmationEventTracker(
+        tracker: DefaultSwapConfirmationEventTracker
+    ): SwapConfirmationEventTracker = tracker
 }

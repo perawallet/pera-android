@@ -28,7 +28,6 @@ import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
-import com.algorand.android.ui.swap.history.model.SwapHistoryItem
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewState.Content
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewState.Idle
@@ -62,7 +61,7 @@ fun SwapHistoryScreen(
                     modifier = Modifier.fillMaxSize(),
                     pagingList = (viewState.value as Content).pagingData,
                     contentPadding = PaddingValues(24.dp),
-                    onSwapItemClick = listener::onSwapItemClick
+                    onSwapItemClick = viewModel::displayTxnInPeraExplorer
                 )
             }
         }
@@ -70,6 +69,5 @@ fun SwapHistoryScreen(
 }
 
 interface SwapHistoryScreenListener {
-    fun onSwapItemClick(swapHistoryItem: SwapHistoryItem)
     fun onNavBackClick()
 }

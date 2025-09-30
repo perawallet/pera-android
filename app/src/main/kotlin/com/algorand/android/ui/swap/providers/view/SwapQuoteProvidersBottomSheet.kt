@@ -52,10 +52,15 @@ import com.algorand.android.ui.swap.providers.model.SwapQuoteProviderSelectionIt
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel.ViewState.Content
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel.ViewState.Idle
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SwapQuoteProvidersBottomSheet(
     sheetState: SheetState,
+    swapViewModel: SwapViewModel,
+    scope: CoroutineScope,
     onDismissRequest: () -> Unit,
     viewModel: SwapQuoteProvidersViewModel,
     onProviderSelected: (SwapQuoteProviderSelectionItem) -> Unit
@@ -70,12 +75,16 @@ fun SwapQuoteProvidersBottomSheet(
                     startContainer = {
                         Spacer(modifier = Modifier.width(12.dp))
                         PeraToolbarIcon(
-                            modifier = Modifier.clickableNoRipple(onClick = onDismissRequest),
+                            modifier = Modifier.clickableNoRipple {
+                                scope.launch { swapViewModel.logProviderCancelClick() }
+                                onDismissRequest()
+                            },
                             iconResId = R.drawable.ic_close
                         )
                     },
                     endContainer = {
                         PeraToolbarTextButton(text = stringResource(R.string.apply)) {
+                            scope.launch { swapViewModel.logProviderApplyClick() }
                             onProviderSelected(viewState.selectedItem)
                         }
                         Spacer(modifier = Modifier.width(24.dp))
@@ -90,7 +99,10 @@ fun SwapQuoteProvidersBottomSheet(
                         val isSelected = item == viewState.selectedItem
                         when (item) {
                             Auto -> AutoSelectionItem(isSelected) { viewModel.setSelectedItem(Auto) }
-                            is Provider -> ProviderItem(item, isSelected) { viewModel.setSelectedItem(item) }
+                            is Provider -> ProviderItem(item, isSelected) {
+                                scope.launch { swapViewModel.logProviderSelection(item.provider.name) }
+                                viewModel.setSelectedItem(item)
+                            }
                         }
                     }
                 }

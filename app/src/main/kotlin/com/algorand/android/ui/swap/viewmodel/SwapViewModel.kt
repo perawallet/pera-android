@@ -25,6 +25,7 @@ import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatureIntroductionPageShownUseCase
 import com.algorand.android.modules.swap.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibilityUseCase
 import com.algorand.android.ui.swap.configuration.model.SwapConfigurationResult
+import com.algorand.android.ui.swap.tracking.SwapScreenEventTracker
 import com.algorand.android.ui.swap.view.SwapFragmentArgs
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
 import com.algorand.android.utils.emptyString
@@ -32,6 +33,7 @@ import com.algorand.android.utils.isEqualTo
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_MAINNET_ID
@@ -66,8 +68,10 @@ class SwapViewModel @Inject constructor(
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getSwapUseLocalCurrencyPreference: GetSwapUseLocalCurrencyPreference,
     private val setSwapUseLocalCurrencyPreference: SetSwapUseLocalCurrencyPreference,
-    private val parityUseCase: ParityUseCase
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+    private val parityUseCase: ParityUseCase,
+    private val swapScreenEventTracker: SwapScreenEventTracker,
+    private val getAssetDetail: GetAssetDetail
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate, SwapScreenEventTracker by swapScreenEventTracker {
 
     private val _swapDetailsFlow = MutableStateFlow<SwapDetails>(SwapDetails())
     val swapDetailsFlow: StateFlow<SwapDetails>
@@ -113,10 +117,20 @@ class SwapViewModel @Inject constructor(
     fun getAssetInId(): Long = swapDetailsFlow.value.assetInId
 
     fun setAssetInId(assetId: Long) {
+        viewModelScope.launch {
+            getAssetDetail(assetId)?.shortName?.let { assetUnitName ->
+                swapScreenEventTracker.logAssetInSelection(assetUnitName)
+            }
+        }
         _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetInId = assetId)
     }
 
     fun setAssetOutId(assetId: Long) {
+        viewModelScope.launch {
+            getAssetDetail(assetId)?.shortName?.let { assetUnitName ->
+                swapScreenEventTracker.logAssetOutSelection(assetUnitName)
+            }
+        }
         _swapDetailsFlow.value = _swapDetailsFlow.value.copy(assetOutId = assetId)
     }
 

@@ -35,6 +35,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeCoreManagers
 import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeHomeNavigation
 import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeLoginNavigation
+import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeMainActivity
 import com.algorand.android.core.BaseActivity
 import com.algorand.android.core.BottomNavigationMenuViewModel
 import com.algorand.android.core.bottomnav.model.BottomNavMenuItem
@@ -50,6 +51,7 @@ import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
+import com.algorand.android.utils.navigateBackSafe
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
@@ -96,15 +98,18 @@ abstract class CoreMainActivity : BaseActivity() {
 
     private val viewEventCollector: suspend (CoreMainViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            InitializeCoreManagers -> initializeCoreManagers()
-            InitializeHomeNavigation -> startNavigation(R.id.homeNavigation)
-            InitializeLoginNavigation -> startNavigation(
-                if (coreMainViewModel.isHdWalletToggleEnabled()) {
+            is InitializeCoreManagers -> initializeCoreManagers()
+            is InitializeHomeNavigation -> startNavigation(R.id.homeNavigation)
+            is InitializeLoginNavigation -> {
+                val startDestinationFragmentId = if (coreMainViewModel.isHdWalletToggleEnabled()) {
                     R.id.initialRegisterIntroNavigation
                 } else {
                     R.id.loginNavigation
                 }
-            )
+                startNavigation(startDestinationFragmentId)
+            }
+
+            is InitializeMainActivity -> initializeMainActivity(event.savedInstanceState)
         }
     }
 
@@ -138,6 +143,8 @@ abstract class CoreMainActivity : BaseActivity() {
 
     abstract fun observeAutoLockManager()
 
+    abstract fun initializeMainActivity(savedInstanceState: Bundle?)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -148,28 +155,30 @@ abstract class CoreMainActivity : BaseActivity() {
         if (savedInstanceState != null) {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
-        initializeActivity()
+        initializeActivity(savedInstanceState)
         bottomNavMenuViewModel.initBottomNavState()
     }
 
     private fun setNavController() {
-        navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
-            .navController
+        val navHostFragment = supportFragmentManager.findFragmentById(binding.navigationHostFragment.id)
+        navController = (navHostFragment as NavHostFragment).navController
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.swapFragment) {
-                binding.bottomNavigationView.menu.forEach { menuItem ->
-                    if (menuItem.itemId == R.id.swapV2Navigation) {
-                        menuItem.isChecked = true
-                    }
-                }
+            val menuItemId = when (destination.id) {
+                R.id.accountsFragment -> R.id.accountsFragment
+                R.id.discoverHomeFragment -> R.id.discoverHomeNavigation
+                R.id.swapFragment -> R.id.swapV2Navigation
+                R.id.stakingFragment -> R.id.stakingFragment
+                R.id.collectiblesFragment -> R.id.collectiblesFragment
+                else -> null
             }
+            menuItemId?.let { binding.bottomNavigationView.menu.findItem(menuItemId).isChecked = true }
         }
     }
 
-    private fun initializeActivity() {
+    private fun initializeActivity(savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                coreMainViewModel.initialize()
+                coreMainViewModel.initialize(savedInstanceState)
             }
         }
     }
@@ -206,7 +215,7 @@ abstract class CoreMainActivity : BaseActivity() {
     }
 
     fun navBack() {
-        navController.navigateUp()
+        navController.navigateBackSafe()
     }
 
     fun nav(directions: NavDirections, onError: (() -> Unit)? = null) {

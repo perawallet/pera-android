@@ -39,8 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
-class DiscoverDappFragment :
-    BaseDiscoverFragment(R.layout.fragment_discover_dapp) {
+class DiscoverDappFragment : BaseDiscoverFragment(R.layout.fragment_discover_dapp) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_close,
@@ -53,7 +52,8 @@ class DiscoverDappFragment :
 
     override val fragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false
+        isBottomBarNeeded = false,
+        firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
     private val discoverDappPreviewCollector: suspend (DiscoverDappPreview) -> Unit = { preview ->
@@ -131,6 +131,7 @@ class DiscoverDappFragment :
                     errorTitleTextView.text = getString(R.string.well_this_is_unexpected)
                     errorDescriptionTextView.text = getString(R.string.we_are_not_able_to_find)
                 }
+
                 WebViewError.NO_CONNECTION -> {
                     errorTitleTextView.text = getString(R.string.no_internet_connection)
                     errorDescriptionTextView.text = getString(R.string.you_dont_seem_to_be_connected)
@@ -214,5 +215,6 @@ class DiscoverDappFragment :
 
     companion object {
         const val ADD_FAVORITE_RESULT_KEY = "add_favorite_result"
+        private const val FIREBASE_EVENT_SCREEN_ID = "screen_discover_dapp"
     }
 }

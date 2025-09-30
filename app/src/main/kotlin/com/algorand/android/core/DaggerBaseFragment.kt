@@ -28,6 +28,7 @@ abstract class DaggerBaseFragment(@LayoutRes layoutResId: Int) : BaseFragment(la
     }
 
     private fun logScreen() {
+        firebaseAnalytics.logScreen(fragmentTag)
         fragmentConfiguration.firebaseEventScreenId?.let {
             firebaseAnalytics.logScreen(it)
         }

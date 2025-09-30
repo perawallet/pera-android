@@ -20,6 +20,7 @@ import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryFiatAmountR
 import com.algorand.android.ui.compose.widget.asset.icon.mapper.AssetIconDrawableMapper
 import com.algorand.android.ui.swap.topfive.model.TopSwapPairItem
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel.ViewState
+import com.algorand.android.ui.swap.tracking.SwapTopPairsEventTracker
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
@@ -39,8 +40,9 @@ class DefaultTopSwapPairsViewModel @Inject constructor(
     private val getTopSwapPairs: GetTopSwapPairs,
     private val assetIconDrawableMapper: AssetIconDrawableMapper,
     private val getCompactPrimaryFiatAmountRenderer: GetCompactPrimaryFiatAmountRenderer,
-    private val stateDelegate: StateDelegate<ViewState>
-) : ViewModel(), TopSwapPairsViewModel {
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val swapTopPairsEventTracker: SwapTopPairsEventTracker
+) : ViewModel(), TopSwapPairsViewModel, SwapTopPairsEventTracker by swapTopPairsEventTracker {
 
     private val viewStateFlow = MutableStateFlow<ViewState>(ViewState.Idle)
 

@@ -14,11 +14,12 @@ package com.algorand.android.ui.swap.topfive.viewmodel
 
 import com.algorand.android.ui.swap.topfive.model.TopSwapPairItem
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel.ViewState
+import com.algorand.android.ui.swap.tracking.SwapTopPairsEventTracker
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 import com.algorand.wallet.viewmodel.StateViewModel
 import kotlinx.coroutines.flow.Flow
 
-interface TopSwapPairsViewModel : StateViewModel<ViewState> {
+interface TopSwapPairsViewModel : StateViewModel<ViewState>, SwapTopPairsEventTracker {
 
     fun init(swapWidgetViewState: Flow<SwapWidgetViewModel.ViewState>)
 

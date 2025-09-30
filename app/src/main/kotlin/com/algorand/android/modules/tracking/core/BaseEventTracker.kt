@@ -27,7 +27,7 @@ open class BaseEventTracker protected constructor(private val peraEventTracker: 
     }
 
     suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>) {
-        peraEventTracker.logEvent(eventName, payloadMap)
+        peraEventTracker.logEvent(getFormattedEventName(eventName), payloadMap)
     }
 
     private suspend fun getFormattedEventName(eventName: String): String {

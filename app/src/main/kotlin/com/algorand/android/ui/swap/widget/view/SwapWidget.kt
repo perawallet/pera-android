@@ -33,6 +33,8 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapButtonViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 private const val ASSET_IN_CONTAINER_ID = "assetInContainer"
 private const val ASSET_OUT_CONTAINER_ID = "assetOutContainer"
@@ -52,11 +54,12 @@ fun SwapWidget(
     topSwapPairsViewModel: TopSwapPairsViewModel,
     swapPairHistoryViewModel: SwapPairHistoryViewModel,
     listener: SwapWidgetListener,
+    scope: CoroutineScope,
     onConfigureClick: () -> Unit
 ) {
     ConstraintLayout(modifier = modifier, constraintSet = createConstraints()) {
-        AssetInContainer(swapViewModel, widgetViewModel, assetInViewModel, listener)
-        AssetOutContainer(widgetViewModel, assetOutViewModel, listener)
+        AssetInContainer(scope, swapViewModel, widgetViewModel, assetInViewModel, listener)
+        AssetOutContainer(scope, swapViewModel, widgetViewModel, assetOutViewModel, listener)
         SwapConfigurationContainer(
             configViewModel,
             swapViewModel::switchAssets,
@@ -79,6 +82,7 @@ fun SwapWidget(
 
 @Composable
 private fun AssetInContainer(
+    scope: CoroutineScope,
     swapViewModel: SwapViewModel,
     widgetViewModel: SwapWidgetViewModel,
     assetInViewModel: SwapAssetSelectionViewModel,
@@ -89,12 +93,17 @@ private fun AssetInContainer(
             .layoutId(ASSET_IN_CONTAINER_ID)
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp)
     ) {
-        SwapAssetInWidget(swapViewModel, widgetViewModel, assetInViewModel, listener::onAssetInChipClick)
+        SwapAssetInWidget(swapViewModel, widgetViewModel, assetInViewModel) {
+            scope.launch { swapViewModel.logAssetInSelectionClick() }
+            listener.onAssetInChipClick()
+        }
     }
 }
 
 @Composable
 private fun AssetOutContainer(
+    scope: CoroutineScope,
+    swapViewModel: SwapViewModel,
     widgetViewModel: SwapWidgetViewModel,
     assetOutViewModel: SwapAssetSelectionViewModel,
     listener: SwapWidgetListener
@@ -105,7 +114,10 @@ private fun AssetOutContainer(
             .background(color = PeraTheme.colors.layer.grayLighter, shape = RoundedCornerShape(12.dp))
             .padding(start = 16.dp, end = 16.dp, top = 40.dp, bottom = 24.dp)
     ) {
-        SwapAssetOutWidget(widgetViewModel, assetOutViewModel, listener::onAssetOutChipClick)
+        SwapAssetOutWidget(widgetViewModel, assetOutViewModel) {
+            scope.launch { swapViewModel.logAssetOutSelectionClick() }
+            listener.onAssetOutChipClick()
+        }
     }
 }
 

@@ -62,15 +62,19 @@ import com.algorand.android.utils.extensions.capitalizeWords
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SwapConfigurationBottomSheet(
     sheetState: SheetState,
-    swapDetails: SwapViewModel.SwapDetails,
+    swapViewModel: SwapViewModel,
+    scope: CoroutineScope,
     onDismissRequest: () -> Unit,
     onApplyClick: (SwapConfigurationResult) -> Unit
 ) {
     PeraModalBottomSheet(sheetState = sheetState, onDismissRequest = onDismissRequest) {
+        val swapDetails = swapViewModel.getSwapDetails()
         val balanceTextState = remember { mutableStateOf(TextFieldValue(emptyString())) }
         val slippageTextState = remember { mutableStateOf(TextFieldValue(swapDetails.slippage?.toString().orEmpty())) }
         val localCurrencyState = remember { mutableStateOf(swapDetails.useLocalCurrency) }
@@ -80,7 +84,10 @@ fun SwapConfigurationBottomSheet(
                 startContainer = {
                     Spacer(modifier = Modifier.width(12.dp))
                     PeraToolbarIcon(
-                        modifier = Modifier.clickableNoRipple { onDismissRequest() },
+                        modifier = Modifier.clickableNoRipple {
+                            scope.launch { swapViewModel.logSettingsCancelClick() }
+                            onDismissRequest()
+                        },
                         iconResId = R.drawable.ic_close
                     )
                 },
@@ -91,6 +98,7 @@ fun SwapConfigurationBottomSheet(
                             slippageTolerance = slippageTextState.value.text.toFloatOrNull(),
                             useLocalCurrency = localCurrencyState.value
                         )
+                        scope.launch { swapViewModel.logSettingsApplyClick() }
                         onApplyClick(result)
                     }
                     Spacer(modifier = Modifier.width(24.dp))
@@ -98,17 +106,21 @@ fun SwapConfigurationBottomSheet(
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
-        BalancePercentageInputContainer(balanceTextState)
+        BalancePercentageInputContainer(scope, swapViewModel, balanceTextState)
         Spacer(modifier = Modifier.height(40.dp))
-        SlippageInputContainer(slippageTextState)
+        SlippageInputContainer(scope, swapViewModel, slippageTextState)
         Spacer(modifier = Modifier.height(40.dp))
-        LocalCurrencyToggle(localCurrencyState)
+        LocalCurrencyToggle(scope, swapViewModel, localCurrencyState)
         Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
 @Composable
-private fun BalancePercentageInputContainer(textState: MutableState<TextFieldValue>) {
+private fun BalancePercentageInputContainer(
+    scope: CoroutineScope,
+    swapViewModel: SwapViewModel,
+    textState: MutableState<TextFieldValue>
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val textInput = textState.value
         val percentageChips = getBalancePercentageChips()
@@ -127,7 +139,10 @@ private fun BalancePercentageInputContainer(textState: MutableState<TextFieldVal
                 ChipButton(
                     text = chip.text,
                     isSelected = textInput.text.toFloatOrNull() == chip.value,
-                    onClick = { textState.update(chip.value.formattedValue(0)) }
+                    onClick = {
+                        scope.launch { swapViewModel.logBalancePercentageSelection(chip.value) }
+                        textState.update(chip.value.formattedValue(0))
+                    }
                 )
             }
         }
@@ -135,7 +150,11 @@ private fun BalancePercentageInputContainer(textState: MutableState<TextFieldVal
 }
 
 @Composable
-private fun SlippageInputContainer(textState: MutableState<TextFieldValue>) {
+private fun SlippageInputContainer(
+    scope: CoroutineScope,
+    swapViewModel: SwapViewModel,
+    textState: MutableState<TextFieldValue>
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val textInput = textState.value
         val slippageChips = getSlippageChips()
@@ -163,6 +182,7 @@ private fun SlippageInputContainer(textState: MutableState<TextFieldValue>) {
                     isSelected = isSelected,
                     onClick = {
                         val newText = if (isCustomButton) emptyString() else chip.value.formattedValue(1)
+                        if (!isCustomButton) scope.launch { swapViewModel.logSlippageSelection(chip.value) }
                         textState.update(newText)
                     }
                 )
@@ -184,7 +204,11 @@ private fun MutableState<TextFieldValue>.update(text: String) {
 }
 
 @Composable
-private fun LocalCurrencyToggle(localCurrencyState: MutableState<Boolean>) {
+private fun LocalCurrencyToggle(
+    scope: CoroutineScope,
+    swapViewModel: SwapViewModel,
+    localCurrencyState: MutableState<Boolean>
+) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
         Text(
             text = stringResource(R.string.primary_currency),
@@ -201,7 +225,15 @@ private fun LocalCurrencyToggle(localCurrencyState: MutableState<Boolean>) {
                 color = PeraTheme.colors.text.main
             )
             Spacer(modifier = Modifier.weight(1f))
-            PeraSwitch(checked = localCurrencyState.value, onCheckedChange = { localCurrencyState.value = it })
+            PeraSwitch(
+                checked = localCurrencyState.value,
+                onCheckedChange = { enabled ->
+                    with(swapViewModel) {
+                        scope.launch { if (enabled) logLocalCurrencyEnabled() else logLocalCurrencyDisabled() }
+                    }
+                    localCurrencyState.value = enabled
+                }
+            )
         }
     }
 }

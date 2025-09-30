@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +54,7 @@ import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel.V
 import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel.ViewState.Error
 import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel.ViewState.Idle
 import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel.ViewState.Loading
+import kotlinx.coroutines.launch
 
 @Composable
 fun SwapPairHistoryWidget(
@@ -64,6 +66,7 @@ fun SwapPairHistoryWidget(
         val viewState = viewModel.state.collectAsStateWithLifecycle()
         if (viewState.value is Idle) return
         var isSeeAllVisible by remember(viewState.value) { mutableStateOf(viewState.value is Content) }
+        val scope = rememberCoroutineScope()
         Row(modifier = Modifier.padding(horizontal = 24.dp)) {
             Text(
                 modifier = Modifier.weight(1f),
@@ -73,7 +76,10 @@ fun SwapPairHistoryWidget(
             )
             if (isSeeAllVisible) {
                 Text(
-                    modifier = Modifier.clickableNoRipple { onSeeAllClick() },
+                    modifier = Modifier.clickableNoRipple {
+                        scope.launch { viewModel.logSeeAllClick() }
+                        onSeeAllClick()
+                    },
                     text = stringResource(R.string.see_all),
                     style = PeraTheme.typography.body.regular.sansMedium,
                     color = PeraTheme.colors.helper.positive
@@ -86,13 +92,16 @@ fun SwapPairHistoryWidget(
             Empty -> EmptyState()
             Error -> ErrorState()
             Loading -> LoadingState()
-            is Content -> ContentState(state.pairs, onSwapPairClick)
+            is Content -> ContentState(state.pairs) { pair ->
+                scope.launch { viewModel.logPairSelected(pair.assetInShortName, pair.assetOutShortName) }
+                onSwapPairClick(pair.assetInId, pair.assetOutId)
+            }
         }
     }
 }
 
 @Composable
-private fun ContentState(pairs: List<SwapPairHistoryItem>, onSwapPairClick: (Long, Long) -> Unit) {
+private fun ContentState(pairs: List<SwapPairHistoryItem>, onSwapPairClick: (SwapPairHistoryItem) -> Unit) {
     LazyRow(contentPadding = PaddingValues(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         items(pairs) { pair ->
             val assetPairText = stringResource(
@@ -103,7 +112,7 @@ private fun ContentState(pairs: List<SwapPairHistoryItem>, onSwapPairClick: (Lon
             val cornerShape = RoundedCornerShape(16.dp)
             Row(
                 modifier = Modifier
-                    .clickableNoRipple { onSwapPairClick(pair.assetInId, pair.assetOutId) }
+                    .clickableNoRipple { onSwapPairClick(pair) }
                     .shadow(1.dp, shape = cornerShape)
                     .border(1.dp, color = PeraTheme.colors.button.strokeColor, shape = cornerShape)
                     .background(color = PeraTheme.colors.background.primary, shape = cornerShape)

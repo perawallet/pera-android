@@ -35,9 +35,12 @@ import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SwapToolbar(
+    scope: CoroutineScope,
     swapViewModel: SwapViewModel,
     listener: SwapToolbarListener
 ) {
@@ -66,7 +69,10 @@ fun SwapToolbar(
         val viewState = swapViewModel.state.collectAsStateWithLifecycle()
         if (viewState.value is SwapViewModel.ViewState.Content) {
             SelectedAccountChip(
-                modifier = Modifier.clickable { listener.onAccountChipClick() },
+                modifier = Modifier.clickable {
+                    scope.launch { swapViewModel.logAccountSelectionClick() }
+                    listener.onAccountChipClick()
+                },
                 content = viewState.value as SwapViewModel.ViewState.Content
             )
         }

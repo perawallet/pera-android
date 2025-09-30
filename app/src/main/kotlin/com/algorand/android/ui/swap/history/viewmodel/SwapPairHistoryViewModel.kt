@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.ui.swap.history.mapper.SwapPairHistoryItemMapper
 import com.algorand.android.ui.swap.history.model.SwapPairHistoryItem
 import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel.ViewState
+import com.algorand.android.ui.swap.tracking.SwapHistoryWidgetEventTracker
 import com.algorand.android.ui.swap.widget.viewmodel.SwapWidgetViewModel
 import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Completed
 import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.InProgress
@@ -35,8 +36,10 @@ import kotlinx.coroutines.flow.onEach
 class SwapPairHistoryViewModel @Inject constructor(
     private val getSwapPairHistory: GetSwapPairHistory,
     private val swapPairHistoryItemMapper: SwapPairHistoryItemMapper,
+    private val swapHistoryWidgetEventTracker: SwapHistoryWidgetEventTracker,
     private val stateDelegate: StateDelegate<ViewState>
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate,
+    SwapHistoryWidgetEventTracker by swapHistoryWidgetEventTracker {
 
     private val viewStateFlow = MutableStateFlow<ViewState>(ViewState.Idle)
 

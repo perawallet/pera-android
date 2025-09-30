@@ -34,9 +34,13 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.swap.topfive.view.TopSwapPairsContainer
 import com.algorand.android.ui.swap.topfive.viewmodel.TopSwapPairsViewModel
+import com.algorand.android.ui.swap.viewmodel.SwapViewModel
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun SwapScreenNoAccountState(
+    scope: CoroutineScope,
+    swapViewModel: SwapViewModel,
     topSwapPairsViewModel: TopSwapPairsViewModel,
     onCreateAccountClick: () -> Unit
 ) {
@@ -76,7 +80,7 @@ fun SwapScreenNoAccountState(
     }
     Spacer(modifier = Modifier.height(8.dp))
 
-    TopSwapPairsContainer(topSwapPairsViewModel)
+    TopSwapPairsContainer(scope, swapViewModel, topSwapPairsViewModel)
 
     LaunchedEffect(Unit) {
         topSwapPairsViewModel.init()

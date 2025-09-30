@@ -19,26 +19,34 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.algorand.android.ui.swap.history.mapper.SwapHistoryItemMapper
 import com.algorand.android.ui.swap.history.model.SwapHistoryItem
+import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewEvent
+import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewEvent.DisplayTxnInPeraExplorer
 import com.algorand.android.ui.swap.history.viewmodel.SwapHistoryViewModel.ViewState
+import com.algorand.android.ui.swap.tracking.SwapHistoryEventTracker
 import com.algorand.android.usecase.NetworkSlugUseCase
 import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
 import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.Completed
 import com.algorand.wallet.swap.domain.model.SwapHistoryStatus.InProgress
 import com.algorand.wallet.swap.domain.usecase.GetSwapHistory
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SwapHistoryViewModel @Inject constructor(
     private val getSwapHistory: GetSwapHistory,
     private val swapHistoryItemMapper: SwapHistoryItemMapper,
     private val networkSlugUseCase: NetworkSlugUseCase,
+    private val swapHistoryEventTracker: SwapHistoryEventTracker,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     private val stateDelegate: StateDelegate<ViewState>
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
@@ -62,10 +70,23 @@ class SwapHistoryViewModel @Inject constructor(
         }
     }
 
-    fun getSelectedNetworkSlug() = networkSlugUseCase.getActiveNodeSlug()
+    fun displayTxnInPeraExplorer(swapHistoryItem: SwapHistoryItem) {
+        viewModelScope.launch {
+            swapHistoryEventTracker.logHistoryItem(
+                assetInName = swapHistoryItem.assetInShortName.orEmpty(),
+                assetOutName = swapHistoryItem.assetOutShortName.orEmpty()
+            )
+            val viewEvent = DisplayTxnInPeraExplorer(swapHistoryItem.txnGroupId, networkSlugUseCase.getActiveNodeSlug())
+            eventDelegate.sendEvent(viewEvent)
+        }
+    }
 
     sealed interface ViewState {
         data object Idle : ViewState
         data class Content(val pagingData: Flow<PagingData<SwapHistoryItem>>) : ViewState
+    }
+
+    sealed interface ViewEvent {
+        data class DisplayTxnInPeraExplorer(val txnGroupId: String?, val nodeSlug: String?) : ViewEvent
     }
 }

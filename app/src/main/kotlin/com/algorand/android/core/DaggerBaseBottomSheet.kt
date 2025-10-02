@@ -13,27 +13,9 @@
 package com.algorand.android.core
 
 import androidx.annotation.LayoutRes
-import com.algorand.android.utils.analytics.logScreen
-import com.google.firebase.analytics.FirebaseAnalytics
-import javax.inject.Inject
 
 abstract class DaggerBaseBottomSheet(
     @LayoutRes layoutResId: Int,
-    override val fullPageNeeded: Boolean,
-    val firebaseEventScreenId: String?
-) : BaseBottomSheet(layoutResId) {
-
-    @Inject
-    lateinit var firebaseAnalytics: FirebaseAnalytics
-
-    override fun onResume() {
-        super.onResume()
-        logScreen()
-    }
-
-    private fun logScreen() {
-        firebaseEventScreenId?.let {
-            firebaseAnalytics.logScreen(it)
-        }
-    }
-}
+    fullPageNeeded: Boolean,
+    firebaseEventScreenId: String?
+) : BaseBottomSheet(layoutResId, fullPageNeeded, firebaseEventScreenId)

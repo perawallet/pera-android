@@ -13,9 +13,22 @@
 package com.algorand.android.core
 
 import androidx.annotation.LayoutRes
+import com.algorand.android.utils.analytics.logScreen
 
 abstract class DaggerBaseBottomSheet(
     @LayoutRes layoutResId: Int,
-    fullPageNeeded: Boolean,
-    firebaseEventScreenId: String?
-) : BaseBottomSheet(layoutResId, fullPageNeeded, firebaseEventScreenId)
+    override val fullPageNeeded: Boolean,
+    val firebaseEventScreenId: String?
+) : BaseBottomSheet(layoutResId) {
+
+    override fun onResume() {
+        super.onResume()
+        logScreen()
+    }
+
+    private fun logScreen() {
+        firebaseEventScreenId?.let {
+            firebaseAnalytics.logScreen(it)
+        }
+    }
+}

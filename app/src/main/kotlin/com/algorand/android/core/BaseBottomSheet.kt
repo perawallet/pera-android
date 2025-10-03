@@ -37,11 +37,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 // TODO: 5.08.2022 A work around is to provide all fields again in child classes which makes having default parameter
 // TODO: 5.08.2022 completely non-sense. It would be good to investigate
 
-abstract class BaseBottomSheet(
-    @LayoutRes private val layoutResId: Int,
-    val fullPageNeeded: Boolean = false,
-    val firebaseEventScreenId: String? = null
-) : BottomSheetDialogFragment() {
+abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : BottomSheetDialogFragment() {
+
+    open val fullPageNeeded: Boolean = false
 
     protected val firebaseAnalytics: FirebaseAnalytics by lazy {
         FirebaseAnalytics.getInstance(requireContext())
@@ -84,9 +82,7 @@ abstract class BaseBottomSheet(
     }
 
     private fun logScreen() {
-        firebaseEventScreenId?.let {
-            firebaseAnalytics.logScreen(it)
-        }
+        firebaseAnalytics.logScreen(bottomSheetTag)
     }
 
     override fun onPause() {

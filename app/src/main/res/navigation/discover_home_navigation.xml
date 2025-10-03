@@ -134,6 +134,14 @@
                 android:defaultValue="@null"
                 app:argType="string"
                 app:nullable="true" />
+            <argument
+                android:name="assetInId"
+                android:defaultValue="-1L"
+                app:argType="long" />
+            <argument
+                android:name="assetOutId"
+                android:defaultValue="-1L"
+                app:argType="long" />
         </action>
     </fragment>
 

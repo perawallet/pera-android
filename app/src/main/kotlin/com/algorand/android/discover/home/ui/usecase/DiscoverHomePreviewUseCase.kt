@@ -226,7 +226,10 @@ class DiscoverHomePreviewUseCase @Inject constructor(
                             )
                     },
                     onNavToSwapV2 = {
-                        swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToSwapV2Navigation()
+                        swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToSwapV2Navigation(
+                            assetInId = buySellActionRequest.assetInId ?: -1L,
+                            assetOutId = buySellActionRequest.assetOutId ?: -1L
+                        )
                     }
                 )
             }

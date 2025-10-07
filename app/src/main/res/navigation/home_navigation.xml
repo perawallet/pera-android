@@ -798,6 +798,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_contactsFragment"
             app:destination="@id/contactsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_passkeysFragment"
+            app:destination="@id/passkeysFragment" />
     </fragment>
 
     <fragment
@@ -1586,5 +1589,9 @@
             android:defaultValue="false"
             app:argType="boolean" />
     </fragment>
+    <fragment
+        android:id="@+id/passkeysFragment"
+        android:name="com.algorand.android.ui.passkey.view.PasskeysFragment"
+        android:label="PasskeysFragment" />
 
 </navigation>

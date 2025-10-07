@@ -10,25 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.android.ui.passkey.model
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import java.time.Clock
-import javax.inject.Singleton
+import com.algorand.wallet.utils.date.RelativeTimeDifference
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object DateModule {
-
-    @Provides
-    @Singleton
-    fun provideTimeProvider(): TimeProvider {
-        return TimeProviderImpl(Clock.systemDefaultZone())
-    }
-
-    @Provides
-    fun provideRelativeTimeDifference(impl: PeraRelativeTimeDifference): RelativeTimeDifference = impl
-}
+data class PasskeyListItem(
+    val credId: String,
+    val rpId: String,
+    val lastUsedRelativeTime: RelativeTimeDifference.RelativeTime?,
+    val displayName: String,
+    val username: String
+)

@@ -12,6 +12,9 @@
 
 package com.algorand.wallet.utils.date
 
+import java.time.ZonedDateTime
+
 interface TimeProvider {
     fun getCurrentTimeMillis(): Long
+    fun getZonedDateTimeNow(): ZonedDateTime
 }

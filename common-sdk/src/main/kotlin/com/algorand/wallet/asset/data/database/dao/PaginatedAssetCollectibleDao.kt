@@ -26,7 +26,7 @@ internal interface PaginatedAssetCollectibleDao {
         holding.algo_address AS algo_address,
         holding.amount AS amount,
         holding.asset_status AS asset_status,
-        (holding.amount * IFNULL(asset.usd_value, 0)) AS total_usd_value,
+        (CAST(holding.amount AS REAL) / CAST('1e' || IFNULL(asset.decimals, 0) AS REAL)) * IFNULL(asset.usd_value, 0) AS total_usd_value,
         holding.opted_in_at_round AS opted_in_at_round,
         asset.asset_id AS asset_id,
         asset.name AS name,

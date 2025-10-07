@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "537717066676",
-    "project_id": "pera-wallet-public",
-    "storage_bucket": "pera-wallet-public.appspot.com"
+    "project_number": "270342103187",
+    "firebase_url": "https://algorand-e3fe3.firebaseio.com",
+    "project_id": "algorand-e3fe3",
+    "storage_bucket": "algorand-e3fe3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:537717066676:android:eefa96ca6282560c72c0e1",
+        "mobilesdk_app_id": "1:270342103187:android:5de49d342a8de258",
         "android_client_info": {
           "package_name": "com.algorand.android"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB9J9S6XMpUN0hqzzIvvWwXux8ufQWgONU"
+          "current_key": "AIzaSyAsxIoBG2SFu4m58VRfNGYO2NMgVnEfS8w"
         }
       ],
       "services": {
@@ -26,7 +27,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:537717066676:android:a3b584d0f512db4172c0e1",
+        "mobilesdk_app_id": "1:270342103187:android:5525783ebde02543a1ad66",
         "android_client_info": {
           "package_name": "com.algorand.android.debug"
         }
@@ -34,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB9J9S6XMpUN0hqzzIvvWwXux8ufQWgONU"
+          "current_key": "AIzaSyAsxIoBG2SFu4m58VRfNGYO2NMgVnEfS8w"
         }
       ],
       "services": {
@@ -45,15 +46,24 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:537717066676:android:66680aa5a44bdcfd72c0e1",
+        "mobilesdk_app_id": "1:270342103187:android:ee42b8f6363aefe8a1ad66",
         "android_client_info": {
           "package_name": "com.algorand.android.staging"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "270342103187-aik2jv8m6vnl6ta03q781jtnkkjdm1ob.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.algorand.android.staging",
+            "certificate_hash": "d07ee17f0ecbd2e68eb79805b9b2a68c145d9d2c"
+          }
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyB9J9S6XMpUN0hqzzIvvWwXux8ufQWgONU"
+          "current_key": "AIzaSyAsxIoBG2SFu4m58VRfNGYO2NMgVnEfS8w"
         }
       ],
       "services": {
@@ -64,7 +74,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:537717066676:android:6bb5b0ff464e0d9572c0e1",
+        "mobilesdk_app_id": "1:270342103187:android:30c26f71f5afcb57a1ad66",
         "android_client_info": {
           "package_name": "com.algorand.android.staging.debug"
         }
@@ -72,7 +82,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB9J9S6XMpUN0hqzzIvvWwXux8ufQWgONU"
+          "current_key": "AIzaSyAsxIoBG2SFu4m58VRfNGYO2NMgVnEfS8w"
         }
       ],
       "services": {

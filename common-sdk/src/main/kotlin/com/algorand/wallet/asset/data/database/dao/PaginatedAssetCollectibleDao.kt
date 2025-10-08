@@ -38,7 +38,8 @@ internal interface PaginatedAssetCollectibleDao {
         collectible.title AS title,
         collectible.primary_image_url AS primary_image_url,
         collectible.collection_name AS collection_name,
-        collectible.media_type AS media_type
+        collectible.media_type AS media_type,
+        LOWER(COALESCE(asset.name, collectible.title)) AS sort_by_name_value
     FROM asset_detail AS asset
     INNER JOIN asset_holding_table AS holding 
         ON asset.asset_id = holding.asset_id
@@ -66,10 +67,12 @@ internal interface PaginatedAssetCollectibleDao {
             WHEN holding.asset_status IN ('PENDING_FOR_ADDITION', 'PENDING_FOR_REMOVAL') THEN 0
             ELSE 1
         END ASC,
-        CASE WHEN :sortType = 'name_asc' THEN COALESCE(asset.name, collectible.title) END ASC,
-        CASE WHEN :sortType = 'name_desc' THEN COALESCE(asset.name, collectible.title) END DESC,
+        CASE WHEN :sortType = 'name_asc' THEN sort_by_name_value END ASC,
+        CASE WHEN :sortType = 'name_desc' THEN sort_by_name_value END DESC,
         CASE WHEN :sortType = 'value_asc' THEN total_usd_value END ASC,
-        CASE WHEN :sortType = 'value_desc' THEN total_usd_value END DESC
+        CASE WHEN :sortType = 'value_desc' THEN total_usd_value END DESC,
+        sort_by_name_value ASC,
+        asset.asset_id ASC
 """
     )
     fun getPaginatedAssetCollectibleItems(

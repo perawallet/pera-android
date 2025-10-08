@@ -22,3 +22,4 @@ rootProject.name = "algorand-android"
 include(":app")
 include(":test-utils")
 include(":common-sdk")
+include(":credentials")

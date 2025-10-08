@@ -13,10 +13,15 @@
 package com.algorand.wallet.utils.date
 
 import java.time.Clock
+import java.time.ZonedDateTime
 
 internal class TimeProviderImpl(private val clock: Clock) : TimeProvider {
 
     override fun getCurrentTimeMillis(): Long {
         return clock.millis()
+    }
+
+    override fun getZonedDateTimeNow(): ZonedDateTime {
+        return ZonedDateTime.now(clock)
     }
 }

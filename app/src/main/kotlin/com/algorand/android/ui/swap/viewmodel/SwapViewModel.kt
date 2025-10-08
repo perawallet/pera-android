@@ -26,6 +26,7 @@ import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatu
 import com.algorand.android.modules.swap.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibilityUseCase
 import com.algorand.android.ui.swap.configuration.model.SwapConfigurationResult
 import com.algorand.android.ui.swap.tracking.SwapScreenEventTracker
+import com.algorand.android.ui.swap.usecase.GetPreselectedSwapAddress
 import com.algorand.android.ui.swap.view.SwapFragmentArgs
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
 import com.algorand.android.utils.emptyString
@@ -37,7 +38,6 @@ import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_MAINNET_ID
-import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate

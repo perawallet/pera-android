@@ -38,7 +38,7 @@ fun interface GetSelectedSwapAssetDetail {
     suspend operator fun invoke(address: String, assetId: Long): PeraResult<SwapSelectedAssetDetail>
 }
 
-fun interface GetPreselectedSwapAddress {
+fun interface GetLastUsedSwapAddress {
     suspend operator fun invoke(): String?
 }
 

@@ -12,23 +12,19 @@
 
 package com.algorand.wallet.utils.date
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import java.time.Clock
-import javax.inject.Singleton
+import java.time.ZonedDateTime
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object DateModule {
+interface RelativeTimeDifference {
 
-    @Provides
-    @Singleton
-    fun provideTimeProvider(): TimeProvider {
-        return TimeProviderImpl(Clock.systemDefaultZone())
+    fun getRelativeTime(time: ZonedDateTime, timeDifference: Long): RelativeTime
+
+    fun getCurrentRelativeTime(timestampMillis: Long): RelativeTime
+
+    sealed interface RelativeTime {
+        data object Now : RelativeTime
+        data class Minutes(val value: Int) : RelativeTime
+        data class Hours(val value: Int) : RelativeTime
+        data class Days(val value: Int) : RelativeTime
+        data class Date(val value: String) : RelativeTime
     }
-
-    @Provides
-    fun provideRelativeTimeDifference(impl: PeraRelativeTimeDifference): RelativeTimeDifference = impl
 }

@@ -234,6 +234,39 @@
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".credentials.passkeys.ui.PasskeyActivity"
+            android:enabled="true"
+            android:exported="true"
+            android:theme="@style/Theme.Transparent"
+            android:screenOrientation="portrait"
+            tools:targetApi="35">
+            <intent-filter>
+                <action android:name="com.algorand.android.credentials.CREATE_PASSKEY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.algorand.android.credentials.GET_PASSKEY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".credentials.passkeys.ui.PasskeyProviderService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_CREDENTIAL_PROVIDER_SERVICE"
+            tools:targetApi="35">
+            <intent-filter>
+                <action android:name="android.service.credentials.CredentialProviderService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.credentials.provider"
+                android:resource="@xml/provider" />
+        </service>
     </application>
 
 </manifest>

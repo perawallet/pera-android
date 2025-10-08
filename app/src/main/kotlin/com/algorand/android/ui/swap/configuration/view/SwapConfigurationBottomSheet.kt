@@ -267,7 +267,7 @@ private fun TextInputField(title: String, hint: String, text: TextFieldValue, on
 @Composable
 private fun ChipButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val (textColor, backgroundColor) = if (isSelected) {
-        PeraTheme.colors.helper.positive to PeraTheme.colors.helper.positiveLighter.copy(alpha = 0.12f)
+        PeraTheme.colors.helper.positive to PeraTheme.colors.helper.positiveLighter
     } else {
         PeraTheme.colors.button.secondary.text to PeraTheme.colors.button.secondary.background
     }

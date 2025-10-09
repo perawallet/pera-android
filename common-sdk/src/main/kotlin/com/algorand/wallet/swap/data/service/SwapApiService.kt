@@ -30,6 +30,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 internal interface SwapApiService {
 
@@ -70,6 +71,9 @@ internal interface SwapApiService {
         @Query("limit") limit: Int,
         @Query("statuses") statuses: String?
     ): SwapHistoriesResponse
+
+    @GET
+    suspend fun getSwapHistoryMore(@Url url: String): SwapHistoriesResponse
 
     @GET("v2/dex-swap/distinct-pairs-history/")
     suspend fun getSwapPairsHistory(

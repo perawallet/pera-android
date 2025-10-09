@@ -39,18 +39,35 @@ internal class DefaultSwapHistoryPagingSource @Inject constructor(
     ): LoadResult<SwapHistoryPagingData, SwapHistory> {
         return try {
             val keys = params.key
-            val swapHistoryResponseResult = getSwapHistory(params.key)
-            if (params is LoadParams.Refresh) {
-                getPageResult(keys, swapHistoryResponseResult)
-            } else {
-                if (swapHistoryResponseResult.getDataOrNull()?.next == keys?.nextUrl) {
-                    return LoadResult.Error(Exception())
+            when (params) {
+                is LoadParams.Refresh -> {
+                    val swapHistoryResponseResult = getSwapHistory(params.key)
+                    getPageResult(keys, swapHistoryResponseResult)
                 }
-                getPageResult(keys, swapHistoryResponseResult)
+                is LoadParams.Append -> append(params)
+                is LoadParams.Prepend -> prepend(params)
             }
         } catch (exception: Exception) {
             LoadResult.Error(exception)
         }
+    }
+
+    private suspend fun append(
+        params: LoadParams.Append<SwapHistoryPagingData>
+    ): LoadResult<SwapHistoryPagingData, SwapHistory> {
+        val nextUrl = params.key.nextUrl ?: return emptyPage()
+        val response = getSwapHistoryMore(nextUrl)
+        if (response.getDataOrNull()?.next == nextUrl) return emptyPage()
+        return getPageResult(params.key, response)
+    }
+
+    private suspend fun prepend(
+        params: LoadParams.Prepend<SwapHistoryPagingData>
+    ): LoadResult<SwapHistoryPagingData, SwapHistory> {
+        val previousUrl = params.key.previousUrl ?: return emptyPage()
+        val response = getSwapHistoryMore(previousUrl)
+        if (response.getDataOrNull()?.previous == previousUrl) return emptyPage()
+        return getPageResult(params.key, response)
     }
 
     private suspend fun getPageResult(
@@ -61,8 +78,8 @@ internal class DefaultSwapHistoryPagingSource @Inject constructor(
             onSuccess = {
                 LoadResult.Page(
                     data = it.results.mapNotNull { swapHistoryMapper(it) },
-                    prevKey = params?.copy(previousUrl = it.previous),
-                    nextKey = params?.copy(nextUrl = it.next)
+                    prevKey = if (it.previous != null) params?.copy(previousUrl = it.previous) else null,
+                    nextKey = if (it.next != null) params?.copy(nextUrl = it.next) else null
                 )
             },
             onFailed = { exception, _ ->
@@ -85,11 +102,22 @@ internal class DefaultSwapHistoryPagingSource @Inject constructor(
         }
     }
 
+    private suspend fun getSwapHistoryMore(url: String): PeraResult<SwapHistoriesResponse> {
+        return try {
+            val result = swapApiService.getSwapHistoryMore(url)
+            PeraResult.Success(result)
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
     private fun getSwapStatusString(statuses: List<SwapHistoryStatus>): String {
         return statuses.joinToString(",") { status ->
             swapHistoryStatusMapper(status).value
         }
     }
+
+    private fun emptyPage(): LoadResult<SwapHistoryPagingData, SwapHistory> = LoadResult.Page(emptyList(), null, null)
 
     companion object {
         const val ITEM_PER_PAGE = 20

@@ -37,6 +37,7 @@ import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.SwapTransactionPurpose
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
+import com.algorand.wallet.transaction.domain.model.TransactionId
 
 internal fun interface SwapQuoteMapper {
     operator fun invoke(response: SwapQuoteResponse, providers: List<SwapQuoteProvider>): SwapQuoteV2?
@@ -93,6 +94,6 @@ internal fun interface SwapPairHistoryMapper {
 }
 
 internal interface SwapUpdateStatusRequestBodyMapper {
-    fun mapToInProgress(): SwapUpdateStatusRequestBody
+    fun mapToInProgress(txnIds: List<TransactionId>): SwapUpdateStatusRequestBody
     fun mapToFailed(reason: SwapStatusFailureReason): SwapUpdateStatusRequestBody
 }

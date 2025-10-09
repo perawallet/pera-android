@@ -74,6 +74,8 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
+import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
+import com.algorand.wallet.swap.domain.usecase.SendSwapTransactionsUseCase
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetSwapStatusFailed
 import com.algorand.wallet.swap.domain.usecase.SetSwapStatusInProgress
@@ -278,4 +280,7 @@ internal object SwapModule {
 
     @Provides
     fun provideGetSwapFeePadding(useCase: GetSwapFeePaddingUseCase): GetSwapFeePadding = useCase
+
+    @Provides
+    fun provideSendSwapTransactions(useCase: SendSwapTransactionsUseCase): SendSwapTransactions = useCase
 }

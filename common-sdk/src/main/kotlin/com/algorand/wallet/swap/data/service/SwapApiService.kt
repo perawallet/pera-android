@@ -53,7 +53,7 @@ internal interface SwapApiService {
 
     @PATCH("v2/dex-swap/swaps/{swap_id}/")
     suspend fun updateSwapStatus(
-        @Path("swap_id") quoteId: Long,
+        @Path("swap_id") swapId: Long,
         @Body swapUpdateStatusRequestBody: SwapUpdateStatusRequestBody
     )
 

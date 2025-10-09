@@ -13,24 +13,5 @@
 package com.algorand.android.core
 
 import androidx.annotation.LayoutRes
-import com.algorand.android.utils.analytics.logScreen
-import com.google.firebase.analytics.FirebaseAnalytics
-import javax.inject.Inject
 
-abstract class DaggerBaseFragment(@LayoutRes layoutResId: Int) : BaseFragment(layoutResId) {
-
-    @Inject
-    lateinit var firebaseAnalytics: FirebaseAnalytics
-
-    override fun onResume() {
-        super.onResume()
-        logScreen()
-    }
-
-    private fun logScreen() {
-        firebaseAnalytics.logScreen(fragmentTag)
-        fragmentConfiguration.firebaseEventScreenId?.let {
-            firebaseAnalytics.logScreen(it)
-        }
-    }
-}
+abstract class DaggerBaseFragment(@LayoutRes layoutResId: Int) : BaseFragment(layoutResId)

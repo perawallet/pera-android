@@ -26,17 +26,24 @@ import com.algorand.android.CoreMainActivity
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.notification.domain.model.NotificationMetadata
+import com.algorand.android.utils.analytics.logScreen
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.toShortenedAddress
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.analytics.FirebaseAnalytics
 
 // TODO: 5.08.2022 Having a default value in abstract class constructor may create Hilt crashes.
 // TODO: 5.08.2022 A work around is to provide all fields again in child classes which makes having default parameter
 // TODO: 5.08.2022 completely non-sense. It would be good to investigate
+
 abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : BottomSheetDialogFragment() {
 
     open val fullPageNeeded: Boolean = false
+
+    protected val firebaseAnalytics: FirebaseAnalytics by lazy {
+        FirebaseAnalytics.getInstance(requireContext())
+    }
 
     private val bottomSheetTag: String = this::class.simpleName.orEmpty()
     protected val baseActivityTag: String
@@ -67,6 +74,15 @@ abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : Bottom
                 makeBottomSheetFullPage(bottomSheet)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        logScreen()
+    }
+
+    private fun logScreen() {
+        firebaseAnalytics.logScreen(bottomSheetTag)
     }
 
     override fun onPause() {

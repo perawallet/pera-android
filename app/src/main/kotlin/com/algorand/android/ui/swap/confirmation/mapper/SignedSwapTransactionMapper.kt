@@ -10,17 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.data.model
+package com.algorand.android.ui.swap.confirmation.mapper
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
+import com.algorand.wallet.swap.domain.model.SignedSwapTransaction
 
-internal data class SwapUpdateStatusRequestBody(
-    @SerializedName("status")
-    val status: SwapStatusResponse,
-    @SerializedName("submitted_transaction_ids")
-    val transactionIds: List<String>? = null,
-    @SerializedName("reason")
-    val reason: SwapStatusFailureReasonResponse? = null,
-    @SerializedName("swap_version")
-    val swapVersion: String = "v2"
-)
+fun interface SignedSwapTransactionMapper {
+    operator fun invoke(result: ExternalTransactionSignResult.Success<*>): List<SignedSwapTransaction>?
+}

@@ -10,17 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.data.model
+package com.algorand.wallet.transaction.domain.repository
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.transaction.domain.model.TransactionId
 
-internal data class SwapUpdateStatusRequestBody(
-    @SerializedName("status")
-    val status: SwapStatusResponse,
-    @SerializedName("submitted_transaction_ids")
-    val transactionIds: List<String>? = null,
-    @SerializedName("reason")
-    val reason: SwapStatusFailureReasonResponse? = null,
-    @SerializedName("swap_version")
-    val swapVersion: String = "v2"
-)
+internal interface TransactionRepository {
+    suspend fun sendSignedTransaction(signedTransaction: ByteArray): PeraResult<TransactionId>
+    suspend fun waitForConfirmation(txnId: TransactionId, maxRoundToWait: Int): PeraResult<TransactionId>
+    suspend fun trackTransaction(txnId: TransactionId)
+}

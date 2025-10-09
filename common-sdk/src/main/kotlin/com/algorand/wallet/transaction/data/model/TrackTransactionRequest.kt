@@ -10,17 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.data.model
+package com.algorand.wallet.transaction.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class SwapUpdateStatusRequestBody(
-    @SerializedName("status")
-    val status: SwapStatusResponse,
-    @SerializedName("submitted_transaction_ids")
-    val transactionIds: List<String>? = null,
-    @SerializedName("reason")
-    val reason: SwapStatusFailureReasonResponse? = null,
-    @SerializedName("swap_version")
-    val swapVersion: String = "v2"
+internal data class TrackTransactionRequest(
+    @SerializedName("transaction_id")
+    val transactionId: String
 )

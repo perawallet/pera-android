@@ -20,6 +20,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
+import com.algorand.wallet.transaction.domain.model.TransactionId
 import java.math.BigInteger
 
 internal interface SwapRepository {
@@ -33,5 +34,5 @@ internal interface SwapRepository {
     suspend fun getUseLocalCurrencyPreference(): Boolean
     suspend fun setUseLocalCurrencyPreference(useLocalCurrency: Boolean)
     suspend fun setSwapStatusFailed(quoteId: Long, reason: SwapStatusFailureReason)
-    suspend fun setSwapStatusInProgress(quoteId: Long)
+    suspend fun setSwapStatusInProgress(swapId: Long, txnIds: List<TransactionId>)
 }

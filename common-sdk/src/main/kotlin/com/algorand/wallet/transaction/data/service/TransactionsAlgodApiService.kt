@@ -10,17 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.data.model
+package com.algorand.wallet.transaction.data.service
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.wallet.transaction.data.model.SendTransactionResponse
+import okhttp3.RequestBody
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
 
-internal data class SwapUpdateStatusRequestBody(
-    @SerializedName("status")
-    val status: SwapStatusResponse,
-    @SerializedName("submitted_transaction_ids")
-    val transactionIds: List<String>? = null,
-    @SerializedName("reason")
-    val reason: SwapStatusFailureReasonResponse? = null,
-    @SerializedName("swap_version")
-    val swapVersion: String = "v2"
-)
+internal interface TransactionsAlgodApiService {
+
+    @Headers("Content-Type: application/x-binary")
+    @POST("v2/transactions")
+    suspend fun sendSignedTransaction(@Body rawTransactionData: RequestBody): SendTransactionResponse
+}

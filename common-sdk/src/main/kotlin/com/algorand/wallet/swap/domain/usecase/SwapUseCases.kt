@@ -15,6 +15,7 @@ package com.algorand.wallet.swap.domain.usecase
 import androidx.paging.PagingData
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
+import com.algorand.wallet.swap.domain.model.SignedSwapTransaction
 import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
 import com.algorand.wallet.swap.domain.model.SwapHistory
 import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
@@ -27,6 +28,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuotes
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
+import com.algorand.wallet.transaction.domain.model.TransactionId
 import java.math.BigDecimal
 import kotlinx.coroutines.flow.Flow
 
@@ -83,7 +85,7 @@ fun interface SetSwapUseLocalCurrencyPreference {
 }
 
 fun interface SetSwapStatusInProgress {
-    suspend operator fun invoke(quoteId: Long)
+    suspend operator fun invoke(swapId: Long, txnIds: List<TransactionId>)
 }
 
 fun interface SetSwapStatusFailed {
@@ -92,4 +94,8 @@ fun interface SetSwapStatusFailed {
 
 fun interface GetSwapFeePadding {
     operator fun invoke(): BigDecimal
+}
+
+fun interface SendSwapTransactions {
+    suspend operator fun invoke(swapId: Long, txns: List<SignedSwapTransaction>): PeraResult<List<TransactionId>>
 }

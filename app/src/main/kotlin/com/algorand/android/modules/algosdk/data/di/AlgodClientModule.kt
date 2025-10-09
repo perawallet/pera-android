@@ -17,11 +17,11 @@ import com.algorand.android.network.AlgodInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object AlgodClientModule {
 
     @Provides

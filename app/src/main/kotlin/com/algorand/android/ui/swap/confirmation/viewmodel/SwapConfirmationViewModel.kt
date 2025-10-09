@@ -22,9 +22,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.confirmswap.domain.SwapTransactionSignManager
-import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
 import com.algorand.android.modules.swap.ledger.signwithledger.ui.model.LedgerDialogPayload
-import com.algorand.android.modules.swap.transactionstatus.domain.SendSwapTransactionsManager
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.LedgerScanFailed
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.LedgerWaitingForApproval
@@ -33,6 +31,7 @@ import com.algorand.android.modules.transaction.signmanager.ExternalTransactionS
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.TransactionCancelled
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
+import com.algorand.android.ui.swap.confirmation.mapper.SignedSwapTransactionMapper
 import com.algorand.android.ui.swap.confirmation.mapper.SwapConfirmationContentMapper
 import com.algorand.android.ui.swap.confirmation.model.SwapPriceImpact
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent
@@ -48,11 +47,10 @@ import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
 import com.algorand.android.ui.swap.domain.usecase.CreateSwapV2QuoteTransactions
 import com.algorand.android.ui.swap.tracking.SwapConfirmationEventTracker
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
-import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.OTHER
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.USER_CANCELLED
+import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetSwapStatusFailed
-import com.algorand.wallet.swap.domain.usecase.SetSwapStatusInProgress
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -69,9 +67,9 @@ import kotlinx.coroutines.launch
 class SwapConfirmationViewModel @Inject constructor(
     private val contentMapper: SwapConfirmationContentMapper,
     private val swapTransactionSignManager: SwapTransactionSignManager,
-    private val sendSwapTransactionsManager: SendSwapTransactionsManager,
     private val setLastUsedSwapAddress: SetLastUsedSwapAddress,
-    private val setSwapStatusInProgress: SetSwapStatusInProgress,
+    private val signedSwapTransactionMapper: SignedSwapTransactionMapper,
+    private val sendSwapTransactions: SendSwapTransactions,
     private val setSwapStatusFailed: SetSwapStatusFailed,
     private val createSwapV2QuoteTransactions: CreateSwapV2QuoteTransactions,
     private val swapConfirmationEventTracker: SwapConfirmationEventTracker,
@@ -162,29 +160,31 @@ class SwapConfirmationViewModel @Inject constructor(
 
     private suspend fun sendSignTransactions(transactions: SwapQuoteTransactions, result: Success<*>) {
         stateDelegate.onState<ViewState.Content> { content ->
-            val signedTxns = result.signedTransaction as? List<SwapQuoteTransaction>
-            if (signedTxns != null) {
-                sendSwapTransactionsManager.sendSwapTransactions(
-                    signedTransactions = signedTxns.toMutableList(),
-                    onSendTransactionsSuccess = {
-                        setSwapStatusInProgress(transactions.swapId)
-                        setLastUsedSwapAddress(content.accountDisplayName.accountAddress)
-                        displaySuccessState(content)
-                        val assetInShortName = content.quote.assetInDetail.shortName.orEmpty()
-                        val assetOutShortName = content.quote.assetOutDetail.shortName.orEmpty()
-                        eventDelegate.sendEvent(ViewEvent.NavigateToSwapScreen(assetInShortName, assetOutShortName))
-                    },
-                    onSendTransactionsFailed = {
-                        setSwapStatusFailed(transactions.swapId, OTHER)
-                        displayErrorState()
-                        eventDelegate.sendEvent(DisplayError(Generic))
-                    }
-                )
+            val signedTransactions = signedSwapTransactionMapper(result)
+            if (signedTransactions == null) {
+                updateUiToSendingErrorState()
             } else {
-                displayErrorState()
-                eventDelegate.sendEvent(DisplayError(Generic))
+                sendSwapTransactions(transactions.swapId, signedTransactions).use(
+                    onSuccess = {
+                        setLastUsedSwapAddress(content.accountDisplayName.accountAddress)
+                        updateUiToSendingSuccessState(content)
+                    },
+                    onFailed = { _, _ -> updateUiToSendingErrorState() }
+                )
             }
         }
+    }
+
+    private suspend fun updateUiToSendingSuccessState(content: ViewState.Content) {
+        displaySuccessState(content)
+        val assetInShortName = content.quote.assetInDetail.shortName.orEmpty()
+        val assetOutShortName = content.quote.assetOutDetail.shortName.orEmpty()
+        eventDelegate.sendEvent(ViewEvent.NavigateToSwapScreen(assetInShortName, assetOutShortName))
+    }
+
+    private suspend fun updateUiToSendingErrorState() {
+        displayErrorState()
+        eventDelegate.sendEvent(DisplayError(Generic))
     }
 
     private suspend fun displayFailedToCreateTxnError(exception: Exception, code: Int?) {

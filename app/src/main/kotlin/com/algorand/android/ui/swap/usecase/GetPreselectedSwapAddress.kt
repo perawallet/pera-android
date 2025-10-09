@@ -10,25 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.core
+package com.algorand.android.ui.swap.usecase
 
-import androidx.annotation.LayoutRes
-import com.algorand.android.utils.analytics.logScreen
-
-abstract class DaggerBaseBottomSheet(
-    @LayoutRes layoutResId: Int,
-    override val fullPageNeeded: Boolean,
-    val firebaseEventScreenId: String?
-) : BaseBottomSheet(layoutResId) {
-
-    override fun onResume() {
-        super.onResume()
-        logScreen()
-    }
-
-    private fun logScreen() {
-        firebaseEventScreenId?.let {
-            firebaseAnalytics.logScreen(it)
-        }
-    }
+fun interface GetPreselectedSwapAddress {
+    suspend operator fun invoke(): String?
 }

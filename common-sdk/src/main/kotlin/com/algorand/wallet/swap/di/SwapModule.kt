@@ -57,8 +57,7 @@ import com.algorand.wallet.swap.domain.repository.SwapHistoryRepository
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import com.algorand.wallet.swap.domain.repository.SwapSelectedAssetRepository
 import com.algorand.wallet.swap.domain.usecase.GetAvailableSwapAssets
-import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
-import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddressUseCase
+import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetailUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
@@ -153,9 +152,9 @@ internal object SwapModule {
     ): GetSelectedSwapAssetDetail = useCase
 
     @Provides
-    fun provideGetPreselectedSwapAddress(
-        useCase: GetPreselectedSwapAddressUseCase
-    ): GetPreselectedSwapAddress = useCase
+    fun provideGetLastUsedSwapAddress(
+        repository: SwapRepository
+    ): GetLastUsedSwapAddress = GetLastUsedSwapAddress(repository::getLastUsedSwapAddress)
 
     @Provides
     fun provideSwapTransactionPurposeMapper(

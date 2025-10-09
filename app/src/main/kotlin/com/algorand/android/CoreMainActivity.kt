@@ -113,13 +113,6 @@ abstract class CoreMainActivity : BaseActivity() {
         }
     }
 
-    private val bottomNavMenuStateCollector: suspend (BottomNavigationMenuViewModel.ViewState) -> Unit = { state ->
-        when (state) {
-            is BottomNavigationMenuViewModel.ViewState.Content -> initBottomNavMenu(state.menuItems)
-            BottomNavigationMenuViewModel.ViewState.Idle -> Unit
-        }
-    }
-
     private val bottomNavMenuEventCollector: suspend (BottomNavigationMenuViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
             is BottomNavigationMenuViewModel.ViewEvent.SetItemEnabled -> {
@@ -147,7 +140,6 @@ abstract class CoreMainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setWindowInsetsForSystemBars()
         setContentView(binding.root)
         initObservers()
@@ -159,20 +151,35 @@ abstract class CoreMainActivity : BaseActivity() {
         bottomNavMenuViewModel.initBottomNavState()
     }
 
+    private val bottomNavMenuStateCollector: suspend (BottomNavigationMenuViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BottomNavigationMenuViewModel.ViewState.Content -> {
+                initBottomNavMenu(state.menuItems)
+                updateMenuItemForDestination(navController.currentDestination?.id)
+            }
+
+            BottomNavigationMenuViewModel.ViewState.Idle -> Unit
+        }
+    }
+
     private fun setNavController() {
         val navHostFragment = supportFragmentManager.findFragmentById(binding.navigationHostFragment.id)
         navController = (navHostFragment as NavHostFragment).navController
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            val menuItemId = when (destination.id) {
-                R.id.accountsFragment -> R.id.accountsFragment
-                R.id.discoverHomeFragment -> R.id.discoverHomeNavigation
-                R.id.swapFragment -> R.id.swapV2Navigation
-                R.id.stakingFragment -> R.id.stakingFragment
-                R.id.collectiblesFragment -> R.id.collectiblesFragment
-                else -> null
-            }
-            menuItemId?.let { binding.bottomNavigationView.menu.findItem(menuItemId).isChecked = true }
+            updateMenuItemForDestination(destination.id)
         }
+    }
+
+    private fun updateMenuItemForDestination(destinationId: Int?) {
+        val menuItemId = when (destinationId) {
+            R.id.accountsFragment -> R.id.accountsFragment
+            R.id.discoverHomeFragment -> R.id.discoverHomeNavigation
+            R.id.swapFragment -> R.id.swapV2Navigation
+            R.id.stakingFragment -> R.id.stakingFragment
+            R.id.collectiblesFragment -> R.id.collectiblesFragment
+            else -> null
+        }
+        menuItemId?.let { binding.bottomNavigationView.menu.findItem(it)?.isChecked = true }
     }
 
     private fun initializeActivity(savedInstanceState: Bundle?) {

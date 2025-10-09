@@ -38,7 +38,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 
-private val ICON_SIZE = 24.dp
+private val iconSize = 24.dp
 
 @Composable
 fun AssetPairIcons(modifier: Modifier = Modifier, firstDrawable: AssetIconDrawable, secondDrawable: AssetIconDrawable) {
@@ -71,7 +71,7 @@ private fun AssetPairIcon(modifier: Modifier, drawable: AssetIconDrawable) {
 @Composable
 private fun AssetDrawableIcon(drawable: AssetIconDrawable.AssetDrawable) {
     if (drawable.isUrlValid()) {
-        val widthAsPx = with(LocalDensity.current) { ICON_SIZE.toPx().toInt() }
+        val widthAsPx = with(LocalDensity.current) { iconSize.toPx().toInt() }
         GlideImage(
             modifier = Modifier.clip(CircleShape),
             model = drawable.getImageUrl(widthAsPx),
@@ -107,7 +107,7 @@ private fun AssetNameIcon(unitName: String?) {
 @Composable
 private fun AlgoIcon() {
     Image(
-        modifier = Modifier.size(ICON_SIZE),
+        modifier = Modifier.size(iconSize),
         contentDescription = null,
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_algo_circle)
     )

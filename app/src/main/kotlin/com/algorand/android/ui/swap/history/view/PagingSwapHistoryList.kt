@@ -25,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -39,7 +40,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIcons
+import com.algorand.android.ui.compose.widget.asset.icon.AssetPairIcons
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.swap.history.model.SwapHistoryItem
 import kotlinx.coroutines.flow.Flow
@@ -57,7 +58,10 @@ fun PagingSwapHistoryList(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = contentPadding,
     ) {
-        items(swapHistory.itemCount) { index ->
+        items(
+            count = swapHistory.itemCount,
+            key = { index -> swapHistory[index]?.id ?: index }
+        ) { index ->
             swapHistory[index]?.let { swapHistoryItem ->
                 SwapHistoryListItem(swapHistoryItem, onSwapItemClick)
                 if (index in 0 until swapHistory.itemCount - 1) {
@@ -76,7 +80,7 @@ fun PagingSwapHistoryList(
 @Composable
 private fun SwapHistoryListItem(item: SwapHistoryItem, onClick: (SwapHistoryItem) -> Unit) {
     Row(modifier = Modifier.clickableNoRipple { onClick(item) }, verticalAlignment = Alignment.CenterVertically) {
-        AssetIcons(firstDrawable = item.assetInDrawable, secondDrawable = item.assetOutDrawable)
+        AssetPairIcons(firstDrawable = item.assetInDrawable, secondDrawable = item.assetOutDrawable)
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             modifier = Modifier.weight(1f),
@@ -98,48 +102,37 @@ private fun SwapHistoryListItem(item: SwapHistoryItem, onClick: (SwapHistoryItem
 
 @Composable
 private fun getItemDescription(item: SwapHistoryItem): AnnotatedString {
-    return buildAnnotatedString {
-        val assetInAmount = "${item.amountIn} ${item.assetInShortName}"
-        val assetOutAmount = "${item.amountOut} ${item.assetOutShortName}"
-        val descriptionText = stringResource(R.string.swapped_asset_for_asset_formatted, assetInAmount, assetOutAmount)
-        val startIndex = descriptionText.indexOf(assetOutAmount)
-        val endIndex = startIndex + assetOutAmount.length
+    val boldWeight = PeraTheme.typography.body.regular.sansBold.fontWeight
+    val dateColor = PeraTheme.colors.text.gray
+    val mainSpan = SpanStyle(
+        color = PeraTheme.colors.text.main,
+        fontStyle = PeraTheme.typography.body.regular.sans.fontStyle
+    )
+    val descriptionTextTemplate = stringResource(R.string.swapped_asset_for_asset_formatted)
+    return remember(item) {
+        buildAnnotatedString {
+            val assetInAmount = "${item.amountIn} ${item.assetInShortName}"
+            val assetOutAmount = "${item.amountOut} ${item.assetOutShortName}"
+            val descriptionText = String.format(descriptionTextTemplate, assetInAmount, assetOutAmount)
+            val startIndex = descriptionText.indexOf(assetOutAmount)
+            val endIndex = startIndex + assetOutAmount.length
 
-        val font = PeraTheme.typography.body.regular.sans
-        val color = PeraTheme.colors.text.main
-        withStyle(style = SpanStyle(color = color, fontStyle = font.fontStyle)) {
-            append(descriptionText.substring(0, startIndex))
-        }
-
-        withStyle(
-            style = SpanStyle(
-                color = color,
-                fontStyle = font.fontStyle,
-                fontWeight = PeraTheme.typography.body.regular.sansBold.fontWeight
-            )
-        ) {
-            append(assetOutAmount)
-        }
-        withStyle(style = SpanStyle(color = color, fontStyle = font.fontStyle)) {
-            append(descriptionText.substring(endIndex, descriptionText.length))
-        }
-
-        if (item.datetime != null) {
-            withStyle(
-                style = SpanStyle(
-                    color = PeraTheme.colors.text.grayLighter,
-                    fontStyle = PeraTheme.typography.body.regular.sans.fontStyle
-                )
-            ) {
-                append(" • ")
+            withStyle(style = mainSpan) {
+                append(descriptionText.substring(0, startIndex))
             }
-            withStyle(
-                style = SpanStyle(
-                    color = PeraTheme.colors.text.gray,
-                    fontStyle = PeraTheme.typography.body.regular.sans.fontStyle
-                )
-            ) {
-                append(item.datetime)
+
+            withStyle(style = mainSpan.copy(fontWeight = boldWeight)) {
+                append(assetOutAmount)
+            }
+            withStyle(style = mainSpan) {
+                append(descriptionText.substring(endIndex, descriptionText.length))
+            }
+
+            if (item.datetime != null) {
+                withStyle(style = mainSpan.copy(color = dateColor)) {
+                    append(" • ")
+                    append(item.datetime)
+                }
             }
         }
     }

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIcons
+import com.algorand.android.ui.compose.widget.asset.icon.AssetPairIcons
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.modifier.shimmer
 import com.algorand.android.ui.swap.topfive.model.TopSwapPairItem
@@ -144,7 +144,7 @@ private fun SwapPairItem(modifier: Modifier, index: Int, detail: TopSwapPairItem
             style = PeraTheme.typography.body.large.sans,
             color = PeraTheme.colors.text.gray
         )
-        AssetIcons(firstDrawable = detail.assetInIconDrawable, secondDrawable = detail.assetOutIconDrawable)
+        AssetPairIcons(firstDrawable = detail.assetInIconDrawable, secondDrawable = detail.assetOutIconDrawable)
         Spacer(modifier = Modifier.width(8.dp))
         Row(modifier = Modifier.weight(1f)) {
             Text(

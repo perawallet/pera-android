@@ -38,7 +38,9 @@ import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.domain.util.AssetConstants.USDC_MAINNET_ID
+import com.algorand.wallet.swap.domain.usecase.GetSwapSlippageTolerancePercentage
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
+import com.algorand.wallet.swap.domain.usecase.SetSwapSlippageTolerancePercentage
 import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
@@ -70,7 +72,9 @@ class SwapViewModel @Inject constructor(
     private val setSwapUseLocalCurrencyPreference: SetSwapUseLocalCurrencyPreference,
     private val parityUseCase: ParityUseCase,
     private val swapScreenEventTracker: SwapScreenEventTracker,
-    private val getAssetDetail: GetAssetDetail
+    private val getAssetDetail: GetAssetDetail,
+    private val getSwapSlippageTolerancePercentage: GetSwapSlippageTolerancePercentage,
+    private val setSwapSlippageTolerancePercentage: SetSwapSlippageTolerancePercentage
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, SwapScreenEventTracker by swapScreenEventTracker {
 
     private val _swapDetailsFlow = MutableStateFlow<SwapDetails>(SwapDetails())
@@ -140,15 +144,22 @@ class SwapViewModel @Inject constructor(
 
     fun applySwapConfigs(result: SwapConfigurationResult) {
         _swapDetailsFlow.update { currentConfig ->
-            if (currentConfig.useLocalCurrency != result.useLocalCurrency) {
-                viewModelScope.launch {
-                    setSwapUseLocalCurrencyPreference(result.useLocalCurrency)
-                }
-            }
+            updateConfigPreferences(currentConfig, result)
             currentConfig.copy(
                 slippage = result.slippageTolerance,
                 useLocalCurrency = result.useLocalCurrency
             )
+        }
+    }
+
+    private fun updateConfigPreferences(currentConfig: SwapDetails, newConfig: SwapConfigurationResult) {
+        viewModelScope.launch {
+            if (currentConfig.useLocalCurrency != newConfig.useLocalCurrency) {
+                setSwapUseLocalCurrencyPreference(newConfig.useLocalCurrency)
+            }
+            if (currentConfig.slippage != newConfig.slippageTolerance) {
+                setSwapSlippageTolerancePercentage(newConfig.slippageTolerance)
+            }
         }
     }
 
@@ -183,7 +194,8 @@ class SwapViewModel @Inject constructor(
                 assetInId = assetInId,
                 assetOutId = getAssetOutId(assetInId, arg.assetOutId),
                 useLocalCurrency = useLocalCurrency,
-                primaryCurrencySymbol = getPrimaryCurrencySymbol(useLocalCurrency)
+                primaryCurrencySymbol = getPrimaryCurrencySymbol(useLocalCurrency),
+                slippage = getSwapSlippageTolerancePercentage()
             )
             updateContentState(address)
         }

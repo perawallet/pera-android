@@ -79,7 +79,7 @@ internal class GetPasskeyViewModel @Inject constructor(
     }
 
     data class GetCredentialsParams(
-        val seedId: Int,
+        val bip39Address: String,
         val credId: String,
         val origin: String,
         val request: PublicKeyCredentialRequestOptions,

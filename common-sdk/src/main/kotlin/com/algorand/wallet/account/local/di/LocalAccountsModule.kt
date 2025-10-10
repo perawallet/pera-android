@@ -56,6 +56,8 @@ import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCas
 import com.algorand.wallet.account.local.domain.usecase.GetAccountMnemonic
 import com.algorand.wallet.account.local.domain.usecase.GetAccountMnemonicUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeedFirstAddresses
+import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeedFirstAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeeds
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
@@ -337,4 +339,9 @@ internal object LocalAccountsModule {
     fun provideGetHdSeedId(repository: HdKeyAccountRepository): GetHdSeedId {
         return GetHdSeedId(repository::getHdSeedId)
     }
+
+    @Provides
+    fun provideGetAllHdSeedFirstAddresses(
+        useCase: GetAllHdSeedFirstAddressesUseCase
+    ): GetAllHdSeedFirstAddresses = useCase
 }

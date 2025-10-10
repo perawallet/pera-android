@@ -14,7 +14,7 @@ package com.algorand.android.credentials.passkeys.ui.viewmodel
 
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.PublicKeyCredential
-import com.algorand.android.credentials.passkeys.domain.PasskeyManager
+import com.algorand.android.credentials.passkeys.domain.Bip39SignManager
 import com.algorand.android.credentials.passkeys.domain.model.AuthenticatorAssertionResponse
 import com.algorand.android.credentials.passkeys.domain.model.AuthenticatorFlags
 import com.algorand.android.credentials.passkeys.domain.model.FidoPublicKeyCredential
@@ -24,7 +24,7 @@ import com.algorand.wallet.utils.date.TimeProvider
 import javax.inject.Inject
 
 internal class DefaultGetCredentialResponseProcessor @Inject constructor(
-    private val passkeyManager: PasskeyManager,
+    private val bip39SignManager: Bip39SignManager,
     private val setPasskeyLastUsedTime: SetPasskeyLastUsedTime,
     private val timeProvider: TimeProvider
 ) : GetCredentialResponseProcessor {
@@ -36,7 +36,9 @@ internal class DefaultGetCredentialResponseProcessor @Inject constructor(
         }
 
         val authAssertionResponse = getAuthAssertionResponse(params, callingOrigin).apply {
-            signature = passkeyManager.signPasskey(params.seedId, params.origin, params.username, dataToSign())
+            signature = bip39SignManager
+                .sign(params.bip39Address, params.origin, params.username, dataToSign())
+                ?: byteArrayOf()
         }
         setPasskeyLastUsedTime(params.credId, timeProvider.getCurrentTimeMillis())
         val fidoResponse = FidoPublicKeyCredential(params.credId, authAssertionResponse)

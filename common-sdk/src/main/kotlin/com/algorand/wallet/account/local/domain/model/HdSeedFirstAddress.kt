@@ -10,12 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.credentials.passkeys.domain
+package com.algorand.wallet.account.local.domain.model
 
-import java.security.KeyPair
-
-internal interface PasskeyManager {
-    suspend fun signPasskey(seedId: Int, origin: String, userHandle: String, payload: ByteArray): ByteArray
-    suspend fun derivePasskey(seedId: Int, origin: String, userHandle: String): KeyPair
-    fun deriveCredentialId(keyPair: KeyPair): ByteArray
-}
+data class HdSeedFirstAddress(
+    val seedId: Int,
+    val firstAddress: String
+)

@@ -23,8 +23,8 @@ internal data class PasskeyEntity(
     val credentialId: String,
     @ColumnInfo(name = "site_id")
     val siteId: Long,
-    @ColumnInfo(name = "seed_id")
-    val seedId: Int,
+    @ColumnInfo(name = "bip39_address")
+    val bip39Address: String,
     @ColumnInfo(name = "user_id")
     val userId: String,
     @ColumnInfo(name = "user_name")

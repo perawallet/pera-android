@@ -19,11 +19,11 @@ import androidx.credentials.GetPublicKeyCredentialOption
 import androidx.credentials.provider.PendingIntentHandler
 import androidx.credentials.provider.ProviderGetCredentialRequest
 import com.algorand.android.credentials.passkeys.domain.model.Passkey
-import com.algorand.android.credentials.passkeys.domain.usecase.GetPasskeyByCredentialId
 import com.algorand.android.credentials.passkeys.domain.model.PublicKeyCredentialRequestOptions
+import com.algorand.android.credentials.passkeys.domain.usecase.GetPasskeyByCredentialId
+import com.algorand.android.credentials.passkeys.ui.PasskeyProviderService
 import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyIntentValidationResult
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewModel
-import com.algorand.android.credentials.passkeys.ui.PasskeyProviderService
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -87,7 +87,7 @@ internal class DefaultGetPasskeyIntentValidator @Inject constructor(
         passkey: Passkey
     ): GetPasskeyViewModel.GetCredentialsParams {
         return GetPasskeyViewModel.GetCredentialsParams(
-            seedId = passkey.seedId,
+            bip39Address = passkey.bip39Address,
             credId = passkey.credId,
             origin = appInfoOrigin,
             request = publicKeyRequestOptions,

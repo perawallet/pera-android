@@ -12,13 +12,13 @@
 
 package com.algorand.android.credentials.passkeys.ui.mapper
 
-import com.algorand.android.credentials.passkeys.domain.PasskeyManager
 import com.algorand.android.credentials.passkeys.domain.model.CreatePublicKeyCredentialResponseArgs
+import com.algorand.android.credentials.passkeys.domain.Bip39SignManager
 import com.algorand.android.credentials.passkeys.ui.viewmodel.CreatePasskeyViewModel.CreatePasskeyParams
 import javax.inject.Inject
 
 internal class DefaultCreatePublicKeyCredentialResponseArgsMapper @Inject constructor(
-    private val passkeyManager: PasskeyManager
+    private val bip39SignManager: Bip39SignManager
 ) : CreatePublicKeyCredentialResponseArgsMapper {
 
     override suspend fun invoke(
@@ -27,10 +27,10 @@ internal class DefaultCreatePublicKeyCredentialResponseArgsMapper @Inject constr
     ): CreatePublicKeyCredentialResponseArgs {
         with(params) {
             val userHandle = requestOptions.user.name
-            val keyPair = passkeyManager.derivePasskey(seedId, appInfoOrigin, userHandle)
+            val keyPair = bip39SignManager.deriveKeyPair(bip39Address, appInfoOrigin, userHandle)!!
             return CreatePublicKeyCredentialResponseArgs(
                 keyPair = keyPair,
-                credentialId = passkeyManager.deriveCredentialId(keyPair),
+                credentialId = bip39SignManager.deriveCredentialId(keyPair),
                 request = requestOptions,
                 appInfoOrigin = appInfoOrigin,
                 appInfo = callingAppInfo,

@@ -25,7 +25,7 @@ internal class DefaultCreatePasskeyParamsMapper @Inject constructor() : CreatePa
 
     override fun invoke(
         request: ProviderCreateCredentialRequest,
-        seedId: Int,
+        bip39Address: String,
         appInfoOrigin: String
     ): CreatePasskeyParams {
         val publicKeyRequest = request.callingRequest as CreatePublicKeyCredentialRequest
@@ -34,7 +34,7 @@ internal class DefaultCreatePasskeyParamsMapper @Inject constructor() : CreatePa
                 requestOptions = PublicKeyCredentialCreationOptions(requestJson),
                 callingAppInfo = request.callingAppInfo,
                 clientDataHash = clientDataHash,
-                seedId = seedId,
+                bip39Address = bip39Address,
                 appInfoOrigin = appInfoOrigin
             )
         }

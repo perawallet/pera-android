@@ -10,10 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.android.credentials.passkeys.ui.model
+package com.algorand.android.credentials.passkeys.domain
 
-data class CreatePasskeyCredentialCreateEntry(
-    val accountName: String,
-    val passkeyCount: Int,
-    val bip39Address: String
-)
+import java.security.KeyPair
+
+internal interface Bip39SignManager {
+    suspend fun sign(address: String, origin: String, userHandle: String, payload: ByteArray): ByteArray?
+    suspend fun deriveKeyPair(address: String, origin: String, userHandle: String): KeyPair?
+    fun deriveCredentialId(keyPair: KeyPair): ByteArray
+}

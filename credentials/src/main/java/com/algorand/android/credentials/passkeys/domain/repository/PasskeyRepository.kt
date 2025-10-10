@@ -25,5 +25,5 @@ internal interface PasskeyRepository {
     suspend fun removePasskeyByCredentialId(credId: String)
     suspend fun clearAllPasskeys()
     suspend fun setPasskeyLastUsedTime(credId: String, lastUsed: Long)
-    suspend fun doesPasskeyExist(rpId: String, username: String, seedId: Int): Boolean
+    suspend fun doesPasskeyExist(rpId: String, username: String, bip39Address: String): Boolean
 }

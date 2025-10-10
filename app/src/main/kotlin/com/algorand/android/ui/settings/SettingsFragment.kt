@@ -31,14 +31,16 @@ import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openSupportCenterUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.extensions.hide
+import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.crypto.tink.Aead
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
@@ -100,6 +102,10 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             developerListItem.setOnClickListener { onDeveloperSettingsClick() }
             logoutButton.setOnClickListener { onLogoutClick() }
             versionCodeTextView.text = getVersionText()
+            passkeysListItem.apply {
+                if (settingsViewModel.isPasskeysFeatureEnabled()) show() else hide()
+                setOnClickListener { onPasskeysClick() }
+            }
         }
     }
 
@@ -200,6 +206,10 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             negativeButtonTextRes = R.string.keep_it
         )
         nav(SettingsFragmentDirections.actionSettingsFragmentToWarningConfirmationNavigation(warningConfirmation))
+    }
+
+    private fun onPasskeysClick() {
+        nav(SettingsFragmentDirections.actionSettingsFragmentToPasskeysFragment())
     }
 
     private fun onTermsAndServicesClick() {

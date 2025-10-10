@@ -99,3 +99,11 @@ fun interface GetSwapFeePadding {
 fun interface SendSwapTransactions {
     suspend operator fun invoke(swapId: Long, txns: List<SignedSwapTransaction>): PeraResult<List<TransactionId>>
 }
+
+fun interface SetSwapSlippageTolerancePercentage {
+    suspend operator fun invoke(percentage: Float?)
+}
+
+fun interface GetSwapSlippageTolerancePercentage {
+    suspend operator fun invoke(): Float?
+}

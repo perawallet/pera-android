@@ -48,7 +48,7 @@ internal class DefaultSwapQuoteFetchStateMapper @Inject constructor(
                 assetInId = assetInState.assetDetail.assetId,
                 assetOutId = assetOutState.assetDetail.assetId,
                 amount = assetAmount,
-                slippage = swapDetails.slippage
+                slippage = swapDetails.slippage?.let { it / SLIPPAGE_TOLERANCE_DIVIDER }
             )
             SwapQuoteFetchState(swapDetails.useLocalCurrency, SwapQuoteFetchState.State.ReadyToFetch(payload))
         } else {
@@ -66,5 +66,9 @@ internal class DefaultSwapQuoteFetchStateMapper @Inject constructor(
         } else {
             amount.movePointRight(assetInDetail.decimal).toBigInteger()
         }
+    }
+
+    private companion object {
+        const val SLIPPAGE_TOLERANCE_DIVIDER = 100f
     }
 }

@@ -72,11 +72,13 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetails
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuoteDetailsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
+import com.algorand.wallet.swap.domain.usecase.GetSwapSlippageTolerancePercentage
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
 import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
 import com.algorand.wallet.swap.domain.usecase.SendSwapTransactionsUseCase
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
+import com.algorand.wallet.swap.domain.usecase.SetSwapSlippageTolerancePercentage
 import com.algorand.wallet.swap.domain.usecase.SetSwapStatusFailed
 import com.algorand.wallet.swap.domain.usecase.SetSwapStatusInProgress
 import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
@@ -124,6 +126,10 @@ internal object SwapModule {
             useLocalCurrencyCache = persistentCacheProvider.getPersistentCache<Boolean>(
                 type = Boolean::class.java,
                 key = "swap_use_local_currency_preference",
+            ),
+            slippageTolerancePersistentCache = persistentCacheProvider.getPersistentCache<Float>(
+                type = Float::class.java,
+                key = "swap_slippage_tolerance_preference",
             )
         )
     }
@@ -283,4 +289,14 @@ internal object SwapModule {
 
     @Provides
     fun provideSendSwapTransactions(useCase: SendSwapTransactionsUseCase): SendSwapTransactions = useCase
+
+    @Provides
+    fun provideSetSwapSlippageTolerancePercentage(repository: SwapRepository): SetSwapSlippageTolerancePercentage {
+        return SetSwapSlippageTolerancePercentage(repository::setSlippageTolerancePercentage)
+    }
+
+    @Provides
+    fun provideGetSwapSlippageTolerancePercentage(repository: SwapRepository): GetSwapSlippageTolerancePercentage {
+        return GetSwapSlippageTolerancePercentage(repository::getSlippageTolerancePercentage)
+    }
 }

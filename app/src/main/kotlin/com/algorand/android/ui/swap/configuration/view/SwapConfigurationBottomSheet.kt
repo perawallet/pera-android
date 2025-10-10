@@ -183,7 +183,7 @@ private fun SlippageInputContainer(
                     onClick = {
                         val newText = if (isCustomButton) emptyString() else chip.value.formattedValue(1)
                         if (!isCustomButton) scope.launch { swapViewModel.logSlippageSelection(chip.value) }
-                        textState.update(newText)
+                        textState.update(newText.replaceCommaWithDot())
                     }
                 )
             }

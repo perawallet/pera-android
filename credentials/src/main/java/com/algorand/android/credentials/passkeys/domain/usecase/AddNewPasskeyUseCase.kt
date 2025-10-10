@@ -12,10 +12,10 @@
 
 package com.algorand.android.credentials.passkeys.domain.usecase
 
-import com.algorand.android.credentials.passkeys.domain.model.AddPasskeyArgs
-import com.algorand.android.credentials.passkeys.domain.repository.PasskeyRepository
 import com.algorand.android.credentials.passkeys.domain.WebAuthnUtils
+import com.algorand.android.credentials.passkeys.domain.model.AddPasskeyArgs
 import com.algorand.android.credentials.passkeys.domain.model.PublicKeyCredentialCreationOptions
+import com.algorand.android.credentials.passkeys.domain.repository.PasskeyRepository
 import javax.inject.Inject
 
 internal class AddNewPasskeyUseCase @Inject constructor(
@@ -23,23 +23,23 @@ internal class AddNewPasskeyUseCase @Inject constructor(
 ) : AddNewPasskey {
 
     override suspend fun invoke(
-        seedId: Int,
+        bip44Address: String,
         requestOptions: PublicKeyCredentialCreationOptions,
         credId: ByteArray
     ) {
-        val args = getAddPasskeyArgs(seedId, requestOptions, credId)
+        val args = getAddPasskeyArgs(bip44Address, requestOptions, credId)
         passkeyRepository.addNewPasskey(args)
     }
 
     private fun getAddPasskeyArgs(
-        seedId: Int,
+        bip44Address: String,
         requestOptions: PublicKeyCredentialCreationOptions,
         credId: ByteArray
     ): AddPasskeyArgs {
         return AddPasskeyArgs(
             siteUrl = requestOptions.rp.id,
             siteName = requestOptions.rp.name,
-            seedId = seedId,
+            bip44Address = bip44Address,
             uid = WebAuthnUtils.b64Encode(requestOptions.user.id),
             username = requestOptions.user.name,
             displayName = requestOptions.user.displayName,

@@ -39,8 +39,8 @@ internal class DefaultCreatePasskeyIntentValidator @Inject constructor(
     override suspend fun validate(intent: Intent): CreatePasskeyIntentValidationResult {
         val createPasskeyRequest = PendingIntentHandler.Companion.retrieveProviderCreateCredentialRequest(intent)
         val requestExtras = intent.getBundleExtra(PasskeyProviderService.Companion.EXTRA_INTENT_DATA_KEY)
-        val seedId = requestExtras?.getInt(PasskeyProviderService.Companion.SEED_ID_KEY)
-        if (createPasskeyRequest == null || seedId == null) {
+        val bip44Address = requestExtras?.getString(PasskeyProviderService.Companion.BIP44ADDRESS)
+        if (createPasskeyRequest == null || bip44Address == null) {
             return CreatePasskeyIntentValidationResult.UnableToExtractData
         }
 
@@ -52,7 +52,7 @@ internal class DefaultCreatePasskeyIntentValidator @Inject constructor(
         }
 
         return if (createPasskeyRequest.callingRequest is CreatePublicKeyCredentialRequest) {
-            getIntentResultValidatingAppInfo(createPasskeyRequest, seedId)
+            getIntentResultValidatingAppInfo(createPasskeyRequest, bip44Address)
         } else {
             CreatePasskeyIntentValidationResult.InvalidRequestType
         }
@@ -60,12 +60,12 @@ internal class DefaultCreatePasskeyIntentValidator @Inject constructor(
 
     private suspend fun getIntentResultValidatingAppInfo(
         createPasskeyRequest: ProviderCreateCredentialRequest,
-        seedId: Int
+        bip44Address: String
     ): CreatePasskeyIntentValidationResult {
         val publicKeyRequest = createPasskeyRequest.callingRequest as CreatePublicKeyCredentialRequest
         val requestOptions = PublicKeyCredentialCreationOptions(publicKeyRequest.requestJson)
 
-        if (doesPasskeyExist(requestOptions.rp.id, requestOptions.user.name, seedId)) {
+        if (doesPasskeyExist(requestOptions.rp.id, requestOptions.user.name, bip44Address)) {
             return CreatePasskeyIntentValidationResult.ExistingPasskey
         }
 
@@ -79,7 +79,7 @@ internal class DefaultCreatePasskeyIntentValidator @Inject constructor(
             is FailedToValidateOrigin -> CreatePasskeyIntentValidationResult.FailedToValidateOrigin
             is Success -> {
                 val appInfoOrigin = validationResult.callingAppInfoOrigin
-                val params = createPasskeyParamsMapper(createPasskeyRequest, seedId, appInfoOrigin)
+                val params = createPasskeyParamsMapper(createPasskeyRequest, bip44Address, appInfoOrigin)
                 CreatePasskeyIntentValidationResult.Success(createPasskeyRequest, params)
             }
         }

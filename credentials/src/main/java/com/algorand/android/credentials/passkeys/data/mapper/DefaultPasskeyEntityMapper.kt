@@ -21,7 +21,7 @@ internal class DefaultPasskeyEntityMapper @Inject constructor() : PasskeyEntityM
     override fun mapToPasskeyEntity(passkey: AddPasskeyArgs, siteId: Long): PasskeyEntity {
         return PasskeyEntity(
             siteId = siteId,
-            seedId = passkey.seedId,
+            bip44Address = passkey.bip44Address,
             userId = passkey.uid,
             userName = passkey.username,
             userDisplayName = passkey.displayName,

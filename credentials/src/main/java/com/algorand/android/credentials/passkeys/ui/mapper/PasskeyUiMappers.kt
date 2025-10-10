@@ -19,7 +19,7 @@ import com.algorand.android.credentials.passkeys.ui.viewmodel.CreatePasskeyViewM
 internal fun interface CreatePasskeyParamsMapper {
     operator fun invoke(
         request: ProviderCreateCredentialRequest,
-        seedId: Int,
+        bip44Address: String,
         appInfoOrigin: String
     ): CreatePasskeyParams
 }

@@ -45,9 +45,11 @@ internal interface PasskeyDao {
             SELECT 1 
             FROM passkey_table 
             INNER JOIN sites ON passkey_table.site_id = sites.id 
-            WHERE sites.url = :siteUrl AND passkey_table.user_name = :username AND passkey_table.seed_id = :seedId
+            WHERE sites.url = :siteUrl 
+                AND passkey_table.user_name = :username
+                AND passkey_table.bip44_address = :bip44Address
         )
         """
     )
-    suspend fun doesPasskeyExist(siteUrl: String, username: String, seedId: Int): Boolean
+    suspend fun doesPasskeyExist(siteUrl: String, username: String, bip44Address: String): Boolean
 }

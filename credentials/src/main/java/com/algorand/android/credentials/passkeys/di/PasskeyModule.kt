@@ -21,8 +21,8 @@ import com.algorand.android.credentials.passkeys.data.mapper.DefaultPasskeyMappe
 import com.algorand.android.credentials.passkeys.data.mapper.PasskeyEntityMapper
 import com.algorand.android.credentials.passkeys.data.mapper.PasskeyMapper
 import com.algorand.android.credentials.passkeys.data.repository.DefaultPasskeyRepository
-import com.algorand.android.credentials.passkeys.domain.PasskeyManager
-import com.algorand.android.credentials.passkeys.domain.PeraPasskeyManager
+import com.algorand.android.credentials.passkeys.domain.Bip39SignManager
+import com.algorand.android.credentials.passkeys.domain.DeterministicBip39SignManager
 import com.algorand.android.credentials.passkeys.domain.repository.PasskeyRepository
 import com.algorand.android.credentials.passkeys.domain.usecase.AddNewPasskey
 import com.algorand.android.credentials.passkeys.domain.usecase.AddNewPasskeyUseCase
@@ -42,6 +42,7 @@ import com.algorand.android.credentials.passkeys.ui.builder.PasskeyCreateCredent
 import com.algorand.android.credentials.passkeys.ui.builder.PasskeyGetCredentialsEntryBuilder
 import com.algorand.android.credentials.passkeys.ui.viewmodel.DefaultGetCredentialResponseProcessor
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetCredentialResponseProcessor
+import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeedFirstAddresses
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import dagger.Module
 import dagger.Provides
@@ -105,8 +106,11 @@ internal object PasskeyModule {
     fun provideAddNewPasskey(useCase: AddNewPasskeyUseCase): AddNewPasskey = useCase
 
     @Provides
-    fun providePasskeyManager(getHdEntropy: GetHdEntropy): PasskeyManager {
-        return PeraPasskeyManager(DeterministicP256(), getHdEntropy)
+    fun provideBip39SignManager(
+        getHdEntropy: GetHdEntropy,
+        getAllHdSeedFirstAddresses: GetAllHdSeedFirstAddresses
+    ): Bip39SignManager {
+        return DeterministicBip39SignManager(DeterministicP256(), getAllHdSeedFirstAddresses, getHdEntropy)
     }
 
     @Provides

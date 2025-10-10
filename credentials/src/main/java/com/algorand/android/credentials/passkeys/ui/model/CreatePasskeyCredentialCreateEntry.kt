@@ -15,5 +15,5 @@ package com.algorand.android.credentials.passkeys.ui.model
 data class CreatePasskeyCredentialCreateEntry(
     val accountName: String,
     val passkeyCount: Int,
-    val seedId: Int
+    val bip44Address: String
 )

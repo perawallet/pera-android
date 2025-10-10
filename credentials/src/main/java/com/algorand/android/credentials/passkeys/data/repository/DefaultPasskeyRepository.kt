@@ -90,7 +90,7 @@ internal class DefaultPasskeyRepository @Inject constructor(
         passkeyDao.updateLastUsedTime(credId, lastUsed)
     }
 
-    override suspend fun doesPasskeyExist(rpId: String, username: String, seedId: Int): Boolean {
-        return passkeyDao.doesPasskeyExist(rpId, username, seedId)
+    override suspend fun doesPasskeyExist(rpId: String, username: String, bip44Address: String): Boolean {
+        return passkeyDao.doesPasskeyExist(rpId, username, bip44Address)
     }
 }

@@ -18,13 +18,13 @@ import com.algorand.android.credentials.passkeys.domain.model.PublicKeyCredentia
 import com.algorand.android.credentials.passkeys.domain.usecase.GetSitePasskeyCount
 import com.algorand.android.credentials.passkeys.ui.model.CreatePasskeyCredentialCreateEntry
 import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedCustomName
-import com.algorand.wallet.account.local.domain.model.HdSeed
-import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeeds
+import com.algorand.wallet.account.local.domain.model.HdSeedFirstAddress
+import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeedFirstAddresses
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
 internal class DefaultPasskeyCreateCredentialEntryBuilder @Inject constructor(
-    private val getAllHdSeeds: GetAllHdSeeds,
+    private val getAllHdSeedFirstAddresses: GetAllHdSeedFirstAddresses,
     private val getSitePasskeyCount: GetSitePasskeyCount,
     private val getHdSeedCustomName: GetHdSeedCustomName
 ) : PasskeyCreateCredentialEntryBuilder {
@@ -32,24 +32,24 @@ internal class DefaultPasskeyCreateCredentialEntryBuilder @Inject constructor(
     override suspend fun buildEntries(
         request: BeginCreateCredentialRequest
     ): PeraResult<List<CreatePasskeyCredentialCreateEntry>> {
-        val hdSeedIds = getAllHdSeeds()
-        return if (hdSeedIds.isEmpty()) {
+        val hdSeedsAddresses = getAllHdSeedFirstAddresses()
+        return if (hdSeedsAddresses.isEmpty()) {
             PeraResult.Error(CreateCredentialNoCreateOptionException())
         } else {
-            PeraResult.Success(createEntries(request, hdSeedIds))
+            PeraResult.Success(createEntries(request, hdSeedsAddresses))
         }
     }
 
     private suspend fun createEntries(
         request: BeginCreateCredentialRequest,
-        hdSeeds: List<HdSeed>
+        hdSeedsAddresses: List<HdSeedFirstAddress>
     ): List<CreatePasskeyCredentialCreateEntry> {
         val registeredRelyingPartyPasskeyCount = getPasskeyCount(request)
-        return hdSeeds.map { hdSeed ->
+        return hdSeedsAddresses.map { hdSeed ->
             CreatePasskeyCredentialCreateEntry(
                 accountName = getHdSeedCustomName(hdSeed.seedId).orEmpty(),
                 passkeyCount = registeredRelyingPartyPasskeyCount,
-                seedId = hdSeed.seedId
+                bip44Address = hdSeed.firstAddress
             )
         }
     }

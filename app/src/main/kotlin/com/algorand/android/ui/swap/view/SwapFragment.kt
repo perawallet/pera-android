@@ -28,8 +28,8 @@ import com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFrag
 import com.algorand.android.ui.swap.assetselection.view.SwapAssetOutSelectionFragment.Companion.SWAP_ASSET_OUT_ID_KEY
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.utils.browser.SWAP_INFO_SUPPORT_URL
+import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.browser.openUrl
-import com.algorand.android.utils.browser.openVestigeTermsOfServiceUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.useFragmentResultListenerValue
@@ -114,6 +114,6 @@ class SwapFragment : BaseFragment(0), SwapScreenListener,
     }
 
     override fun onTermsOfServiceClick() {
-        context?.openVestigeTermsOfServiceUrl()
+        context?.openTermsAndServicesUrl()
     }
 }

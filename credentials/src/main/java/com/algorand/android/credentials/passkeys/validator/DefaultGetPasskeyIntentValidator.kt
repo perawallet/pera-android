@@ -87,7 +87,7 @@ internal class DefaultGetPasskeyIntentValidator @Inject constructor(
         passkey: Passkey
     ): GetPasskeyViewModel.GetCredentialsParams {
         return GetPasskeyViewModel.GetCredentialsParams(
-            bip39Address = passkey.bip39Address,
+            bip44Address = passkey.bip44Address,
             credId = passkey.credId,
             origin = appInfoOrigin,
             request = publicKeyRequestOptions,

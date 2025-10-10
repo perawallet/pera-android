@@ -47,9 +47,9 @@ internal interface PasskeyDao {
             INNER JOIN sites ON passkey_table.site_id = sites.id 
             WHERE sites.url = :siteUrl 
                 AND passkey_table.user_name = :username
-                AND passkey_table.bip39_address = :bip39Address
+                AND passkey_table.bip44_address = :bip44Address
         )
         """
     )
-    suspend fun doesPasskeyExist(siteUrl: String, username: String, bip39Address: String): Boolean
+    suspend fun doesPasskeyExist(siteUrl: String, username: String, bip44Address: String): Boolean
 }

@@ -23,23 +23,23 @@ internal class AddNewPasskeyUseCase @Inject constructor(
 ) : AddNewPasskey {
 
     override suspend fun invoke(
-        bip39Address: String,
+        bip44Address: String,
         requestOptions: PublicKeyCredentialCreationOptions,
         credId: ByteArray
     ) {
-        val args = getAddPasskeyArgs(bip39Address, requestOptions, credId)
+        val args = getAddPasskeyArgs(bip44Address, requestOptions, credId)
         passkeyRepository.addNewPasskey(args)
     }
 
     private fun getAddPasskeyArgs(
-        bip39Address: String,
+        bip44Address: String,
         requestOptions: PublicKeyCredentialCreationOptions,
         credId: ByteArray
     ): AddPasskeyArgs {
         return AddPasskeyArgs(
             siteUrl = requestOptions.rp.id,
             siteName = requestOptions.rp.name,
-            bip39Address = bip39Address,
+            bip44Address = bip44Address,
             uid = WebAuthnUtils.b64Encode(requestOptions.user.id),
             username = requestOptions.user.name,
             displayName = requestOptions.user.displayName,

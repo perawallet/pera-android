@@ -27,7 +27,7 @@ internal class DefaultCreatePublicKeyCredentialResponseArgsMapper @Inject constr
     ): CreatePublicKeyCredentialResponseArgs {
         with(params) {
             val userHandle = requestOptions.user.name
-            val keyPair = bip39SignManager.deriveKeyPair(bip39Address, appInfoOrigin, userHandle)!!
+            val keyPair = bip39SignManager.deriveKeyPair(bip44Address, appInfoOrigin, userHandle)!!
             return CreatePublicKeyCredentialResponseArgs(
                 keyPair = keyPair,
                 credentialId = bip39SignManager.deriveCredentialId(keyPair),

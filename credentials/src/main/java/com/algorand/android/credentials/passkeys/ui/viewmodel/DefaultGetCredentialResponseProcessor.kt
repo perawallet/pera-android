@@ -37,7 +37,7 @@ internal class DefaultGetCredentialResponseProcessor @Inject constructor(
 
         val authAssertionResponse = getAuthAssertionResponse(params, callingOrigin).apply {
             signature = bip39SignManager
-                .sign(params.bip39Address, params.origin, params.username, dataToSign())
+                .sign(params.bip44Address, params.origin, params.username, dataToSign())
                 ?: byteArrayOf()
         }
         setPasskeyLastUsedTime(params.credId, timeProvider.getCurrentTimeMillis())

@@ -49,7 +49,7 @@ internal class DefaultPasskeyCreateCredentialEntryBuilder @Inject constructor(
             CreatePasskeyCredentialCreateEntry(
                 accountName = getHdSeedCustomName(hdSeed.seedId).orEmpty(),
                 passkeyCount = registeredRelyingPartyPasskeyCount,
-                bip39Address = hdSeed.firstAddress
+                bip44Address = hdSeed.firstAddress
             )
         }
     }

@@ -15,7 +15,7 @@ package com.algorand.android.credentials.passkeys.domain.model
 data class Passkey(
     val credId: String,
     val site: PasskeySite,
-    val bip39Address: String,
+    val bip44Address: String,
     val userId: String,
     val username: String,
     val displayName: String,

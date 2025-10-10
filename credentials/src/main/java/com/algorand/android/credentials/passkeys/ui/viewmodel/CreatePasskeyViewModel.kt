@@ -83,7 +83,7 @@ internal class CreatePasskeyViewModel @Inject constructor(
             with(params) {
                 val args = createPublicKeyCredentialResponseArgsMapper(params, appInfoOrigin)
                 val responseData = createPublicKeyCredentialResponseProcessor(args)
-                addNewPasskey(bip39Address, requestOptions, responseData.credentialId)
+                addNewPasskey(bip44Address, requestOptions, responseData.credentialId)
                 eventDelegate.sendEvent(ViewEvent.SetCreateResponseAndFinishActivity(responseData.response))
             }
         }
@@ -100,7 +100,7 @@ internal class CreatePasskeyViewModel @Inject constructor(
         val requestOptions: PublicKeyCredentialCreationOptions,
         val callingAppInfo: CallingAppInfo,
         val clientDataHash: ByteArray?,
-        val bip39Address: String,
+        val bip44Address: String,
         val appInfoOrigin: String
     ) {
         val rpId: String

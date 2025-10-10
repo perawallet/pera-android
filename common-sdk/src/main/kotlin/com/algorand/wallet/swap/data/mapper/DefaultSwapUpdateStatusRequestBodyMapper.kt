@@ -16,12 +16,16 @@ import com.algorand.wallet.swap.data.model.SwapStatusFailureReasonResponse
 import com.algorand.wallet.swap.data.model.SwapStatusResponse
 import com.algorand.wallet.swap.data.model.SwapUpdateStatusRequestBody
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
+import com.algorand.wallet.transaction.domain.model.TransactionId
 import javax.inject.Inject
 
 internal class DefaultSwapUpdateStatusRequestBodyMapper @Inject constructor() : SwapUpdateStatusRequestBodyMapper {
 
-    override fun mapToInProgress(): SwapUpdateStatusRequestBody {
-        return SwapUpdateStatusRequestBody(status = SwapStatusResponse.IN_PROGRESS)
+    override fun mapToInProgress(txnIds: List<TransactionId>): SwapUpdateStatusRequestBody {
+        return SwapUpdateStatusRequestBody(
+            status = SwapStatusResponse.IN_PROGRESS,
+            transactionIds = txnIds.map { it.value }
+        )
     }
 
     override fun mapToFailed(reason: SwapStatusFailureReason): SwapUpdateStatusRequestBody {

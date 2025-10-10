@@ -19,14 +19,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -40,20 +38,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
@@ -134,19 +132,7 @@ private fun BoxScope.BottomButtonContainer(
             .onSizeChanged { onSizeChanged(it) },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(R.string.powered_by),
-                style = PeraTheme.typography.footnote.sans,
-                color = PeraTheme.colors.text.grayLighter
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Image(
-                modifier = Modifier.height(16.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_vestige),
-                contentDescription = null
-            )
-        }
+        Text(text = getPoweredByText())
         Spacer(modifier = Modifier.height(16.dp))
         PeraPrimaryButton(
             modifier = Modifier.fillMaxWidth(),
@@ -161,6 +147,27 @@ private fun BoxScope.BottomButtonContainer(
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Composable
+private fun getPoweredByText() = buildAnnotatedString {
+    withStyle(style = PeraTheme.typography.footnote.sans.toSpanStyle(PeraTheme.colors.text.grayLighter)) {
+        append(stringResource(R.string.powered_by))
+    }
+    append(" ")
+    withStyle(style = PeraTheme.typography.footnote.sansMedium.toSpanStyle(PeraTheme.colors.text.main)) {
+        append(stringResource(R.string.pera_dot_separated))
+    }
+}
+
+private fun TextStyle.toSpanStyle(color: Color): SpanStyle {
+    return SpanStyle(
+        color = color,
+        fontFamily = fontFamily,
+        fontSize = fontSize,
+        fontWeight = fontWeight,
+        fontStyle = fontStyle
+    )
 }
 
 interface SwapScreenIntroductionStateListener {

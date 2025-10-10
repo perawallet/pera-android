@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -43,7 +44,8 @@ fun PeraSlimTextField(
     startIconContainer: @Composable (() -> Unit)? = null,
     endIconContainer: @Composable (() -> Unit)? = null,
     singleLine: Boolean = true,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    textColor: Color = PeraTheme.colors.text.main
 ) {
     Row(
         modifier = modifier
@@ -66,6 +68,8 @@ fun PeraSlimTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = text,
                 singleLine = singleLine,
+                textStyle = PeraTheme.typography.footnote.sans.copy(color = textColor),
+                cursorBrush = SolidColor(textColor),
                 onValueChange = onTextChanged,
                 decorationBox = @Composable { innerTextField ->
                     TextFieldDefaults.DecorationBox(

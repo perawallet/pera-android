@@ -52,5 +52,8 @@ internal data class PaginatedAssetCollectibleItemDto(
     val verificationTierEntity: VerificationTierEntity,
 
     @ColumnInfo("media_type")
-    val mediaTypeEntity: CollectibleMediaTypeEntity?
+    val mediaTypeEntity: CollectibleMediaTypeEntity?,
+
+    @ColumnInfo("sort_by_name_value")
+    private val sortByNameValue: String?
 )

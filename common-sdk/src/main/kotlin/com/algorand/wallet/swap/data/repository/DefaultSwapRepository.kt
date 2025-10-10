@@ -35,6 +35,7 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import com.algorand.wallet.swap.domain.repository.SwapRepository
+import com.algorand.wallet.transaction.domain.model.TransactionId
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -83,10 +84,10 @@ internal class DefaultSwapRepository @Inject constructor(
         }
     }
 
-    override suspend fun setSwapStatusInProgress(quoteId: Long) {
+    override suspend fun setSwapStatusInProgress(swapId: Long, txnIds: List<TransactionId>) {
         try {
-            val body = swapUpdateStatusRequestBodyMapper.mapToInProgress()
-            swapApiService.updateSwapStatus(quoteId, body)
+            val body = swapUpdateStatusRequestBodyMapper.mapToInProgress(txnIds)
+            swapApiService.updateSwapStatus(swapId, body)
         } catch (e: Exception) {
             // Fire and forget request, no need to handle the exception
         }

@@ -1568,4 +1568,12 @@
     <string name="see_all">See all</string>
     <string name="your_swap_history_will_appear">Your swap history will appear here once you\'ve completed a swap.</string>
     <string name="no_swap_activity_in_the">No swap activity in the last 24 hours</string>
+    <string name="passkeys">Passkeys</string>
+    <string name="no_passkeys_yet">No passkeys yet</string>
+    <string name="last_used">Last used</string>
+    <string name="user_name">User name</string>
+    <string name="remove_passkey">Remove Passkey</string>
+    <string name="you_are_about_to_remove_passkey">You are about to remove this passkey. Are you sure you want to proceed?</string>
+    <string name="never">Never</string>
+    <string name="now">Now</string>
 </resources>

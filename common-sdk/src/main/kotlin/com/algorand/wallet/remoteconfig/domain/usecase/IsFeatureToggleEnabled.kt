@@ -21,6 +21,7 @@ const val ACCOUNTS_CHART_TOGGLE = "enable_charts_portfolio"
 const val ACCOUNT_DETAIL_CHART_TOGGLE = "enable_charts_accounts"
 const val ASSET_DETAIL_CHART_TOGGLE = "enable_charts_assets"
 const val SWAP_V2_TOGGLE = "enable_swap_v2"
+const val LIQUID_AUTH_TOGGLE = "enable_liquid_auth"
 
 fun interface IsFeatureToggleEnabled {
     operator fun invoke(featureToggleKey: String): Boolean

@@ -14,6 +14,7 @@ package com.algorand.android.usecase
 
 import android.app.NotificationManager
 import com.algorand.android.core.LegacyAccountManager
+import com.algorand.android.credentials.passkeys.domain.usecase.ClearAllPasskeys
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformation
@@ -22,6 +23,7 @@ import com.algorand.wallet.banner.common.domain.usecase.ClearAllBannerCaches
 import com.algorand.wallet.banner.domain.usecase.ClearDismissedBannerIds
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class DeleteAllDataUseCase @Inject constructor(
     private val contactRepository: ContactRepository,
     private val legacyAccountManager: LegacyAccountManager,
@@ -31,7 +33,8 @@ class DeleteAllDataUseCase @Inject constructor(
     private val notificationManager: NotificationManager?,
     private val clearAllCustomInformation: ClearAllCustomInformation,
     private val clearAllBannerCaches: ClearAllBannerCaches,
-    private val clearDismissedBannerIds: ClearDismissedBannerIds
+    private val clearDismissedBannerIds: ClearDismissedBannerIds,
+    private val clearAllPasskeys: ClearAllPasskeys
 ) {
     suspend fun deleteAllData() {
         legacyAccountManager.removeAllData()
@@ -43,5 +46,6 @@ class DeleteAllDataUseCase @Inject constructor(
         clearAllBannerCaches()
         clearDismissedBannerIds()
         notificationManager?.cancelAll()
+        clearAllPasskeys()
     }
 }

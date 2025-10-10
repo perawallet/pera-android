@@ -20,6 +20,8 @@ import com.algorand.android.ui.settings.model.SettingsPreview
 import com.algorand.android.ui.settings.usecase.SettingsPreviewUseCase
 import com.algorand.android.usecase.DeleteAllDataUseCase
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.LIQUID_AUTH_TOGGLE
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +35,8 @@ import kotlinx.coroutines.launch
 class SettingsViewModel @Inject constructor(
     private val deleteAllDataUseCase: DeleteAllDataUseCase,
     private val settingsPreviewUseCase: SettingsPreviewUseCase,
-    private val eventDelegate: EventDelegate<ViewEvent>
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     private val _settingsPreviewFlow = MutableStateFlow<SettingsPreview?>(null)
@@ -53,6 +56,8 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+
+    fun isPasskeysFeatureEnabled() = isFeatureToggleEnabled(LIQUID_AUTH_TOGGLE)
 
     sealed interface ViewEvent {
         data object ShowDataClearedBottomSheet : ViewEvent

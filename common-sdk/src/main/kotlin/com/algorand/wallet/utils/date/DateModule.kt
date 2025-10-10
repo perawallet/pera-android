@@ -28,4 +28,7 @@ internal object DateModule {
     fun provideTimeProvider(): TimeProvider {
         return TimeProviderImpl(Clock.systemDefaultZone())
     }
+
+    @Provides
+    fun provideRelativeTimeDifference(impl: PeraRelativeTimeDifference): RelativeTimeDifference = impl
 }

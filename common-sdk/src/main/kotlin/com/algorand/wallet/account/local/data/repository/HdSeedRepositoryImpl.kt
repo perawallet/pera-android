@@ -15,15 +15,17 @@ package com.algorand.wallet.account.local.data.repository
 import com.algorand.wallet.account.local.data.database.dao.HdSeedDao
 import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
+import com.algorand.wallet.account.local.domain.model.HdEntropy
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.foundation.security.SensitiveDataApi
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 internal class HdSeedRepositoryImpl @Inject constructor(
     private val hdSeedDao: HdSeedDao,
@@ -72,6 +74,16 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         return withContext(coroutineDispatcher) {
             val entities = hdSeedDao.getAll()
             entities.map { hdSeedMapper(it) }
+        }
+    }
+
+    @OptIn(SensitiveDataApi::class)
+    override suspend fun getAllHdEntropies(): List<HdEntropy> {
+        return withContext(coroutineDispatcher) {
+            val entities = hdSeedDao.getAll()
+            entities.map {
+                HdEntropy(seedId = it.seedId, entropy = aesPlatformManager.decryptByteArray(it.encryptedEntropy))
+            }
         }
     }
 

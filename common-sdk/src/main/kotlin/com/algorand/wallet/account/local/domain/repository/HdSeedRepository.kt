@@ -12,7 +12,9 @@
 
 package com.algorand.wallet.account.local.domain.repository
 
+import com.algorand.wallet.account.local.domain.model.HdEntropy
 import com.algorand.wallet.account.local.domain.model.HdSeed
+import com.algorand.wallet.foundation.security.SensitiveDataApi
 import kotlinx.coroutines.flow.Flow
 
 internal interface HdSeedRepository {
@@ -30,6 +32,9 @@ internal interface HdSeedRepository {
     suspend fun getSeedIdIfExistingEntropy(entropy: ByteArray): Int?
 
     suspend fun getAllHdSeeds(): List<HdSeed>
+
+    @OptIn(SensitiveDataApi::class)
+    suspend fun getAllHdEntropies(): List<HdEntropy>
 
     suspend fun getHdSeed(seedId: Int): HdSeed?
 

@@ -65,6 +65,14 @@
             app:settingIcon="@drawable/ic_wallet_connect"
             app:settingTitle="@string/wallet_connect_sessions" />
 
+        <com.algorand.android.customviews.SettingsListItem
+            android:id="@+id/passkeysListItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:endViewLayoutResource="@layout/layout_right_arrow"
+            app:settingIcon="@drawable/ic_passkey"
+            app:settingTitle="@string/passkeys" />
+
         <TextView
             android:id="@+id/appPreferencesTitleTextView"
             android:layout_width="match_parent"

@@ -57,8 +57,7 @@ import com.algorand.wallet.swap.domain.repository.SwapHistoryRepository
 import com.algorand.wallet.swap.domain.repository.SwapRepository
 import com.algorand.wallet.swap.domain.repository.SwapSelectedAssetRepository
 import com.algorand.wallet.swap.domain.usecase.GetAvailableSwapAssets
-import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddress
-import com.algorand.wallet.swap.domain.usecase.GetPreselectedSwapAddressUseCase
+import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetailUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
@@ -75,6 +74,8 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapQuotesUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.swap.domain.usecase.GetTopSwapPairs
+import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
+import com.algorand.wallet.swap.domain.usecase.SendSwapTransactionsUseCase
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetSwapStatusFailed
 import com.algorand.wallet.swap.domain.usecase.SetSwapStatusInProgress
@@ -151,9 +152,9 @@ internal object SwapModule {
     ): GetSelectedSwapAssetDetail = useCase
 
     @Provides
-    fun provideGetPreselectedSwapAddress(
-        useCase: GetPreselectedSwapAddressUseCase
-    ): GetPreselectedSwapAddress = useCase
+    fun provideGetLastUsedSwapAddress(
+        repository: SwapRepository
+    ): GetLastUsedSwapAddress = GetLastUsedSwapAddress(repository::getLastUsedSwapAddress)
 
     @Provides
     fun provideSwapTransactionPurposeMapper(
@@ -279,4 +280,7 @@ internal object SwapModule {
 
     @Provides
     fun provideGetSwapFeePadding(useCase: GetSwapFeePaddingUseCase): GetSwapFeePadding = useCase
+
+    @Provides
+    fun provideSendSwapTransactions(useCase: SendSwapTransactionsUseCase): SendSwapTransactions = useCase
 }

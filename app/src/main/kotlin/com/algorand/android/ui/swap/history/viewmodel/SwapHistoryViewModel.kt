@@ -34,7 +34,9 @@ import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -65,6 +67,7 @@ class SwapHistoryViewModel @Inject constructor(
                     getSwapHistory(pagingData)
                         .map { pagingData -> pagingData.map { swapHistoryItemMapper(it) } }
                         .cachedIn(viewModelScope)
+                        .flowOn(Dispatchers.IO)
                 )
             }
         }

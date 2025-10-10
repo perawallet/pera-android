@@ -26,11 +26,16 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.notification.domain.model.NotificationMetadata
+import com.algorand.android.utils.analytics.logScreen
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.toShortenedAddress
+import com.google.firebase.analytics.FirebaseAnalytics
 
 abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(layoutResId) {
 
+    protected val firebaseAnalytics: FirebaseAnalytics by lazy {
+        FirebaseAnalytics.getInstance(requireContext())
+    }
     abstract val fragmentConfiguration: FragmentConfiguration
 
     protected val fragmentTag: String = this::class.simpleName.orEmpty()
@@ -43,6 +48,18 @@ abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(
         // So, we remove previous fragment's click listeners on 'onViewCreated()' of B
         getAppToolbar()?.removeClickListeners()
         customizeFragment()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        logScreen()
+    }
+
+    private fun logScreen() {
+        firebaseAnalytics.logScreen(fragmentTag)
+        fragmentConfiguration.firebaseEventScreenId?.let {
+            firebaseAnalytics.logScreen(it)
+        }
     }
 
     override fun onPause() {

@@ -97,7 +97,7 @@ fun BoxWithConstraintsScope.SlideToConfirmButtonThumb(
                         }
                     )
                 }
-                .padding(start = with(density) { dragOffsetAnimator.value.toDp() })
+                .padding(start = with(density) { dragOffsetAnimator.value.coerceAtLeast(0f).toDp() })
                 .background(color = PeraTheme.colors.button.primary.background, shape = CircleShape)
                 .then(modifier),
             contentAlignment = Alignment.Center

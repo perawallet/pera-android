@@ -145,17 +145,19 @@ class DefaultSwapWidgetViewModel @Inject constructor(
     override fun selectQuote(providerItem: SwapQuoteProviderSelectionItem) {
         stateDelegate.onState<ViewState.Content> { content ->
             val quoteState = getContentQuoteState() ?: return
-            stateDelegate.updateState {
-                val quoteSelection = when (providerItem) {
-                    Auto -> QuoteSelection(quoteId = quoteState.bestOfferQuoteId, selectionType = Type.Auto)
-                    is Provider -> QuoteSelection(quoteId = providerItem.quoteId, selectionType = Type.Manual)
-                }
-                val selectedQuote = quoteState.quotes.first { it.quote.quoteId == quoteSelection.quoteId }.quote
-                content.copy(
-                    contentState = quoteState.copy(quoteSelection = quoteSelection),
-                    amountRenderers = amountRendererMapper.getQuoteRenderers(selectedQuote, content.useLocalCurrency),
-                )
+            val quoteSelection = when (providerItem) {
+                Auto -> QuoteSelection(quoteId = quoteState.bestOfferQuoteId, selectionType = Type.Auto)
+                is Provider -> QuoteSelection(quoteId = providerItem.quoteId, selectionType = Type.Manual)
             }
+            val selectedQuote = quoteState.quotes
+                .firstOrNull { it.quote.quoteId == quoteSelection.quoteId }
+                ?.quote
+                ?: return
+            val newState = content.copy(
+                contentState = quoteState.copy(quoteSelection = quoteSelection),
+                amountRenderers = amountRendererMapper.getQuoteRenderers(selectedQuote, content.useLocalCurrency),
+            )
+            stateDelegate.updateState { newState }
         }
     }
 

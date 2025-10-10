@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
@@ -61,6 +60,8 @@ sealed interface AssetIconDrawable {
     data object AlgoDrawable : AssetIconDrawable
     data class AssetDrawable(private val url: String, val unitName: String?) : AssetIconDrawable {
 
+        fun isUrlValid() = url.isNotBlank()
+
         fun getImageUrl(containerWidthPx: Int): String {
             return PrismUrlBuilder.create(url)
                 .addWidth(containerWidthPx)
@@ -77,24 +78,6 @@ fun AssetIcon(modifier: Modifier, drawable: AssetIconDrawable, shape: Shape = Ro
             AssetIconDrawable.AlgoDrawable -> AlgoIcon()
             is AssetIconDrawable.AssetDrawable -> AssetDrawableIcon(drawable, shape)
         }
-    }
-}
-
-@Composable
-fun AssetIcons(modifier: Modifier = Modifier, firstDrawable: AssetIconDrawable, secondDrawable: AssetIconDrawable) {
-    Box(modifier = modifier.padding(2.dp)) {
-        val iconModifier = Modifier
-            .size(25.dp)
-            .border(width = 2.dp, color = PeraTheme.colors.background.primary, shape = CircleShape)
-            .padding(1.dp)
-        AssetIcon(iconModifier, firstDrawable, shape = CircleShape)
-        AssetIcon(
-            modifier = Modifier
-                .padding(start = 14.dp, top = 14.dp)
-                .then(iconModifier),
-            drawable = secondDrawable,
-            shape = CircleShape
-        )
     }
 }
 

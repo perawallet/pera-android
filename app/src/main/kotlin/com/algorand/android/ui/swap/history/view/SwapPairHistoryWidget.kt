@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.asset.icon.AssetIcons
+import com.algorand.android.ui.compose.widget.asset.icon.AssetPairIcons
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.modifier.shimmer
 import com.algorand.android.ui.swap.history.model.SwapPairHistoryItem
@@ -119,7 +119,7 @@ private fun ContentState(pairs: List<SwapPairHistoryItem>, onSwapPairClick: (Swa
                     .padding(horizontal = 12.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AssetIcons(firstDrawable = pair.assetInIconDrawable, secondDrawable = pair.assetOutIconDrawable)
+                AssetPairIcons(firstDrawable = pair.assetInIconDrawable, secondDrawable = pair.assetOutIconDrawable)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = assetPairText,

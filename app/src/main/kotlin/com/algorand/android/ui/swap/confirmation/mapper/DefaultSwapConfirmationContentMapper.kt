@@ -26,6 +26,7 @@ import com.algorand.android.ui.common.amount.PlainFormattedAmount.SimplePlainFor
 import com.algorand.android.ui.common.amount.SimpleFormattedAmount
 import com.algorand.android.ui.compose.widget.asset.icon.mapper.AssetIconDrawableMapper
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Content
+import com.algorand.android.utils.formatAsPercentage
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2.AssetDetail
@@ -55,7 +56,8 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
             peraFee = getFeeRenderer(quote.fee.peraFeeAmount),
             minReceivedAssetAmount = getAmountRenderer(quote.assetOutAmount.amountWithSlippage, quote.assetOutDetail),
             assetInToOutPriceRatio = getAssetInToOutPriceRatio(quote),
-            assetOutToInPriceRatio = getAssetOutToInPriceRatio(quote)
+            assetOutToInPriceRatio = getAssetOutToInPriceRatio(quote),
+            slippage = (quote.slippage * SLIPPAGE_MULTIPLIER).formatAsPercentage()
         )
     }
 
@@ -127,5 +129,9 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
         val feeAmount = PeraAmount(fee)
         val formattedAmount = PlainFormattedAmount.AlgoPlainFormattedAmount(feeAmount)
         return AmountRenderer(formattedAmount, Plain, prefix = Currency.ALGO.symbol)
+    }
+
+    private companion object {
+        const val SLIPPAGE_MULTIPLIER = 100f
     }
 }

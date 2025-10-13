@@ -242,6 +242,7 @@ class SwapConfirmationViewModel @Inject constructor(
             val minReceivedAssetAmount: AmountRenderer,
             val assetInToOutPriceRatio: PriceRatio,
             val assetOutToInPriceRatio: PriceRatio,
+            val slippage: String,
             val contentState: ContentState = ContentState.Idle
         ) : ViewState {
 

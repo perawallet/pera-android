@@ -74,7 +74,7 @@ fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirm
         QuoteRowSeparator()
         Provider(content.quote.provider)
         QuoteRowSeparator()
-        SlippageTolerance(content.quote.slippage, listener::onSlippageToleranceInfoClick)
+        SlippageTolerance(content.slippage, listener::onSlippageToleranceInfoClick)
         QuoteRowSeparator()
         PriceImpact(content.priceImpact, listener::onPriceImpactInfoClick)
         QuoteRowSeparator()
@@ -158,14 +158,14 @@ private fun Provider(provider: SwapQuoteProvider) {
 }
 
 @Composable
-private fun SlippageTolerance(slippage: Float, onInfoClick: () -> Unit) {
+private fun SlippageTolerance(slippage: String, onInfoClick: () -> Unit) {
     QuoteDetailRow(
         labelContent = {
             QuoteDetailLabel(textResId = R.string.slippage_tolerance)
             Spacer(modifier = Modifier.width(6.dp))
             InfoIcon(onClick = onInfoClick)
         },
-        valueContent = { QuoteDetailValue(text = "$slippage%") }
+        valueContent = { QuoteDetailValue(text = slippage) }
     )
 }
 

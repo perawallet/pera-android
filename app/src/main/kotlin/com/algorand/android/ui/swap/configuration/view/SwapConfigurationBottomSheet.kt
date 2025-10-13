@@ -15,6 +15,7 @@
 
 package com.algorand.android.ui.swap.configuration.view
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,15 +31,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -65,6 +72,11 @@ import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+private const val MAX_BALANCE = 100
+private const val MIN_BALANCE = 0
+private const val MAX_SLIPPAGE = 10f
+private const val MIN_SLIPPAGE = 0.01f
+
 @Composable
 fun SwapConfigurationBottomSheet(
     sheetState: SheetState,
@@ -78,6 +90,11 @@ fun SwapConfigurationBottomSheet(
         val balanceTextState = remember { mutableStateOf(TextFieldValue(emptyString())) }
         val slippageTextState = remember { mutableStateOf(TextFieldValue(swapDetails.slippage?.toString().orEmpty())) }
         val localCurrencyState = remember { mutableStateOf(swapDetails.useLocalCurrency) }
+        val isBalanceErrorVisible by isBalanceErrorVisible(balanceTextState)
+        val isSlippageErrorVisible by isSlippageErrorVisible(slippageTextState)
+        val isApplyButtonEnabled by remember(isBalanceErrorVisible, isSlippageErrorVisible) {
+            derivedStateOf { !isBalanceErrorVisible && !isSlippageErrorVisible }
+        }
         Row {
             PeraToolbar(
                 text = stringResource(R.string.swap_settings),
@@ -92,7 +109,7 @@ fun SwapConfigurationBottomSheet(
                     )
                 },
                 endContainer = {
-                    PeraToolbarTextButton(text = stringResource(R.string.apply)) {
+                    PeraToolbarTextButton(text = stringResource(R.string.apply), enabled = isApplyButtonEnabled) {
                         val result = SwapConfigurationResult(
                             balancePercentage = balanceTextState.value.text.toFloatOrNull(),
                             slippageTolerance = slippageTextState.value.text.toFloatOrNull(),
@@ -106,9 +123,9 @@ fun SwapConfigurationBottomSheet(
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
-        BalancePercentageInputContainer(scope, swapViewModel, balanceTextState)
+        BalancePercentageInputContainer(scope, isBalanceErrorVisible, swapViewModel, balanceTextState)
         Spacer(modifier = Modifier.height(40.dp))
-        SlippageInputContainer(scope, swapViewModel, slippageTextState)
+        SlippageInputContainer(scope, isSlippageErrorVisible, swapViewModel, slippageTextState)
         Spacer(modifier = Modifier.height(40.dp))
         LocalCurrencyToggle(scope, swapViewModel, localCurrencyState)
         Spacer(modifier = Modifier.height(40.dp))
@@ -118,6 +135,7 @@ fun SwapConfigurationBottomSheet(
 @Composable
 private fun BalancePercentageInputContainer(
     scope: CoroutineScope,
+    isErrorVisible: Boolean,
     swapViewModel: SwapViewModel,
     textState: MutableState<TextFieldValue>
 ) {
@@ -130,7 +148,10 @@ private fun BalancePercentageInputContainer(
             text = textInput,
             onTextChanged = { textState.value = it.copy(text = it.text.replaceCommaWithDot()) }
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        ErrorText(
+            error = stringResource(R.string.balance_percentage_must_be_between, MIN_BALANCE, MAX_BALANCE),
+            isVisible = isErrorVisible
+        )
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 24.dp)
@@ -152,6 +173,7 @@ private fun BalancePercentageInputContainer(
 @Composable
 private fun SlippageInputContainer(
     scope: CoroutineScope,
+    isErrorVisible: Boolean,
     swapViewModel: SwapViewModel,
     textState: MutableState<TextFieldValue>
 ) {
@@ -164,7 +186,10 @@ private fun SlippageInputContainer(
             text = textInput,
             onTextChanged = { textState.value = it.copy(text = it.text.replaceCommaWithDot()) }
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        ErrorText(
+            error = stringResource(R.string.percentage_must_be_between, MIN_SLIPPAGE, MAX_SLIPPAGE),
+            isVisible = isErrorVisible
+        )
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 24.dp)
@@ -187,6 +212,47 @@ private fun SlippageInputContainer(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ErrorText(error: String, isVisible: Boolean) {
+    val alphaAnimation = animateFloatAsState(if (isVisible) 1f else 0f)
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 24.dp, vertical = 4.dp)
+            .alpha(alphaAnimation.value),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_error),
+            tint = PeraTheme.colors.helper.negative,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = error,
+            style = PeraTheme.typography.footnote.sansMedium,
+            color = PeraTheme.colors.helper.negative
+        )
+    }
+}
+
+@Composable
+private fun isSlippageErrorVisible(textState: MutableState<TextFieldValue>): State<Boolean> {
+    return remember(textState.value.text) {
+        derivedStateOf {
+            textState.value.text.toFloatOrNull()?.let { it != 0f && (it < MIN_SLIPPAGE || it > MAX_SLIPPAGE) } == true
+        }
+    }
+}
+
+@Composable
+private fun isBalanceErrorVisible(textState: MutableState<TextFieldValue>): State<Boolean> {
+    return remember(textState.value.text) {
+        derivedStateOf {
+            textState.value.text.toFloatOrNull()?.let { it != 0f && (it < MIN_BALANCE || it > MAX_BALANCE) } == true
         }
     }
 }

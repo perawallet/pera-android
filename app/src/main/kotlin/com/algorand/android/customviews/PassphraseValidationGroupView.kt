@@ -36,8 +36,12 @@ class PassphraseValidationGroupView @JvmOverloads constructor(
             passphraseValidationViews.clear()
             removeAllViews()
         }
+        val uniqueWords = words
+            .distinct()
+            .takeIf { it.size >= PER_ITEM_COUNT * SIZE }
+            ?: words
 
-        words.withIndex()
+        uniqueWords.withIndex()
             .shuffled()
             .windowed(PER_ITEM_COUNT, PER_ITEM_COUNT, partialWindows = false)
             .take(SIZE)

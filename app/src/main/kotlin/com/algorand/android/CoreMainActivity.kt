@@ -12,6 +12,7 @@
 
 package com.algorand.android
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
@@ -279,22 +280,36 @@ abstract class CoreMainActivity : BaseActivity() {
     }
 
     private fun setWindowInsetsForSystemBars() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.rootConstraintLayout) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
+        val root = binding.rootConstraintLayout
+
+        val initialPadding = Rect(
+            root.paddingLeft,
+            root.paddingTop,
+            root.paddingRight,
+            root.paddingBottom
+        )
+
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val sys = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+
             v.updatePadding(
-                left = bars.left,
-                top = 0,
-                right = bars.right,
-                bottom = bars.bottom,
+                left = initialPadding.left + sys.left,
+                top = initialPadding.top,
+                right = initialPadding.right + sys.right,
+                bottom = initialPadding.bottom + maxOf(sys.bottom, ime.bottom)
             )
+
             binding.statusBarBackgroundView.updateLayoutParams {
-                height = bars.top
+                height = sys.top
             }
-            WindowInsetsCompat.CONSUMED
+
+            insets
         }
+
+        ViewCompat.requestApplyInsets(root)
     }
 
     private fun handleStatusBarIconColorChanges(

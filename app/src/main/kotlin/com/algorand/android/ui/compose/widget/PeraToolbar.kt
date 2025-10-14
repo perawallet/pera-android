@@ -13,6 +13,7 @@
 package com.algorand.android.ui.compose.widget
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -71,12 +72,14 @@ fun PeraToolbarIcon(modifier: Modifier = Modifier, @DrawableRes iconResId: Int) 
 fun PeraToolbarTextButton(
     modifier: Modifier = Modifier,
     text: String,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
+    val textColor = animateColorAsState(if (enabled) PeraTheme.colors.helper.positive else PeraTheme.colors.text.gray)
     Text(
-        modifier = modifier.clickableNoRipple { onClick() },
+        modifier = modifier.clickableNoRipple(enabled) { onClick() },
         text = text,
-        color = PeraTheme.colors.helper.positive,
+        color = textColor.value,
         style = PeraTheme.typography.body.regular.sansMedium
     )
 }

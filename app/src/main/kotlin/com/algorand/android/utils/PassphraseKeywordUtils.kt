@@ -32,16 +32,14 @@ object PassphraseKeywordUtils {
         itemCount: Int,
         perItemCount: Int,
     ): List<PassphraseValidationItem> {
-        val diffWords = (predefinedWords - words).toMutableList()
+        val diffWords = (predefinedWords - words).shuffled().toMutableList()
         val validationItems = mutableListOf<PassphraseValidationItem>()
 
         words.withIndex()
             .shuffled()
             .take(itemCount)
             .forEach { correctWord ->
-                val incorrectOptions = diffWords
-                    .shuffled()
-                    .take(perItemCount - 1)
+                val incorrectOptions = diffWords.take(perItemCount - 1)
 
                 diffWords.removeAll(incorrectOptions)
 

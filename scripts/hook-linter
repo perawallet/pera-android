@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+export JAVA_HOME=`/usr/libexec/java_home -v 21`
+
+printf "\nRunning Ktlint\n"
+./gradlew ktlint
+
+printf "\nRunning Detekt\n"
+./gradlew detekt

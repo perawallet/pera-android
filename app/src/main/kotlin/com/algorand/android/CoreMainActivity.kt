@@ -20,6 +20,7 @@ import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.core.view.isEmpty
@@ -280,6 +281,7 @@ abstract class CoreMainActivity : BaseActivity() {
     }
 
     private fun setWindowInsetsForSystemBars() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         val root = binding.rootConstraintLayout
 
         val initialPadding = Rect(
@@ -294,12 +296,16 @@ abstract class CoreMainActivity : BaseActivity() {
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-
+            val bottomPadding = if (isBottomBarNavigationVisible) {
+                ime.bottom
+            } else {
+                maxOf(sys.bottom, ime.bottom)
+            }
             v.updatePadding(
                 left = initialPadding.left + sys.left,
                 top = initialPadding.top,
                 right = initialPadding.right + sys.right,
-                bottom = initialPadding.bottom + maxOf(sys.bottom, ime.bottom)
+                bottom = bottomPadding
             )
 
             binding.statusBarBackgroundView.updateLayoutParams {

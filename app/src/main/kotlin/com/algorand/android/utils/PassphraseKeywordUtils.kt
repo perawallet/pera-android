@@ -27,6 +27,41 @@ object PassphraseKeywordUtils {
         return predefinedWords.binarySearch(word) >= 0
     }
 
+    fun generatePassphraseValidationItems(
+        words: List<String>,
+        itemCount: Int,
+        perItemCount: Int,
+    ): List<PassphraseValidationItem> {
+        val diffWords = (predefinedWords - words).toMutableList()
+        val validationItems = mutableListOf<PassphraseValidationItem>()
+
+        words.withIndex()
+            .shuffled()
+            .take(itemCount)
+            .forEach { correctWord ->
+                val incorrectOptions = diffWords
+                    .shuffled()
+                    .take(perItemCount - 1)
+
+                diffWords.removeAll(incorrectOptions)
+
+                val options = buildList {
+                    add(correctWord.value)
+                    addAll(incorrectOptions)
+                }.shuffled()
+
+                validationItems.add(
+                    PassphraseValidationItem(
+                        correctWordIndex = correctWord.index,
+                        correctWord = correctWord.value,
+                        options = options
+                    )
+                )
+            }
+
+        return validationItems
+    }
+
     private val predefinedWords = listOf(
         "abandon",
         "ability",

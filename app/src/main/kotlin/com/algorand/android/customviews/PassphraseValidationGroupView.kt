@@ -6,8 +6,8 @@ import android.widget.LinearLayout
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
 import com.algorand.android.R
-import kotlin.random.Random
-import kotlin.random.nextInt
+import com.algorand.android.utils.PassphraseKeywordUtils.generatePassphraseValidationItems
+import com.algorand.android.utils.PassphraseValidationItem
 
 class PassphraseValidationGroupView @JvmOverloads constructor(
     context: Context,
@@ -36,24 +36,23 @@ class PassphraseValidationGroupView @JvmOverloads constructor(
             passphraseValidationViews.clear()
             removeAllViews()
         }
-        val uniqueWords = words
-            .distinct()
-            .takeIf { it.size >= PER_ITEM_COUNT * SIZE }
-            ?: words
-
-        uniqueWords.withIndex()
-            .shuffled()
-            .windowed(PER_ITEM_COUNT, PER_ITEM_COUNT, partialWindows = false)
-            .take(SIZE)
-            .forEachIndexed { index, wordsWithIndexedValue ->
-                addPassphraseValidationView(
-                    passphraseValidatorView = createPassphraseValidatorView(wordsWithIndexedValue),
-                    addMarginToBottom = index + 1 != SIZE
-                )
-            }
-
+        addPassphraseValidationViews(words)
         if (isFirstSetup.not()) {
             listener?.onInputUpdate(allWordsSelected = false)
+        }
+    }
+
+    private fun addPassphraseValidationViews(words: List<String>) {
+        val validationItems = generatePassphraseValidationItems(
+            words = words,
+            itemCount = VALIDATION_VIEW_COUNT,
+            perItemCount = PER_ITEM_COUNT
+        )
+        validationItems.forEachIndexed { index, item ->
+            addPassphraseValidationView(
+                passphraseValidatorView = createPassphraseValidatorView(item),
+                addMarginToBottom = index + 1 != validationItems.size
+            )
         }
     }
 
@@ -71,16 +70,14 @@ class PassphraseValidationGroupView @JvmOverloads constructor(
     }
 
     private fun createPassphraseValidatorView(
-        wordsWithIndexedValue: List<IndexedValue<String>>
+        item: PassphraseValidationItem
     ): PassphraseValidatorView {
         return PassphraseValidatorView(context).apply {
-            val correctWordPositionInList = Random.nextInt(0 until PER_ITEM_COUNT)
-            val (correctWordPosition, correctWord) = wordsWithIndexedValue[correctWordPositionInList]
             setup(
-                words = wordsWithIndexedValue.map { it.value },
-                correctWord = correctWord,
-                correctWordPosition = correctWordPosition,
-                passphraseValidatorViewListener
+                words = item.options,
+                correctWord = item.correctWord,
+                correctWordPosition = item.correctWordIndex,
+                listener = passphraseValidatorViewListener
             )
         }
     }
@@ -94,7 +91,7 @@ class PassphraseValidationGroupView @JvmOverloads constructor(
     }
 
     companion object {
-        private const val SIZE = 4
+        private const val VALIDATION_VIEW_COUNT = 4
         private const val PER_ITEM_COUNT = 3
     }
 }

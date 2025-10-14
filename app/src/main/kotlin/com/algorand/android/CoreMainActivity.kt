@@ -86,6 +86,7 @@ abstract class CoreMainActivity : BaseActivity() {
     var isBottomBarNavigationVisible by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             binding.bottomNavigationView.isVisible = newValue
+            setWindowInsetsForSystemBars()
         }
     }
 
@@ -297,7 +298,7 @@ abstract class CoreMainActivity : BaseActivity() {
             )
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             val bottomPadding = if (isBottomBarNavigationVisible) {
-                ime.bottom
+                0
             } else {
                 maxOf(sys.bottom, ime.bottom)
             }

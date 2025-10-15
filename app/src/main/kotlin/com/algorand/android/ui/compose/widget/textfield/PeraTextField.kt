@@ -51,7 +51,8 @@ fun PeraTextField(
     singleLine: Boolean = true,
     enabled: Boolean = true,
     hint: String? = null,
-    cursorBrush: Brush = SolidColor(Color.Black),
+    textStyle: TextStyle = PeraTheme.typography.body.regular.sans.copy(color = PeraTheme.colors.text.main),
+    cursorBrush: Brush = SolidColor(PeraTheme.colors.text.main),
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
     val textField = text.ifEmpty { " " }
@@ -61,6 +62,7 @@ fun PeraTextField(
             value = textField,
             onValueChange = onTextChanged,
             cursorBrush = cursorBrush,
+            textStyle = textStyle,
             decorationBox = {
                 TextFieldDecorationBox(textField, it, label, trailingIcon, singleLine, enabled, colors)
             }
@@ -81,7 +83,7 @@ fun PeraTextField(
     hint: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     textStyle: TextStyle = TextStyle.Default,
-    cursorBrush: Brush = SolidColor(Color.Black),
+    cursorBrush: Brush = SolidColor(PeraTheme.colors.text.main),
     colors: TextFieldColors = PeraTextFieldColors.defaultColors()
 ) {
     PeraTextFieldContainer(modifier, textFieldValue.text, hint) {

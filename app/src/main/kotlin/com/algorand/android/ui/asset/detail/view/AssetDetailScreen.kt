@@ -43,6 +43,8 @@ import com.algorand.android.ui.asset.detail.view.holdings.AssetHoldingScreenList
 import com.algorand.android.ui.asset.detail.view.markets.AssetMarketsScreen
 import com.algorand.android.ui.asset.detail.view.markets.AssetMarketsScreenListener
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewEvent.DisplayFailedToToggleFavoriteError
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewEvent.DisplayFailedToTogglePriceAlertError
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState.Content
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState.Idle
@@ -94,6 +96,14 @@ fun AssetDetailScreen(
                         HOLDINGS_PAGE -> AssetHoldingScreen(headerViewModel, chartViewModel, holdingViewModel, listener)
                         MARKETS_PAGE -> {
                             AssetMarketsScreen(headerViewModel, marketsViewModel, priceChartViewModel, listener)
+                        }
+                    }
+                }
+                LaunchedEffect(headerViewModel.viewEvent) {
+                    headerViewModel.viewEvent.collect { event ->
+                        when (event) {
+                            is DisplayFailedToToggleFavoriteError -> listener.onFailedToUpdateFavoriteStatus()
+                            is DisplayFailedToTogglePriceAlertError -> listener.onFailedToUpdatePriceAlertStatus()
                         }
                     }
                 }
@@ -173,4 +183,6 @@ private fun LoadingState() {
 
 interface AssetDetailScreenListener : AssetHoldingScreenListener, AssetMarketsScreenListener {
     fun onNavBackClick()
+    fun onFailedToUpdateFavoriteStatus()
+    fun onFailedToUpdatePriceAlertStatus()
 }

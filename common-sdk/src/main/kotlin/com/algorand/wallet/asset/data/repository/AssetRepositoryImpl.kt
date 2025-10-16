@@ -245,7 +245,8 @@ internal class AssetRepositoryImpl @Inject constructor(
 
     override suspend fun cacheAlgoAssetDetail(usdValue: BigDecimal?) {
         withContext(coroutineDispatcher) {
-            val entity = algoAssetDetailEntityMapper(usdValue)
+            val algoDetail = assetDetailDao.getByAssetId(ALGO_ID)
+            val entity = algoDetail?.copy(usdValue = usdValue) ?: algoAssetDetailEntityMapper(usdValue)
             assetDetailDao.insert(entity)
         }
     }

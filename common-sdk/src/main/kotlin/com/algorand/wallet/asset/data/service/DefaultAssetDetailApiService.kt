@@ -18,11 +18,14 @@ import com.algorand.wallet.asset.data.utils.toQueryString
 import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.foundation.network.model.Pagination
 import com.algorand.wallet.logger.PeraErrorLogger
+import com.algorand.wallet.remoteconfig.domain.usecase.ASSET_DETAIL_V2_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Inject
 
 internal class DefaultAssetDetailApiService @Inject constructor(
     private val apiService: AssetDetailRetrofitApiService,
-    private val errorLogger: PeraErrorLogger
+    private val errorLogger: PeraErrorLogger,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : AssetDetailApiService {
 
     override suspend fun getAssetsByIds(
@@ -32,7 +35,7 @@ internal class DefaultAssetDetailApiService @Inject constructor(
     ): Pagination<AssetResponse> {
         val safeDeviceId = deviceId?.toLongOrNull()
         val assetIdsQueryString = assetIds.map { getSafeAssetIdForRequest(it) }.toQueryString()
-        return if (safeDeviceId == null) {
+        return if (safeDeviceId == null || !isFeatureToggleEnabled(ASSET_DETAIL_V2_TOGGLE)) {
             apiService.getAssetsByIds(assetIdsQueryString, includeDeleted)
         } else {
             try {
@@ -48,7 +51,7 @@ internal class DefaultAssetDetailApiService @Inject constructor(
     override suspend fun getAssetDetail(assetId: Long, deviceId: String?): AssetResponse {
         val safeDeviceId = deviceId?.toLongOrNull()
         val safeAssetId = getSafeAssetIdForRequest(assetId)
-        return if (safeDeviceId == null) {
+        return if (safeDeviceId == null || !isFeatureToggleEnabled(ASSET_DETAIL_V2_TOGGLE)) {
             apiService.getAssetDetail(safeAssetId)
         } else {
             try {

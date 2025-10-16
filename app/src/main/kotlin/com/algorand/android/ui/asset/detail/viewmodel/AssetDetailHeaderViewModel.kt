@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewEvent
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewState
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewState.Content
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewState.Idle
@@ -25,6 +26,7 @@ import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.usecase.SetAssetFavoriteStatus
 import com.algorand.wallet.asset.domain.usecase.SetAssetPriceAlertStatus
 import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,7 +44,7 @@ class AssetDetailHeaderViewModel @Inject constructor(
     private val setAssetPriceAlertStatus: SetAssetPriceAlertStatus,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val stateDelegate: StateDelegate<ViewState>
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     private var toggleFavoriteJob: Job? = null
     private var togglePriceAlertJob: Job? = null
@@ -121,5 +123,10 @@ class AssetDetailHeaderViewModel @Inject constructor(
             val isFavorite: Boolean?,
             val isNotificationsEnabled: Boolean?
         ) : ViewState
+    }
+
+    sealed interface ViewEvent {
+        data object DisplayFailedToToggleFavoriteError : ViewEvent
+        data object DisplayFailedToTogglePriceAlertError : ViewEvent
     }
 }

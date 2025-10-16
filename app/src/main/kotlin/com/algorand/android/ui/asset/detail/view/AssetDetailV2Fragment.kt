@@ -81,4 +81,12 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
     override fun onCreatorAddressClick(address: String) {
         TODO("Not yet implemented")
     }
+
+    override fun onFailedToUpdateFavoriteStatus() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onFailedToUpdatePriceAlertStatus() {
+        TODO("Not yet implemented")
+    }
 }

@@ -10,18 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.data.service
+package com.algorand.wallet.asset.data.model
 
-import com.algorand.wallet.asset.data.model.AssetResponse
-import com.algorand.wallet.foundation.network.model.Pagination
+import com.google.gson.annotations.SerializedName
 
-internal interface AssetDetailApiService {
-
-    suspend fun getAssetsByIds(
-        assetIds: List<Long>,
-        deviceId: String?,
-        includeDeleted: Boolean?
-    ): Pagination<AssetResponse>
-
-    suspend fun getAssetDetail(assetId: Long, deviceId: String?): AssetResponse
-}
+internal data class GetAssetsByIdsRequestBody(
+    @SerializedName("device_id")
+    val deviceId: Long,
+    @SerializedName("asset_ids")
+    val assetIds: String,
+    @SerializedName("include_deleted")
+    val includeDeleted: Boolean? = null
+)

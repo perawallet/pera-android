@@ -22,13 +22,13 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface AssetRepository {
 
-    suspend fun fetchAsset(assetId: Long): PeraResult<Asset>
+    suspend fun fetchAsset(assetId: Long, deviceId: String?): PeraResult<Asset>
 
-    suspend fun fetchAssets(assetIds: List<Long>): PeraResult<List<Asset>>
+    suspend fun fetchAssets(assetIds: List<Long>, deviceId: String?): PeraResult<List<Asset>>
 
     suspend fun fetchAssetDetailFromNode(assetId: Long): PeraResult<AssetDetail>
 
-    suspend fun fetchAndCacheAssets(assetIds: List<Long>, includeDeleted: Boolean): PeraResult<Unit>
+    suspend fun fetchAndCacheAssets(assetIds: List<Long>, deviceId: String?, includeDeleted: Boolean): PeraResult<Unit>
 
     suspend fun getAssetDetail(assetId: Long): AssetDetail?
 
@@ -44,7 +44,7 @@ internal interface AssetRepository {
 
     suspend fun getCollectiblesDetail(collectibleIds: List<Long>): List<CollectibleDetail>
 
-    suspend fun fetchCollectibleDetail(collectibleAssetId: Long): PeraResult<CollectibleDetail>
+    suspend fun fetchCollectibleDetail(collectibleAssetId: Long, deviceId: String?): PeraResult<CollectibleDetail>
 
     suspend fun getCachedAssetIds(): List<Long>
 

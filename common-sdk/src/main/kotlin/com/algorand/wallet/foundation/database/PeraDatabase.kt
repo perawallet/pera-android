@@ -79,7 +79,7 @@ internal abstract class PeraDatabase : RoomDatabase() {
     abstract fun paginatedSwappableAssetDao(): PaginatedSwappableAssetDao
 
     companion object {
-        const val DATABASE_VERSION = 5
+        const val DATABASE_VERSION = 6
         const val DATABASE_NAME = "pera_database"
     }
 }

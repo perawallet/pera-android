@@ -91,7 +91,13 @@ internal data class AssetDetailEntity(
     val verificationTier: VerificationTierEntity,
 
     @ColumnInfo("category")
-    val category: AssetCategoryEntity?
+    val category: AssetCategoryEntity?,
+
+    @ColumnInfo("is_favorite")
+    val isFavorite: Boolean?,
+
+    @ColumnInfo("is_price_alert_enabled")
+    val isPriceAlertEnabled: Boolean?
 ) {
 
     internal companion object {

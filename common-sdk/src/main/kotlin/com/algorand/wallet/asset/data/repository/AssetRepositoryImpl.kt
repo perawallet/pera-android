@@ -61,29 +61,24 @@ internal class AssetRepositoryImpl @Inject constructor(
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AssetRepository {
 
-    override suspend fun fetchAsset(assetId: Long): PeraResult<Asset> {
+    override suspend fun fetchAsset(assetId: Long, deviceId: String?): PeraResult<Asset> {
         return withContext(coroutineDispatcher) {
             try {
-                val assetIds = listOf(assetId)
-                val response = assetDetailApi.getAssetsByIds(assetIds.toQueryString())
-                if (response.results.isEmpty()) {
-                    PeraResult.Error(Exception("No asset found with id: $assetId"))
-                } else {
-                    mapAssetDetailResponseToResult(response.results.first())
-                }
+                val response = assetDetailApi.getAssetDetail(assetId, deviceId)
+                mapAssetDetailResponseToResult(response)
             } catch (exception: Exception) {
                 PeraResult.Error(exception)
             }
         }
     }
 
-    override suspend fun fetchAssets(assetIds: List<Long>): PeraResult<List<Asset>> {
+    override suspend fun fetchAssets(assetIds: List<Long>, deviceId: String?): PeraResult<List<Asset>> {
         return try {
             withContext(coroutineDispatcher) {
                 val chunkedAssetIds = assetIds.toSet().chunked(MAX_ASSET_FETCH_COUNT)
                 val result = chunkedAssetIds.map {
                     async {
-                        val response = assetDetailApi.getAssetsByIds(it.toQueryString())
+                        val response = assetDetailApi.getAssetsByIds(assetIds, deviceId, includeDeleted = null)
                         response.results.mapNotNull { assetMapper(it) }
                     }
                 }.awaitAll()
@@ -102,13 +97,17 @@ internal class AssetRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchAndCacheAssets(assetIds: List<Long>, includeDeleted: Boolean): PeraResult<Unit> {
+    override suspend fun fetchAndCacheAssets(
+        assetIds: List<Long>,
+        deviceId: String?,
+        includeDeleted: Boolean
+    ): PeraResult<Unit> {
         return try {
             withContext(coroutineDispatcher) {
                 val chunkedAssetIds = assetIds.toSet().chunked(MAX_ASSET_FETCH_COUNT)
                 chunkedAssetIds.map {
                     async {
-                        val response = assetDetailApi.getAssetsByIds(it.toQueryString(), includeDeleted)
+                        val response = assetDetailApi.getAssetsByIds(it, deviceId, includeDeleted)
                         assetDetailCacheHelper.cacheAssetDetails(response.results)
                     }
                 }.awaitAll()
@@ -150,20 +149,21 @@ internal class AssetRepositoryImpl @Inject constructor(
         return assetDetailCacheHelper.getAsset(assetId)
     }
 
-    override suspend fun fetchCollectibleDetail(collectibleAssetId: Long): PeraResult<CollectibleDetail> {
-        return request { assetDetailApi.getAssetDetail(collectibleAssetId) }.use(
-            onSuccess = {
-                val collectibleDetail = collectibleDetailMapper(it)
-                if (collectibleDetail == null) {
-                    PeraResult.Error(Exception("CollectibleDetail is null"))
-                } else {
-                    PeraResult.Success(collectibleDetail)
-                }
-            },
-            onFailed = { exception, code ->
-                PeraResult.Error(exception, code)
+    override suspend fun fetchCollectibleDetail(
+        collectibleAssetId: Long,
+        deviceId: String?
+    ): PeraResult<CollectibleDetail> {
+        return try {
+            val response = assetDetailApi.getAssetDetail(collectibleAssetId, deviceId)
+            val collectibleDetail = collectibleDetailMapper(response)
+            if (collectibleDetail == null) {
+                PeraResult.Error(Exception("CollectibleDetail is null"))
+            } else {
+                PeraResult.Success(collectibleDetail)
             }
-        )
+        } catch (e: Exception) {
+            PeraResult.Error(e)
+        }
     }
 
     override suspend fun clearCache() {

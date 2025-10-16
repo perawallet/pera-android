@@ -37,7 +37,9 @@ internal class AssetInfoMapperImpl @Inject constructor(
             supply = assetResponse.mapToSupply(),
             url = assetResponse.url,
             isAvailableOnDiscoverMobile = assetResponse.isAvailableOnDiscoverMobile,
-            category = assetCategoryMapper(assetResponse.category)
+            category = assetCategoryMapper(assetResponse.category),
+            isFavorite = assetResponse.isFavorite,
+            isPriceAlertEnabled = assetResponse.isPriceAlertEnabled
         )
     }
 
@@ -55,7 +57,9 @@ internal class AssetInfoMapperImpl @Inject constructor(
             supply = entity.mapToSupply(),
             url = entity.url,
             isAvailableOnDiscoverMobile = entity.availableOnDiscoverMobile,
-            category = assetCategoryMapper(entity.category)
+            category = assetCategoryMapper(entity.category),
+            isFavorite = entity.isFavorite,
+            isPriceAlertEnabled = entity.isPriceAlertEnabled
         )
     }
 
@@ -79,7 +83,9 @@ internal class AssetInfoMapperImpl @Inject constructor(
             description = null,
             url = null,
             isAvailableOnDiscoverMobile = null,
-            category = null
+            category = null,
+            isFavorite = null,
+            isPriceAlertEnabled = null
         )
     }
 

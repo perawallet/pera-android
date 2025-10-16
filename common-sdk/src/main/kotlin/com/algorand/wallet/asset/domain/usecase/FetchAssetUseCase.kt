@@ -12,26 +12,24 @@
 
 package com.algorand.wallet.asset.domain.usecase
 
+import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
 
-internal class FetchAndCacheMissingAssetsUseCase @Inject constructor(
-    private val assetRepository: AssetRepository,
+internal class FetchAssetUseCase @Inject constructor(
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
+    private val assetRepository: AssetRepository,
     private val errorLogger: PeraErrorLogger
-) : FetchAndCacheMissingAssets {
+) : FetchAsset {
 
-    override suspend fun invoke(assetIds: List<Long>, includeDeleted: Boolean): PeraResult<Unit> {
-        val cachedAssetIds = assetRepository.getCachedAssetIds()
-        val missingAssetIds = assetIds.filterNot { cachedAssetIds.contains(it) }
-        if (missingAssetIds.isEmpty()) return PeraResult.Success(Unit)
+    override suspend fun invoke(assetId: Long): PeraResult<Asset> {
         val deviceId = getSelectedNodeDeviceId()
         if (deviceId.isNullOrBlank()) {
-            errorLogger.logError("FetchAndCacheMissingAssetsUseCase: Device ID is null or blank.")
+            errorLogger.logError("FetchAssetUseCase: Device ID is null or blank.")
         }
-        return assetRepository.fetchAndCacheAssets(missingAssetIds, deviceId, includeDeleted)
+        return assetRepository.fetchAsset(assetId, deviceId)
     }
 }

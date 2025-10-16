@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface SingleAssetRepository {
 
-    suspend fun cacheAssetDetail(assetId: Long)
+    suspend fun cacheAssetDetail(assetId: Long, deviceId: String)
 
     fun getAssetDetailFlow(): Flow<Asset>
 

@@ -82,7 +82,7 @@ fun interface InitializeAssets {
 }
 
 fun interface CacheSingleAssetDetail {
-    suspend operator fun invoke(assetId: Long)
+    suspend operator fun invoke(assetId: Long, deviceId: String)
 }
 
 fun interface GetSingleAssetDetailFlow {

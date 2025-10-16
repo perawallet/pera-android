@@ -47,7 +47,9 @@ internal class AssetDetailEntityMapperImpl @Inject constructor(
                 assetCreatorAddress = assetCreator?.publicKey,
                 assetCreatorId = assetCreator?.id,
                 isVerifiedAssetCreator = assetCreator?.isVerifiedAssetCreator,
-                category = assetCategoryEntityMapper(category)
+                category = assetCategoryEntityMapper(category),
+                isFavorite = isFavorite,
+                isPriceAlertEnabled = isPriceAlertEnabled
             )
         }
     }

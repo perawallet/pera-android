@@ -10,16 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain.usecase
+package com.algorand.wallet.foundation.database.migration
 
-import com.algorand.wallet.asset.domain.repository.AssetRepository
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity.Companion.ASSET_DETAIL_TABLE_NAME
 
-internal class InitializeAssetsUseCase(
-    private val assetRepository: AssetRepository
-) : InitializeAssets {
+internal object PeraDatabaseMigration5to6 : Migration(5, 6){
 
-    override suspend fun invoke(assetIds: List<Long>) {
-        assetRepository.clearCache()
-        assetRepository.fetchAndCacheAssets(assetIds, includeDeleted = false)
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE $ASSET_DETAIL_TABLE_NAME ADD COLUMN is_favorite INTEGER")
+        db.execSQL("ALTER TABLE $ASSET_DETAIL_TABLE_NAME ADD COLUMN is_price_alert_enabled INTEGER")
     }
 }

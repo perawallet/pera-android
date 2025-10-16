@@ -16,12 +16,16 @@ import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.asset.domain.usecase.CacheAlgoAssetDetail
 import com.algorand.wallet.asset.domain.usecase.ClearAssetCache
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssets
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.FetchAsset
 import com.algorand.wallet.asset.domain.usecase.FetchAssetDetailFromNode
+import com.algorand.wallet.asset.domain.usecase.FetchAssetUseCase
 import com.algorand.wallet.asset.domain.usecase.FetchAssets
+import com.algorand.wallet.asset.domain.usecase.FetchAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
+import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetailUseCase
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetAssetCreatorAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
@@ -31,8 +35,6 @@ import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import com.algorand.wallet.asset.domain.usecase.GetRecentlyAddedCollectibleUrls
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetIdUseCase
-import com.algorand.wallet.asset.domain.usecase.InitializeAssets
-import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetLiteInformation
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetsLiteInformationFlow
@@ -51,19 +53,13 @@ internal object AssetDetailUseCaseModule {
     }
 
     @Provides
-    fun provideFetchAndCacheAssets(repository: AssetRepository): FetchAndCacheAssets {
-        return FetchAndCacheAssets(repository::fetchAndCacheAssets)
-    }
+    fun provideFetchAndCacheAssets(useCase: FetchAndCacheAssetsUseCase): FetchAndCacheAssets = useCase
 
     @Provides
-    fun provideFetchAsset(repository: AssetRepository): FetchAsset {
-        return FetchAsset(repository::fetchAsset)
-    }
+    fun provideFetchAsset(useCase: FetchAssetUseCase): FetchAsset = useCase
 
     @Provides
-    fun provideFetchAssets(repository: AssetRepository): FetchAssets {
-        return FetchAssets(repository::fetchAssets)
-    }
+    fun provideFetchAssets(useCase: FetchAssetsUseCase): FetchAssets = useCase
 
     @Provides
     fun provideFetchAssetDetailFromNode(repository: AssetRepository): FetchAssetDetailFromNode {
@@ -86,17 +82,12 @@ internal object AssetDetailUseCaseModule {
     }
 
     @Provides
-    fun provideFetchCollectibleDetail(repository: AssetRepository): FetchCollectibleDetail {
-        return FetchCollectibleDetail(repository::fetchCollectibleDetail)
-    }
+    fun provideFetchCollectibleDetail(useCase: FetchCollectibleDetailUseCase): FetchCollectibleDetail = useCase
 
     @Provides
     fun provideGetCollectiblesDetail(repository: AssetRepository): GetCollectiblesDetail {
         return GetCollectiblesDetail(repository::getCollectiblesDetail)
     }
-
-    @Provides
-    fun provideInitializeAssets(useCase: InitializeAssetsUseCase): InitializeAssets = useCase
 
     @Provides
     fun provideFetchAndCacheMissingAssets(

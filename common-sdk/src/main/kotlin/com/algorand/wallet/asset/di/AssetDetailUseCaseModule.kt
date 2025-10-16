@@ -36,6 +36,10 @@ import com.algorand.wallet.asset.domain.usecase.GetRecentlyAddedCollectibleUrls
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetId
 import com.algorand.wallet.asset.domain.usecase.GetUsdcAssetIdUseCase
 import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
+import com.algorand.wallet.asset.domain.usecase.SetAssetFavoriteStatus
+import com.algorand.wallet.asset.domain.usecase.SetAssetFavoriteStatusUseCase
+import com.algorand.wallet.asset.domain.usecase.SetAssetPriceAlertStatus
+import com.algorand.wallet.asset.domain.usecase.SetAssetPriceAlertStatusUseCase
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetLiteInformation
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetsLiteInformationFlow
 import dagger.Module
@@ -135,4 +139,10 @@ internal object AssetDetailUseCaseModule {
 
     @Provides
     fun provideGetUsdcAssetId(useCase: GetUsdcAssetIdUseCase): GetUsdcAssetId = useCase
+
+    @Provides
+    fun provideSetAssetPriceAlertStatus(useCase: SetAssetPriceAlertStatusUseCase): SetAssetPriceAlertStatus = useCase
+
+    @Provides
+    fun provideSetAssetFavoriteStatus(useCase: SetAssetFavoriteStatusUseCase): SetAssetFavoriteStatus = useCase
 }

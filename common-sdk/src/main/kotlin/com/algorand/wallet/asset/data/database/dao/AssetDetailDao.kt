@@ -73,4 +73,10 @@ internal interface AssetDetailDao {
 
     @Query("SELECT asset_creator_address FROM asset_detail WHERE asset_id = :assetId")
     suspend fun getAssetCreatorAddress(assetId: Long): String?
+
+    @Query("UPDATE asset_detail SET is_favorite = :isFavorite WHERE asset_id = :assetId")
+    suspend fun updateFavoriteStatus(assetId: Long, isFavorite: Boolean)
+
+    @Query("UPDATE asset_detail SET is_price_alert_enabled = :isPriceAlertEnabled WHERE asset_id = :assetId")
+    suspend fun updatePriceAlertStatus(assetId: Long, isPriceAlertEnabled: Boolean)
 }

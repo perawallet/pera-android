@@ -22,14 +22,17 @@ import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetailMapper
 import com.algorand.wallet.asset.data.model.AssetResponse
+import com.algorand.wallet.asset.data.model.SetAssetFavoriteStatusRequestBody
+import com.algorand.wallet.asset.data.model.SetAssetPriceAlertStatusRequestBody
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
-import com.algorand.wallet.asset.data.utils.toQueryString
+import com.algorand.wallet.asset.data.service.AssetStatusApiService
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
@@ -49,6 +52,7 @@ import kotlinx.coroutines.withContext
 internal class AssetRepositoryImpl @Inject constructor(
     private val assetDetailApi: AssetDetailApiService,
     private val assetDetailNodeApi: AssetDetailNodeApiService,
+    private val assetStatusApiService: AssetStatusApiService,
     private val assetDetailCacheHelper: AssetDetailCacheHelper,
     private val assetDetailDao: AssetDetailDao,
     private val collectibleDao: CollectibleDao,
@@ -248,6 +252,28 @@ internal class AssetRepositoryImpl @Inject constructor(
 
     override suspend fun getRecentlyAddedCollectibleUrls(count: Int): List<String> {
         return collectibleDao.getRecentlyAddedCollectibleUrls(count)
+    }
+
+    override suspend fun setFavoriteStatus(assetId: Long, deviceId: String, isFavorite: Boolean): PeraResult<Unit> {
+        return try {
+            val body = SetAssetFavoriteStatusRequestBody(deviceId.toLong(), isFavorite)
+            assetStatusApiService.setAssetFavoriteStatus(getSafeAssetIdForRequest(assetId), body)
+            assetDetailDao.updateFavoriteStatus(assetId, isFavorite)
+            PeraResult.Success(Unit)
+        } catch (e: Exception) {
+            PeraResult.Error(e)
+        }
+    }
+
+    override suspend fun setPriceAlertStatus(assetId: Long, deviceId: String, enabled: Boolean): PeraResult<Unit> {
+        return try {
+            val body = SetAssetPriceAlertStatusRequestBody(deviceId.toLong(), enabled)
+            assetStatusApiService.setAssetPriceAlertStatus(getSafeAssetIdForRequest(assetId), body)
+            assetDetailDao.updatePriceAlertStatus(assetId, enabled)
+            PeraResult.Success(Unit)
+        } catch (e: Exception) {
+            PeraResult.Error(e)
+        }
     }
 
     companion object {

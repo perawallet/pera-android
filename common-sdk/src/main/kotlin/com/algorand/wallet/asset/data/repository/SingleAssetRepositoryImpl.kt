@@ -28,7 +28,7 @@ internal class SingleAssetRepositoryImpl @Inject constructor(
     private val assetMapper: AssetMapper
 ) : SingleAssetRepository {
 
-    override suspend fun cacheAssetDetail(assetId: Long, deviceId: String) {
+    override suspend fun cacheAssetDetail(assetId: Long, deviceId: String?) {
         try {
             val response = assetDetailApi.getAssetDetail(assetId, deviceId)
             val asset = assetMapper(response)

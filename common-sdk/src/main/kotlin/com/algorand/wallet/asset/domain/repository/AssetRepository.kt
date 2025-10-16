@@ -57,4 +57,8 @@ internal interface AssetRepository {
     suspend fun cacheAlgoAssetDetail(usdValue: BigDecimal?)
 
     suspend fun getRecentlyAddedCollectibleUrls(count: Int): List<String>
+
+    suspend fun setFavoriteStatus(assetId: Long, deviceId: String, isFavorite: Boolean): PeraResult<Unit>
+
+    suspend fun setPriceAlertStatus(assetId: Long, deviceId: String, enabled: Boolean): PeraResult<Unit>
 }

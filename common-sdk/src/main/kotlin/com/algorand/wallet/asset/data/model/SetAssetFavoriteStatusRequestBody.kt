@@ -10,16 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain.repository
+package com.algorand.wallet.asset.data.model
 
-import com.algorand.wallet.asset.domain.model.Asset
-import kotlinx.coroutines.flow.Flow
+import com.google.gson.annotations.SerializedName
 
-internal interface SingleAssetRepository {
-
-    suspend fun cacheAssetDetail(assetId: Long, deviceId: String?)
-
-    fun getAssetDetailFlow(): Flow<Asset>
-
-    suspend fun clearCache()
-}
+internal data class SetAssetFavoriteStatusRequestBody(
+    @SerializedName("device_id")
+    val deviceId: Long,
+    @SerializedName("enabled")
+    val isFavorite: Boolean
+)

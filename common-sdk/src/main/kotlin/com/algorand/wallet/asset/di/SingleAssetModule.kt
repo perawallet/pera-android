@@ -17,6 +17,7 @@ import com.algorand.wallet.asset.data.repository.SingleAssetRepositoryImpl
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.domain.repository.SingleAssetRepository
 import com.algorand.wallet.asset.domain.usecase.CacheSingleAssetDetail
+import com.algorand.wallet.asset.domain.usecase.CacheSingleAssetDetailUseCase
 import com.algorand.wallet.asset.domain.usecase.ClearSingleAssetCache
 import com.algorand.wallet.asset.domain.usecase.GetSingleAssetDetailFlow
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
@@ -44,11 +45,7 @@ internal object SingleAssetModule {
     }
 
     @Provides
-    fun provideCacheSingleAssetDetail(
-        repository: SingleAssetRepository
-    ): CacheSingleAssetDetail {
-        return CacheSingleAssetDetail(repository::cacheAssetDetail)
-    }
+    fun provideCacheSingleAssetDetail(useCase: CacheSingleAssetDetailUseCase): CacheSingleAssetDetail = useCase
 
     @Provides
     fun provideGetSingleAssetDetailFlow(

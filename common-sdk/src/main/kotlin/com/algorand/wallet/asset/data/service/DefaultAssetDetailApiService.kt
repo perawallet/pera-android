@@ -15,6 +15,7 @@ package com.algorand.wallet.asset.data.service
 import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.model.GetAssetsByIdsRequestBody
 import com.algorand.wallet.asset.data.utils.toQueryString
+import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.foundation.network.model.Pagination
 import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
@@ -30,7 +31,7 @@ internal class DefaultAssetDetailApiService @Inject constructor(
         includeDeleted: Boolean?
     ): Pagination<AssetResponse> {
         val safeDeviceId = deviceId?.toLongOrNull()
-        val assetIdsQueryString = assetIds.toQueryString()
+        val assetIdsQueryString = assetIds.map { getSafeAssetIdForRequest(it) }.toQueryString()
         return if (safeDeviceId == null) {
             apiService.getAssetsByIds(assetIdsQueryString, includeDeleted)
         } else {
@@ -46,14 +47,15 @@ internal class DefaultAssetDetailApiService @Inject constructor(
 
     override suspend fun getAssetDetail(assetId: Long, deviceId: String?): AssetResponse {
         val safeDeviceId = deviceId?.toLongOrNull()
+        val safeAssetId = getSafeAssetIdForRequest(assetId)
         return if (safeDeviceId == null) {
-            apiService.getAssetDetail(assetId)
+            apiService.getAssetDetail(safeAssetId)
         } else {
             try {
-                apiService.getAssetDetailV2(safeDeviceId, assetId)
+                apiService.getAssetDetailV2(safeDeviceId, safeAssetId)
             } catch (e: Exception) {
                 errorLogger.logError(e)
-                apiService.getAssetDetail(assetId)
+                apiService.getAssetDetail(safeAssetId)
             }
         }
     }

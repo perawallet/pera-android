@@ -67,7 +67,7 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
     }
 
     override fun onNavBackClick() {
-        TODO("Not yet implemented")
+        navBack()
     }
 
     override fun onUrlClick(url: String) {

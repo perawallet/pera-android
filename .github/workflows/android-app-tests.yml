@@ -45,6 +45,10 @@ jobs:
           distribution: "zulu"
           java-version: "21"
           cache: "gradle"
+      - name: "Run KLint"
+        run: ./gradlew ktlint
+      - name: "Run Detekt"
+        run: ./gradlew detekt
       - name: "Run Lint Checks"
         run: ./gradlew lint
       - name: "Archive App Lint Test Results"

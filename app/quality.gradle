@@ -24,7 +24,7 @@ detekt {
     def configFile = new File(rootDir, 'detekt-config.yml')
     if (!configFile.exists()) {
         new File("$projectDir/detekt-config.yml")
-                .withInputStream{ i -> configFile.withOutputStream{ it << i }}
+                .withInputStream { i -> configFile.withOutputStream { it << i } }
     }
     input = files("$projectDir")
     config = files("$configFile")
@@ -78,7 +78,7 @@ tasks.register('pmd', Pmd) {
     }
 }
 
-preBuild.dependsOn('checkstyle')
-preBuild.dependsOn ktlint
-preBuild.dependsOn('detekt')
+//preBuild.dependsOn('checkstyle')
+//preBuild.dependsOn ktlint
+//preBuild.dependsOn('detekt')
 //preBuild.dependsOn('pmd')

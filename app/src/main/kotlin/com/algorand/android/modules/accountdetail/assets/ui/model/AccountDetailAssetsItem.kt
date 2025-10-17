@@ -46,6 +46,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
         sealed class BaseOwnedItem : BaseAssetItem() {
 
             abstract val formattedAmount: String
+            abstract val isFavorite: Boolean
 
             data class AssetItem(
                 override val id: Long,
@@ -53,6 +54,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                 override val shortName: AssetName,
                 override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
                 override val formattedAmount: String,
+                override val isFavorite: Boolean,
                 val verificationTierConfiguration: VerificationTierConfiguration,
                 val amountInSelectedCurrency: BigDecimal?,
                 val isAmountInDisplayedCurrencyVisible: Boolean,
@@ -86,6 +88,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                 override val shortName: AssetName,
                 override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
                 override val formattedAmount: String,
+                override val isFavorite: Boolean,
                 val collectionName: String?,
                 val nftIndicatorDrawable: BaseNFTIndicatorDrawable?,
                 val shouldDecreaseOpacity: Boolean,

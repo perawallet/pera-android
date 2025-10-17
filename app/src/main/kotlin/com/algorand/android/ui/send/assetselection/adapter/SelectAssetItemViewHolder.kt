@@ -29,6 +29,7 @@ class SelectAssetItemViewHolder(
     override fun bind(item: BaseSelectAssetItem) {
         if (item !is BaseSelectAssetItem.SelectAssetItem) return
         binding.assetItemView.apply {
+            setIsFavorite(item.isFavorite)
             with(item.assetItemConfiguration) {
                 setAssetStartIconDrawable(assetDrawableProvider = assetIconDrawableProvider)
                 setAssetTitleText(primaryAssetName?.getName(resources))

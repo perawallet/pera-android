@@ -13,6 +13,7 @@
 package com.algorand.wallet.asset.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -79,4 +80,9 @@ internal interface AssetDetailDao {
 
     @Query("UPDATE asset_detail SET is_price_alert_enabled = :isPriceAlertEnabled WHERE asset_id = :assetId")
     suspend fun updatePriceAlertStatus(assetId: Long, isPriceAlertEnabled: Boolean)
+
+    @Query("SELECT asset_id, is_favorite FROM asset_detail WHERE asset_id IN (:assetIds)")
+    suspend fun getFavoriteStatuses(
+        assetIds: List<Long>
+    ): Map<@MapColumn("asset_id") Long, @MapColumn("is_favorite") Boolean?>
 }

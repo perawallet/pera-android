@@ -43,6 +43,7 @@ class OwnedAssetViewHolder(
                 setSecondaryValueText(if (isAmountInDisplayedCurrencyVisible) formattedDisplayedCurrencyValue else null)
                 setTitleTextColor(verificationTierConfiguration.textColorResId)
                 setTrailingIconOfTitleText(verificationTierConfiguration.drawableResId)
+                setIsFavorite(isFavorite)
                 setOnClickListener { listener.onOwnedAssetItemClick(item.id) }
                 setOnLongClickListener { listener.onOwnedAssetLongPressed(item.id); true }
             }

@@ -277,6 +277,10 @@ internal class AssetRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getFavoriteStatuses(assetIds: List<Long>): Map<Long, Boolean?> {
+        return assetDetailDao.getFavoriteStatuses(assetIds)
+    }
+
     companion object {
         private const val MAX_ASSET_FETCH_COUNT = 100
         private const val MAX_ASSET_CHUNK_SIZE = 900

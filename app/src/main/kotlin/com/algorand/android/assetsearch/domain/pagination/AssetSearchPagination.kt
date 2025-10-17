@@ -16,6 +16,7 @@ import androidx.paging.PagingData
 import com.algorand.android.assetsearch.domain.model.AssetSearchDTO
 import com.algorand.android.assetsearch.domain.model.AssetSearchQuery
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +37,10 @@ class AssetSearchPagination @Inject constructor() {
         scope: CoroutineScope,
         repository: AssetSearchRepository,
         defaultQuery: AssetSearchQuery,
+        getAssetFavoriteStatuses: GetAssetFavoriteStatuses,
         queryDebounce: Long = DEFAULT_QUERY_DEBOUNCE
     ): Flow<PagingData<AssetSearchDTO>> {
-        assetSearchPager = assetSearchPagerBuilder.build(repository, defaultQuery)
+        assetSearchPager = assetSearchPagerBuilder.build(repository, getAssetFavoriteStatuses, defaultQuery)
         querySharedFlow
             .debounce(queryDebounce)
             .onEach { assetSearchPager.updateQuery(it) }

@@ -55,7 +55,9 @@ internal class AlgoAssetDetailMapperImpl @Inject constructor() : AlgoAssetDetail
                 ),
                 url = ALGORAND_WEBSITE_URL,
                 isAvailableOnDiscoverMobile = true,
-                category = null
+                category = null,
+                isFavorite = true,
+                isPriceAlertEnabled = false // TODO
             )
         )
     }

@@ -48,7 +48,8 @@ internal class AssetLiteMapperImpl @Inject constructor(
                     )
                 } else {
                     AssetLite.Type.Asset(logoUrl)
-                }
+                },
+                isFavorite = dto.isFavorite ?: false
             )
         }
     }

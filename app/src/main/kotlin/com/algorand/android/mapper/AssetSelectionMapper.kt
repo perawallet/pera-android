@@ -54,7 +54,7 @@ class AssetSelectionMapper @Inject constructor(
             verificationTier = assetLite.verificationTier,
             primaryValue = parityDisplayValue.primaryParityValue.amountAsCurrency
         )
-        return SelectAssetItem(assetItemConfig)
+        return SelectAssetItem(assetItemConfig, assetLite.isFavorite)
     }
 
     private fun mapToSelectCollectibleItem(assetLite: AssetLite, collectible: Type.Collectible): SelectCollectibleItem {
@@ -85,7 +85,8 @@ class AssetSelectionMapper @Inject constructor(
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetLite),
             optedInAtRound = assetLite.optedInAtRound,
             amountInSelectedCurrency = parityDisplayValue.primaryParityValue.amountAsCurrency,
-            type = type
+            type = type,
+            isFavorite = assetLite.isFavorite
         )
     }
 }

@@ -61,4 +61,6 @@ internal interface AssetRepository {
     suspend fun setFavoriteStatus(assetId: Long, deviceId: String, isFavorite: Boolean): PeraResult<Unit>
 
     suspend fun setPriceAlertStatus(assetId: Long, deviceId: String, enabled: Boolean): PeraResult<Unit>
+
+    suspend fun getFavoriteStatuses(assetIds: List<Long>): Map<Long, Boolean?>
 }

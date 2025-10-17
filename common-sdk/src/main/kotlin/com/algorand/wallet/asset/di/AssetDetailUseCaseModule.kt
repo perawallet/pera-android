@@ -30,6 +30,7 @@ import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetAssetCreatorAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetails
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import com.algorand.wallet.asset.domain.usecase.GetRecentlyAddedCollectibleUrls
@@ -145,4 +146,9 @@ internal object AssetDetailUseCaseModule {
 
     @Provides
     fun provideSetAssetFavoriteStatus(useCase: SetAssetFavoriteStatusUseCase): SetAssetFavoriteStatus = useCase
+
+    @Provides
+    fun provideGetAssetFavoriteStatuses(repository: AssetRepository): GetAssetFavoriteStatuses {
+        return GetAssetFavoriteStatuses(repository::getFavoriteStatuses)
+    }
 }

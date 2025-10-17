@@ -40,7 +40,8 @@ class AssetTransferAmountAssetPreviewMapper @Inject constructor(
             formattedAmount = accountAssetData.formattedCompactAmount,
             isAmountInSelectedCurrencyVisible = accountAssetData.isAmountInSelectedCurrencyVisible,
             prismUrl = accountAssetData.prismUrl,
-            assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData)
+            assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData),
+            isFavorite = accountAssetData.isFavorite
         )
     }
 }

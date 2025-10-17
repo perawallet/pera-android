@@ -33,10 +33,10 @@ import com.algorand.android.R
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewState.Content
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewState.Idle
-import com.algorand.android.ui.compose.theme.ColorPalette
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.VerificationTierIcon
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
+import com.algorand.android.ui.compose.widget.icon.FavoriteIcon
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 
@@ -60,7 +60,17 @@ fun AssetDetailHeader(viewModel: AssetDetailHeaderViewModel) {
                 Spacer(Modifier.width(8.dp))
                 NotificationButton(viewState.isNotificationsEnabled, viewModel::togglePriceAlertStatus)
                 Spacer(Modifier.width(12.dp))
-                FavoriteButton(viewState.isFavorite, viewModel::toggleFavoriteStatus)
+                FavoriteIcon(
+                    modifier = Modifier
+                        .clickableNoRipple(
+                            enabled = viewState.isFavorite != null,
+                            onClick = viewModel::toggleFavoriteStatus
+                        )
+                        .background(color = PeraTheme.colors.layer.grayLighter, shape = CircleShape)
+                        .size(28.dp)
+                        .padding(4.dp),
+                    viewState.isFavorite
+                )
             }
         }
     }
@@ -76,25 +86,6 @@ private fun NotificationButton(isPriceAlertEnabled: Boolean?, onClick: () -> Uni
     Icon(
         modifier = Modifier
             .clickableNoRipple(enabled = isPriceAlertEnabled != null, onClick = onClick)
-            .background(color = PeraTheme.colors.layer.grayLighter, shape = CircleShape)
-            .size(28.dp)
-            .padding(4.dp),
-        painter = painterResource(iconRes),
-        tint = tintColor,
-        contentDescription = null
-    )
-}
-
-@Composable
-private fun FavoriteButton(isFavorite: Boolean?, onClick: () -> Unit) {
-    val (iconRes, tintColor) = when (isFavorite) {
-        true -> R.drawable.ic_favorite_enabled to ColorPalette.Yellow.V500
-        false -> R.drawable.ic_favorite_disabled to PeraTheme.colors.text.main
-        null -> R.drawable.ic_favorite_disabled to PeraTheme.colors.text.grayLighter
-    }
-    Icon(
-        modifier = Modifier
-            .clickableNoRipple(enabled = isFavorite != null, onClick = onClick)
             .background(color = PeraTheme.colors.layer.grayLighter, shape = CircleShape)
             .size(28.dp)
             .padding(4.dp),

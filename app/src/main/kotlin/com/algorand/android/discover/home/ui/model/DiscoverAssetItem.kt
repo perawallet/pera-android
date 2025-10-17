@@ -24,7 +24,8 @@ data class DiscoverAssetItem(
     val prismUrl: String?,
     val baseAssetDrawableProvider: BaseAssetDrawableProvider,
     val verificationTierConfiguration: VerificationTierConfiguration?,
-    val formattedUsdValue: String?
+    val formattedUsdValue: String?,
+    val isFavorite: Boolean
 ) : RecyclerListItem {
     override fun areItemsTheSame(other: RecyclerListItem): Boolean {
         return other is DiscoverAssetItem && other.assetId == assetId

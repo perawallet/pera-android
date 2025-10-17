@@ -37,6 +37,7 @@ class AssetInformationItemViewHolder(
                 setSecondaryValueText(if (isAmountInDisplayedCurrencyVisible) formattedDisplayedCurrencyValue else null)
                 setTitleTextColor(verificationTierConfiguration.textColorResId)
                 setTrailingIconOfTitleText(verificationTierConfiguration.drawableResId)
+                binding.assetItemView.setIsFavorite(assetInformationItem.isFavorite)
             }
         }
     }

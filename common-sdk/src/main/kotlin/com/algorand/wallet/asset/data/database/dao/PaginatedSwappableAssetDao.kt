@@ -60,6 +60,10 @@ internal interface PaginatedSwappableAssetDao {
            asset.verification_tier IN (:verificationTiers) OR asset.category IN (:categories)
         )
     ORDER BY
+        CASE
+            WHEN asset.is_favorite = 1 THEN 0
+            ELSE 1
+        END ASC,
         COALESCE(asset.name, collectible.title) ASC
     """
     )

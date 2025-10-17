@@ -112,3 +112,7 @@ fun interface SetAssetFavoriteStatus {
 fun interface SetAssetPriceAlertStatus {
     suspend operator fun invoke(assetId: Long, enabled: Boolean): PeraResult<Unit>
 }
+
+fun interface GetAssetFavoriteStatuses {
+    suspend operator fun invoke(assetIds: List<Long>): Map<Long, Boolean?>
+}

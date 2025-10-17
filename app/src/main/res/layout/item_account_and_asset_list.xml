@@ -78,7 +78,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_normal"
-        android:drawablePadding="@dimen/spacing_xxsmall"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body.Sans"
@@ -91,8 +90,35 @@
         app:layout_constraintStart_toEndOf="@id/startIconImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:drawableEndCompat="@drawable/ic_asa_trusted"
         tools:text="@tools:sample/lorem[1]"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/favoriteIconImageView"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="6dp"
+        android:src="@drawable/ic_favorite_enabled"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/titleTextView"
+        app:layout_constraintEnd_toStartOf="@id/titleEndIconImageView"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/titleTextView"
+        app:layout_constraintTop_toTopOf="@id/titleTextView"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/titleEndIconImageView"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="6dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/titleTextView"
+        app:layout_constraintEnd_toStartOf="@id/firstColumnBarrier"
+        app:layout_constraintStart_toEndOf="@id/favoriteIconImageView"
+        app:layout_constraintTop_toTopOf="@id/titleTextView"
+        tools:srcCompat="@drawable/ic_asa_trusted"
         tools:visibility="visible" />
 
     <TextView

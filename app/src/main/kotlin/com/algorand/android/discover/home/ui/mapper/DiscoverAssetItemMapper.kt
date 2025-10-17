@@ -36,7 +36,8 @@ class DiscoverAssetItemMapper @Inject constructor(
             ),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(discoverSearchedAsset),
             prismUrl = discoverSearchedAsset.logo,
-            formattedUsdValue = discoverSearchedAsset.formattedUsdValue
+            formattedUsdValue = discoverSearchedAsset.formattedUsdValue,
+            isFavorite = discoverSearchedAsset.isFavorite
         )
     }
 }

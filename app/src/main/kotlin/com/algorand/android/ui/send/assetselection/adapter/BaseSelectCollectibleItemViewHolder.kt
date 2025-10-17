@@ -46,6 +46,7 @@ abstract class BaseSelectCollectibleItemViewHolder(
                 )
                 bindImage(item)
                 setOnClickListener { listener.onCollectibleItemClick(item.id) }
+                setIsFavorite(isFavorite)
             }
         }
     }

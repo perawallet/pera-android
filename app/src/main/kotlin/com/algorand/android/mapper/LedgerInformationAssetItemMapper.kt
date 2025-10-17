@@ -38,7 +38,8 @@ class LedgerInformationAssetItemMapper @Inject constructor(
             ),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData),
             formattedDisplayedCurrencyValue = accountAssetData.getSelectedCurrencyParityValue().getFormattedValue(),
-            formattedAmount = accountAssetData.formattedAmount
+            formattedAmount = accountAssetData.formattedAmount,
+            isFavorite = accountAssetData.isFavorite
         )
     }
 }

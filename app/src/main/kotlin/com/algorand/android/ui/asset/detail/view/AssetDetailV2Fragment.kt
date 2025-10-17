@@ -83,10 +83,10 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
     }
 
     override fun onFailedToUpdateFavoriteStatus() {
-        TODO("Not yet implemented")
+        showGlobalError("Failed to update favorite status") // TODO replace with string resource
     }
 
     override fun onFailedToUpdatePriceAlertStatus() {
-        TODO("Not yet implemented")
+        showGlobalError("Failed to update price alert status") // TODO replace with string resource
     }
 }

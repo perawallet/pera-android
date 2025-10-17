@@ -48,7 +48,8 @@ internal class AlgoAssetDataMapperImpl @Inject constructor() : AlgoAssetDataMapp
             parityValueInSecondaryCurrency = parityValueInSecondaryCurrency,
             prismUrl = null, // Algo does not have prism url
             verificationTier = VerificationTier.TRUSTED,
-            optedInAtRound = null
+            optedInAtRound = null,
+            isFavorite = false // TODO
         )
     }
 }

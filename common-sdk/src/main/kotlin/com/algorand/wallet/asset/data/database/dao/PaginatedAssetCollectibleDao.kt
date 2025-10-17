@@ -35,6 +35,7 @@ internal interface PaginatedAssetCollectibleDao {
         asset.usd_value AS usd_value,
         asset.decimals AS decimals,
         asset.verification_tier AS verification_tier,
+        asset.is_favorite AS is_favorite,
         collectible.title AS title,
         collectible.primary_image_url AS primary_image_url,
         collectible.collection_name AS collection_name,
@@ -65,7 +66,8 @@ internal interface PaginatedAssetCollectibleDao {
     ORDER BY
         CASE 
             WHEN holding.asset_status IN ('PENDING_FOR_ADDITION', 'PENDING_FOR_REMOVAL') THEN 0
-            ELSE 1
+            WHEN asset.is_favorite = 1 THEN 1
+            ELSE 2
         END ASC,
         CASE WHEN :sortType = 'name_asc' THEN sort_by_name_value END ASC,
         CASE WHEN :sortType = 'name_desc' THEN sort_by_name_value END DESC,

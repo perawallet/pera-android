@@ -18,6 +18,7 @@ import androidx.paging.cachedIn
 import com.algorand.android.assetsearch.domain.model.AssetSearchDTO
 import com.algorand.android.assetsearch.domain.model.AssetSearchQuery
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.shareIn
 class AssetSearchPager private constructor(
     pagingConfig: PagingConfig,
     assetSearchRepository: AssetSearchRepository,
+    getAssetFavoriteStatuses: GetAssetFavoriteStatuses,
     private val defaultQuery: AssetSearchQuery?
 ) {
 
@@ -35,7 +37,7 @@ class AssetSearchPager private constructor(
 
     init {
         searchPager = Pager<String, AssetSearchDTO>(pagingConfig) {
-            AssetSearchDataSource(assetSearchRepository, searchQuery).also {
+            AssetSearchDataSource(assetSearchRepository, getAssetFavoriteStatuses, searchQuery).also {
                 searchDataSource = it
             }
         }
@@ -60,9 +62,10 @@ class AssetSearchPager private constructor(
         fun create(
             config: PagingConfig,
             repository: AssetSearchRepository,
+            getAssetFavoriteStatuses: GetAssetFavoriteStatuses,
             defaultQuery: AssetSearchQuery?
         ): AssetSearchPager {
-            return AssetSearchPager(config, repository, defaultQuery)
+            return AssetSearchPager(config, repository, getAssetFavoriteStatuses, defaultQuery)
         }
     }
 }

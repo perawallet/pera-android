@@ -66,6 +66,7 @@ sealed class BaseAssetSearchListItem : RecyclerListItem {
         abstract val shortName: AssetName
         abstract val accountAssetItemButtonState: AccountAssetItemButtonState
         abstract val baseAssetDrawableProvider: BaseAssetDrawableProvider
+        abstract val isFavorite: Boolean
 
         data class AssetSearchItem(
             override val assetId: Long,
@@ -73,6 +74,7 @@ sealed class BaseAssetSearchListItem : RecyclerListItem {
             override val shortName: AssetName,
             override val accountAssetItemButtonState: AccountAssetItemButtonState,
             override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
+            override val isFavorite: Boolean,
             val verificationTierConfiguration: VerificationTierConfiguration?
         ) : AssetListItem() {
 
@@ -94,7 +96,8 @@ sealed class BaseAssetSearchListItem : RecyclerListItem {
                 override val fullName: AssetName,
                 override val shortName: AssetName,
                 override val accountAssetItemButtonState: AccountAssetItemButtonState,
-                override val baseAssetDrawableProvider: BaseAssetDrawableProvider
+                override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
+                override val isFavorite: Boolean
             ) : BaseCollectibleSearchListItem() {
 
                 override val itemType: ItemType = ItemType.COLLECTIBLE_IMAGE_ITEM

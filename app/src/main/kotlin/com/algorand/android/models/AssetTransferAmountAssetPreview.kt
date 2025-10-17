@@ -28,5 +28,6 @@ data class AssetTransferAmountAssetPreview(
     val formattedSelectedCurrencyValue: String,
     val isAmountInSelectedCurrencyVisible: Boolean,
     val prismUrl: String?,
-    val assetDrawableProvider: BaseAssetDrawableProvider
+    val assetDrawableProvider: BaseAssetDrawableProvider,
+    val isFavorite: Boolean
 )

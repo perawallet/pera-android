@@ -102,7 +102,9 @@ internal class AssetDetailEntityMapperImplTest {
                 isVerifiedAssetCreator = true
             ),
             collectible = null,
-            category = 1
+            category = 1,
+            isFavorite = true,
+            isPriceAlertEnabled = false
         )
 
         private val ASSET_DETAIL_ENTITY = AssetDetailEntity(
@@ -129,7 +131,9 @@ internal class AssetDetailEntityMapperImplTest {
             assetCreatorAddress = "publicKey",
             assetCreatorId = 1L,
             isVerifiedAssetCreator = true,
-            category = AssetCategoryEntity.RUG_NINJA
+            category = AssetCategoryEntity.RUG_NINJA,
+            isFavorite = true,
+            isPriceAlertEnabled = false
         )
     }
 }

@@ -27,11 +27,9 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import retrofit2.Response
 
 class SingleAssetRepositoryImplTest {
 
@@ -50,12 +48,12 @@ class SingleAssetRepositoryImplTest {
 
     @Test
     fun `EXPECT asset to be cached WHEN fetching succeeds`() = runTest {
-        coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id) } returns Response.success(ASSET_RESPONSE)
+        coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id, DEVICE_ID) } returns ASSET_RESPONSE
         every { assetMapper(ASSET_RESPONSE) } returns ASSET_DETAIL
         val cacheSlot = slot<CacheResult.Success<Asset>>()
         every { assetCache.put(capture(cacheSlot)) } returns Unit
 
-        sut.cacheAssetDetail(ASSET_DETAIL.id)
+        sut.cacheAssetDetail(ASSET_DETAIL.id, DEVICE_ID)
 
         val captured = cacheSlot.captured
         assertEquals(ASSET_DETAIL, captured.data)
@@ -63,13 +61,11 @@ class SingleAssetRepositoryImplTest {
 
     @Test
     fun `EXPECT error to be cached WHEN fetching fails`() = runTest {
-        val code = 404
-        val errorBody = Response.error<AssetResponse>(code, "".toResponseBody(null))
-        coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id) } returns errorBody
+        coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id, DEVICE_ID) } throws Exception()
         val cacheSlot = slot<CacheResult<Asset>>()
         every { assetCache.put(capture(cacheSlot)) } returns Unit
 
-        sut.cacheAssetDetail(ASSET_DETAIL.id)
+        sut.cacheAssetDetail(ASSET_DETAIL.id, DEVICE_ID)
 
         val captured = cacheSlot.captured
         assertTrue(captured is CacheResult.Error)
@@ -77,10 +73,10 @@ class SingleAssetRepositoryImplTest {
 
     @Test
     fun `EXPECT nothing to be cached WHEN fetching succeeds but mapping fails`() = runTest {
-        coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id) } returns Response.success(ASSET_RESPONSE)
+        coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id, DEVICE_ID) } returns ASSET_RESPONSE
         every { assetMapper(ASSET_RESPONSE) } returns null
 
-        sut.cacheAssetDetail(ASSET_DETAIL.id)
+        sut.cacheAssetDetail(ASSET_DETAIL.id, DEVICE_ID)
 
         verify(exactly = 0) { assetCache.put(any()) }
     }
@@ -116,5 +112,6 @@ class SingleAssetRepositoryImplTest {
     private companion object {
         val ASSET_DETAIL = peraFixture<Asset>()
         val ASSET_RESPONSE = peraFixture<AssetResponse>()
+        val DEVICE_ID = peraFixture<String?>()
     }
 }

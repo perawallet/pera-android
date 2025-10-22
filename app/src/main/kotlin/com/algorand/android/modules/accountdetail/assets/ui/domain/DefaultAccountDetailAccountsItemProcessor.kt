@@ -34,7 +34,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.can
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
-import com.algorand.wallet.remoteconfig.domain.usecase.ACCOUNT_DETAIL_CHART_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -97,7 +97,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
             getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType).getDisplayValue(),
             getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType).getDisplayValue(),
             requiredMinBalance = formattedRequiredMinimumBalance,
-            displayChart = isFeatureToggleEnabled(ACCOUNT_DETAIL_CHART_TOGGLE)
+            displayChart = isFeatureToggleEnabled(FeatureToggle.ACCOUNT_DETAIL_CHART.key)
         )
     }
 

@@ -10,8 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.remoteconfig.domain.usecase
+package com.algorand.wallet.devoptions.domain.repository
 
-fun interface IsFeatureToggleEnabled {
-    operator fun invoke(featureToggleKey: String): Boolean
+internal interface DeveloperOptionsRepository {
+    fun enableDeveloperOptions()
+    fun disableDeveloperOptions()
+    fun isDeveloperOptionsEnabled(): Boolean
+    fun clearDeveloperOptions()
+
+    fun setFeatureFlagStatus(featureName: String, isEnabled: Boolean)
+    fun isFeatureFlagEnabled(featureName: String): Boolean?
+    fun clearFeatureFlag(featureName: String)
+    fun getFeatureFlags(): Map<String, Boolean>
 }

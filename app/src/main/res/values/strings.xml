@@ -1576,4 +1576,13 @@
     <string name="you_are_about_to_remove_passkey">You are about to remove this passkey. Are you sure you want to proceed?</string>
     <string name="never">Never</string>
     <string name="now">Now</string>
+    <string name="developer_options">Developer Options</string>
+    <string name="override_feature_flags">Override Feature Flags</string>
+    <string name="overridden">Overridden</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="disable_developer_options">Disable Developer Options</string>
+    <string name="developer_options_is_already_enabled">Developer options is already enabled</string>
+    <string name="more_click_to_enable_developer">%1$d clicks to enable developer options</string>
+    <string name="developer_options_enabled">Developer options enabled</string>
 </resources>

@@ -36,7 +36,6 @@ class OverrideFeatureFlagsViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
-
     init {
         stateDelegate.setDefaultState(Idle)
     }

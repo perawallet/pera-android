@@ -13,11 +13,12 @@
 package com.algorand.wallet.remoteconfig.di
 
 import com.algorand.wallet.remoteconfig.data.repository.FeatureToggleRepositoryImpl
+import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigService
 import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigServiceImpl
 import com.algorand.wallet.remoteconfig.domain.repository.FeatureToggleRepository
-import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigService
 import com.algorand.wallet.remoteconfig.domain.usecase.InitializeOperationalToggles
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabledUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,7 +45,5 @@ internal object RemoteConfigModule {
 
     @Provides
     @Singleton
-    fun provideIsFeatureToggleEnabled(
-        repository: FeatureToggleRepository
-    ): IsFeatureToggleEnabled = IsFeatureToggleEnabled(repository::isFeatureEnabled)
+    fun provideIsFeatureToggleEnabled(useCase: IsFeatureToggleEnabledUseCase): IsFeatureToggleEnabled = useCase
 }

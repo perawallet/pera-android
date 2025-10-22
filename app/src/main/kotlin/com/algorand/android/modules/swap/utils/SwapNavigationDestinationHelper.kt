@@ -17,8 +17,8 @@ import com.algorand.android.modules.swap.reddot.domain.usecase.SetSwapFeatureRed
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import javax.inject.Inject
 
 class SwapNavigationDestinationHelper @Inject constructor(
@@ -38,7 +38,7 @@ class SwapNavigationDestinationHelper @Inject constructor(
         onNavToAccountSelection: (() -> Unit)? = null,
         onNavToSwapV2: (accountAddress: String?) -> Unit
     ) {
-        if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+        if (isFeatureToggleEnabled(FeatureToggle.SWAP_V2.key)) {
             onNavToSwapV2(accountAddress)
             return
         }

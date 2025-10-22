@@ -10,8 +10,24 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.remoteconfig.domain.usecase
+package com.algorand.wallet.devoptions.domain.model
 
-fun interface IsFeatureToggleEnabled {
-    operator fun invoke(featureToggleKey: String): Boolean
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+
+data class DeveloperOptionFeatureFlag(
+    val featureToggle: FeatureToggle,
+    val remoteValue: Boolean,
+    val status: Status
+) {
+
+    val isEnabled: Boolean
+        get() = when (status) {
+            is Status.Overridden -> status.isEnabled
+            Status.Remote -> remoteValue
+        }
+
+    sealed interface Status {
+        data object Remote : Status
+        data class Overridden(val isEnabled: Boolean) : Status
+    }
 }

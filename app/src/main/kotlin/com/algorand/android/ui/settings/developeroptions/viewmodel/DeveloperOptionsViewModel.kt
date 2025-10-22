@@ -10,8 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.remoteconfig.domain.usecase
+package com.algorand.android.ui.settings.developeroptions.viewmodel
 
-fun interface IsFeatureToggleEnabled {
-    operator fun invoke(featureToggleKey: String): Boolean
+import androidx.lifecycle.ViewModel
+import com.algorand.wallet.devoptions.domain.usecase.DisableDeveloperOptions
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class DeveloperOptionsViewModel @Inject constructor(
+    private val disableDeveloperOptions: DisableDeveloperOptions
+) : ViewModel() {
+
+    fun disableDevOps() {
+        disableDeveloperOptions()
+    }
 }

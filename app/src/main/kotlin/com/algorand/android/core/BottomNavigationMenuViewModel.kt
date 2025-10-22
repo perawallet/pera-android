@@ -20,8 +20,8 @@ import com.algorand.android.core.BottomNavigationMenuViewModel.ViewState
 import com.algorand.android.core.bottomnav.model.BottomNavMenuItem
 import com.algorand.android.utils.isStagingApp
 import com.algorand.wallet.node.domain.usecase.IsSelectedNodeTestnet
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -61,7 +61,7 @@ class BottomNavigationMenuViewModel @Inject constructor(
         return buildList {
             add(getHomeItem())
             add(getDiscoverItem())
-            if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+            if (isFeatureToggleEnabled(FeatureToggle.SWAP_V2.key)) {
                 add(getSwapItem())
                 add(getStakingItem())
             } else {

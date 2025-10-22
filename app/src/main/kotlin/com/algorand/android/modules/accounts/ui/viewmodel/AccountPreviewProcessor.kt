@@ -37,9 +37,8 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
-import com.algorand.wallet.remoteconfig.domain.usecase.ACCOUNTS_CHART_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -75,7 +74,7 @@ class AccountPreviewProcessor @Inject constructor(
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
-        if (isFeatureToggleEnabled(ACCOUNTS_CHART_TOGGLE)) {
+        if (isFeatureToggleEnabled(FeatureToggle.ACCOUNTS_CHART.key)) {
             accountList.add(BaseAccountListItem.WalletChartItem)
         }
 
@@ -187,7 +186,7 @@ class AccountPreviewProcessor @Inject constructor(
         accountsList.add(
             BaseAccountListItem.QuickActionsItem(
                 isSwapButtonSelected = getSwapFeatureRedDotVisibility.getSwapFeatureRedDotVisibility(),
-                isStakingEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
+                isStakingEnabled = isFeatureToggleEnabled(FeatureToggle.STAKING.key)
             )
         )
     }

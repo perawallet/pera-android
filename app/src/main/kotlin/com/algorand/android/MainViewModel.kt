@@ -58,8 +58,8 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -169,7 +169,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun isSwapV2Enabled(): Boolean = isFeatureToggleEnabled(SWAP_V2_TOGGLE)
+    fun isSwapV2Enabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.SWAP_V2.key)
 
     fun handleNotificationDeepLink(
         accountAddress: String,

@@ -19,8 +19,8 @@ import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.SwapV2
 import com.algorand.android.modules.swap.reddot.domain.usecase.SetSwapFeatureRedDotVisibilityUseCase
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import javax.inject.Inject
 
 internal class GetSwapNavigationDestinationUseCase @Inject constructor(
@@ -31,7 +31,7 @@ internal class GetSwapNavigationDestinationUseCase @Inject constructor(
 ) : GetSwapNavigationDestination {
 
     override suspend fun invoke(address: String?): SwapNavigationDestination {
-        return if (isFeatureToggleEnabled(SWAP_V2_TOGGLE)) {
+        return if (isFeatureToggleEnabled(FeatureToggle.SWAP_V2.key)) {
             getSwapV2Destination(address)
         } else {
             swapNavDestinationHelper {

@@ -16,12 +16,12 @@ import com.algorand.wallet.devoptions.domain.model.DeveloperOptionFeatureFlag
 import com.algorand.wallet.devoptions.domain.model.DeveloperOptionFeatureFlag.Status.Overridden
 import com.algorand.wallet.devoptions.domain.model.DeveloperOptionFeatureFlag.Status.Remote
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.repository.FeatureToggleRepository
 import javax.inject.Inject
 
 internal class GetAllDeveloperOptionFeatureFlagsUseCase @Inject constructor(
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
-    private val getOverriddenFeatureFlags: GetOverriddenFeatureFlags
+    private val getOverriddenFeatureFlags: GetOverriddenFeatureFlags,
+    private val featureToggleRepository: FeatureToggleRepository
 ) : GetAllDeveloperOptionFeatureFlags {
 
     override fun invoke(): List<DeveloperOptionFeatureFlag> {
@@ -34,7 +34,7 @@ internal class GetAllDeveloperOptionFeatureFlagsUseCase @Inject constructor(
     private fun mapFeatureFlag(toggle: FeatureToggle, overriddenValue: Boolean?): DeveloperOptionFeatureFlag {
         return DeveloperOptionFeatureFlag(
             featureToggle = toggle,
-            remoteValue = isFeatureToggleEnabled(toggle.key),
+            remoteValue = featureToggleRepository.isFeatureEnabled(toggle.key),
             status = if (overriddenValue != null) Overridden(overriddenValue) else Remote
         )
     }

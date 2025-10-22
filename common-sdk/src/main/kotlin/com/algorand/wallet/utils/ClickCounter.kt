@@ -38,6 +38,6 @@ class ClickCounter(
     }
 
     private companion object {
-        const val DEFAULT_TIME_WINDOW_MILLIS = 400L
+        const val DEFAULT_TIME_WINDOW_MILLIS = 600L
     }
 }

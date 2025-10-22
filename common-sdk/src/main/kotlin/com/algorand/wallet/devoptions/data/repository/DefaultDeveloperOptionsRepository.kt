@@ -15,9 +15,8 @@ package com.algorand.wallet.devoptions.data.repository
 import com.algorand.wallet.devoptions.data.cache.DeveloperOptionsFeatureFlagsCache
 import com.algorand.wallet.devoptions.domain.repository.DeveloperOptionsRepository
 import com.algorand.wallet.foundation.cache.FlowPersistentCache
-import javax.inject.Inject
 
-internal class DefaultDeveloperOptionsRepository @Inject constructor(
+internal class DefaultDeveloperOptionsRepository(
     private val developerOptionsPersistentCache: FlowPersistentCache<Boolean>,
     private val developerOptionsFeatureFlagsCache: DeveloperOptionsFeatureFlagsCache
 ) : DeveloperOptionsRepository {

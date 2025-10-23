@@ -21,5 +21,6 @@ enum class FeatureToggle(val key: String, val description: String) {
     ACCOUNT_DETAIL_CHART("enable_charts_accounts", "Account Detail Chart"),
     ASSET_DETAIL_CHART("enable_charts_assets", "Asset Detail Chart"),
     SWAP_V2("enable_swap_v2", "Swap v2"),
-    LIQUID_AUTH("enable_liquid_auth", "Liquid Auth")
+    LIQUID_AUTH("enable_liquid_auth", "Liquid Auth"),
+    LEDGER_DEFLEX_FILTER("enable_ledger_deflex_filter", "Ledger Deflex Filter")
 }

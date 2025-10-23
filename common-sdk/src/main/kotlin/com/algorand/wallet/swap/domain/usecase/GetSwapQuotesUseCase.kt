@@ -12,8 +12,12 @@
 
 package com.algorand.wallet.swap.domain.usecase
 
+import com.algorand.wallet.account.detail.domain.model.AccountType.LedgerBle
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle.LEDGER_DEFLEX_FILTER
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
@@ -24,12 +28,17 @@ import javax.inject.Inject
 internal class GetSwapQuotesUseCase @Inject constructor(
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
     private val swapRepository: SwapRepository,
-    private val getSwapQuoteDetails: GetSwapQuoteDetails
+    private val getSwapQuoteDetails: GetSwapQuoteDetails,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val getAccountType: GetAccountType
 ) : GetSwapQuotes {
 
     override suspend fun invoke(payload: SwapQuotePayload): PeraResult<SwapQuotes> {
         return swapRepository.getSwapQuotes(getRequestPayload(payload)).use(
-            onSuccess = { quotes -> getSuccessResult(quotes) },
+            onSuccess = { quotes ->
+                val filteredQuotes = getFilteredQuotes(payload.address, quotes)
+                getSuccessResult(filteredQuotes)
+            },
             onFailed = { exception, code -> PeraResult.Error(exception, code) }
         )
     }
@@ -54,5 +63,17 @@ internal class GetSwapQuotesUseCase @Inject constructor(
             deviceId = getSelectedNodeDeviceId().orEmpty(),
             slippage = payload.slippage
         )
+    }
+
+    private suspend fun getFilteredQuotes(address: String, quotes: List<SwapQuoteV2>): List<SwapQuoteV2> {
+        return if (isFeatureToggleEnabled(LEDGER_DEFLEX_FILTER.key) && getAccountType(address) is LedgerBle) {
+            quotes.filter { it.provider.name != DEFLEX_PROVIDER_NAME }
+        } else {
+            quotes
+        }
+    }
+
+    private companion object {
+        private const val DEFLEX_PROVIDER_NAME = "deflex"
     }
 }

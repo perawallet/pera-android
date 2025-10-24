@@ -12,7 +12,7 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.wallet.remoteconfig.domain.usecase.HD_WALLET_BUTTON_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Inject
 
@@ -22,7 +22,7 @@ class IsOnHdWalletUseCase @Inject constructor(
 ) {
 
     operator fun invoke(): Boolean {
-        val isHdWalletToggleEnabled = isFeatureToggleEnabled(HD_WALLET_BUTTON_TOGGLE)
+        val isHdWalletToggleEnabled = isFeatureToggleEnabled(FeatureToggle.HD_WALLET.key)
         return isHdWalletToggleEnabled
     }
 

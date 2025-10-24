@@ -47,6 +47,7 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         binding.dispenserListItem.setOnClickListener { onDispenserClick() }
         binding.createLegacyAlgo25ListItem.setOnClickListener { onCreateLegacyAlgo25Click() }
         binding.migrationListItem.setOnClickListener { onMigrationViewerClick() }
+        binding.developerOptionsListItem.setOnClickListener { onDeveloperOptionsClick() }
     }
 
     override fun onResume() {
@@ -54,6 +55,7 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         binding.dispenserListItem.isVisible = developerSettingsViewModel.isConnectedToTestnet()
         binding.createLegacyAlgo25ListItem.isVisible = developerSettingsViewModel.showCreateLegacyAlgo25Account()
         binding.migrationListItem.isVisible = developerSettingsViewModel.showMigrationViewer()
+        binding.developerOptionsListItem.isVisible = developerSettingsViewModel.showDeveloperOptions()
     }
 
     private fun onNodeSettingsClick() {
@@ -73,6 +75,10 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
 
     private fun onMigrationViewerClick() {
         nav(DeveloperSettingsFragmentDirections.actionDeveloperSettingsFragmentToMigrationViewerFragment())
+    }
+
+    private fun onDeveloperOptionsClick() {
+        nav(DeveloperSettingsFragmentDirections.actionDeveloperSettingsFragmentToDeveloperOptionsFragment())
     }
 
     private fun onCreateLegacyAlgo25Click() {

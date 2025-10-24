@@ -24,16 +24,16 @@ import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.remoteconfig.domain.usecase.ASSET_DETAIL_CHART_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AssetDetailViewModel @Inject constructor(
@@ -68,7 +68,7 @@ class AssetDetailViewModel @Inject constructor(
         }
     }
 
-    fun isChartFeatureEnabled(): Boolean = isFeatureToggleEnabled(ASSET_DETAIL_CHART_TOGGLE)
+    fun isChartFeatureEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.ASSET_DETAIL_CHART.key)
 
     fun displayAssetLineChart(item: AssetLineChartData) {
         val event = ViewEvent.UpdateAssetBalanceText(

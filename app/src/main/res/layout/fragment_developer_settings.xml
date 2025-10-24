@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         app:endViewLayoutResource="@layout/layout_right_arrow"
         app:settingIcon="@drawable/ic_algo_sign"
-        app:settingTitle="@string/algorand_dispenser"></com.algorand.android.customviews.SettingsListItem>
+        app:settingTitle="@string/algorand_dispenser" />
 
     <com.algorand.android.customviews.SettingsListItem
         android:id="@+id/createLegacyAlgo25ListItem"
@@ -40,7 +40,7 @@
         android:visibility="gone"
         app:endViewLayoutResource="@layout/layout_right_arrow"
         app:settingIcon="@drawable/ic_wallet"
-        app:settingTitle="@string/create_legacy_algo25_account"></com.algorand.android.customviews.SettingsListItem>
+        app:settingTitle="@string/create_legacy_algo25_account" />
 
     <com.algorand.android.customviews.SettingsListItem
         android:id="@+id/migrationListItem"
@@ -48,6 +48,15 @@
         android:layout_height="wrap_content"
         app:endViewLayoutResource="@layout/layout_right_arrow"
         app:settingIcon="@drawable/ic_algo_sign"
-        app:settingTitle="@string/migration_troubleshooter"></com.algorand.android.customviews.SettingsListItem>
+        app:settingTitle="@string/migration_troubleshooter" />
+
+    <com.algorand.android.customviews.SettingsListItem
+        android:id="@+id/developerOptionsListItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:endViewLayoutResource="@layout/layout_right_arrow"
+        app:settingIcon="@drawable/ic_customize"
+        app:settingTitle="@string/developer_options" />
 
 </LinearLayout>

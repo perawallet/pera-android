@@ -160,6 +160,7 @@ class SwapConfirmationViewModel @Inject constructor(
 
     private suspend fun sendSignTransactions(transactions: SwapQuoteTransactions, result: Success<*>) {
         stateDelegate.onState<ViewState.Content> { content ->
+            eventDelegate.sendEvent(ViewEvent.HideLedgerWaitingForApprovalDialog)
             val signedTransactions = signedSwapTransactionMapper(result)
             if (signedTransactions == null) {
                 updateUiToSendingErrorState()
@@ -205,6 +206,7 @@ class SwapConfirmationViewModel @Inject constructor(
     private fun displayErrorState() {
         stateDelegate.onState<ViewState.Content> { contentState ->
             viewModelScope.launch {
+                eventDelegate.sendEvent(ViewEvent.HideLedgerWaitingForApprovalDialog)
                 stateDelegate.updateState { contentState.copy(contentState = ContentState.Error) }
                 delay(SWAP_ERROR_DISPLAY_DURATION)
                 stateDelegate.updateState { contentState.copy(contentState = ContentState.Idle) }
@@ -273,6 +275,7 @@ class SwapConfirmationViewModel @Inject constructor(
         data class NavigateToSwapScreen(val assetInShortName: String, val assetOutShortName: String) : ViewEvent
         data object DisplayLedgerNotFoundDialog : ViewEvent
         data class NavigateToLedgerWaitingForApprovalDialog(val payload: LedgerDialogPayload) : ViewEvent
+        data object HideLedgerWaitingForApprovalDialog : ViewEvent
         data class DisplayError(val errorType: ErrorType) : ViewEvent {
             sealed interface ErrorType {
                 data object Generic : ErrorType

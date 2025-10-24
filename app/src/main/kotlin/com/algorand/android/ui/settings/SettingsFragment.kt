@@ -14,6 +14,7 @@ package com.algorand.android.ui.settings
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
 import com.algorand.android.BuildConfig
@@ -27,6 +28,10 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet.Companion.WARNING_CONFIRMATION_KEY
 import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowDataClearedBottomSheet
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowDevOptionsAlreadyEnabled
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowDevOptionsEnabled
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowRemainingClicksToDevOptions
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openSupportCenterUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
@@ -55,6 +60,8 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     private val binding by viewBinding(FragmentSettingsBinding::bind)
 
+    private var devOptionsToast: Toast? = null
+
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.settings,
         startIconResId = R.drawable.ic_left_arrow,
@@ -75,7 +82,12 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
         when (event) {
-            ViewEvent.ShowDataClearedBottomSheet -> navigateToDataClearedBottomSheet()
+            ShowDataClearedBottomSheet -> navigateToDataClearedBottomSheet()
+            ShowDevOptionsAlreadyEnabled -> showToast(getString(R.string.developer_options_is_already_enabled))
+            ShowDevOptionsEnabled -> showAlertSuccess(title = getString(R.string.developer_options_enabled))
+            is ShowRemainingClicksToDevOptions -> {
+                showToast(getString(R.string.more_click_to_enable_developer, event.remainingClicks))
+            }
         }
     }
 
@@ -101,7 +113,10 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             privacyPolicyListItem.setOnClickListener { onPrivacyPolicyClick() }
             developerListItem.setOnClickListener { onDeveloperSettingsClick() }
             logoutButton.setOnClickListener { onLogoutClick() }
-            versionCodeTextView.text = getVersionText()
+            versionCodeTextView.apply {
+                text = getVersionText()
+                setOnClickListener { settingsViewModel.enableDeveloperOptions() }
+            }
             passkeysListItem.apply {
                 if (settingsViewModel.isPasskeysFeatureEnabled()) show() else hide()
                 setOnClickListener { onPasskeysClick() }
@@ -152,6 +167,13 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     private fun onSecurityClick() {
         nav(SettingsFragmentDirections.actionSettingsFragmentToSecurityNavigation())
+    }
+
+    private fun showToast(message: String) {
+        devOptionsToast?.cancel()
+        devOptionsToast = Toast.makeText(context, message, Toast.LENGTH_SHORT).also {
+            it.show()
+        }
     }
 
     private fun initDialogSavedStateListener() {

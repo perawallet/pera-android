@@ -25,9 +25,10 @@ import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMes
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.ThemePreference
-import com.algorand.wallet.remoteconfig.domain.usecase.DISCOVER_V5_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +38,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverHomeViewModel @Inject constructor(
@@ -232,7 +232,7 @@ class DiscoverHomeViewModel @Inject constructor(
     }
 
     fun isV5Enabled(): Boolean {
-        return isFeatureToggleEnabled(DISCOVER_V5_TOGGLE)
+        return isFeatureToggleEnabled(FeatureToggle.DISCOVER_V5.key)
     }
 
     fun getAuthorizedAddresses() {

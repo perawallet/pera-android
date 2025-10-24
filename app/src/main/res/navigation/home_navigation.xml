@@ -849,6 +849,9 @@
             android:id="@+id/action_developerSettingsFragment_to_nodeSettingsFragment"
             app:destination="@id/nodeSettingsFragment" />
         <action
+            android:id="@+id/action_developerSettingsFragment_to_developerOptionsFragment"
+            app:destination="@id/developerOptionsFragment" />
+        <action
             android:id="@+id/action_developerSettingsFragment_to_migrationViewerFragment"
             app:destination="@id/migrationViewerFragment" />
         <action
@@ -1666,5 +1669,17 @@
         android:id="@+id/passkeysFragment"
         android:name="com.algorand.android.ui.passkey.view.PasskeysFragment"
         android:label="PasskeysFragment" />
+    <fragment
+        android:id="@+id/developerOptionsFragment"
+        android:name="com.algorand.android.ui.settings.developeroptions.view.DeveloperOptionsFragment"
+        android:label="DeveloperOptionsFragment">
+        <action
+            android:id="@+id/action_developerOptionsFragment_to_overrideFeatureFlagsFragment"
+            app:destination="@id/overrideFeatureFlagsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/overrideFeatureFlagsFragment"
+        android:name="com.algorand.android.ui.settings.developeroptions.featureflags.view.OverrideFeatureFlagsFragment"
+        android:label="OverrideFeatureFlagsFragment" />
 
 </navigation>

@@ -1576,4 +1576,6 @@
     <string name="you_are_about_to_remove_passkey">You are about to remove this passkey. Are you sure you want to proceed?</string>
     <string name="never">Never</string>
     <string name="now">Now</string>
+    <string name="unable_to_change_price_alert">Unable to change price alert settings. Please try again later.</string>
+    <string name="unable_to_update_favorite_status">Unable to update favorite status. Please try again later.</string>
 </resources>

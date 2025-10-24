@@ -31,6 +31,7 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.Swa
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.ui.asset.detail.view.AssetDetailHeader
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel.ViewState.Content
 import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel.ViewState.Idle
@@ -49,7 +50,7 @@ fun AssetHoldingScreen(
     assetDetailHeaderViewModel: AssetDetailHeaderViewModel,
     chartViewModel: AssetLineChartViewModel,
     assetHoldingViewModel: AssetHoldingViewModel,
-    listener: AssetHoldingScreenListener
+    assetDetailViewModel: AssetDetailV2ViewModel
 ) {
     val viewState = assetHoldingViewModel.state.collectAsStateWithLifecycle().value
     when (viewState) {
@@ -72,7 +73,7 @@ fun AssetHoldingScreen(
                     )
                 }
                 item {
-                    QuickActionButtons(viewState, listener)
+                    QuickActionButtons(viewState, assetDetailViewModel)
                 }
             }
         }
@@ -106,25 +107,18 @@ private fun BalanceHistoryChart(
 }
 
 @Composable
-private fun QuickActionButtons(viewState: Content, listener: AssetHoldingScreenListener) {
+private fun QuickActionButtons(viewState: Content, viewModel: AssetDetailV2ViewModel) {
     if (viewState.quickActionItems.isNotEmpty()) {
         Spacer(modifier = Modifier.height(32.dp))
         QuickActionButtonContainer {
             viewState.quickActionItems.forEach {
                 when (it) {
-                    is SwapButton -> SwapQuickActionButton(it.isSelected, listener::onSwapClick)
-                    BuyAlgoButton -> BuySellQuickActionButton(listener::onBuyAlgoClick)
-                    ReceiveButton -> ReceiveQuickActionButton(listener::onReceiveClick)
-                    SendButton -> SendQuickActionButton(listener::onSendClick)
+                    is SwapButton -> SwapQuickActionButton(it.isSelected, viewModel::navigateToSwap)
+                    BuyAlgoButton -> BuySellQuickActionButton(viewModel::navigateToOfframp)
+                    ReceiveButton -> ReceiveQuickActionButton(viewModel::navigateToReceive)
+                    SendButton -> SendQuickActionButton(viewModel::navigateToSend)
                 }
             }
         }
     }
-}
-
-interface AssetHoldingScreenListener {
-    fun onSwapClick()
-    fun onBuyAlgoClick()
-    fun onReceiveClick()
-    fun onSendClick()
 }

@@ -1633,7 +1633,34 @@
                 android:defaultValue="-1L"
                 app:argType="long" />
         </action>
-
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_singleButtonBottomSheetNavigation"
+            app:destination="@id/singleButtonBottomSheetNavigation">
+            <argument
+                android:name="titleAnnotatedString"
+                app:argType="com.algorand.android.models.AnnotatedString" />
+            <argument
+                android:name="descriptionAnnotatedString"
+                android:defaultValue="@null"
+                app:argType="com.algorand.android.models.AnnotatedString"
+                app:nullable="true" />
+            <argument
+                android:name="buttonStringResId"
+                android:defaultValue="@string/close"
+                app:argType="reference" />
+            <argument
+                android:name="drawableResId"
+                android:defaultValue="0"
+                app:argType="reference" />
+            <argument
+                android:name="drawableTintResId"
+                android:defaultValue="0"
+                app:argType="reference" />
+            <argument
+                android:name="shouldDescriptionHasLinkMovementMethod"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/passkeysFragment"

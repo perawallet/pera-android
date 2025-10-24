@@ -24,7 +24,6 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.modules.assets.profile.asaprofile.ui.AsaProfileFragmentDirections
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.DisplayError
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToMeld
@@ -112,7 +111,7 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
                 replacementList = listOf("verification_mail" to PERA_VERIFICATION_MAIL_ADDRESS)
             )
             nav(
-                AsaProfileFragmentDirections.actionAsaProfileFragmentToSingleButtonBottomSheetNavigation(
+                AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToSingleButtonBottomSheetNavigation(
                     titleAnnotatedString = titleAnnotatedString,
                     descriptionAnnotatedString = descriptionAnnotatedString,
                     buttonStringResId = R.string.got_it,

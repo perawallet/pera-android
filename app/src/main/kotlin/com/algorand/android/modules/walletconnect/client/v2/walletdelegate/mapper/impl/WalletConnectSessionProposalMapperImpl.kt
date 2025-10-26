@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.impl
 
+import app.perawallet.walletconnectv2.sign.client.Sign
 import com.algorand.android.modules.walletconnect.client.v2.mapper.WalletConnectV2ProposalIdentifierMapper
 import com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.WalletConnectPeerMetaMapper
 import com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.WalletConnectSessionProposalMapper
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBlockchain
-import com.walletconnect.sign.client.Sign
 
 class WalletConnectSessionProposalMapperImpl(
     private val peerMetaMapper: WalletConnectPeerMetaMapper,

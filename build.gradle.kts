@@ -51,3 +51,19 @@ tasks.register("kover") {
     group = "verification"
     description = "Runs koverHtmlReport for the common-sdk module"
 }
+
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("org.bouncycastle:bcprov-jdk18on:1.82")
+            force("org.bouncycastle:bcpkix-jdk18on:1.82")
+            force("org.bouncycastle:bctls-jdk18on:1.82")
+
+            eachDependency {
+                if (requested.group == "org.bouncycastle" && requested.name == "bcprov-jdk15to18") {
+                    useTarget("org.bouncycastle:bcprov-jdk18on:1.82")
+                }
+            }
+        }
+    }
+}

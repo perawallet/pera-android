@@ -13,6 +13,7 @@
 package com.algorand.android.utils.walletconnect
 
 import android.util.Base64
+import app.perawallet.walletconnectv1.Session
 import com.algorand.android.R
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WCAlgoTransactionRequest
@@ -25,7 +26,6 @@ import com.algorand.android.utils.getTransactionId
 import com.algorand.android.utils.signTx
 import com.google.crypto.tink.subtle.Hex
 import com.google.gson.Gson
-import org.walletconnect.Session
 
 const val WALLET_CONNECT_URL_PREFIX = "wc:"
 private const val FUTURE_TRANSACTION_WARNING_THRESHOLD = 500L

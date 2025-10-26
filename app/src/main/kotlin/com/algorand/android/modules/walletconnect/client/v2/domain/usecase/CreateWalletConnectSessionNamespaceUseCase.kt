@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.domain.usecase
 
+import app.perawallet.walletconnectv2.sign.client.Sign
 import com.algorand.android.modules.walletconnect.client.v2.domain.decider.WalletConnectV2BlockchainDecider
 import com.algorand.android.modules.walletconnect.client.v2.domain.decider.WalletConnectV2ChainIdentifierDecider
 import com.algorand.android.modules.walletconnect.client.v2.domain.decider.WalletConnectV2EventDecider
@@ -23,7 +24,6 @@ import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBloc
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectConnectedAccount
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectConnectedAccountMapper
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectNamespaceMapper
-import com.walletconnect.sign.client.Sign
 import javax.inject.Inject
 
 class CreateWalletConnectSessionNamespaceUseCase @Inject constructor(

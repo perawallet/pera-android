@@ -37,18 +37,17 @@ def getVersionCode = {
     System.getenv("PERA_APP_VERSION_CODE")?.toInteger() ?: libs.versions.android.versionCode.get().toInteger()
 }
 
-def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
+def gitHashProvider = providers.exec {
+    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+}.standardOutput.asText.map { it.trim() }.orElse("unknown")
 
 android {
-    compileSdk libs.versions.android.compileSdk.get().toInteger()
+    compileSdk = libs.versions.android.compileSdk.get().toInteger()
+    ndkVersion = libs.versions.ndk.get()
     defaultConfig {
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "x86_64", "arm64-v8a"
+        }
         versionCode getVersionCode()
         versionName getVersionName()
         applicationId libs.versions.android.namespace.get().toString()
@@ -63,7 +62,7 @@ android {
             }
         }
 
-        buildConfigField "String", "GitHash", "\"${getGitHash()}\""
+        buildConfigField "String", "GitHash", "\"${gitHashProvider.get()}\""
         buildConfigField "String", "APPLICATION_NAME", '"pera"'
         buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
         buildConfigField "String", "PERA_WC_DEEPLINK_PREFIX", '"perawallet-wc://"'
@@ -192,8 +191,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_21.toString()
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_21.majorVersion))
+        }
     }
 
     sourceSets {
@@ -210,6 +211,8 @@ android {
     packagingOptions {
         resources {
             excludes += [
+                    'META-INF/io.netty.versions.properties',
+                    'META-INF/INDEX.LIST',
                     'META-INF/versions/9/OSGI-INF/MANIFEST.MF',
                     'META-INF/DEPENDENCIES.md',
                     'META-INF/NOTICE.md',
@@ -224,15 +227,6 @@ android {
         }
     }
 
-    configurations.configureEach {
-        // exclude duplicate bouncycastle till walletconnect is no longer used, use
-        // common wallet-sdk module versions instead
-        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15to18'
-        exclude group: 'org.bouncycastle', module: 'bcutil-jdk18on'
-        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
-        exclude group: 'org.bouncycastle', module: 'bcutil-jdk15on'
-    }
-
     namespace libs.versions.android.namespace.get().toString()
 }
 
@@ -241,16 +235,20 @@ dependencies {
     implementation project(':common-sdk')
     implementation project(':credentials')
 
+    implementation libs.wallet.connect.v1
+    implementation libs.wallet.connect.v2
+
     implementation libs.installreferrer
 
     implementation libs.pera.compact.decimal.format
-    implementation libs.pera.walletconnect.v1
 
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
 
     implementation libs.material
     implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.material.icons.core
+    implementation libs.androidx.compose.material.icons.extended
 
     implementation libs.flexbox
     implementation libs.appcompat
@@ -312,6 +310,7 @@ dependencies {
 
     implementation libs.retrofit
     implementation libs.converter.gson
+    implementation libs.converter.moshi
     implementation libs.logging.interceptor
 
     // Chart
@@ -321,26 +320,16 @@ dependencies {
 
     // Wallet Connect v1
     implementation libs.java.websocket
-    implementation libs.khex
     implementation libs.moshi.core
     implementation libs.moshi.kotlin
 
-    // Wallet Connect v2
-    implementation(platform(libs.walletconnect.v2))
-    implementation(libs.walletconnect.v2.android.core) {
-        exclude group: 'com.jakewharton.timber', module: 'timber'
-    }
-    implementation libs.walletconnect.v2.sign
-    implementation libs.walletconnect.v2.web3wallet
-
     // ExoPlayer
-    implementation libs.exoplayer
+    implementation libs.androidx.media3.exoplayer
+    implementation libs.androidx.media3.ui
 
     // Credentials
-    implementation libs.xhdwalletapi
     implementation libs.kotlin.bip39
     implementation libs.androidx.credentials
-    implementation files("../libs/dP256.jar")
 
     // Test
     testImplementation(project(":test-utils"))

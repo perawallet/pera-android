@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.algosdk.transaction.mapper
 
+import com.algorand.wallet.algosdk.transaction.model.AccessList
 import com.algorand.wallet.algosdk.transaction.model.ApplicationCallStateSchema
 import com.algorand.wallet.algosdk.transaction.model.AssetConfigParameters
 import com.algorand.wallet.algosdk.transaction.model.RawTransaction
@@ -35,4 +36,8 @@ internal interface AssetConfigParametersMapper {
 
 internal interface ApplicationCallStateSchemaMapper {
     operator fun invoke(payload: RawTransactionApplicationCallStateSchemaPayload?): ApplicationCallStateSchema
+}
+
+internal interface RawAccessListMapper {
+    operator fun invoke(payload: RawAccessListMapper?): AccessList
 }

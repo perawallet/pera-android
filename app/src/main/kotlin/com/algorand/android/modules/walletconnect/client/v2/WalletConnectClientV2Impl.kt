@@ -14,6 +14,8 @@ package com.algorand.android.modules.walletconnect.client.v2
 
 import android.app.Application
 import android.util.Log
+import app.perawallet.walletconnectv2.Core
+import app.perawallet.walletconnectv2.CoreClient
 import com.algorand.android.modules.walletconnect.client.utils.WalletConnectClientErrorMessageUtils.createDappErrorMessage
 import com.algorand.android.modules.walletconnect.client.v2.domain.WalletConnectV2SignClient
 import com.algorand.android.modules.walletconnect.client.v2.domain.model.WalletConnectSessionDto
@@ -40,12 +42,10 @@ import com.algorand.android.modules.walletconnect.domain.model.WalletConnectClie
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectError
 import com.algorand.android.utils.launchIO
 import com.google.gson.Gson
-import com.walletconnect.android.Core
-import com.walletconnect.android.CoreClient
-import javax.inject.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import javax.inject.Named
 
 @Suppress("TooManyFunctions", "LongParameterList")
 class WalletConnectClientV2Impl(

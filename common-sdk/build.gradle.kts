@@ -55,10 +55,10 @@ android {
 dependencies {
 
     api(libs.algosdk)
-    api(libs.algorand.go.mobile)
-    implementation(files("../libs/dP256.jar"))
-    implementation("net.java.dev.jna:jna:5.17.0@aar")
-    implementation(libs.xhdwalletapi)
+    api(files("../libs/algosdk.aar"))
+    api(files("../libs/xhd.aar"))
+    api(files("../libs/dP256.jar"))
+    implementation(libs.jna)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)
     implementation(libs.room.runtime)

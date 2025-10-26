@@ -13,10 +13,10 @@
 package com.algorand.android.modules.walletconnect.client.v1.session
 
 import android.util.Log
+import app.perawallet.walletconnectv1.Session
+import app.perawallet.walletconnectv1.Session.Config
+import app.perawallet.walletconnectv1.impls.WCSession
 import com.algorand.android.utils.sendErrorLog
-import org.walletconnect.Session
-import org.walletconnect.Session.Config
-import org.walletconnect.impls.WCSession
 
 class WalletConnectV1SessionCachedData(
     var sessionId: Long,

@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.walletconnect.mapper
 
+import app.perawallet.walletconnectv1.Session
 import com.algorand.android.modules.walletconnect.client.v1.domain.model.WalletConnectPeerMetaDto
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import javax.inject.Inject
-import org.walletconnect.Session
 
 class WalletConnectPeerMetaMapper @Inject constructor() {
 

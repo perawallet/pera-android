@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.domain.usecase
 
+import app.perawallet.walletconnectv2.sign.client.Sign
 import com.algorand.android.modules.walletconnect.client.v2.domain.WalletConnectV2SignClient
 import com.algorand.android.modules.walletconnect.client.v2.domain.decider.WalletConnectV2ChainIdentifierDecider
 import com.algorand.android.modules.walletconnect.client.v2.mapper.WalletConnectClientV2Mapper
 import com.algorand.android.modules.walletconnect.client.v2.utils.WalletConnectV2CaipUseCase
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.walletconnect.sign.client.Sign
 import javax.inject.Inject
 
 class RemoveAccountFromV2SessionUseCase @Inject constructor(

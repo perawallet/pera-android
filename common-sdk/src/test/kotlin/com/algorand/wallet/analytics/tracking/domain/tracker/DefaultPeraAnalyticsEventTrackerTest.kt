@@ -18,6 +18,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -32,11 +33,13 @@ class DefaultPeraAnalyticsEventTrackerTest {
     private val peraAnalyticsRepository: PeraAnalyticsRepository = mockk(relaxed = true)
     private val getEventNameForSelectedNode: GetEventNameForSelectedNode = mockk()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
     private lateinit var sut: DefaultPeraAnalyticsEventTracker
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
@@ -47,6 +50,7 @@ class DefaultPeraAnalyticsEventTrackerTest {
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @After
     fun tearDown() {
         Dispatchers.resetMain()

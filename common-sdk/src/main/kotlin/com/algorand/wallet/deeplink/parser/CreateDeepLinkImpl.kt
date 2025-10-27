@@ -30,7 +30,8 @@ internal class CreateDeepLinkImpl(
     private val keyRegTransactionDeepLinkBuilder: DeepLinkBuilder,
     private val cardsDeepLinkBuilder: DeepLinkBuilder,
     private val stakingDeepLinkBuilder: DeepLinkBuilder,
-    private val homeDeepLinkBuilder: DeepLinkBuilder
+    private val homeDeepLinkBuilder: DeepLinkBuilder,
+    private val fidoDeepLinkBuilder: DeepLinkBuilder
 ) : CreateDeepLink {
 
     override fun invoke(url: String): DeepLink {
@@ -87,6 +88,10 @@ internal class CreateDeepLinkImpl(
 
             stakingDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 stakingDeepLinkBuilder.createDeepLink(payload)
+            }
+
+            fidoDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                fidoDeepLinkBuilder.createDeepLink(payload)
             }
 
             homeDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {

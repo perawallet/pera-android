@@ -31,6 +31,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
@@ -533,6 +534,14 @@ class MainActivity :
     fun isBasePeraWebViewFragmentActive(): Boolean {
         return (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
             .childFragmentManager.fragments.first() is BasePeraWebViewFragment
+    }
+
+    fun launchIntentWithUri(uri: String) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = uri.toUri()
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        }
     }
 
     fun signAddAssetTransaction(assetActionResult: AssetActionResult) {

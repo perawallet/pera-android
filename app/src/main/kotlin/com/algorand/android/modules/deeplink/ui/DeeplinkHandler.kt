@@ -25,9 +25,9 @@ import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
 import com.algorand.wallet.deeplink.parser.CreateNewDeepLink
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
 class DeeplinkHandler @Inject constructor(
@@ -85,6 +85,7 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.InternalBrowser -> handleInternalBrowserDeepLink(deepLink)
             is DeepLink.Swap -> handleSwapDeepLink(deepLink)
             is DeepLink.Home -> handleHomeDeepLink()
+            is DeepLink.Fido -> handleFidoDeepLink(deepLink)
         }
         if (isDeeplinkHandled) {
             listener?.onDeepLinkHandled()
@@ -245,6 +246,12 @@ class DeeplinkHandler @Inject constructor(
         }
     }
 
+    private fun handleFidoDeepLink(deepLink: DeepLink.Fido): Boolean {
+        return triggerListener {
+            it.onFidoDeepLink(deepLink.uri)
+        }
+    }
+
     private fun triggerListener(action: (Listener) -> Boolean): Boolean {
         return listener?.run(action) ?: false
     }
@@ -293,5 +300,6 @@ class DeeplinkHandler @Inject constructor(
         fun onDeepLinkHandled() = false
         fun onUndefinedDeepLink()
         fun onDeepLinkNotHandled(deepLink: DeepLink)
+        fun onFidoDeepLink(uri: String): Boolean = false
     }
 }

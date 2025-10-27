@@ -15,6 +15,7 @@ package com.algorand.android.models.builder
 
 import com.algorand.android.models.BaseAppCallTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestSenderInfo
@@ -43,7 +44,21 @@ class BaseAppCallTransactionDetailUiBuilder @Inject constructor() :
     }
 
     override fun buildTransactionRequestExtrasInfo(txn: BaseAppCallTransaction): TransactionRequestExtrasInfo {
-        return with(txn) { TransactionRequestExtrasInfo(rawTransaction = rawTransactionPayload, appId = appId) }
+        return with(txn) {
+            TransactionRequestExtrasInfo(
+                rawTransaction = rawTransactionPayload,
+                appId = appId
+            )
+        }
+    }
+
+    override fun buildTransactionRequestExtraFields(txn: BaseAppCallTransaction): TransactionRequestExtraFields? {
+        return with(txn) {
+            TransactionRequestExtraFields(
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
+            )
+        }
     }
 
     private fun buildAppCallCreationSenderInfo(

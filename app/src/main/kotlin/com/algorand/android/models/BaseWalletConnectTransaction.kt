@@ -32,6 +32,10 @@ abstract class BaseWalletConnectTransaction : Parcelable {
     abstract val groupId: String?
     abstract val fee: Long
     abstract val transactionSigner: TransactionSigner?
+
+    abstract val rejectVersion: Long?
+
+    abstract val accessListSize: Int?
     var isRekeyTransaction: Boolean = false
 
     var requestedBlockCurrentRound: Long = -1

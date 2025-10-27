@@ -1585,4 +1585,6 @@
     <string name="developer_options_is_already_enabled">Developer options is already enabled</string>
     <string name="more_click_to_enable_developer">%1$d clicks to enable developer options</string>
     <string name="developer_options_enabled">Developer options enabled</string>
+    <string name="reject_version">Reject Version</string>
+    <string name="access_list">Access List</string>
 </resources>

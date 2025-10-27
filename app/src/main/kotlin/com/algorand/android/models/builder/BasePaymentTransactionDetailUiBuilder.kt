@@ -16,6 +16,7 @@ package com.algorand.android.models.builder
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
@@ -46,7 +47,7 @@ class BasePaymentTransactionDetailUiBuilder @Inject constructor(
                     fullName = ALGO_FULL_NAME,
                     decimals = assetDecimal,
                     verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                        verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
                 ),
                 rekeyToAccountAddress = getFromAddressAsDisplayAddress(
                     getRekeyToAccountAddress()?.decodedAddress.orEmpty()
@@ -79,5 +80,14 @@ class BasePaymentTransactionDetailUiBuilder @Inject constructor(
 
     override fun buildTransactionRequestExtrasInfo(txn: BasePaymentTransaction): TransactionRequestExtrasInfo {
         return TransactionRequestExtrasInfo(rawTransaction = txn.rawTransactionPayload)
+    }
+
+    override fun buildTransactionRequestExtraFields(txn: BasePaymentTransaction): TransactionRequestExtraFields? {
+        return with(txn) {
+            TransactionRequestExtraFields(
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
+            )
+        }
     }
 }

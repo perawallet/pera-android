@@ -32,7 +32,7 @@
             android:layout_height="@dimen/default_toolbar_height"
             android:layout_marginVertical="@dimen/spacing_small" />
 
-         <com.algorand.android.ui.common.walletconnect.WalletConnectSenderCardView
+        <com.algorand.android.ui.common.walletconnect.WalletConnectSenderCardView
             android:id="@+id/senderInfoCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,6 +100,19 @@
 
         <View
             android:id="@+id/amountInfoDivider"
+            style="@style/Divider.Horizontal"
+            android:layout_marginVertical="@dimen/spacing_xxsmall" />
+
+        <com.algorand.android.ui.common.walletconnect.WalletConnectExtraFieldsCardView
+            android:id="@+id/extraFieldsCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xsmall"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/extraFieldsDivider"
             style="@style/Divider.Horizontal"
             android:layout_marginVertical="@dimen/spacing_xxsmall" />
 

@@ -47,12 +47,15 @@ class BaseAssetCreationTransactionMapper @Inject constructor(
             isTransactionWithCloseToAndRekeyed(transactionRequest) -> {
                 createAssetCreationTransactionWithCloseToAndRekey(peerMeta, transactionRequest, rawTxn)
             }
+
             isTransactionWithCloseTo(transactionRequest) -> {
                 createAssetCreationTransactionWithCloseTo(peerMeta, transactionRequest, rawTxn)
             }
+
             isTransactionWithRekeyed(transactionRequest) -> {
                 createAssetCreationTransactionWithRekey(peerMeta, transactionRequest, rawTxn)
             }
+
             else -> {
                 createAssetCreationTransaction(peerMeta, transactionRequest, rawTxn)
             }
@@ -87,7 +90,9 @@ class BaseAssetCreationTransactionMapper @Inject constructor(
                 frozenAddress = createWalletConnectAddress(assetConfigParams?.frozenAddress),
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
                 groupId = groupId,
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -125,7 +130,9 @@ class BaseAssetCreationTransactionMapper @Inject constructor(
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
                 groupId = groupId,
                 warningCount = 1.takeIf { isLocalAccountSigner },
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -164,7 +171,9 @@ class BaseAssetCreationTransactionMapper @Inject constructor(
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
                 groupId = groupId,
                 warningCount = 2.takeIf { isLocalAccountSigner },
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -202,7 +211,9 @@ class BaseAssetCreationTransactionMapper @Inject constructor(
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
                 groupId = groupId,
                 warningCount = 1.takeIf { isLocalAccountSigner },
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }

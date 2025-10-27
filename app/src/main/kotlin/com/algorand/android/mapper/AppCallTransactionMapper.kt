@@ -93,7 +93,9 @@ class AppCallTransactionMapper @Inject constructor(
                 stateHash = generateAddressFromProgram(stateHash),
                 groupId = groupId,
                 warningCount = if (isLocalAccountSigner) 1 else null,
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -124,7 +126,9 @@ class AppCallTransactionMapper @Inject constructor(
                 approvalHash = generateAddressFromProgram(approvalHash),
                 stateHash = generateAddressFromProgram(stateHash),
                 groupId = groupId,
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -158,7 +162,9 @@ class AppCallTransactionMapper @Inject constructor(
                 approvalHash = generateAddressFromProgram(approvalHash),
                 stateHash = generateAddressFromProgram(stateHash),
                 groupId = groupId,
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -189,7 +195,9 @@ class AppCallTransactionMapper @Inject constructor(
                 approvalHash = generateAddressFromProgram(approvalHash),
                 stateHash = generateAddressFromProgram(stateHash),
                 groupId = groupId,
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }

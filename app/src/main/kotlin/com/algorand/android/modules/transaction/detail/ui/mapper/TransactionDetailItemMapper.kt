@@ -251,6 +251,26 @@ class TransactionDetailItemMapper @Inject constructor() {
         )
     }
 
+    fun mapToRejectVersionItem(
+        @StringRes labelTextRes: Int,
+        rejectVersionText: String?
+    ): TransactionDetailItem.ApplicationCallItem.RejectVersionItem {
+        return TransactionDetailItem.ApplicationCallItem.RejectVersionItem(
+            labelTextRes = labelTextRes,
+            rejectVersionText = rejectVersionText
+        )
+    }
+
+    fun mapToAccessListItem(
+        @StringRes labelTextRes: Int,
+        accessListText: String?
+    ): TransactionDetailItem.ApplicationCallItem.AccessListItem {
+        return TransactionDetailItem.ApplicationCallItem.AccessListItem(
+            labelTextRes = labelTextRes,
+            accessListText = accessListText
+        )
+    }
+
     fun mapToApplicationCallAssetInformationItem(
         @PluralsRes labelTextRes: Int,
         assetInformationList: List<ApplicationCallAssetInformation>,

@@ -15,8 +15,8 @@ package com.algorand.android.models
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.walletconnect.WalletConnectAssetDetail
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() {
 
@@ -71,7 +71,9 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val frozenAddress: WalletConnectAddress? = null,
             override val clawbackAddress: WalletConnectAddress? = null,
             override val groupId: String?,
-            override val transactionSigner: TransactionSigner?
+            override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?
         ) : BaseAssetCreationTransaction() {
 
             override val fee: Long
@@ -101,6 +103,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val closeToAddress: WalletConnectAddress
         ) : BaseAssetCreationTransaction() {
 
@@ -133,6 +137,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val rekeyAddress: WalletConnectAddress
         ) : BaseAssetCreationTransaction() {
 
@@ -165,6 +171,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val closeToAddress: WalletConnectAddress,
             val rekeyAddress: WalletConnectAddress
         ) : BaseAssetCreationTransaction() {
@@ -231,7 +239,9 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val frozenAddress: WalletConnectAddress? = null,
             override val clawbackAddress: WalletConnectAddress? = null,
             override val groupId: String?,
-            override val transactionSigner: TransactionSigner?
+            override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?
         ) : BaseAssetReconfigurationTransaction() {
 
             override val fee: Long
@@ -257,6 +267,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val closeToAddress: WalletConnectAddress
         ) : BaseAssetReconfigurationTransaction() {
 
@@ -285,6 +297,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val rekeyAddress: WalletConnectAddress
         ) : BaseAssetReconfigurationTransaction() {
 
@@ -313,6 +327,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val closeToAddress: WalletConnectAddress,
             val rekeyAddress: WalletConnectAddress
         ) : BaseAssetReconfigurationTransaction() {
@@ -372,6 +388,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
         ) : BaseAssetDeletionTransaction() {
 
             override val fee: Long
@@ -394,6 +412,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val warningCount: Int?,
             val closeToAddress: WalletConnectAddress,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
         ) : BaseAssetDeletionTransaction() {
 
             override val fee: Long
@@ -418,6 +438,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val warningCount: Int?,
             val rekeyAddress: WalletConnectAddress,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
         ) : BaseAssetDeletionTransaction() {
 
             override val fee: Long
@@ -441,6 +463,8 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
             override val groupId: String?,
             override val warningCount: Int?,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val closeToAddress: WalletConnectAddress,
             val rekeyAddress: WalletConnectAddress
         ) : BaseAssetDeletionTransaction() {

@@ -7,15 +7,13 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License
+ *  limitations under the License
+ *
  */
 
-package com.algorand.android.modules.transaction.common.domain.model
+package com.algorand.android.models
 
-data class ApplicationCallDTO(
-    val applicationId: Long?,
-    val accounts: List<String>?,
-    val foreignApps: List<Long>?,
-    val foreignAssets: List<Long>?,
-    val onCompletion: OnCompletionDTO?
+data class TransactionRequestExtraFields(
+    val rejectVersion: Long? = null,
+    val accessListSize: Int? = null
 )

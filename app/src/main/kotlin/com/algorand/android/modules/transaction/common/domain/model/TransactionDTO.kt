@@ -32,7 +32,9 @@ data class TransactionDTO(
     val transactionType: TransactionTypeDTO?,
     val innerTransactions: List<TransactionDTO>?,
     val createdAssetIndex: Long?,
-    val keyRegTransactionDTO: KeyRegTransactionDTO?
+    val keyRegTransactionDTO: KeyRegTransactionDTO?,
+    val rejectVersion: Long? = null,
+    val accessListSize: Int? = null
 )
 
 fun TransactionDTO.getReceiverAddress(): String? {

@@ -15,6 +15,7 @@ package com.algorand.android.models.builder
 import com.algorand.android.R
 import com.algorand.android.models.BaseKeyRegTransaction
 import com.algorand.android.models.BaseKeyRegTransaction.BaseOfflineKeyRegTransaction
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestOfflineKeyRegInfo
 import javax.inject.Inject
 
@@ -28,5 +29,16 @@ class BaseOfflineKeyRegTransactionDetailUiBuilder @Inject constructor() :
         return TransactionRequestOfflineKeyRegInfo(
             participationStatusResId = if (txn.nonParticipation) R.string.not_participating else R.string.participating
         )
+    }
+
+    override fun buildTransactionRequestExtraFields(
+        txn: BaseKeyRegTransaction
+    ): TransactionRequestExtraFields? {
+        return with(txn) {
+            TransactionRequestExtraFields(
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
+            )
+        }
     }
 }

@@ -17,6 +17,7 @@ import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.U
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestSenderInfo
@@ -63,6 +64,17 @@ class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
         return when (txn) {
             is BaseAssetTransferTransaction.AssetOptInTransaction -> buildAssetOptInExtrasInfo(txn)
             else -> buildGeneralExtrasInfo(txn)
+        }
+    }
+
+    override fun buildTransactionRequestExtraFields(
+        txn: BaseAssetTransferTransaction
+    ): TransactionRequestExtraFields? {
+        return with(txn) {
+            TransactionRequestExtraFields(
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
+            )
         }
     }
 

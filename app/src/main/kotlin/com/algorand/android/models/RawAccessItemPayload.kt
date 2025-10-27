@@ -10,12 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.transaction.common.domain.model
+package com.algorand.android.models
 
-data class ApplicationCallDTO(
-    val applicationId: Long?,
-    val accounts: List<String>?,
-    val foreignApps: List<Long>?,
-    val foreignAssets: List<Long>?,
-    val onCompletion: OnCompletionDTO?
-)
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class RawAccessItemPayload(
+    @SerializedName("d") val address: String?,
+    @SerializedName("s") val asset: String?,
+    @SerializedName("p") val app: String?
+) : Parcelable

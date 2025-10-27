@@ -15,8 +15,8 @@ package com.algorand.android.models
 import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
 
@@ -45,7 +45,9 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val fromAccount: WalletConnectAccount?,
         override val toAccount: WalletConnectAccount?,
         override val groupId: String?,
-        override val transactionSigner: TransactionSigner?
+        override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
     ) : BasePaymentTransaction() {
 
         override fun getAllAddressPublicKeysTxnIncludes(): List<WalletConnectAddress> {
@@ -71,6 +73,8 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val groupId: String?,
         override val warningCount: Int?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val closeToAddress: WalletConnectAddress
     ) : BasePaymentTransaction() {
 
@@ -99,6 +103,8 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val groupId: String?,
         override val warningCount: Int?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val rekeyToAddress: WalletConnectAddress
     ) : BasePaymentTransaction() {
 
@@ -127,6 +133,8 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val groupId: String?,
         override val warningCount: Int?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val closeToAddress: WalletConnectAddress,
         val rekeyToAddress: WalletConnectAddress
     ) : BasePaymentTransaction() {

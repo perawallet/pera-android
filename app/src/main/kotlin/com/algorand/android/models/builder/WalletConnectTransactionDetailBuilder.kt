@@ -47,6 +47,5 @@ interface WalletConnectTransactionDetailBuilder<T : BaseWalletConnectTransaction
 
     fun buildTransactionRequestExtraFields(txn: T): TransactionRequestExtraFields?
 
-
     fun buildTransactionRequestAmountInfo(txn: T): TransactionRequestAmountInfo
 }

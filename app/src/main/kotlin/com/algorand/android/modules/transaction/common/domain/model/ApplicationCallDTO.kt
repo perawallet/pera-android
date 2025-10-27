@@ -17,5 +17,5 @@ data class ApplicationCallDTO(
     val accounts: List<String>?,
     val foreignApps: List<Long>?,
     val foreignAssets: List<Long>?,
-    val onCompletion: OnCompletionDTO?,
+    val onCompletion: OnCompletionDTO?
 )

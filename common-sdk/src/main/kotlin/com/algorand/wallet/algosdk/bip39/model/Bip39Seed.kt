@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.algosdk.bip39.model
 
-data class Bip39Seed internal constructor(val value: ByteArray) {
+data class Bip39Seed(val value: ByteArray) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -14,15 +14,15 @@ package com.algorand.android.modules.walletconnect.client.v2.utils
 
 import android.app.Application
 import android.util.Log
+import app.perawallet.walletconnectv2.Core
+import app.perawallet.walletconnectv2.CoreClient
+import app.perawallet.walletconnectv2.relay.ConnectionType
+import app.perawallet.walletconnectv2.sign.client.Sign
+import app.perawallet.walletconnectv2.web3.wallet.client.Wallet
+import app.perawallet.walletconnectv2.web3.wallet.client.Web3Wallet
 import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
 import com.algorand.android.modules.walletconnect.client.v2.domain.WalletConnectV2SignClient
 import com.algorand.android.utils.walletconnect.peermeta.WalletConnectPeraPeerMeta
-import com.walletconnect.android.Core
-import com.walletconnect.android.CoreClient
-import com.walletconnect.android.relay.ConnectionType
-import com.walletconnect.sign.client.Sign
-import com.walletconnect.web3.wallet.client.Wallet
-import com.walletconnect.web3.wallet.client.Web3Wallet
 import javax.inject.Inject
 
 class InitializeWalletConnectV2ClientUseCase @Inject constructor(

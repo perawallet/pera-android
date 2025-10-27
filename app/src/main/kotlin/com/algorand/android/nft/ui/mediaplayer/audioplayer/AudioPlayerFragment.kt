@@ -14,10 +14,12 @@ package com.algorand.android.nft.ui.mediaplayer.audioplayer
 
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.viewModels
+import androidx.media3.common.util.UnstableApi
 import com.algorand.android.R
 import com.algorand.android.nft.ui.mediaplayer.MediaPlayerFragment
 import dagger.hilt.android.AndroidEntryPoint
 
+@UnstableApi
 @AndroidEntryPoint
 class AudioPlayerFragment : MediaPlayerFragment() {
 

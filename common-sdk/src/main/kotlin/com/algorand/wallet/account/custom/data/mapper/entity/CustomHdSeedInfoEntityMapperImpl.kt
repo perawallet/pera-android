@@ -18,12 +18,12 @@ import javax.inject.Inject
 
 internal class CustomHdSeedInfoEntityMapperImpl @Inject constructor() :
     CustomHdSeedInfoEntityMapper {
-    override fun invoke(info: CustomHdSeedInfo): CustomHdSeedInfoEntity {
+    override fun invoke(entropyInformation: CustomHdSeedInfo): CustomHdSeedInfoEntity {
         return CustomHdSeedInfoEntity(
-            seedId = info.seedId,
-            entropyCustomName = info.entropyCustomName,
-            orderIndex = info.orderIndex,
-            isBackedUp = info.isBackedUp
+            seedId = entropyInformation.seedId,
+            entropyCustomName = entropyInformation.entropyCustomName,
+            orderIndex = entropyInformation.orderIndex,
+            isBackedUp = entropyInformation.isBackedUp
         )
     }
 }

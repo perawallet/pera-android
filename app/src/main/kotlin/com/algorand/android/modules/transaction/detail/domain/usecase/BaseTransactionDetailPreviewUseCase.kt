@@ -60,6 +60,34 @@ open class BaseTransactionDetailPreviewUseCase(
         }
     }
 
+    protected fun addRejectVersionIfExist(
+        transactionList: MutableList<TransactionDetailItem>,
+        rejectVersion: Long?
+    ) {
+        if (rejectVersion != null) {
+            transactionList.add(
+                transactionDetailItemMapper.mapToRejectVersionItem(
+                    labelTextRes = R.string.reject_version,
+                    rejectVersionText = rejectVersion.toString()
+                )
+            )
+        }
+    }
+
+    protected fun addAccessListIfExist(
+        transactionList: MutableList<TransactionDetailItem>,
+        accessListSize: Int?
+    ) {
+        if (accessListSize != null) {
+            transactionList.add(
+                transactionDetailItemMapper.mapToAccessListItem(
+                    labelTextRes = R.string.access_list,
+                    accessListText = accessListSize.toString()
+                )
+            )
+        }
+    }
+
     protected fun createTransactionAmount(
         transactionSign: TransactionSign,
         transactionAmount: BigInteger,
@@ -154,6 +182,7 @@ open class BaseTransactionDetailPreviewUseCase(
                     }
                 }
             }
+
             is BaseTransactionDetail.ApplicationCallTransaction,
             is BaseTransactionDetail.AssetConfigurationTransaction,
             is BaseTransactionDetail.UndefinedTransaction,
@@ -185,7 +214,7 @@ open class BaseTransactionDetailPreviewUseCase(
 
     protected fun isTransactionCloseTo(baseTransactionDetail: BaseTransactionDetail): Boolean {
         return baseTransactionDetail.closeToAccountAddress != null &&
-            baseTransactionDetail.transactionCloseAmount != null
+                baseTransactionDetail.transactionCloseAmount != null
     }
 
     protected fun getRequiredTransactionIdLabelTextResId(isInnerTransaction: Boolean): Int {

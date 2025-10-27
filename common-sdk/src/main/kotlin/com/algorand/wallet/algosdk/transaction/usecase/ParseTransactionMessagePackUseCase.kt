@@ -28,7 +28,7 @@ internal class ParseTransactionMessagePackUseCase @Inject constructor(
     override fun invoke(txnByteArray: ByteArray): RawTransaction? {
         return try {
             tryParsing(txnByteArray)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

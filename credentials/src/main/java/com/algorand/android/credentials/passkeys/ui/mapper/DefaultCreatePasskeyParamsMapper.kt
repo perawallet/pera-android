@@ -20,7 +20,7 @@ import com.algorand.android.credentials.passkeys.domain.model.PublicKeyCredentia
 import com.algorand.android.credentials.passkeys.ui.viewmodel.CreatePasskeyViewModel.CreatePasskeyParams
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 internal class DefaultCreatePasskeyParamsMapper @Inject constructor() : CreatePasskeyParamsMapper {
 
     override fun invoke(

@@ -29,7 +29,7 @@ import com.algorand.android.credentials.passkeys.validator.AppInfoValidationResu
 import com.algorand.android.credentials.passkeys.validator.AppInfoValidationResult.Success
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 internal class DefaultCreatePasskeyIntentValidator @Inject constructor(
     private val appInfoValidator: CallingAppInfoValidator,
     private val createPasskeyParamsMapper: CreatePasskeyParamsMapper,

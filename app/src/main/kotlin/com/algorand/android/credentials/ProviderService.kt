@@ -39,7 +39,7 @@ import java.io.IOException
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicInteger
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @AndroidEntryPoint
 class ProviderService : CredentialProviderService() {
     @Inject
@@ -56,20 +56,24 @@ class ProviderService : CredentialProviderService() {
         option: BeginGetPublicKeyCredentialOption,
         pendingIntent: PendingIntent
     ): PublicKeyCredentialEntry {
-        return PublicKeyCredentialEntry.Builder(
+        var entry = PublicKeyCredentialEntry.Builder(
             applicationContext,
             passkey.username,
             pendingIntent,
             option,
         )
             .setDisplayName(passkey.userHandle)
-            .setBiometricPromptData(
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            entry = entry.setBiometricPromptData(
                 BiometricPromptData(
                     cryptoObject = null,
                     allowedAuthenticators = allowedAuthenticator,
                 ),
             )
-            .build()
+        }
+
+        return entry.build()
     }
 
     /**
@@ -81,7 +85,7 @@ class ProviderService : CredentialProviderService() {
      * @return A newly constructed credential entry of type CreateEntry.
      */
     private fun createEntry(accountName: String, passkeyCount: Int, intent: PendingIntent): CreateEntry {
-        return CreateEntry.Builder(
+        var entry = CreateEntry.Builder(
             accountName, intent
         )
             .setLastUsedTime(
@@ -91,12 +95,17 @@ class ProviderService : CredentialProviderService() {
             .setTotalCredentialCount(passkeyCount).setDescription(
                 CREDENTIAL_DESCRIPTION,
             )
-            .setBiometricPromptData(
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            entry = entry.setBiometricPromptData(
                 BiometricPromptData(
                     cryptoObject = null,
                     allowedAuthenticators = allowedAuthenticator,
                 ),
-            ).build()
+            )
+        }
+
+        return entry.build()
     }
 
     /**
@@ -162,7 +171,7 @@ class ProviderService : CredentialProviderService() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     private suspend fun populatePasskeyData(
         option: BeginGetPublicKeyCredentialOption,
         responseBuilder: Builder,

@@ -73,7 +73,7 @@ const val DEFAULT_BYTE_LENGTH = 32
  * - `passkeyRepository`: Provides operations for managing stored passkey and site data.
  * - `passkeyManager`: Handles cryptographic operations such as passkey signing and derivation.
  */
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @AndroidEntryPoint
 class CreatePasskeyActivity : FragmentActivity() {
     @Inject

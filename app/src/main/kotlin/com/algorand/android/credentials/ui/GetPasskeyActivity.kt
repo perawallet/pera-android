@@ -50,7 +50,7 @@ import java.security.Security
  * @property passkeyRepository The repository interface for accessing passkey-related data and operations.
  * @property passkeyManager The manager facilitating passkey operations and handling the assertion process.
  */
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @AndroidEntryPoint
 class GetPasskeyActivity : FragmentActivity() {
     @Inject

@@ -149,26 +149,18 @@ class PasskeyProviderService : CredentialProviderService() {
     private fun createPublicKeyCredentialEntry(entry: GetPasskeyCredentialEntry): PublicKeyCredentialEntry {
         val extras = Bundle().apply { putString(CRED_ID_KEY, entry.credentialId) }
         val intent = createNewPendingIntent(GET_PASSKEY_INTENT, extras)
-        if (Build.VERSION.SDK_INT >= 35) {
-            return PublicKeyCredentialEntry.Builder(
+        var entry = PublicKeyCredentialEntry.Builder(
                 applicationContext,
                 entry.username.orEmpty(),
                 intent,
                 entry.option
-            )
-                .setDisplayName(entry.userDisplayName)
-                .setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
-                .build()
-        } else {
-            return PublicKeyCredentialEntry.Builder(
-                applicationContext,
-                entry.username.orEmpty(),
-                intent,
-                entry.option
-            )
-                .setDisplayName(entry.userDisplayName)
-                .build()
+            ).setDisplayName(entry.userDisplayName)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            entry = entry.setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
         }
+
+        return entry.build()
     }
 
     override fun onClearCredentialStateRequest(
@@ -184,22 +176,17 @@ class PasskeyProviderService : CredentialProviderService() {
 
     private fun getCreateEntry(accountName: String, passkeyCount: Int, intent: PendingIntent): CreateEntry {
         val description = resources.getString(R.string.your_credential_will_be_saved)
-        if (Build.VERSION.SDK_INT >= 35) {
-            return CreateEntry.Builder(accountName, intent)
-                .setLastUsedTime(Instant.ofEpochMilli(0L))
-                .setPublicKeyCredentialCount(passkeyCount)
-                .setTotalCredentialCount(passkeyCount)
-                .setDescription(description)
-                .setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
-                .build()
-        } else {
-            return CreateEntry.Builder(accountName, intent)
-                .setLastUsedTime(Instant.ofEpochMilli(0L))
-                .setPublicKeyCredentialCount(passkeyCount)
-                .setTotalCredentialCount(passkeyCount)
-                .setDescription(description)
-                .build()
+        var entry = CreateEntry.Builder(accountName, intent)
+            .setLastUsedTime(Instant.ofEpochMilli(0L))
+            .setPublicKeyCredentialCount(passkeyCount)
+            .setTotalCredentialCount(passkeyCount)
+            .setDescription(description)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            entry = entry.setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
         }
+
+        return entry .build()
     }
 
     private fun createNewPendingIntent(action: String, extra: Bundle? = null): PendingIntent {

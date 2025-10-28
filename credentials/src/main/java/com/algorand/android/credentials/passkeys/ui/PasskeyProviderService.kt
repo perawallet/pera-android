@@ -186,7 +186,7 @@ class PasskeyProviderService : CredentialProviderService() {
             entry = entry.setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
         }
 
-        return entry .build()
+        return entry.build()
     }
 
     private fun createNewPendingIntent(action: String, extra: Bundle? = null): PendingIntent {

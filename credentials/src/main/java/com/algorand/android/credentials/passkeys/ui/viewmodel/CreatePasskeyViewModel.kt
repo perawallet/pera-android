@@ -38,7 +38,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @HiltViewModel
 internal class CreatePasskeyViewModel @Inject constructor(
     private val eventDelegate: EventDelegate<ViewEvent>,

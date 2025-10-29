@@ -25,6 +25,6 @@ internal class FeatureToggleRepositoryImpl @Inject constructor(
     }
 
     override fun isFeatureEnabled(featureName: String): Boolean {
-        return firebaseRemoteConfigService.getBoolean(featureName)
+        return true //return firebaseRemoteConfigService.getBoolean(featureName)
     }
 }

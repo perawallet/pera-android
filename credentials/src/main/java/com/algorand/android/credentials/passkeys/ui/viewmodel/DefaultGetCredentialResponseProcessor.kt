@@ -15,12 +15,14 @@ package com.algorand.android.credentials.passkeys.ui.viewmodel
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.PublicKeyCredential
 import com.algorand.android.credentials.passkeys.domain.Bip39SignManager
+import com.algorand.android.credentials.passkeys.domain.WebAuthnUtils
 import com.algorand.android.credentials.passkeys.domain.model.AuthenticatorAssertionResponse
 import com.algorand.android.credentials.passkeys.domain.model.AuthenticatorFlags
 import com.algorand.android.credentials.passkeys.domain.model.FidoPublicKeyCredential
 import com.algorand.android.credentials.passkeys.domain.usecase.SetPasskeyLastUsedTime
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewModel.GetCredentialsParams
 import com.algorand.wallet.utils.date.TimeProvider
+import java.util.logging.Logger
 import javax.inject.Inject
 
 internal class DefaultGetCredentialResponseProcessor @Inject constructor(
@@ -36,8 +38,10 @@ internal class DefaultGetCredentialResponseProcessor @Inject constructor(
         }
 
         val authAssertionResponse = getAuthAssertionResponse(params, callingOrigin).apply {
+            // QR code routes seem to have no / but mobile browser embedded routes seem to add the trailing /
+            val origin = if (params.origin.endsWith("/")) params.origin.substring(0, params.origin.length - 1) else params.origin
             signature = bip39SignManager
-                .sign(params.bip44Address, params.origin, params.username, dataToSign())
+                .sign(params.bip44Address, origin, params.username, dataToSign())
                 ?: byteArrayOf()
         }
         setPasskeyLastUsedTime(params.credId, timeProvider.getCurrentTimeMillis())

@@ -334,8 +334,8 @@
 
 -dontwarn com.sun.jna.Native
 
--keep class foundation.algorand.xhdwalletapi.** { *; }
--keep interface foundation.algorand.xhdwalletapi.** { *; }
+-keep class app.perawallet.xhdwalletapi.** { *; }
+-keep interface app.perawallet.xhdwalletapi.** { *; }
 # ---------------- END JNA -------------------
 
 
@@ -435,3 +435,6 @@
 # Vert.x HAProxy usage (server transport)
 -dontwarn io.vertx.core.net.impl.HAProxyMessageCompletionHandler
 -dontwarn io.vertx.core.http.impl.HttpServerWorker
+
+-keep,includedescriptorclasses class net.sqlcipher.** { *; }
+-keep,includedescriptorclasses interface net.sqlcipher.** { *; }

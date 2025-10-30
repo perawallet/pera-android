@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.algosdk.sdk.Uint64
+import app.perawallet.gomobilesdk.sdk.Uint64
 import java.math.BigInteger
 
 internal object AlgoSdkNumberExtensions {

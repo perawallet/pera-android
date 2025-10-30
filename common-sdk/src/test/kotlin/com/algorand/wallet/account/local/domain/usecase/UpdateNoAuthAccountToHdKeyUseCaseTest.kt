@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
+import app.perawallet.xhdwalletapi.Bip32DerivationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import io.mockk.coVerify
 import io.mockk.mockk
 import org.junit.Test

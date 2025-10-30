@@ -24,7 +24,7 @@ internal class GetAlgoToUsdConversionRateUseCase @Inject constructor(
 
     override fun invoke(): BigDecimal {
         val usdToAlgoConversionRate = getUsdToAlgoConversionRate()
-        return if (usdToAlgoConversionRate.isZero()) {
+        return if (!usdToAlgoConversionRate.isZero()) {
             BigDecimal.ONE.divide(usdToAlgoConversionRate, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
         } else {
             BigDecimal.ZERO

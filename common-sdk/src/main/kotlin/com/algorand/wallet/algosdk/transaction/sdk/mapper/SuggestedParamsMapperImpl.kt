@@ -13,7 +13,7 @@
 package com.algorand.wallet.algosdk.transaction.sdk.mapper
 
 import android.util.Base64
-import com.algorand.algosdk.sdk.SuggestedParams
+import app.perawallet.gomobilesdk.sdk.SuggestedParams
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams.TransactionFee.FeeType
 import com.algorand.wallet.encryption.domain.manager.Base64Manager

@@ -54,6 +54,7 @@ tasks.register("kover") {
 
 subprojects {
     configurations.all {
+        exclude(group = "net.java.dev.jna", module = "jna")
         resolutionStrategy {
             force("org.bouncycastle:bcprov-jdk18on:1.82")
             force("org.bouncycastle:bcpkix-jdk18on:1.82")

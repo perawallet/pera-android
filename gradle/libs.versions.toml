@@ -79,7 +79,7 @@ room = "2.8.3"
 runner = "1.7.0"
 tink = "1.19.0"
 peraWalletConnect = "1.0.8"
-xhdwalletapi = "1.2.0"
+xhdwalletapi = "1.2.1"
 zxing = "4.3.0"
 credentials = "1.5.0"
 
@@ -168,7 +168,7 @@ zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", ve
 algosdk = { module = "com.algorand:algosdk", version.ref = "algoSdk" }
 algorand-go-mobile = { group = "app.perawallet.gomobilesdk", name = "algosdk-android", version.ref = "algoGoMobilesdk" }
 pera-compact-decimal-format = { group = "io.github.perawallet", name = "peracompactdecimalformat", version.ref = "peraCompactDecimalFormat" }
-xhdwalletapi = { module = "app.perawallet.xhdwalletapi:xhdwalletapi-android", version.ref = "xhdwalletapi" }
+xhdwalletapi = { module = "app.perawallet:xhdwalletapi-android", version.ref = "xhdwalletapi" }
 kotlin-bip39 = { module = "cash.z.ecc.android:kotlin-bip39", version.ref = "bip39" }
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
 

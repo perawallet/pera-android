@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.algosdk.domain.usecase
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.utils.toSuggestedParams
 import com.algorand.android.utils.toUint64

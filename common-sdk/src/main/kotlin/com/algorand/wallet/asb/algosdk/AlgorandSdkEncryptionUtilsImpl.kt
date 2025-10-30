@@ -13,7 +13,7 @@
 package com.algorand.wallet.asb.algosdk
 
 import android.util.Base64.NO_WRAP
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import javax.inject.Inject
 

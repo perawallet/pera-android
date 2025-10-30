@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.0"
 algoSdk = "2.10.1"
+algoGoMobilesdk = "1.0.0"
 kjson = "9.9"
 ndk = "29.0.14206865"
 android-application = "8.13.0"
@@ -77,7 +78,7 @@ review = "2.0.2"
 room = "2.8.3"
 runner = "1.7.0"
 tink = "1.19.0"
-peraWalletConnect = "1.0.6"
+peraWalletConnect = "1.0.8"
 xhdwalletapi = "1.2.0"
 zxing = "4.3.0"
 credentials = "1.5.0"
@@ -159,14 +160,15 @@ mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "
 # Sensors - Bluetooth / Camera
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 ble = { module = "no.nordicsemi.android:ble", version.ref = "ble" }
-wallet-connect-v1 = { module = "com.github.perawallet.PeraWalletConnect:wallet-connect-v1", version.ref = "peraWalletConnect" }
-wallet-connect-v2 = { module = "com.github.perawallet.PeraWalletConnect:wallet-connect-v2", version.ref = "peraWalletConnect" }
+wallet-connect-v1 = { module = "app.perawallet:pera-wallet-connect-v1", version.ref = "peraWalletConnect" }
+wallet-connect-v2 = { module = "app.perawallet:pera-wallet-connect-v2", version.ref = "peraWalletConnect" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing" }
 
 # Wallet SDK - Security / Blockchain / Crypto
 algosdk = { module = "com.algorand:algosdk", version.ref = "algoSdk" }
+algorand-go-mobile = { group = "app.perawallet.gomobilesdk", name = "algosdk-android", version.ref = "algoGoMobilesdk" }
 pera-compact-decimal-format = { group = "io.github.perawallet", name = "peracompactdecimalformat", version.ref = "peraCompactDecimalFormat" }
-xhdwalletapi = { module = "foundation.algorand.xhdwalletapi:xhdwalletapi-android", version.ref = "xhdwalletapi" }
+xhdwalletapi = { module = "app.perawallet.xhdwalletapi:xhdwalletapi-android", version.ref = "xhdwalletapi" }
 kotlin-bip39 = { module = "cash.z.ecc.android:kotlin-bip39", version.ref = "bip39" }
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
 

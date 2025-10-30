@@ -13,9 +13,9 @@
 package com.algorand.android
 
 import android.util.Base64
-import com.algorand.algosdk.sdk.Sdk
-import com.algorand.algosdk.sdk.SuggestedParams
-import com.algorand.algosdk.sdk.Uint64
+import app.perawallet.gomobilesdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.SuggestedParams
+import app.perawallet.gomobilesdk.sdk.Uint64
 import org.junit.Test
 
 class AlgorandSDKTest {

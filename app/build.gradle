@@ -237,6 +237,7 @@ dependencies {
 
     implementation libs.wallet.connect.v1
     implementation libs.wallet.connect.v2
+    implementation libs.algorand.go.mobile
 
     implementation libs.installreferrer
 

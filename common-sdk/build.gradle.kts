@@ -58,6 +58,7 @@ dependencies {
 
     api(libs.algosdk)
     api(files("../libs/dP256.jar"))
+    api("net.java.dev.jna:jna:5.18.1@aar")
     
     implementation(libs.algorand.go.mobile)
     implementation(libs.xhdwalletapi)

@@ -15,7 +15,7 @@ package com.algorand.wallet.asset.domain.util
 import java.math.BigDecimal
 
 object AssetConstants {
-    const val ALGO_ID = -7L
+    const val ALGO_ID = 0L
     const val DEFAULT_ASSET_DECIMAL = 0
     const val ALGO_FULL_NAME = "Algo"
     const val ALGO_SHORT_NAME = "ALGO"

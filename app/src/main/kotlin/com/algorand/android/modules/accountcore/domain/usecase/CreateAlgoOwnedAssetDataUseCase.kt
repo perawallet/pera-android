@@ -17,6 +17,8 @@ import com.algorand.android.modules.accountcore.domain.mapper.AlgoAssetDataMappe
 import com.algorand.android.modules.parity.domain.usecase.GetAlgoToUsdConversionRate
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryAlgoParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryAlgoParityValue
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -25,14 +27,17 @@ internal class CreateAlgoOwnedAssetDataUseCase @Inject constructor(
     private val getPrimaryAlgoParityValue: GetPrimaryAlgoParityValue,
     private val getSecondaryAlgoParityValue: GetSecondaryAlgoParityValue,
     private val getAlgoToUsdConversionRate: GetAlgoToUsdConversionRate,
+    private val getAssetDetail: GetAssetDetail
 ) : CreateAlgoOwnedAssetData {
 
     override suspend fun invoke(amount: BigInteger): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData {
+        val algoDetail = getAssetDetail(ALGO_ID)
         return algoAssetDataMapper(
-            amount,
-            getPrimaryAlgoParityValue(amount),
-            getSecondaryAlgoParityValue(amount),
-            usdValue = getAlgoToUsdConversionRate()
+            amount = amount,
+            parityValueInSelectedCurrency = getPrimaryAlgoParityValue(amount),
+            parityValueInSecondaryCurrency = getSecondaryAlgoParityValue(amount),
+            usdValue = getAlgoToUsdConversionRate(),
+            algoDetail = algoDetail
         )
     }
 }

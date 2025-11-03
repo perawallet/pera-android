@@ -13,7 +13,6 @@
 package com.algorand.wallet.swap.data.mapper
 
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.swap.data.model.AvailableSwapAssetResponse
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import javax.inject.Inject
@@ -24,7 +23,7 @@ internal class DefaultAvailableSwapAssetMapper @Inject constructor(
 
     override fun invoke(response: AvailableSwapAssetResponse): AvailableSwapAsset? {
         return AvailableSwapAsset(
-            assetId = getSafeAssetIdForResponse(response.assetId) ?: return null,
+            assetId = response.assetId ?: return null,
             name = response.assetName,
             unitName = response.assetName,
             logoUrl = response.logoUrl,

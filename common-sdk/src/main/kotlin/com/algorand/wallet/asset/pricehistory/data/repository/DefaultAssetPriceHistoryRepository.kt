@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.asset.pricehistory.data.repository
 
-import com.algorand.wallet.asset.data.utils.AssetIdQueryNormalizer
 import com.algorand.wallet.asset.pricehistory.data.mapper.AssetPriceHistoryMapper
 import com.algorand.wallet.asset.pricehistory.data.service.AssetPriceHistoryApiService
 import com.algorand.wallet.asset.pricehistory.domain.model.AssetPriceHistory
@@ -43,8 +42,7 @@ internal class DefaultAssetPriceHistoryRepository @Inject constructor(
         assetId: Long,
         period: WalletWealthPeriod
     ): PeraResult<List<AssetPriceHistory>> {
-        val id = AssetIdQueryNormalizer.getSafeAssetIdForRequest(assetId)
-        val response = historyApiService.getAssetPriceHistory(id, walletWealthPeriodRequestMapper(period))
+        val response = historyApiService.getAssetPriceHistory(assetId, walletWealthPeriodRequestMapper(period))
         val assetPriceHistoryList = response.mapNotNull { assetPriceHistoryMapper(it) }
         return PeraResult.Success(assetPriceHistoryList)
     }

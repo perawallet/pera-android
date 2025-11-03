@@ -33,7 +33,6 @@ import com.algorand.android.discover.home.ui.mapper.DiscoverAssetItemMapper
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
 import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.Event
@@ -199,8 +198,8 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         val detailActionRequest = getDetailActionRequestFromJson(data)
 
         val buySellActionRequest = buySellActionRequestMapper.mapToBuySellActionRequest(
-            assetInId = getSafeAssetIdForResponse(detailActionRequest?.assetIn?.toLongOrNull()) ?: -1,
-            assetOutId = getSafeAssetIdForResponse(detailActionRequest?.assetOut?.toLongOrNull()) ?: -1,
+            assetInId = detailActionRequest?.assetIn?.toLongOrNull() ?: -1,
+            assetOutId = detailActionRequest?.assetOut?.toLongOrNull() ?: -1,
             detailAction = detailActionRequest?.action
         )
         var swapNavDirection: NavDirections? = null
@@ -252,8 +251,8 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         detailActionRequest?.let {
             logDetailAction(
                 discoverActionRequest = it,
-                assetIn = getSafeAssetIdForResponse(it.assetIn?.toLongOrNull()) ?: -1,
-                assetOut = getSafeAssetIdForResponse(it.assetOut?.toLongOrNull()) ?: -1
+                assetIn = it.assetIn?.toLongOrNull() ?: -1,
+                assetOut = it.assetOut?.toLongOrNull() ?: -1
             )
         }
     }

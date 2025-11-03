@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.swap.data.mapper
 
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
 import com.algorand.wallet.swap.data.model.TopSwapPairsResponse
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
@@ -35,7 +34,7 @@ internal class DefaultTopSwapPairsMapper @Inject constructor() : TopSwapPairsMap
         if (response == null) return null
         return with(response) {
             TopSwapPairs.AssetDetail(
-                id = getSafeAssetIdForResponse(assetId) ?: return null,
+                id = assetId ?: return null,
                 logoUrl = logoUrl,
                 shortName = shortName
             )

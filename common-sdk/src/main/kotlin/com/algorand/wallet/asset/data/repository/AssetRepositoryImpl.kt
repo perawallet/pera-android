@@ -32,7 +32,6 @@ import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
@@ -108,7 +107,9 @@ internal class AssetRepositoryImpl @Inject constructor(
     ): PeraResult<Unit> {
         return try {
             withContext(coroutineDispatcher) {
-                val chunkedAssetIds = assetIds.toSet().chunked(MAX_ASSET_FETCH_COUNT)
+                val chunkedAssetIds = mutableListOf<Long>(ALGO_ID).apply {
+                    addAll(assetIds)
+                }.toSet().chunked(MAX_ASSET_FETCH_COUNT)
                 chunkedAssetIds.map {
                     async {
                         val response = assetDetailApi.getAssetsByIds(it, deviceId, includeDeleted)
@@ -129,16 +130,14 @@ internal class AssetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAssetDetail(assetId: Long): AssetDetail? {
-        return if (assetId == ALGO_ID) {
-            algoAssetDetailMapper()
-        } else {
-            assetDetailCacheHelper.getAssetDetail(assetId)
-        }
+        val cachedAssetDetail = assetDetailCacheHelper.getAssetDetail(assetId)
+        if (cachedAssetDetail == null && assetId == ALGO_ID) return algoAssetDetailMapper()
+        return cachedAssetDetail
     }
 
     override suspend fun getAssetsDetail(assetIds: List<Long>): List<AssetDetail> {
         val assetDetails = assetDetailCacheHelper.getAssetsDetail(assetIds)
-        return if (assetIds.any { it == ALGO_ID }) {
+        return if (assetIds.any { it == ALGO_ID } && assetDetails.any { it.id != ALGO_ID }) {
             assetDetails + algoAssetDetailMapper()
         } else {
             assetDetails
@@ -258,7 +257,7 @@ internal class AssetRepositoryImpl @Inject constructor(
     override suspend fun setFavoriteStatus(assetId: Long, deviceId: String, isFavorite: Boolean): PeraResult<Unit> {
         return try {
             val body = SetAssetFavoriteStatusRequestBody(deviceId.toLong(), isFavorite)
-            assetStatusApiService.setAssetFavoriteStatus(getSafeAssetIdForRequest(assetId), body)
+            assetStatusApiService.setAssetFavoriteStatus(assetId, body)
             assetDetailDao.updateFavoriteStatus(assetId, isFavorite)
             PeraResult.Success(Unit)
         } catch (e: Exception) {
@@ -269,7 +268,7 @@ internal class AssetRepositoryImpl @Inject constructor(
     override suspend fun setPriceAlertStatus(assetId: Long, deviceId: String, enabled: Boolean): PeraResult<Unit> {
         return try {
             val body = SetAssetPriceAlertStatusRequestBody(deviceId.toLong(), enabled)
-            assetStatusApiService.setAssetPriceAlertStatus(getSafeAssetIdForRequest(assetId), body)
+            assetStatusApiService.setAssetPriceAlertStatus(assetId, body)
             assetDetailDao.updatePriceAlertStatus(assetId, enabled)
             PeraResult.Success(Unit)
         } catch (e: Exception) {

@@ -1039,6 +1039,16 @@
                 app:argType="string" />
         </action>
         <action
+            android:id="@+id/action_accountDetailFragment_to_assetDetailV2Fragment"
+            app:destination="@id/assetDetailV2Fragment">
+            <argument
+                android:name="assetId"
+                app:argType="long" />
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
+        <action
             android:id="@+id/action_accountDetailFragment_to_viewPassphraseNavigation"
             app:destination="@id/viewPassphraseNavigation">
             <argument

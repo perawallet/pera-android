@@ -14,7 +14,6 @@ package com.algorand.android.modules.swap.assetswap.ui.usecase
 
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.modules.swap.assetswap.domain.usecase.GetPeraFeeUseCase
 import com.algorand.android.modules.swap.utils.swapFeePadding
 import com.algorand.android.utils.ALGO_DECIMALS
@@ -145,8 +144,7 @@ class GetPercentageCalculatedBalanceForSwapUseCase @Inject constructor(
 
     private suspend fun getPeraFeeDeductedAmount(amount: BigDecimal): DataResource<BigDecimal> {
         var result: DataResource<BigDecimal>? = null
-        val safeAssetId = getSafeAssetIdForRequest(ALGO_ID)
-        getPeraFeeUseCase.getPeraFee(safeAssetId, amount, ALGO_DECIMALS).useSuspended(
+        getPeraFeeUseCase.getPeraFee(ALGO_ID, amount, ALGO_DECIMALS).useSuspended(
             onSuccess = {
                 val feeDeductedAmount = amount.minus(it)
                 result = if (feeDeductedAmount isLesserThan BigDecimal.ZERO) {

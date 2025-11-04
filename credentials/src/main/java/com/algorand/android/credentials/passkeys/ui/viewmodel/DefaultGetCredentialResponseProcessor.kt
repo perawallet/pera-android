@@ -36,10 +36,8 @@ internal class DefaultGetCredentialResponseProcessor @Inject constructor(
         }
 
         val authAssertionResponse = getAuthAssertionResponse(params, callingOrigin).apply {
-            // QR code routes seem to have no / but mobile browser embedded routes seem to add the trailing /
-    val origin = params.origin.removeSuffix("/")
             signature = bip39SignManager
-                .sign(params.bip44Address, origin, params.username, dataToSign())
+                .sign(params.bip44Address, params.origin, params.username, dataToSign())
                 ?: byteArrayOf()
         }
         setPasskeyLastUsedTime(params.credId, timeProvider.getCurrentTimeMillis())

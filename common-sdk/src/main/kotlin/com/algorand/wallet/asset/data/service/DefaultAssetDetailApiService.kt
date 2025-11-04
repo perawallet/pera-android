@@ -34,7 +34,7 @@ internal class DefaultAssetDetailApiService @Inject constructor(
     ): Pagination<AssetResponse> {
         val safeDeviceId = deviceId?.toLongOrNull()
         val assetIdsQueryString = assetIds.toQueryString()
-        return if (safeDeviceId == null || !isFeatureToggleEnabled(FeatureToggle.ASSET_DETAIL_V2.key)) {
+        return if (safeDeviceId == null || !isFeatureToggleEnabled(FeatureToggle.ASSET_DETAIL_V2_ENDPOINTS.key)) {
             apiService.getAssetsByIds(assetIdsQueryString, includeDeleted)
         } else {
             try {
@@ -49,7 +49,7 @@ internal class DefaultAssetDetailApiService @Inject constructor(
 
     override suspend fun getAssetDetail(assetId: Long, deviceId: String?): AssetResponse {
         val safeDeviceId = deviceId?.toLongOrNull()
-        return if (safeDeviceId == null || !isFeatureToggleEnabled(FeatureToggle.ASSET_DETAIL_V2.key)) {
+        return if (safeDeviceId == null || !isFeatureToggleEnabled(FeatureToggle.ASSET_DETAIL_V2_ENDPOINTS.key)) {
             apiService.getAssetDetail(assetId)
         } else {
             try {

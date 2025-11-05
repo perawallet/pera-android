@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk.mapper
 
-import com.algorand.algosdk.sdk.SuggestedParams
+import app.perawallet.gomobilesdk.sdk.SuggestedParams
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
 
 internal interface SuggestedParamsMapper {

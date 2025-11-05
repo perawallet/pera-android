@@ -73,12 +73,12 @@ class WalletConnectV2ClientWalletDelegate @Inject constructor(
         walletDelegateListener?.onSessionUpdate(sessionUpdate)
     }
 
-    override fun onProposalExpired(p0: Sign.Model.ExpiredProposal) {
+    override fun onProposalExpired(proposal: Sign.Model.ExpiredProposal) {
         // TODO("Not yet implemented")
     }
 
-    override fun onRequestExpired(p0: Sign.Model.ExpiredRequest) {
-        //  TODO("Not yet implemented")
+    override fun onRequestExpired(request: Sign.Model.ExpiredRequest) {
+        //  TODO"Not yet implemented"
     }
 
     override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest, verifyContext: Sign.Model.VerifyContext) {

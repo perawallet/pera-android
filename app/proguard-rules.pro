@@ -334,8 +334,9 @@
 
 -dontwarn com.sun.jna.Native
 
--keep class foundation.algorand.xhdwalletapi.** { *; }
--keep interface foundation.algorand.xhdwalletapi.** { *; }
+-keep class app.perawallet.xhdwalletapi.** { *; }
+-keep interface app.perawallet.xhdwalletapi.** { *; }
+
 # ---------------- END JNA -------------------
 
 
@@ -422,7 +423,7 @@
 -dontwarn reactor.blockhound.**
 -dontwarn reactor.blockhound.integration.**
 -dontwarn io.netty.util.internal.Hidden$NettyBlockHoundIntegration
--keep class io.netty.util.internal.Hidden$NettyBlockHoundIntegration { *; }
+-dontwarn java.awt.geom.AffineTransform
 
 # Protobuf Nano (not used on Android, optional in Netty)
 -dontwarn com.google.protobuf.nano.**
@@ -435,3 +436,6 @@
 # Vert.x HAProxy usage (server transport)
 -dontwarn io.vertx.core.net.impl.HAProxyMessageCompletionHandler
 -dontwarn io.vertx.core.http.impl.HttpServerWorker
+
+-keep,includedescriptorclasses class net.sqlcipher.** { *; }
+-keep,includedescriptorclasses interface net.sqlcipher.** { *; }

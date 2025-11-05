@@ -15,6 +15,7 @@ package com.algorand.android.credentials.passkeys.di
 
 import android.content.Context
 import androidx.room.Room
+import app.perawallet.deterministicP256.DeterministicP256
 import com.algorand.android.credentials.passkeys.data.database.PasskeyDatabase
 import com.algorand.android.credentials.passkeys.data.mapper.DefaultPasskeyEntityMapper
 import com.algorand.android.credentials.passkeys.data.mapper.DefaultPasskeyMapper
@@ -49,7 +50,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import foundation.algorand.deterministicP256.DeterministicP256
 import javax.inject.Singleton
 
 @Module

@@ -336,6 +336,7 @@
 
 -keep class app.perawallet.xhdwalletapi.** { *; }
 -keep interface app.perawallet.xhdwalletapi.** { *; }
+
 # ---------------- END JNA -------------------
 
 
@@ -422,7 +423,7 @@
 -dontwarn reactor.blockhound.**
 -dontwarn reactor.blockhound.integration.**
 -dontwarn io.netty.util.internal.Hidden$NettyBlockHoundIntegration
--keep class io.netty.util.internal.Hidden$NettyBlockHoundIntegration { *; }
+-dontwarn java.awt.geom.AffineTransform
 
 # Protobuf Nano (not used on Android, optional in Netty)
 -dontwarn com.google.protobuf.nano.**

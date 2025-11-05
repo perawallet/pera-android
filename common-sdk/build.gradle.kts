@@ -55,13 +55,11 @@ android {
 }
 
 dependencies {
-
     api(libs.algosdk)
-    api(files("../libs/dP256.jar"))
-    
+    api(libs.p256)
+
     implementation(libs.algorand.go.mobile)
     implementation(libs.xhdwalletapi)
-    implementation(libs.kjson)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)
     implementation(libs.room.runtime)

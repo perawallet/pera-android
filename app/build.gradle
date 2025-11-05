@@ -88,7 +88,7 @@ android {
     buildTypes {
         release {
             // signingConfig signingConfigs.releaseLocal //enable this to sign the release
-            multiDexEnabled true
+            multiDexEnabled = true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [enableCrashReporting: "true", enableFirebasePerformanceLogcat: "false"]
@@ -97,7 +97,7 @@ android {
         debug {
             debuggable true
             applicationIdSuffix ".debug"
-            multiDexEnabled true
+            multiDexEnabled = true
             minifyEnabled false
             manifestPlaceholders = [enableCrashReporting: "false", enableFirebasePerformanceLogcat: "true"]
             resValue("string", "app_name", "Pera (Dev)")
@@ -185,7 +185,7 @@ android {
     }
 
     compileOptions {
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled = true
 
         targetCompatibility = JavaVersion.VERSION_21
         sourceCompatibility = JavaVersion.VERSION_21
@@ -203,7 +203,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding true
+        viewBinding = true
         buildConfig = true
         compose = true
     }
@@ -220,6 +220,16 @@ android {
                     'META-INF/LICENSE.txt',
                     'META-INF/NOTICE.txt',
                     'META-INF/ASL2.0.md',
+
+                    'mac/**',
+                    'darwin/**',
+                    'osx/**',
+                    'linux/**',
+                    'windows/**',
+                    'windows64/**',
+
+                    'lib/**/libsodium.dylib',
+                    'lib/**/libsodium.dll',
                     'lib/libnarcissus-macos-64.dylib',
                     'lib/libnarcissus-win-32.dll',
                     'lib/libnarcissus-win-64.dll'
@@ -227,7 +237,7 @@ android {
         }
     }
 
-    namespace libs.versions.android.namespace.get().toString()
+    namespace = libs.versions.android.namespace.get().toString()
 }
 
 dependencies {

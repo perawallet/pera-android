@@ -336,6 +336,7 @@
 
 -keep class app.perawallet.xhdwalletapi.** { *; }
 -keep interface app.perawallet.xhdwalletapi.** { *; }
+
 # ---------------- END JNA -------------------
 
 

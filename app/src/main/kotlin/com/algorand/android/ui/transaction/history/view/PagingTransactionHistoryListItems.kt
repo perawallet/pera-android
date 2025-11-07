@@ -57,6 +57,7 @@ import com.algorand.android.ui.transaction.history.model.TransactionHistoryItem.
 import com.algorand.android.ui.transaction.history.model.TransactionHistoryItem.Separator
 import com.algorand.android.ui.transaction.history.model.TransactionHistoryItem.Swap
 import com.algorand.android.utils.toShortenedAddress
+import java.math.BigDecimal.ZERO
 
 fun LazyListScope.pagingTransactionHistoryListItems(historyItems: LazyPagingItems<TransactionHistoryItem>?) {
     if (historyItems != null) {
@@ -155,7 +156,7 @@ private fun SendItem(item: Send, onClick: () -> Unit) {
         primaryText = stringResource(R.string.send),
         secondaryText = item.receiverAddress.toShortenedAddress(),
         amountText = item.formattedAmount,
-        amountTextColor = PeraTheme.colors.helper.negative,
+        amountTextColor = if (item.amount > ZERO) PeraTheme.colors.helper.negative else PeraTheme.colors.text.main,
         onClick = onClick
     )
 }

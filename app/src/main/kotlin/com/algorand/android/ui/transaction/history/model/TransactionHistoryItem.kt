@@ -12,6 +12,8 @@
 
 package com.algorand.android.ui.transaction.history.model
 
+import java.math.BigDecimal
+
 sealed interface TransactionHistoryItem {
 
     data class Date(val date: String) : TransactionHistoryItem
@@ -24,6 +26,7 @@ sealed interface TransactionHistoryItem {
 
     data class Send(
         val id: String,
+        val amount: BigDecimal,
         val receiverAddress: String,
         val formattedAmount: String
     ) : TransactionHistoryItem

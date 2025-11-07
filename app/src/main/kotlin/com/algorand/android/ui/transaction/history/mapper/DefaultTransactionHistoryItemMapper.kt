@@ -58,7 +58,8 @@ class DefaultTransactionHistoryItemMapper @Inject constructor() : TransactionHis
                 }
                 is PaymentType.Send -> {
                     val formattedAmount = formatSendAmount(ALGO_ID, payment.amount, Currency.ALGO.symbol)
-                    TransactionHistoryItem.Send(id, (payment.type as PaymentType.Send).receiverAddress, formattedAmount)
+                    val receiverAddress = (payment.type as PaymentType.Send).receiverAddress
+                    TransactionHistoryItem.Send(id, payment.amount, receiverAddress, formattedAmount)
                 }
             }
         }
@@ -97,6 +98,7 @@ class DefaultTransactionHistoryItemMapper @Inject constructor() : TransactionHis
             is AssetTransferType.Send -> {
                 TransactionHistoryItem.Send(
                     id = transactionHistory.id,
+                    amount = assetTransferType.amount,
                     receiverAddress = assetTransferType.receiverAddress,
                     formattedAmount = formatSendAmount(assetId, assetTransferType.amount, unitName)
                 )

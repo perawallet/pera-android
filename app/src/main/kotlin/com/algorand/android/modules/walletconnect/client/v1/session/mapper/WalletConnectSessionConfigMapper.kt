@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.walletconnect.client.v1.session.mapper
 
+import app.perawallet.walletconnectv1.Session
 import com.algorand.android.modules.walletconnect.client.v1.domain.model.WalletConnectSessionMetaDto
 import javax.inject.Inject
-import org.walletconnect.Session
 
 class WalletConnectSessionConfigMapper @Inject constructor() {
 

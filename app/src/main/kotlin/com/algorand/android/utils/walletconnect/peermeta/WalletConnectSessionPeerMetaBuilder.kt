@@ -12,8 +12,8 @@
 
 package com.algorand.android.utils.walletconnect.peermeta
 
+import app.perawallet.walletconnectv1.Session
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import org.walletconnect.Session
 
 object WalletConnectSessionPeerMetaBuilder {
 

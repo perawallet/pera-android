@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.sessionexpiration
 
+import app.perawallet.walletconnectv2.Core
+import app.perawallet.walletconnectv2.CoreClient
 import com.algorand.android.modules.walletconnect.client.v2.domain.WalletConnectV2SignClient
 import com.algorand.android.modules.walletconnect.client.v2.mapper.WalletConnectClientV2Mapper
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.utils.getCurrentTimeAsSec
-import com.walletconnect.android.Core
-import com.walletconnect.android.CoreClient
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine

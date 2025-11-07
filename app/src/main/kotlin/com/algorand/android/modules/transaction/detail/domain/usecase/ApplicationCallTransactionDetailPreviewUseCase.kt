@@ -32,8 +32,8 @@ import com.algorand.android.usecase.GetActiveNodeUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
-import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
@@ -146,6 +146,8 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
                         transactionId = transactionId
                     )
                 )
+                addRejectVersionIfExist(this@apply, rejectVersion)
+                addAccessListIfExist(this@apply, accessListSize)
                 add(TransactionDetailItem.DividerItem)
                 addNoteIfExist(this@apply, noteInBase64)
                 add(createTransactionChipGroupItem(id.orEmpty()))

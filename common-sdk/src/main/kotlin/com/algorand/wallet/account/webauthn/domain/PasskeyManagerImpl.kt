@@ -1,9 +1,9 @@
 package com.algorand.wallet.account.webauthn.domain
 
+import app.perawallet.deterministicP256.DeterministicP256
 import cash.z.ecc.android.bip39.Mnemonics
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import foundation.algorand.deterministicP256.DeterministicP256
 import kotlinx.coroutines.runBlocking
 import java.security.KeyPair
 import java.security.MessageDigest
@@ -28,6 +28,7 @@ class PasskeyManagerImpl @Inject internal constructor(
     override fun signPasskey(seedId: Int, origin: String, userHandle: String, payload: ByteArray): ByteArray {
         return xPasskey.signWithDomainSpecificKeyPair(derivePasskey(seedId, origin, userHandle), payload)
     }
+
     /**
      * Generates a credential identifier by hashing the public key associated with the given key pair.
      *
@@ -47,6 +48,7 @@ class PasskeyManagerImpl @Inject internal constructor(
 
         return credentialId
     }
+
     /**
      * Generates a domain-specific key pair based on the provided origin and user handle.
      *

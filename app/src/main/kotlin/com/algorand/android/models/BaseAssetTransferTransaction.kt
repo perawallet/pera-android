@@ -16,8 +16,8 @@ import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.walletconnect.WalletConnectAssetDetail
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), WalletConnectAssetDetail {
 
@@ -48,6 +48,8 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val toAccount: WalletConnectAccount?,
         override val groupId: String?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val assetAmount: BigInteger
     ) : BaseAssetTransferTransaction() {
 
@@ -80,6 +82,8 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val groupId: String?,
         override val warningCount: Int?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val assetCloseToAddress: WalletConnectAddress,
         val assetAmount: BigInteger
     ) : BaseAssetTransferTransaction() {
@@ -115,6 +119,8 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val groupId: String?,
         override val warningCount: Int?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val rekeyAddress: WalletConnectAddress,
         val assetAmount: BigInteger
     ) : BaseAssetTransferTransaction() {
@@ -150,6 +156,8 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val groupId: String?,
         override val warningCount: Int?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val rekeyAddress: WalletConnectAddress,
         val assetAmount: BigInteger,
         val closeAddress: WalletConnectAddress
@@ -187,7 +195,9 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val transactionSigner: TransactionSigner?,
-        override val groupId: String?
+        override val groupId: String?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
     ) : BaseAssetTransferTransaction() {
 
         override val fee: Long

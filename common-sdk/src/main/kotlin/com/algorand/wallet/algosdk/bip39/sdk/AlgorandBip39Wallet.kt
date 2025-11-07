@@ -12,6 +12,11 @@
 
 package com.algorand.wallet.algosdk.bip39.sdk
 
+import app.perawallet.xhdwalletapi.Bip32DerivationType
+import app.perawallet.xhdwalletapi.KeyContext
+import app.perawallet.xhdwalletapi.XHDWalletAPIAndroid
+import app.perawallet.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
+import app.perawallet.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
@@ -23,11 +28,6 @@ import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressDerivationType
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import foundation.algorand.xhdwalletapi.Bip32DerivationType
-import foundation.algorand.xhdwalletapi.KeyContext
-import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
-import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
-import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
 
 internal class AlgorandBip39Wallet internal constructor(private val entropy: Bip39Entropy) : Bip39Wallet {
 

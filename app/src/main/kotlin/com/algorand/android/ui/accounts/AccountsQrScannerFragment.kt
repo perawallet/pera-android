@@ -190,4 +190,11 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
             mainActivity?.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
         }
     }
+
+    override fun onFidoDeepLink(uri: String): Boolean {
+        return true.also {
+            navBack()
+            mainActivity?.launchIntentWithUri(uri)
+        }
+    }
 }

@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.impl
 
+import app.perawallet.walletconnectv2.sign.client.Sign
 import com.algorand.android.modules.walletconnect.client.v2.mapper.WalletConnectV2SessionIdentifierMapper
 import com.algorand.android.modules.walletconnect.client.v2.mapper.WalletConnectV2SessionMetaMapper
 import com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.WalletConnectSessionSettleSuccessMapper
@@ -19,7 +20,6 @@ import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBlockchain
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectExpiryMapper
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectSessionDetailMapper
-import com.walletconnect.sign.client.Sign
 
 class WalletConnectSessionSettleSuccessMapperImpl(
     private val sessionIdentifierMapper: WalletConnectV2SessionIdentifierMapper,

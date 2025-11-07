@@ -13,7 +13,7 @@
 package com.algorand.android.modules.parity.utils
 
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
-import com.algorand.android.utils.isEqualTo
+import com.algorand.android.utils.isZero
 import com.algorand.android.utils.toBigDecimalOrZero
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -27,7 +27,7 @@ object ParityUtils {
     ): BigDecimal {
         val assetOutAmountAsBigDecimal = assetAmount.toBigDecimalOrZero()
 
-        if (assetOutAmountAsBigDecimal.isEqualTo(BigDecimal.ZERO)) {
+        if (assetOutAmountAsBigDecimal.isZero()) {
             return BigDecimal.ZERO
         }
 

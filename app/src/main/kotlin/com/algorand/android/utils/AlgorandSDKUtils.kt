@@ -15,12 +15,12 @@
 package com.algorand.android.utils
 
 import android.util.Base64
-import com.algorand.algosdk.sdk.BytesArray
-import com.algorand.algosdk.sdk.Encryption
-import com.algorand.algosdk.sdk.Sdk
-import com.algorand.algosdk.sdk.SuggestedParams
-import com.algorand.algosdk.sdk.TransactionSignerArray
-import com.algorand.algosdk.sdk.Uint64
+import app.perawallet.gomobilesdk.sdk.BytesArray
+import app.perawallet.gomobilesdk.sdk.Encryption
+import app.perawallet.gomobilesdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.SuggestedParams
+import app.perawallet.gomobilesdk.sdk.TransactionSignerArray
+import app.perawallet.gomobilesdk.sdk.Uint64
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.TransactionParams
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID

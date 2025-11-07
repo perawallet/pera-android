@@ -47,7 +47,9 @@ sealed class TransactionDetailItem : RecyclerListItem {
         INNER_APPLICATION_CALL_TRANSACTION_DETAIL_ITEM,
         ASSET_INFORMATION_ITEM,
         ONLINE_KEY_REG_ITEM,
-        OFFLINE_KEY_REG_ITEM
+        OFFLINE_KEY_REG_ITEM,
+        REJECTION_VERSION_ITEM,
+        ACCESS_LIST_ITEM,
     }
 
     abstract val itemType: ItemType
@@ -145,8 +147,8 @@ sealed class TransactionDetailItem : RecyclerListItem {
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is StandardInnerTransactionItem &&
-                    transactionAmount == other.transactionAmount &&
-                    accountAddress == other.accountAddress
+                        transactionAmount == other.transactionAmount &&
+                        accountAddress == other.accountAddress
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -228,6 +230,40 @@ sealed class TransactionDetailItem : RecyclerListItem {
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
                 return other is OnCompletionItem && this == other
+            }
+        }
+
+        data class RejectVersionItem(
+            @StringRes
+            val labelTextRes: Int,
+            val rejectVersionText: String?
+        ) : TransactionDetailItem() {
+
+            override val itemType: ItemType = ItemType.REJECTION_VERSION_ITEM
+
+            override fun areItemsTheSame(other: RecyclerListItem): Boolean {
+                return other is RejectVersionItem && rejectVersionText == other.rejectVersionText
+            }
+
+            override fun areContentsTheSame(other: RecyclerListItem): Boolean {
+                return other is RejectVersionItem && this == other
+            }
+        }
+
+        data class AccessListItem(
+            @StringRes
+            val labelTextRes: Int,
+            val accessListText: String?
+        ) : TransactionDetailItem() {
+
+            override val itemType: ItemType = ItemType.ACCESS_LIST_ITEM
+
+            override fun areItemsTheSame(other: RecyclerListItem): Boolean {
+                return other is AccessListItem && accessListText == other.accessListText
+            }
+
+            override fun areContentsTheSame(other: RecyclerListItem): Boolean {
+                return other is AccessListItem && this == other
             }
         }
 

@@ -184,11 +184,11 @@
 
 
 # ---------------- BEGIN WALLET CONNECT -------------------
--keep class org.walletconnect.** { *; }
--keep interface org.walletconnect.** { *; }
+-keep class app.perawallet.walletconnectv1.** { *; }
+-keep interface app.perawallet.walletconnectv1.** { *; }
 
--keep class com.walletconnect.** { *; }
--keep interface com.walletconnect.** { *; }
+-keep class app.perawallet.walletconnectv2.** { *; }
+-keep interface app.perawallet.walletconnectv2.** { *; }
 # ---------------- END WALLET CONNECT -------------------
 
 
@@ -334,8 +334,9 @@
 
 -dontwarn com.sun.jna.Native
 
--keep class foundation.algorand.xhdwalletapi.** { *; }
--keep interface foundation.algorand.xhdwalletapi.** { *; }
+-keep class app.perawallet.xhdwalletapi.** { *; }
+-keep interface app.perawallet.xhdwalletapi.** { *; }
+
 # ---------------- END JNA -------------------
 
 
@@ -376,3 +377,65 @@
 
 -dontwarn java.lang.reflect.AnnotatedType
 -dontwarn sun.nio.ch.**
+
+# Compression codecs (optional native libs)
+-dontwarn com.aayushatharva.brotli4j.**
+-dontwarn com.github.luben.zstd.**
+-dontwarn com.jcraft.jzlib.**
+-dontwarn com.ning.compress.**
+-dontwarn lzma.sdk.**
+-dontwarn net.jpountz.**
+-dontwarn net.jpountz.xxhash.**
+
+# Logging backends
+-dontwarn org.apache.log4j.**
+-dontwarn org.apache.logging.log4j.**
+
+# Jetty ALPN/NPN (server-side only)
+-dontwarn org.eclipse.jetty.**
+
+# Marshalling/OSGi/Beans classes (server-side)
+-dontwarn org.jboss.marshalling.**
+-dontwarn org.osgi.**
+-dontwarn java.beans.**
+-dontwarn java.rmi.**
+-dontwarn javax.tools.**
+
+# Netty native transport (Epoll, KQueue, tcnative)
+-dontwarn io.netty.channel.epoll.**
+-dontwarn io.netty.channel.kqueue.**
+-dontwarn io.netty.internal.tcnative.**
+
+# Vert.x codegen and annotations (compile-time only)
+-dontwarn io.vertx.codegen.**
+-dontwarn io.vertx.core.impl.transports.**
+-dontwarn io.vertx.core.logging.**
+
+# GraalVM / Substitutions (not used on Android)
+-dontwarn com.oracle.svm.**
+
+# Identity connectors / Groovy (not used)
+-dontwarn org.identityconnectors.**
+-dontwarn groovy.**
+
+# Other optional utilities
+-dontwarn sun.security.x509.**
+-dontwarn reactor.blockhound.**
+-dontwarn reactor.blockhound.integration.**
+-dontwarn io.netty.util.internal.Hidden$NettyBlockHoundIntegration
+-dontwarn java.awt.geom.AffineTransform
+
+# Protobuf Nano (not used on Android, optional in Netty)
+-dontwarn com.google.protobuf.nano.**
+-keep class com.google.protobuf.nano.** { *; }
+
+# HAProxy codec (Netty server-side only)
+-dontwarn io.netty.handler.codec.haproxy.**
+-keep class io.netty.handler.codec.haproxy.** { *; }
+
+# Vert.x HAProxy usage (server transport)
+-dontwarn io.vertx.core.net.impl.HAProxyMessageCompletionHandler
+-dontwarn io.vertx.core.http.impl.HttpServerWorker
+
+-keep,includedescriptorclasses class net.sqlcipher.** { *; }
+-keep,includedescriptorclasses interface net.sqlcipher.** { *; }

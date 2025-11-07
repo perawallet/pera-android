@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.impl
 
+import app.perawallet.walletconnectv2.sign.client.Sign
 import com.algorand.android.modules.walletconnect.client.v2.mapper.WalletConnectV2SessionIdentifierMapper
 import com.algorand.android.modules.walletconnect.client.v2.utils.WalletConnectClientV2Utils
 import com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.WalletConnectSessionUpdateMapper
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.walletconnect.sign.client.Sign
 
 class WalletConnectSessionUpdateMapperImpl(
     private val sessionIdentifierMapper: WalletConnectV2SessionIdentifierMapper

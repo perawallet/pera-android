@@ -21,6 +21,7 @@ import com.algorand.android.models.BaseKeyRegTransaction.BaseOnlineKeyRegTransac
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestOfflineKeyRegInfo
@@ -59,6 +60,10 @@ class WalletConnectTransactionDetailUiDecider @Inject constructor(
 
     fun buildTransactionRequestExtrasInfo(txn: BaseWalletConnectTransaction): TransactionRequestExtrasInfo {
         return getTxnTypeUiBuilder(txn).buildTransactionRequestExtrasInfo(txn)
+    }
+
+    fun buildTransactionRequestExtraFields(txn: BaseWalletConnectTransaction): TransactionRequestExtraFields? {
+        return getTxnTypeUiBuilder(txn).buildTransactionRequestExtraFields(txn)
     }
 
     fun buildTransactionRequestAmountInfo(txn: BaseWalletConnectTransaction): TransactionRequestAmountInfo {

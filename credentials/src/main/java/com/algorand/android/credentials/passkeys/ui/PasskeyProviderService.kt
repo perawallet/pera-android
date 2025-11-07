@@ -54,7 +54,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @AndroidEntryPoint
 class PasskeyProviderService : CredentialProviderService() {
 
@@ -148,10 +148,18 @@ class PasskeyProviderService : CredentialProviderService() {
     private fun createPublicKeyCredentialEntry(entry: GetPasskeyCredentialEntry): PublicKeyCredentialEntry {
         val extras = Bundle().apply { putString(CRED_ID_KEY, entry.credentialId) }
         val intent = createNewPendingIntent(GET_PASSKEY_INTENT, extras)
-        return PublicKeyCredentialEntry.Builder(applicationContext, entry.username.orEmpty(), intent, entry.option)
-            .setDisplayName(entry.userDisplayName)
-            .setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
-            .build()
+        var entry = PublicKeyCredentialEntry.Builder(
+                applicationContext,
+                entry.username.orEmpty(),
+                intent,
+                entry.option
+            ).setDisplayName(entry.userDisplayName)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            entry = entry.setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
+        }
+
+        return entry.build()
     }
 
     override fun onClearCredentialStateRequest(
@@ -167,13 +175,17 @@ class PasskeyProviderService : CredentialProviderService() {
 
     private fun getCreateEntry(accountName: String, passkeyCount: Int, intent: PendingIntent): CreateEntry {
         val description = resources.getString(R.string.your_credential_will_be_saved)
-        return CreateEntry.Builder(accountName, intent)
+        var entry = CreateEntry.Builder(accountName, intent)
             .setLastUsedTime(Instant.ofEpochMilli(0L))
             .setPublicKeyCredentialCount(passkeyCount)
             .setTotalCredentialCount(passkeyCount)
             .setDescription(description)
-            .setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
-            .build()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            entry = entry.setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
+        }
+
+        return entry.build()
     }
 
     private fun createNewPendingIntent(action: String, extra: Bundle? = null): PendingIntent {

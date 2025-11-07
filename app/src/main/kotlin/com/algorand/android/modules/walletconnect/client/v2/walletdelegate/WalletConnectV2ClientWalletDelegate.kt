@@ -12,6 +12,9 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.walletdelegate
 
+import app.perawallet.walletconnectv2.Core
+import app.perawallet.walletconnectv2.sign.client.Sign
+import app.perawallet.walletconnectv2.sign.client.SignClient
 import com.algorand.android.modules.walletconnect.client.v2.domain.usecase.CreateWalletConnectProposalNamespaceUseCase
 import com.algorand.android.modules.walletconnect.client.v2.domain.usecase.CreateWalletConnectSessionNamespaceUseCase
 import com.algorand.android.modules.walletconnect.client.v2.domain.usecase.GetWalletConnectV2LaunchBackBrowserGroupUseCase
@@ -19,13 +22,10 @@ import com.algorand.android.modules.walletconnect.client.v2.utils.WalletConnectW
 import com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.WalletConnectV2ClientWalletDelegateMapperFacade
 import com.algorand.android.utils.getCurrentTimeAsSec
 import com.algorand.android.utils.launchIO
-import com.walletconnect.android.Core
-import com.walletconnect.sign.client.Sign
-import com.walletconnect.sign.client.SignClient
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import javax.inject.Inject
 
 class WalletConnectV2ClientWalletDelegate @Inject constructor(
     private val walletDelegateMapperFacade: WalletConnectV2ClientWalletDelegateMapperFacade,
@@ -71,6 +71,14 @@ class WalletConnectV2ClientWalletDelegate @Inject constructor(
     override fun onSessionUpdateResponse(sessionUpdateResponse: Sign.Model.SessionUpdateResponse) {
         val sessionUpdate = walletDelegateMapperFacade.mapToSessionUpdate(sessionUpdateResponse)
         walletDelegateListener?.onSessionUpdate(sessionUpdate)
+    }
+
+    override fun onProposalExpired(proposal: Sign.Model.ExpiredProposal) {
+        // TODO("Not yet implemented")
+    }
+
+    override fun onRequestExpired(request: Sign.Model.ExpiredRequest) {
+        //  TODO"Not yet implemented"
     }
 
     override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest, verifyContext: Sign.Model.VerifyContext) {

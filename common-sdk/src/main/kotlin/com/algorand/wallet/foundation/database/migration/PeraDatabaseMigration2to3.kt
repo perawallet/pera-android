@@ -17,8 +17,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 internal object PeraDatabaseMigration2to3 : Migration(2, 3) {
 
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
             "ALTER TABLE account_information ADD COLUMN opted_in_assets_count INTEGER NOT NULL DEFAULT 0"
         )
     }

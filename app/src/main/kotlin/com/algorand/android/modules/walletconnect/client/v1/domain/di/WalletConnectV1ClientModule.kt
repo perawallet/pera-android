@@ -13,6 +13,7 @@
 package com.algorand.android.modules.walletconnect.client.v1.domain.di
 
 import android.content.Context
+import app.perawallet.walletconnectv1.impls.FileWCSessionStore
 import com.algorand.android.modules.walletconnect.client.v1.WalletConnectClientV1Impl
 import com.algorand.android.modules.walletconnect.client.v1.domain.decider.WalletConnectV1ChainIdentifierDecider
 import com.algorand.android.modules.walletconnect.client.v1.domain.repository.WalletConnectRepository
@@ -44,7 +45,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import org.walletconnect.impls.FileWCSessionStore
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton

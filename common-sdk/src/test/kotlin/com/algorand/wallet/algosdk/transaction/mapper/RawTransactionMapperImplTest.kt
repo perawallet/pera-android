@@ -18,6 +18,7 @@ import com.algorand.wallet.algosdk.transaction.model.ApplicationCallStateSchema
 import com.algorand.wallet.algosdk.transaction.model.AssetConfigParameters
 import com.algorand.wallet.algosdk.transaction.model.RawTransaction
 import com.algorand.wallet.algosdk.transaction.model.RawTransactionType
+import com.algorand.wallet.algosdk.transaction.model.payload.RawAccessItemPayload
 import com.algorand.wallet.algosdk.transaction.model.payload.RawTransactionApplicationCallStateSchemaPayload
 import com.algorand.wallet.algosdk.transaction.model.payload.RawTransactionAssetConfigParametersPayload
 import com.algorand.wallet.algosdk.transaction.model.payload.RawTransactionPayload
@@ -25,13 +26,13 @@ import com.algorand.wallet.algosdk.transaction.model.payload.RawTransactionTypeP
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.Assert.assertEquals
+import org.junit.Test
 import java.math.BigInteger
 import java.math.BigInteger.ONE
 import java.math.BigInteger.TEN
 import java.math.BigInteger.TWO
 import java.math.BigInteger.ZERO
-import org.junit.Assert.assertEquals
-import org.junit.Test
 
 class RawTransactionMapperImplTest {
 
@@ -103,7 +104,6 @@ class RawTransactionMapperImplTest {
     private companion object {
         val RAW_TXN_TYPE_PAYLOAD = peraFixture<RawTransactionTypePayload>()
         val RAW_TXN_TYPE = peraFixture<RawTransactionType>()
-
         val AMOUNT = peraFixture<String>()
         val FEE = peraFixture<Long?>()
         val FIRST_VALID_ROUND = peraFixture<Long?>()
@@ -126,6 +126,8 @@ class RawTransactionMapperImplTest {
         val ASSET_ID_BEING_CONFIGURED = peraFixture<Long?>()
         val ASSET_CONFIG_PARAMETERS_PAYLOAD = peraFixture<RawTransactionAssetConfigParametersPayload>()
         val ASSET_CONFIG_PARAMETERS = peraFixture<AssetConfigParameters>()
+        val REJECT_VERSION = peraFixture<Long?>()
+        val ACCESS_LIST = peraFixture<List<RawAccessItemPayload>?>()
 
         val RECEIVER_ADDRESS = AlgorandAddress(decodedAddress = "receiverAddress", addressPublicKey = null)
         val SENDER_ADDRESS = AlgorandAddress(decodedAddress = "senderAddress", addressPublicKey = null)
@@ -163,7 +165,9 @@ class RawTransactionMapperImplTest {
             stateHash = STATE_HASH,
             assetIdBeingConfigured = ASSET_ID_BEING_CONFIGURED,
             decodedAssetConfigParameters = ASSET_CONFIG_PARAMETERS_PAYLOAD,
-            groupId = GROUP_ID
+            groupId = GROUP_ID,
+            rejectVersion = REJECT_VERSION,
+            accessList = ACCESS_LIST
         )
 
         val RAW_TXN = RawTransaction(
@@ -193,7 +197,9 @@ class RawTransactionMapperImplTest {
             stateHash = STATE_HASH,
             assetIdBeingConfigured = ASSET_ID_BEING_CONFIGURED,
             assetConfigParameters = ASSET_CONFIG_PARAMETERS,
-            groupId = GROUP_ID
+            groupId = GROUP_ID,
+            rejectVersion = REJECT_VERSION,
+            accessListSize = ACCESS_LIST?.size
         )
     }
 }

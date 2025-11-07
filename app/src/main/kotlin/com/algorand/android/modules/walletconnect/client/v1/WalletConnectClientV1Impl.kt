@@ -15,6 +15,8 @@
 package com.algorand.android.modules.walletconnect.client.v1
 
 import android.app.Application
+import app.perawallet.walletconnectv1.Session
+import app.perawallet.walletconnectv1.impls.WCSession
 import com.algorand.android.modules.walletconnect.client.utils.WalletConnectClientErrorMessageUtils.createDappErrorMessage
 import com.algorand.android.modules.walletconnect.client.utils.WalletConnectSessionNotFoundException
 import com.algorand.android.modules.walletconnect.client.v1.domain.decider.WalletConnectV1ChainIdentifierDecider
@@ -53,8 +55,6 @@ import com.algorand.android.utils.walletconnect.WalletConnectSessionRetryCounter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import org.walletconnect.Session
-import org.walletconnect.impls.WCSession
 import javax.inject.Named
 
 @Suppress("LongParameterList")

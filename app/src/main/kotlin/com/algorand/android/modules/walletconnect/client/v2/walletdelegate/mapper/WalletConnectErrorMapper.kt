@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper
 
+import app.perawallet.walletconnectv2.sign.client.Sign
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.walletconnect.sign.client.Sign
 
 interface WalletConnectErrorMapper {
     fun mapToError(error: Sign.Model.Error): WalletConnect.Model.Error

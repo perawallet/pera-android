@@ -95,7 +95,6 @@ fun AssetDetailScreen(
                 AssetDetailPagerIndicator(pagerState) { selectedPage ->
                     scope.launch { pagerState.animateScrollToPage(selectedPage) }
                 }
-                Spacer(modifier = Modifier.height(32.dp))
                 HorizontalPager(modifier = Modifier.fillMaxSize(), state = pagerState) { page ->
                     when (page) {
                         HOLDINGS_PAGE -> {

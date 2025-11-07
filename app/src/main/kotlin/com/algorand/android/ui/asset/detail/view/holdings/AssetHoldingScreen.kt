@@ -71,6 +71,7 @@ fun AssetHoldingScreen(
             val historyItems = (txnHistoryState.value as? ViewState.Content)?.pagingData?.collectAsLazyPagingItems()
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item {
+                    Spacer(modifier = Modifier.height(32.dp))
                     AssetDetailHeader(assetDetailHeaderViewModel)
                 }
                 item {

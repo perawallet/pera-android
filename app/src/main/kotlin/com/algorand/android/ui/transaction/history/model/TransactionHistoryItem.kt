@@ -20,6 +20,7 @@ sealed interface TransactionHistoryItem {
 
     data class Receive(
         val id: String,
+        val amount: BigDecimal,
         val senderAddress: String,
         val formattedAmount: String,
     ) : TransactionHistoryItem

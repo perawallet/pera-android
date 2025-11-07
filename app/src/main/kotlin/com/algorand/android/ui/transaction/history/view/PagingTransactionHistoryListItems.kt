@@ -168,7 +168,7 @@ private fun ReceiveItem(item: Receive, onClick: () -> Unit) {
         primaryText = stringResource(R.string.receive),
         secondaryText = item.senderAddress.toShortenedAddress(),
         amountText = item.formattedAmount,
-        amountTextColor = PeraTheme.colors.helper.positive,
+        amountTextColor = if (item.amount > ZERO) PeraTheme.colors.helper.positive else PeraTheme.colors.text.main,
         onClick = onClick
     )
 }

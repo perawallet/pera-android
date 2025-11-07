@@ -51,7 +51,9 @@ data class WalletConnectTransactionRequest(
     @SerializedName("votefst") val voteFirstValidRound: Long?, // Not to be confused with the LastValid round
     @SerializedName("votelst") val voteLastValidRound: Long?, // Not to be confused with the FirstValid round
     @SerializedName("votekd") val voteKeyDilution: Long?,
-    @SerializedName("nonpart") val nonParticipation: Boolean?
+    @SerializedName("nonpart") val nonParticipation: Boolean?,
+    @SerializedName("aprv") val rejectVersion: Long? = null,
+    @SerializedName("al") val accessList: List<RawAccessItemPayload>? = null
 ) {
 
     val decodedNote: String

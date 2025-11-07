@@ -26,7 +26,7 @@ import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyIntentValida
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewModel
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 internal class DefaultGetPasskeyIntentValidator @Inject constructor(
     private val appInfoValidator: CallingAppInfoValidator,
     private val getPasskeyByCredentialId: GetPasskeyByCredentialId

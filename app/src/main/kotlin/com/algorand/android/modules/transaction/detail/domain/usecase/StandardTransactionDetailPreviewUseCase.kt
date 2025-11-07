@@ -28,8 +28,8 @@ import com.algorand.android.utils.formatNumberWithDecimalSeparators
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class StandardTransactionDetailPreviewUseCase @Inject constructor(
@@ -93,7 +93,7 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
         val senderAccountPublicKey = baseTransactionDetail.senderAccountAddress.orEmpty()
 
         val areAccountsInCache = isThereAnyAccountWithAddress(senderAccountPublicKey) ||
-            isThereAnyAccountWithAddress(receiverAccountPublicKey)
+                isThereAnyAccountWithAddress(receiverAccountPublicKey)
 
         val transactionSign = getTransactionSign(
             receiverAccountPublicKey = receiverAccountPublicKey,
@@ -172,6 +172,8 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
                     transactionId = transactionId
                 )
             )
+            addRejectVersionIfExist(this@apply, baseTransactionDetail.rejectVersion)
+            addAccessListIfExist(this@apply, baseTransactionDetail.accessListSize)
             add(TransactionDetailItem.DividerItem)
 
             if (baseTransactionDetail is BaseTransactionDetail.BaseKeyRegTransaction) {

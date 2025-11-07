@@ -16,7 +16,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.ledger.operations.AccountFetchAllOperation
 import com.algorand.android.ledger.operations.BaseOperation

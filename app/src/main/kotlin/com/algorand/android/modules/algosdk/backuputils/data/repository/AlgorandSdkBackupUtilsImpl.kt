@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.algosdk.backuputils.data.repository
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.modules.algosdk.backuputils.domain.repository.AlgorandSdkBackupUtils
 
 class AlgorandSdkBackupUtilsImpl : AlgorandSdkBackupUtils {

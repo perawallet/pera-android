@@ -24,6 +24,7 @@ import com.algorand.android.modules.transaction.detail.ui.viewholder.BaseInnerTr
 import com.algorand.android.modules.transaction.detail.ui.viewholder.InnerApplicationCallTransactionItemViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.InnerStandardTransactionItemViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.InnerTransactionTitleItemViewHolder
+import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionAccessListViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionAccountViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionAmountViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionApplicationIdViewHolder
@@ -39,6 +40,7 @@ import com.algorand.android.modules.transaction.detail.ui.viewholder.Transaction
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionOfflineKeyRegViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionOnCompletionViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionOnlineKeyRegViewHolder
+import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionRejectVersionViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionRoundViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionSenderViewHolder
 import com.algorand.android.modules.transaction.detail.ui.viewholder.TransactionStatusViewHolder
@@ -122,33 +124,44 @@ class TransactionDetailAdapter(
             TransactionDetailItem.ItemType.STATUS_ITEM.ordinal -> createStatusViewHolder(parent)
             TransactionDetailItem.ItemType.SENDER_ITEM.ordinal -> createTransactionSenderViewHolder(parent)
             TransactionDetailItem.ItemType.ON_COMPLETION_ITEM.ordinal -> createOnCompletionViewHolder(parent)
+            TransactionDetailItem.ItemType.ACCESS_LIST_ITEM.ordinal -> createAccessListViewHolder(parent)
+            TransactionDetailItem.ItemType.REJECTION_VERSION_ITEM.ordinal -> createRejectionVersionViewHolder(parent)
             TransactionDetailItem.ItemType.APPLICATION_CALL_ASSET_INFORMATION_ITEM.ordinal -> {
                 createApplicationCallTransactionAssetInformationViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.ASSET_INFORMATION_ITEM.ordinal -> {
                 createTransactionAssetInformationViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.INNER_TRANSACTION_TITLE_ITEM.ordinal -> {
                 createInnerTransactionTitleItemViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.INNER_STANDARD_TRANSACTION_DETAIL_ITEM.ordinal -> {
                 createInnerStandardTransactionItemViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.INNER_APPLICATION_CALL_TRANSACTION_DETAIL_ITEM.ordinal -> {
                 createInnerApplicationCallTransactionItemViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.APPLICATION_ID_ITEM.ordinal -> {
                 createTransactionApplicationIdViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.INNER_TRANSACTION_LIST_ITEM.ordinal -> {
                 createInnerTransactionListItemViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.ONLINE_KEY_REG_ITEM.ordinal -> {
                 createOnlineKeyRegViewHolder(parent)
             }
+
             TransactionDetailItem.ItemType.OFFLINE_KEY_REG_ITEM.ordinal -> {
                 createOfflineKeyRegViewHolder(parent)
             }
+
             else -> throw Exception("$logTag list item is unknown")
         }
     }
@@ -211,6 +224,14 @@ class TransactionDetailAdapter(
 
     private fun createOnCompletionViewHolder(parent: ViewGroup): TransactionOnCompletionViewHolder {
         return TransactionOnCompletionViewHolder.create(parent)
+    }
+
+    private fun createAccessListViewHolder(parent: ViewGroup): TransactionAccessListViewHolder {
+        return TransactionAccessListViewHolder.create(parent)
+    }
+
+    private fun createRejectionVersionViewHolder(parent: ViewGroup): TransactionRejectVersionViewHolder {
+        return TransactionRejectVersionViewHolder.create(parent)
     }
 
     private fun createOnlineKeyRegViewHolder(parent: ViewGroup): TransactionOnlineKeyRegViewHolder {

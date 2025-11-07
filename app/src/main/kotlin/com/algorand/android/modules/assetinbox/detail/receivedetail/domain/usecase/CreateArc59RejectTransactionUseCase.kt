@@ -13,7 +13,7 @@
 
 package com.algorand.android.modules.assetinbox.detail.receivedetail.domain.usecase
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.BuildConfig
 import com.algorand.android.models.Result
 import com.algorand.android.models.TransactionParams

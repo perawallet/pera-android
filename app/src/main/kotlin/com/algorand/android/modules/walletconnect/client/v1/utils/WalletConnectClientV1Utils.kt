@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.walletconnect.client.v1.utils
 
+import app.perawallet.walletconnectv1.Session
 import com.algorand.android.modules.walletconnect.client.v1.model.WalletConnectV1ChainIdentifier
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectEvent
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectMethod
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectVersionIdentifier
 import com.algorand.android.utils.walletconnect.WALLET_CONNECT_URL_PREFIX
-import org.walletconnect.Session
 
 object WalletConnectClientV1Utils {
 

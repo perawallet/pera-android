@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
-    id("io.gitlab.arturbosch.detekt") version(libs.versions.detekt)
+    id("io.gitlab.arturbosch.detekt") version (libs.versions.detekt)
 }
 
 apply(from = "../app/quality.gradle")
@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.kotlin.bip39)
     implementation(libs.logging.interceptor)
-    implementation(files("../libs/dP256.jar"))
+    implementation(libs.p256)
 
     ksp(libs.dagger.hilt.compiler)
     ksp(libs.androidx.hilt.compiler)

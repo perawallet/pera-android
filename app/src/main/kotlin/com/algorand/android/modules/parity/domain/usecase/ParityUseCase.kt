@@ -21,7 +21,7 @@ import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
-import com.algorand.android.utils.isEqualTo
+import com.algorand.android.utils.isZero
 import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -51,9 +51,7 @@ class ParityUseCase @Inject constructor(
 
     fun getUsdToAlgoConversionRate(): BigDecimal {
         return parityRepository.getCachedSelectedCurrencyDetail()?.data?.let {
-            if (it.algoToSelectedCurrencyConversionRate == null ||
-                it.algoToSelectedCurrencyConversionRate.isEqualTo(BigDecimal.ZERO)
-            ) {
+            if (it.algoToSelectedCurrencyConversionRate == null || it.algoToSelectedCurrencyConversionRate.isZero()) {
                 BigDecimal.ZERO
             } else {
                 it.usdToSelectedCurrencyConversionRate?.divide(
@@ -209,7 +207,7 @@ class ParityUseCase @Inject constructor(
         with(currencyDetailDTO) {
             return if (isSelectedCurrencyAlgo) {
                 val algoToCurrencyConversionRate = exchangePrice?.toBigDecimalOrNull()
-                if (algoToCurrencyConversionRate == null || algoToCurrencyConversionRate.isEqualTo(BigDecimal.ZERO)) {
+                if (algoToCurrencyConversionRate == null || algoToCurrencyConversionRate.isZero()) {
                     BigDecimal.ZERO
                 } else {
                     usdValue?.divide(algoToCurrencyConversionRate, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
@@ -228,10 +226,10 @@ class ParityUseCase @Inject constructor(
         return if (isSelectedCurrencyAlgo) {
             exchangePrice
         } else {
-            if (exchangePrice?.isEqualTo(BigDecimal.ZERO) == true) return null
+            if (exchangePrice?.isZero() == true) return null
             val selectedCurrencyUsdValue = currencyDetailDTO.usdValue
             val ratio = selectedCurrencyUsdValue?.divide(exchangePrice, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
-            if (ratio?.isEqualTo(BigDecimal.ZERO) == true) return null
+            if (ratio?.isZero() == true) return null
             BigDecimal.ONE.divide(ratio, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
         }
     }

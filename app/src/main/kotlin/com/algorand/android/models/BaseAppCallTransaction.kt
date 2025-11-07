@@ -39,7 +39,9 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val approvalHash: String?,
         override val stateHash: String?,
         override val groupId: String?,
-        override val transactionSigner: TransactionSigner?
+        override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?
     ) : BaseAppCallTransaction() {
 
         override val fee: Long
@@ -65,7 +67,9 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val approvalHash: String?,
         override val stateHash: String?,
         override val groupId: String?,
-        override val transactionSigner: TransactionSigner?
+        override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?
     ) : BaseAppCallTransaction() {
 
         override val fee: Long
@@ -92,6 +96,8 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val stateHash: String?,
         override val groupId: String?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val appGlobalSchema: ApplicationCallStateSchema?,
         val appLocalSchema: ApplicationCallStateSchema?,
         val appExtraPages: Int?
@@ -122,6 +128,8 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val groupId: String?,
         override val warningCount: Int?,
         override val transactionSigner: TransactionSigner?,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val rekeyToAddress: WalletConnectAddress
     ) : BaseAppCallTransaction() {
 
@@ -153,11 +161,11 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
 
         companion object {
             fun isSupportedOnComplete(appOnCompleteNo: Int): Boolean {
-                return values().firstOrNull { it.appOnCompleteNo == appOnCompleteNo } != null
+                return entries.firstOrNull { it.appOnCompleteNo == appOnCompleteNo } != null
             }
 
             fun getByAppNoOrDefault(appOnCompleteNo: Int?): AppOnComplete {
-                return values().firstOrNull { it.appOnCompleteNo == appOnCompleteNo } ?: NO_OP
+                return entries.firstOrNull { it.appOnCompleteNo == appOnCompleteNo } ?: NO_OP
             }
         }
     }

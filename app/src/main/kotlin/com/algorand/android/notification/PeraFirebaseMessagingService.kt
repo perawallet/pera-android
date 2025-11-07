@@ -20,6 +20,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import app.perawallet.walletconnectv2.Core
+import app.perawallet.walletconnectv2.push.notifications.PushMessagingService
 import com.algorand.android.R
 import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
 import com.algorand.android.notification.domain.model.NotificationMetadata
@@ -31,8 +33,6 @@ import com.algorand.android.utils.preference.isNotificationActivated
 import com.algorand.android.utils.recordException
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
-import com.walletconnect.android.Core
-import com.walletconnect.android.push.notifications.PushMessagingService
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Integer.parseInt
 import java.text.SimpleDateFormat

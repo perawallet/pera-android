@@ -32,8 +32,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_21.toString()
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
     }
 
     packaging {
@@ -53,11 +55,10 @@ android {
 }
 
 dependencies {
-
     api(libs.algosdk)
-    api(libs.algorand.go.mobile)
-    implementation(files("../libs/dP256.jar"))
-    implementation("net.java.dev.jna:jna:5.17.0@aar")
+    api(libs.p256)
+
+    implementation(libs.algorand.go.mobile)
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)

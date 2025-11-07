@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import javax.inject.Inject
 
 internal class AlgoTransactionSignerImpl @Inject constructor() : AlgoTransactionSigner {

@@ -10,12 +10,32 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.wallet.transaction.history.data.model
 
-import java.time.ZonedDateTime
+import com.google.gson.annotations.SerializedName
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
+internal enum class TransactionTypeResponse {
+
+    @SerializedName("pay")
+    PAY_TRANSACTION,
+
+    @SerializedName("axfer")
+    ASSET_TRANSACTION,
+
+    @SerializedName("appl")
+    APP_TRANSACTION,
+
+    @SerializedName("acfg")
+    ASSET_CONFIGURATION,
+
+    @SerializedName("keyreg")
+    KEYREG_TRANSACTION,
+
+    @SerializedName("hb")
+    HEARTBEAT_TRANSACTION,
+
+    @SerializedName("swap")
+    SWAP_TRANSACTION,
+
+    UNDEFINED
 }

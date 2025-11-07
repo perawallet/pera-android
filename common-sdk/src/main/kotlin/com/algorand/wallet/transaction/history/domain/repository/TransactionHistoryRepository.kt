@@ -10,12 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.wallet.transaction.history.domain.repository
 
-import java.time.ZonedDateTime
+import androidx.paging.PagingData
+import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
+import com.algorand.wallet.transaction.history.domain.model.TransactionHistoryPagingData
+import kotlinx.coroutines.flow.Flow
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
+internal interface TransactionHistoryRepository {
+    fun getTransactionHistory(data: TransactionHistoryPagingData): Flow<PagingData<TransactionHistory>>
 }

@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.wallet.transaction.history.data.mapper
 
-import java.time.ZonedDateTime
+import com.algorand.wallet.transaction.history.data.model.TransactionHistoryItemResponse
+import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
+internal interface TransactionHistoryMapper {
+    operator fun invoke(address: String, response: TransactionHistoryItemResponse): TransactionHistory?
 }

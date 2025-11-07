@@ -10,12 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.wallet.transaction.history.domain.model
 
-import java.time.ZonedDateTime
-
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
-}
+data class TransactionHistoryPagingData(
+    val address: String,
+    val nextUrl: String? = null,
+    val previousUrl: String? = null,
+    val assetId: Long? = null,
+    val afterTime: String? = null, // RFC3339
+    val beforeTime: String? = null, // RFC3339
+    val itemPerPage: Int
+)

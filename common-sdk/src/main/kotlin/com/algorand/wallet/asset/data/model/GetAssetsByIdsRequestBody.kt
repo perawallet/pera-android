@@ -18,7 +18,7 @@ internal data class GetAssetsByIdsRequestBody(
     @SerializedName("device_id")
     val deviceId: Long,
     @SerializedName("asset_ids")
-    val assetIds: String,
+    val assetIds: List<String>,
     @SerializedName("include_deleted")
     val includeDeleted: Boolean? = null
 )

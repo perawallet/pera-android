@@ -50,7 +50,7 @@ class DefaultTransactionHistoryItemMapper @Inject constructor() : TransactionHis
             when (payment.type) {
                 is PaymentType.Receive -> {
                     val formattedAmount = formatAmount(ALGO_ID, payment.amount, Currency.ALGO.symbol)
-                    TransactionHistoryItem.Receive(id, senderAddress, formattedAmount)
+                    TransactionHistoryItem.Receive(id, payment.amount, senderAddress, formattedAmount)
                 }
                 PaymentType.Self -> {
                     val formattedAmount = formatAmount(ALGO_ID, payment.amount, Currency.ALGO.symbol)
@@ -88,6 +88,7 @@ class DefaultTransactionHistoryItemMapper @Inject constructor() : TransactionHis
             is AssetTransferType.Receive -> {
                 TransactionHistoryItem.Receive(
                     id = transactionHistory.id,
+                    amount = assetTransferType.amount,
                     senderAddress = transactionHistory.senderAddress,
                     formattedAmount = formatAmount(assetId, assetTransferType.amount, unitName)
                 )

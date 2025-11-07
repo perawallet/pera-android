@@ -1674,6 +1674,13 @@
                 android:defaultValue="false"
                 app:argType="boolean" />
         </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_dateFilterNavigation"
+            app:destination="@id/dateFilterNavigation">
+            <argument
+                android:name="selectedDateFilter"
+                app:argType="com.algorand.android.models.DateFilter" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/passkeysFragment"

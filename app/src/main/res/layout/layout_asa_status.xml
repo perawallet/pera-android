@@ -58,7 +58,7 @@
         tools:drawableStartCompat="@drawable/ic_wallet"
         tools:text="@tools:sample/lorem[2]" />
 
-    <com.algorand.android.customviews.PeraMaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/assetStatusActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

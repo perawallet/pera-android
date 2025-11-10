@@ -22,24 +22,21 @@ import com.algorand.android.usecase.DeleteAllDataUseCase
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.devoptions.domain.usecase.EnableDeveloperOptions
 import com.algorand.wallet.devoptions.domain.usecase.IsDeveloperOptionsEnabled
-import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.utils.ClickCounter
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val deleteAllDataUseCase: DeleteAllDataUseCase,
     private val settingsPreviewUseCase: SettingsPreviewUseCase,
     private val eventDelegate: EventDelegate<ViewEvent>,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val isDeveloperOptionsEnabled: IsDeveloperOptionsEnabled,
     private val enableDeveloperOps: EnableDeveloperOptions
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
@@ -64,8 +61,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun isPasskeysFeatureEnabled() = isFeatureToggleEnabled(FeatureToggle.LIQUID_AUTH.key)
-
     fun enableDeveloperOptions() {
         devOptionsClickCounter.click()
     }
@@ -81,6 +76,7 @@ class SettingsViewModel @Inject constructor(
                 }
                 devOptionsClickCounter.reset()
             }
+
             clickCount >= DEV_OPTIONS_INFO_CLICK_THRESHOLD -> {
                 val remainingClicks = DEV_OPTIONS_ENABLE_CLICK_THRESHOLD - clickCount
                 eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowRemainingClicksToDevOptions(remainingClicks))

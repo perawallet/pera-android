@@ -30,12 +30,12 @@ object WebImportNetworkModule {
     @Named(WebImportAccountRepository.REPOSITORY_INJECTION_NAME)
     internal fun provideWebImportAccountRepository(
         mobileAlgorandApi: MobileAlgorandApi,
-        hipoApiErrorHandler: RetrofitErrorHandler,
+        retrofitErrorHandler: RetrofitErrorHandler,
         importBackupResponseDTOMapper: ImportBackupResponseDTOMapper
     ): WebImportAccountRepository {
         return WebImportAccountRepositoryImpl(
             mobileAlgorandApi,
-            hipoApiErrorHandler,
+            retrofitErrorHandler,
             importBackupResponseDTOMapper
         )
     }

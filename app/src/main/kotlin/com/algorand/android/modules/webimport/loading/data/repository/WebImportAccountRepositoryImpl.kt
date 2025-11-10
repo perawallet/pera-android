@@ -17,20 +17,20 @@ import com.algorand.android.modules.webimport.loading.data.mapper.ImportBackupRe
 import com.algorand.android.modules.webimport.loading.domain.model.ImportBackupResponseDTO
 import com.algorand.android.modules.webimport.loading.domain.repository.WebImportAccountRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class WebImportAccountRepositoryImpl @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler,
+    private val retrofitErrorHandler: RetrofitErrorHandler,
     private val importBackupResponseDTOMapper: ImportBackupResponseDTOMapper
 ) : WebImportAccountRepository {
 
     override suspend fun importEncryptedBackup(
         backupId: String
     ): Result<ImportBackupResponseDTO> {
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             mobileAlgorandApi.getBackup(
                 id = backupId
             )

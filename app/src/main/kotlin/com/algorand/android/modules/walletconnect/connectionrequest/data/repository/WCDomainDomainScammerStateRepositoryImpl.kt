@@ -16,17 +16,17 @@ import com.algorand.android.models.Result
 import com.algorand.android.modules.walletconnect.connectionrequest.data.model.GetWCDomainScammerStateResponse
 import com.algorand.android.modules.walletconnect.connectionrequest.domain.repository.WCDomainScammerStateRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class WCDomainDomainScammerStateRepositoryImpl @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler
+    private val retrofitErrorHandler: RetrofitErrorHandler
 ) : WCDomainScammerStateRepository {
 
     override suspend fun getDomainScammerState(domain: String): Result<GetWCDomainScammerStateResponse> {
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             mobileAlgorandApi.getWCDomainScammerState(domain)
         }
     }

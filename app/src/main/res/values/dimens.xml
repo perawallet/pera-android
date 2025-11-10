@@ -55,7 +55,6 @@
     <dimen name="show_qr_size">230dp</dimen>
     <dimen name="minimum_keyboard_height">256dp</dimen>
     <dimen name="main_bottom_navigation_elevation">6dp</dimen>
-    <dimen name="main_bottom_navigation_height">64dp</dimen>
 
     <dimen name="passphrase_background_radius">8dp</dimen>
 
@@ -78,11 +77,8 @@
 
     <!-- Register Type Selection -->
     <dimen name="register_type_selection_item_icon_size">40dp</dimen>
-    <dimen name="register_type_selection_policy_margin">42dp</dimen>
 
     <!-- Chart -->
-    <dimen name="chart_price_tag_offset">4dp</dimen>
-    <dimen name="chart_vertical_padding">20dp</dimen>
 
     <!--    Custom Input Layout-->
     <dimen name="custom_input_layout_end_icon_size">24dp</dimen>
@@ -101,24 +97,12 @@
     <!--  Asset Avatar  -->
     <dimen name="asset_avatar_image_size">40dp</dimen>
 
-    <!--  Asset Name Text View  -->
-
-    <!--  Transactions View  Button -->
-    <dimen name="transaction_view_button_size">40dp</dimen>
-
-    <!--  Transactions Recycler Viev -->
-    <dimen name="transaction_view_height_offset">72dp</dimen>
-
     <!--  Contact Placeholder  -->
     <dimen name="contact_placeholder_image_size">80dp</dimen>
     <dimen name="half_of_contact_placeholder_image_size">40dp</dimen>
 
     <!--  Add Contact View  -->
     <dimen name="contact_name_input_layout_top_margin">72dp</dimen>
-
-    <!--  Asset Detail Buttons  -->
-    <dimen name="reward_info_button_size">24dp</dimen>
-    <dimen name="asset_id_copy_button_size">20dp</dimen>
 
     <dimen name="toolbar_title_drawable_size">24dp</dimen>
 
@@ -154,11 +138,8 @@
     <dimen name="account_icon_size_large">40dp</dimen>
     <dimen name="account_icon_size_normal">24dp</dimen>
     <dimen name="account_icon_size_small">20dp</dimen>
-    <dimen name="account_icon_size_xsmall">16dp</dimen>
 
     <!--  Governor Icon (governor icon size is %60 of account icon size) -->
-    <dimen name="governor_icon_size_xlarge">48dp</dimen>
-    <dimen name="governor_icon_size_large">24dp</dimen>
     <dimen name="governor_icon_size_normal">14dp</dimen>
     <dimen name="governor_icon_size_small">12dp</dimen>
 
@@ -174,18 +155,9 @@
     <dimen name="asa_action_layout_height">130dp</dimen>
 
     <dimen name="nft_image_view_radius">4dp</dimen>
-    <dimen name="nft_image_size">40dp</dimen>
-    <dimen name="divider_margin">56dp</dimen>
     <dimen name="fab_bottom_padding">100dp</dimen>
 
     <dimen name="bottom_padding_for_screen_with_floating_button">100dp</dimen>
-    <dimen name="bottom_padding_for_screen_with_double_floating_button">180dp</dimen>
-
-    <dimen name="webexport_bottom_padding">120dp</dimen>
-
-    <!-- Swap Fragment -->
-    <dimen name="swap_quick_action_button_stroke_width">1dp</dimen>
-    <dimen name="swap_quick_action_button_radius">16dp</dimen>
 
     <dimen name="discover_button_radius">16dp</dimen>
 

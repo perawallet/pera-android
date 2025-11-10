@@ -34,7 +34,6 @@ import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUs
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
@@ -58,13 +57,9 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
-import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,6 +68,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -86,7 +83,6 @@ class MainViewModel @Inject constructor(
     private val deepLinkHandler: DeeplinkHandler,
     private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
     private val tutorialUseCase: TutorialUseCase,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val nodeRepository: NodeRepository,
     private val peraReferrerManager: PeraReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
@@ -104,7 +100,6 @@ class MainViewModel @Inject constructor(
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
     BottomNavigationEventTracker by bottomNavigationEventTracker {
 
@@ -168,8 +163,6 @@ class MainViewModel @Inject constructor(
             else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
         }
     }
-
-    fun isSwapV2Enabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.SWAP_V2.key)
 
     fun handleNotificationDeepLink(
         accountAddress: String,

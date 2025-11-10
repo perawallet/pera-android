@@ -29,11 +29,11 @@ import com.algorand.wallet.swap.domain.repository.SwapRepository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.math.BigInteger
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class GetSwapQuotesUseCaseTest {
 
@@ -59,6 +59,7 @@ class GetSwapQuotesUseCaseTest {
 
     @Test
     fun `EXPECT error WHEN quote list is empty`() = runTest {
+        coEvery { getAccountType(any()) } returns AccountType.Algo25
         coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(emptyList())
 
         val result = sut(PAYLOAD)
@@ -77,6 +78,7 @@ class GetSwapQuotesUseCaseTest {
 
     @Test
     fun `EXPECT best offer preselected quotes WHEN there are multiple quotes`() = runTest {
+        coEvery { getAccountType(any()) } returns AccountType.Algo25
         coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(QUOTES)
 
         val result = sut(PAYLOAD)
@@ -89,6 +91,7 @@ class GetSwapQuotesUseCaseTest {
 
     @Test
     fun `EXPECT empty device id WHEN does not exist`() = runTest {
+        coEvery { getAccountType(any()) } returns AccountType.Algo25
         every { getSelectedNodeDeviceId() } returns null
         val request = REQUEST.copy(deviceId = "")
 

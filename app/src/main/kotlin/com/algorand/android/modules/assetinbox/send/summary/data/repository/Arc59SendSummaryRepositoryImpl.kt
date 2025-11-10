@@ -20,7 +20,7 @@ import com.algorand.android.modules.assetinbox.send.summary.data.mapper.Arc59Sen
 import com.algorand.android.modules.assetinbox.send.summary.data.service.Arc59SendSummaryApiService
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendSummary
 import com.algorand.android.modules.assetinbox.send.summary.domain.repository.Arc59SendSummaryRepository
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ class Arc59SendSummaryRepositoryImpl @Inject constructor(
         address: String,
         assetId: Long
     ): Result<Arc59SendSummary> {
-        val result = requestWithHipoErrorHandler(retrofitErrorHandler) {
+        val result = requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             arc59SendSummaryApi.getArc59SendSummary(address, assetId)
         }
         if (result is Result.Error) return result

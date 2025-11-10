@@ -30,11 +30,11 @@ object WCDomainScammerStateRepositoryModule {
     @Provides
     fun provideWCDomainScammerStateRepository(
         mobileAlgorandApi: MobileAlgorandApi,
-        hipoApiErrorHandler: RetrofitErrorHandler
+        retrofitErrorHandler: RetrofitErrorHandler
     ): WCDomainScammerStateRepository {
         return WCDomainDomainScammerStateRepositoryImpl(
             mobileAlgorandApi,
-            hipoApiErrorHandler
+            retrofitErrorHandler
         )
     }
 }

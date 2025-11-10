@@ -100,33 +100,6 @@
             app:destination="@id/meldNavigation" />
 
         <action
-            android:id="@+id/action_discoverHomeFragment_to_swapAccountSelectionNavigation"
-            app:destination="@id/swapAccountSelectionNavigation">
-            <argument
-                android:name="fromAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-            <argument
-                android:name="toAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-        </action>
-
-        <action
-            android:id="@+id/action_discoverHomeFragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation">
-            <argument
-                android:name="fromAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-            <argument
-                android:name="toAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-        </action>
-
-
-        <action
             android:id="@+id/action_discoverHomeFragment_to_swapV2Navigation"
             app:destination="@id/swapV2Navigation">
             <argument

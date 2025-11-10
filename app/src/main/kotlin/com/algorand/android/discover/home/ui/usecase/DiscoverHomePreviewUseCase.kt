@@ -34,16 +34,15 @@ import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
 import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
-import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.google.gson.Gson
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class DiscoverHomePreviewUseCase @Inject constructor(
     private val discoverSearchAssetUseCase: DiscoverSearchAssetUseCase,
@@ -54,7 +53,6 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     private val gson: Gson,
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val buySellActionRequestMapper: BuySellActionRequestMapper,
-    private val discoverSwapNavigationDestinationHelper: DiscoverSwapNavigationDestinationHelper,
 ) {
 
     fun getSearchPaginationFlow(
@@ -115,9 +113,9 @@ class DiscoverHomePreviewUseCase @Inject constructor(
             if (isLoading.not()) previousState.handleQueryChangeForScrollEvent?.consume()?.run { Event(Unit) } else null
         return previousState.copy(
             isListEmpty = isListEmpty &&
-                !isCurrentStateError &&
-                !isLoading &&
-                previousState.isSearchActivated,
+                    !isCurrentStateError &&
+                    !isLoading &&
+                    previousState.isSearchActivated,
             scrollToTopEvent = scrollToTopEvent
         )
     }
@@ -210,31 +208,12 @@ class DiscoverHomePreviewUseCase @Inject constructor(
             }
 
             BuySellActionRequest.Destination.SWAP -> {
-                discoverSwapNavigationDestinationHelper.getSwapNavigationDestination(
-                    onNavToIntroduction = {
-                        swapNavDirection = DiscoverHomeFragmentDirections
-                            .actionDiscoverHomeFragmentToSwapIntroductionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToAccountSelection = {
-                        swapNavDirection = DiscoverHomeFragmentDirections
-                            .actionDiscoverHomeFragmentToSwapAccountSelectionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToSwapV2 = {
-                        swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToSwapV2Navigation(
-                            assetInId = buySellActionRequest.assetInId ?: -1L,
-                            assetOutId = buySellActionRequest.assetOutId ?: -1L
-                        )
-                    }
+                swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToSwapV2Navigation(
+                    assetInId = buySellActionRequest.assetInId ?: -1L,
+                    assetOutId = buySellActionRequest.assetOutId ?: -1L
                 )
             }
 
-            BuySellActionRequest.Destination.ONRAMP -> {}
             else -> {}
         }
         return swapNavDirection?.let { direction ->

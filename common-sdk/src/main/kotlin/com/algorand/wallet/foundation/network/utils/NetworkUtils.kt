@@ -45,7 +45,7 @@ suspend fun <T : Any> request(
     }
 }
 
-suspend fun <T : Any> requestWithHipoErrorHandler(
+suspend fun <T : Any> requestWithRetrofitErrorHandler(
     peraApiErrorHandler: PeraRetrofitErrorHandler,
     doRequest: suspend () -> Response<T>
 ): PeraResult<T> {

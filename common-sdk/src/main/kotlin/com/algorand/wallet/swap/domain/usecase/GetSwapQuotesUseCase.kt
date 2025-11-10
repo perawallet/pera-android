@@ -16,7 +16,6 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.LedgerBle
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle.LEDGER_DEFLEX_FILTER
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
@@ -66,7 +65,7 @@ internal class GetSwapQuotesUseCase @Inject constructor(
     }
 
     private suspend fun getFilteredQuotes(address: String, quotes: List<SwapQuoteV2>): List<SwapQuoteV2> {
-        return if (isFeatureToggleEnabled(LEDGER_DEFLEX_FILTER.key) && getAccountType(address) is LedgerBle) {
+        return if (getAccountType(address) is LedgerBle) {
             quotes.filter { it.provider.name != DEFLEX_PROVIDER_NAME }
         } else {
             quotes

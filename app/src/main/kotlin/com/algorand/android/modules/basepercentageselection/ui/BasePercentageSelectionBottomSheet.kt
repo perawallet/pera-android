@@ -18,8 +18,8 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.PeraChipGroup
 import com.algorand.android.customviews.PeraChipGroup.PeraChipItem
-import com.algorand.android.databinding.BottomSheetPercentageSelectionBinding
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.databinding.BottomSheetPercentageSelectionBinding
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.hideKeyboard
@@ -28,8 +28,6 @@ import com.algorand.android.utils.viewbinding.viewBinding
 abstract class BasePercentageSelectionBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_percentage_selection) {
 
     abstract val toolbarConfiguration: ToolbarConfiguration
-
-    abstract val inputFieldHintText: Int
 
     abstract fun onChipItemSelected(peraChipItem: PeraChipItem, selectedChipIndex: Int)
 
@@ -79,7 +77,7 @@ abstract class BasePercentageSelectionBottomSheet : BaseBottomSheet(R.layout.bot
                 setEndButton(TextButton(R.string.done, R.color.link_primary, ::onDoneClick))
             }
             customPercentageInput.apply {
-                hint = getString(inputFieldHintText)
+                hint = getString(R.string.set_custom_slippage)
                 setOnEditorEnterClickListener { onDoneClick() }
                 setImeOptionsDone { onDoneClick() }
                 setOnTextChangeListener { basePercentageSelectionViewModel.onInputUpdated(resources, it) }

@@ -20,13 +20,10 @@ import android.os.CancellationSignal
 import android.os.OutcomeReceiver
 import androidx.annotation.RequiresApi
 import androidx.credentials.exceptions.ClearCredentialException
-import androidx.credentials.exceptions.ClearCredentialUnsupportedException
 import androidx.credentials.exceptions.CreateCredentialException
 import androidx.credentials.exceptions.CreateCredentialUnknownException
-import androidx.credentials.exceptions.CreateCredentialUnsupportedException
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.GetCredentialUnknownException
-import androidx.credentials.exceptions.GetCredentialUnsupportedException
 import androidx.credentials.exceptions.NoCredentialException
 import androidx.credentials.provider.BeginCreateCredentialRequest
 import androidx.credentials.provider.BeginCreateCredentialResponse
@@ -43,16 +40,15 @@ import com.algorand.android.credentials.passkeys.ui.builder.PasskeyCreateCredent
 import com.algorand.android.credentials.passkeys.ui.builder.PasskeyGetCredentialsEntryBuilder
 import com.algorand.android.credentials.passkeys.ui.model.CreatePasskeyCredentialCreateEntry
 import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyCredentialEntry
-import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.Instant
-import java.util.concurrent.atomic.AtomicInteger
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.concurrent.atomic.AtomicInteger
+import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @AndroidEntryPoint
@@ -76,10 +72,6 @@ class PasskeyProviderService : CredentialProviderService() {
         cancellationSignal: CancellationSignal,
         callback: OutcomeReceiver<BeginCreateCredentialResponse, CreateCredentialException>
     ) {
-        if (!isPasskeyFeatureEnabled()) {
-            callback.onError(CreateCredentialUnsupportedException())
-            return
-        }
         when (request) {
             is BeginCreatePublicKeyCredentialRequest -> {
                 scope.launch {
@@ -95,6 +87,7 @@ class PasskeyProviderService : CredentialProviderService() {
                     )
                 }
             }
+
             else -> callback.onError(CreateCredentialUnknownException())
         }
     }
@@ -117,10 +110,6 @@ class PasskeyProviderService : CredentialProviderService() {
         cancellationSignal: CancellationSignal,
         callback: OutcomeReceiver<BeginGetCredentialResponse, GetCredentialException>
     ) {
-        if (!isPasskeyFeatureEnabled()) {
-            callback.onError(GetCredentialUnsupportedException())
-            return
-        }
         val callingPackage = request.callingAppInfo?.packageName
         if (callingPackage == null) {
             callback.onError(NoCredentialException())
@@ -149,11 +138,11 @@ class PasskeyProviderService : CredentialProviderService() {
         val extras = Bundle().apply { putString(CRED_ID_KEY, entry.credentialId) }
         val intent = createNewPendingIntent(GET_PASSKEY_INTENT, extras)
         var entry = PublicKeyCredentialEntry.Builder(
-                applicationContext,
-                entry.username.orEmpty(),
-                intent,
-                entry.option
-            ).setDisplayName(entry.userDisplayName)
+            applicationContext,
+            entry.username.orEmpty(),
+            intent,
+            entry.option
+        ).setDisplayName(entry.userDisplayName)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             entry = entry.setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())
@@ -167,10 +156,7 @@ class PasskeyProviderService : CredentialProviderService() {
         cancellationSignal: CancellationSignal,
         callback: OutcomeReceiver<Void?, ClearCredentialException>
     ) {
-        if (!isPasskeyFeatureEnabled()) {
-            callback.onError(ClearCredentialUnsupportedException())
-            return
-        }
+        // Nothing to do
     }
 
     private fun getCreateEntry(accountName: String, passkeyCount: Int, intent: PendingIntent): CreateEntry {
@@ -196,10 +182,6 @@ class PasskeyProviderService : CredentialProviderService() {
         }
         val flags = PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         return PendingIntent.getActivity(applicationContext, requestCode.incrementAndGet(), intent, flags)
-    }
-
-    private fun isPasskeyFeatureEnabled(): Boolean {
-        return isFeatureToggleEnabled(FeatureToggle.LIQUID_AUTH.key)
     }
 
     internal companion object {

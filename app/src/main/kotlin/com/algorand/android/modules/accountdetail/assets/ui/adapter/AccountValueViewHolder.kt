@@ -26,8 +26,6 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
-import com.algorand.android.utils.extensions.hide
-import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatDateToChartDateString
 
 class AccountValueViewHolder(
@@ -90,16 +88,10 @@ class AccountValueViewHolder(
 
     private fun setChart(item: AccountPortfolioItem) {
         with(binding.chartComposeView) {
-            if (item.displayChart) {
-                setContent {
-                    PeraTheme {
-                        StatefulPeraLineChart(viewModel = viewModel, listener = getChartListener(item))
-                    }
+            setContent {
+                PeraTheme {
+                    StatefulPeraLineChart(viewModel = viewModel, listener = getChartListener(item))
                 }
-                show()
-            } else {
-                hide()
-                binding.chartComposeView.removeAllViews()
             }
         }
     }

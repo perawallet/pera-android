@@ -36,16 +36,14 @@ import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openSupportCenterUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.android.utils.extensions.hide
-import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.crypto.tink.Aead
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
@@ -118,14 +116,13 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
                 setOnClickListener { settingsViewModel.enableDeveloperOptions() }
             }
             passkeysListItem.apply {
-                if (settingsViewModel.isPasskeysFeatureEnabled()) show() else hide()
                 setOnClickListener { onPasskeysClick() }
             }
         }
     }
 
     private fun getVersionText(): String {
-        var versionName = getString(R.string.version_format, BuildConfig.VERSION_NAME)
+        val versionName = getString(R.string.version_format, BuildConfig.VERSION_NAME)
 
         val versionText = if (BuildConfig.DEBUG) {
             versionName + " (${BuildConfig.FLAVOR.uppercase()} - DEBUG)"

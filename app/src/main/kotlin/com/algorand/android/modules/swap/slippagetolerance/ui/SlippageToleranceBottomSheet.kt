@@ -36,8 +36,6 @@ class SlippageToleranceBottomSheet : BasePercentageSelectionBottomSheet() {
     override val basePercentageSelectionViewModel: BasePercentageSelectionViewModel
         get() = slippageToleranceViewModel
 
-    override val inputFieldHintText: Int = R.string.set_custom_slippage
-
     override fun onChipItemSelected(peraChipItem: PeraChipGroup.PeraChipItem, selectedChipIndex: Int) {
         slippageToleranceViewModel.onChipItemSelected(peraChipItem, selectedChipIndex)
     }

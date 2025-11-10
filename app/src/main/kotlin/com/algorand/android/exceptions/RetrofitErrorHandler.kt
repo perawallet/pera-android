@@ -31,7 +31,7 @@ class RetrofitErrorHandler(
         val requestMethod = networkResponseRequest?.method
         val requestUrl = networkResponseRequest?.url
 
-        logStringBuilder.appendLine("HipoExceptionsAndroid")
+        logStringBuilder.appendLine("PeraExceptionsAndroid")
         logStringBuilder.appendLine("--->")
         logStringBuilder.appendLine("$responseCode $requestMethod $requestUrl ")
         logStringBuilder.appendLine("HEADERS { ")
@@ -67,6 +67,7 @@ class RetrofitErrorHandler(
                     sendExceptionLog(FallbackMessageException(getLogMessage(response)))
                     fallbackMessage
                 }
+
                 else -> {
                     sendExceptionLog(NoFallbackMessageException(getLogMessage(response)))
                     defaultErrorMessage

@@ -45,13 +45,13 @@ suspend fun <T : Any> request(
     }
 }
 
-suspend fun <T : Any> requestWithHipoErrorHandler(
-    hipoApiErrorHandler: RetrofitErrorHandler,
+suspend fun <T : Any> requestWithRetrofitErrorHandler(
+    retrofitErrorHandler: RetrofitErrorHandler,
     doRequest: suspend () -> Response<T>
 ): Result<T> {
     return request(
         doRequest = doRequest,
-        onFailed = { errorResponse -> hipoApiErrorHandler.getMessageAsResultError(errorResponse) }
+        onFailed = { errorResponse -> retrofitErrorHandler.getMessageAsResultError(errorResponse) }
     )
 }
 

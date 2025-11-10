@@ -20,7 +20,7 @@ import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.service.AssetInboxOneAccountApiService
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.domain.model.AssetInboxOneAccountPaginated
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.domain.repository.AssetInboxOneAccountRepository
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -32,7 +32,7 @@ class AssetInboxOneAccountRepositoryImpl @Inject constructor(
 ) : AssetInboxOneAccountRepository {
 
     override suspend fun getAssetInboxOneAccount(address: String): Result<AssetInboxOneAccountPaginated> {
-        val result = requestWithHipoErrorHandler(retrofitErrorHandler) {
+        val result = requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             assetInboxOneAccountApiService.getAssetInboxOneAccountRequests(address)
         }
         if (result is Result.Error) return result
@@ -47,7 +47,7 @@ class AssetInboxOneAccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAssetInboxOneAccountMore(nextUrl: String): Result<AssetInboxOneAccountPaginated> {
-        val result = requestWithHipoErrorHandler(retrofitErrorHandler) {
+        val result = requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             assetInboxOneAccountApiService.getAssetInboxOneAccountRequestsMore(nextUrl)
         }
         if (result is Result.Error) return result

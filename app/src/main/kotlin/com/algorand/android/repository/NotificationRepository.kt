@@ -17,7 +17,7 @@ import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.models.NotificationFilter
 import com.algorand.android.models.NotificationFilterRequest
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 import com.algorand.android.sharedpref.NotificationRefreshTimeLocalSource
 import com.algorand.android.utils.Resource
 import com.algorand.android.exceptions.RetrofitErrorHandler
@@ -26,16 +26,16 @@ import javax.inject.Inject
 class NotificationRepository @Inject constructor(
     private val notificationFilterDao: NotificationFilterDao,
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler,
+    private val retrofitErrorHandler: RetrofitErrorHandler,
     private val deviceIdUseCase: DeviceIdUseCase,
     private val notificationRefreshTimeLocalSource: NotificationRefreshTimeLocalSource
 ) {
 
-    suspend fun getNotifications(notificationUserId: String) = requestWithHipoErrorHandler(hipoApiErrorHandler) {
+    suspend fun getNotifications(notificationUserId: String) = requestWithRetrofitErrorHandler(retrofitErrorHandler) {
         mobileAlgorandApi.getNotifications(notificationUserId)
     }
 
-    suspend fun getNotificationsMore(nextUrl: String) = requestWithHipoErrorHandler(hipoApiErrorHandler) {
+    suspend fun getNotificationsMore(nextUrl: String) = requestWithRetrofitErrorHandler(retrofitErrorHandler) {
         mobileAlgorandApi.getNotificationsMore(nextUrl)
     }
 
@@ -43,7 +43,7 @@ class NotificationRepository @Inject constructor(
         deviceId: String,
         publicKey: String,
         notificationFilterRequest: NotificationFilterRequest
-    ) = requestWithHipoErrorHandler(hipoApiErrorHandler) {
+    ) = requestWithRetrofitErrorHandler(retrofitErrorHandler) {
         mobileAlgorandApi.putNotificationFilter(deviceId, publicKey, notificationFilterRequest)
     }
 

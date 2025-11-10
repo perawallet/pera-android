@@ -40,9 +40,9 @@ import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
-import java.math.BigDecimal
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
 
 abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profile),
     AssetAboutFragment.AssetAboutTabListener {
@@ -252,6 +252,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                         }
                     }
                 }
+
                 is AsaStatusPreview.RemovalStatus.AssetRemovalStatus -> {
                     text = getString(
                         R.string.pair_value_format,
@@ -259,6 +260,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                         asaStatusPreview.assetShortName?.assetName
                     )
                 }
+
                 is AsaStatusPreview.TransferStatus -> {
                     text = getString(
                         R.string.pair_value_format,
@@ -266,9 +268,11 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                         asaStatusPreview.assetShortName?.assetName
                     )
                 }
+
                 is AsaStatusPreview.AccountSelectionStatus -> {
                     // no value text for account selection case
                 }
+
                 is AsaStatusPreview.RemovalStatus.CollectibleRemovalStatus -> {
                     // no value text for  collectible removal status case
                 }
@@ -282,12 +286,12 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
     ) {
         with(asaStatusPreview.peraButtonState) {
             with(binding.assetStatusConstraintLayout.assetStatusActionButton) {
-                setIconDrawable(iconResourceId = iconDrawableResId)
-                setBackgroundColor(colorResId = backgroundColorResId)
-                setIconTint(iconTintResId = iconTintColorResId)
-                setText(textResId = asaStatusPreview.actionButtonTextResId)
-                setButtonStroke(colorResId = strokeColorResId)
-                setButtonTextColor(colorResId = textColor)
+                setIconResource(iconDrawableResId)
+                setBackgroundColor(backgroundColorResId)
+                setIconTint(ContextCompat.getColorStateList(context, iconTintColorResId))
+                setText(asaStatusPreview.actionButtonTextResId)
+                setStrokeColor(ContextCompat.getColorStateList(context, strokeColorResId))
+                setTextColor(textColor)
                 setOnClickListener { onAsaActionButtonClick(asaStatusPreview) }
             }
         }

@@ -19,13 +19,13 @@ import com.algorand.android.models.AssetSearchResponse
 import com.algorand.android.models.Pagination
 import com.algorand.android.models.Result
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class AssetSearchRepositoryImpl @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler,
+    private val retrofitErrorHandler: RetrofitErrorHandler,
     private val assetSearchDTOMapper: AssetSearchDTOMapper
 ) : AssetSearchRepository {
 
@@ -34,7 +34,7 @@ class AssetSearchRepositoryImpl @Inject constructor(
         hasCollectible: Boolean?,
         availableOnDiscoverMobile: Boolean?
     ): Result<Pagination<AssetSearchDTO>> {
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             val assetQuery = queryText.takeIf { it.isNotBlank() }
             mobileAlgorandApi.getAssets(
                 assetQuery = assetQuery,
@@ -47,7 +47,7 @@ class AssetSearchRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTrendingAssets(): Result<Pagination<AssetSearchDTO>> {
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             mobileAlgorandApi.getTrendingAssets()
         }.map { listData ->
             mapToAssetSearchDTO(Pagination(null, listData))
@@ -55,7 +55,7 @@ class AssetSearchRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAssetsByUrl(url: String): Result<Pagination<AssetSearchDTO>> {
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             mobileAlgorandApi.getAssetsMore(url)
         }.map { paginationData -> mapToAssetSearchDTO(paginationData) }
     }

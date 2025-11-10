@@ -19,7 +19,7 @@ import com.algorand.wallet.asset.assetinbox.domain.repository.AssetInboxReposito
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.InMemoryLocalCache
 import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
-import com.algorand.wallet.foundation.network.utils.requestWithHipoErrorHandler
+import com.algorand.wallet.foundation.network.utils.requestWithRetrofitErrorHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -31,7 +31,7 @@ internal class AssetInboxRepositoryImpl(
 ) : AssetInboxRepository {
 
     override suspend fun getRequests(addresses: List<String>): PeraResult<List<AssetInboxRequest>> {
-        return requestWithHipoErrorHandler(retrofitErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             assetInboxApiService.getAssetInboxAllAccountsRequests(addresses.joinToString(","))
         }.map { response ->
             assetInboxRequestMapper(response)

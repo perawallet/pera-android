@@ -47,7 +47,7 @@
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
         android:clipToPadding="false"
         android:paddingBottom="100dp"
-        app:layout_constraintBottom_toTopOf="@id/poweredByTextView"
+        app:layout_constraintBottom_toTopOf="@id/buyGiftCardsButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/introductionImageView">

@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.currency.data.di
 
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.currency.data.local.CurrencyLocalSource
 import com.algorand.android.modules.currency.data.mapper.CurrencyOptionMapper
 import com.algorand.android.modules.currency.data.repository.CurrencyRepositoryImpl
 import com.algorand.android.modules.currency.domain.repository.CurrencyRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,8 +34,13 @@ object CurrencyRepositoryModule {
         currencyLocalSource: CurrencyLocalSource,
         currencyOptionMapper: CurrencyOptionMapper,
         mobileAlgorandApi: MobileAlgorandApi,
-        hipoErrorHandler: RetrofitErrorHandler
+        retrofitErrorHandler: RetrofitErrorHandler
     ): CurrencyRepository {
-        return CurrencyRepositoryImpl(currencyLocalSource, currencyOptionMapper, mobileAlgorandApi, hipoErrorHandler)
+        return CurrencyRepositoryImpl(
+            currencyLocalSource,
+            currencyOptionMapper,
+            mobileAlgorandApi,
+            retrofitErrorHandler
+        )
     }
 }

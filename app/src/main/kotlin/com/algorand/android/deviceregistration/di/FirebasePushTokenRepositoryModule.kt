@@ -16,8 +16,8 @@ import com.algorand.android.cache.FirebasePushTokenSingleLocalCache
 import com.algorand.android.deviceregistration.data.mapper.PushTokenDeleteRequestMapper
 import com.algorand.android.deviceregistration.data.repository.FirebasePushTokenRepositoryImpl
 import com.algorand.android.deviceregistration.domain.repository.FirebasePushTokenRepository
-import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.exceptions.RetrofitErrorHandler
+import com.algorand.android.network.MobileAlgorandApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,13 +36,13 @@ object FirebasePushTokenRepositoryModule {
         firebasePushTokenSingleLocalCache: FirebasePushTokenSingleLocalCache,
         pushTokenDeleteRequestMapper: PushTokenDeleteRequestMapper,
         mobileAlgorandApi: MobileAlgorandApi,
-        hipoErrorHandler: RetrofitErrorHandler
+        retrofitErrorHandler: RetrofitErrorHandler
     ): FirebasePushTokenRepository {
         return FirebasePushTokenRepositoryImpl(
             firebasePushTokenSingleLocalCache,
             pushTokenDeleteRequestMapper,
             mobileAlgorandApi,
-            hipoErrorHandler
+            retrofitErrorHandler
         )
     }
 }

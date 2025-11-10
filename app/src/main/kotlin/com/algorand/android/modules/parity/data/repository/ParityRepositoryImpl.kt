@@ -13,21 +13,21 @@
 package com.algorand.android.modules.parity.data.repository
 
 import com.algorand.android.cache.SelectedCurrencyDetailSingleLocalCache
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.modules.parity.data.mapper.CurrencyDetailDTOMapper
 import com.algorand.android.modules.parity.domain.model.CurrencyDetailDTO
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 import com.algorand.android.utils.CacheResult
-import com.algorand.android.exceptions.RetrofitErrorHandler
-import javax.inject.Inject
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 class ParityRepositoryImpl @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler,
+    private val retrofitErrorHandler: RetrofitErrorHandler,
     private val selectedCurrencyDetailSingleLocalCache: SelectedCurrencyDetailSingleLocalCache,
     private val currencyDetailDTOMapper: CurrencyDetailDTOMapper
 ) : ParityRepository {
@@ -53,7 +53,7 @@ class ParityRepositoryImpl @Inject constructor(
     override suspend fun fetchCurrencyDetailDTO(
         currencyPreference: String
     ): Result<CurrencyDetailDTO> {
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             mobileAlgorandApi.getCurrencyDetail(currencyPreference)
         }.map { response ->
             currencyDetailDTOMapper.mapToCurrencyDetailDTO(response)

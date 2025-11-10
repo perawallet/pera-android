@@ -29,9 +29,9 @@ object CsvModule {
     @Provides
     @Named(CsvRepository.INJECTION_NAME)
     fun provideCsvRepository(
-        hipoApiErrorHandler: RetrofitErrorHandler,
+        retrofitErrorHandler: RetrofitErrorHandler,
         mobileAlgorandApi: MobileAlgorandApi
     ): CsvRepository {
-        return CsvRepositoryImpl(hipoApiErrorHandler, mobileAlgorandApi)
+        return CsvRepositoryImpl(retrofitErrorHandler, mobileAlgorandApi)
     }
 }

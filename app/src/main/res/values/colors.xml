@@ -147,33 +147,14 @@
     <color name="button_secondary_text">@color/gray_900</color>
     <color name="button_secondary_disabled_text">@color/gray_500</color>
 
-    <!-- Ghost Button -->
-    <color name="button_ghost_bg">@color/white</color>
-    <color name="button_ghost_focus_bg">@color/gray_100</color>
-    <color name="button_ghost_disabled_bg">@color/white</color>
-    <color name="button_ghost_text">@color/gray_900</color>
-    <color name="button_ghost_disabled_text">@color/gray_500</color>
-
-    <!-- Float Button -->
-    <color name="button_float_bg">@color/white</color>
-    <color name="button_float_focus_bg">@color/gray_100</color>
-    <color name="button_float_icon_main">@color/gray_900</color>
-    <color name="button_float_icon_lighter">@color/white</color>
-
     <!-- Helper Button -->
     <color name="button_helper_bg">@color/gray_800</color>
-    <color name="button_helper_focus_bg">@color/gray_700</color>
     <color name="button_helper_disabled_bg">@color/gray_100</color>
     <color name="button_helper_icon">@color/white</color>
-    <color name="button_helper_disabled_icon">@color/gray_500</color>
-    <color name="button_helper_pera_icon">@color/yellow_400</color>
 
     <!-- Square Button -->
     <color name="button_square_bg">@color/turquoise_700_alpha_12</color>
-    <color name="button_square_focus_bg">@color/turquoise_700_alpha_28</color>
-    <color name="button_square_secondary_bg">@color/gray_100</color>
     <color name="button_square_icon">@color/turquoise_700</color>
-    <color name="button_square_secondary_icon">@color/gray_500</color>
 
     <!-- Helpers -->
     <color name="negative">@color/salmon_600</color>
@@ -187,7 +168,6 @@
     <!-- Banner -->
     <color name="banner_bg">@color/turquoise_600</color>
     <color name="banner_button">@color/white_alpha_12</color>
-    <color name="banner_icon_bg">@color/turquoise_700_alpha_20</color>
     <color name="banner_text">@color/white</color>
 
     <!-- Wallets -->
@@ -199,8 +179,6 @@
     <color name="wallet_3_icon">#FFAEE3</color>
     <color name="wallet_4">@color/turquoise_300</color>
     <color name="wallet_4_icon">@color/turquoise_800</color>
-    <color name="wallet_5">@color/salmon_400</color>
-    <color name="wallet_5_icon">#424F76</color>
     <color name="wallet_placeholder">@color/gray_100</color>
     <color name="wallet_placeholder_icon">@color/gray_500</color>
 
@@ -210,7 +188,6 @@
     <color name="wallet_4_icon_governor">@color/turquoise_700</color>
 
     <!-- Tab Bar -->
-    <color name="tab_bar_button">@color/gray_800</color>
     <color name="tab_bar_background">@color/white</color>
     <color name="tab_bar_icon_active">@color/gray_900</color>
     <color name="tab_bar_icon_non_active">@color/gray_400</color>
@@ -226,10 +203,6 @@
     <color name="switch_bg">@color/turquoise_600</color>
     <color name="switch_off_bg">@color/gray_400</color>
     <color name="switch_disabled_bg">@color/gray_400_alpha_50</color>
-
-    <!-- NFT Icons -->
-    <color name="nft_icon_bg">@color/gray_900_alpha_60</color>
-    <color name="nft_icon">@color/white</color>
 
     <!-- Meld -->
     <color name="meld">#171835</color>
@@ -265,8 +238,6 @@
 
     <color name="button_stroke_color">@color/gray_100</color>
 
-    <color name="divider_color_dark">@color/gray_800</color>
-
     <!-- endregion App Color Palette -->
 
     <!--!!! Do not add any new color to below this line. Try to use the ones at above.
@@ -299,7 +270,6 @@
     <color name="chart_time_frame_button_color">@color/gray_100</color>
     <color name="chart_time_frame_default_text_color">@color/gray_400</color>
 
-    <color name="wallet_connect_account_selection_border_color">@color/gray_100</color>
     <color name="wallet_connect_dapp_icon_background_color">@color/white</color>
     <color name="wallet_connect_dapp_icon_border_color">@color/gray_100</color>
 
@@ -375,8 +345,6 @@
     <color name="connected_node_testnet_text_color">@color/yellow_600</color>
 
     <!-- Backup -->
-    <color name="backup_banner_title">@color/white_alpha_60</color>
     <color name="backup_banner_description">@color/background</color>
     <color name="backup_banner_icon">@color/background</color>
-    <color name="backup_banner_icon_bg">@color/salmon_850_alpha20</color>
 </resources>

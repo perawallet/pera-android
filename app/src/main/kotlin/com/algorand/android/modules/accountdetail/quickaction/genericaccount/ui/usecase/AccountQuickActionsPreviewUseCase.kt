@@ -12,14 +12,12 @@
 
 package com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.usecase
 
-import androidx.navigation.NavDirections
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.AccountQuickActionsBottomSheetDirections
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.mapper.AccountQuickActionsPreviewMapper
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.model.AccountQuickActionsPreview
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
@@ -27,7 +25,6 @@ import javax.inject.Inject
 
 class AccountQuickActionsPreviewUseCase @Inject constructor(
     private val accountQuickActionsPreviewMapper: AccountQuickActionsPreviewMapper,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val getAccountType: GetAccountType
 ) {
 
@@ -40,23 +37,8 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
         accountAddress: String
     ): AccountQuickActionsPreview {
         return if (hasAccountAuthority(accountAddress)) {
-            var swapNavDirection: NavDirections? = null
-            swapNavigationDestinationHelper.getSwapNavigationDestination(
-                accountAddress = accountAddress,
-                onNavToSwap = { address ->
-                    swapNavDirection = AccountQuickActionsBottomSheetDirections
-                        .actionAccountQuickActionsBottomSheetToSwapNavigation(address)
-                },
-                onNavToIntroduction = {
-                    swapNavDirection = AccountQuickActionsBottomSheetDirections
-                        .actionAccountQuickActionsBottomSheetToSwapIntroductionNavigation()
-                },
-                onNavToSwapV2 = { accountAddress ->
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapV2Navigation(accountAddress)
-                }
-            )
-            val safeDirection = swapNavDirection ?: return preview
-            preview.copy(onNavigationEvent = Event(safeDirection))
+            val swapNavDirection = HomeNavigationDirections.actionGlobalSwapV2Navigation(accountAddress)
+            preview.copy(onNavigationEvent = Event(swapNavDirection))
         } else {
             preview.copy(showGlobalErrorEvent = Event(R.string.this_action_is_not_available))
         }

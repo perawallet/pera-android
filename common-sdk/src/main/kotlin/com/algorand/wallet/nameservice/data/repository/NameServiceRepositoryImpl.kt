@@ -15,7 +15,7 @@ package com.algorand.wallet.nameservice.data.repository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.InMemoryLocalCache
 import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
-import com.algorand.wallet.foundation.network.utils.requestWithHipoErrorHandler
+import com.algorand.wallet.foundation.network.utils.requestWithRetrofitErrorHandler
 import com.algorand.wallet.nameservice.data.mapper.NameServiceMapper
 import com.algorand.wallet.nameservice.data.mapper.NameServiceSearchResultMapper
 import com.algorand.wallet.nameservice.data.model.SearchNameServiceRequestBody
@@ -34,7 +34,7 @@ internal class NameServiceRepositoryImpl @Inject constructor(
 ) : NameServiceRepository {
 
     override suspend fun initializeNameServiceCache(addresses: List<String>): PeraResult<List<NameService>> {
-        return requestWithHipoErrorHandler(peraApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(peraApiErrorHandler) {
             nameServiceApiService.fetchAccountsNameServices(SearchNameServiceRequestBody(addresses))
         }.use(
             onSuccess = {
@@ -49,7 +49,7 @@ internal class NameServiceRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getNameServiceSearchResults(query: String): PeraResult<List<NameServiceSearchResult>> {
-        return requestWithHipoErrorHandler(peraApiErrorHandler) {
+        return requestWithRetrofitErrorHandler(peraApiErrorHandler) {
             nameServiceApiService.getNameServiceAccountAddresses(query)
         }.map { searchResponses ->
             searchResponses.results?.mapNotNull { response ->

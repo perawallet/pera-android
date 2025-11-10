@@ -235,16 +235,12 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
     }
 
     private fun initAssetLineChart() {
-        val isChartFeatureEnabled = assetDetailViewModel.isChartFeatureEnabled()
-        binding.assetLineChart.isVisible = isChartFeatureEnabled
-        if (isChartFeatureEnabled) {
-            binding.assetLineChart.setContent {
-                PeraTheme {
-                    StatefulPeraLineChart(
-                        viewModel = assetLineChartViewModel,
-                        listener = chartListener
-                    )
-                }
+        binding.assetLineChart.setContent {
+            PeraTheme {
+                StatefulPeraLineChart(
+                    viewModel = assetLineChartViewModel,
+                    listener = chartListener
+                )
             }
         }
     }

@@ -12,22 +12,22 @@
 
 package com.algorand.android.modules.nftdomain.data.repository
 
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.modules.nftdomain.data.mapper.NftDomainSearchResultDTOMapper
 import com.algorand.android.modules.nftdomain.domain.model.NftDomainSearchResultDTO
 import com.algorand.android.modules.nftdomain.domain.repository.NftDomainSearchRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
-import com.algorand.android.exceptions.RetrofitErrorHandler
+import com.algorand.android.network.requestWithRetrofitErrorHandler
 
 class NftDomainSearchRepositoryImpl(
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoErrorHandler: RetrofitErrorHandler,
+    private val retrofitErrorHandler: RetrofitErrorHandler,
     private val nftDomainSearchResultDTOMapper: NftDomainSearchResultDTOMapper
 ) : NftDomainSearchRepository {
 
     override suspend fun getSearchResults(query: String): Result<List<NftDomainSearchResultDTO>> {
-        return requestWithHipoErrorHandler(hipoErrorHandler) {
+        return requestWithRetrofitErrorHandler(retrofitErrorHandler) {
             mobileAlgorandApi.getNftDomainAccountAddresses(query)
         }.map { nftDomainSearchResponse ->
             nftDomainSearchResponse.results?.map { nftDomainSearchResultResponse ->

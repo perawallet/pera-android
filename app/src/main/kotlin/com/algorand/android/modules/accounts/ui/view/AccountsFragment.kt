@@ -78,7 +78,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             is AccountsViewModel.ViewEvent.NavToLoginNavigation -> navToLoginNavigation()
             is ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
             is NavigateToBackupPassphraseInfo -> navToBackupPassphraseInfo(event.addresses)
-            is NavigateToSwap -> nav(event.navDirections)
+            is NavigateToSwap -> navToSwapV2Navigation()
             is ShowAccountAddressCopyTutorial -> showAccountAddressCopyTutorialDialog(event.tutorialId)
             is ShowGiftCardsTutorial -> showGiftCardsTutorialDialog(event.tutorialId)
             is ShowNotificationPermission -> askNotificationPermission()
@@ -490,6 +490,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 addresses.toTypedArray(),
                 OnboardingAccountType.Algo25
             )
+        )
+    }
+
+    private fun navToSwapV2Navigation() {
+        nav(
+            AccountsFragmentDirections.actionGlobalSwapV2Navigation()
         )
     }
 

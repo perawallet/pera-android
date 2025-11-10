@@ -14,6 +14,7 @@ package com.algorand.android.modules.collectibles.profile.ui
 
 import android.view.View
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -136,12 +137,12 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
     private fun initAsaStatusActionButton(asaStatusPreview: AsaStatusPreview) {
         with(asaStatusPreview.peraButtonState) {
             with(asaStatusViewStubBinding.assetStatusActionButton) {
-                setIconDrawable(iconResourceId = iconDrawableResId)
-                setBackgroundColor(colorResId = backgroundColorResId)
-                setIconTint(iconTintResId = iconTintColorResId)
-                setText(textResId = asaStatusPreview.actionButtonTextResId)
-                setButtonStroke(colorResId = strokeColorResId)
-                setButtonTextColor(colorResId = textColor)
+                setIconResource(iconDrawableResId)
+                setBackgroundColor(backgroundColorResId)
+                setIconTint(ContextCompat.getColorStateList(context, iconTintColorResId))
+                setText(asaStatusPreview.actionButtonTextResId)
+                setStrokeColor(ContextCompat.getColorStateList(context, strokeColorResId))
+                setTextColor(textColor)
                 setOnClickListener { onAsaActionButtonClick(asaStatusPreview) }
             }
         }

@@ -32,7 +32,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class TransactionsRepository @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
     private val algodApi: AlgodApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler
+    private val retrofitErrorHandler: RetrofitErrorHandler
 ) {
 
     suspend fun getTransactionParams(): Result<TransactionParams> =
@@ -83,7 +83,7 @@ class TransactionsRepository @Inject constructor(
             mobileAlgorandApi.trackTransaction(trackTransactionRequest)
         },
         onFailed = { errorResponse ->
-            hipoApiErrorHandler.getMessageAsResultError(errorResponse)
+            retrofitErrorHandler.getMessageAsResultError(errorResponse)
         }
     )
 

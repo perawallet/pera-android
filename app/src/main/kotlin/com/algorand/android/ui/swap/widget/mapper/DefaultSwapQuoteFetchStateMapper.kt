@@ -69,6 +69,6 @@ internal class DefaultSwapQuoteFetchStateMapper @Inject constructor(
     }
 
     private companion object {
-        const val SLIPPAGE_TOLERANCE_DIVIDER = 100f
+        const val SLIPPAGE_TOLERANCE_DIVIDER = 100.0
     }
 }

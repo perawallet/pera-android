@@ -65,14 +65,14 @@ import com.algorand.android.ui.swap.configuration.view.ChipOption.Companion.CUST
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.capitalizeWords
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 private const val MAX_BALANCE = 100
-private const val MIN_BALANCE = 0
+private const val MIN_BALANCE = 1
 private const val MAX_SLIPPAGE = 10f
 private const val MIN_SLIPPAGE = 0.01f
 
@@ -110,8 +110,8 @@ fun SwapConfigurationBottomSheet(
                 endContainer = {
                     PeraToolbarTextButton(text = stringResource(R.string.apply), enabled = isApplyButtonEnabled) {
                         val result = SwapConfigurationResult(
-                            balancePercentage = balanceTextState.value.text.toFloatOrNull(),
-                            slippageTolerance = slippageTextState.value.text.toFloatOrNull(),
+                            balancePercentage = balanceTextState.value.text.toIntOrNull(),
+                            slippageTolerance = slippageTextState.value.text.toDoubleOrNull(),
                             useLocalCurrency = localCurrencyState.value
                         )
                         scope.launch { swapViewModel.logSettingsApplyClick() }

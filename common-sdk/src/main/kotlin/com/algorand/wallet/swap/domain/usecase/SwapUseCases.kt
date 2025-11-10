@@ -101,9 +101,9 @@ fun interface SendSwapTransactions {
 }
 
 fun interface SetSwapSlippageTolerancePercentage {
-    suspend operator fun invoke(percentage: Float?)
+    suspend operator fun invoke(percentage: Double?)
 }
 
 fun interface GetSwapSlippageTolerancePercentage {
-    suspend operator fun invoke(): Float?
+    suspend operator fun invoke(): Double?
 }

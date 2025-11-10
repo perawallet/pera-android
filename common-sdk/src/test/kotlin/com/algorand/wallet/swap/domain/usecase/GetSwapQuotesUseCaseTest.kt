@@ -162,7 +162,7 @@ class GetSwapQuotesUseCaseTest {
         val ASSET_IN = peraFixture<Long>()
         val ASSET_OUT = peraFixture<Long>()
         val AMOUNT = peraFixture<BigInteger>()
-        val SLIPPAGE = peraFixture<Float?>()
+        val SLIPPAGE = peraFixture<Double?>()
 
         val PAYLOAD = SwapQuotePayload(ADDRESS, ASSET_IN, ASSET_OUT, AMOUNT, SLIPPAGE)
         val REQUEST = SwapQuoteRequestPayload(ADDRESS, ASSET_IN, ASSET_OUT, AMOUNT, DEVICE_ID, SLIPPAGE)

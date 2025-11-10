@@ -64,7 +64,7 @@ class DefaultSwapRepositoryTest {
     private val swapQuoteProviderMapper: SwapQuoteProviderMapper = mockk()
     private val topSwapPairsMapper: TopSwapPairsMapper = mockk()
     private val useLocalCurrencyCache: PersistentCache<Boolean> = mockk(relaxed = true)
-    private val slippageToleranceCache: PersistentCache<Float> = mockk(relaxed = true)
+    private val slippageToleranceCache: PersistentCache<Double> = mockk(relaxed = true)
     private val swapUpdateStatusRequestBodyMapper: SwapUpdateStatusRequestBodyMapper = mockk(relaxed = true)
 
     private val sut = DefaultSwapRepository(

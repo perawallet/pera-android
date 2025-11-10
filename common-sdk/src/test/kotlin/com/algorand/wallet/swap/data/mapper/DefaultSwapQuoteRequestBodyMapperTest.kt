@@ -57,7 +57,7 @@ class DefaultSwapQuoteRequestBodyMapperTest {
             assetInId = 1L,
             assetOutId = 2L,
             amount = BigInteger.valueOf(10_000),
-            slippage = 0.01f
+            slippage = 0.01
         )
 
         val REQUEST_BODY = SwapQuoteRequestBody(
@@ -66,7 +66,7 @@ class DefaultSwapQuoteRequestBodyMapperTest {
             assetInId = 1L,
             assetOutId = 2L,
             amount = BigInteger.valueOf(10_000),
-            slippage = 0.01f,
+            slippage = 0.01,
             swapType = SwapTypeResponse.FIXED_INPUT
         )
     }

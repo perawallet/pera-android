@@ -127,8 +127,8 @@ internal object SwapModule {
                 type = Boolean::class.java,
                 key = "swap_use_local_currency_preference",
             ),
-            slippageTolerancePersistentCache = persistentCacheProvider.getPersistentCache<Float>(
-                type = Float::class.java,
+            slippageTolerancePersistentCache = persistentCacheProvider.getPersistentCache<Double>(
+                type = Double::class.java,
                 key = "swap_slippage_tolerance_preference",
             )
         )

@@ -249,7 +249,7 @@ class SwapViewModel @Inject constructor(
         val address: String? = null,
         val assetInId: Long = ALGO_ID,
         val assetOutId: Long = USDC_MAINNET_ID,
-        val slippage: Float? = null,
+        val slippage: Double? = null,
         val useLocalCurrency: Boolean = false,
         val primaryCurrencySymbol: String = ""
     )

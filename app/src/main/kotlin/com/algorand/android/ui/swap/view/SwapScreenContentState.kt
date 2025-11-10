@@ -127,7 +127,7 @@ fun SwapScreenContentState(
                 onApplyClick = {
                     swapViewModel.applySwapConfigs(it)
                     if (it.balancePercentage != null) {
-                        val percentage = it.balancePercentage.toInt()
+                        val percentage = it.balancePercentage
                         widgetViewModel.setAmountByPercentage(swapViewModel.getSwapDetails(), percentage)
                     }
                     swapConfigurationBottomSheetState.hide()

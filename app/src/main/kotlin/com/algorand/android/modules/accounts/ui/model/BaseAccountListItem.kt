@@ -131,7 +131,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         }
     }
 
-    data class HeaderItem(@StringRes val titleResId: Int) : BaseAccountListItem {
+    data class HeaderItem(@param:StringRes val titleResId: Int) : BaseAccountListItem {
 
         override val itemType: ItemType
             get() = ItemType.HEADER

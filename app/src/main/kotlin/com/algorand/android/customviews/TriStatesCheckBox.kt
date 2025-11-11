@@ -56,7 +56,7 @@ class TriStatesCheckBox @JvmOverloads constructor(
         setCompoundDrawablesWithIntrinsicBounds(0, 0, state.drawableResId, 0)
     }
 
-    enum class CheckBoxState(@DrawableRes val drawableResId: Int, @StringRes val titleResId: Int) {
+    enum class CheckBoxState(@param:DrawableRes val drawableResId: Int, @param:StringRes val titleResId: Int) {
         UNCHECKED(R.drawable.ic_checkbox_unselected, R.string.select_all),
         PARTIAL_CHECKED(R.drawable.ic_checkbox_partially_selected, R.string.select_all),
         CHECKED(R.drawable.ic_checkbox_selected, R.string.unselect_all)

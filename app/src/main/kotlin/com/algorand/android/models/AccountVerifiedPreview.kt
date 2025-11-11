@@ -16,8 +16,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class AccountVerifiedPreview(
-    @StringRes val titleRes: Int,
-    @StringRes val descriptionRes: Int,
-    @DrawableRes val imageRes: Int,
-    @StringRes val buttonTextRes: Int
+    @param:StringRes val titleRes: Int,
+    @param:StringRes val descriptionRes: Int,
+    @param:DrawableRes val imageRes: Int,
+    @param:StringRes val buttonTextRes: Int
 )

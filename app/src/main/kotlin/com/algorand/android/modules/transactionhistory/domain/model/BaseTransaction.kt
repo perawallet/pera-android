@@ -8,7 +8,7 @@ sealed class BaseTransaction {
 
     data class TransactionDateTitle(val title: String) : BaseTransaction()
 
-    data class PendingTransactionTitle(@StringRes val stringRes: Int) : BaseTransaction()
+    data class PendingTransactionTitle(@param:StringRes val stringRes: Int) : BaseTransaction()
 
     sealed class Transaction : BaseTransaction() {
 

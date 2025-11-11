@@ -50,7 +50,7 @@ sealed class BaseWalletConnectConnectionItem : RecyclerListItem {
     }
 
     data class TitleItem(
-        @PluralsRes val titleTextResId: Int,
+        @param:PluralsRes val titleTextResId: Int,
         val memberCount: Int
     ) : BaseWalletConnectConnectionItem() {
 

@@ -59,7 +59,7 @@ sealed class LedgerInformationListItem {
         }
     }
 
-    data class TitleItem(@StringRes val titleRes: Int) : LedgerInformationListItem() {
+    data class TitleItem(@param:StringRes val titleRes: Int) : LedgerInformationListItem() {
         override fun areItemsTheSame(other: LedgerInformationListItem): Boolean {
             return other is TitleItem && titleRes == other.titleRes
         }

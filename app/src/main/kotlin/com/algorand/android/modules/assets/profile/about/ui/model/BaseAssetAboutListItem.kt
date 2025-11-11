@@ -45,8 +45,8 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is StatisticsItem &&
-                formattedPriceText == other.formattedPriceText &&
-                formattedCompactTotalSupplyText == other.formattedCompactTotalSupplyText
+                    formattedPriceText == other.formattedPriceText &&
+                    formattedCompactTotalSupplyText == other.formattedCompactTotalSupplyText
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -89,9 +89,9 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is BadgeDescriptionItem &&
-                drawableResId == other.drawableResId &&
-                titleTextResId == other.titleTextResId &&
-                descriptionTextResId == other.descriptionTextResId
+                    drawableResId == other.drawableResId &&
+                    titleTextResId == other.titleTextResId &&
+                    descriptionTextResId == other.descriptionTextResId
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -138,7 +138,7 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
             }
         }
 
-        data class AlgoDescriptionItem(@StringRes val descriptionTextResId: Int) : BaseAssetDescriptionItem() {
+        data class AlgoDescriptionItem(@param:StringRes val descriptionTextResId: Int) : BaseAssetDescriptionItem() {
 
             override val itemType = ItemType.ALGO_DESCRIPTION_ITEM
 
@@ -162,9 +162,9 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is SocialMediaItem &&
-                discordUrl == other.discordUrl &&
-                telegramUrl == other.telegramUrl &&
-                twitterUrl == other.twitterUrl
+                    discordUrl == other.discordUrl &&
+                    telegramUrl == other.telegramUrl &&
+                    twitterUrl == other.twitterUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

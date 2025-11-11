@@ -27,7 +27,7 @@ data class WalletConnectSessionDetailConnectedAccountItem(
 
     data class ConnectedNodeItem(
         val nodeName: String,
-        @ColorRes val textColorResId: Int
+        @param:ColorRes val textColorResId: Int
     )
 
     override fun areItemsTheSame(other: RecyclerListItem): Boolean {

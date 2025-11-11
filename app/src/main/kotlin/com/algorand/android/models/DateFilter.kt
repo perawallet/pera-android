@@ -22,8 +22,8 @@ import com.algorand.android.utils.getLastWeekRange
 import kotlinx.parcelize.Parcelize
 
 sealed class DateFilter(
-    @DrawableRes val iconResId: Int,
-    @StringRes val titleResId: Int
+    @param:DrawableRes val iconResId: Int,
+    @param:StringRes val titleResId: Int
 ) : Parcelable, RecyclerListItem {
 
     open var isSelected: Boolean = false

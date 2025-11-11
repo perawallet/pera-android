@@ -18,8 +18,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AnnotatedString(
-    @StringRes
-    val stringResId: Int,
+    @param:StringRes val stringResId: Int,
 
     val replacementList: List<Pair<CharSequence, CharSequence>> = emptyList(),
 

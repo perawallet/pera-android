@@ -47,8 +47,8 @@ sealed class LedgerBleResult {
     data class LedgerErrorResult(val errorMessage: String) : LedgerBleResult()
 
     data class AppErrorResult(
-        @StringRes val errorMessageId: Int,
-        @StringRes val titleResId: Int
+        @param:StringRes val errorMessageId: Int,
+        @param:StringRes val titleResId: Int
     ) : LedgerBleResult()
 
     object OnLedgerDisconnected : LedgerBleResult()

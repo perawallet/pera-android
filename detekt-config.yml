@@ -1,35 +1,17 @@
 build:
   maxIssues: 0
-  weights:
-  # complexity: 2
-  # LongParameterList: 1
-  # style: 1
-  # comments: 1
 
 processors:
   active: true
-  exclude:
-  # - 'FunctionCountProcessor'
-  # - 'PropertyCountProcessor'
-  # - 'ClassCountProcessor'
-  # - 'PackageCountProcessor'
-  # - 'KtFileCountProcessor'
+  exclude: [ ]
 
 console-reports:
   active: true
-  exclude:
-  #  - 'ProjectStatisticsReport'
-  #  - 'ComplexityReport'
-  #  - 'NotificationReport'
-  #  - 'FindingsReport'
-  #  - 'BuildFailureReport'
+  exclude: [ ]
 
 output-reports:
   active: true
-  exclude:
-  #  - 'HtmlOutputReport'
-  #  - 'PlainOutputReport'
-  #  - 'XmlOutputReport'
+  exclude: [ ]
 
 comments:
   active: true
@@ -43,10 +25,6 @@ comments:
     endOfSentenceFormat: ([.?!][ \t\n\r\f<])|([.?!]$)
   UndocumentedPublicClass:
     active: false
-    searchInNestedClass: true
-    searchInInnerClass: true
-    searchInInnerObject: true
-    searchInInnerInterface: true
   UndocumentedPublicFunction:
     active: false
 
@@ -58,8 +36,7 @@ complexity:
   ComplexInterface:
     active: false
     threshold: 10
-    includeStaticDeclarations: false
-  ComplexMethod:
+  CyclomaticComplexMethod:
     active: true
     threshold: 50
     ignoreSingleWhenExpression: false
@@ -75,7 +52,6 @@ complexity:
     active: true
     functionThreshold: 10
     constructorThreshold: 10
-    ignoreDefaultParameters: false
   MethodOverloading:
     active: false
     threshold: 6
@@ -134,7 +110,11 @@ exceptions:
   active: true
   ExceptionRaisedInUnexpectedLocation:
     active: false
-    methodNames: 'toString,hashCode,equals,finalize'
+    methodNames:
+      - toString
+      - hashCode
+      - equals
+      - finalize
   InstanceOfCheckForException:
     active: false
   NotImplementedDeclaration:
@@ -153,7 +133,10 @@ exceptions:
     active: false
   ThrowingExceptionsWithoutMessageOrCause:
     active: false
-    exceptions: 'IllegalArgumentException,IllegalStateException,IOException'
+    exceptions:
+      - IllegalArgumentException
+      - IllegalStateException
+      - IOException
   ThrowingNewInstanceOfSameException:
     active: false
   TooGenericExceptionCaught:
@@ -188,7 +171,7 @@ naming:
     enumEntryPattern: '^[A-Z][_a-zA-Z0-9]*'
   ForbiddenClassName:
     active: false
-    forbiddenName: ''
+    forbiddenName: [ ]
   FunctionMaxLength:
     active: false
     maximumFunctionNameLength: 30
@@ -197,9 +180,9 @@ naming:
     minimumFunctionNameLength: 3
   FunctionNaming:
     active: true
-    ignoreAnnotated: ['Composable']
+    ignoreAnnotated:
+      - Composable
     functionPattern: '^([a-z$][a-zA-Z$0-9]*)|(`.*`)$'
-    excludeClassPattern: '$^'
   MatchingDeclarationName:
     active: true
   MemberNameEqualsClassName:
@@ -216,17 +199,10 @@ naming:
     constantPattern: '[A-Z][_A-Z0-9]*'
     propertyPattern: '[a-z][A-Za-z\d]*'
     privatePropertyPattern: '(_)?[a-z][A-Za-z0-9]*'
-  VariableMaxLength:
-    active: false
-    maximumVariableNameLength: 64
-  VariableMinLength:
-    active: false
-    minimumVariableNameLength: 1
   VariableNaming:
     active: true
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
-    excludeClassPattern: '$^'
 
 performance:
   active: true
@@ -240,8 +216,6 @@ performance:
 
 potential-bugs:
   active: true
-  DuplicateCaseInWhenExpression:
-    active: true
   EqualsAlwaysReturnsTrueOrFalse:
     active: false
   EqualsWithHashCodeExist:
@@ -257,7 +231,7 @@ potential-bugs:
   LateinitUsage:
     active: false
     excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/generated/**"
-    excludeAnnotatedProperties: ""
+    ignoreAnnotated: [ ]
     ignoreOnClassesPattern: ""
   UnconditionalJumpStatementInLoop:
     active: false
@@ -278,35 +252,39 @@ style:
     active: false
   DataClassContainsFunctions:
     active: false
-    conversionFunctionPrefix: 'to'
-  EqualsNullCall:
-    active: false
+    conversionFunctionPrefix:
+      - to
   ExpressionBodySyntax:
     active: false
   ForbiddenComment:
     active: false
-    values: 'FIXME:,STOPSHIP:'
+    comments:
+      - FIXME:
+      - STOPSHIP:
   ForbiddenImport:
     active: false
-    imports: ''
+    imports: [ ]
   FunctionOnlyReturningConstant:
     active: false
     ignoreOverridableFunction: true
-    excludedFunctions: 'describeContents'
+    excludedFunctions:
+      - describeContents
   LoopWithTooManyJumpStatements:
     active: false
-    maxJumpCount: 1
   MagicNumber:
     active: true
     excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/generated/**"
-    ignoreNumbers: '-1,0,1,2'
+    ignoreNumbers:
+      - "-1"
+      - "0"
+      - "1"
+      - "2"
     ignoreHashCodeFunction: false
     ignorePropertyDeclaration: false
     ignoreConstantDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
     ignoreAnnotation: false
     ignoreNamedArgument: true
-    ignoreEnums: false
   MaxLineLength:
     active: true
     excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/generated/**, **/ViewModelModule.kt, **/BuildersModule.kt"
@@ -317,55 +295,33 @@ style:
     active: true
   ModifierOrder:
     active: true
-  NestedClassesVisibility:
-    active: false
   NewLineAtEndOfFile:
     active: true
-  NoTabs:
-    active: false
   OptionalAbstractKeyword:
     active: true
   OptionalUnit:
     active: false
-  OptionalWhenBraces:
+  BracesOnWhenStatements:
     active: false
   ProtectedMemberInFinalClass:
-    active: false
-  RedundantVisibilityModifierRule:
     active: false
   ReturnCount:
     active: true
     max: 5
-    excludedFunctions: "equals,getItemViewType"
+    excludedFunctions:
+      - equals
+      - getItemViewType
   SafeCast:
     active: true
-  SerialVersionUIDInSerializableClass:
-    active: false
   SpacingBetweenPackageAndImports:
     active: true
   ThrowsCount:
     active: true
     max: 5
-  TrailingWhitespace:
-    active: false
   UnnecessaryAbstractClass:
     active: true
-  UnnecessaryInheritance:
-    active: false
-  UnnecessaryParentheses:
-    active: false
-  UntilInsteadOfRangeTo:
-    active: false
-  UnusedImports:
-    active: false
-  UnusedPrivateMember:
-    active: false
-  UseDataClass:
-    active: false
-    excludeAnnotatedClasses: ""
-  UtilityClassWithPublicConstructor:
-    active: false
   WildcardImport:
     active: true
-    excludeImports: 'java.util.*,kotlinx.android.synthetic.*'
-    excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/generated/**"
+    excludeImports:
+      - java.util.*
+      - kotlinx.android.synthetic.*

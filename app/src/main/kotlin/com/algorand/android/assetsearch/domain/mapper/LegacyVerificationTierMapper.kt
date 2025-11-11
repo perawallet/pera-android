@@ -18,5 +18,5 @@ internal interface LegacyVerificationTierMapper {
 
     operator fun invoke(
         verificationTier: VerificationTier
-    ): com.algorand.android.assetsearch.domain.model.VerificationTier
+    ): com.algorand.wallet.asset.domain.model.VerificationTier
 }

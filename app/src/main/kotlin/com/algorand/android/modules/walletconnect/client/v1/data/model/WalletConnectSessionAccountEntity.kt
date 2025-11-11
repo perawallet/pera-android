@@ -29,6 +29,11 @@ import com.algorand.android.modules.walletconnect.client.v1.data.model.WalletCon
             onDelete = CASCADE,
             onUpdate = CASCADE
         )
+    ],
+    indices = [
+        androidx.room.Index(
+            value = [WALLET_CONNECT_SESSION_ACCOUNT_TABLE_SESSION_ID_COLUMN_NAME]
+        )
     ]
 )
 data class WalletConnectSessionAccountEntity(

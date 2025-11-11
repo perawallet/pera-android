@@ -55,8 +55,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class FeeItem(
-        @StringRes
-        val labelTextRes: Int,
+        @param:StringRes val labelTextRes: Int,
         val transactionSign: TransactionSign,
         val transactionAmount: BigInteger,
         val formattedTransactionAmount: String,
@@ -75,8 +74,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
     }
 
     data class NoteItem(
-        @StringRes
-        val labelTextRes: Int,
+        @param:StringRes val labelTextRes: Int,
         val note: String
     ) : TransactionDetailItem() {
 
@@ -182,8 +180,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
     sealed class ApplicationCallItem : TransactionDetailItem() {
 
         data class SenderItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val senderAccountAddress: String
         ) : ApplicationCallItem() {
 
@@ -199,8 +196,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class ApplicationIdItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val applicationId: Long
         ) : ApplicationCallItem() {
 
@@ -216,10 +212,8 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class OnCompletionItem(
-            @StringRes
-            val labelTextRes: Int,
-            @StringRes
-            val onCompletionTextRes: Int?
+            @param:StringRes val labelTextRes: Int,
+            @param:StringRes val onCompletionTextRes: Int?
         ) : ApplicationCallItem() {
 
             override val itemType: ItemType = ItemType.ON_COMPLETION_ITEM
@@ -234,8 +228,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class RejectVersionItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val rejectVersionText: String?
         ) : TransactionDetailItem() {
 
@@ -251,8 +244,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class AccessListItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val accessListText: String?
         ) : TransactionDetailItem() {
 
@@ -268,8 +260,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class AppCallAssetInformationItem(
-            @PluralsRes
-            val labelTextRes: Int,
+            @param:PluralsRes val labelTextRes: Int,
             val assetInformationList: List<ApplicationCallAssetInformation>,
             val showMoreButton: Boolean,
             val showMoreAssetCount: Int
@@ -287,8 +278,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class InnerTransactionCountItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val innerTransactionCount: Int,
             val innerTransactions: List<BaseTransactionDetail>?
         ) : ApplicationCallItem() {
@@ -308,8 +298,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
     sealed class StandardTransactionItem : TransactionDetailItem() {
 
         data class TransactionAmountItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val transactionSign: TransactionSign,
             val transactionAmount: BigInteger,
             val formattedTransactionAmount: String,
@@ -348,8 +337,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class CloseAmountItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val transactionSign: TransactionSign,
             val transactionAmount: BigInteger,
             val formattedTransactionAmount: String,
@@ -436,8 +424,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class DateItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val date: String
         ) : StandardTransactionItem() {
 
@@ -453,8 +440,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class RoundItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val round: String
         ) : StandardTransactionItem() {
 
@@ -470,8 +456,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class TransactionIdItem(
-            @StringRes
-            val labelTextRes: Int,
+            @param:StringRes val labelTextRes: Int,
             val transactionId: String
         ) : StandardTransactionItem() {
 
@@ -571,7 +556,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class OfflineKeyRegItem(
-            @StringRes val participationStatusResId: Int
+            @param:StringRes val participationStatusResId: Int
         ) : BaseKeyRegItem() {
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {

@@ -12,7 +12,7 @@
 
 package com.algorand.android.assetsearch.domain.mapper
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import javax.inject.Inject
 
 internal class LegacyVerificationTierMapperImpl @Inject constructor() : LegacyVerificationTierMapper {

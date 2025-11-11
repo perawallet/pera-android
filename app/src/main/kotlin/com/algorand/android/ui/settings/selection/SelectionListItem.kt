@@ -41,7 +41,7 @@ data class CurrencyListItem(
 
 data class ThemeListItem(
     val themeId: String,
-    @StringRes val themeResId: Int,
+    @param:StringRes val themeResId: Int,
     override var isSelected: Boolean
 ) : SelectionListItem() {
     override fun getVisibleName(context: Context): String {

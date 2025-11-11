@@ -138,11 +138,11 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
         with(asaStatusPreview.peraButtonState) {
             with(asaStatusViewStubBinding.assetStatusActionButton) {
                 setIconResource(iconDrawableResId)
-                setBackgroundColor(backgroundColorResId)
+                setBackgroundColor(ContextCompat.getColor(context, backgroundColorResId))
                 setIconTint(ContextCompat.getColorStateList(context, iconTintColorResId))
                 setText(asaStatusPreview.actionButtonTextResId)
                 setStrokeColor(ContextCompat.getColorStateList(context, strokeColorResId))
-                setTextColor(textColor)
+                setTextColor(ContextCompat.getColor(context, textColor))
                 setOnClickListener { onAsaActionButtonClick(asaStatusPreview) }
             }
         }

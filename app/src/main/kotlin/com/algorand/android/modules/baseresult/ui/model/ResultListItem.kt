@@ -35,8 +35,8 @@ sealed class ResultListItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class IconItem(
-        @ColorRes val iconTintColorResId: Int,
-        @DrawableRes val iconResId: Int
+        @param:ColorRes val iconTintColorResId: Int,
+        @param:DrawableRes val iconResId: Int
     ) : ResultListItem() {
         override val itemType: ItemType
             get() = ItemType.RESULT_ICON_ITEM
@@ -125,7 +125,7 @@ sealed class ResultListItem : RecyclerListItem {
         ) : InfoBoxItem() {
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is Plural &&
-                    infoDescriptionPluralAnnotatedString == other.infoDescriptionPluralAnnotatedString
+                        infoDescriptionPluralAnnotatedString == other.infoDescriptionPluralAnnotatedString
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -161,7 +161,7 @@ sealed class ResultListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&
-                accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
+                    accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

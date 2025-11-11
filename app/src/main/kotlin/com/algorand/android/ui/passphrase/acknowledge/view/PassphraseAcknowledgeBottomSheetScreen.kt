@@ -208,6 +208,6 @@ private fun getConfirmationItems(): SnapshotStateList<ConfirmationItem> {
 }
 
 private data class ConfirmationItem(
-    @StringRes val resId: Int,
+    @param:StringRes val resId: Int,
     var isChecked: Boolean
 )

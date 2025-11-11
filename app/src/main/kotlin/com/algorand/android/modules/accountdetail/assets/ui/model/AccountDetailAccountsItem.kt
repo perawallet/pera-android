@@ -50,7 +50,7 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
     }
 
     data class TitleItem(
-        @StringRes val titleRes: Int,
+        @param:StringRes val titleRes: Int,
         val isAddAssetButtonVisible: Boolean
     ) : AccountDetailAccountsItem {
 

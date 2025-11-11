@@ -17,11 +17,11 @@ import androidx.annotation.DrawableRes
 import com.algorand.android.R
 
 enum class PeraButtonState(
-    @ColorRes val backgroundColorResId: Int,
-    @ColorRes val strokeColorResId: Int,
-    @ColorRes val iconTintColorResId: Int,
-    @ColorRes val textColor: Int,
-    @DrawableRes val iconDrawableResId: Int
+    @param:ColorRes val backgroundColorResId: Int,
+    @param:ColorRes val strokeColorResId: Int,
+    @param:ColorRes val iconTintColorResId: Int,
+    @param:ColorRes val textColor: Int,
+    @param:DrawableRes val iconDrawableResId: Int
 ) {
     ADDITION(
         backgroundColorResId = R.color.primary_button_background_color,

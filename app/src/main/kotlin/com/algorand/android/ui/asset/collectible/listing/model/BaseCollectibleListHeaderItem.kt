@@ -59,7 +59,7 @@ sealed interface BaseCollectibleListHeaderItem : RecyclerListItem {
     }
 
     data class SearchViewItem(
-        @StringRes val searchViewHintResId: Int,
+        @param:StringRes val searchViewHintResId: Int,
         val query: String,
         val onGridListViewSelectedEvent: Event<Unit>? = null,
         val onLinearListViewSelectedEvent: Event<Unit>? = null

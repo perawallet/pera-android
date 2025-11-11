@@ -18,7 +18,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ExceptionErrorParser
 import com.algorand.android.utils.Resource
 
-data class AnnotatedException(@StringRes val stringRes: Int) : Exception(), ExceptionErrorParser {
+data class AnnotatedException(@param:StringRes val stringRes: Int) : Exception(), ExceptionErrorParser {
     override fun getAsResourceError(): Resource.Error {
         return Resource.Error.Annotated(AnnotatedString(stringRes))
     }

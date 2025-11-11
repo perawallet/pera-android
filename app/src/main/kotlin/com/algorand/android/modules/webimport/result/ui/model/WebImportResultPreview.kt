@@ -16,5 +16,5 @@ import androidx.annotation.StringRes
 
 data class WebImportResultPreview(
     val listItems: List<BaseAccountResultListItem>,
-    @StringRes val buttonTextRes: Int
+    @param:StringRes val buttonTextRes: Int
 )

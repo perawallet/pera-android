@@ -30,7 +30,7 @@ fun SharedPreferences.getSavedThemePreference(): ThemePreference {
 }
 
 enum class ThemePreference(
-    @StringRes val visibleNameResId: Int
+    @param:StringRes val visibleNameResId: Int
 ) {
     SYSTEM_DEFAULT(R.string.system_default),
     LIGHT(R.string.light),

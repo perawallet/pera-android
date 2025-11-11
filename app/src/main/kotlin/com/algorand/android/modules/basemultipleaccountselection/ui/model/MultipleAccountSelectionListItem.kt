@@ -33,7 +33,7 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class TitleItem(
-        @StringRes val textResId: Int
+        @param:StringRes val textResId: Int
     ) : MultipleAccountSelectionListItem() {
 
         override val itemType
@@ -65,7 +65,7 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
     }
 
     data class AccountHeaderItem(
-        @PluralsRes val titleRes: Int,
+        @param:PluralsRes val titleRes: Int,
         val accountCount: Int,
         val checkboxState: TriStatesCheckBox.CheckBoxState,
     ) : MultipleAccountSelectionListItem() {

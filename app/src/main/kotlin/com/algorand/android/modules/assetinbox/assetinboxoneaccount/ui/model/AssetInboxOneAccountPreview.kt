@@ -12,13 +12,13 @@
 
 package com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import java.math.BigInteger
 
 data class AssetInboxOneAccountPreview(

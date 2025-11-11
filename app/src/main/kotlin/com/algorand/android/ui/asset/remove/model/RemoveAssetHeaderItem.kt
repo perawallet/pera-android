@@ -26,7 +26,7 @@ sealed interface RemoveAssetHeaderItem : RecyclerListItem {
 
     val itemType: ItemType
 
-    data class TitleViewItem(@StringRes val titleTextRes: Int) : RemoveAssetHeaderItem {
+    data class TitleViewItem(@param:StringRes val titleTextRes: Int) : RemoveAssetHeaderItem {
 
         override val itemType = ItemType.TITLE_VIEW_ITEM
 
@@ -39,7 +39,7 @@ sealed interface RemoveAssetHeaderItem : RecyclerListItem {
         }
     }
 
-    data class DescriptionViewItem(@StringRes val descriptionTextRes: Int) : RemoveAssetHeaderItem {
+    data class DescriptionViewItem(@param:StringRes val descriptionTextRes: Int) : RemoveAssetHeaderItem {
 
         override val itemType = ItemType.DESCRIPTION_VIEW_ITEM
 
@@ -52,7 +52,7 @@ sealed interface RemoveAssetHeaderItem : RecyclerListItem {
         }
     }
 
-    data class SearchViewItem(@StringRes val searchViewHintResId: Int) : RemoveAssetHeaderItem {
+    data class SearchViewItem(@param:StringRes val searchViewHintResId: Int) : RemoveAssetHeaderItem {
 
         override val itemType: ItemType = ItemType.SEARCH_VIEW_ITEM
 

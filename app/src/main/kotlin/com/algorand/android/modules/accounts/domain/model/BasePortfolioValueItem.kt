@@ -36,8 +36,8 @@ sealed class BasePortfolioValueItem {
     data class ErrorPortfolioValueItem(
         override val titleColorResId: Int,
         @StringRes override val errorStringResId: Int?,
-        @StringRes val primaryAccountValueErrorResId: Int,
-        @StringRes val secondaryAccountValueErrorResId: Int
+        @param:StringRes val primaryAccountValueErrorResId: Int,
+        @param:StringRes val secondaryAccountValueErrorResId: Int
     ) : BasePortfolioValueItem() {
         override fun getPrimaryAccountValue(context: Context): String = context.getString(primaryAccountValueErrorResId)
 

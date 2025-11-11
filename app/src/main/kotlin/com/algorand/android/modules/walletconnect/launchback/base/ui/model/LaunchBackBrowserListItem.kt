@@ -20,10 +20,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class LaunchBackBrowserListItem(
-    @DrawableRes
-    val iconDrawableResId: Int,
-    @StringRes
-    val nameStringResId: Int,
+    @param:DrawableRes val iconDrawableResId: Int,
+    @param:StringRes val nameStringResId: Int,
     val packageName: String
 ) : RecyclerListItem, Parcelable {
     override fun areItemsTheSame(other: RecyclerListItem): Boolean {

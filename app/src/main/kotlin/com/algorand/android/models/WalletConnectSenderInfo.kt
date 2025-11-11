@@ -17,7 +17,7 @@ import androidx.annotation.DrawableRes
 
 data class WalletConnectSenderInfo(
     val senderDisplayedAddress: BaseWalletConnectDisplayedAddress,
-    @DrawableRes val senderTypeImageResId: Int?,
+    @param:DrawableRes val senderTypeImageResId: Int?,
     val dappName: String,
     val rekeyToAccountAddress: String?,
     val applicationId: Long?,

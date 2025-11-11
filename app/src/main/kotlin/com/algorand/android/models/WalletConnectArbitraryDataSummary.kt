@@ -27,6 +27,6 @@ data class WalletConnectArbitraryDataSummary(
     val accountBalance: BigInteger? = null,
     val transactionAmount: BigInteger? = null,
     val summaryTitle: AnnotatedString? = null,
-    @StringRes val showMoreButtonText: Int = R.string.show_all_details,
+    @param:StringRes val showMoreButtonText: Int = R.string.show_all_details,
     val formattedSelectedCurrencyValue: String? = null
 ) : Parcelable

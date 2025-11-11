@@ -22,17 +22,6 @@ import javax.inject.Inject
 
 class VerificationTierConfigurationDecider @Inject constructor() {
 
-    fun decideVerificationTierConfiguration(
-        verificationTier: com.algorand.android.assetsearch.domain.model.VerificationTier?
-    ): VerificationTierConfiguration {
-        return when (verificationTier) {
-            com.algorand.android.assetsearch.domain.model.VerificationTier.VERIFIED -> VERIFIED
-            com.algorand.android.assetsearch.domain.model.VerificationTier.TRUSTED -> TRUSTED
-            com.algorand.android.assetsearch.domain.model.VerificationTier.SUSPICIOUS -> SUSPICIOUS
-            com.algorand.android.assetsearch.domain.model.VerificationTier.UNVERIFIED, null -> UNVERIFIED
-        }
-    }
-
     fun decideVerificationTierConfiguration(verificationTier: VerificationTier?): VerificationTierConfiguration {
         return when (verificationTier) {
             VerificationTier.VERIFIED -> VERIFIED

@@ -15,8 +15,7 @@ package com.algorand.android.models
 import androidx.annotation.PluralsRes
 
 data class PluralAnnotatedString(
-    @PluralsRes
-    val pluralStringResId: Int,
+    @param:PluralsRes val pluralStringResId: Int,
 
     val quantity: Int,
 

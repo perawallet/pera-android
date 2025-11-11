@@ -12,6 +12,7 @@ plugins {
 
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
+    alias(libs.plugins.room)
 }
 
 apply from: "$projectDir/quality.gradle"
@@ -352,4 +353,8 @@ dependencies {
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core
+}
+
+room {
+    schemaDirectory "${projectDir}/schemas"
 }

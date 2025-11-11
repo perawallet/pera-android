@@ -19,10 +19,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AccountIconDrawablePreview(
-    @ColorRes
-    val backgroundColorResId: Int,
-    @ColorRes
-    val iconTintResId: Int,
-    @DrawableRes
-    val iconResId: Int
+    @param:ColorRes val backgroundColorResId: Int,
+    @param:ColorRes val iconTintResId: Int,
+    @param:DrawableRes val iconResId: Int
 ) : Parcelable

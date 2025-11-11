@@ -26,10 +26,11 @@ sealed class Resource<out T> {
     sealed class Error : Resource<Nothing>() {
         data class Annotated(val annotatedString: AnnotatedString) : Error()
         data class Api(val exception: Throwable) : Error()
-        data class Warning(@StringRes val titleRes: Int, val annotatedString: AnnotatedString) : Error()
+        data class Warning(@param:StringRes val titleRes: Int, val annotatedString: AnnotatedString) : Error()
         data class Navigation(val navDirections: NavDirections) : Error()
         data class Local(val message: String) : Error()
-        data class GlobalWarning(@StringRes val titleRes: Int? = null, val annotatedString: AnnotatedString) : Error()
+        data class GlobalWarning(@param:StringRes val titleRes: Int? = null, val annotatedString: AnnotatedString) :
+            Error()
 
         fun parse(context: Context): CharSequence? {
             return when (this) {
@@ -58,13 +59,16 @@ sealed class Resource<out T> {
                     onSuccess?.invoke(data)
                 }
             }
+
             is Error -> {
                 onLoadingFinished?.invoke()
                 onFailed?.invoke(this)
             }
+
             is Loading -> {
                 onLoading?.invoke()
             }
+
             is OnLoadingFinished -> {
                 onLoadingFinished?.invoke()
             }

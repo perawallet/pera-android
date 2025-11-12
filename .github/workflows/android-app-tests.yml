@@ -1,7 +1,6 @@
 name: "Android App Checks"
 
 on:
-
   pull_request:
 
 concurrency:

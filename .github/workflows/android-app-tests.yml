@@ -1,21 +1,18 @@
-name: "Android App Tests"
+name: "Android App Checks"
 
 on:
 
   push:
   pull_request:
-    branches:
-      - dev
-      - release
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
 
   android-build:
-    name: "Android App Build Job"
+    name: "Android App Build"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -26,7 +23,7 @@ jobs:
           distribution: "zulu"
           java-version: "21"
           cache: "gradle"
-      - name: "Run KLint"
+      - name: "Run KtLint"
         run: ./gradlew ktlint
       - name: "Run Detekt"
         run: ./gradlew detekt
@@ -59,5 +56,5 @@ jobs:
           name: "test-coverage-result"
           path: ./common-sdk/build/reports/kover/**
           overwrite: true
-      - name: "Run App Bundle Publish Test"
+      - name: "Build Prod Debug Bundle"
         run: ./gradlew packageProdDebugBundle

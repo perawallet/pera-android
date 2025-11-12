@@ -10,11 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.transaction.history.data.mapper
+package com.algorand.wallet.transaction.history.domain.model
 
-import com.algorand.wallet.transaction.history.data.model.TransactionHistoryItemResponse
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
+import java.math.BigDecimal
+import java.time.ZonedDateTime
 
-internal interface TransactionHistoryMapper {
-    operator fun invoke(address: String, response: TransactionHistoryItemResponse): TransactionHistory?
-}
+data class TransactionHistorySwapGroupDetail(
+    val id: String,
+    val groupId: String,
+    val provider: String,
+    val status: String,
+    val assetInId: Long,
+    val assetInUnitName: String,
+    val amountIn: BigDecimal,
+    val assetOutId: Long,
+    val assetOutUnitName: String,
+    val amountOut: BigDecimal,
+    val transactions: List<TransactionHistory>,
+    val confirmedRound: Long?,
+    val time: ZonedDateTime
+)

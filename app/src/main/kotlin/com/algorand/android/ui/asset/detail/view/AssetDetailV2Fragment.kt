@@ -26,6 +26,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.DisplayError
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToMeld
@@ -225,5 +226,34 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
 
     override fun onFailedToUpdatePriceAlertStatus() {
         showGlobalError(getString(R.string.unable_to_change_price_alert))
+    }
+
+    override fun onApplicationCallClick(id: String) {
+        nav(
+            AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToTransactionDetailNavigation(
+                transactionId = id,
+                accountAddress = arg.accountAddress,
+                entryPoint = TransactionDetailEntryPoint.APPLICATION_CALL_TRANSACTION
+            )
+        )
+    }
+
+    override fun onSwapClick(groupId: String) {
+        nav(
+            AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToSwapGroupDetailFragment(
+                accountAddress = arg.accountAddress,
+                groupId = groupId
+            )
+        )
+    }
+
+    override fun onTransactionClick(id: String) {
+        nav(
+            AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToTransactionDetailNavigation(
+                transactionId = id,
+                accountAddress = arg.accountAddress,
+                entryPoint = TransactionDetailEntryPoint.STANDARD_TRANSACTION
+            )
+        )
     }
 }

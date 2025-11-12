@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.transaction.history.domain.repository
+package com.algorand.wallet.transaction.history.domain.usecase
 
 import androidx.paging.PagingData
 import com.algorand.wallet.foundation.PeraResult
@@ -19,10 +19,13 @@ import com.algorand.wallet.transaction.history.domain.model.TransactionHistoryPa
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistorySwapGroupDetail
 import kotlinx.coroutines.flow.Flow
 
-internal interface TransactionHistoryRepository {
-    fun getTransactionHistory(data: TransactionHistoryPagingData): Flow<PagingData<TransactionHistory>>
-    suspend fun getSwapGroupTransactions(
-        address: String,
+fun interface GetTransactionHistory {
+    operator fun invoke(data: TransactionHistoryPagingData): Flow<PagingData<TransactionHistory>>
+}
+
+fun interface GetTransactionHistorySwapGroupDetail {
+    suspend operator fun invoke(
+        accountAddress: String,
         groupId: String
     ): PeraResult<TransactionHistorySwapGroupDetail>
 }

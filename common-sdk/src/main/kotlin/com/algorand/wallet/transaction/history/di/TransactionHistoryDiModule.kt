@@ -13,8 +13,14 @@
 package com.algorand.wallet.transaction.history.di
 
 import androidx.paging.PagingSource
+import com.algorand.wallet.transaction.history.data.mapper.DefaultTransactionHistoryAssetTransferTypeMapper
 import com.algorand.wallet.transaction.history.data.mapper.DefaultTransactionHistoryMapper
+import com.algorand.wallet.transaction.history.data.mapper.DefaultTransactionHistoryPaymentTypeMapper
+import com.algorand.wallet.transaction.history.data.mapper.DefaultTransactionHistorySwapGroupDetailMapper
+import com.algorand.wallet.transaction.history.data.mapper.TransactionHistoryAssetTransferTypeMapper
 import com.algorand.wallet.transaction.history.data.mapper.TransactionHistoryMapper
+import com.algorand.wallet.transaction.history.data.mapper.TransactionHistoryPaymentTypeMapper
+import com.algorand.wallet.transaction.history.data.mapper.TransactionHistorySwapGroupDetailMapper
 import com.algorand.wallet.transaction.history.data.repository.DefaultTransactionHistoryPagingSource
 import com.algorand.wallet.transaction.history.data.repository.DefaultTransactionHistoryRepository
 import com.algorand.wallet.transaction.history.data.service.TransactionHistoryApiService
@@ -22,6 +28,7 @@ import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistoryPagingData
 import com.algorand.wallet.transaction.history.domain.repository.TransactionHistoryRepository
 import com.algorand.wallet.transaction.history.domain.usecase.GetTransactionHistory
+import com.algorand.wallet.transaction.history.domain.usecase.GetTransactionHistorySwapGroupDetail
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,4 +66,24 @@ internal object TransactionHistoryDiModule {
     fun provideGetTransactionHistory(
         repository: TransactionHistoryRepository
     ): GetTransactionHistory = GetTransactionHistory(repository::getTransactionHistory)
+
+    @Provides
+    fun provideTransactionHistorySwapGroupDetailMapper(
+        mapper: DefaultTransactionHistorySwapGroupDetailMapper
+    ): TransactionHistorySwapGroupDetailMapper = mapper
+
+    @Provides
+    fun provideTransactionHistoryAssetTransferTypeMapper(
+        mapper: DefaultTransactionHistoryAssetTransferTypeMapper
+    ): TransactionHistoryAssetTransferTypeMapper = mapper
+
+    @Provides
+    fun provideTransactionHistoryPaymentTypeMapper(
+        mapper: DefaultTransactionHistoryPaymentTypeMapper
+    ): TransactionHistoryPaymentTypeMapper = mapper
+
+    @Provides
+    fun provideGetTransactionHistorySwapGroupDetail(
+        repository: TransactionHistoryRepository
+    ): GetTransactionHistorySwapGroupDetail = GetTransactionHistorySwapGroupDetail(repository::getSwapGroupTransactions)
 }

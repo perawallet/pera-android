@@ -13,6 +13,8 @@
 package com.algorand.wallet.transaction.history.data.mapper
 
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
+import com.algorand.wallet.transaction.history.data.model.TransactionHistoryDetailResponse
+import com.algorand.wallet.transaction.history.data.model.TransactionHistoryInterpretedMeaning
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryItemResponse
 import com.algorand.wallet.transaction.history.data.model.TransactionTypeResponse.APP_TRANSACTION
 import com.algorand.wallet.transaction.history.data.model.TransactionTypeResponse.ASSET_CONFIGURATION
@@ -20,22 +22,18 @@ import com.algorand.wallet.transaction.history.data.model.TransactionTypeRespons
 import com.algorand.wallet.transaction.history.data.model.TransactionTypeResponse.HEARTBEAT_TRANSACTION
 import com.algorand.wallet.transaction.history.data.model.TransactionTypeResponse.KEYREG_TRANSACTION
 import com.algorand.wallet.transaction.history.data.model.TransactionTypeResponse.PAY_TRANSACTION
-import com.algorand.wallet.transaction.history.data.model.TransactionTypeResponse.SWAP_TRANSACTION
 import com.algorand.wallet.transaction.history.data.model.TransactionTypeResponse.UNDEFINED
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type.AssetTransfer.AssetTransferType
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type.AssetTransfer.AssetTransferType.OptIn
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type.AssetTransfer.AssetTransferType.OptOut
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type.AssetTransfer.AssetTransferType.ReceiveOptOut
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type.AssetTransfer.AssetTransferType.SendOptOut
 import com.algorand.wallet.utils.date.TimeProvider
-import java.math.BigDecimal
+import com.algorand.wallet.utils.formatToBigDecimal
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 
 internal class DefaultTransactionHistoryMapper @Inject constructor(
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val paymentTypeMapper: TransactionHistoryPaymentTypeMapper,
+    private val assetTransferTypeMapper: TransactionHistoryAssetTransferTypeMapper
 ) : TransactionHistoryMapper {
 
     override fun invoke(address: String, response: TransactionHistoryItemResponse): TransactionHistory? {
@@ -44,76 +42,72 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
             senderAddress = response.sender ?: return null,
             block = response.confirmedRound,
             time = timeProvider.getZonedDateTimeFromSeconds(response.roundTime ?: return null),
-            fee = response.fee?.toBigDecimalOrNull()?.movePointLeft(ALGO_DECIMALS) ?: ZERO,
+            fee = response.fee?.formatToBigDecimal(ALGO_DECIMALS) ?: ZERO,
             type = getTransactionType(address, response) ?: return null
         )
     }
 
-    private fun getTransactionType(address: String, response: TransactionHistoryItemResponse): Type? {
+    override fun invoke(address: String, response: TransactionHistoryDetailResponse): TransactionHistory? {
+        return TransactionHistory(
+            id = response.id ?: return null,
+            senderAddress = response.sender ?: return null,
+            block = response.confirmedRound,
+            time = timeProvider.getZonedDateTimeFromSeconds(response.roundTime ?: return null),
+            fee = response.fee?.formatToBigDecimal(ALGO_DECIMALS) ?: ZERO,
+            type = getTransactionType(address, response) ?: return null
+        )
+    }
+
+    private fun getTransactionType(address: String, response: TransactionHistoryDetailResponse): Type? {
         return when (response.txType) {
-            PAY_TRANSACTION -> mapPaymentTransaction(address, response)
-            ASSET_TRANSACTION -> mapAssetTransaction(address, response)
-            APP_TRANSACTION -> Type.ApplicationCall(response.applicationId ?: return null)
-            ASSET_CONFIGURATION -> Type.AssetConfiguration(response.assetId ?: return null)
+            PAY_TRANSACTION -> paymentTypeMapper(address, response)
+            ASSET_TRANSACTION -> assetTransferTypeMapper(address, response)
+            APP_TRANSACTION -> Type.ApplicationCall(response.applicationTransaction?.applicationId ?: return null)
+            ASSET_CONFIGURATION -> Type.AssetConfiguration(response.assetConfigTransaction?.assetId ?: return null)
             KEYREG_TRANSACTION -> Type.KeyRegistration
             HEARTBEAT_TRANSACTION -> Type.Heartbeat
-            SWAP_TRANSACTION -> mapSwapTransaction(response)
+            UNDEFINED, null -> null
+        }
+    }
+
+    private fun getTransactionType(address: String, response: TransactionHistoryItemResponse): Type? {
+        return if (response.interpretedMeaning != null) {
+            getTransactionTypeByInterpretedMeaning(response)
+        } else {
+            getTransactionTypeByRawType(address, response)
+        }
+    }
+
+    private fun getTransactionTypeByInterpretedMeaning(response: TransactionHistoryItemResponse): Type? {
+        return when (response.interpretedMeaning?.type) {
+            TransactionHistoryInterpretedMeaning.Type.SWAP -> mapSwapTransaction(response)
+            TransactionHistoryInterpretedMeaning.Type.UNKNOWN, null -> null
+        }
+    }
+
+    private fun getTransactionTypeByRawType(address: String, response: TransactionHistoryItemResponse): Type? {
+        return when (response.txType) {
+            PAY_TRANSACTION -> paymentTypeMapper(address, response)
+            ASSET_TRANSACTION -> assetTransferTypeMapper(address, response)
+            APP_TRANSACTION -> Type.ApplicationCall(response.applicationId ?: return null)
+            ASSET_CONFIGURATION -> Type.AssetConfiguration(response.asset?.id ?: return null)
+            KEYREG_TRANSACTION -> Type.KeyRegistration
+            HEARTBEAT_TRANSACTION -> Type.Heartbeat
             UNDEFINED, null -> null
         }
     }
 
     private fun mapSwapTransaction(response: TransactionHistoryItemResponse): Type.Swap? {
-        return response.swapMetadata?.run {
+        return response.swapGroupDetail?.run {
             Type.Swap(
-                assetInId = assetInId ?: return null,
-                assetInUnitName = assetInUnitName.orEmpty(),
-                assetOutId = assetOutId ?: return null,
-                assetOutUnitName = assetOutUnitName.orEmpty(),
-                amountIn = amountInWithSlippage.formatToBigDecimal(assetInDecimals) ?: return null,
-                amountOut = amountOutWithSlippage.formatToBigDecimal(assetOutDecimals) ?: return null
+                groupId = groupId ?: return null,
+                assetInId = assetIn?.id ?: return null,
+                assetInUnitName = assetIn.unitName.orEmpty(),
+                assetOutId = assetOut?.id ?: return null,
+                assetOutUnitName = assetOut.unitName.orEmpty(),
+                amountIn = amountInWithSlippage.formatToBigDecimal(assetIn.decimals) ?: return null,
+                amountOut = amountOutWithSlippage.formatToBigDecimal(assetOut.decimals) ?: return null
             )
         }
-    }
-
-    private fun mapPaymentTransaction(address: String, response: TransactionHistoryItemResponse): Type.Payment? {
-        val paymentType = when {
-            address == response.receiver && address == response.sender -> Type.Payment.PaymentType.Self
-            address == response.receiver -> Type.Payment.PaymentType.Receive
-            address == response.sender -> Type.Payment.PaymentType.Send(response.receiver ?: return null)
-            else -> null
-        } ?: return null
-        return Type.Payment(amount = response.amount?.formatToBigDecimal(ALGO_DECIMALS) ?: return null, paymentType)
-    }
-
-    private fun mapAssetTransaction(address: String, response: TransactionHistoryItemResponse): Type.AssetTransfer? {
-        val assetTransferType = with(response) {
-            val assetAmount = amount.formatToBigDecimal(assetDecimals)
-            when {
-                !closeToAddress.isNullOrBlank() && closeToAddress == address -> ReceiveOptOut(assetAmount ?: ZERO)
-                !closeToAddress.isNullOrBlank() && assetAmount != null && assetAmount > ZERO -> SendOptOut(assetAmount)
-                !closeToAddress.isNullOrBlank() -> OptOut
-                isSelfTransaction(address, response) && assetAmount == ZERO -> OptIn
-                isSelfTransaction(address, response) -> AssetTransferType.Self(assetAmount ?: return null)
-                isReceiveTransaction(address, response) -> AssetTransferType.Receive(assetAmount ?: return null)
-                else -> AssetTransferType.Send(response.receiver ?: return null, assetAmount ?: return null)
-            }
-        }
-        return Type.AssetTransfer(
-            assetId = response.assetId ?: return null,
-            assetUnitName = response.assetUnitName.orEmpty(),
-            type = assetTransferType
-        )
-    }
-
-    private fun isSelfTransaction(address: String, response: TransactionHistoryItemResponse): Boolean {
-        return address == response.sender && address == response.receiver
-    }
-
-    private fun isReceiveTransaction(address: String, response: TransactionHistoryItemResponse): Boolean {
-        return address == response.receiver || address == response.closeToAddress
-    }
-
-    private fun String?.formatToBigDecimal(decimals: Int?): BigDecimal? {
-        return this?.toBigDecimalOrNull()?.movePointLeft(decimals ?: 0)?.stripTrailingZeros()
     }
 }

@@ -10,29 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.transaction.history.data.model
+package com.algorand.wallet.utils
 
-import com.google.gson.annotations.SerializedName
+import java.math.BigDecimal
 
-internal enum class TransactionTypeResponse {
-
-    @SerializedName("pay")
-    PAY_TRANSACTION,
-
-    @SerializedName("axfer")
-    ASSET_TRANSACTION,
-
-    @SerializedName("appl")
-    APP_TRANSACTION,
-
-    @SerializedName("acfg")
-    ASSET_CONFIGURATION,
-
-    @SerializedName("keyreg")
-    KEYREG_TRANSACTION,
-
-    @SerializedName("hb")
-    HEARTBEAT_TRANSACTION,
-
-    UNDEFINED
+internal fun String?.formatToBigDecimal(decimals: Int?): BigDecimal? {
+    return this?.toBigDecimalOrNull()?.movePointLeft(decimals ?: 0)?.stripTrailingZeros()
 }

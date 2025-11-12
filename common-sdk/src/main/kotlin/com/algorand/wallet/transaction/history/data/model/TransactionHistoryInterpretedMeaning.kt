@@ -14,25 +14,13 @@ package com.algorand.wallet.transaction.history.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal enum class TransactionTypeResponse {
-
-    @SerializedName("pay")
-    PAY_TRANSACTION,
-
-    @SerializedName("axfer")
-    ASSET_TRANSACTION,
-
-    @SerializedName("appl")
-    APP_TRANSACTION,
-
-    @SerializedName("acfg")
-    ASSET_CONFIGURATION,
-
-    @SerializedName("keyreg")
-    KEYREG_TRANSACTION,
-
-    @SerializedName("hb")
-    HEARTBEAT_TRANSACTION,
-
-    UNDEFINED
+internal data class TransactionHistoryInterpretedMeaning(
+    @SerializedName("type")
+    val type: Type
+) {
+    enum class Type {
+        @SerializedName("swap")
+        SWAP,
+        UNKNOWN
+    }
 }

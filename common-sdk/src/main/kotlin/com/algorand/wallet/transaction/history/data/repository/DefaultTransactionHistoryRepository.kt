@@ -16,14 +16,22 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.logger.PeraErrorLogger
+import com.algorand.wallet.transaction.history.data.mapper.TransactionHistorySwapGroupDetailMapper
+import com.algorand.wallet.transaction.history.data.service.TransactionHistoryApiService
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistoryPagingData
+import com.algorand.wallet.transaction.history.domain.model.TransactionHistorySwapGroupDetail
 import com.algorand.wallet.transaction.history.domain.repository.TransactionHistoryRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 internal class DefaultTransactionHistoryRepository @Inject constructor(
-    private val transactionHistoryPagingSource: PagingSource<TransactionHistoryPagingData, TransactionHistory>
+    private val transactionHistoryPagingSource: PagingSource<TransactionHistoryPagingData, TransactionHistory>,
+    private val transactionHistoryApiService: TransactionHistoryApiService,
+    private val swapGroupDetailMapper: TransactionHistorySwapGroupDetailMapper,
+    private val errorLogger: PeraErrorLogger
 ) : TransactionHistoryRepository {
 
     override fun getTransactionHistory(data: TransactionHistoryPagingData): Flow<PagingData<TransactionHistory>> {
@@ -32,5 +40,27 @@ internal class DefaultTransactionHistoryRepository @Inject constructor(
             initialKey = data,
             pagingSourceFactory = { transactionHistoryPagingSource }
         ).flow
+    }
+
+    override suspend fun getSwapGroupTransactions(
+        address: String,
+        groupId: String
+    ): PeraResult<TransactionHistorySwapGroupDetail> {
+        return try {
+            val response = transactionHistoryApiService.getSwapGroupTransactions(address, groupId)
+            val detail = swapGroupDetailMapper(address, response)
+            if (detail != null) {
+                PeraResult.Success(detail)
+            } else {
+                errorLogger.logError("$logTag - Failed to map swap group detail response for groupId: $groupId")
+                PeraResult.Error(Exception())
+            }
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
+    private companion object {
+        private val logTag = DefaultTransactionHistoryRepository::class.java.simpleName
     }
 }

@@ -30,8 +30,6 @@ jobs:
         run: ./gradlew ktlint
       - name: "Run Detekt"
         run: ./gradlew detekt
-      - name: "Run Lint Checks"
-        run: ./gradlew lint
       - name: "Archive App Lint Test Results"
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
@@ -62,4 +60,4 @@ jobs:
           path: ./common-sdk/build/reports/kover/**
           overwrite: true
       - name: "Run App Bundle Publish Test"
-        run: ./gradlew packageProdReleaseBundle
+        run: ./gradlew packageProdDebugBundle

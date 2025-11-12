@@ -227,6 +227,7 @@ private fun SwapItem(item: Swap, onClick: () -> Unit) {
         primaryText = stringResource(R.string.swap),
         amountText = item.formattedAmountOut,
         onClick = onClick,
+        amountTextColor = PeraTheme.colors.helper.positive,
         secondaryText = stringResource(
             R.string.asset_for_asset_formatted,
             item.formattedAmountIn,

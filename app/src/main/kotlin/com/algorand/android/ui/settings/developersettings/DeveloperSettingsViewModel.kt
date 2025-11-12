@@ -23,8 +23,8 @@ import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DeveloperSettingsViewModel @Inject constructor(
@@ -49,10 +49,6 @@ class DeveloperSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             firstAccountAddress = developerSettingsPreviewUseCase.getFirstAccountAddress()
         }
-    }
-
-    fun showMigrationViewer(): Boolean {
-        return isFeatureToggleEnabled.invoke(FeatureToggle.ACCOUNT_DB_MIGRATION_VIEWER.key)
     }
 
     fun showDeveloperOptions(): Boolean = isDeveloperOptionsEnabled()

@@ -62,13 +62,11 @@
 
     <include app:graph="@navigation/audio_player_navigation" />
 
-    <!-- Swap -->
     <include app:graph="@navigation/swap_account_selection_navigation" />
 
     <include app:graph="@navigation/swap_introduction_navigation" />
 
     <include app:graph="@navigation/swap_navigation" />
-    <!-- Swap End -->
 
     <include app:graph="@navigation/wallet_connect_connection_navigation" />
 
@@ -761,7 +759,6 @@
             app:destination="@id/assetTransferAmountFragment" />
     </fragment>
 
-
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.algorand.android.ui.settings.SettingsFragment"
@@ -852,9 +849,6 @@
             android:id="@+id/action_developerSettingsFragment_to_developerOptionsFragment"
             app:destination="@id/developerOptionsFragment" />
         <action
-            android:id="@+id/action_developerSettingsFragment_to_migrationViewerFragment"
-            app:destination="@id/migrationViewerFragment" />
-        <action
             android:id="@+id/action_developerSettingsFragment_to_createAccountNameRegistrationNavigation"
             app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
@@ -882,11 +876,6 @@
         </action>
 
     </fragment>
-
-    <fragment
-        android:id="@+id/migrationViewerFragment"
-        android:name="com.algorand.android.ui.settings.migrationviewer.MigrationViewerFragment"
-        android:label="MigrationViewerFragment" />
 
     <fragment
         android:id="@+id/nodeSettingsFragment"
@@ -1454,6 +1443,7 @@
                 app:argType="string" />
         </action>
     </dialog>
+
     <dialog
         android:id="@+id/watchAccountQuickActionsBottomSheet"
         android:name="com.algorand.android.modules.accountdetail.quickaction.watchaccount.WatchAccountQuickActionsBottomSheet"
@@ -1515,6 +1505,7 @@
             android:id="@+id/action_manageAccountNFTsBottomSheet_to_accountNFTFilterFragment"
             app:destination="@id/accountNFTFilterFragment" />
     </dialog>
+
     <dialog
         android:id="@+id/WCSessionValidityExtensionBottomSheet"
         android:name="com.algorand.android.modules.walletconnect.validityextend.ui.WCSessionValidityExtensionBottomSheet"
@@ -1527,6 +1518,7 @@
             android:name="formattedExtendedSessionValidityDate"
             app:argType="string" />
     </dialog>
+
     <dialog
         android:id="@+id/walletConnectAdvancedPermissionsInfoBottomSheet"
         android:name="com.algorand.android.modules.walletconnect.advancedpermissionsinfo.WalletConnectAdvancedPermissionsInfoBottomSheet"
@@ -1724,10 +1716,12 @@
                 app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
         </action>
     </fragment>
+
     <fragment
         android:id="@+id/passkeysFragment"
         android:name="com.algorand.android.ui.passkey.view.PasskeysFragment"
         android:label="PasskeysFragment" />
+
     <fragment
         android:id="@+id/developerOptionsFragment"
         android:name="com.algorand.android.ui.settings.developeroptions.view.DeveloperOptionsFragment"
@@ -1736,6 +1730,7 @@
             android:id="@+id/action_developerOptionsFragment_to_overrideFeatureFlagsFragment"
             app:destination="@id/overrideFeatureFlagsFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/overrideFeatureFlagsFragment"
         android:name="com.algorand.android.ui.settings.developeroptions.featureflags.view.OverrideFeatureFlagsFragment"

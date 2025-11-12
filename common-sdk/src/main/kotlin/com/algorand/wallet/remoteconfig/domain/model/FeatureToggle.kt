@@ -16,7 +16,6 @@ enum class FeatureToggle(val key: String, val description: String) {
     STAKING("enable_staking", "Staking"),
     HD_WALLET("enable_hd_wallet", "Hd Wallet"),
     DISCOVER_V5("enable_discover_v5", "Discover V5"),
-    ACCOUNT_DB_MIGRATION_VIEWER("enable_account_migration_viewer", "Account Migration Viewer"),
     ACCOUNTS_CHART("enable_charts_portfolio", "Portfolio Chart"),
     ACCOUNT_DETAIL_CHART("enable_charts_accounts", "Account Detail Chart"),
     ASSET_DETAIL_CHART("enable_charts_assets", "Asset Detail Chart"),

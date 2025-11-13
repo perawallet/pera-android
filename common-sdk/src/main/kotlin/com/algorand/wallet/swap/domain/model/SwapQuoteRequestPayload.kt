@@ -20,5 +20,5 @@ data class SwapQuoteRequestPayload(
     val assetOutId: Long,
     val amount: BigInteger,
     val deviceId: String,
-    val slippage: Float? = null
+    val slippage: Double? = null
 )

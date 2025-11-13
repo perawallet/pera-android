@@ -50,7 +50,7 @@ internal class DefaultSwapRepository @Inject constructor(
     private val topSwapPairsMapper: TopSwapPairsMapper,
     private val swapUpdateStatusRequestBodyMapper: SwapUpdateStatusRequestBodyMapper,
     private val useLocalCurrencyCache: PersistentCache<Boolean>,
-    private val slippageTolerancePersistentCache: PersistentCache<Float>
+    private val slippageTolerancePersistentCache: PersistentCache<Double>
 ) : SwapRepository {
 
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
@@ -153,11 +153,11 @@ internal class DefaultSwapRepository @Inject constructor(
         useLocalCurrencyCache.put(useLocalCurrency)
     }
 
-    override suspend fun getSlippageTolerancePercentage(): Float? {
+    override suspend fun getSlippageTolerancePercentage(): Double? {
         return slippageTolerancePersistentCache.get()
     }
 
-    override suspend fun setSlippageTolerancePercentage(percentage: Float?) {
+    override suspend fun setSlippageTolerancePercentage(percentage: Double?) {
         if (percentage == null) {
             slippageTolerancePersistentCache.clear()
         } else {

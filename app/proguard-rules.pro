@@ -27,6 +27,7 @@
 -keep interface com.algorand.wallet.** { *; }
 -keep class androidx.** { *; }
 -keep class com.algorand.android.**.model.** { *; }
+-keep class com.algorand.algosdk.** { *; }
 
 -keep class com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionListItem
 # ---------------- END PERA ---------------------

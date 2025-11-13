@@ -10,12 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.wallet.utils
 
-import java.time.ZonedDateTime
+import java.math.BigDecimal
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
+internal fun String?.formatToBigDecimal(decimals: Int?): BigDecimal? {
+    return this?.toBigDecimalOrNull()?.movePointLeft(decimals ?: 0)?.stripTrailingZeros()
 }

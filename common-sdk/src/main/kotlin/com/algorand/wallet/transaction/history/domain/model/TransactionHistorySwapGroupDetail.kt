@@ -10,12 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.wallet.transaction.history.domain.model
 
+import java.math.BigDecimal
 import java.time.ZonedDateTime
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
-}
+data class TransactionHistorySwapGroupDetail(
+    val id: String,
+    val groupId: String,
+    val provider: String,
+    val status: String,
+    val assetInId: Long,
+    val assetInUnitName: String,
+    val amountIn: BigDecimal,
+    val assetOutId: Long,
+    val assetOutUnitName: String,
+    val amountOut: BigDecimal,
+    val transactions: List<TransactionHistory>,
+    val confirmedRound: Long?,
+    val time: ZonedDateTime
+)

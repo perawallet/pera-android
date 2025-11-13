@@ -10,12 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.wallet.transaction.history.data.model
 
-import java.time.ZonedDateTime
+import com.google.gson.annotations.SerializedName
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
+internal data class TransactionHistoryInterpretedMeaning(
+    @SerializedName("type")
+    val type: Type
+) {
+    enum class Type {
+        @SerializedName("swap")
+        SWAP,
+        UNKNOWN
+    }
 }

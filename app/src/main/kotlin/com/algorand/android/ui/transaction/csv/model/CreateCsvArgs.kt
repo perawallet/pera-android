@@ -10,12 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.android.ui.transaction.csv.model
 
-import java.time.ZonedDateTime
+import com.algorand.android.models.DateRange
+import java.io.File
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
-}
+data class CreateCsvArgs(
+    val cacheDirectory: File,
+    val address: String,
+    val dateRange: DateRange?,
+    val assetId: Long?
+)

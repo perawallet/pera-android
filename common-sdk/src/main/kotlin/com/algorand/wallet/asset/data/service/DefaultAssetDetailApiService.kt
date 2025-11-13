@@ -38,7 +38,8 @@ internal class DefaultAssetDetailApiService @Inject constructor(
             apiService.getAssetsByIds(assetIdsQueryString, includeDeleted)
         } else {
             try {
-                val requestBody = GetAssetsByIdsRequestBody(safeDeviceId, assetIdsQueryString, includeDeleted)
+                val assetIdsQuery = assetIds.map { it.toString() }
+                val requestBody = GetAssetsByIdsRequestBody(safeDeviceId, assetIdsQuery, includeDeleted)
                 apiService.getAssetsByIdsV2(requestBody)
             } catch (e: Exception) {
                 errorLogger.logError(e)

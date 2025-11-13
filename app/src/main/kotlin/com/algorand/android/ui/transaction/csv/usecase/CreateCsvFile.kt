@@ -10,12 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.android.ui.transaction.csv.usecase
 
-import java.time.ZonedDateTime
+import com.algorand.android.ui.transaction.csv.model.CreateCsvArgs
+import com.algorand.wallet.foundation.PeraResult
+import java.io.File
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
+interface CreateCsvFile {
+    suspend operator fun invoke(args: CreateCsvArgs): PeraResult<File>
 }

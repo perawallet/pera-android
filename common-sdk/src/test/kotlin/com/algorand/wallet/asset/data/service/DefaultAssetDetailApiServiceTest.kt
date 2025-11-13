@@ -116,6 +116,7 @@ class DefaultAssetDetailApiServiceTest {
 
     private companion object {
         const val ASSET_IDS_QUERY = "1,2,3"
+        val ASSET_IDS_V2_QUERY = listOf("1", "2", "3")
         const val DEVICE_ID = "12345"
         const val DEVICE_ID_QUERY = 12345L
         const val ASSET_ID = 1L
@@ -123,7 +124,7 @@ class DefaultAssetDetailApiServiceTest {
         val INCLUDE_DELETED = peraFixture<Boolean>()
         val ASSET_RESPONSE = AssetResponse()
         val ASSETS_PAGINATION_RESPONSE = Pagination(next = null, results = listOf(ASSET_RESPONSE))
-        val ASSETS_BY_ID_REQUEST_BODY = GetAssetsByIdsRequestBody(DEVICE_ID_QUERY, ASSET_IDS_QUERY, INCLUDE_DELETED)
+        val ASSETS_BY_ID_REQUEST_BODY = GetAssetsByIdsRequestBody(DEVICE_ID_QUERY, ASSET_IDS_V2_QUERY, INCLUDE_DELETED)
         const val ASSET_DETAIL_V2_FEATURE_TOGGLE = "enable_asset_detail_v2_endpoint"
     }
 }

@@ -10,12 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.utils.date
+package com.algorand.android.ui.transaction.csv.di
 
-import java.time.ZonedDateTime
+import com.algorand.android.ui.transaction.csv.usecase.CreateCsvFile
+import com.algorand.android.ui.transaction.csv.usecase.CreateCsvFileUseCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-interface TimeProvider {
-    fun getCurrentTimeMillis(): Long
-    fun getZonedDateTimeNow(): ZonedDateTime
-    fun getZonedDateTimeFromSeconds(seconds: Long): ZonedDateTime
+@Module
+@InstallIn(SingletonComponent::class)
+internal object CsvModule {
+
+    @Provides
+    fun provideCreateCsvFile(useCase: CreateCsvFileUseCase): CreateCsvFile = useCase
 }

@@ -1588,6 +1588,32 @@
         android:label="InviteFriendsBottomSheet" />
 
     <fragment
+        android:id="@+id/swapGroupDetailFragment"
+        android:name="com.algorand.android.ui.transaction.swapgroup.view.SwapGroupDetailFragment"
+        android:label="SwapGroupDetailFragment">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_swapGroupDetailFragment_to_transactionDetailNavigation"
+            app:destination="@id/transactionDetailNavigation">
+            <argument
+                android:name="transactionId"
+                app:argType="string" />
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+            <argument
+                android:name="entryPoint"
+                app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
+        </action>
+    </fragment>
+
+    <fragment
         android:id="@+id/assetDetailV2Fragment"
         android:name="com.algorand.android.ui.asset.detail.view.AssetDetailV2Fragment"
         android:label="AssetDetailV2Fragment">
@@ -1673,6 +1699,29 @@
                 android:name="shouldDescriptionHasLinkMovementMethod"
                 android:defaultValue="false"
                 app:argType="boolean" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_dateFilterNavigation"
+            app:destination="@id/dateFilterNavigation">
+            <argument
+                android:name="selectedDateFilter"
+                app:argType="com.algorand.android.models.DateFilter" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_swapGroupDetailFragment"
+            app:destination="@id/swapGroupDetailFragment" />
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_transactionDetailNavigation"
+            app:destination="@id/transactionDetailNavigation">
+            <argument
+                android:name="transactionId"
+                app:argType="string" />
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+            <argument
+                android:name="entryPoint"
+                app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
         </action>
     </fragment>
     <fragment

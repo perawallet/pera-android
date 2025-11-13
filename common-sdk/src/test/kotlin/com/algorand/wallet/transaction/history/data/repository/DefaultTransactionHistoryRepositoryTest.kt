@@ -13,7 +13,6 @@
 package com.algorand.wallet.transaction.history.data.repository
 
 import androidx.paging.PagingSource
-import com.algorand.test.peraFixture
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.logger.PeraErrorLogger
 import com.algorand.wallet.transaction.history.data.mapper.TransactionHistorySwapGroupDetailMapper
@@ -75,7 +74,9 @@ class DefaultTransactionHistoryRepositoryTest {
     private companion object {
         const val ADDRESS = "address"
         const val GROUP_ID = "groupId"
-        val SWAP_GROUP_DETAIL_RESPONSE = peraFixture<TransactionHistorySwapGroupDetailResponse>()
+        val SWAP_GROUP_DETAIL_RESPONSE = TransactionHistorySwapGroupDetailResponse(
+            "", "", "", null, null, "", "", 0, null, "", null, null
+        )
         val SWAP_GROUP_DETAIL = TransactionHistorySwapGroupDetail(
             "", "", "", "", 1L, "", ZERO, 2L, "", ZERO, emptyList(), null, ZonedDateTime.now()
         )

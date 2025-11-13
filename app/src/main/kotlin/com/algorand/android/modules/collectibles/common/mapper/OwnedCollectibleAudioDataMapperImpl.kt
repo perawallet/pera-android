@@ -46,7 +46,8 @@ internal class OwnedCollectibleAudioDataMapperImpl @Inject constructor() : Owned
             prismUrl = collectibleDetail.prismUrl,
             collectibleName = collectibleDetail.title,
             collectionName = collectibleDetail.collectionName,
-            optedInAtRound = optedInAtRound
+            optedInAtRound = optedInAtRound,
+            isFavorite = collectibleDetail.assetInfo?.isFavorite == true
         )
     }
 }

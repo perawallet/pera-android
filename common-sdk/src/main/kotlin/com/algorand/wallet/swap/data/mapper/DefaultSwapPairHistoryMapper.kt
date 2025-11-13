@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.swap.data.mapper
 
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.swap.data.model.SwapPairHistoryResponse
 import com.algorand.wallet.swap.domain.model.SwapPairHistory
 import javax.inject.Inject
@@ -22,12 +21,12 @@ internal class DefaultSwapPairHistoryMapper @Inject constructor() : SwapPairHist
     override fun invoke(response: SwapPairHistoryResponse): SwapPairHistory? {
         return with(response) {
             SwapPairHistory(
-                assetInId = getSafeAssetIdForResponse(assetIn?.assetId) ?: return null,
-                assetInLogoUrl = assetIn?.logoUrl,
-                assetInShortName = assetIn?.shortName,
-                assetOutId = getSafeAssetIdForResponse(assetOut?.assetId) ?: return null,
-                assetOutLogoUrl = assetOut?.logoUrl,
-                assetOutShortName = assetOut?.shortName
+                assetInId = assetIn?.assetId ?: return null,
+                assetInLogoUrl = assetIn.logoUrl,
+                assetInShortName = assetIn.shortName,
+                assetOutId = assetOut?.assetId ?: return null,
+                assetOutLogoUrl = assetOut.logoUrl,
+                assetOutShortName = assetOut.shortName
             )
         }
     }

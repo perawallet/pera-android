@@ -61,18 +61,6 @@ class DefaultAssetPriceHistoryRepositoryTest {
         assertEquals(expected, result)
     }
 
-    @Test
-    fun `EXPECT asset id to be 0 WHEN asset is algo`() = runTest {
-        coEvery { historyApiService.getAssetPriceHistory(0, PERIOD_REQUEST) } returns PRICE_HISTORY_RESPONSE
-        every { assetPriceHistoryMapper(PRICE_HISTORY_ITEM_RESPONSE) } returns PRICE_HISTORY
-        every { periodRequestMapper(PERIOD) } returns PERIOD_REQUEST
-
-        val result = sut.getAssetPriceHistory(-7, PERIOD)
-
-        val expected = PeraResult.Success(PRICE_HISTORY_RESULT)
-        assertEquals(expected, result)
-    }
-
     private companion object {
         const val ASSET_ID = 12345L
         const val PERIOD_REQUEST = "one-day"

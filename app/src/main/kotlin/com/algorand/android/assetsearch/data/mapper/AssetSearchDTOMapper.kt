@@ -29,7 +29,10 @@ class AssetSearchDTOMapper @Inject constructor(
             logo = response.logo,
             verificationTier = verificationTierDTODecider.decideVerificationTierDTO(response.verificationTier),
             collectible = collectibleSearchDTOMapper.mapToCollectibleSearchDTO(response.collectible),
-            usdValue = response.usdValue
+            usdValue = response.usdValue,
+            // This field is being updated in paging source.
+            // Since this is a legacy code, no need to change it for now.
+            isFavorite = false
         )
     }
 }

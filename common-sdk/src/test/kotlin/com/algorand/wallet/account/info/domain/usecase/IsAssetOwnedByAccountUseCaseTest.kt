@@ -86,6 +86,6 @@ class IsAssetOwnedByAccountUseCaseTest {
     private companion object {
         const val ADDRESS = "address"
         const val ASSET_ID = 1L
-        const val ALGO_ID = -7L
+        const val ALGO_ID = 0L
     }
 }

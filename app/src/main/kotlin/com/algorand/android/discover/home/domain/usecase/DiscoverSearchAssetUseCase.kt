@@ -20,6 +20,7 @@ import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilde
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagination
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.android.discover.home.domain.mapper.DiscoverSearchedAssetMapper
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import javax.inject.Inject
 import javax.inject.Named
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +30,8 @@ import kotlinx.coroutines.flow.map
 class DiscoverSearchAssetUseCase @Inject constructor(
     @Named(AssetSearchRepository.REPOSITORY_INJECTION_NAME) private val assetSearchRepository: AssetSearchRepository,
     private val assetSearchPagination: AssetSearchPagination,
-    private val discoverSearchedAssetMapper: DiscoverSearchedAssetMapper
+    private val discoverSearchedAssetMapper: DiscoverSearchedAssetMapper,
+    private val getAssetFavoriteStatuses: GetAssetFavoriteStatuses
 ) {
 
     fun createPaginationFlow(
@@ -38,7 +40,7 @@ class DiscoverSearchAssetUseCase @Inject constructor(
         defaultQuery: AssetSearchQuery
     ): Flow<PagingData<DiscoverSearchedAsset>> {
         return assetSearchPagination
-            .initPagination(builder, scope, assetSearchRepository, defaultQuery)
+            .initPagination(builder, scope, assetSearchRepository, defaultQuery, getAssetFavoriteStatuses)
             .map { pagingData -> pagingData.map { discoverSearchedAssetMapper.mapToDiscoverSearchedAsset(it) } }
     }
 

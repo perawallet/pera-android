@@ -39,5 +39,7 @@ internal data class AssetResponse(
     @SerializedName("total_supply") val totalSupply: String? = null,
     @SerializedName("last_24_hours_algo_price_change_percentage") val last24HoursAlgoPriceChangePercentage: BigDecimal? = null,
     @SerializedName("available_on_discover_mobile") val isAvailableOnDiscoverMobile: Boolean? = null,
-    @SerializedName("category") val category: Int? = null
+    @SerializedName("category") val category: Int? = null,
+    @SerializedName("is_favorited") val isFavorite: Boolean? = null,
+    @SerializedName("is_price_alert_enabled") val isPriceAlertEnabled: Boolean? = null
 )

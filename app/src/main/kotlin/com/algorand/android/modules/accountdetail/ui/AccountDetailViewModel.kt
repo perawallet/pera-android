@@ -29,6 +29,8 @@ import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +47,8 @@ class AccountDetailViewModel @Inject constructor(
     private val accountDetailFragmentEventTracker: AccountDetailFragmentEventTracker,
     private val getSwapNavigationDestination: GetSwapNavigationDestination,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
-    private val getAccountDetailSummary: GetAccountDetailSummary
+    private val getAccountDetailSummary: GetAccountDetailSummary,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : ViewModel() {
 
     val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
@@ -76,6 +79,8 @@ class AccountDetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun isAssetDetailV2Enabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.ASSET_DETAIL_V2.key)
 
     fun removeAccount(publicKey: String) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -34,7 +34,8 @@ class DiscoverSearchedAssetMapper @Inject constructor(
                 verificationTier = verificationTierDecider.decideVerificationTier(verificationTier),
                 formattedUsdValue = usdValue?.let {
                     BigDecimal(it).formatAsCurrency(symbol = Currency.USD.symbol)
-                }
+                },
+                isFavorite = assetDetailDTO.isFavorite
             )
         }
     }

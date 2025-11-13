@@ -10,19 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.data.utils
+package com.algorand.wallet.foundation.database.migration
 
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity.Companion.ASSET_DETAIL_TABLE_NAME
 
-internal object AssetIdQueryNormalizer {
+internal object PeraDatabaseMigration5to6 : Migration(5, 6){
 
-    // Backend accepts ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
-    fun getSafeAssetIdForRequest(assetId: Long): Long {
-        return if (assetId == ALGO_ID) 0 else assetId
-    }
-
-    // Backend returns ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
-    fun getSafeAssetIdForResponse(assetId: Long?): Long? {
-        return if (assetId == 0L) ALGO_ID else assetId
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE $ASSET_DETAIL_TABLE_NAME ADD COLUMN is_favorite INTEGER")
+        db.execSQL("ALTER TABLE $ASSET_DETAIL_TABLE_NAME ADD COLUMN is_price_alert_enabled INTEGER")
     }
 }

@@ -14,21 +14,14 @@ package com.algorand.wallet.asset.data.service
 
 import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.foundation.network.model.Pagination
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 internal interface AssetDetailApiService {
 
-    @GET("v1/assets/")
     suspend fun getAssetsByIds(
-        @Query("asset_ids", encoded = true) assetIdsList: String,
-        @Query("include_deleted") includeDeleted: Boolean? = null
+        assetIds: List<Long>,
+        deviceId: String?,
+        includeDeleted: Boolean?
     ): Pagination<AssetResponse>
 
-    @GET("v1/assets/{asset_id}/")
-    suspend fun getAssetDetail(
-        @Path("asset_id") nftAssetId: Long
-    ): Response<AssetResponse>
+    suspend fun getAssetDetail(assetId: Long, deviceId: String?): AssetResponse
 }

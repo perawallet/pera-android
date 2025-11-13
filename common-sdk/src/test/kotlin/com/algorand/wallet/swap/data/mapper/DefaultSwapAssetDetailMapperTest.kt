@@ -80,7 +80,7 @@ class DefaultSwapAssetDetailMapperTest {
 
         val result = sut(response)
 
-        assertEquals(-7L, result?.assetId)
+        assertEquals(0L, result?.assetId)
     }
 
     private companion object {

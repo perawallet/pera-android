@@ -28,7 +28,6 @@ import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.utils.getSendDeviceId
 import com.algorand.android.discover.utils.isValidDiscoverURL
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
 import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.discover.detail.DiscoverDetailEventTracker
 import com.algorand.android.utils.Event
@@ -85,8 +84,8 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
         detailActionRequest?.let {
             logDetailAction(
                 discoverActionRequest = it,
-                assetIn = getSafeAssetIdForResponse(it.assetIn?.toLongOrNull()) ?: -1,
-                assetOut = getSafeAssetIdForResponse(it.assetOut?.toLongOrNull()) ?: -1
+                assetIn = it.assetIn?.toLongOrNull() ?: -1,
+                assetOut = it.assetOut?.toLongOrNull() ?: -1
             )
         }
     }
@@ -98,8 +97,8 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
         val detailActionRequest = getDetailActionRequestFromJson(data)
 
         val buySellActionRequest = buySellActionRequestMapper.mapToBuySellActionRequest(
-            assetInId = getSafeAssetIdForResponse(detailActionRequest?.assetIn?.toLongOrNull()) ?: -1,
-            assetOutId = getSafeAssetIdForResponse(detailActionRequest?.assetOut?.toLongOrNull()) ?: -1,
+            assetInId = detailActionRequest?.assetIn?.toLongOrNull() ?: -1,
+            assetOutId = detailActionRequest?.assetOut?.toLongOrNull() ?: -1,
             detailAction = detailActionRequest?.action
         )
         var swapNavDirection: NavDirections? = null

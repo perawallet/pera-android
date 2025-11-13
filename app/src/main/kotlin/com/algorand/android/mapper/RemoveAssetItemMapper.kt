@@ -51,7 +51,8 @@ class RemoveAssetItemMapper @Inject constructor(
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetStatus),
                 amountInPrimaryCurrency = parityDisplayValue.primaryParityValue.amountAsCurrency,
-                type = mapToRemoveAssetItemType(assetLite)
+                type = mapToRemoveAssetItemType(assetLite),
+                isFavorite = assetLite.isFavorite
             )
         }
     }

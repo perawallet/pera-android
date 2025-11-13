@@ -75,6 +75,7 @@ fun AssetMarketsScreen(
                 var selectedDateText by remember { mutableStateOf("") }
                 var changePercentage by remember { mutableStateOf<Float?>(null) }
                 var isChangePercentageVisible by remember { mutableStateOf(false) }
+                Spacer(modifier = Modifier.height(32.dp))
                 AssetDetailHeader(assetDetailHeaderViewModel)
                 Spacer(modifier = Modifier.height(8.dp))
                 PriceText(priceRenderer)

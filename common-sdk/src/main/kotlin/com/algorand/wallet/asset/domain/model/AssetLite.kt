@@ -29,7 +29,8 @@ data class AssetLite(
     val type: Type,
     val verificationTier: VerificationTier,
     val assetStatus: AssetStatus,
-    val optedInAtRound: Long?
+    val optedInAtRound: Long?,
+    val isFavorite: Boolean
 ) {
 
     val isAlgo: Boolean

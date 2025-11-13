@@ -13,7 +13,6 @@
 package com.algorand.wallet.deeplink.builder
 
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 import com.algorand.wallet.deeplink.model.NotificationGroupType
@@ -38,7 +37,7 @@ internal class NotificationDeepLinkBuilder : DeepLinkBuilder {
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return DeepLink.Notification(
             address = payload.accountAddress.orEmpty(),
-            assetId = getSafeAssetIdForResponse(payload.assetId) ?: ALGO_ID,
+            assetId = payload.assetId ?: ALGO_ID,
             notificationGroupType = payload.notificationGroupType ?: NotificationGroupType.TRANSACTIONS
         )
     }

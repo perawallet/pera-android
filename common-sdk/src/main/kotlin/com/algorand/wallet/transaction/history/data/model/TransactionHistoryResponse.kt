@@ -10,16 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain.util
+package com.algorand.wallet.transaction.history.data.model
 
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.google.gson.annotations.SerializedName
 
-// Backend accepts ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
-fun getSafeAssetIdForRequest(assetId: Long): Long {
-    return if (assetId == ALGO_ID) 0 else assetId
-}
-
-// Backend returns ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
-fun getSafeAssetIdForResponse(assetId: Long?): Long? {
-    return if (assetId == 0L) ALGO_ID else assetId
-}
+internal data class TransactionHistoryResponse(
+    @SerializedName("current_round")
+    val currentRound: Long?,
+    @SerializedName("next")
+    val nextUrl: String?,
+    @SerializedName("previous")
+    val previousUrl: String?,
+    @SerializedName("results")
+    val transactions: List<TransactionHistoryItemResponse>
+)

@@ -32,7 +32,8 @@ internal interface AlgoAssetDataMapper {
         amount: BigInteger,
         parityValueInSelectedCurrency: ParityValue,
         parityValueInSecondaryCurrency: ParityValue,
-        usdValue: BigDecimal
+        usdValue: BigDecimal,
+        algoDetail: AssetDetail?
     ): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 }
 

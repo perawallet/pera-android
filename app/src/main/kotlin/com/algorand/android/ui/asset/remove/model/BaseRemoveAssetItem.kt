@@ -59,7 +59,8 @@ sealed interface BaseRemoveAssetItem : RecyclerListItem {
         val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         val actionItemButtonState: AccountAssetItemButtonState,
         val amountInPrimaryCurrency: BigDecimal?,
-        val type: RemoveAssetItemType
+        val type: RemoveAssetItemType,
+        val isFavorite: Boolean
     ) : BaseRemoveAssetItem {
 
         override val itemType: ItemType

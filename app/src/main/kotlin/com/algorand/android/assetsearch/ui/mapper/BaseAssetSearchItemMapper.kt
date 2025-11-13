@@ -39,7 +39,8 @@ class BaseAssetSearchItemMapper @Inject constructor(
                 searchedAsset.verificationTier
             ),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(searchedAsset),
-            accountAssetItemButtonState = accountAssetItemButtonState
+            accountAssetItemButtonState = accountAssetItemButtonState,
+            isFavorite = searchedAsset.isFavorite
         )
     }
 
@@ -52,7 +53,8 @@ class BaseAssetSearchItemMapper @Inject constructor(
             fullName = getAssetName(searchedCollectible.fullName),
             shortName = getAssetName(searchedCollectible.shortName),
             accountAssetItemButtonState = accountAssetItemButtonState,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(searchedCollectible)
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(searchedCollectible),
+            isFavorite = searchedCollectible.isFavorite
         )
     }
 

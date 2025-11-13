@@ -15,6 +15,7 @@ package com.algorand.android.ui.asset.detail.view.holdings
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SendButton
@@ -31,6 +33,7 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.Swa
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.ui.asset.detail.view.AssetDetailHeader
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel.ViewState.Content
 import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel.ViewState.Idle
@@ -43,12 +46,21 @@ import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonConta
 import com.algorand.android.ui.compose.widget.quickaction.ReceiveQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SwapQuickActionButton
+import com.algorand.android.ui.transaction.csv.viewmodel.CsvViewModel
+import com.algorand.android.ui.transaction.history.view.TransactionHistoryListItemHeader
+import com.algorand.android.ui.transaction.history.view.TransactionHistoryListListener
+import com.algorand.android.ui.transaction.history.view.pagingTransactionHistoryListItems
+import com.algorand.android.ui.transaction.history.viewmodel.TransactionHistoryViewModel
+import com.algorand.android.ui.transaction.history.viewmodel.TransactionHistoryViewModel.ViewState
 
 @Composable
 fun AssetHoldingScreen(
     assetDetailHeaderViewModel: AssetDetailHeaderViewModel,
     chartViewModel: AssetLineChartViewModel,
     assetHoldingViewModel: AssetHoldingViewModel,
+    assetDetailViewModel: AssetDetailV2ViewModel,
+    transactionHistoryViewModel: TransactionHistoryViewModel,
+    csvViewModel: CsvViewModel,
     listener: AssetHoldingScreenListener
 ) {
     val viewState = assetHoldingViewModel.state.collectAsStateWithLifecycle().value
@@ -56,8 +68,11 @@ fun AssetHoldingScreen(
         Idle -> Unit
         is Content -> {
             var selectedChartItem by remember { mutableStateOf<AssetLineChartData?>(null) }
+            val txnHistoryState = transactionHistoryViewModel.state.collectAsStateWithLifecycle()
+            val historyItems = (txnHistoryState.value as? ViewState.Content)?.pagingData?.collectAsLazyPagingItems()
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item {
+                    Spacer(modifier = Modifier.height(32.dp))
                     AssetDetailHeader(assetDetailHeaderViewModel)
                 }
                 item {
@@ -72,8 +87,21 @@ fun AssetHoldingScreen(
                     )
                 }
                 item {
-                    QuickActionButtons(viewState, listener)
+                    QuickActionButtons(viewState, assetDetailViewModel)
                 }
+                item {
+                    Spacer(Modifier.height(40.dp))
+                    TransactionHistoryListItemHeader(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 24.dp),
+                        csvViewModel = csvViewModel,
+                        isFilterSelected = transactionHistoryViewModel.isFilterSelected(),
+                        onFilterClick = listener::onFilterClick,
+                        onCsvClick = listener::onCsvClick
+                    )
+                }
+                pagingTransactionHistoryListItems(historyItems, listener)
             }
         }
     }
@@ -106,25 +134,23 @@ private fun BalanceHistoryChart(
 }
 
 @Composable
-private fun QuickActionButtons(viewState: Content, listener: AssetHoldingScreenListener) {
+private fun QuickActionButtons(viewState: Content, viewModel: AssetDetailV2ViewModel) {
     if (viewState.quickActionItems.isNotEmpty()) {
         Spacer(modifier = Modifier.height(32.dp))
         QuickActionButtonContainer {
             viewState.quickActionItems.forEach {
                 when (it) {
-                    is SwapButton -> SwapQuickActionButton(it.isSelected, listener::onSwapClick)
-                    BuyAlgoButton -> BuySellQuickActionButton(listener::onBuyAlgoClick)
-                    ReceiveButton -> ReceiveQuickActionButton(listener::onReceiveClick)
-                    SendButton -> SendQuickActionButton(listener::onSendClick)
+                    is SwapButton -> SwapQuickActionButton(it.isSelected, viewModel::navigateToSwap)
+                    BuyAlgoButton -> BuySellQuickActionButton(viewModel::navigateToOfframp)
+                    ReceiveButton -> ReceiveQuickActionButton(viewModel::navigateToReceive)
+                    SendButton -> SendQuickActionButton(viewModel::navigateToSend)
                 }
             }
         }
     }
 }
 
-interface AssetHoldingScreenListener {
-    fun onSwapClick()
-    fun onBuyAlgoClick()
-    fun onReceiveClick()
-    fun onSendClick()
+interface AssetHoldingScreenListener : TransactionHistoryListListener {
+    fun onFilterClick()
+    fun onCsvClick()
 }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
@@ -59,9 +60,10 @@ fun AssetHoldingBalanceStats(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = 20.dp)
+                .defaultMinSize(minHeight = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier.weight(1f)) {
+            Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                 SecondaryBalanceText(secondaryAmountRenderer)
                 if (viewState.chartData != null && selectedChartItem == null) {
                     Spacer(modifier = Modifier.width(8.dp))

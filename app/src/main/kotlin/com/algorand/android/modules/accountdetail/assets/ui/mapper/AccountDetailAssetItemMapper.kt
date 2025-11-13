@@ -114,7 +114,8 @@ class AccountDetailAssetItemMapper @Inject constructor(
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
-                amountInSelectedCurrency = primaryParityValue.amountAsCurrency
+                amountInSelectedCurrency = primaryParityValue.amountAsCurrency,
+                isFavorite = assetLite.isFavorite
             )
         }
     }
@@ -215,7 +216,8 @@ class AccountDetailAssetItemMapper @Inject constructor(
                 ),
                 shouldDecreaseOpacity = shouldDecreaseOpacity,
                 isAmountVisible = isAmountVisible,
-                collectionName = (assetLite.type as? Type.Collectible)?.collectionName
+                collectionName = (assetLite.type as? Type.Collectible)?.collectionName,
+                isFavorite = assetLite.isFavorite
             )
         }
     }

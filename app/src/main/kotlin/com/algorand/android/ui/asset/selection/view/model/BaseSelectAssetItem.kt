@@ -20,9 +20,11 @@ sealed interface BaseSelectAssetItem : RecyclerListItem {
     }
 
     val itemType: ItemType
+    val isFavorite: Boolean
 
     data class SelectAssetItem(
-        val assetItemConfiguration: BaseItemConfiguration.BaseAssetItemConfiguration.AssetItemConfiguration
+        val assetItemConfiguration: BaseItemConfiguration.BaseAssetItemConfiguration.AssetItemConfiguration,
+        override val isFavorite: Boolean
     ) : BaseSelectAssetItem {
 
         override val itemType: ItemType = ItemType.SELECT_ASSET_TEM
@@ -51,7 +53,8 @@ sealed interface BaseSelectAssetItem : RecyclerListItem {
         val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         val optedInAtRound: Long?,
         val amountInSelectedCurrency: BigDecimal?,
-        val type: CollectibleType
+        val type: CollectibleType,
+        override val isFavorite: Boolean
     ) : BaseSelectAssetItem {
 
         override val itemType: ItemType

@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.swap.assetswap.domain.usecase
 
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.modules.swap.assetswap.domain.model.dto.PeraFeeDTO
 import com.algorand.android.modules.swap.assetswap.domain.repository.AssetSwapRepository
 import com.algorand.android.modules.swap.utils.defaultPeraSwapFee
@@ -32,8 +31,7 @@ class GetPeraFeeUseCase @Inject constructor(
     suspend fun getPeraFee(fromAssetId: Long, amount: BigDecimal, fractionDecimals: Int): DataResource<BigDecimal> {
         var result: DataResource<BigDecimal>? = null
         val amountAsMicro = amount.movePointRight(fractionDecimals).toBigInteger()
-        val safeAssetId = getSafeAssetIdForRequest(fromAssetId)
-        assetSwapRepository.getPeraFee(safeAssetId, amountAsMicro).map { peraFeeDtoResult ->
+        assetSwapRepository.getPeraFee(fromAssetId, amountAsMicro).map { peraFeeDtoResult ->
             peraFeeDtoResult.use(
                 onSuccess = { peraFeeDTO ->
                     val safePeraFeeAmount = getSafePeraFee(peraFeeDTO)

@@ -16,6 +16,7 @@ import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.formatAmount
+import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_FULL_NAME
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -30,7 +31,8 @@ internal class AlgoAssetDataMapperImpl @Inject constructor() : AlgoAssetDataMapp
         amount: BigInteger,
         parityValueInSelectedCurrency: ParityValue,
         parityValueInSecondaryCurrency: ParityValue,
-        usdValue: BigDecimal
+        usdValue: BigDecimal,
+        algoDetail: AssetDetail?
     ): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData {
         return BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData(
             id = ALGO_ID,
@@ -48,7 +50,8 @@ internal class AlgoAssetDataMapperImpl @Inject constructor() : AlgoAssetDataMapp
             parityValueInSecondaryCurrency = parityValueInSecondaryCurrency,
             prismUrl = null, // Algo does not have prism url
             verificationTier = VerificationTier.TRUSTED,
-            optedInAtRound = null
+            optedInAtRound = null,
+            isFavorite = algoDetail?.assetInfo?.isFavorite ?: false
         )
     }
 }

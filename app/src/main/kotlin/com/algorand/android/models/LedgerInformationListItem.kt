@@ -48,7 +48,8 @@ sealed class LedgerInformationListItem {
         val verificationTierConfiguration: VerificationTierConfiguration,
         val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         val formattedDisplayedCurrencyValue: String,
-        val formattedAmount: String
+        val formattedAmount: String,
+        val isFavorite: Boolean
     ) : LedgerInformationListItem() {
         override fun areItemsTheSame(other: LedgerInformationListItem): Boolean {
             return other is AssetInformationItem && id == other.id

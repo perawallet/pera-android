@@ -10,16 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain.usecase
+package com.algorand.android.ui.transaction.history.mapper
 
-import com.algorand.wallet.asset.domain.repository.AssetRepository
+import com.algorand.android.ui.transaction.history.model.TransactionHistoryItem
+import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
 
-internal class InitializeAssetsUseCase(
-    private val assetRepository: AssetRepository
-) : InitializeAssets {
-
-    override suspend fun invoke(assetIds: List<Long>) {
-        assetRepository.clearCache()
-        assetRepository.fetchAndCacheAssets(assetIds, includeDeleted = false)
-    }
+interface TransactionHistoryItemMapper {
+    fun map(transactionHistory: TransactionHistory): TransactionHistoryItem
 }

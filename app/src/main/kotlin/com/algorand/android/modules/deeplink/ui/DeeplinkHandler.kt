@@ -20,7 +20,6 @@ import com.algorand.android.utils.toBigIntegerOrZero
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
@@ -144,7 +143,7 @@ class DeeplinkHandler @Inject constructor(
     }
 
     private suspend fun handleAssetTransferDeepLink(deepLink: DeepLink.AssetTransfer): Boolean {
-        val safeAssetId = getSafeAssetIdForResponse(deepLink.assetId) ?: ALGO_ID
+        val safeAssetId = deepLink.assetId
         val isAssetOptedInByAnyLocalAccount = if (safeAssetId == ALGO_ID) {
             true
         } else {

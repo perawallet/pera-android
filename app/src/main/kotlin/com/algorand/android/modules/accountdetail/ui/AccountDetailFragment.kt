@@ -147,12 +147,13 @@ class AccountDetailFragment :
     }
 
     override fun onAssetClick(assetId: Long) {
-        nav(
-            AccountDetailFragmentDirections.actionAccountDetailFragmentToAssetDetailNavigation(
-                assetId = assetId,
-                accountAddress = accountDetailViewModel.accountAddress
-            )
-        )
+        val address = accountDetailViewModel.accountAddress
+        val navDestination = if (accountDetailViewModel.isAssetDetailV2Enabled()) {
+            AccountDetailFragmentDirections.actionAccountDetailFragmentToAssetDetailV2Fragment(assetId, address)
+        } else {
+            AccountDetailFragmentDirections.actionAccountDetailFragmentToAssetDetailNavigation(assetId, address)
+        }
+        nav(navDestination)
     }
 
     override fun onAssetLongClick(assetId: Long) {

@@ -23,7 +23,8 @@ data class AssetListItem(
     val unitName: String?,
     val balance: Balance?,
     val verificationTier: VerificationTierConfiguration,
-    val assetIcon: AssetIconDrawable
+    val assetIcon: AssetIconDrawable,
+    val isFavorite: Boolean
 ) {
 
     data class Balance(

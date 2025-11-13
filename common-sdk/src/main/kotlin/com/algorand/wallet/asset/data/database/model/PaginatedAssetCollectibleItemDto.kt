@@ -54,6 +54,9 @@ internal data class PaginatedAssetCollectibleItemDto(
     @ColumnInfo("media_type")
     val mediaTypeEntity: CollectibleMediaTypeEntity?,
 
+    @ColumnInfo("is_favorite")
+    val isFavorite: Boolean?,
+
     @ColumnInfo("sort_by_name_value")
     private val sortByNameValue: String?
 )

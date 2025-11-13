@@ -16,8 +16,6 @@ import com.algorand.android.modules.swap.assetselection.toasset.domain.mapper.Av
 import com.algorand.android.modules.swap.assetselection.toasset.domain.model.AvailableSwapAsset
 import com.algorand.android.modules.swap.assetselection.toasset.domain.model.AvailableSwapAssetDTO
 import com.algorand.android.modules.swap.assetselection.toasset.domain.repository.AvailableTargetSwapAssetsRepository
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
 import com.algorand.android.utils.DataResource
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -38,8 +36,7 @@ class GetAvailableTargetSwapAssetListUseCase @Inject constructor(
         query: String?
     ): Flow<DataResource<List<AvailableSwapAsset>>> = flow {
         emit(DataResource.Loading())
-        val safeAssetId = getSafeAssetIdForRequest(assetId)
-        availableTargetSwapAssetsRepository.getAvailableTargetSwapAssets(safeAssetId, query).map {
+        availableTargetSwapAssetsRepository.getAvailableTargetSwapAssets(assetId, query).map {
             it.use(
                 onSuccess = { availableSwapAssetDTOList ->
                     val availableSwapAssetList = createAvailableSwapAssetList(availableSwapAssetDTOList)
@@ -56,9 +53,8 @@ class GetAvailableTargetSwapAssetListUseCase @Inject constructor(
         availableSwapAssetDTOList: List<AvailableSwapAssetDTO>
     ): List<AvailableSwapAsset> {
         return availableSwapAssetDTOList.mapNotNull { availableSwapAssetDTO ->
-            val safeAssetId = getSafeAssetIdForResponse(availableSwapAssetDTO.assetId)
             availableSwapAssetMapper.mapToAvailableSwapAsset(
-                assetId = safeAssetId ?: return@mapNotNull null,
+                assetId = availableSwapAssetDTO.assetId ?: return@mapNotNull null,
                 availableSwapAssetDTO = availableSwapAssetDTO,
                 usdValue = availableSwapAssetDTO.usdValue?.toBigDecimalOrNull() ?: BigDecimal.ZERO
             )

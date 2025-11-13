@@ -30,26 +30,6 @@ class DefaultSwapQuoteRequestBodyMapperTest {
         assertEquals(REQUEST_BODY, result)
     }
 
-    @Test
-    fun `EXPECT asset in id to be zero WHEN asset in is ALGO`() {
-        val payload = PAYLOAD.copy(assetInId = -7)
-
-        val result = sut(payload)
-
-        val expected = REQUEST_BODY.copy(assetInId = 0L)
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun `EXPECT asset out id to be zero WHEN asset out is ALGO`() {
-        val payload = PAYLOAD.copy(assetOutId = -7)
-
-        val result = sut(payload)
-
-        val expected = REQUEST_BODY.copy(assetOutId = 0L)
-        assertEquals(expected, result)
-    }
-
     private companion object {
         val PAYLOAD = SwapQuoteRequestPayload(
             address = "address",

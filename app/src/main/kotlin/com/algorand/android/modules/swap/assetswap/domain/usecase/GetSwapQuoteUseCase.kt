@@ -16,7 +16,6 @@ import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.utils.ParityUtils
 import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapType
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.modules.swap.assetswap.domain.mapper.SwapQuoteAssetDetailMapper
 import com.algorand.android.modules.swap.assetswap.domain.mapper.SwapQuoteMapper
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
@@ -59,14 +58,12 @@ class GetSwapQuoteUseCase @Inject constructor(
         slippage: Float?
     ) = flow<DataResource<SwapQuote>> {
         emit(DataResource.Loading())
-        val safeFromAssetId = getSafeAssetIdForRequest(fromAssetId)
-        val safeToAssetId = getSafeAssetIdForRequest(toAssetId)
         val deviceId = deviceIdUseCase.getSelectedNodeDeviceId().orEmpty()
         val providers = SwapQuoteProvider.getProviders() // TODO Get this from UI when design is ready
         val swapType = SwapType.getDefaultSwapType()
         assetSwapRepository.getSwapQuote(
-            safeFromAssetId,
-            safeToAssetId,
+            fromAssetId,
+            toAssetId,
             amount,
             swapType,
             accountAddress,

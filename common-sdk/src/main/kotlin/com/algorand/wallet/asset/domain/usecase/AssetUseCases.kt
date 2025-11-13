@@ -77,10 +77,6 @@ fun interface GetCollectiblesDetail {
     suspend operator fun invoke(collectibleIds: List<Long>): List<CollectibleDetail>
 }
 
-fun interface InitializeAssets {
-    suspend operator fun invoke(assetIds: List<Long>)
-}
-
 fun interface CacheSingleAssetDetail {
     suspend operator fun invoke(assetId: Long)
 }
@@ -107,4 +103,16 @@ fun interface GetUsdcAssetId {
 
 fun interface GetSwappableAssetLitesFlow {
     operator fun invoke(address: String, searchKeyword: String?): Flow<PagingData<AssetLite>>
+}
+
+fun interface SetAssetFavoriteStatus {
+    suspend operator fun invoke(assetId: Long, isFavorite: Boolean): PeraResult<Unit>
+}
+
+fun interface SetAssetPriceAlertStatus {
+    suspend operator fun invoke(assetId: Long, enabled: Boolean): PeraResult<Unit>
+}
+
+fun interface GetAssetFavoriteStatuses {
+    suspend operator fun invoke(assetIds: List<Long>): Map<Long, Boolean?>
 }

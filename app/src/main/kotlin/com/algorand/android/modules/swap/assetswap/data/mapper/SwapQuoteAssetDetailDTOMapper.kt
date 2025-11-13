@@ -14,7 +14,6 @@ package com.algorand.android.modules.swap.assetswap.data.mapper
 
 import com.algorand.android.assetsearch.data.mapper.VerificationTierDTODecider
 import com.algorand.android.modules.swap.assetswap.data.model.SwapQuoteAssetDetailResponse
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
 import com.algorand.android.modules.swap.assetswap.domain.model.dto.SwapQuoteAssetDetailDTO
 import javax.inject.Inject
 
@@ -24,7 +23,7 @@ class SwapQuoteAssetDetailDTOMapper @Inject constructor(
 
     fun mapToSwapQuoteAssetDetailDTO(response: SwapQuoteAssetDetailResponse?): SwapQuoteAssetDetailDTO? {
         if (response == null) return null
-        val safeAssetId = getSafeAssetIdForResponse(response.assetId)
+        val safeAssetId = response.assetId
         return SwapQuoteAssetDetailDTO(
             assetId = safeAssetId,
             logoUrl = response.logoUrl,

@@ -10,13 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.transaction.history.domain.usecase
+package com.algorand.wallet.transaction.history.data.model
 
-import androidx.paging.PagingData
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
-import com.algorand.wallet.transaction.history.domain.model.TransactionHistoryPagingData
-import kotlinx.coroutines.flow.Flow
+import com.google.gson.annotations.SerializedName
 
-fun interface GetTransactionHistory {
-    operator fun invoke(data: TransactionHistoryPagingData): Flow<PagingData<TransactionHistory>>
-}
+internal data class TransactionHistoryAssetSummaryResponse(
+    @SerializedName("asset_id")
+    val id: Long?,
+    @SerializedName("unit_name")
+    val unitName: String?,
+    @SerializedName("fraction_decimals")
+    val decimals: Int?
+)

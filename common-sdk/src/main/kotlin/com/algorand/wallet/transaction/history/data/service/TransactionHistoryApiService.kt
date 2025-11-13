@@ -13,6 +13,7 @@
 package com.algorand.wallet.transaction.history.data.service
 
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryResponse
+import com.algorand.wallet.transaction.history.data.model.TransactionHistorySwapGroupDetailResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -31,4 +32,10 @@ internal interface TransactionHistoryApiService {
 
     @GET
     suspend fun getTransactionHistoryMore(@Url url: String): TransactionHistoryResponse
+
+    @GET("/v1/accounts/{account_address}/swap-groups/{group_id}/")
+    suspend fun getSwapGroupTransactions(
+        @Path("account_address") accountAddress: String,
+        @Path("group_id") groupId: String
+    ): TransactionHistorySwapGroupDetailResponse
 }

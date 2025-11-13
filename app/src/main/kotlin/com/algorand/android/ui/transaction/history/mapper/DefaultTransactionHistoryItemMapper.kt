@@ -28,7 +28,7 @@ import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.T
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class DefaultTransactionHistoryItemMapper @Inject constructor() : TransactionHistoryItemMapper {
+internal class DefaultTransactionHistoryItemMapper @Inject constructor() : TransactionHistoryItemMapper {
 
     override fun map(transactionHistory: TransactionHistory): TransactionHistoryItem {
         return with(transactionHistory) {
@@ -112,6 +112,7 @@ class DefaultTransactionHistoryItemMapper @Inject constructor() : TransactionHis
         return with(swapDetails) {
             TransactionHistoryItem.Swap(
                 id = transactionHistory.id,
+                groupId = swapDetails.groupId,
                 formattedAmountIn = formatAmount(assetInId, amountIn, assetInUnitName),
                 formattedAmountOut = formatAmount(assetOutId, amountOut, assetOutUnitName)
             )

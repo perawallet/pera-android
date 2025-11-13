@@ -34,6 +34,7 @@ sealed interface TransactionHistoryItem {
 
     data class Swap(
         val id: String,
+        val groupId: String,
         val formattedAmountIn: String,
         val formattedAmountOut: String
     ) : TransactionHistoryItem

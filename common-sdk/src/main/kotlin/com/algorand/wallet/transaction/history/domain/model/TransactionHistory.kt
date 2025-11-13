@@ -55,6 +55,7 @@ data class TransactionHistory(
         }
 
         data class Swap(
+            val groupId: String,
             val assetInId: Long,
             val assetInUnitName: String,
             val assetOutId: Long,

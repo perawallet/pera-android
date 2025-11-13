@@ -48,6 +48,7 @@ import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SwapQuickActionButton
 import com.algorand.android.ui.transaction.csv.viewmodel.CsvViewModel
 import com.algorand.android.ui.transaction.history.view.TransactionHistoryListItemHeader
+import com.algorand.android.ui.transaction.history.view.TransactionHistoryListListener
 import com.algorand.android.ui.transaction.history.view.pagingTransactionHistoryListItems
 import com.algorand.android.ui.transaction.history.viewmodel.TransactionHistoryViewModel
 import com.algorand.android.ui.transaction.history.viewmodel.TransactionHistoryViewModel.ViewState
@@ -100,7 +101,7 @@ fun AssetHoldingScreen(
                         onCsvClick = listener::onCsvClick
                     )
                 }
-                pagingTransactionHistoryListItems(historyItems)
+                pagingTransactionHistoryListItems(historyItems, listener)
             }
         }
     }
@@ -149,7 +150,7 @@ private fun QuickActionButtons(viewState: Content, viewModel: AssetDetailV2ViewM
     }
 }
 
-interface AssetHoldingScreenListener {
+interface AssetHoldingScreenListener : TransactionHistoryListListener {
     fun onFilterClick()
     fun onCsvClick()
 }

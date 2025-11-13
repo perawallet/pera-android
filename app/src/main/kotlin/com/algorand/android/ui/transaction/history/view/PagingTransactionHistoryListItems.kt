@@ -16,13 +16,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -59,7 +62,10 @@ import com.algorand.android.ui.transaction.history.model.TransactionHistoryItem.
 import com.algorand.android.utils.toShortenedAddress
 import java.math.BigDecimal.ZERO
 
-fun LazyListScope.pagingTransactionHistoryListItems(historyItems: LazyPagingItems<TransactionHistoryItem>?) {
+fun LazyListScope.pagingTransactionHistoryListItems(
+    historyItems: LazyPagingItems<TransactionHistoryItem>?,
+    listener: TransactionHistoryListListener
+) {
     if (historyItems != null) {
         when (historyItems.loadState.refresh) {
             LoadState.Loading -> loadingState()
@@ -68,23 +74,38 @@ fun LazyListScope.pagingTransactionHistoryListItems(historyItems: LazyPagingItem
                 if (historyItems.itemCount == 0) {
                     emptyState()
                 } else {
-                    contentState(historyItems)
+                    contentState(historyItems, listener)
                 }
             }
         }
     }
 }
 
-private fun LazyListScope.contentState(historyItems: LazyPagingItems<TransactionHistoryItem>) {
+@Composable
+fun TransactionHistoryList(
+    modifier: Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    historyItems: List<TransactionHistoryItem>,
+    listener: TransactionHistoryListListener
+) {
+    LazyColumn(modifier, contentPadding = contentPadding) {
+        items(historyItems) { historyItem ->
+            TransactionHistoryListItem(historyItem, listener)
+        }
+    }
+}
+
+private fun LazyListScope.contentState(
+    historyItems: LazyPagingItems<TransactionHistoryItem>,
+    listener: TransactionHistoryListListener
+) {
     items(
         count = historyItems.itemCount,
         key = { index -> index }
     ) { index ->
         val historyItem = historyItems[index]
         if (historyItem != null) {
-            TransactionHistoryListItem(historyItem) {
-                // TODO
-            }
+            TransactionHistoryListItem(historyItem, listener)
         }
     }
 }
@@ -130,22 +151,48 @@ private fun LazyListScope.emptyState() {
 }
 
 @Composable
-private fun TransactionHistoryListItem(item: TransactionHistoryItem, onClick: () -> Unit) {
-    when (item) {
-        is ApplicationCall -> GenericItemContainer(R.string.application_call, item.formattedFee, onClick)
-        is AssetConfiguration -> GenericItemContainer(R.string.asset_configuration, item.formattedFee, onClick)
-        is Date -> DateItem(item.date)
-        is Heartbeat -> GenericItemContainer(R.string.heartbeat, item.formattedFee, onClick)
-        is KeyRegistration -> GenericItemContainer(R.string.key_reg, item.formattedFee, onClick)
-        is OptIn -> GenericItemContainer(R.string.opt_in, item.formattedFee, onClick)
-        is OptOut -> GenericItemContainer(R.string.opt_out, item.formattedFee, onClick)
-        is Receive -> ReceiveItem(item, onClick)
-        is ReceiveOptOut -> GenericItemContainer(R.string.receive_opt_out, item.formattedAmount, onClick)
-        is Self -> GenericItemContainer(R.string.self_transfer, item.formattedAmount, onClick)
-        is Send -> SendItem(item, onClick)
-        is SendOptOut -> GenericItemContainer(R.string.opt_out, item.formattedAmount, onClick)
-        is Swap -> SwapItem(item, onClick)
-        is Separator -> SeparatorItem()
+private fun TransactionHistoryListItem(item: TransactionHistoryItem, listener: TransactionHistoryListListener) {
+    with(listener) {
+        when (item) {
+            is ApplicationCall -> GenericItemContainer(R.string.application_call, item.formattedFee) {
+                onApplicationCallClick(item.id)
+            }
+            is AssetConfiguration -> GenericItemContainer(R.string.asset_configuration, item.formattedFee) {
+                onTransactionClick(item.id)
+            }
+            is Date -> DateItem(item.date)
+            is Heartbeat -> GenericItemContainer(R.string.heartbeat, item.formattedFee) {
+                onTransactionClick(item.id)
+            }
+            is KeyRegistration -> GenericItemContainer(R.string.key_reg, item.formattedFee) {
+                onTransactionClick(item.id)
+            }
+            is OptIn -> GenericItemContainer(R.string.opt_in, item.formattedFee) {
+                onTransactionClick(item.id)
+            }
+            is OptOut -> GenericItemContainer(R.string.opt_out, item.formattedFee) {
+                onTransactionClick(item.id)
+            }
+            is Receive -> ReceiveItem(item) {
+                onTransactionClick(item.id)
+            }
+            is ReceiveOptOut -> GenericItemContainer(R.string.receive_opt_out, item.formattedAmount) {
+                onTransactionClick(item.id)
+            }
+            is Self -> GenericItemContainer(R.string.self_transfer, item.formattedAmount) {
+                onTransactionClick(item.id)
+            }
+            is Send -> SendItem(item) {
+                onTransactionClick(item.id)
+            }
+            is SendOptOut -> GenericItemContainer(R.string.opt_out, item.formattedAmount) {
+                onTransactionClick(item.id)
+            }
+            is Swap -> SwapItem(item) {
+                onSwapClick(item.groupId)
+            }
+            is Separator -> SeparatorItem()
+        }
     }
 }
 
@@ -180,6 +227,7 @@ private fun SwapItem(item: Swap, onClick: () -> Unit) {
         primaryText = stringResource(R.string.swap),
         amountText = item.formattedAmountOut,
         onClick = onClick,
+        amountTextColor = PeraTheme.colors.helper.positive,
         secondaryText = stringResource(
             R.string.asset_for_asset_formatted,
             item.formattedAmountIn,
@@ -311,4 +359,10 @@ private fun AmountText(text: String, color: Color) {
         style = PeraTheme.typography.body.regular.sansMedium,
         color = color
     )
+}
+
+interface TransactionHistoryListListener {
+    fun onTransactionClick(id: String)
+    fun onApplicationCallClick(id: String)
+    fun onSwapClick(groupId: String)
 }

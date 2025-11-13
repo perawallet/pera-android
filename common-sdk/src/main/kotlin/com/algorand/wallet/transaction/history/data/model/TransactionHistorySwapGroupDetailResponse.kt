@@ -14,27 +14,29 @@ package com.algorand.wallet.transaction.history.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class TransactionHistoryItemSwapMetadataResponse(
+internal data class TransactionHistorySwapGroupDetailResponse(
     @SerializedName("swap_id")
     val swapId: String?,
     @SerializedName("provider")
     val provider: String?,
     @SerializedName("status")
     val status: String?,
-    @SerializedName("asset_in_id")
-    val assetInId: Long?,
-    @SerializedName("asset_in_unit_name")
-    val assetInUnitName: String?,
-    @SerializedName("asset_in_decimals")
-    val assetInDecimals: Int?,
-    @SerializedName("asset_out_id")
-    val assetOutId: Long?,
-    @SerializedName("asset_out_unit_name")
-    val assetOutUnitName: String?,
-    @SerializedName("asset_out_decimals")
-    val assetOutDecimals: Int?,
+    @SerializedName("asset_in")
+    val assetIn: TransactionHistoryAssetSummaryResponse?,
+    @SerializedName("asset_out")
+    val assetOut: TransactionHistoryAssetSummaryResponse?,
     @SerializedName("amount_in_with_slippage")
     val amountInWithSlippage: String?,
     @SerializedName("amount_out_with_slippage")
-    val amountOutWithSlippage: String?
+    val amountOutWithSlippage: String?,
+    @SerializedName("transaction_count")
+    val transactionCount: Int?,
+    @SerializedName("transactions")
+    val transactions: List<TransactionHistoryDetailResponse>?,
+    @SerializedName("group_id")
+    val groupId: String?,
+    @SerializedName("confirmed_round")
+    val confirmedRound: Long?,
+    @SerializedName("round_time")
+    val roundTime: Long?
 )

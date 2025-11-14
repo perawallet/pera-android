@@ -16,8 +16,6 @@ interface SwapFeatureRedDotRepository {
 
     suspend fun getSwapFeatureRedDotVisibility(): Boolean
 
-    suspend fun setSwapFeatureRedDotVisibility(isVisible: Boolean)
-
     companion object {
         const val INJECTION_NAME = "swapFeatureRedDotRepository"
     }

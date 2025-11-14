@@ -635,11 +635,7 @@ class MainActivity :
     }
 
     fun navToSwapNavigation(address: String, assetInId: Long?, assetOutId: Long?) {
-        if (mainViewModel.isSwapV2Enabled()) {
-            nav(HomeNavigationDirections.actionGlobalSwapV2Navigation(address, assetInId ?: -1L, assetOutId ?: -1L))
-        } else {
-            nav(HomeNavigationDirections.actionGlobalSwapNavigation(address))
-        }
+        nav(HomeNavigationDirections.actionGlobalSwapV2Navigation(address, assetInId ?: -1L, assetOutId ?: -1L))
     }
 
     fun navToCardsFragment(path: String? = null) {

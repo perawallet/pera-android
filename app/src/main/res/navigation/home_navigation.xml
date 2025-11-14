@@ -62,12 +62,6 @@
 
     <include app:graph="@navigation/audio_player_navigation" />
 
-    <include app:graph="@navigation/swap_account_selection_navigation" />
-
-    <include app:graph="@navigation/swap_introduction_navigation" />
-
-    <include app:graph="@navigation/swap_navigation" />
-
     <include app:graph="@navigation/wallet_connect_connection_navigation" />
 
     <include app:graph="@navigation/discover_home_navigation" />
@@ -225,22 +219,6 @@
         <argument
             android:name="sessionIdentifier"
             app:argType="com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier" />
-    </action>
-
-    <action
-        android:id="@+id/action_global_swap_introduction_navigation"
-        app:destination="@id/swapIntroductionNavigation" />
-
-    <action
-        android:id="@+id/action_global_swapAccountSelectionNavigation"
-        app:destination="@id/swapAccountSelectionNavigation" />
-
-    <action
-        android:id="@+id/action_global_swapNavigation"
-        app:destination="@id/swapNavigation">
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
     </action>
 
     <action
@@ -570,19 +548,6 @@
         <action
             android:id="@+id/action_accountsFragment_to_removeAssetsFragment"
             app:destination="@id/removeAssetsFragment" />
-        <action
-            android:id="@+id/action_accountsFragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation" />
-        <action
-            android:id="@+id/action_accountsFragment_to_swapNavigation"
-            app:destination="@id/swapNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_accountsFragment_to_swapAccountSelectionNavigation"
-            app:destination="@id/swapAccountSelectionNavigation" />
         <action
             android:id="@+id/action_accountsFragment_to_accountErrorOptionsBottomSheet"
             app:destination="@id/accountErrorOptionsBottomSheet" />
@@ -1058,20 +1023,6 @@
             android:id="@+id/action_accountDetailFragment_to_watchAccountQuickActionsBottomSheet"
             app:destination="@id/watchAccountQuickActionsBottomSheet" />
         <action
-            android:id="@+id/action_accountDetailFragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_accountDetailFragment_to_swapNavigation"
-            app:destination="@id/swapNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
-        <action
             android:id="@+id/action_accountDetailFragment_to_swapV2Navigation"
             app:destination="@id/swapV2Navigation">
             <argument
@@ -1432,16 +1383,6 @@
         <argument
             android:name="accountAddress"
             app:argType="string" />
-        <action
-            android:id="@+id/action_accountQuickActionsBottomSheet_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation" />
-        <action
-            android:id="@+id/action_accountQuickActionsBottomSheet_to_swapNavigation"
-            app:destination="@id/swapNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
     </dialog>
 
     <dialog
@@ -1644,25 +1585,6 @@
             <argument
                 android:name="qrText"
                 app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_assetDetailV2Fragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string"
-                app:nullable="true" />
-        </action>
-        <action
-            android:id="@+id/action_assetDetailV2Fragment_to_swapNavigation"
-            app:destination="@id/swapNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-            <argument
-                android:name="fromAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
         </action>
         <action
             android:id="@+id/action_assetDetailV2Fragment_to_singleButtonBottomSheetNavigation"

@@ -28,7 +28,7 @@ class SwapFeatureRedDotPreferenceLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Boolean? {
-        return sharedPref.getBoolean(key, defaultSwapFeatureRedDotPreference)
+        return sharedPref.getBoolean(key, DEFAULT_SWAP_FEATURE_RED_DOT_PREFERENCE)
     }
 
     override fun saveData(data: Boolean) {
@@ -37,6 +37,6 @@ class SwapFeatureRedDotPreferenceLocalSource @Inject constructor(
 
     companion object {
         const val SWAP_FEATURE_RED_DOT_KEY = "swapFeatureRedDotPreference"
-        const val defaultSwapFeatureRedDotPreference = true
+        const val DEFAULT_SWAP_FEATURE_RED_DOT_PREFERENCE = true
     }
 }

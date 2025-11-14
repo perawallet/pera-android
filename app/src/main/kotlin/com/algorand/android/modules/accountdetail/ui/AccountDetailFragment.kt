@@ -49,10 +49,6 @@ import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragm
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
-import com.algorand.android.modules.swap.model.SwapNavigationDestination
-import com.algorand.android.modules.swap.model.SwapNavigationDestination.Introduction
-import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
-import com.algorand.android.modules.swap.model.SwapNavigationDestination.SwapV2
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
@@ -104,10 +100,6 @@ class AccountDetailFragment :
 
     private val accountDetailTabArgCollector: suspend (Event<Int>?) -> Unit = {
         it?.consume()?.run { updateViewPagerBySelectedTab(this) }
-    }
-
-    private val swapNavigationDestinationCollector: suspend (Event<SwapNavigationDestination>?) -> Unit = {
-        it?.consume()?.run { handleSwapNavigationDestination(this) }
     }
 
     private val navBackEventCollector: suspend (Event<Unit>?) -> Unit = {
@@ -326,10 +318,6 @@ class AccountDetailFragment :
             collection = accountDetailTabArgCollector
         )
         viewLifecycleOwner.collectOnLifecycle(
-            flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.swapNavigationDestinationEvent },
-            collection = swapNavigationDestinationCollector
-        )
-        viewLifecycleOwner.collectOnLifecycle(
             flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.navBackEvent },
             collection = navBackEventCollector
         )
@@ -493,29 +481,21 @@ class AccountDetailFragment :
         }
     }
 
-    private fun handleSwapNavigationDestination(swapNavigationDestination: SwapNavigationDestination) {
-        with(accountDetailViewModel) {
-            if (canAccountSignTransaction) {
-                with(AccountDetailFragmentDirections) {
-                    val destination = when (swapNavigationDestination) {
-                        is Introduction -> actionAccountDetailFragmentToSwapIntroductionNavigation(accountAddress)
-                        is Swap -> actionAccountDetailFragmentToSwapNavigation(accountAddress)
-                        is SwapV2 -> actionAccountDetailFragmentToSwapV2Navigation(accountAddress)
-                        else -> null
-                    }
-                    if (destination != null) nav(destination)
-                }
-            } else {
-                showActionNotAvailableError()
-            }
+    private fun handleSwapClick() {
+        if (accountDetailViewModel.canAccountSignTransaction) {
+            handleSwapNavigationDestination()
+        } else {
+            showActionNotAvailableError()
         }
     }
 
-    private fun handleSwapClick() {
-        if (accountDetailViewModel.canAccountSignTransaction) {
-            accountDetailViewModel.onSwapClick()
-        } else {
-            showActionNotAvailableError()
+    private fun handleSwapNavigationDestination() {
+        with(accountDetailViewModel) {
+            if (canAccountSignTransaction) {
+                nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToSwapV2Navigation(accountAddress))
+            } else {
+                showActionNotAvailableError()
+            }
         }
     }
 

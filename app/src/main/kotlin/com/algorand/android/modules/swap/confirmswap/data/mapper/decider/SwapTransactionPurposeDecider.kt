@@ -19,6 +19,6 @@ import javax.inject.Inject
 class SwapTransactionPurposeDecider @Inject constructor() {
 
     fun decideSwapTransactionPurpose(value: String?): SwapTransactionPurpose {
-        return SwapTransactionPurpose.values().firstOrNull { it.value == value } ?: fallbackTransactionPurpose
+        return SwapTransactionPurpose.entries.firstOrNull { it.value == value } ?: fallbackTransactionPurpose
     }
 }

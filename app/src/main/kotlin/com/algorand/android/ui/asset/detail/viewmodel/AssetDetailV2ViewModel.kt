@@ -20,12 +20,9 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.DisplayError
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToMeld
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSwapIntroduction
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSwapV1
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSwapV2
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState.Content
@@ -40,8 +37,8 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 // TODO Rename after deleting asset detail v1
 @HiltViewModel
@@ -52,7 +49,6 @@ class AssetDetailV2ViewModel @Inject constructor(
     private val getAsset: GetAsset,
     private val fetchAsset: FetchAsset,
     private val getAccountType: GetAccountType,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val networkSlugUseCase: NetworkSlugUseCase
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -76,16 +72,7 @@ class AssetDetailV2ViewModel @Inject constructor(
     fun navigateToSwap() {
         stateDelegate.onState<Content> { content ->
             viewModelScope.launch {
-                swapNavigationDestinationHelper.getSwapNavigationDestination(
-                    accountAddress = content.address,
-                    onNavToIntroduction = {
-                        eventDelegate.sendEvent(viewModelScope, NavigateToSwapIntroduction(content.address))
-                    },
-                    onNavToSwap = { eventDelegate.sendEvent(viewModelScope, NavigateToSwapV1(it)) },
-                    onNavToSwapV2 = {
-                        eventDelegate.sendEvent(viewModelScope, NavigateToSwapV2(content.address, content.asset.id))
-                    }
-                )
+                eventDelegate.sendEvent(viewModelScope, NavigateToSwapV2(content.address, content.asset.id))
             }
         }
     }
@@ -151,9 +138,7 @@ class AssetDetailV2ViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data class NavigateToSwapIntroduction(val address: String) : ViewEvent
         data class NavigateToSwapV2(val address: String, val assetOutId: Long) : ViewEvent
-        data class NavigateToSwapV1(val address: String) : ViewEvent
         data class NavigateToSendNavigation(val assetTransaction: AssetTransaction) : ViewEvent
         data class NavigateToMeld(val address: String) : ViewEvent
         data class NavigateToShowQr(val address: String) : ViewEvent

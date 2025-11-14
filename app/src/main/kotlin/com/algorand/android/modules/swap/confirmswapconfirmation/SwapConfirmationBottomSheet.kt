@@ -47,7 +47,7 @@ class SwapConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
         materialButton.apply {
             setText(R.string.confirm_swap)
             setOnClickListener {
-                setFragmentNavigationResult<Boolean>(CONFIRMATION_SUCCESS_KEY, true)
+                setFragmentNavigationResult(CONFIRMATION_SUCCESS_KEY, true)
                 navBack()
             }
         }

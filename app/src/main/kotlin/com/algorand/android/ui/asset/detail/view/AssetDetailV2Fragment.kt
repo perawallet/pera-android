@@ -32,8 +32,6 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.Vie
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToMeld
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSendNavigation
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToShowQr
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSwapIntroduction
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSwapV1
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSwapV2
 import com.algorand.android.ui.asset.detail.viewmodel.AssetLineChartViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetPriceLineChartViewModel
@@ -74,10 +72,8 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
 
     private val viewEventCollector: suspend (AssetDetailV2ViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            is NavigateToSwapIntroduction -> navToSwapIntroduction(event.address)
             is DisplayError -> showGlobalError(getString(event.errorResId))
             is NavigateToSendNavigation -> navToSendNavigation(event.assetTransaction)
-            is NavigateToSwapV1 -> navToSwapV1(event.address)
             is NavigateToSwapV2 -> navToSwapV2(event.address, event.assetOutId)
             is NavigateToMeld -> navToMeldNavigation(event.address)
             is NavigateToShowQr -> navToShowQRBottomSheet(event.address)
@@ -197,16 +193,8 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
         nav(AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToMeldNavigation(address))
     }
 
-    private fun navToSwapIntroduction(address: String) {
-        nav(AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToSwapIntroductionNavigation(address))
-    }
-
     private fun navToSendNavigation(assetTransaction: AssetTransaction) {
         nav(AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToSendAlgoNavigation(assetTransaction))
-    }
-
-    private fun navToSwapV1(address: String) {
-        nav(AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToSwapNavigation(address))
     }
 
     private fun navToSwapV2(address: String?, assetOutId: Long) {

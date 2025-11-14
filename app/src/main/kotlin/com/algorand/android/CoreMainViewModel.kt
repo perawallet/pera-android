@@ -17,7 +17,6 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.CoreMainViewModel.ViewEvent
-import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.viewmodel.EventViewModel
@@ -32,7 +31,6 @@ import javax.inject.Inject
 class CoreMainViewModel @Inject constructor(
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val sharedPref: SharedPreferences,
-    private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
 ) : ViewModel(), EventViewModel<ViewEvent> {
 
     private val _viewEvent = MutableSharedFlow<ViewEvent>(extraBufferCapacity = VIEW_EVENT_BUFFER_CAPACITY)
@@ -48,10 +46,6 @@ class CoreMainViewModel @Inject constructor(
             _viewEvent.emit(ViewEvent.InitializeMainActivity(savedInstanceState))
             _viewEvent.emit(ViewEvent.InitializeCoreManagers)
         }
-    }
-
-    fun isHdWalletToggleEnabled(): Boolean {
-        return isOnHdWalletUseCase.invoke()
     }
 
     sealed interface ViewEvent {

@@ -52,7 +52,6 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
     override fun onResume() {
         super.onResume()
         binding.dispenserListItem.isVisible = developerSettingsViewModel.isConnectedToTestnet()
-        binding.createLegacyAlgo25ListItem.isVisible = developerSettingsViewModel.showCreateLegacyAlgo25Account()
         binding.developerOptionsListItem.isVisible = developerSettingsViewModel.showDeveloperOptions()
     }
 

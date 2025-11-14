@@ -37,7 +37,6 @@
         android:id="@+id/createLegacyAlgo25ListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:endViewLayoutResource="@layout/layout_right_arrow"
         app:settingIcon="@drawable/ic_wallet"
         app:settingTitle="@string/create_legacy_algo25_account" />

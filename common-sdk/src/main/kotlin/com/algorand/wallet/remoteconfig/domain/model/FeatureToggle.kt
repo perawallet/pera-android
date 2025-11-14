@@ -14,7 +14,6 @@ package com.algorand.wallet.remoteconfig.domain.model
 
 enum class FeatureToggle(val key: String, val description: String) {
     STAKING("enable_staking", "Staking"),
-    HD_WALLET("enable_hd_wallet", "Hd Wallet"),
     DISCOVER_V5("enable_discover_v5", "Discover V5"),
     ACCOUNTS_CHART("enable_charts_portfolio", "Portfolio Chart"),
     ACCOUNT_DETAIL_CHART("enable_charts_accounts", "Account Detail Chart"),

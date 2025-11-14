@@ -103,15 +103,7 @@ abstract class CoreMainActivity : BaseActivity() {
         when (event) {
             is InitializeCoreManagers -> initializeCoreManagers()
             is InitializeHomeNavigation -> startNavigation(R.id.homeNavigation)
-            is InitializeLoginNavigation -> {
-                val startDestinationFragmentId = if (coreMainViewModel.isHdWalletToggleEnabled()) {
-                    R.id.initialRegisterIntroNavigation
-                } else {
-                    R.id.loginNavigation
-                }
-                startNavigation(startDestinationFragmentId)
-            }
-
+            is InitializeLoginNavigation -> startNavigation(R.id.initialRegisterIntroNavigation)
             is InitializeMainActivity -> initializeMainActivity(event.savedInstanceState)
         }
     }

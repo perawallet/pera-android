@@ -126,8 +126,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
                 ?.let { nameRegistrationViewModel.updateWatchAccount(it) }
             handleNextNavigationEvent?.consume()?.let { navToNextFragment() }
 
-            val isWalletVisible = nameRegistrationViewModel.isOnHdWallet() &&
-                    nameRegistrationViewModel.isHdKey()
+            val isWalletVisible = nameRegistrationViewModel.isHdKey()
             binding.cardviewWalletNumber.isVisible = isWalletVisible
 
             if (isWalletVisible) {

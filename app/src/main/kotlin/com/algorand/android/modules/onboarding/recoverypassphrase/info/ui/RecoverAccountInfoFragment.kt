@@ -23,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
@@ -54,8 +53,6 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
     override val fragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
-    private val recoveryAccountInfoViewModel by viewModels<RecoveryAccountInfoViewModel>()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureToolbar()
@@ -85,27 +82,17 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) {
-        val titleTextRes = if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
-            R.string.recover_an_algorand_wallet
-        } else {
-            R.string.recover_an_algorand_account
-        }
         PeraHeadlineText(
             modifier = modifier,
-            text = stringResource(id = titleTextRes)
+            text = stringResource(id = R.string.recover_an_algorand_wallet)
         )
     }
 
     @Composable
     override fun Description(modifier: Modifier) {
-        val descriptionTextRes = if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
-            R.string.in_the_following_wallet
-        } else {
-            R.string.in_the_following_account
-        }
         PeraBodyText(
             modifier = modifier,
-            text = stringResource(id = descriptionTextRes)
+            text = stringResource(id = R.string.in_the_following_wallet)
         )
     }
 
@@ -114,11 +101,6 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
     override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
         val coroutineScope = rememberCoroutineScope()
         val showBottomSheet = rememberSaveable { mutableStateOf(false) }
-        val buttonTextRes = if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
-            R.string.recover_an_algorand_wallet
-        } else {
-            R.string.recover_an_algorand_account
-        }
         PeraPrimaryButton(
             modifier = modifier,
             onClick = {
@@ -128,7 +110,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                     )
                 }
             },
-            text = stringResource(id = buttonTextRes)
+            text = stringResource(id = R.string.recover_an_algorand_wallet)
         )
 
         if (showBottomSheet.value) {

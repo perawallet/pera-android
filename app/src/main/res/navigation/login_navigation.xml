@@ -76,14 +76,6 @@
                 app:argType="com.algorand.android.models.AccountCreation"
                 app:nullable="true" />
         </action>
-        <action
-            android:id="@+id/action_registerIntroFragment_to_createAccountNameRegistrationNavigation"
-            app:destination="@id/createAccountNameRegistrationNavigation">
-            <argument
-                android:name="accountCreation"
-                app:argType="com.algorand.android.models.AccountCreation"
-                app:nullable="true" />
-        </action>
     </fragment>
 
     <fragment

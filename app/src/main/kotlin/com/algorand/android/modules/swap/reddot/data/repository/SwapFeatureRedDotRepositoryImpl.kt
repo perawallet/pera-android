@@ -13,7 +13,7 @@
 package com.algorand.android.modules.swap.reddot.data.repository
 
 import com.algorand.android.modules.swap.reddot.data.local.SwapFeatureRedDotPreferenceLocalSource
-import com.algorand.android.modules.swap.reddot.data.local.SwapFeatureRedDotPreferenceLocalSource.Companion.defaultSwapFeatureRedDotPreference
+import com.algorand.android.modules.swap.reddot.data.local.SwapFeatureRedDotPreferenceLocalSource.Companion.DEFAULT_SWAP_FEATURE_RED_DOT_PREFERENCE
 import com.algorand.android.modules.swap.reddot.domain.repository.SwapFeatureRedDotRepository
 
 class SwapFeatureRedDotRepositoryImpl(
@@ -21,10 +21,6 @@ class SwapFeatureRedDotRepositoryImpl(
 ) : SwapFeatureRedDotRepository {
 
     override suspend fun getSwapFeatureRedDotVisibility(): Boolean {
-        return swapFeatureRedDotPreferenceLocalSource.getData(defaultSwapFeatureRedDotPreference)
-    }
-
-    override suspend fun setSwapFeatureRedDotVisibility(isVisible: Boolean) {
-        swapFeatureRedDotPreferenceLocalSource.saveData(isVisible)
+        return swapFeatureRedDotPreferenceLocalSource.getData(DEFAULT_SWAP_FEATURE_RED_DOT_PREFERENCE)
     }
 }

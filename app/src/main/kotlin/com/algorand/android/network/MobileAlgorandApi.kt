@@ -32,14 +32,6 @@ import com.algorand.android.modules.notification.data.model.LastSeenNotification
 import com.algorand.android.modules.notification.data.model.NotificationResponse
 import com.algorand.android.modules.notification.data.model.NotificationStatusResponse
 import com.algorand.android.modules.parity.data.model.CurrencyDetailResponse
-import com.algorand.android.modules.swap.assetselection.toasset.data.model.AvailableSwapAssetListResponse
-import com.algorand.android.modules.swap.assetswap.data.model.PeraFeeRequestBody
-import com.algorand.android.modules.swap.assetswap.data.model.PeraFeeResponse
-import com.algorand.android.modules.swap.assetswap.data.model.SwapQuoteExceptionRequestBody
-import com.algorand.android.modules.swap.assetswap.data.model.SwapQuoteRequestBody
-import com.algorand.android.modules.swap.assetswap.data.model.SwapQuoteResultResponse
-import com.algorand.android.modules.swap.confirmswap.data.model.CreateSwapQuoteTransactionsRequestBody
-import com.algorand.android.modules.swap.confirmswap.data.model.CreateSwapQuoteTransactionsResponse
 import com.algorand.android.modules.walletconnect.connectionrequest.data.model.GetWCDomainScammerStateResponse
 import com.algorand.android.modules.webimport.loading.data.model.ImportBackupResponse
 import okhttp3.ResponseBody
@@ -148,28 +140,6 @@ interface MobileAlgorandApi {
         @Query("end_date") endDate: String?
     ): Response<ResponseBody>
 
-    @GET("v1/dex-swap/available-assets/")
-    suspend fun getAvailableSwapAssetList(
-        @Query("asset_in_id") assetId: Long,
-        @Query("providers") providersAsCsv: String,
-        @Query("q") query: String?
-    ): Response<AvailableSwapAssetListResponse>
-
-    @POST("v1/dex-swap/quotes/")
-    suspend fun getSwapQuote(
-        @Body requestBody: SwapQuoteRequestBody
-    ): Response<SwapQuoteResultResponse>
-
-    @POST("v1/dex-swap/calculate-pera-fee/")
-    suspend fun getPeraFee(
-        @Body requestBody: PeraFeeRequestBody
-    ): Response<PeraFeeResponse>
-
-    @POST("v1/dex-swap/prepare-transactions/")
-    suspend fun getQuoteTransactions(
-        @Body requestBody: CreateSwapQuoteTransactionsRequestBody
-    ): Response<CreateSwapQuoteTransactionsResponse>
-
     @GET("v1/discover/assets/trending/")
     suspend fun getTrendingAssets(): Response<List<AssetSearchResponse>>
 
@@ -177,12 +147,6 @@ interface MobileAlgorandApi {
     suspend fun getBackup(
         @Path("id") id: String
     ): Response<ImportBackupResponse>
-
-    @PATCH("v1/dex-swap/quotes/{quote_id}/")
-    suspend fun putSwapQuoteException(
-        @Path("quote_id") quoteId: Long,
-        @Body swapQuoteExceptionRequestBody: SwapQuoteExceptionRequestBody
-    ): Response<Unit>
 
     @GET("v1/is-scammer-domain/")
     suspend fun getWCDomainScammerState(

@@ -21,7 +21,6 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSumma
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
-import com.algorand.android.modules.swap.common.domain.usecase.GetSwapNavigationDestination
 import com.algorand.android.modules.tracking.accountdetail.AccountDetailFragmentEventTracker
 import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.utils.Event
@@ -32,20 +31,19 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.can
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountDetailViewModel @Inject constructor(
     private val accountDeletionUseCase: AccountDeletionUseCase,
     savedStateHandle: SavedStateHandle,
     private val accountDetailFragmentEventTracker: AccountDetailFragmentEventTracker,
-    private val getSwapNavigationDestination: GetSwapNavigationDestination,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getAccountDetailSummary: GetAccountDetailSummary,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
@@ -124,19 +122,8 @@ class AccountDetailViewModel @Inject constructor(
         }
     }
 
-    fun onSwapClick() {
-        viewModelScope.launchIO {
-            _accountDetailPreviewFlow.update {
-                it?.copy(
-                    swapNavigationDestinationEvent = Event(getSwapNavigationDestination(accountAddress))
-                )
-            }
-        }
-    }
-
     companion object {
         private const val PUBLIC_KEY = "publicKey"
-        private const val ACCOUNT_ADDRESS = "accountAddress"
         private const val ACCOUNT_DETAIL_TAB = "accountDetailTab"
     }
 }

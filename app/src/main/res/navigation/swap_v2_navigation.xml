@@ -118,14 +118,17 @@
         android:name="com.algorand.android.modules.swap.priceimpact.ui.PriceImpactInfoBottomSheet"
         android:label="PriceImpactInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_base_information" />
+
     <dialog
         android:id="@+id/swapSlippageToleranceInfoBottomSheet"
         android:name="com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceInfoBottomSheet"
         android:label="SlippageToleranceInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_base_information" />
+
     <dialog
         android:id="@+id/swapExchangeFeeInfoBottomSheet"
         android:name="com.algorand.android.modules.swap.confirmswap.ui.ExchangeFeeInfoBottomSheet"
         android:label="ExchangeFeeInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_base_information" />
+
 </navigation>

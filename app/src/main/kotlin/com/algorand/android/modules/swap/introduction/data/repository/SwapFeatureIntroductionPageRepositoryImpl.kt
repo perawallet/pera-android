@@ -13,7 +13,7 @@
 package com.algorand.android.modules.swap.introduction.data.repository
 
 import com.algorand.android.modules.swap.introduction.data.local.SwapFeatureIntroductionPagePreferenceLocalSource
-import com.algorand.android.modules.swap.introduction.data.local.SwapFeatureIntroductionPagePreferenceLocalSource.Companion.defaultSwapFeatureIntroductionPagePreference
+import com.algorand.android.modules.swap.introduction.data.local.SwapFeatureIntroductionPagePreferenceLocalSource.Companion.DEFAULT_SWAP_FEATURE_INTRODUCTION_PAGE_PREFERENCE
 import com.algorand.android.modules.swap.introduction.domain.repository.SwapFeatureIntroductionPageRepository
 
 class SwapFeatureIntroductionPageRepositoryImpl(
@@ -21,7 +21,9 @@ class SwapFeatureIntroductionPageRepositoryImpl(
 ) : SwapFeatureIntroductionPageRepository {
 
     override suspend fun getSwapFeatureIntroductionPageVisibility(): Boolean {
-        return swapFeatureIntroductionPagePreferenceLocalSource.getData(defaultSwapFeatureIntroductionPagePreference)
+        return swapFeatureIntroductionPagePreferenceLocalSource.getData(
+            DEFAULT_SWAP_FEATURE_INTRODUCTION_PAGE_PREFERENCE
+        )
     }
 
     override suspend fun setSwapFeatureIntroductionPageVisibility(isVisible: Boolean) {

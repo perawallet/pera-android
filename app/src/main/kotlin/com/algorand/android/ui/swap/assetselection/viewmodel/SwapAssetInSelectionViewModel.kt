@@ -26,7 +26,6 @@ import com.algorand.wallet.asset.domain.usecase.GetSwappableAssetLitesFlow
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +35,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @HiltViewModel
 class SwapAssetInSelectionViewModel @Inject constructor(
@@ -48,7 +48,7 @@ class SwapAssetInSelectionViewModel @Inject constructor(
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
-    private val queryFlow = MutableStateFlow<String>("")
+    private val queryFlow = MutableStateFlow("")
     private val addressFlow = MutableStateFlow<String?>(null)
 
     private val assetPagingItems: Flow<PagingData<AssetListItem>> =

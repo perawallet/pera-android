@@ -28,7 +28,6 @@ import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.utils.getSendDeviceId
 import com.algorand.android.discover.utils.isValidDiscoverURL
-import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.discover.detail.DiscoverDetailEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
@@ -39,7 +38,6 @@ import javax.inject.Inject
 class DiscoverDetailPreviewUseCase @Inject constructor(
     private val buySellActionRequestMapper: BuySellActionRequestMapper,
     private val sharedPreferences: SharedPreferences,
-    private val discoverSwapNavigationDestinationHelper: DiscoverSwapNavigationDestinationHelper,
     private val discoverDetailEventTracker: DiscoverDetailEventTracker,
     private val deviceIdUseCase: DeviceIdUseCase,
     private val discoverDappFavoritesMapper: DiscoverDappFavoritesMapper,
@@ -108,29 +106,11 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
             }
 
             BuySellActionRequest.Destination.SWAP -> {
-                discoverSwapNavigationDestinationHelper.getSwapNavigationDestination(
-                    onNavToIntroduction = {
-                        swapNavDirection = DiscoverDetailFragmentDirections
-                            .actionDiscoverDetailFragmentToSwapIntroductionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToAccountSelection = {
-                        swapNavDirection = DiscoverDetailFragmentDirections
-                            .actionDiscoverDetailFragmentToSwapAccountSelectionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToSwapV2 = {
-                        swapNavDirection = DiscoverDetailFragmentDirections
-                            .actionDiscoverDetailFragmentToSwapV2Navigation(
-                                assetInId = buySellActionRequest.assetInId ?: -1L,
-                                assetOutId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    }
-                )
+                swapNavDirection = DiscoverDetailFragmentDirections
+                    .actionDiscoverDetailFragmentToSwapV2Navigation(
+                        assetInId = buySellActionRequest.assetInId ?: -1L,
+                        assetOutId = buySellActionRequest.assetOutId ?: -1L
+                    )
             }
 
             BuySellActionRequest.Destination.ONRAMP -> {}

@@ -20,7 +20,6 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
         val accountPrimaryFormattedParityValue: String?,
         val accountSecondaryFormattedParityValue: String?,
         val requiredMinBalance: String,
-        val displayChart: Boolean
     ) : AccountDetailAccountsItem {
 
         override val itemType: ItemType
@@ -28,7 +27,7 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountPortfolioItem &&
-                accountPrimaryFormattedParityValue == other.accountPrimaryFormattedParityValue
+                    accountPrimaryFormattedParityValue == other.accountPrimaryFormattedParityValue
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

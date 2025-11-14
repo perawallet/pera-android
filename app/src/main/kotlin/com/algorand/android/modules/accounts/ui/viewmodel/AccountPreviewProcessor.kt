@@ -74,9 +74,7 @@ class AccountPreviewProcessor @Inject constructor(
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
-        if (isFeatureToggleEnabled(FeatureToggle.ACCOUNTS_CHART.key)) {
-            accountList.add(BaseAccountListItem.WalletChartItem)
-        }
+        accountList.add(BaseAccountListItem.WalletChartItem)
 
         insertQuickActionsItem(accountList)
 

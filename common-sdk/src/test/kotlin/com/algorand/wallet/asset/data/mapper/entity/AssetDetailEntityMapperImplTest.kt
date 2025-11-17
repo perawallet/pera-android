@@ -71,7 +71,7 @@ internal class AssetDetailEntityMapperImplTest {
         assertEquals(0, result?.decimals)
         assertEquals("0", result?.maxSupply)
         assertEquals("0", result?.totalSupply)
-        assertFalse(result?.availableOnDiscoverMobile ?: return)
+        assertFalse(result?.availableOnDiscoverMobile!!)
     }
 
     companion object {

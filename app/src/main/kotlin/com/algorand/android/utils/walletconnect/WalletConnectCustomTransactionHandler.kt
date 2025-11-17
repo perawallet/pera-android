@@ -51,10 +51,8 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
     * -> Check if all the signers are valid
     * -> hasAllAtomicAtLeastOneTxnNeedsToBeSigned
     * -> doAppHaveAtLeastOneSignerAccountInTxn
-    *
-    *
-    *
-    * */
+    */
+
     @SuppressWarnings("ReturnCount", "LongMethod")
     suspend fun handleCustomTransaction(
         sessionIdentifier: WalletConnect.SessionIdentifier,
@@ -139,7 +137,7 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
                 versionIdentifier = version
             )
             onResult(Success(result))
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             onResult(Error(sessionIdentifier, requestIdentifier, errorProvider.getUnableToParseTransactionError()))
         } finally {
             walletConnectCustomTransactionAssetDetailHandler.clearAssetCacheMap()

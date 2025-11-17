@@ -31,6 +31,7 @@ import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -75,6 +76,7 @@ class DiscoverHomeViewModel @Inject constructor(
         initQueryTextFlow()
     }
 
+    @OptIn(FlowPreview::class)
     private fun initQueryTextFlow() {
         queryTextFlow
             .debounce(QUERY_DEBOUNCE)

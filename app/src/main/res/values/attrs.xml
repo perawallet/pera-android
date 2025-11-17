@@ -150,10 +150,6 @@
         <attr name="customButtonIconColor" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="ViewPortHeightRecyclerView">
-        <attr name="heightOffset" format="dimension" />
-    </declare-styleable>
-
     <declare-styleable name="CollectibleMediaPager">
         <attr name="bottomButtonText" format="string" />
         <attr name="bottomButtonIcon" format="reference" />

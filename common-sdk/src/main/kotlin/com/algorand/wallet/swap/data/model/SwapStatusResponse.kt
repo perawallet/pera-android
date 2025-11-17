@@ -14,6 +14,7 @@ package com.algorand.wallet.swap.data.model
 
 import com.google.gson.annotations.SerializedName
 
+@Suppress("unused")
 internal enum class SwapStatusResponse {
     @SerializedName("pending")
     PENDING,

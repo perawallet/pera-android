@@ -10,7 +10,6 @@
  * limitations under the License
  */
 
-
 package com.algorand.wallet.nameservice.domain.util
 
 internal object NameServiceUtils {

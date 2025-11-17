@@ -17,4 +17,5 @@ import com.algorand.android.BuildConfig
 
 fun isStagingApp(): Boolean = BuildConfig.FLAVOR == "staging"
 
+@Suppress("unused")
 fun isProductionApp(): Boolean = BuildConfig.FLAVOR == "prod"

@@ -227,7 +227,7 @@ abstract class BaseLedgerSearchFragment :
                 override fun run() {
                     try {
                         runBlocking(Dispatchers.Main) { connectLedger(device) }
-                    } catch (exception: Exception) {
+                    } catch (_: Exception) {
                         showError(getString(R.string.an_error_occured))
                     }
                 }

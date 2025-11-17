@@ -10,11 +10,11 @@
   ~ limitations under the License
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Pera Algo Wallet</string>
 
     <!--This value is required to fix this issue https://stackoverflow.com/questions/63325427/firebase-crashlytics-java-lang-illegalstateexception-the-crashlytics-build-id-->
-    <string name="com.crashlytics.android.build_id">1</string>
+    <string name="com.crashlytics.android.build_id" tools:keep="@string/com_crashlytics_android_build_id">1</string>
 
     <string name="version_format">Pera Algo Wallet v%1$s</string>
     <string name="firebase_id_format">Firebase ID: %1$s</string>
@@ -85,7 +85,6 @@
 
     <string name="asset_amount_with_x">x%1$s</string>
 
-    <string name="swap_amount_hint">0.00</string>
     <string name="formatted_percentage">%1$s%%</string>
 
     <string name="bidali">Bidali</string>

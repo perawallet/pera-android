@@ -30,6 +30,7 @@ import com.algorand.android.utils.Resource
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -134,6 +135,7 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         }
     }
 
+    @OptIn(FlowPreview::class)
     private fun combineLatestCopiedMessageAndQueryFlow() {
         viewModelScope.launch {
             combine(

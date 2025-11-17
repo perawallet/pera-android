@@ -40,7 +40,7 @@ class SwapAmountInput(val locale: Locale) {
             if (input.isBlank()) return null
             val amountNumber = getFormatter().parse(input)?.toString()
             if (!amountNumber.isNullOrBlank()) BigDecimal(amountNumber) else null
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

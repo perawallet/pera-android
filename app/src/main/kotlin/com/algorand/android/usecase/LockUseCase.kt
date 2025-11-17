@@ -40,10 +40,6 @@ class LockUseCase @Inject constructor(
         securityRepository.setLockPenaltyRemainingTime(penaltyRemainingTime)
     }
 
-    fun isPinCodeEnabled(): Boolean {
-        return encryptedPinUseCase.isEncryptedPinSet()
-    }
-
     fun shouldShowBiometricDialog(): Boolean {
         return isBiometricActive() && getLockPenaltyRemainingTime() == 0L
     }

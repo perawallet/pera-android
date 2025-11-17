@@ -420,4 +420,5 @@ dependencies {
     androidTestImplementation(libs.room.testing)
     androidTestImplementation(libs.runner)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.junit.ktx)
 }

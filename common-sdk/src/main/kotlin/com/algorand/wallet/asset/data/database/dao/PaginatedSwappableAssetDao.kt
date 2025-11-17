@@ -15,13 +15,11 @@ package com.algorand.wallet.asset.data.database.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.RoomWarnings
 import com.algorand.wallet.asset.data.database.model.AssetCategoryEntity
 import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleItemDto
 import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
 
 @Dao
-@SuppressWarnings(RoomWarnings.QUERY_MISMATCH)
 internal interface PaginatedSwappableAssetDao {
 
     @Query(
@@ -32,6 +30,7 @@ internal interface PaginatedSwappableAssetDao {
         holding.asset_status AS asset_status,
         (holding.amount * IFNULL(asset.usd_value, 0)) AS total_usd_value,
         holding.opted_in_at_round AS opted_in_at_round,
+        
         asset.asset_id AS asset_id,
         asset.name AS name,
         asset.unit_name AS unit_name,
@@ -39,6 +38,8 @@ internal interface PaginatedSwappableAssetDao {
         asset.usd_value AS usd_value,
         asset.decimals AS decimals,
         asset.verification_tier AS verification_tier,
+        asset.is_favorite AS is_favorite,
+        
         collectible.title AS title,
         collectible.primary_image_url AS primary_image_url,
         collectible.collection_name AS collection_name,

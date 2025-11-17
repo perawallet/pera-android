@@ -12,8 +12,6 @@
 
 package com.algorand.android.modules.parity.domain.usecase
 
-import com.algorand.android.models.AssetHolding
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.parity.domain.mapper.ParityValueMapper
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.ALGO_DECIMALS
@@ -29,16 +27,6 @@ class SecondaryCurrencyParityCalculationUseCase @Inject constructor(
     private val parityUseCase: ParityUseCase,
     parityValueMapper: ParityValueMapper
 ) : BaseParityCalculationUseCase(parityValueMapper) {
-
-    override fun getAssetParityValue(assetHolding: AssetHolding, assetItem: BaseAssetDetail): ParityValue {
-        return calculateParityValue(
-            assetUsdValue = assetItem.usdValue,
-            assetDecimals = assetItem.fractionDecimals,
-            amount = assetHolding.amount,
-            conversionRate = parityUseCase.getUsdToSecondaryCurrencyConversionRate(),
-            currencySymbol = parityUseCase.getSecondaryCurrencySymbol()
-        )
-    }
 
     override fun getAssetParityValue(
         assetAmount: BigInteger,

@@ -15,13 +15,11 @@ package com.algorand.wallet.asset.collectible.data.database.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.RoomWarnings
 import com.algorand.wallet.asset.collectible.data.database.model.FilteredCollectibleCountDto
 import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleItemDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-@SuppressWarnings(RoomWarnings.QUERY_MISMATCH)
 internal interface PaginatedCollectibleDao {
 
     @Query(
@@ -39,6 +37,7 @@ internal interface PaginatedCollectibleDao {
         asset.usd_value AS usd_value,
         asset.decimals AS decimals,
         asset.verification_tier AS verification_tier,
+        asset.is_favorite AS is_favorite,
         
         collectible.title AS title,
         collectible.primary_image_url AS primary_image_url,

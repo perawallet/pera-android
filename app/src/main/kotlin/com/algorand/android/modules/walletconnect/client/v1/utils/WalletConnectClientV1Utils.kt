@@ -33,7 +33,7 @@ object WalletConnectClientV1Utils {
     private fun createSessionConfigFromUrl(url: String): Session.Config? {
         return try {
             Session.Config.fromWCUri(url)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

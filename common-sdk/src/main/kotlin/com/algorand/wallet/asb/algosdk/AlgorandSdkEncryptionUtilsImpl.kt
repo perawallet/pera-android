@@ -26,7 +26,7 @@ internal class AlgorandSdkEncryptionUtilsImpl @Inject constructor() : AlgorandSd
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -40,7 +40,7 @@ internal class AlgorandSdkEncryptionUtilsImpl @Inject constructor() : AlgorandSd
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

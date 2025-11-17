@@ -170,7 +170,7 @@ class BackupInfoFragment : BaseInfoFragment() {
                     backupInfoViewModel.createAlgo25Account()
                 }
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             navBack()
             null
         }

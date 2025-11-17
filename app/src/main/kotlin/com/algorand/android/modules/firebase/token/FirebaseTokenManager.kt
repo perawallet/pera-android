@@ -97,7 +97,7 @@ class FirebaseTokenManager @Inject constructor(
                 FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
                     firebasePushTokenUseCase.setPushToken(token)
                 }
-            } catch (exception: Exception) {
+            } catch (_: Exception) {
                 // TODO: Re-active last activated node in case of failure
                 _firebaseTokenResultEventFlow.emit(firebaseTokenResultMapper.mapToTokenLoaded())
             }

@@ -69,7 +69,7 @@ class WalletConnectCustomArbitraryDataHandler @Inject constructor(
             )
 
             onResult(Success(result))
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             onResult(Error(sessionIdentifier, requestIdentifier, errorProvider.getUnableToParseArbitraryDataError()))
         }
     }

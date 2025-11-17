@@ -286,7 +286,7 @@ fun groupWalletConnectTransactions(
             }
         }
         txnGroupList.groupBy { it.first }.map { it.value.map { it.second } }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

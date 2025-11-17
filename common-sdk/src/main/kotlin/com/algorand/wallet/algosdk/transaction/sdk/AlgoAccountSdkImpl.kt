@@ -30,7 +30,7 @@ internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
             )
             secretKey.clearFromMemory()
             output
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -38,7 +38,7 @@ internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
     override fun getMnemonicFromAlgo25SecretKey(secretKey: ByteArray): String? {
         return try {
             Account(secretKey).toMnemonic()
-        } catch (e: NoSuchAlgorithmException) {
+        } catch (_: NoSuchAlgorithmException) {
             null
         }
     }
@@ -53,7 +53,7 @@ internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
             )
             secretKey.clearFromMemory()
             output
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

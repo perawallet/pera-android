@@ -20,7 +20,7 @@ fun getQrCodeBitmap(size: Int, qrContent: String): Bitmap? {
     return try {
         // The QR code has self padding about 28dp.
         BarcodeEncoder().encodeBitmap(qrContent, BarcodeFormat.QR_CODE, size, size)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

@@ -91,9 +91,6 @@
 
     <dimen name="passphrase_word_suggester_height">45dp</dimen>
 
-    <!--  Asset Avatar  -->
-    <dimen name="asset_avatar_image_size">40dp</dimen>
-
     <!--  Contact Placeholder  -->
     <dimen name="contact_placeholder_image_size">80dp</dimen>
     <dimen name="half_of_contact_placeholder_image_size">40dp</dimen>

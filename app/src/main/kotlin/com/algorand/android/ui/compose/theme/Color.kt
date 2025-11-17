@@ -22,7 +22,7 @@ object ThemedColors {
     }
 }
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "unused")
 object ColorPalette {
 
     val Transparent: Color = Color(0x00000000)

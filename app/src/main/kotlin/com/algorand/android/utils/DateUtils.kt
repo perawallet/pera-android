@@ -102,7 +102,7 @@ fun String?.parseFormattedDate(dateTimeFormatter: DateTimeFormatter): ZonedDateT
         } else {
             OffsetDateTime.parse(this, dateTimeFormatter).toZonedDateTime()
         }
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

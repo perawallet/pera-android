@@ -12,6 +12,7 @@
 
 package com.algorand.android.utils
 
+@Suppress("unused")
 class PrismUrlBuilder private constructor(url: String) : BaseUrlBuilder(url.trim()) {
 
     enum class PrismQuery(override val key: String) : UrlQueryParam {

@@ -14,6 +14,7 @@ package com.algorand.android.discover.home.domain
 
 import android.webkit.JavascriptInterface
 
+@Suppress("unused")
 class PeraMobileWebInterface private constructor(val listener: WebInterfaceListener) {
 
     @JavascriptInterface

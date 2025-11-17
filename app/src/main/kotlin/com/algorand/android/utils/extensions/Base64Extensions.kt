@@ -17,7 +17,7 @@ import android.util.Base64
 fun ByteArray.encodeBase64(): String? {
     return try {
         Base64.encodeToString(this, Base64.NO_WRAP)
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -25,7 +25,7 @@ fun ByteArray.encodeBase64(): String? {
 fun String.decodeBase64ToByteArray(): ByteArray? {
     return try {
         Base64.decode(this, Base64.NO_WRAP)
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -34,7 +34,7 @@ fun String.decodeBase64ToString(): String? {
     return try {
         val stringInByteArray = Base64.decode(this, Base64.NO_WRAP)
         String(stringInByteArray, Charsets.UTF_8)
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

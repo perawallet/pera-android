@@ -49,7 +49,7 @@ class WalletConnectTransactionMapper @Inject constructor(
             (payload.first() as List<*>).map { rawTransactionRequest ->
                 gson.fromJson(gson.toJson(rawTransactionRequest), WCAlgoTransactionRequest::class.java)
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -58,7 +58,7 @@ class WalletConnectTransactionMapper @Inject constructor(
         return try {
             val rawSignTxnOptions = (payload.getOrNull(TRANSACTION_SIGN_OPTIONS_INDEX) as? String)
             gson.fromJson(gson.toJson(rawSignTxnOptions), SignTxnOptions::class.java)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

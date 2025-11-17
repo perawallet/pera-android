@@ -43,7 +43,7 @@ class AssetName private constructor(
     fun getAsAvatarNameOrDefault(resource: Resources): String {
         return try {
             getName(resource).formatAsAvatarTextOrThrow(ASSET_AVATAR_MAX_LETTER_COUNT)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             resource.getString(assetNameResId).formatAsAvatarTextOrThrow(ASSET_AVATAR_MAX_LETTER_COUNT)
         }
     }

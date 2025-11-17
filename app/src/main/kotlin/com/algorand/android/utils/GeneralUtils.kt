@@ -117,7 +117,7 @@ fun EditText.addFilterNotLetters() {
 fun String.decodeBase64(): ByteArray? {
     return try {
         Base64.decode(this, Base64.DEFAULT)
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         // TODO Log firebase
         null
     }

@@ -42,7 +42,7 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
         try {
             initializeStrongBoxEncryption()
             return true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // StrongBox still not available
             return false
         } finally {

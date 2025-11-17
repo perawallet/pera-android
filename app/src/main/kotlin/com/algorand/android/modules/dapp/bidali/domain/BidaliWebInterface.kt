@@ -14,7 +14,13 @@ package com.algorand.android.modules.dapp.bidali.domain
 
 import android.webkit.JavascriptInterface
 
+@Suppress("unused")
 class BidaliWebInterface private constructor(val listener: WebInterfaceListener) {
+
+    @JavascriptInterface
+    fun onPaymentRequest(jsonData: String) {
+        listener.onPaymentRequest(jsonData)
+    }
 
     @JavascriptInterface
     fun openUrl(jsonData: String) {

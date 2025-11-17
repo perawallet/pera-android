@@ -1,155 +1,165 @@
-# ============================================================================
-#  PERA WALLET PROGUARD CONFIGURATION
-# ============================================================================
-# Optimized for code shrinking, obfuscation, and APK size reduction
+# Add project specific ProGuard rules here.
+# You can control the set of applied configuration files using the
+# proguardFiles setting in build.gradle.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# ────────────────────────────────────────────────────────────────────────────
-#  GLOBAL ATTRIBUTES
-# ────────────────────────────────────────────────────────────────────────────
-# Keep source file and line numbers for better crash reports
--keepattributes SourceFile,LineNumberTable
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
 
-# Keep generic signatures for reflection
--keepattributes Signature
+# Uncomment this to preserve the line number information for
+# debugging stack traces.
+#-keepattributes SourceFile,LineNumberTable
 
-# Keep annotations for reflection and runtime access
--keepattributes *Annotation*
+# If you keep the line number information, uncomment this to
+# hide the original source file name.
+#-renamesourcefileattribute SourceFile
 
-# Keep inner classes and enclosing methods for proper reflection
--keepattributes InnerClasses,EnclosingMethod
-
-# Keep runtime visible annotations (for Retrofit, etc.)
--keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations
-
-# Keep annotation default values
--keepattributes AnnotationDefault
-
-# ────────────────────────────────────────────────────────────────────────────
-#  PERA SPECIFIC RULES
-# ────────────────────────────────────────────────────────────────────────────
-# Keep data models that may be used with reflection/serialization
+# ---------------- BEGIN PERA -------------------
+-keep public enum com.algorand.android.**{ *; }
+-keep class com.algorand.android.** { *; }
+-keep class com.algorand.wallet.** { *; }
+-keep interface com.algorand.wallet.** { *; }
+-keep class androidx.** { *; }
 -keep class com.algorand.android.**.model.** { *; }
--keep class com.algorand.wallet.**.model.** { *; }
--keep class com.algorand.wallet.**.entity.** { *; }
+-keep class com.algorand.algosdk.** { *; }
 
-# Keep enums (used in model classes and potentially serialized)
--keep public enum com.algorand.android.** { *; }
+-keep class com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionListItem
+# ---------------- END PERA ---------------------
 
-# Keep Parcelable implementations
--keepclassmembers class * implements android.os.Parcelable {
-    public static final ** CREATOR;
-}
-
-# Keep serializable classes
--keepclassmembers class * implements java.io.Serializable {
-    static final long serialVersionUID;
-    private static final java.io.ObjectStreamField[] serialPersistentFields;
-    private void writeObject(java.io.ObjectOutputStream);
-    private void readObject(java.io.ObjectInputStream);
-    java.lang.Object writeReplace();
-    java.lang.Object readResolve();
-}
-
-# Keep WalletConnect transaction classes
--keep class com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionListItem { *; }
-
-# ────────────────────────────────────────────────────────────────────────────
-#  GLIDE
-# ────────────────────────────────────────────────────────────────────────────
+# ---------------- BEGIN GLIDE -------------------
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep class * extends com.bumptech.glide.module.AppGlideModule {
-    <init>(...);
+ <init>(...);
 }
 -keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
-    **[] $VALUES;
-    public *;
+  **[] $VALUES;
+  public *;
 }
 -keep class com.bumptech.glide.load.data.ParcelFileDescriptorRewinder$InternalRewinder {
-    *** rewind();
+  *** rewind();
 }
+# ---------------- END GLIDE -------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-#  RETROFIT
-# ────────────────────────────────────────────────────────────────────────────
-# Keep service method parameters
+
+# ---------------- BEGIN RETROFIT -------------------
+# Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
+# EnclosingMethod is required to use InnerClasses.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+
+# Retrofit does reflection on method and parameter annotations.
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+
+# Keep annotation default values (e.g., retrofit2.http.Field.encoded).
+-keepattributes AnnotationDefault
+
+# Retain service method parameters when optimizing.
 -keepclassmembers,allowshrinking,allowobfuscation interface * {
     @retrofit2.http.* <methods>;
 }
 
-# Keep interfaces with Retrofit annotations
--if interface * { @retrofit2.http.* <methods>; }
--keep,allowobfuscation interface <1>
-
-# Keep inherited services
--if interface * { @retrofit2.http.* <methods>; }
--keep,allowobfuscation interface * extends <1>
-
-# Keep Continuation for suspend functions
--keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
-
-# Keep return types
--if interface * { @retrofit2.http.* public *** *(...); }
--keep,allowoptimization,allowshrinking,allowobfuscation class <3>
-
-# Keep Response wrapper
--keep,allowobfuscation,allowshrinking class retrofit2.Response
-
-# Ignore warnings
+# Ignore annotation used for build tooling.
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# Ignore JSR 305 annotations for embedding nullability information.
 -dontwarn javax.annotation.**
+
+# Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
 -dontwarn kotlin.Unit
+
+# Top-level functions that can only be used by Kotlin.
 -dontwarn retrofit2.KotlinExtensions
 -dontwarn retrofit2.KotlinExtensions$*
 
-# ────────────────────────────────────────────────────────────────────────────
-#  GSON
-# ────────────────────────────────────────────────────────────────────────────
-# Keep classes with @SerializedName
--keepclassmembers,allowobfuscation class * {
-    @com.google.gson.annotations.SerializedName <fields>;
-}
+# With R8 full mode, it sees no subtypes of Retrofit interfaces since they are created with a Proxy
+# and replaces all potential values with null. Explicitly keeping the interfaces prevents this.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface <1>
 
-# Keep TypeAdapter implementations
+# Keep inherited services.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
+# With R8 full mode generic signatures are stripped for classes that are not
+# kept. Suspend functions are wrapped in continuations where the type argument
+# is used.
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+# R8 full mode strips generic signatures from return types if not kept.
+-if interface * { @retrofit2.http.* public *** *(...); }
+-keep,allowoptimization,allowshrinking,allowobfuscation class <3>
+
+# With R8 full mode generic signatures are stripped for classes that are not kept.
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+# ---------------- END RETR0FIT -------------------
+
+
+# ---------------- BEGIN GSON -------------------
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
+-keepattributes Signature
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+
+# Gson specific classes
+-dontwarn sun.misc.**
+#-keep class com.google.gson.stream.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.google.gson.examples.android.model.** { <fields>; }
+
+# Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
+# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
 -keep class * extends com.google.gson.TypeAdapter
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 
-# Keep TypeToken
--keep class com.google.gson.reflect.TypeToken { *; }
--keep class * extends com.google.gson.reflect.TypeToken
-
-# Ignore warnings
--dontwarn sun.misc.**
-
-# ────────────────────────────────────────────────────────────────────────────
-#  FIREBASE & CRASHLYTICS
-# ────────────────────────────────────────────────────────────────────────────
-# Keep exception classes for proper crash reporting
--keep public class * extends java.lang.Exception
-
-# Keep Firebase classes
--keep class com.google.firebase.** { *; }
--keep class com.google.android.gms.** { *; }
--keep class com.crashlytics.** { *; }
-
-# Keep @Keep annotated classes
--keep @androidx.annotation.Keep class *
--keepclassmembers class * {
-    @androidx.annotation.Keep *;
+# Prevent R8 from leaving Data object members always null
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
 }
+# ---------------- END GSON -------------------
 
-# Ignore warnings
--dontwarn com.crashlytics.**
+
+# ---------------- BEGIN FIREBASE -------------------
+-keep class com.firebase.** { *; }
+-keep class org.shaded.apache.** { *; }
+-keepnames class com.shaded.fasterxml.jackson.** { *; }
+-keepnames class javax.servlet.** { *; }
+-keepnames class org.ietf.jgss.** { *; }
 -dontwarn org.w3c.dom.**
 -dontwarn org.joda.time.**
 -dontwarn org.shaded.apache.**
 -dontwarn org.ietf.jgss.**
--dontwarn com.fasterxml.jackson.databind.**
 
-# ────────────────────────────────────────────────────────────────────────────
-#  DAGGER HILT
-# ────────────────────────────────────────────────────────────────────────────
+
+-keepattributes *Annotation*,EnclosingMethod,Signature
+-keepnames class com.fasterxml.jackson.** { *; }
+ -dontwarn com.fasterxml.jackson.databind.**
+ -keep class org.codehaus.** { *; }
+# -keepclassmembers public final enum org.codehaus.jackson.annotate.JsonAutoDetect$Visibility {
+# public static final org.codehaus.jackson.annotate.JsonAutoDetect$Visibility *; }
+# ---------------- END FIREBASE -------------------
+
+
+# ---------------- BEGIN CRASHLYTICS -------------------
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+
+# ---------------- END CRASHLYTICS -------------------
+
+
+# ---------------- BEGIN DAGGER -------------------
+-dontwarn com.google.errorprone.annotations.*
 -keep,allowobfuscation,allowshrinking @dagger.hilt.android.EarlyEntryPoint class *
 -keep class javax.inject.* { *; }
 -keep class dagger.hilt.** { *; }
@@ -158,57 +168,65 @@
 -keep @dagger.hilt.android.EarlyEntryPoint class *
 -keep,allowobfuscation,allowshrinking @dagger.hilt.EntryPoint class *
 -keep,allowobfuscation,allowshrinking @dagger.hilt.android.EarlyEntryPoint class *
+# ---------------- END DAGGER -------------------
 
--dontwarn com.google.errorprone.annotations.*
 
-# ────────────────────────────────────────────────────────────────────────────
-#  ALGORAND SDK
-# ────────────────────────────────────────────────────────────────────────────
--keep class com.algorand.algosdk.** { *; }
+# ---------------- BEGIN AlgoSDK -------------------
 -keep class org.msgpack.core.buffer.** { *; }
+# ---------------- END AlgoSDK -------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-#  BOUNCYCASTLE
-# ────────────────────────────────────────────────────────────────────────────
+
+# ---------------- BEGIN BouncyCastle -------------------
 -keep class org.bouncycastle.jcajce.provider.** { *; }
 -keep class org.bouncycastle.jce.provider.** { *; }
 
 -dontwarn javax.naming.**
+# ---------------- END BouncyCastle -------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-#  WALLET CONNECT
-# ────────────────────────────────────────────────────────────────────────────
+
+# ---------------- BEGIN WALLET CONNECT -------------------
 -keep class app.perawallet.walletconnectv1.** { *; }
 -keep interface app.perawallet.walletconnectv1.** { *; }
+
 -keep class app.perawallet.walletconnectv2.** { *; }
 -keep interface app.perawallet.walletconnectv2.** { *; }
+# ---------------- END WALLET CONNECT -------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-#  ROOM DATABASE
-# ────────────────────────────────────────────────────────────────────────────
-# Keep Room annotated classes
+
+# ---------------- BEGIN ROOM -------------------
+# Keep Room database classes and their fields
+-keep class androidx.room.** { *; }
+-keep interface androidx.room.** { *; }
 -keep @androidx.room.Dao class *
--keep @androidx.room.Dao interface *
 -keep @androidx.room.Entity class *
+-keep @androidx.room.Dao interface *
+-keep @androidx.room.Entity interface *
 -keep class * extends androidx.room.RoomDatabase
 
-# Keep specific databases
 -keep class com.algorand.wallet.account.local.data.database.AddressDatabase { *; }
 -keep class com.algorand.wallet.foundation.database.PeraDatabase { *; }
-
-# Keep Room mappers and DAOs
+-keepclassmembers class com.algorand.wallet.**.model.** { *; }
 -keepclassmembers class com.algorand.wallet.**.mapper.** { *; }
 -keepclassmembers class com.algorand.wallet.**.dao.** { *; }
+-keepclassmembers class com.algorand.wallet.**.entity.** { *; }
+
+-keepclassmembers interface com.algorand.wallet.**.model.** { *; }
 -keepclassmembers interface com.algorand.wallet.**.mapper.** { *; }
 -keepclassmembers interface com.algorand.wallet.**.dao.** { *; }
+-keepclassmembers interface com.algorand.wallet.**.entity.** { *; }
+-keep @androidx.room.Dao interface *
 
-# Keep classes with Room annotations
+# Keep any classes and methods annotated with Room annotations
 -keep class * {
     @androidx.room.Query <methods>;
+}
+
+# Keep Room's AutoMigration-annotated classes
+-keep class * {
     @androidx.room.AutoMigration <methods>;
 }
 
-# Keep annotated fields
+# Keep Embedded and Relation fields
 -keepclassmembers class ** {
     @androidx.room.Embedded <fields>;
     @androidx.room.Relation <fields>;
@@ -218,62 +236,112 @@
     @androidx.room.Index <fields>;
 }
 
-# Keep RoomDatabase members
+# Keep constructors of @Entity classes with @Ignore annotations
 -keepclassmembers class * extends androidx.room.RoomDatabase {
     androidx.room.InvalidationTracker invalidationTracker;
     androidx.room.dao.* *;
 }
 
-# ────────────────────────────────────────────────────────────────────────────
-#  JETPACK COMPOSE
-# ────────────────────────────────────────────────────────────────────────────
-# Keep @Composable functions (for reflection/tooling)
+-keepattributes *Annotation*
+
+# Keep TypeConverters
+-keep class * extends androidx.room.TypeConverter
+# ---------------- END ROOM -------------------
+
+
+# ---------------- BEGIN GMS -------------------
+# Keep classes used by Google Play Services
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.firebase.** { *; }
+
+# Keep methods with @Keep annotation
+-keep @androidx.annotation.Keep class *
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
+}
+
+# Firebase Analytics
+-keep class com.google.firebase.analytics.** { *; }
+
+# Firebase Crashlytics
+-keepattributes SourceFile,LineNumberTable
+-keep class com.crashlytics.** { *; }
+-keep class com.google.firebase.crashlytics.** { *; }
+
+# Google Play Services measurement
+-keep class com.google.android.gms.measurement.** { *; }
+
+# For Google Play Services auth
+-keepattributes Signature
+-keepattributes *Annotation*
+
+# Google Location
+-keep class com.google.android.gms.location.** { *; }
+# ---------------- END GMS -------------------
+
+
+# ---------------- BEGIN COROUTINE -------------------
+
+-keep class kotlinx.coroutines.** { *; }
+-keep class kotlin.coroutines.** { *; }
+-keep class kotlin.ranges.** { *; } # needed for ranges in coroutines
+-keep class kotlin.sequences.** { *; } # needed for sequences in coroutines
+-keep class kotlin.collections.** { *; } # needed for collections in coroutines
+-keep class kotlinx.atomicfu.** { *; } # needed for atomic operations in coroutines
+-keep class kotlinx.serialization.** { *; } # if you are using kotlinx-serialization with coroutines
+-keep class kotlinx.io.** { *; } # if you are using kotlinx-io with coroutines
+-keep class kotlinx.datetime.** { *; } # if you are using kotlinx-datetime with coroutines
+-keep class kotlin.coroutines.Continuation { *; }
+-keep class kotlin.coroutines.CoroutineContext { *; }
+# ---------------- END COROUTINE -------------------
+
+
+# ---------------- BEGIN COMPOSE -------------------
+-keep class androidx.compose.** { *; }
+-keep class androidx.compose.runtime.** { *; }
+-keep class androidx.compose.runtime.snapshots.** { *; }
+
 -keepclasseswithmembers class * {
     @androidx.compose.runtime.Composable <methods>;
 }
 
-# Keep @Preview functions (for Android Studio previews)
 -keepclasseswithmembers class * {
     @androidx.compose.ui.tooling.preview.Preview <methods>;
 }
+# ---------------- END COMPOSE -------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-#  COROUTINES
-# ────────────────────────────────────────────────────────────────────────────
-# Keep Continuation for proper coroutine functionality
--keep class kotlin.coroutines.Continuation { *; }
--keep class kotlin.coroutines.CoroutineContext { *; }
 
-# ────────────────────────────────────────────────────────────────────────────
-#  JNA (Java Native Access)
-# ────────────────────────────────────────────────────────────────────────────
+# ---------------- BEGIN JNA -------------------
 -keep class net.java.dev.jna.** { *; }
 -keepclassmembers class net.java.dev.jna.** { *; }
+
 -keep class **.jna.** { *; }
 
-# Keep native methods
 -keepclasseswithmembernames class * {
     native <methods>;
 }
 
-# Keep Structure fields
 -keep class ** {
     @**.Structure$FieldOrder *;
+}
+
+-keep class ** {
+    @**.** *;
 }
 
 -keepclassmembers class * {
     @net.java.dev.jna.annotation.* *;
 }
 
-# XHD Wallet API
+-dontwarn com.sun.jna.Native
+
 -keep class app.perawallet.xhdwalletapi.** { *; }
 -keep interface app.perawallet.xhdwalletapi.** { *; }
 
--dontwarn com.sun.jna.Native
+# ---------------- END JNA -------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-#  AES ENCRYPTION
-# ────────────────────────────────────────────────────────────────────────────
+
+# ---------------- BEGIN AES -------------------
 -keep interface com.algorand.wallet.encryption.domain.manager.AESPlatformManager { *; }
 -keep class com.algorand.wallet.encryption.domain.manager.AESPlatformManagerImpl { *; }
 -keepclassmembers class com.algorand.wallet.encryption.domain.manager.AESPlatformManagerImpl { *; }
@@ -281,76 +349,94 @@
 -keep class javax.crypto.** { *; }
 -keep class android.security.keystore.** { *; }
 -keep class java.security.** { *; }
+-keep class java.util.Base64 { *; }
+# ---------------- END JNA -------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-#  SQLCIPHER
-# ────────────────────────────────────────────────────────────────────────────
--keep,includedescriptorclasses class net.sqlcipher.** { *; }
--keep,includedescriptorclasses interface net.sqlcipher.** { *; }
 
-# ────────────────────────────────────────────────────────────────────────────
-#  SUPPRESS WARNINGS
-# ────────────────────────────────────────────────────────────────────────────
-# Android/Google
+# ---------------- BEGIN OTHERS -------------------
+# Prevent R8 from leaving Data object members always null
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# Retain generic signatures of TypeToken and its subclasses with R8 version 3.0 and higher.
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+# ---------------- END OTHERS -------------------
+
+# Needed to supress warnings recommended by Android Studio
 -dontwarn com.google.android.gms.common.annotation.NoNullnessRewrite
 -dontwarn java.lang.management.ManagementFactory
 -dontwarn java.lang.management.ThreadMXBean
+-dontwarn net.pwall.json.schema.JSONSchema
 -dontwarn java.awt.Component
 -dontwarn java.awt.GraphicsEnvironment
 -dontwarn java.awt.HeadlessException
 -dontwarn java.awt.Window
--dontwarn java.awt.geom.AffineTransform
--dontwarn java.lang.reflect.AnnotatedType
--dontwarn sun.nio.ch.**
--dontwarn sun.security.x509.**
-
-# JSON Schema (not used on Android)
--dontwarn net.pwall.json.schema.JSONSchema
 -dontwarn net.pwall.json.pointer.JSONPointer
 -dontwarn net.pwall.json.schema.output.BasicOutput
 
-# Compression codecs (optional)
+-dontwarn java.lang.reflect.AnnotatedType
+-dontwarn sun.nio.ch.**
+
+# Compression codecs (optional native libs)
 -dontwarn com.aayushatharva.brotli4j.**
 -dontwarn com.github.luben.zstd.**
 -dontwarn com.jcraft.jzlib.**
 -dontwarn com.ning.compress.**
 -dontwarn lzma.sdk.**
 -dontwarn net.jpountz.**
+-dontwarn net.jpountz.xxhash.**
 
-# Logging backends (server-side)
+# Logging backends
 -dontwarn org.apache.log4j.**
 -dontwarn org.apache.logging.log4j.**
 
-# Jetty (server-side)
+# Jetty ALPN/NPN (server-side only)
 -dontwarn org.eclipse.jetty.**
 
-# Server-side dependencies
+# Marshalling/OSGi/Beans classes (server-side)
 -dontwarn org.jboss.marshalling.**
 -dontwarn org.osgi.**
 -dontwarn java.beans.**
 -dontwarn java.rmi.**
 -dontwarn javax.tools.**
 
-# Netty native transport (server-side)
+# Netty native transport (Epoll, KQueue, tcnative)
 -dontwarn io.netty.channel.epoll.**
 -dontwarn io.netty.channel.kqueue.**
 -dontwarn io.netty.internal.tcnative.**
--dontwarn io.netty.handler.codec.haproxy.**
--dontwarn io.netty.util.internal.Hidden$NettyBlockHoundIntegration
 
-# Vert.x (server-side)
+# Vert.x codegen and annotations (compile-time only)
 -dontwarn io.vertx.codegen.**
 -dontwarn io.vertx.core.impl.transports.**
 -dontwarn io.vertx.core.logging.**
+
+# GraalVM / Substitutions (not used on Android)
+-dontwarn com.oracle.svm.**
+
+# Identity connectors / Groovy (not used)
+-dontwarn org.identityconnectors.**
+-dontwarn groovy.**
+
+# Other optional utilities
+-dontwarn sun.security.x509.**
+-dontwarn reactor.blockhound.**
+-dontwarn reactor.blockhound.integration.**
+-dontwarn io.netty.util.internal.Hidden$NettyBlockHoundIntegration
+-dontwarn java.awt.geom.AffineTransform
+
+# Protobuf Nano (not used on Android, optional in Netty)
+-dontwarn com.google.protobuf.nano.**
+-keep class com.google.protobuf.nano.** { *; }
+
+# HAProxy codec (Netty server-side only)
+-dontwarn io.netty.handler.codec.haproxy.**
+-keep class io.netty.handler.codec.haproxy.** { *; }
+
+# Vert.x HAProxy usage (server transport)
 -dontwarn io.vertx.core.net.impl.HAProxyMessageCompletionHandler
 -dontwarn io.vertx.core.http.impl.HttpServerWorker
 
-# GraalVM (not used on Android)
--dontwarn com.oracle.svm.**
-
-# Other optional dependencies
--dontwarn org.identityconnectors.**
--dontwarn groovy.**
--dontwarn reactor.blockhound.**
--dontwarn reactor.blockhound.integration.**
--dontwarn com.google.protobuf.nano.**
+-keep,includedescriptorclasses class net.sqlcipher.** { *; }
+-keep,includedescriptorclasses interface net.sqlcipher.** { *; }

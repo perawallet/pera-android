@@ -112,7 +112,7 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
                     onPaymentRequestEvent = Event(it)
                 )
             } ?: previousState
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             previousState
         }
     }
@@ -129,7 +129,7 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
                     openUrlRequestEvent = Event(it)
                 )
             } ?: previousState
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             previousState
         }
     }

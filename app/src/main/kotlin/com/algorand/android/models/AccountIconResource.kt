@@ -16,6 +16,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.algorand.android.R
 
+@Suppress("unused")
 enum class AccountIconResource(
     @param:DrawableRes val iconResId: Int,
     @param:ColorRes val backgroundColorResId: Int,

@@ -46,7 +46,7 @@ fun isValidWalletConnectV1Url(url: String): Boolean {
 fun createSessionConfigFromUrl(url: String): Session.Config? {
     return try {
         Session.Config.fromWCUri(url)
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -54,7 +54,7 @@ fun createSessionConfigFromUrl(url: String): Session.Config? {
 fun createFullyQualifiedSessionConfig(sessionConfig: Session.Config): Session.FullyQualifiedConfig? {
     return try {
         sessionConfig.toFullyQualifiedConfig()
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -69,7 +69,7 @@ fun getRandomPeerMetaIconResId(): Int = placeholderIconResIdList.random()
 fun decodeBase64ToString(text: String?): String {
     return try {
         String(Base64.decode(text, Base64.DEFAULT))
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         ""
     }
 }
@@ -77,7 +77,7 @@ fun decodeBase64ToString(text: String?): String {
 fun encodeBase64EncodedHexString(text: String?): String? {
     return try {
         Hex.encode(text?.decodeBase64())
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

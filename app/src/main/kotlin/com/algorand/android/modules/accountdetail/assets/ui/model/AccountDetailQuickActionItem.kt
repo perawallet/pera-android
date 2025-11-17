@@ -16,7 +16,7 @@ sealed interface AccountDetailQuickActionItem {
 
     data class AssetInbox(val isSelected: Boolean) : AccountDetailQuickActionItem
 
-    data class SwapButton(val isSelected: Boolean) : AccountDetailQuickActionItem
+    data object SwapButton : AccountDetailQuickActionItem
 
     data object SendButton : AccountDetailQuickActionItem
 

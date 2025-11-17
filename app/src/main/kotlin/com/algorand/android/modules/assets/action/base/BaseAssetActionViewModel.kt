@@ -68,7 +68,7 @@ abstract class BaseAssetActionViewModel(
                         val errorResourceId = if (exception is AssetNotFoundException) {
                             R.string.asset_not_found_please_make
                         } else {
-                            R.string.an_error_occured
+                            R.string.an_error_occurred
                         }
                         Resource.Error.Annotated(AnnotatedString(errorResourceId))
                     }

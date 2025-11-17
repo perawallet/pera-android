@@ -42,7 +42,7 @@ open class ListQueuingHelper<E, D> @Inject constructor() {
     protected var listener: Listener<E, D>? = null
 
     private val areAllItemsDequeued: Boolean
-        get() = enqueuedItemCount == dequeuedItemList.size && enqueuedItemCount != -1
+        get() = enqueuedItemCount == dequeuedItemList.size
 
     fun initListener(listener: Listener<E, D>) {
         this.listener = listener

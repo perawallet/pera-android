@@ -14,6 +14,7 @@ package com.algorand.android.ui.splash
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -45,7 +46,12 @@ class LauncherActivity : BaseActivity() {
 
     private fun handleNavigation() {
         startActivity(MainActivity.newIntentWithDeeplinkOrNavigation(this, intent))
-        this.overridePendingTransition(0, 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(0, 0)
+        }
         finish()
     }
 

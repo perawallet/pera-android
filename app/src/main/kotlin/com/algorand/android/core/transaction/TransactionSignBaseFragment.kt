@@ -73,7 +73,6 @@ abstract class TransactionSignBaseFragment(
 //                    Currently, we are showing this kind of error in case of ASA  adding failure. Since we are are
 //                    handling this operation in [MainActivity], no need to check it here. But as a fallback behaviour,
 //                    we will display [CustomSnackbar] here as well.
-                    onCustomBottomSheetOpened(this)
                     transactionFragmentListener?.onSignTransactionFailed()
                 }
 
@@ -203,8 +202,6 @@ abstract class TransactionSignBaseFragment(
         showGlobalError(errorMessage, title)
         transactionManager.manualStopAllResources()
     }
-
-    protected open fun onCustomBottomSheetOpened(transactionResult: TransactionManagerResult.Error.SnackbarError) {}
 
     protected fun handleError(error: Resource.Error, viewGroup: ViewGroup) {
         when (error) {

@@ -265,6 +265,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 # --- Room ---
 room = { id = "androidx.room", version.ref = "room" }
+room-module = { id = "androidx.room" }
 
 # --- Code Quality ---
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

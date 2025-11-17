@@ -125,6 +125,7 @@ private fun BalanceHistoryChart(
             }
 
             override fun onChartDataUpdated(items: List<PeraLineChartData>) {
+                @Suppress("UNCHECKED_CAST")
                 onChartDataUpdated(items as List<AssetLineChartData>)
             }
         }
@@ -139,7 +140,7 @@ private fun QuickActionButtons(viewState: Content, viewModel: AssetDetailV2ViewM
         QuickActionButtonContainer {
             viewState.quickActionItems.forEach {
                 when (it) {
-                    is SwapButton -> SwapQuickActionButton(it.isSelected, viewModel::navigateToSwap)
+                    is SwapButton -> SwapQuickActionButton(viewModel::navigateToSwap)
                     BuyAlgoButton -> BuySellQuickActionButton(viewModel::navigateToOfframp)
                     ReceiveButton -> ReceiveQuickActionButton(viewModel::navigateToReceive)
                     SendButton -> SendQuickActionButton(viewModel::navigateToSend)

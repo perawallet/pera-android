@@ -59,7 +59,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(viewEvent)
             HideFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.dismiss()
             ShowFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.show(requireContext())
-            ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
+            ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred))
         }
     }
 

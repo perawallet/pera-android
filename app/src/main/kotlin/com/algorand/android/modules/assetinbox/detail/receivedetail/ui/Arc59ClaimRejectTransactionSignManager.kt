@@ -67,7 +67,7 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     ): ExternalTransactionSignResult {
         val transactionByteArray = signedTransactions?.filterNotNull()?.flatten()
         return if (transactionByteArray == null) {
-            ExternalTransactionSignResult.Error.Defined(AnnotatedString(R.string.an_error_occured))
+            ExternalTransactionSignResult.Error.Defined(AnnotatedString(R.string.an_error_occurred))
         } else {
             val txnDetail = listOf(SignedTransactionDetail.Arc59ClaimOrReject(transactionByteArray))
             ExternalTransactionSignResult.Success<SignedTransactionDetail>(txnDetail)

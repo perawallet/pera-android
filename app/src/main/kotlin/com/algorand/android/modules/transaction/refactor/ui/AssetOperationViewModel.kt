@@ -109,9 +109,9 @@ class AssetOperationViewModel @Inject constructor(
                         val errorResourceId = when (dataResource.exception) {
                             is AccountAlreadyOptedIntoAssetException -> R.string.you_are_already
                             is TransactionConfirmationAwaitException -> R.string.transaction_confirmation_timed_out
-                            is TransactionIdNullException -> R.string.an_error_occured
+                            is TransactionIdNullException -> R.string.an_error_occurred
                             is AssetAlreadyPendingForRemovalException -> R.string.this_asset_is
-                            else -> R.string.an_error_occured
+                            else -> R.string.an_error_occurred
                         }
                         val assetName = getAsset(transaction.assetId)?.fullName.orEmpty()
                         val error = Resource.Error.GlobalWarning(

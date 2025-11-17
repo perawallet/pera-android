@@ -324,7 +324,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         accountsViewModel.dismissTutorial(tutorialId)
         binding.root.context.showGiftCardsTutorialDialog(
             onBuyGiftCards = ::navToBidali,
-            onLater = { }
+            onLater = {}
         )
     }
 

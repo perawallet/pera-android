@@ -22,7 +22,6 @@ import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite.CachedInfo
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
-import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
@@ -45,7 +44,6 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getPrivacyModeFlow: GetPrivacyModeFlow,
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
     private val getAssetInboxRequest: GetAssetInboxRequest,
-    private val getSwapFeatureRedDotVisibility: GetSwapFeatureRedDotVisibilityUseCase,
     private val accountDetailAssetItemMapper: AccountDetailAssetItemMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
@@ -118,8 +116,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
 
     private suspend fun getAuthAccountQuickActionItem(address: String): List<AccountDetailQuickActionItem> {
         return mutableListOf<AccountDetailQuickActionItem>().apply {
-            val isSwapSelected = getSwapFeatureRedDotVisibility.getSwapFeatureRedDotVisibility()
-            add(AccountDetailQuickActionItem.SwapButton(isSwapSelected))
+            add(AccountDetailQuickActionItem.SwapButton)
             add(AccountDetailQuickActionItem.BuyAlgoButton)
             add(AssetInbox(hasInboxItem(address)))
         }

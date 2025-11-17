@@ -10,8 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.data.service
+package com.algorand.wallet.analytics.service
 
+import com.algorand.wallet.analytics.data.service.PeraReferrerManagerImpl
 import com.algorand.wallet.analytics.domain.model.ReferrerData
 import com.algorand.wallet.analytics.domain.service.PeraReferrerInstallClient
 import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser

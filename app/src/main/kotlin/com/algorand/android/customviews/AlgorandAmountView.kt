@@ -39,8 +39,8 @@ class AlgorandAmountView @JvmOverloads constructor(
     }
 
     private fun loadAttrs() {
-        context.obtainStyledAttributes(attrs, R.styleable.CustomAmountView).use { attrs ->
-            isOperatorShown = attrs.getBoolean(R.styleable.CustomAmountView_showOperator, false)
+        context.obtainStyledAttributes(attrs, R.styleable.AlgorandAmountView).use { attrs ->
+            isOperatorShown = attrs.getBoolean(R.styleable.AlgorandAmountView_showOperator, false)
         }
     }
 

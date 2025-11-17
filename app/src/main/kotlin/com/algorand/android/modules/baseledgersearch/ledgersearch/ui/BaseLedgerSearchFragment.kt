@@ -228,7 +228,7 @@ abstract class BaseLedgerSearchFragment :
                     try {
                         runBlocking(Dispatchers.Main) { connectLedger(device) }
                     } catch (_: Exception) {
-                        showError(getString(R.string.an_error_occured))
+                        showError(getString(R.string.an_error_occurred))
                     }
                 }
             },

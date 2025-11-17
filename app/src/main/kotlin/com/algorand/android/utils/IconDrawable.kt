@@ -53,7 +53,6 @@ abstract class IconDrawable(
         if (showBackground) listener?.drawBackground(canvas)
         listener?.drawBorder(canvas)
         drawIcon(canvas)
-        listener?.drawColor(canvas)
         canvas.restoreToCount(restoreCount)
     }
 
@@ -72,8 +71,8 @@ abstract class IconDrawable(
 
     interface Listener {
         fun drawBorder(canvas: Canvas) {}
+
         fun drawBackground(canvas: Canvas)
-        fun drawColor(canvas: Canvas) {}
     }
 
     companion object {

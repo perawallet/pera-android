@@ -37,7 +37,6 @@ sealed interface BaseAccountListItem : RecyclerListItem {
     }
 
     data class QuickActionsItem(
-        val isSwapButtonSelected: Boolean,
         val isStakingEnabled: Boolean
     ) : BaseAccountListItem {
 
@@ -45,7 +44,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
             get() = ItemType.QUICK_ACTIONS
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is QuickActionsItem && isSwapButtonSelected == other.isSwapButtonSelected
+            return other is QuickActionsItem && isStakingEnabled == other.isStakingEnabled
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

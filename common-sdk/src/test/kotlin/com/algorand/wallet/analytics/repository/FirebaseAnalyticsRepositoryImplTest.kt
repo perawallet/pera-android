@@ -10,8 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.data.repository
+package com.algorand.wallet.analytics.repository
 
+import com.algorand.wallet.analytics.data.repository.FirebaseAnalyticsRepositoryImpl
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.installations.FirebaseInstallations
 import io.mockk.every
@@ -41,7 +43,7 @@ class FirebaseAnalyticsRepositoryImplTest {
         every { mockTask.result } returns expectedId
 
         every { mockTask.addOnCompleteListener(any()) } answers {
-            val listener = firstArg<com.google.android.gms.tasks.OnCompleteListener<String>>()
+            val listener = firstArg<OnCompleteListener<String>>()
             listener.onComplete(mockTask)
             mockTask
         }

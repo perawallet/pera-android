@@ -81,7 +81,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
 
             NavToNoRekeyedAccounts -> navToNoRekeyedAccounts()
             is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(event)
-            ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
+            ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred))
         }
     }
 

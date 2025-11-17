@@ -21,7 +21,7 @@ class BottomGlobalErrorTitleDecider @Inject constructor() {
     fun getTitle(errorCode: Int?): Int {
         return when (errorCode) {
             HttpURLConnection.HTTP_INTERNAL_ERROR -> R.string.well_this_is_unexpected
-            else -> R.string.an_error_occured
+            else -> R.string.an_error_occurred
         }
     }
 }

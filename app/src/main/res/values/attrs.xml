@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -102,7 +103,7 @@
         <attr name="warningText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="CustomInputLayout">
+    <declare-styleable name="AlgorandInputLayout">
         <attr name="hint" format="string" />
         <attr name="text" format="string" />
         <attr name="error" format="string" />
@@ -125,7 +126,7 @@
         <attr name="buttonTextRes" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="CustomAmountView">
+    <declare-styleable name="AlgorandAmountView">
         <attr name="showOperator" />
         <attr name="useMicroAlgos" />
     </declare-styleable>
@@ -142,7 +143,7 @@
         <attr name="showSeparatorButton" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="AlgorandSearchBarView">
+    <declare-styleable name="AlgorandSearchView">
         <attr name="startIconTintColor" format="color" />
         <attr name="endIconTintColor" format="color" />
         <attr name="android:hint" format="reference" />

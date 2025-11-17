@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,9 +24,9 @@
         tools:layout="@layout/fragment_web_import_intro">
         <argument
             android:name="webImportQrCode"
+            android:defaultValue="@null"
             app:argType="com.algorand.android.modules.webimport.common.data.model.WebImportQrCode"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_webImportIntroFragment_to_webImportQrScannerFragment"
             app:destination="@id/webImportQrScannerFragment" />

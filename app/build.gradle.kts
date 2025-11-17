@@ -25,7 +25,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.detekt)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.room)
+    alias(libs.plugins.room.module)
     alias(libs.plugins.ksp)
 }
 
@@ -77,7 +77,7 @@ android {
         if (browserPropsFile.exists()) {
             FileInputStream(browserPropsFile).use { browserPackageProps.load(it) }
         }
-        browserPackageProps.forEach { key, value ->
+        browserPackageProps.forEach { (key, value) ->
             val k = key.toString()
             val v = value.toString()
             buildConfigField("String", k, "\"$v\"")
@@ -313,6 +313,10 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+ksp {
+    arg("room.verifySchema", "false")
+}
+
 dependencies {
 
     // Internal modules
@@ -325,6 +329,8 @@ dependencies {
 
     // Lifecycle
     implementation(libs.lifecycle.process)
+    implementation(libs.lifecycle.extensions)
+    implementation(libs.lifecycle.common.java8)
 
     // MultiDex
     implementation(libs.multidex)
@@ -368,6 +374,8 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.converter.moshi)
     implementation(libs.logging.interceptor)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.moshi.core)
 
     implementation(libs.java.websocket)
 
@@ -391,6 +399,7 @@ dependencies {
     implementation(libs.ble)
     implementation(libs.androidx.credentials)
     implementation(libs.tink.android)
+    implementation(libs.biometric)
 
     // Media
     implementation(libs.androidx.media3.exoplayer)

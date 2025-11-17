@@ -291,11 +291,11 @@ class WalletConnectManager @Inject constructor(
                 )
                 logWalletConnectRequestConfirmation()
                 _requestResultLiveData.postValue(
-                    Event(Resource.Success(AnnotatedString(R.string.transaction_succesfully_confirmed)))
+                    Event(Resource.Success(AnnotatedString(R.string.transaction_successfully_confirmed)))
                 )
                 _walletConnectRequestLiveData.postValue(null)
             } else {
-                _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occured))))
+                _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occurred))))
                 val exception = Exception("Wallet connect sign result is not Success: $walletConnectSignResult")
                 recordException(exception)
             }

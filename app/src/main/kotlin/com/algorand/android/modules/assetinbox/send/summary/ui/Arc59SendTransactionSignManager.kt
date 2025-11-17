@@ -78,7 +78,7 @@ class Arc59SendTransactionSignManager @Inject constructor(
         val signedTransactionDetails =
             arc59SignedTransactionDetailMapper(transactions, signedTransactions)
         return if (signedTransactionDetails.isNullOrEmpty()) {
-            Error.Defined(AnnotatedString(R.string.an_error_occured))
+            Error.Defined(AnnotatedString(R.string.an_error_occurred))
         } else {
             Success(signedTransactionDetails)
         }

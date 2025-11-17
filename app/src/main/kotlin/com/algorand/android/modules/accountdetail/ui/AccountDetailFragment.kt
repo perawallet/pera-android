@@ -224,14 +224,6 @@ class AccountDetailFragment :
         navToCollectibleDetailFragment(nftAssetId)
     }
 
-    override fun onGifItemClick(nftAssetId: Long) {
-        // TODO "Not yet implemented"
-    }
-
-    override fun onNotSupportedItemClick(nftAssetId: Long) {
-        navToCollectibleDetailFragment(nftAssetId)
-    }
-
     override fun onMixedItemClick(nftAssetId: Long) {
         navToCollectibleDetailFragment(nftAssetId)
     }

@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.room)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.room.module)
     alias(libs.plugins.hilt)
 }
 
@@ -52,9 +52,6 @@ android {
             }
         }
     }
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
 }
 
 dependencies {
@@ -91,4 +88,12 @@ dependencies {
     testImplementation(libs.mockito)
     testImplementation(libs.mockk)
     testImplementation(project(":test-utils"))
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+ksp {
+    arg("room.verifySchema", "false")
 }

@@ -36,7 +36,7 @@ fun AssetMarketsDetailsContainer(details: List<AssetMarketsDetail>, listener: As
 
         details.forEach { item ->
             when (item) {
-                is Statistics -> AssetMarketsStatistics(item) { }
+                is Statistics -> AssetMarketsStatistics(item) {}
                 is About -> {
                     Divider()
                     AssetMarketsAbout(item, listener::onUrlClick, listener::onCreatorAddressClick)

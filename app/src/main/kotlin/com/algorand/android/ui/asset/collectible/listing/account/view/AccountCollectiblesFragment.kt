@@ -91,8 +91,6 @@ class AccountCollectiblesFragment : BaseFragment(R.layout.fragment_base_collecti
         fun onImageItemClick(nftAssetId: Long)
         fun onVideoItemClick(nftAssetId: Long)
         fun onSoundItemClick(nftAssetId: Long)
-        fun onGifItemClick(nftAssetId: Long)
-        fun onNotSupportedItemClick(nftAssetId: Long)
         fun onMixedItemClick(nftAssetId: Long)
         fun onReceiveCollectibleClick()
         fun onManageCollectiblesClick()

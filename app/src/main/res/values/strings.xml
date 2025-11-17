@@ -223,7 +223,7 @@
     <string name="please_return_to_complete_your_operation">Please return to <annotation replacement="peer_name">peerMetaNamePlaceholder</annotation> to complete your operation.</string>
     <string name="please_select_your_browser_to_return">Please select your browser to return to  <annotation replacement="peer_name">peerMetaNamePlaceholder</annotation> and complete your operation:</string>
     <string name="disconnected">Disconnected</string>
-    <string name="arbitrary_data_limit_this">Arbirary Data limit: this arbitrary data request contains %1$d arbitrary data, exceeding Pera Wallet arbirary data limit.</string>
+    <string name="arbitrary_data_limit_this">Arbitrary Data limit: this arbitrary data request contains %1$d arbitrary data, exceeding Pera Wallet arbitrary data limit.</string>
     <string name="uploading_three_dots">Uploading…</string>
     <string name="upload_successful">Upload Successful</string>
     <string name="replace_file">Replace File</string>
@@ -590,7 +590,7 @@
     <string name="the_transaction_cannot_be">The transaction cannot be completed because the amount will put your account below minimum required balance of <annotation replacement="min_balance">min_balance_placeholder</annotation> Algo.</string>
     <string name="transaction_request">Transaction Request</string>
     <string name="raw_transaction">Raw Transaction</string>
-    <string name="transaction_succesfully_confirmed">Transaction successfully confirmed</string>
+    <string name="transaction_successfully_confirmed">Transaction successfully confirmed</string>
     <string name="sender">Sender</string>
     <string name="multiple_transaction_request">Multiple Transaction Request</string>
     <string name="multiple_transactions_formatted">%1$d transactions</string>
@@ -824,7 +824,7 @@
     <string name="buy_algo">Buy ALGO</string>
     <string name="secured_by">Secured by</string>
     <string name="buy_sell">Buy / Sell</string>
-    <string name="see_all_options_to_buy">See all options to buy or sell your cypto</string>
+    <string name="see_all_options_to_buy">See all options to buy or sell your crypto</string>
     <string name="buy_crypto">Buy crypto</string>
     <string name="sell_crypto">Sell crypto</string>
     <string name="use_apple_pay_credit_cards">Use Apple Pay, credit cards or bank transfer</string>
@@ -1078,7 +1078,7 @@
     <!-- ERROR MESSAGES -->
     <!-- ============================================================ -->
 
-    <string name="an_error_occured">An Error Occurred</string>
+    <string name="an_error_occurred">An Error Occurred</string>
     <string name="error">Error</string>
     <string name="key_not_valid">Key not valid, please make sure you have the right key.</string>
     <string name="scanned_qr_is_not_valid">Scanned QR is not valid.</string>

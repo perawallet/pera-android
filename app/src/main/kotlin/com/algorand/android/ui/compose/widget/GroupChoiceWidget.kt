@@ -87,6 +87,6 @@ fun GroupChoiceWidgetPreview() {
         description = stringResource(id = R.string.import_an_existing),
         iconContentDescription = stringResource(id = R.string.import_an_existing),
         icon = ImageVector.vectorResource(R.drawable.ic_key),
-        onClick = { },
+        onClick = {},
     )
 }

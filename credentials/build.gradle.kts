@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.room)
+    alias(libs.plugins.room.module)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.detekt)
@@ -38,10 +38,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
 }
 
 dependencies {
@@ -69,4 +65,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.espresso.core)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+ksp {
+    arg("room.verifySchema", "false")
 }

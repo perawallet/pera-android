@@ -56,7 +56,7 @@ fun PeraTriStateCheckboxPreview() {
             Modifier.background(color = PeraTheme.colors.background.primary),
             checkedState = { checkedState.value },
             interactionSource = interactionSource,
-            onClick = { }
+            onClick = {}
         )
     }
 }

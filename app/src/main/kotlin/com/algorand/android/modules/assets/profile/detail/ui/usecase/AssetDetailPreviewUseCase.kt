@@ -22,7 +22,6 @@ import com.algorand.android.modules.assets.profile.about.domain.usecase.GetSelec
 import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailFragmentDirections
 import com.algorand.android.modules.assets.profile.detail.ui.mapper.AssetDetailPreviewMapper
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
-import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
@@ -47,7 +46,6 @@ import javax.inject.Inject
 @SuppressWarnings("LongParameterList")
 class AssetDetailPreviewUseCase @Inject constructor(
     private val assetDetailPreviewMapper: AssetDetailPreviewMapper,
-    private val getSwapFeatureRedDotVisibilityUseCase: GetSwapFeatureRedDotVisibilityUseCase,
     private val getAssetDetail: GetAssetDetail,
     private val getSelectedAssetExchangeValueUseCase: GetSelectedAssetExchangeValueUseCase,
     private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
@@ -163,7 +161,7 @@ class AssetDetailPreviewUseCase @Inject constructor(
         val isAlgo = assetId == ALGO_ID
         val isUserOptedInToAsa = assetHoldings.any { it.assetId == assetId }
         if (isUserOptedInToAsa) {
-            quickActionItems.add(SwapButton(getRedDotVisibility(isAlgo)))
+            quickActionItems.add(SwapButton)
         }
 
         if (isAlgo) {
@@ -172,9 +170,5 @@ class AssetDetailPreviewUseCase @Inject constructor(
         quickActionItems.add(SendButton)
         quickActionItems.add(ReceiveButton)
         return quickActionItems
-    }
-
-    private suspend fun getRedDotVisibility(isAlgo: Boolean): Boolean {
-        return getSwapFeatureRedDotVisibilityUseCase.getSwapFeatureRedDotVisibility() && isAlgo
     }
 }

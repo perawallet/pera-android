@@ -10,9 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.usecase
+package com.algorand.wallet.analytics.usecase
 
 import com.algorand.wallet.analytics.domain.repository.FirebaseAnalyticsRepository
+import com.algorand.wallet.analytics.domain.usecase.GetFirebaseInstanceIdUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.TestResult

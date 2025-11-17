@@ -69,24 +69,24 @@ class AlgorandSearchView @JvmOverloads constructor(
     }
 
     private fun loadAttrs() {
-        context?.obtainStyledAttributes(attrs, R.styleable.AlgorandSearchBarView)?.use { attrs ->
-            attrs.getResourceId(R.styleable.AlgorandSearchBarView_startIconTintColor, -1).let { color ->
+        context?.obtainStyledAttributes(attrs, R.styleable.AlgorandSearchView)?.use { attrs ->
+            attrs.getResourceId(R.styleable.AlgorandSearchView_startIconTintColor, -1).let { color ->
                 val drawable = getDrawable(context, R.drawable.ic_search)?.apply {
                     setTint(getColor(context, color))
                 }
                 binding.searchEditText.setDrawable(start = drawable)
             }
-            attrs.getResourceId(R.styleable.AlgorandSearchBarView_endIconTintColor, -1).let { color ->
+            attrs.getResourceId(R.styleable.AlgorandSearchView_endIconTintColor, -1).let { color ->
                 binding.deleteTextButton.setIconTintResource(color)
             }
-            attrs.getResourceId(R.styleable.AlgorandSearchBarView_android_hint, -1).let { hint ->
+            attrs.getResourceId(R.styleable.AlgorandSearchView_android_hint, -1).let { hint ->
                 if (hint != -1) binding.searchEditText.hint = resources.getString(hint)
             }
             val customButtonIconTintColor = attrs.getResourceId(
-                R.styleable.AlgorandSearchBarView_customButtonIconColor,
+                R.styleable.AlgorandSearchView_customButtonIconColor,
                 -1
             )
-            attrs.getResourceId(R.styleable.AlgorandSearchBarView_customButtonIconRes, -1).let { icon ->
+            attrs.getResourceId(R.styleable.AlgorandSearchView_customButtonIconRes, -1).let { icon ->
                 binding.customIconButton.setIconAndVisibility(icon, customButtonIconTintColor)
             }
         }

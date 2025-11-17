@@ -268,5 +268,4 @@
         android:id="@+id/progressBarContainer"
         layout="@layout/layout_full_screen_progress" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>

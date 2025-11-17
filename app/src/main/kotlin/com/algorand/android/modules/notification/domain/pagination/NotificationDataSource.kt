@@ -49,6 +49,7 @@ class NotificationDataSource(
                 val nextKey = result.data.next
                 LoadResult.Page(data = notificationListItems, prevKey = null, nextKey = nextKey)
             }
+
             is Result.Error -> {
                 LoadResult.Error(result.exception)
             }

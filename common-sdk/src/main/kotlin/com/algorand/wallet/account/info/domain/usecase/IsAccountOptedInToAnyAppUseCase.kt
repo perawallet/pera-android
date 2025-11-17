@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 internal class IsAccountOptedInToAnyAppUseCase @Inject constructor(
     private val accountInformationRepository: AccountInformationRepository
-): IsAccountOptedInToAnyApp {
+) : IsAccountOptedInToAnyApp {
 
     override suspend fun invoke(address: String): Boolean {
         val assetsAndAppsCount = accountInformationRepository.getAccountAssetsAndAppsCount(address) ?: return false

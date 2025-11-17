@@ -15,6 +15,7 @@ package com.algorand.android.utils
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
+import androidx.core.graphics.withSave
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.utils.recyclerview.findAdapterAndLocalPosition
 import kotlin.math.roundToInt
@@ -30,36 +31,36 @@ class ExcludedViewTypesDividerItemDecoration(
     }
 
     private fun drawVertical(canvas: Canvas, parent: RecyclerView) {
-        canvas.save()
-        val left: Int
-        val right: Int
-        if (parent.clipToPadding) {
-            left = parent.paddingLeft
-            right = parent.width - parent.paddingRight
-            canvas.clipRect(left, parent.paddingTop, right, parent.height - parent.paddingBottom)
-        } else {
-            left = 0
-            right = parent.width
-        }
-        val childCount = if (showLastDivider) parent.childCount else parent.childCount - 1
-        for (i in 0 until childCount) {
-            val child = parent.getChildAt(i)
-            val position = parent.getChildAdapterPosition(child)
+        canvas.withSave {
+            val left: Int
+            val right: Int
+            if (parent.clipToPadding) {
+                left = parent.paddingLeft
+                right = parent.width - parent.paddingRight
+                clipRect(left, parent.paddingTop, right, parent.height - parent.paddingBottom)
+            } else {
+                left = 0
+                right = parent.width
+            }
+            val childCount = if (showLastDivider) parent.childCount else parent.childCount - 1
+            for (i in 0 until childCount) {
+                val child = parent.getChildAt(i)
+                val position = parent.getChildAdapterPosition(child)
 
-            val adapter = parent.adapter
-            if (position == RecyclerView.NO_POSITION || adapter == null) continue
+                val adapter = parent.adapter
+                if (position == RecyclerView.NO_POSITION || adapter == null) continue
 
-            val (_, viewType) = adapter.findAdapterAndLocalPosition(position)
+                val (_, viewType) = adapter.findAdapterAndLocalPosition(position)
 
-            if (viewType !in excludedViewTypes) {
-                parent.getDecoratedBoundsWithMargins(child, bounds)
-                val bottom = bounds.bottom + child.translationY.roundToInt()
-                val top = bottom - drawable.intrinsicHeight
-                drawable.setBounds(left, top, right, bottom)
-                drawable.draw(canvas)
+                if (viewType !in excludedViewTypes) {
+                    parent.getDecoratedBoundsWithMargins(child, bounds)
+                    val bottom = bounds.bottom + child.translationY.roundToInt()
+                    val top = bottom - drawable.intrinsicHeight
+                    drawable.setBounds(left, top, right, bottom)
+                    drawable.draw(this)
+                }
             }
         }
-        canvas.restore()
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {

@@ -7,7 +7,7 @@ class PasskeyEntityMapperImpl() {
     fun invoke(passkey: Passkey): PasskeyEntity {
         return PasskeyEntity(
             userId = passkey.uid,
-            username =passkey.username,
+            username = passkey.username,
             userHandle = passkey.userHandle,
             seedId = passkey.seedId!!,
             siteId = passkey.siteId!!,

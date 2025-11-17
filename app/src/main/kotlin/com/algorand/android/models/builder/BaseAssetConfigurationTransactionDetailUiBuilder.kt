@@ -21,14 +21,11 @@ import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.decodeBase64IfUTF8
 import javax.inject.Inject
 
-class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
-) :
+class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor() :
     WalletConnectTransactionDetailBuilder<BaseAssetConfigurationTransaction> {
 
     override fun buildTransactionRequestNoteInfo(txn: BaseAssetConfigurationTransaction): TransactionRequestNoteInfo? {
@@ -53,7 +50,7 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
 
     override fun buildTransactionRequestExtraFields(
         txn: BaseAssetConfigurationTransaction
-    ): TransactionRequestExtraFields? {
+    ): TransactionRequestExtraFields {
         return with(txn) {
             TransactionRequestExtraFields(
                 rejectVersion = rejectVersion,

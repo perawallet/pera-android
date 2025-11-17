@@ -17,10 +17,10 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortPreferencePreview
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetSortPreferencePreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetSortPreferenceViewModel @Inject constructor(

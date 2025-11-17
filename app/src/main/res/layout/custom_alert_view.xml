@@ -56,7 +56,6 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="@dimen/account_icon_size_normal" />
 
-
             <TextView
                 android:id="@+id/titleTextView"
                 style="@style/TextAppearance.Body.Sans.Medium"
@@ -80,7 +79,6 @@
                 app:layout_constraintStart_toEndOf="@id/verticalGuideline"
                 app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
                 tools:text="notification description" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -49,11 +49,13 @@ class StatefulButtonAccountAssetItemView(
                 actionButton.hide()
                 progressBar.show()
             }
+
             AccountAssetItemButtonState.UNDO_REKEY -> {
                 actionButton.hide()
                 actionButton.hide()
                 actionTextButton.setTextAndVisibility(state.actionButtonTextResId)
             }
+
             AccountAssetItemButtonState.ADDITION,
             AccountAssetItemButtonState.REMOVAL,
             AccountAssetItemButtonState.CONFIRMATION,
@@ -78,10 +80,6 @@ class StatefulButtonAccountAssetItemView(
         actionButton.setOnClickListener { onClick?.invoke() }
     }
 
-    fun setActionButtonOnLongClickListener(onLongClick: () -> Unit) {
-        actionButton.setOnLongClickListener { onLongClick(); true }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     fun setActionButtonOnTouchClickListener(onTouch: () -> Unit) {
         actionButton.setOnTouchListener { _, event ->
@@ -90,10 +88,6 @@ class StatefulButtonAccountAssetItemView(
             }
             false
         }
-    }
-
-    fun setActionTextButtonClickListener(onClick: (() -> Unit)?) {
-        actionTextButton.setOnClickListener { onClick?.invoke() }
     }
 
     private fun setButtonEnable(isEnable: Boolean) {

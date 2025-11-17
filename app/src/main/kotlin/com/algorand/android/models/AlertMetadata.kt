@@ -18,13 +18,13 @@ import com.algorand.android.R
 import com.algorand.android.notification.domain.model.NotificationMetadata
 
 sealed class AlertMetadata(
-    @DrawableRes open val iconRes: Int? = null,
-    @ColorRes open val iconTintRes: Int? = null,
-    @ColorRes open val backgroundColorRes: Int = R.color.white,
+    @param:DrawableRes open val iconRes: Int? = null,
+    @param:ColorRes open val iconTintRes: Int? = null,
+    @param:ColorRes open val backgroundColorRes: Int = R.color.white,
     open val title: String? = null,
-    @ColorRes open val titleColorRes: Int = R.color.gray_900,
+    @param:ColorRes open val titleColorRes: Int = R.color.gray_900,
     open val description: String? = null,
-    @ColorRes open val descriptionColorRes: Int = R.color.gray_500,
+    @param:ColorRes open val descriptionColorRes: Int = R.color.gray_500,
     open val metadata: Any? = null,
     open val tag: String? = null,
 ) {
@@ -63,18 +63,6 @@ sealed class AlertMetadata(
         titleColorRes = R.color.white,
         descriptionColorRes = R.color.white
     )
-
-    class AlertCustom(
-        override val iconRes: Int? = null,
-        override val iconTintRes: Int? = null,
-        override val backgroundColorRes: Int = R.color.white,
-        override val title: String? = null,
-        override val titleColorRes: Int = R.color.gray_900,
-        override val description: String? = null,
-        override val descriptionColorRes: Int = R.color.gray_500,
-        override val metadata: Any? = null,
-        override val tag: String? = null
-    ) : AlertMetadata()
 
     @Suppress("MagicNumber")
     override fun hashCode(): Int {

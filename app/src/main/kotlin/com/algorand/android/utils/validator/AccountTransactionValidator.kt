@@ -47,7 +47,7 @@ class AccountTransactionValidator @Inject constructor(
         if (assetId == ALGO_ID) {
             return true
         }
-        return isAssetOptedInByAccount(fromAccountPublicKey, assetId) == true
+        return isAssetOptedInByAccount(fromAccountPublicKey, assetId)
     }
 
     fun isSendingAmountLesserThanMinimumBalance(
@@ -94,7 +94,7 @@ class AccountTransactionValidator @Inject constructor(
         assetId: Long
     ): Boolean {
         return assetId == ALGO_ID &&
-            accountAssetDetail.algoAmount isEqualTo BigInteger.ZERO &&
-            amount < minBalancePerAssetAsBigInteger
+                accountAssetDetail.algoAmount isEqualTo BigInteger.ZERO &&
+                amount < minBalancePerAssetAsBigInteger
     }
 }

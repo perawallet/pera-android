@@ -14,4 +14,4 @@
     android:id="@+id/accountItemView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/spacing_xxsmall"/>
+    android:layout_marginTop="@dimen/spacing_xxsmall" />

@@ -57,7 +57,7 @@ class PassphrasesBoxView @JvmOverloads constructor(
     }
 
     fun setPassphrases(passphrases: List<String>) {
-        val itemCount = passphrases.count()
+        val itemCount = passphrases.size
         val itemCountPerColumn = PassphraseViewUtils.calculateMiddleIndexOfPassphrases(passphrases.size)
 
         val leftColumnItems = passphrases.subList(0, itemCountPerColumn)

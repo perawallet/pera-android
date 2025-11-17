@@ -57,8 +57,7 @@ fun SwapGroupDetailScreen(viewModel: SwapGroupDetailViewModel, listener: SwapGro
                 )
             }
         )
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
-        when (viewState) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             is Content -> {
                 when (val contentState = viewState.state) {

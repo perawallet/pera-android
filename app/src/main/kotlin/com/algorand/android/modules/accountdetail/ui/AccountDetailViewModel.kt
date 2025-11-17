@@ -97,7 +97,7 @@ class AccountDetailViewModel @Inject constructor(
                 val accountLite = (cacheStatus as? AccountLiteCacheStatus.Data)?.accountLites?.get(accountAddress)
                 if (accountLite != null) {
                     _accountDetailPreviewFlow.update {
-                        AccountDetailPreview(getAccountDetailSummary(accountLite), null)
+                        AccountDetailPreview(getAccountDetailSummary(accountLite))
                     }
                 }
             }

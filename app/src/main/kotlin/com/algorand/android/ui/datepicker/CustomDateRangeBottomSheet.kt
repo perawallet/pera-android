@@ -18,8 +18,8 @@ import android.widget.DatePicker
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
-import com.algorand.android.databinding.BottomSheetCustomDateRangeBinding
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.databinding.BottomSheetCustomDateRangeBinding
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.ui.CustomDateRangePreview
 import com.algorand.android.utils.extensions.collectOnLifecycle
@@ -103,6 +103,6 @@ class CustomDateRangeBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_custom_
     }
 
     companion object {
-        const val CUSTOM_DATE_FILTER_RESULT = "custom_date_filter_result"
+        const val CUSTOM_DATE_FILTER_RESULT: String = "custom_date_filter_result"
     }
 }

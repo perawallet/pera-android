@@ -23,7 +23,7 @@ internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
 
     override fun createAlgo25Account(): Algo25Account? {
         return try {
-            var secretKey = Sdk.generateSK()
+            val secretKey = Sdk.generateSK()
             val output = Algo25Account(
                 address = Sdk.generateAddressFromSK(secretKey),
                 secretKey = secretKey.copyOf()
@@ -45,7 +45,7 @@ internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
 
     override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
         return try {
-            var secretKey = Sdk.mnemonicToPrivateKey(mnemonic)
+            val secretKey = Sdk.mnemonicToPrivateKey(mnemonic)
 
             val output = Algo25Account(
                 address = Sdk.generateAddressFromSK(secretKey),

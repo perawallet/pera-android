@@ -38,7 +38,6 @@ internal class ParseNewDeepLinkPayloadImpl(
             encryptionKey = peraUri.getQueryParam(ENCRYPTION_KEY_QUERY_KEY),
             backupId = peraUri.getQueryParam(BACKUP_ID_QUERY_KEY),
             action = peraUri.getQueryParam(ACTION_QUERY_KEY),
-            notificationGroupType = null,
             fee = peraUri.getQueryParam(FEE_QUERY_KEY),
             votekey = peraUri.getQueryParam(VOTEKEY_QUERY_KEY),
             selkey = peraUri.getQueryParam(SELKEY_QUERY_KEY),

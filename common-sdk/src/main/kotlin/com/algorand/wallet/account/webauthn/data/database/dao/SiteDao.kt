@@ -116,6 +116,7 @@ interface SiteDao {
      */
     @Query("SELECT * FROM sites WHERE url = :url")
     suspend fun get(url: String): SiteEntity?
+
     @Query("SELECT * FROM sites WHERE id = :siteId")
     suspend fun get(siteId: Long): SiteEntity?
 

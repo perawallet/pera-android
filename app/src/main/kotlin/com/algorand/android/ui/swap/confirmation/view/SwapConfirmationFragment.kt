@@ -68,7 +68,7 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
         swapConfirmationViewModel.stopResources()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             SwapConfirmationScreen(swapConfirmationViewModel, listener = this)
         }

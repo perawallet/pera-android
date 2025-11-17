@@ -53,7 +53,7 @@ class BasePaymentSingleTransactionUiBuilder @Inject constructor(
                 isNeedCurrencyValue = true,
                 formattedSelectedCurrencyValue = assetInformation?.formattedSelectedCurrencyValue,
                 verificationTierConfiguration =
-                verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
             )
         }
     }

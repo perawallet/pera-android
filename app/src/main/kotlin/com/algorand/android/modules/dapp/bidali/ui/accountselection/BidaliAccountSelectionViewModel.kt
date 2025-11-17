@@ -12,17 +12,17 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.accountselection
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.modules.dapp.bidali.ui.accountselection.usecase.BidaliAccountSelectionPreviewUseCase
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.model.BidaliAccountSelectionPreview
+import com.algorand.android.modules.dapp.bidali.ui.accountselection.usecase.BidaliAccountSelectionPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class BidaliAccountSelectionViewModel @Inject constructor(

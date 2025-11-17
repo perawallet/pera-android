@@ -52,8 +52,8 @@ class PeraEventTrackerImpl @Inject constructor(
                 with(payload) {
                     when (value) {
                         is Bundle -> putBundle(key, value as Bundle)
-                        is CharSequence -> putCharSequence(key, value as CharSequence)
                         is String -> putString(key, value as String)
+                        is CharSequence -> putCharSequence(key, value as CharSequence)
                         is Char -> putChar(key, value as Char)
                         is CharArray -> putCharArray(key, value as CharArray)
                         is Boolean -> putBoolean(key, value as Boolean)

@@ -19,10 +19,10 @@ import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.A
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformationWithoutAssets
-import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import javax.inject.Inject
 
 internal class CreateAsbImportedAddressesUseCase @Inject constructor(
     private val fetchAccountInformationWithoutAssets: FetchAccountInformationWithoutAssets,

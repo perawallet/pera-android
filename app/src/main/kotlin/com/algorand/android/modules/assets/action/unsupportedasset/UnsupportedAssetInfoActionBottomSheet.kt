@@ -27,7 +27,8 @@ class UnsupportedAssetInfoActionBottomSheet : BaseAssetActionBottomSheet() {
 
     private val toolbarConfiguration = ToolbarConfiguration(titleResId = R.string.account_does_not_accept)
 
-    override val assetActionViewModel by viewModels<UnsupportedAssetInfoActionViewModel>()
+    override val assetActionViewModel: UnsupportedAssetInfoActionViewModel
+            by viewModels<UnsupportedAssetInfoActionViewModel>()
 
     override fun initUi() {
         assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)

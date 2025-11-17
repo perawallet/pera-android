@@ -50,7 +50,7 @@ class LauncherActivity : BaseActivity() {
     }
 
     companion object {
-        fun newIntent(context: Context) = Intent(context, LauncherActivity::class.java)
+        fun newIntent(context: Context): Intent = Intent(context, LauncherActivity::class.java)
 
         fun newIntentWithDeeplink(context: Context, deeplink: String): Intent {
             return Intent(context, LauncherActivity::class.java).apply {

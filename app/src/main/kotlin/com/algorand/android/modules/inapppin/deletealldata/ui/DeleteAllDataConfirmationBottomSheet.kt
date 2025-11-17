@@ -54,6 +54,6 @@ class DeleteAllDataConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
     }
 
     companion object {
-        const val DELETE_ALL_DATA_CONFIRMATION_KEY = "deleteAllDataConfirmationKey"
+        const val DELETE_ALL_DATA_CONFIRMATION_KEY: String = "deleteAllDataConfirmationKey"
     }
 }

@@ -16,17 +16,17 @@ import com.algorand.android.modules.transaction.csv.domain.repository.CsvReposit
 import com.algorand.android.ui.transaction.csv.model.CreateCsvArgs
 import com.algorand.android.utils.recordException
 import com.algorand.wallet.foundation.PeraResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 internal class CreateCsvFileUseCase @Inject constructor(
-    @Named(CsvRepository.INJECTION_NAME)
+    @param:Named(CsvRepository.INJECTION_NAME)
     private val csvRepository: CsvRepository
 ) : CreateCsvFile {
 

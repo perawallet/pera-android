@@ -27,7 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class CollectibleOptOutConfirmationBottomSheet : BaseAssetActionBottomSheet() {
 
-    override val assetActionViewModel by viewModels<CollectibleOptOutConfirmationViewModel>()
+    override val assetActionViewModel: CollectibleOptOutConfirmationViewModel
+            by viewModels<CollectibleOptOutConfirmationViewModel>()
 
     override fun initUi() {
         with(binding) {
@@ -74,6 +75,6 @@ class CollectibleOptOutConfirmationBottomSheet : BaseAssetActionBottomSheet() {
     }
 
     companion object {
-        const val COLLECTIBLE_OPT_OUT_KEY = "collectible_opt_out_key"
+        const val COLLECTIBLE_OPT_OUT_KEY: String = "collectible_opt_out_key"
     }
 }

@@ -53,4 +53,4 @@ data class PasskeyEntity(
     @ColumnInfo(name = "count") val count: Int,
     @ColumnInfo(name = "last_used_time_ms") val lastUsedTimeMs: Long,
 
-)
+    )

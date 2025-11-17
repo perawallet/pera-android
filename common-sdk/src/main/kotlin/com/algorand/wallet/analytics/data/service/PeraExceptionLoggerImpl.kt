@@ -16,7 +16,7 @@ import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
-class PeraExceptionLoggerImpl @Inject constructor (
+class PeraExceptionLoggerImpl @Inject constructor(
     private val firebaseCrashlytics: FirebaseCrashlytics
 ) : PeraExceptionLogger {
 

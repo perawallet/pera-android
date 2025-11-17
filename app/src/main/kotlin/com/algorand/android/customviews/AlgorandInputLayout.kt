@@ -132,13 +132,6 @@ class AlgorandInputLayout @JvmOverloads constructor(
         }
     }
 
-    fun setImeOptionsNext(callback: () -> Unit) {
-        with(editText) {
-            imeOptions = EditorInfo.IME_ACTION_NEXT
-            onAction(EditorInfo.IME_ACTION_NEXT, callback)
-        }
-    }
-
     fun setImeOptionsDone(callback: () -> Unit) {
         with(editText) {
             imeOptions = EditorInfo.IME_ACTION_DONE
@@ -164,20 +157,6 @@ class AlgorandInputLayout @JvmOverloads constructor(
             iconContainerView.post {
                 textInputEditText.updatePadding(right = iconContainerView.width)
             }
-        }
-    }
-
-    fun setInputFilter(inputFilter: InputFilter) {
-        editText.filters += inputFilter
-    }
-
-    fun setOnEditorEnterClickListener(onClick: () -> Unit) {
-        editText.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                onClick()
-                return@setOnEditorActionListener true
-            }
-            false
         }
     }
 

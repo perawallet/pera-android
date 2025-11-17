@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.transaction.detail.ui.applicationcalltransaction
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
@@ -25,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ApplicationCallTransactionDetailViewModel @Inject constructor(
@@ -32,13 +32,13 @@ class ApplicationCallTransactionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseTransactionDetailViewModel() {
 
-    val transactionId = savedStateHandle.getOrThrow<String>(TRANSACTION_ID_KEY)
-    val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
+    val transactionId: String = savedStateHandle.getOrThrow(TRANSACTION_ID_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(ACCOUNT_ADDRESS_KEY)
     private val transaction = savedStateHandle.getOrElse<BaseTransactionDetail.ApplicationCallTransaction?>(
         TRANSACTION_KEY,
         null
     )
-    val shouldShowCloseButton = savedStateHandle.getOrElse(SHOW_CLOSE_BUTTON_KEY, false)
+    val shouldShowCloseButton: Boolean = savedStateHandle.getOrElse(SHOW_CLOSE_BUTTON_KEY, false)
 
     val navToInnerTransactionFragmentEventFlow: StateFlow<Event<Unit>?>
         get() = _navToInnerTransactionFragmentEventFlow

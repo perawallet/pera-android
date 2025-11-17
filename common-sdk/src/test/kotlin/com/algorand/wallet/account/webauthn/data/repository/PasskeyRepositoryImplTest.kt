@@ -9,6 +9,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -22,8 +23,9 @@ class PasskeyRepositoryImplTest {
         passkeyDao,
         siteDao
     )
+
     @Test
-    fun `EXPECT all passkeys as flow WHEN getAllPasskeysAsFlow is invoked`() = runTest {
+    fun `EXPECT all passkeys as flow WHEN getAllPasskeysAsFlow is invoked`(): TestResult = runTest {
         val entitiesFlow = MutableStateFlow(
             listOf(
                 PasskeyEntity(1, 1, 1, "USER_ID_1", "UserName", "User Handle", "CREDENTIAL_ID", 0, 0),

@@ -76,6 +76,6 @@ class WCSessionValidityExtensionBottomSheet : BaseDoubleButtonBottomSheet() {
     }
 
     companion object {
-        const val WC_SESSION_VALIDITY_EXTENSION_RESULT_KEY = "wcSessionValidityExtensionResultKey"
+        const val WC_SESSION_VALIDITY_EXTENSION_RESULT_KEY: String = "wcSessionValidityExtensionResultKey"
     }
 }

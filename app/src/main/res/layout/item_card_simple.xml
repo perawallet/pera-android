@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="@dimen/spacing_small"
-        android:layout_marginVertical="@dimen/spacing_xsmall" >
+        android:layout_marginVertical="@dimen/spacing_xsmall">
 
         <ImageView
             android:id="@+id/alertIconImageView"
@@ -44,7 +44,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_begin="@dimen/account_icon_size_normal" />
-
 
         <TextView
             android:id="@+id/titleTextView"
@@ -70,7 +69,6 @@
             app:layout_constraintStart_toEndOf="@id/verticalGuideline"
             app:layout_constraintTop_toBottomOf="@id/titleTextView"
             tools:text="notification description" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

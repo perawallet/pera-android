@@ -57,28 +57,6 @@ fun PeraIcon(
 }
 
 @Composable
-fun PeraIconRoundShape(
-    modifier: Modifier = Modifier,
-    imageVector: ImageVector,
-    contentDescription: String
-) {
-    Box(
-        modifier = modifier
-            .padding(start = 10.dp)
-            .size(40.dp)
-            .clip(shape = CircleShape)
-            .background(color = PeraTheme.colors.layer.grayLighter)
-    ) {
-        Icon(
-            modifier = Modifier.align(Alignment.Center),
-            imageVector = imageVector,
-            tint = PeraTheme.colors.text.main,
-            contentDescription = contentDescription
-        )
-    }
-}
-
-@Composable
 fun PeraIconRoundShapeBig(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,

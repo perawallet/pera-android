@@ -24,7 +24,7 @@ import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAc
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem.ItemType.DESCRIPTION_ITEM
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem.ItemType.TITLE_ITEM
 
-class BaseSingleAccountSelectionAdapter constructor(
+class BaseSingleAccountSelectionAdapter(
     private val listener: Listener
 ) : ListAdapter<SingleAccountSelectionListItem, BaseViewHolder<SingleAccountSelectionListItem>>(BaseDiffUtil()) {
 

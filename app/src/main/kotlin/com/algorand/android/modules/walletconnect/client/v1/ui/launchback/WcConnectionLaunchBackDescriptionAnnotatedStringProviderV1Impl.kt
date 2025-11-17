@@ -32,6 +32,7 @@ class WcConnectionLaunchBackDescriptionAnnotatedStringProviderV1Impl :
                     replacementList = listOf("peer_name" to peerName)
                 )
             }
+
             else -> {
                 AnnotatedString(
                     stringResId = R.string.we_couldn_t_automatically_detect,
@@ -42,6 +43,6 @@ class WcConnectionLaunchBackDescriptionAnnotatedStringProviderV1Impl :
     }
 
     companion object {
-        const val INJECTION_NAME = "wcConnectionLaunchBackBrowserDescriptionAnnotatedStringV1InjectionName"
+        const val INJECTION_NAME: String = "wcConnectionLaunchBackBrowserDescriptionAnnotatedStringV1InjectionName"
     }
 }

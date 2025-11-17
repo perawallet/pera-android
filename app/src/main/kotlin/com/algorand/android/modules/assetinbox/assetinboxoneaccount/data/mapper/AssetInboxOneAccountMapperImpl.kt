@@ -42,7 +42,7 @@ class AssetInboxOneAccountMapperImpl @Inject constructor(
 ) : AssetInboxOneAccountMapper {
 
     override fun invoke(response: AssetInboxOneAccountPaginatedResponse?): AssetInboxOneAccountPaginated? {
-        if (response == null || !response.isValid()) return null
+        if (response == null || !isValid()) return null
 
         return AssetInboxOneAccountPaginated(
             next = response.next,
@@ -55,7 +55,7 @@ class AssetInboxOneAccountMapperImpl @Inject constructor(
     }
 
     // TODO Update is valid parameters
-    private fun AssetInboxOneAccountPaginatedResponse.isValid(): Boolean {
+    private fun isValid(): Boolean {
         return true
     }
 
@@ -92,7 +92,7 @@ class AssetInboxOneAccountMapperImpl @Inject constructor(
             isDeleted = response?.isDeleted ?: false,
             verificationTier = verificationTier,
             explorerUrl = response?.explorerUrl.orEmpty(),
-            collectible = response?.collectible.let { mapToCollectible(it) },
+            collectible = mapToCollectible(response?.collectible),
             creator = mapToCreator(response?.creator),
             type = response?.type.orEmpty()
         )

@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
-    id("kotlin-parcelize")
-    id("dagger.hilt.android.plugin")
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.hilt)
 }
 
 apply(from = "./test-coverage/kover.gradle")
@@ -52,6 +52,9 @@ android {
             }
         }
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -88,8 +91,4 @@ dependencies {
     testImplementation(libs.mockito)
     testImplementation(libs.mockk)
     testImplementation(project(":test-utils"))
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
 }

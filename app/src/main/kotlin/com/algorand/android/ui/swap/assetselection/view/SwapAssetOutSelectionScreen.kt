@@ -38,15 +38,14 @@ fun SwapAssetOutSelectionScreen(
         onBackClick = listener::onBackButtonClick,
         onQueryUpdated = viewModel::updateQuery,
     ) {
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
-
-        when (viewState) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             is SwapAssetOutSelectionViewModel.ViewState.Idle -> Unit
             SwapAssetOutSelectionViewModel.ViewState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     PeraCircularProgressIndicator()
                 }
             }
+
             is SwapAssetOutSelectionViewModel.ViewState.Content -> {
                 PeraAssetList(
                     modifier = Modifier.padding(horizontal = 24.dp),

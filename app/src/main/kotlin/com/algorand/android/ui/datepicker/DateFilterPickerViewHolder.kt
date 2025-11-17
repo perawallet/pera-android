@@ -39,10 +39,12 @@ class DateFilterPickerViewHolder(
                         dateInIconTextView.text = dateRange?.from?.dayOfMonth.toString()
                         dateInIconTextView.show()
                     }
+
                     DateFilter.LastMonth -> {
                         dateInIconTextView.text = dateRange?.to?.dayOfMonth.toString()
                         dateInIconTextView.show()
                     }
+
                     else -> dateInIconTextView.hide()
                 }
                 val rangeAsText = dateRange?.getRangeAsText(this)

@@ -36,7 +36,7 @@ class ShowQrFragment : DaggerBaseFragment(R.layout.fragment_show_qr) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID,
         toolbarConfiguration = toolbarConfiguration
     )
@@ -83,7 +83,6 @@ class ShowQrFragment : DaggerBaseFragment(R.layout.fragment_show_qr) {
     }
 
     companion object {
-        private const val ADDRESS_COPY_LABEL = "address"
         private const val FIREBASE_EVENT_SCREEN_ID = "screen_show_qr"
     }
 }

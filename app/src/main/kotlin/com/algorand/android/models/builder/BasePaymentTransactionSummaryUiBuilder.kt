@@ -15,8 +15,8 @@ package com.algorand.android.models.builder
 
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.WalletConnectTransactionSummary
-import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.ALGO_DECIMALS
+import com.algorand.android.utils.ALGO_SHORT_NAME
 import javax.inject.Inject
 
 class BasePaymentTransactionSummaryUiBuilder @Inject constructor() :

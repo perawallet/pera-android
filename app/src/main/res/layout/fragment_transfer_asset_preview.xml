@@ -220,7 +220,7 @@
             app:layout_constraintStart_toStartOf="@id/labelBarrier"
             app:layout_constraintTop_toBottomOf="@id/balanceDivider"
             app:layout_constraintVertical_bias="0"
-            tools:visibility="gone"/>
+            tools:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/addEditNoteButton"
@@ -237,7 +237,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/labelBarrier"
             app:layout_constraintTop_toTopOf="@id/noteLabelTextView"
-            app:layout_constraintHorizontal_bias="0"/>
+            app:layout_constraintHorizontal_bias="0" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/confirmTransferButton"

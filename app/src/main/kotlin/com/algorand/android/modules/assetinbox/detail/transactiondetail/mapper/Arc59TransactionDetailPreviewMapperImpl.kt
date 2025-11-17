@@ -26,7 +26,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class Arc59TransactionDetailPreviewMapperImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : Arc59TransactionDetailPreviewMapper {
 
     override fun invoke(args: Arc59TransactionDetailArgs): Arc59TransactionDetailPreview {

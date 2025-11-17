@@ -28,7 +28,7 @@ class LockPreferencesLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Int {
-        return sharedPref.getInt(key, defaultLockPreferences)
+        return sharedPref.getInt(key, DEFAULT_LOCK_PREFERENCES)
     }
 
     override fun saveData(data: Int) {
@@ -36,8 +36,8 @@ class LockPreferencesLocalSource @Inject constructor(
     }
 
     companion object {
-        const val DONT_SHOW_AGAIN_COUNT = -1
-        const val defaultLockPreferences = 0
+        const val DONT_SHOW_AGAIN_COUNT: Int = -1
+        const val DEFAULT_LOCK_PREFERENCES: Int = 0
         private const val LOCK_PREFERENCE_COUNT_KEY = "lock_preference_count_key"
     }
 }

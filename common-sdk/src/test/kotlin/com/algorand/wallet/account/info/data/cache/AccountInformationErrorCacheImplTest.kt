@@ -20,7 +20,7 @@ class AccountInformationErrorCacheImplTest {
         sut.put("address2")
 
         val expected = setOf("address1", "address2")
-        assertEquals(expected, cache.getOrNull()!!.getDataOrNull())
+        assertEquals(expected, (cache.getOrNull() ?: return).getDataOrNull())
     }
 
     @Test
@@ -30,7 +30,7 @@ class AccountInformationErrorCacheImplTest {
         sut.remove("address1")
 
         val expected = setOf("address2")
-        assertEquals(expected, cache.getOrNull()!!.getDataOrNull())
+        assertEquals(expected, (cache.getOrNull() ?: return).getDataOrNull())
     }
 
     @Test
@@ -55,7 +55,7 @@ class AccountInformationErrorCacheImplTest {
         sut.put("address1")
 
         val expected = setOf("address1")
-        assertEquals(expected, cache.getOrNull()!!.getDataOrNull())
+        assertEquals(expected, (cache.getOrNull() ?: return).getDataOrNull())
     }
 
     @Test
@@ -63,6 +63,6 @@ class AccountInformationErrorCacheImplTest {
         sut.remove("address1")
 
         assertNotNull(cache.getOrNull())
-        assertTrue(cache.getOrNull()!!.getDataOrNull()!!.isEmpty())
+        assertTrue(((cache.getOrNull() ?: return).getDataOrNull() ?: return).isEmpty())
     }
 }

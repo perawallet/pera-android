@@ -39,15 +39,17 @@ abstract class BaseTransactionDetailFragment : DaggerBaseFragment(R.layout.fragm
         initTransactionDetailPreview(preview)
     }
 
-    protected val transactionDetailTooltipListener = TransactionDetailAdapter.TooltipListener {
-        transactionDetailViewModel.setCopyAddressTipShown()
-    }
-
-    protected val transactionDetailClickListener = object : TransactionDetailAdapter.ExtrasClickListener {
-        override fun onPeraExplorerClick(url: String) {
-            context?.openUrl(url)
+    protected val transactionDetailTooltipListener: TransactionDetailAdapter.TooltipListener =
+        TransactionDetailAdapter.TooltipListener {
+            transactionDetailViewModel.setCopyAddressTipShown()
         }
-    }
+
+    protected val transactionDetailClickListener: TransactionDetailAdapter.ExtrasClickListener =
+        object : TransactionDetailAdapter.ExtrasClickListener {
+            override fun onPeraExplorerClick(url: String) {
+                context?.openUrl(url)
+            }
+        }
 
     protected abstract fun initUi()
 
@@ -79,6 +81,6 @@ abstract class BaseTransactionDetailFragment : DaggerBaseFragment(R.layout.fragm
     }
 
     companion object {
-        const val FIREBASE_EVENT_SCREEN_ID = "screen_transaction_detail"
+        const val FIREBASE_EVENT_SCREEN_ID: String = "screen_transaction_detail"
     }
 }

@@ -17,9 +17,9 @@ import androidx.annotation.DrawableRes
 import com.algorand.android.R
 
 enum class AccountIconResource(
-    @DrawableRes val iconResId: Int,
-    @ColorRes val backgroundColorResId: Int,
-    @ColorRes val iconTintResId: Int
+    @param:DrawableRes val iconResId: Int,
+    @param:ColorRes val backgroundColorResId: Int,
+    @param:ColorRes val iconTintResId: Int
 ) {
     WATCH(R.drawable.ic_eye, R.color.wallet_1, R.color.wallet_1_icon),
 

@@ -39,6 +39,6 @@ class EncryptedPinLocalSource @Inject constructor(
     }
 
     companion object {
-        const val ENCRYPTED_PIN_KEY = "encrypted_pin"
+        const val ENCRYPTED_PIN_KEY: String = "encrypted_pin"
     }
 }

@@ -18,8 +18,8 @@ import android.text.style.MetricAffectingSpan
 
 class CustomTypefaceSpan(private val font: Typeface?) : MetricAffectingSpan() {
 
-    override fun updateMeasureState(textPaint: TextPaint) = update(textPaint)
-    override fun updateDrawState(textPaint: TextPaint?) = update(textPaint)
+    override fun updateMeasureState(textPaint: TextPaint): Unit = update(textPaint)
+    override fun updateDrawState(textPaint: TextPaint?): Unit = update(textPaint)
 
     private fun update(tp: TextPaint?) {
         tp?.apply {

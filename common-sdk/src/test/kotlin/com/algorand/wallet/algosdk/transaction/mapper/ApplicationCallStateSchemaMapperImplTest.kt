@@ -2,10 +2,10 @@ package com.algorand.wallet.algosdk.transaction.mapper
 
 import com.algorand.wallet.algosdk.transaction.model.ApplicationCallStateSchema
 import com.algorand.wallet.algosdk.transaction.model.payload.RawTransactionApplicationCallStateSchemaPayload
-import java.math.BigInteger.ONE
-import java.math.BigInteger.TEN
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger.ONE
+import java.math.BigInteger.TEN
 
 class ApplicationCallStateSchemaMapperImplTest {
 

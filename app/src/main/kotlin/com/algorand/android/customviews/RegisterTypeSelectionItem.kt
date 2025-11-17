@@ -39,10 +39,6 @@ class RegisterTypeSelectionItem @JvmOverloads constructor(
         binding.titleTextView.setText(titleRes)
     }
 
-    fun setDescription(@StringRes descriptionRes: Int) {
-        binding.descriptionTextView.setText(descriptionRes)
-    }
-
     private fun setTitle(title: CharSequence) {
         binding.titleTextView.text = title
     }

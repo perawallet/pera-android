@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CancellationSignal
 import android.os.OutcomeReceiver
+import androidx.annotation.RequiresApi
 import androidx.credentials.exceptions.ClearCredentialException
 import androidx.credentials.exceptions.CreateCredentialException
 import androidx.credentials.exceptions.CreateCredentialUnknownException
@@ -16,16 +17,15 @@ import androidx.credentials.exceptions.NoCredentialException
 import androidx.credentials.provider.Action
 import androidx.credentials.provider.BeginCreateCredentialRequest
 import androidx.credentials.provider.BeginCreateCredentialResponse
+import androidx.credentials.provider.BeginCreatePublicKeyCredentialRequest
 import androidx.credentials.provider.BeginGetCredentialRequest
 import androidx.credentials.provider.BeginGetCredentialResponse
-import androidx.credentials.provider.CredentialProviderService
-import androidx.credentials.provider.ProviderClearCredentialStateRequest
-import androidx.annotation.RequiresApi
-import androidx.credentials.provider.BeginCreatePublicKeyCredentialRequest
 import androidx.credentials.provider.BeginGetCredentialResponse.Builder
 import androidx.credentials.provider.BeginGetPublicKeyCredentialOption
 import androidx.credentials.provider.BiometricPromptData
 import androidx.credentials.provider.CreateEntry
+import androidx.credentials.provider.CredentialProviderService
+import androidx.credentials.provider.ProviderClearCredentialStateRequest
 import androidx.credentials.provider.PublicKeyCredentialEntry
 import com.algorand.android.R
 import com.algorand.android.credentials.webauthn.PublicKeyCredentialRequestOptions
@@ -203,7 +203,8 @@ class ProviderService : CredentialProviderService() {
         }
         return true
     }
-    suspend fun processGetCredentialsRequest(
+
+    private suspend fun processGetCredentialsRequest(
         request: BeginGetCredentialRequest,
         responseBuilder: Builder,
     ): Boolean {
@@ -310,13 +311,13 @@ class ProviderService : CredentialProviderService() {
     }
 
     companion object {
-        const val KEY_SEED_ID = "SEED-ID"
+        const val KEY_SEED_ID: String = "SEED-ID"
         private const val OPEN_APP_INTENT = "com.algorand.android.OPEN_APP"
         private const val CREATE_PASSKEY_INTENT =
             "com.algorand.android.credentials.CREATE_PASSKEY"
         private const val GET_PASSKEY_INTENT =
             "com.algorand.android.credentials.GET_PASSKEY"
-        const val CREDENTIAL_DESCRIPTION =
+        const val CREDENTIAL_DESCRIPTION: String =
             "Your credential will be saved securely to the chosen account."
     }
 }

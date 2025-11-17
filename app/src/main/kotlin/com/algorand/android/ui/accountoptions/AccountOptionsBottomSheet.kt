@@ -283,6 +283,6 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     companion object {
-        const val ACCOUNT_REMOVE_ACTION_KEY = "remove_account_action"
+        const val ACCOUNT_REMOVE_ACTION_KEY: String = "remove_account_action"
     }
 }

@@ -39,7 +39,7 @@ class AuthenticatorAttestationResponse(
     private val clientDataHash: ByteArray? = null,
     private val spki: ByteArray? = null,
 ) : AuthenticatorResponse {
-    override var clientJson = JSONObject()
+    override var clientJson: JSONObject = JSONObject()
     private var attestationObject: ByteArray
 
     init {
@@ -76,13 +76,14 @@ class AuthenticatorAttestationResponse(
         val credIdLen = byteArrayOf((credentialId.size shr 8).toByte(), credentialId.size.toByte())
 
         return rpHash +
-            byteArrayOf(flags.toByte()) +
-            byteArrayOf(0, 0, 0, 0) +
-            aaguid +
-            credIdLen +
-            credentialId +
-            credentialPublicKey
+                byteArrayOf(flags.toByte()) +
+                byteArrayOf(0, 0, 0, 0) +
+                aaguid +
+                credIdLen +
+                credentialId +
+                credentialPublicKey
     }
+
     @Suppress("MagicNumber")
     private fun uuidToBytes(uuid: UUID): ByteArray {
         val byteBuffer = ByteBuffer.wrap(ByteArray(16))
@@ -144,6 +145,7 @@ class AuthenticatorAttestationResponse(
 
         return response
     }
+
     @Suppress("MagicNumber")
     private fun getPublicKeyAlgorithm(): Long {
         // Learn more here : https://www.iana.org/assignments/cose/cose.xhtml#algorithms

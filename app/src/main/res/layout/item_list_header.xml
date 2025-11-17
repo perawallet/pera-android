@@ -22,4 +22,3 @@
     android:textAppearance="@style/TextAppearance.Footnote.Sans"
     android:textColor="@color/secondary_text_color"
     tools:text="@string/assets" />
-

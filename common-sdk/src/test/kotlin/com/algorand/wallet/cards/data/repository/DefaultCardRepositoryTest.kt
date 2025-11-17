@@ -23,6 +23,7 @@ import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -36,7 +37,7 @@ class DefaultCardRepositoryTest {
     private val sut = DefaultCardRepository(cardApiService, fundAddressMapper)
 
     @Test
-    fun `EXPECT error WHEN fetching fund address throws exception`() = runTest {
+    fun `EXPECT error WHEN fetching fund address throws exception`(): TestResult = runTest {
         coEvery { cardApiService.getFundAddresses(ADDRESSES_QUERY) } throws Exception("Network error")
 
         val result = sut.getCardFundAddresses(ADDRESSES)
@@ -45,7 +46,7 @@ class DefaultCardRepositoryTest {
     }
 
     @Test
-    fun `EXPECT fund addresses WHEN fetching fund address succeeds`() = runTest {
+    fun `EXPECT fund addresses WHEN fetching fund address succeeds`(): TestResult = runTest {
         val response = peraFixture<FundAddressResponse>()
         val fundAddress = peraFixture<FundAddress>()
         coEvery { cardApiService.getFundAddresses(ADDRESSES_QUERY) } returns FundAddressResultResponse(listOf(response))
@@ -58,7 +59,7 @@ class DefaultCardRepositoryTest {
     }
 
     @Test
-    fun `EXPECT error WHEN checking country waitlist throws exception`() = runTest {
+    fun `EXPECT error WHEN checking country waitlist throws exception`(): TestResult = runTest {
         coEvery { cardApiService.isCountryAvailable(ADDRESSES_QUERY) } throws Exception("Network error")
 
         val result = sut.isCountryWaitlisted(ADDRESSES)
@@ -67,34 +68,37 @@ class DefaultCardRepositoryTest {
     }
 
     @Test
-    fun `EXPECT waitlisted status true WHEN checking country waitlist succeeds and response is not null`() = runTest {
-        coEvery { cardApiService.isCountryAvailable(ADDRESSES_QUERY) } returns CountryAvailabilityResponse(true)
+    fun `EXPECT waitlisted status true WHEN checking country waitlist succeeds and response is not null`(): TestResult =
+        runTest {
+            coEvery { cardApiService.isCountryAvailable(ADDRESSES_QUERY) } returns CountryAvailabilityResponse(true)
 
-        val result = sut.isCountryWaitlisted(ADDRESSES)
+            val result = sut.isCountryWaitlisted(ADDRESSES)
 
-        val expected = PeraResult.Success(true)
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun `EXPECT waitlisted status false WHEN checking country waitlist succeeds and response is null`() = runTest {
-        coEvery { cardApiService.isCountryAvailable(ADDRESSES_QUERY) } returns CountryAvailabilityResponse(null)
-
-        val result = sut.isCountryWaitlisted(ADDRESSES)
-
-        val expected = PeraResult.Success(false)
-        assertEquals(expected, result)
-    }
+            val expected = PeraResult.Success(true)
+            assertEquals(expected, result)
+        }
 
     @Test
-    fun `EXPECT waitlisted status false WHEN checking country waitlist succeeds and response is false`() = runTest {
-        coEvery { cardApiService.isCountryAvailable(ADDRESSES_QUERY) } returns CountryAvailabilityResponse(false)
+    fun `EXPECT waitlisted status false WHEN checking country waitlist succeeds and response is null`(): TestResult =
+        runTest {
+            coEvery { cardApiService.isCountryAvailable(ADDRESSES_QUERY) } returns CountryAvailabilityResponse(null)
 
-        val result = sut.isCountryWaitlisted(ADDRESSES)
+            val result = sut.isCountryWaitlisted(ADDRESSES)
 
-        val expected = PeraResult.Success(false)
-        assertEquals(expected, result)
-    }
+            val expected = PeraResult.Success(false)
+            assertEquals(expected, result)
+        }
+
+    @Test
+    fun `EXPECT waitlisted status false WHEN checking country waitlist succeeds and response is false`(): TestResult =
+        runTest {
+            coEvery { cardApiService.isCountryAvailable(ADDRESSES_QUERY) } returns CountryAvailabilityResponse(false)
+
+            val result = sut.isCountryWaitlisted(ADDRESSES)
+
+            val expected = PeraResult.Success(false)
+            assertEquals(expected, result)
+        }
 
     private companion object {
         const val ADDRESSES_QUERY = "address1,address2"

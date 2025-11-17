@@ -55,6 +55,7 @@ import java.security.Security
 class GetPasskeyActivity : FragmentActivity() {
     @Inject
     lateinit var passkeyRepository: PasskeyRepository
+
     @Inject
     lateinit var passkeyManager: PasskeyManager
 
@@ -158,7 +159,7 @@ class GetPasskeyActivity : FragmentActivity() {
         request: ProviderGetCredentialRequest,
     ) {
         // Retrieve the encoded credential ID from the request information.
-        val credentialIdEncoded = requestInfo.getString(getString(R.string.cred_id))!!
+        val credentialIdEncoded = requestInfo.getString(getString(R.string.cred_id)) ?: return
 
         // Retrieve the PasskeyItem from the data source using the encoded credential ID.
         val passkey = runBlocking { passkeyRepository.getPasskey(credentialIdEncoded)!! }
@@ -215,7 +216,7 @@ class GetPasskeyActivity : FragmentActivity() {
                 callingAppInfo = callingAppOriginInfo,
                 clientDataHash = clientDataHash,
 
-            )
+                )
         } else {
             // If biometric authentication was not used or was not successful, use the default flow.
             assertPasskeyWithDefaultFlow(
@@ -469,7 +470,7 @@ class GetPasskeyActivity : FragmentActivity() {
      *
      * @param credId The credential ID for the associated passkey.
      * @param origin The origin of the calling application.
-     * @param callingAppInfoOrigin The origin information of the calling application if available.
+     * @param callingAppInfo The origin information of the calling application if available.
      * @param request The PublicKeyCredentialRequestOptions containing the credential request details.
      * @param uid The unique identifier associated with the passkey.
      * @param userHandle The user handle associated with the credential request.
@@ -557,7 +558,7 @@ class GetPasskeyActivity : FragmentActivity() {
             clientDataHash,
         )
 
-         response.signature = passkeyManager.signPasskey(1, origin, userHandle, response.dataToSign())
+        response.signature = passkeyManager.signPasskey(1, origin, userHandle, response.dataToSign())
 
         val credential = FidoPublicKeyCredential(
             rawId = credId,

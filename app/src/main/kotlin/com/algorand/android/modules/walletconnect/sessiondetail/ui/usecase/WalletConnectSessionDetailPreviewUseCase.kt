@@ -19,8 +19,6 @@ import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionExtendedExpirationDateUseCase
-import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionMaxExpirationDateUseCase
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBlockchain
@@ -35,54 +33,53 @@ import com.algorand.android.utils.MONTH_DAY_YEAR_PATTERN
 import com.algorand.android.utils.format
 import com.algorand.android.utils.getZonedDateTimeFromTimeStamp
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+import javax.inject.Named
 
 class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
-    @ApplicationContext private val appContext: Context,
+    @param:ApplicationContext private val appContext: Context,
     private val walletConnectManager: WalletConnectManager,
     private val sessionDetailPreviewMapper: WalletConnectSessionDetailPreviewMapper,
-    @Named(WalletConnectSessionDetailPreviewStateProvider.INJECTION_NAME)
+    @param:Named(WalletConnectSessionDetailPreviewStateProvider.INJECTION_NAME)
     private val previewStateProvider: WalletConnectSessionDetailPreviewStateProvider,
-    private val getFormattedWCSessionMaxExpirationDateUseCase: GetFormattedWCSessionMaxExpirationDateUseCase,
-    private val getFormattedWCSessionExtendedExpirationDateUseCase: GetFormattedWCSessionExtendedExpirationDateUseCase,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
-    fun getInitialPreview(sessionIdentifier: WalletConnectSessionIdentifier) = flow<WalletConnectSessionDetailPreview> {
-        // TODO Handle null case
-        val sessionDetail = walletConnectManager.getWalletConnectSession(sessionIdentifier) ?: return@flow
-        val sessionStatusInitialState = previewStateProvider.getInitialCheckSessionStatus(sessionIdentifier)
-        val informationBadge = previewStateProvider.getInformationBadgeDetail(sessionIdentifier)
-        val sessionDetailPreview = sessionDetailPreviewMapper.mapToPreview(
-            dappMetaData = getDappMetaData(sessionDetail),
-            sessionDate = getSessionDate(sessionDetail),
-            connectedAccountList = getConnectedAccountsList(sessionDetail),
-            advancedPermissions = getAdvancedPermissions(sessionDetail),
-            isLoadingVisible = false,
-            expandAdvancedPermissionsEvent = null,
-            collapseAdvancedPermissionsEvent = null,
-            isAdvancedPermissionsExpanded = false,
-            navBackEvent = null,
-            showSuccessMessageEvent = null,
-            showErrorMessageEvent = null,
-            isExtendExpirationDateButtonEnabled = previewStateProvider
-                .isExtendExpirationDateButtonEnabled(sessionIdentifier),
-            isExtendExpirationDateButtonVisible = previewStateProvider
-                .isExtendExpirationDateButtonVisible(sessionIdentifier),
-            isSessionStatusVisible = sessionStatusInitialState != null,
-            checkSessionStatus = sessionStatusInitialState,
-            isInformationBadgeVisible = informationBadge != null,
-            informationBadge = informationBadge,
-            navExtendSessionApproveBottomSheet = null,
-            navAdvancedPermissionsInfoBottomSheetEvent = null
-        )
-        emit(sessionDetailPreview)
-    }
+    fun getInitialPreview(sessionIdentifier: WalletConnectSessionIdentifier): Flow<WalletConnectSessionDetailPreview> =
+        flow {
+            // TODO Handle null case
+            val sessionDetail = walletConnectManager.getWalletConnectSession(sessionIdentifier) ?: return@flow
+            val sessionStatusInitialState = previewStateProvider.getInitialCheckSessionStatus(sessionIdentifier)
+            val informationBadge = previewStateProvider.getInformationBadgeDetail(sessionIdentifier)
+            val sessionDetailPreview = sessionDetailPreviewMapper.mapToPreview(
+                dappMetaData = getDappMetaData(sessionDetail),
+                sessionDate = getSessionDate(sessionDetail),
+                connectedAccountList = getConnectedAccountsList(sessionDetail),
+                advancedPermissions = getAdvancedPermissions(sessionDetail),
+                isLoadingVisible = false,
+                expandAdvancedPermissionsEvent = null,
+                collapseAdvancedPermissionsEvent = null,
+                isAdvancedPermissionsExpanded = false,
+                navBackEvent = null,
+                showSuccessMessageEvent = null,
+                showErrorMessageEvent = null,
+                isExtendExpirationDateButtonEnabled = previewStateProvider
+                    .isExtendExpirationDateButtonEnabled(sessionIdentifier),
+                isExtendExpirationDateButtonVisible = previewStateProvider
+                    .isExtendExpirationDateButtonVisible(sessionIdentifier),
+                isSessionStatusVisible = sessionStatusInitialState != null,
+                checkSessionStatus = sessionStatusInitialState,
+                isInformationBadgeVisible = informationBadge != null,
+                informationBadge = informationBadge,
+                navExtendSessionApproveBottomSheet = null,
+                navAdvancedPermissionsInfoBottomSheetEvent = null
+            )
+            emit(sessionDetailPreview)
+        }
 
     private fun getDappMetaData(
         sessionDetail: WalletConnect.SessionDetail
@@ -174,23 +171,7 @@ class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun getExtendClickedPreview(
-        sessionIdentifier: WalletConnectSessionIdentifier,
-        previousPreview: WalletConnectSessionDetailPreview
-    ): WalletConnectSessionDetailPreview {
-        val extendedExpirationDate = getFormattedWCSessionExtendedExpirationDateUseCase(sessionIdentifier)
-        val maxExtendableExpirationDate = getFormattedWCSessionMaxExpirationDateUseCase(sessionIdentifier)
-        val expirationDate = sessionDetailPreviewMapper.mapToExpirationDate(
-            formattedMaxExtendableExpirationDate = maxExtendableExpirationDate,
-            formattedExtendedExpirationDate = extendedExpirationDate
-        )
-
-        return previousPreview.copy(
-            navExtendSessionApproveBottomSheet = Event(expirationDate)
-        )
-    }
-
-    suspend fun getExtendSessionApprovedPreview(
+    fun getExtendSessionApprovedPreview(
         sessionIdentifier: WalletConnectSessionIdentifier,
         previousPreview: WalletConnectSessionDetailPreview
     ): Flow<WalletConnectSessionDetailPreview> = flow {
@@ -206,7 +187,7 @@ class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
         emit(updatedPreview)
     }
 
-    suspend fun getCheckStatusClickedPreview(
+    fun getCheckStatusClickedPreview(
         sessionIdentifier: WalletConnectSessionIdentifier
     ): Flow<WalletConnectSessionDetailPreview.CheckSessionStatus?> = flow {
         emit(previewStateProvider.getLoadingStateForCheckSessionStatus(sessionIdentifier))

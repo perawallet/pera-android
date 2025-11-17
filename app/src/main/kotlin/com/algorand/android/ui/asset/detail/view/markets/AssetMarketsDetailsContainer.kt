@@ -41,22 +41,27 @@ fun AssetMarketsDetailsContainer(details: List<AssetMarketsDetail>, listener: As
                     Divider()
                     AssetMarketsAbout(item, listener::onUrlClick, listener::onCreatorAddressClick)
                 }
+
                 is AssetDescription.Text -> {
                     Divider()
                     AssetMarketDescription(item)
                 }
+
                 is AssetDescription.TextResource -> {
                     Divider()
                     AssetMarketDescription(item)
                 }
+
                 is BadgeDescription -> {
                     Divider()
                     AssetMarketBadgeDescription(item, listener::onUrlClick)
                 }
+
                 is SocialMedia -> {
                     Divider()
                     AssetMarketsSocialMedia(item, listener::onUrlClick)
                 }
+
                 is Report -> {
                     Divider()
                     AssetMarketsReport(item) { listener.onReportClick(item.assetId, item.assetName.orEmpty()) }

@@ -15,7 +15,7 @@ package com.algorand.wallet.account.local.domain.usecase
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import javax.inject.Inject
 
-internal class UpdateNoAuthAccountToHdKeyUseCase @Inject constructor (
+internal class UpdateNoAuthAccountToHdKeyUseCase @Inject constructor(
     private val deleteLocalAccount: DeleteLocalAccount,
     private val saveHdKeyAccount: SaveHdKeyAccount
 ) : UpdateNoAuthAccountToHdKey {

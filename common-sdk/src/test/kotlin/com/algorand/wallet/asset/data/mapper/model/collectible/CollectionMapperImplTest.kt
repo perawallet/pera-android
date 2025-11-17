@@ -43,9 +43,6 @@ internal class CollectionMapperImplTest {
     @Test
     fun `EXPECT null WHEN all response fields are null`() {
         val response = CollectionResponse(
-            collectionId = null,
-            collectionName = null,
-            collectionDescription = null
         )
 
         val result = sut(response)
@@ -56,9 +53,7 @@ internal class CollectionMapperImplTest {
     @Test
     fun `EXPECT collection WHEN at least one response field is valid`() {
         val response = CollectionResponse(
-            collectionId = 123L,
-            collectionName = null,
-            collectionDescription = null
+            collectionId = 123L
         )
 
         val result = sut(response)

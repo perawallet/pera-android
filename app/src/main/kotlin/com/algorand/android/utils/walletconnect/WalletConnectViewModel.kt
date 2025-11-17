@@ -24,11 +24,11 @@ import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionP
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectViewModel @Inject constructor(
@@ -42,7 +42,7 @@ class WalletConnectViewModel @Inject constructor(
     val walletConnectRequestLiveData: LiveData<Event<Resource<WalletConnectRequest>>?>
         get() = walletConnectManager.walletConnectRequestLiveData
 
-    val invalidTransactionCauseLiveData
+    val invalidTransactionCauseLiveData: LiveData<Event<Resource.Error.Local>>
         get() = walletConnectManager.invalidTransactionCauseLiveData
 
     val localSessionsFlow: Flow<List<WalletConnect.SessionDetail>>

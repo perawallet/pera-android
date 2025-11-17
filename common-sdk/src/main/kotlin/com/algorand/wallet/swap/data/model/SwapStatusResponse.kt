@@ -17,10 +17,13 @@ import com.google.gson.annotations.SerializedName
 internal enum class SwapStatusResponse {
     @SerializedName("pending")
     PENDING,
+
     @SerializedName("in_progress")
     IN_PROGRESS,
+
     @SerializedName("completed")
     COMPLETED,
+
     @SerializedName("failed")
     FAILED
 }

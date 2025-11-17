@@ -19,6 +19,6 @@ interface SwapFeatureIntroductionPageRepository {
     suspend fun setSwapFeatureIntroductionPageVisibility(isVisible: Boolean)
 
     companion object {
-        const val INJECTION_NAME = "swapFeatureIntroductionPageRepository"
+        const val INJECTION_NAME: String = "swapFeatureIntroductionPageRepository"
     }
 }

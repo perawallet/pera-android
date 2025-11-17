@@ -63,8 +63,7 @@ fun AssetHoldingScreen(
     csvViewModel: CsvViewModel,
     listener: AssetHoldingScreenListener
 ) {
-    val viewState = assetHoldingViewModel.state.collectAsStateWithLifecycle().value
-    when (viewState) {
+    when (val viewState = assetHoldingViewModel.state.collectAsStateWithLifecycle().value) {
         Idle -> Unit
         is Content -> {
             var selectedChartItem by remember { mutableStateOf<AssetLineChartData?>(null) }

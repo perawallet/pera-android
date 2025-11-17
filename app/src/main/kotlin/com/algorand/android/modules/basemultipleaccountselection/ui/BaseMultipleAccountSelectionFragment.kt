@@ -36,19 +36,20 @@ abstract class BaseMultipleAccountSelectionFragment : BaseFragment(R.layout.frag
 
     private val binding by viewBinding(FragmentBaseMultipleAccountSelectionBinding::bind)
 
-    protected val multipleAccountSelectionAdapterListener = object : MultipleAccountSelectionAdapter.Listener {
-        override fun onHeaderCheckBoxClicked() {
-            onHeaderCheckBoxClick()
-        }
+    protected val multipleAccountSelectionAdapterListener: MultipleAccountSelectionAdapter.Listener =
+        object : MultipleAccountSelectionAdapter.Listener {
+            override fun onHeaderCheckBoxClicked() {
+                onHeaderCheckBoxClick()
+            }
 
-        override fun onAccountCheckboxClicked(accountAddress: String) {
-            onAccountCheckBoxClick(accountAddress)
-        }
+            override fun onAccountCheckboxClicked(accountAddress: String) {
+                onAccountCheckBoxClick(accountAddress)
+            }
 
-        override fun onAccountLongPressed(accountAddress: String) {
-            onAccountLongPress(accountAddress)
+            override fun onAccountLongPressed(accountAddress: String) {
+                onAccountLongPress(accountAddress)
+            }
         }
-    }
 
     private val actionButtonStateCollector: suspend (Boolean) -> Unit = {
         binding.primaryActionButton.isEnabled = it
@@ -79,10 +80,6 @@ abstract class BaseMultipleAccountSelectionFragment : BaseFragment(R.layout.frag
         super.onViewCreated(view, savedInstanceState)
         initObservers()
         initUi()
-    }
-
-    protected fun setEmptyStateActionButtonClick(action: () -> Unit) {
-        binding.screenStateView.setOnNeutralButtonClickListener { action() }
     }
 
     private fun initUi() {

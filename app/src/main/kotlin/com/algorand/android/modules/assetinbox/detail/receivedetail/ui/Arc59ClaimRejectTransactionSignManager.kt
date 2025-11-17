@@ -28,8 +28,9 @@ import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     ledgerBleSearchManager: LedgerBleSearchManager,
@@ -51,15 +52,16 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     signHdKeyTransaction
 ) {
 
-    val arc59ClaimRejectTransactionSignResultFlow = signResultFlow.map { externalTransactionSignResult ->
-        when (externalTransactionSignResult) {
-            is ExternalTransactionSignResult.Success<*> -> mapSignedTransactions(
-                externalTransactionSignResult.signedTransactionsByteArray
-            )
+    val arc59ClaimRejectTransactionSignResultFlow: Flow<ExternalTransactionSignResult> =
+        signResultFlow.map { externalTransactionSignResult ->
+            when (externalTransactionSignResult) {
+                is ExternalTransactionSignResult.Success<*> -> mapSignedTransactions(
+                    externalTransactionSignResult.signedTransactionsByteArray
+                )
 
-            else -> externalTransactionSignResult
+                else -> externalTransactionSignResult
+            }
         }
-    }
 
     private fun mapSignedTransactions(
         signedTransactions: List<ByteArray?>?

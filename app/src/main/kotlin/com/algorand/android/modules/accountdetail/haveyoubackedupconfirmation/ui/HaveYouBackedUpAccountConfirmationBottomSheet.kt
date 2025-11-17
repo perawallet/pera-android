@@ -55,6 +55,6 @@ class HaveYouBackedUpAccountConfirmationBottomSheet : BaseDoubleButtonBottomShee
     }
 
     companion object {
-        const val HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY = "have_you_backed_up_account_confirmation"
+        const val HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY: String = "have_you_backed_up_account_confirmation"
     }
 }

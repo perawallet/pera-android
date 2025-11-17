@@ -25,9 +25,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomPeraMaterialButtonBinding
-import com.algorand.android.utils.extensions.hide
-import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import kotlin.properties.Delegates
 
@@ -44,12 +41,6 @@ class PeraMaterialButton(
         }
     }
 
-    private var isButtonEnabled: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
-        if (oldValue != newValue) {
-            binding.button.isClickable = newValue
-        }
-    }
-
     private var buttonIconDrawable: Drawable? by Delegates.observable(null) { _, _, newValue ->
         binding.button.icon = newValue
     }
@@ -58,7 +49,7 @@ class PeraMaterialButton(
         binding.button.strokeColor = newValue
     }
 
-    private var buttonIconTintColor: Int? by Delegates.observable<Int?>(null) { _, _, newValue ->
+    private var buttonIconTintColor: Int? by Delegates.observable(null) { _, _, newValue ->
         binding.button.apply {
             if (newValue == null) {
                 iconTint = null
@@ -104,10 +95,6 @@ class PeraMaterialButton(
         buttonIconTintColor = iconTintResId
     }
 
-    fun setIconDrawable(drawable: Drawable?) {
-        buttonIconDrawable = drawable
-    }
-
     fun setButtonStroke(@ColorRes colorResId: Int?) {
         buttonStrokeColor = if (colorResId == null) {
             null
@@ -132,34 +119,6 @@ class PeraMaterialButton(
             null
         } else {
             ColorStateList.valueOf(ContextCompat.getColor(context, colorResId))
-        }
-    }
-
-    fun showProgress() {
-        binding.progressBar.show()
-        isButtonEnabled = false
-        clearButtonAttributes()
-    }
-
-    fun hideProgress() {
-        binding.progressBar.hide()
-        isButtonEnabled = true
-        recoverButtonAttributes()
-    }
-
-    private fun clearButtonAttributes() {
-        binding.button.apply {
-            text = ""
-            setDrawable(null)
-            strokeColor = null
-        }
-    }
-
-    private fun recoverButtonAttributes() {
-        binding.button.apply {
-            text = buttonText
-            setDrawable(buttonIconDrawable)
-            strokeColor = buttonStrokeColor
         }
     }
 

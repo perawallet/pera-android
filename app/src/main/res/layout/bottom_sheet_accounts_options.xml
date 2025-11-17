@@ -110,7 +110,6 @@
             app:icon="@drawable/ic_empty_notification"
             tools:visibility="visible" />
 
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/showQrButton"
             style="@style/Button.Text.Options"

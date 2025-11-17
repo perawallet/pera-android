@@ -17,6 +17,6 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectSessionExp
 interface WalletConnectV2SessionExpirationManager : WalletConnectSessionExpirationManager {
 
     companion object {
-        const val INJECTION_NAME = "wcV2SessionExpirationManager"
+        const val INJECTION_NAME: String = "wcV2SessionExpirationManager"
     }
 }

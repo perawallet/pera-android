@@ -27,28 +27,21 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.TemporalAdjusters
 
-const val MONTH_DAY_YEAR_PATTERN = "MMMM dd, yyyy"
-const val MONTH_DAY_YEAR_WITH_DOT_PATTERN = "MM.dd.yyyy"
-const val ISO_EXTENDED_DATE_FORMAT = "yyyy-MM-dd"
-const val CSV_PATTERN = "MM-dd-yyyy"
-const val MONTH_DAY_PATTERN = "MMM dd"
-const val DATE_AND_TIME_PATTERN = "MMMM dd, yyyy - HH:mm"
-const val DATE_AND_TIME_SEC_PATTERN = "MMMM dd, yyyy - HH:mm:ss"
-const val TXN_DATE_AND_TIME_PATTERN = "MMM dd, yyyy hh:mm a"
-const val TXN_DATE_PATTERN = "MMM dd, yyyy"
-const val UTC_ZONE_ID = "UTC"
-const val HOUR_MINUTE_AM_PM_PATTERN = "hh:mm a"
+const val MONTH_DAY_YEAR_PATTERN: String = "MMMM dd, yyyy"
+const val MONTH_DAY_YEAR_WITH_DOT_PATTERN: String = "MM.dd.yyyy"
+const val ISO_EXTENDED_DATE_FORMAT: String = "yyyy-MM-dd"
+const val MONTH_DAY_PATTERN: String = "MMM dd"
+const val DATE_AND_TIME_PATTERN: String = "MMMM dd, yyyy - HH:mm:ss"
+const val TXN_DATE_AND_TIME_PATTERN: String = "MMM dd, yyyy hh:mm a"
+const val TXN_DATE_PATTERN: String = "MMM dd, yyyy"
+const val UTC_ZONE_ID: String = "UTC"
+const val HOUR_MINUTE_AM_PM_PATTERN: String = "hh:mm a"
 
-const val UNIX_TIME_STAMP_MULTIPLIER = 1000
+const val UNIX_TIME_STAMP_MULTIPLIER: Int = 1000
 private const val WEEK_IN_DAYS = 7L
 private const val MINUTE_IN_SECONDS = 60
-private const val MIN_TO_SEC_MULTIPLIER = 60
-const val ONE_DAY_IN_MILLIS = (1000 * 60 * 60 * 24)
-const val ONE_SECOND_IN_MILLIS = 1_000L
-
-fun ZonedDateTime.formatAsTxString(): String {
-    return format(DateTimeFormatter.ofPattern(MONTH_DAY_YEAR_PATTERN))
-}
+const val ONE_DAY_IN_MILLIS: Int = (1000 * 60 * 60 * 24)
+const val ONE_SECOND_IN_MILLIS: Long = 1_000L
 
 fun ZonedDateTime.formatAsDateAndTime(): String {
     return format(DateTimeFormatter.ofPattern(DATE_AND_TIME_PATTERN))
@@ -73,10 +66,6 @@ fun Long.getZonedDateTimeFromTimeStamp(): ZonedDateTime {
 
 fun getBeginningOfDay(dayBefore: Long = 0): ZonedDateTime {
     return ZonedDateTime.now().minusDays(dayBefore).with(LocalTime.MIN)
-}
-
-fun getEndOfDay(dayBefore: Long = 0): ZonedDateTime {
-    return ZonedDateTime.now().minusDays(dayBefore).with(LocalTime.MAX)
 }
 
 fun getLastWeekRange(): DateRange {
@@ -146,22 +135,14 @@ fun getRelativeTimeDifference(resources: Resources, time: ZonedDateTime, timeDif
     }
 }
 
-fun getCurrentTimeAsSec() = System.currentTimeMillis() / UNIX_TIME_STAMP_MULTIPLIER
+fun getCurrentTimeAsSec(): Long = System.currentTimeMillis() / UNIX_TIME_STAMP_MULTIPLIER
 
-fun getCurrentSystemTimeAsMillis() = System.currentTimeMillis()
+fun getCurrentSystemTimeAsMillis(): Long = System.currentTimeMillis()
 
-fun convertMinToSec(min: Long) = min * MIN_TO_SEC_MULTIPLIER
-
-fun convertSecToMills(sec: Long) = sec * UNIX_TIME_STAMP_MULTIPLIER
-
-fun getZonedDateTimeAsSec() = ZonedDateTime.now().toEpochSecond()
+fun convertSecToMills(sec: Long): Long = sec * UNIX_TIME_STAMP_MULTIPLIER
 
 fun getZonedDateTimeFromSec(sec: Long): ZonedDateTime {
     return ZonedDateTime.ofInstant(Instant.ofEpochSecond(sec), ZoneId.systemDefault())
-}
-
-fun getUTCZonedDateTime(): ZonedDateTime {
-    return ZonedDateTime.ofInstant(Instant.now(), ZoneId.of(UTC_ZONE_ID))
 }
 
 fun createBeginningOfDayZonedDateTime(year: Int, month: Int, day: Int): ZonedDateTime {

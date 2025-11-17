@@ -3,6 +3,8 @@ package com.algorand.wallet.account.webauthn.di
 import android.content.Context
 import androidx.room.Room
 import com.algorand.wallet.account.webauthn.data.database.PasskeyDatabase
+import com.algorand.wallet.account.webauthn.data.database.dao.PasskeyDao
+import com.algorand.wallet.account.webauthn.data.database.dao.SiteDao
 import com.algorand.wallet.account.webauthn.data.repository.PasskeyRepositoryImpl
 import com.algorand.wallet.account.webauthn.domain.PasskeyManager
 import com.algorand.wallet.account.webauthn.domain.PasskeyManagerImpl
@@ -29,11 +31,11 @@ object PasskeysModule {
 
     @Provides
     @Singleton
-    fun provideSiteDao(passkeyDatabase: PasskeyDatabase) = passkeyDatabase.siteDao()
+    fun provideSiteDao(passkeyDatabase: PasskeyDatabase): SiteDao = passkeyDatabase.siteDao()
 
     @Provides
     @Singleton
-    fun providePasskeyDao(passkeyDatabase: PasskeyDatabase) = passkeyDatabase.passkeyDao()
+    fun providePasskeyDao(passkeyDatabase: PasskeyDatabase): PasskeyDao = passkeyDatabase.passkeyDao()
 
     @Provides
     fun providePasskeyRepository(repository: PasskeyRepositoryImpl): PasskeyRepository = repository

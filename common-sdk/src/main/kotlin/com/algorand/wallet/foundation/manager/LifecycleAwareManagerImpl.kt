@@ -13,13 +13,13 @@
 package com.algorand.wallet.foundation.manager
 
 import androidx.lifecycle.LifecycleOwner
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 internal class LifecycleAwareManagerImpl @Inject constructor() : LifecycleAwareManager {
 

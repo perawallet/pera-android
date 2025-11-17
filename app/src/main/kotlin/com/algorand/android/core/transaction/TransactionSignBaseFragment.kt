@@ -63,10 +63,12 @@ abstract class TransactionSignBaseFragment(
                     hideLoading()
                     transactionFragmentListener?.onSignTransactionFinished(this.signedTransactionDetail)
                 }
+
                 is TransactionManagerResult.Error.GlobalWarningError -> {
                     showTransactionError(this)
                     transactionFragmentListener?.onSignTransactionFailed()
                 }
+
                 is TransactionManagerResult.Error.SnackbarError.Retry -> {
 //                    Currently, we are showing this kind of error in case of ASA  adding failure. Since we are are
 //                    handling this operation in [MainActivity], no need to check it here. But as a fallback behaviour,
@@ -74,16 +76,20 @@ abstract class TransactionSignBaseFragment(
                     onCustomBottomSheetOpened(this)
                     transactionFragmentListener?.onSignTransactionFailed()
                 }
+
                 TransactionManagerResult.Loading -> {
                     transactionFragmentListener?.onSignTransactionLoading()
                 }
+
                 is TransactionManagerResult.LedgerWaitingForApproval -> {
                     showLedgerLoading(bluetoothName)
                 }
+
                 TransactionManagerResult.LedgerScanFailed -> {
                     hideLoading()
                     navigateToConnectionIssueBottomSheet()
                 }
+
                 TransactionManagerResult.LedgerOperationCanceled -> {
                     onSignTransactionCancelledByLedger()
                 }
@@ -177,7 +183,7 @@ abstract class TransactionSignBaseFragment(
         }
     }
 
-    fun sendGroupTransaction(transactionDataList: List<TransactionSignData>) {
+    private fun sendGroupTransaction(transactionDataList: List<TransactionSignData>) {
         val isLedgerNeeded = transactionDataList.any { it.signer is TransactionSigner.LedgerBle }
         if (isLedgerNeeded) {
             if (isBluetoothEnabled(bleRequestLauncher).not()) {
@@ -191,7 +197,7 @@ abstract class TransactionSignBaseFragment(
         )
     }
 
-    protected fun showTransactionError(error: TransactionManagerResult.Error.GlobalWarningError) {
+    private fun showTransactionError(error: TransactionManagerResult.Error.GlobalWarningError) {
         hideLoading()
         val (title, errorMessage) = error.getMessage(requireContext())
         showGlobalError(errorMessage, title)
@@ -205,19 +211,23 @@ abstract class TransactionSignBaseFragment(
             is Resource.Error.Annotated -> {
                 showSnackbar(context?.getXmlStyledString(error.annotatedString).toString(), viewGroup)
             }
+
             is Resource.Error.Warning -> {
                 context?.showAlertDialog(
                     getString(error.titleRes),
                     context?.getXmlStyledString(error.annotatedString).toString()
                 )
             }
+
             is Resource.Error.Navigation -> {
                 nav(error.navDirections)
             }
+
             is Resource.Error.GlobalWarning -> {
                 val titleString = error.titleRes?.let { getString(it) }
                 context?.run { showGlobalError(error.parse(this), titleString) }
             }
+
             else -> {
                 context?.run { showGlobalError(error.parse(this)) }
             }

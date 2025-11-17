@@ -26,10 +26,10 @@ import com.algorand.android.utils.Event
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.math.BigInteger
+import javax.inject.Inject
 
 class SenderAccountSelectionPreviewUseCase @Inject constructor(
     private val senderAccountSelectionPreviewMapper: SenderAccountSelectionPreviewMapper,

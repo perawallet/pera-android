@@ -100,20 +100,8 @@ fun interface DeleteHdSeedCustomInfo {
     suspend operator fun invoke(aseedId: Int)
 }
 
-fun interface GetHdSeedCustomInfo {
-    suspend operator fun invoke(seedId: Int): CustomHdSeedInfo
-}
-
 fun interface SetHdSeedOrderIndex {
     suspend operator fun invoke(seedId: Int, orderIndex: Int)
-}
-
-fun interface GetBackedUpHdSeeds {
-    suspend operator fun invoke(): Set<String>
-}
-
-fun interface GetNotBackedUpHdSeeds {
-    suspend operator fun invoke(): Set<String>
 }
 
 fun interface GetHdSeedAsbBackUpStatus {

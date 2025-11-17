@@ -19,7 +19,9 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAssetAboutBinding
@@ -32,11 +34,12 @@ import com.algorand.android.utils.composeReportAssetEmail
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AssetAboutFragment : BaseFragment(R.layout.fragment_asset_about) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val assetAboutViewModel by viewModels<AssetAboutViewModel>()
 
@@ -96,8 +99,10 @@ class AssetAboutFragment : BaseFragment(R.layout.fragment_asset_about) {
     }
 
     private fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            assetAboutViewModel.assetAboutPreviewFlow.collectLatest(assetAboutPreviewCollector)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                assetAboutViewModel.assetAboutPreviewFlow.collectLatest(assetAboutPreviewCollector)
+            }
         }
     }
 

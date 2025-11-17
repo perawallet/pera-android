@@ -65,6 +65,6 @@ class CollectibleOptInActionBottomSheet : BaseAssetActionBottomSheet() {
     }
 
     companion object {
-        const val OPT_IN_COLLECTIBLE_ACTION_RESULT_KEY = "opt_in_collectible_action_result_key"
+        const val OPT_IN_COLLECTIBLE_ACTION_RESULT_KEY: String = "opt_in_collectible_action_result_key"
     }
 }

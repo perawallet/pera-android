@@ -25,6 +25,6 @@ interface NFTListingViewTypeRepository {
     fun removeOnListingViewTypeChangeListener(listener: SharedPrefLocalSource.OnChangeListener<Int>)
 
     companion object {
-        const val INJECTION_NAME = "nftListingViewTypeRepositoryInjection"
+        const val INJECTION_NAME: String = "nftListingViewTypeRepositoryInjection"
     }
 }

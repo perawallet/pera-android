@@ -22,12 +22,18 @@ import com.algorand.android.R
 import com.algorand.android.credentials.BiometricErrorUtils
 import com.algorand.android.credentials.ProviderService.Companion.KEY_SEED_ID
 import com.algorand.android.credentials.encoding.appInfoToOrigin
+import com.algorand.android.credentials.encoding.b64Encode
 import com.algorand.android.credentials.webauthn.AssetLinkVerifier
 import com.algorand.android.credentials.webauthn.AuthenticatorAttestationResponse
 import com.algorand.android.credentials.webauthn.AuthenticatorFlags
 import com.algorand.android.credentials.webauthn.Cbor
 import com.algorand.android.credentials.webauthn.FidoPublicKeyCredential
 import com.algorand.android.credentials.webauthn.PublicKeyCredentialCreationOptions
+import com.algorand.wallet.account.webauthn.domain.PasskeyManager
+import com.algorand.wallet.account.webauthn.domain.model.Passkey
+import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -38,19 +44,9 @@ import java.net.URL
 import java.security.KeyPair
 import java.security.SecureRandom
 import java.security.interfaces.ECPublicKey
-import kotlin.collections.plus
-import kotlin.collections.set
-import kotlin.io.readText
-import kotlin.text.isNotEmpty
-import com.algorand.android.credentials.encoding.b64Encode
-import com.algorand.wallet.account.webauthn.domain.PasskeyManager
-import com.algorand.wallet.account.webauthn.domain.model.Passkey
-import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
-import dagger.hilt.android.AndroidEntryPoint
-import jakarta.inject.Inject
 import java.util.UUID
 
-const val DEFAULT_BYTE_LENGTH = 32
+const val DEFAULT_BYTE_LENGTH: Int = 32
 
 /**
  * `CreatePasskeyActivity` is responsible for handling the lifecycle and operations required
@@ -78,6 +74,7 @@ const val DEFAULT_BYTE_LENGTH = 32
 class CreatePasskeyActivity : FragmentActivity() {
     @Inject
     lateinit var passkeyRepository: PasskeyRepository
+
     @Inject
     lateinit var passkeyManager: PasskeyManager
 
@@ -376,15 +373,11 @@ class CreatePasskeyActivity : FragmentActivity() {
     private fun validateAssetLinks(rpId: String, callingAppInfo: CallingAppInfo) {
         val isRpValid: Boolean = runBlocking {
             val isRpValidDeferred: Deferred<Boolean> = async(Dispatchers.IO) {
-                if (!isValidRpId(
-                        rpId,
-                        callingAppInfo.signingInfo,
-                        callingAppInfo.packageName,
-                    )
-                ) {
-                    return@async false
-                }
-                return@async true
+                return@async isValidRpId(
+                    rpId,
+                    callingAppInfo.signingInfo,
+                    callingAppInfo.packageName,
+                )
             }
             return@runBlocking isRpValidDeferred.await()
         }
@@ -642,6 +635,7 @@ class CreatePasskeyActivity : FragmentActivity() {
             )
         }
     }
+
     companion object {
         /**
          * A JSON string representing an invalid allowlist configuration.

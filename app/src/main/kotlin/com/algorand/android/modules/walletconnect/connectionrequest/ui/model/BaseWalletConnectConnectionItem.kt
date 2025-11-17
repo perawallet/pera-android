@@ -24,7 +24,6 @@ sealed class BaseWalletConnectConnectionItem : RecyclerListItem {
         DAPP_INFO_ITEM,
         TITLE_ITEM,
         ACCOUNT_ITEM,
-        REQUESTED_PERMISSION_ITEM,
         NETWORK_ITEM,
         EVENT_ITEM
     }
@@ -50,7 +49,7 @@ sealed class BaseWalletConnectConnectionItem : RecyclerListItem {
     }
 
     data class TitleItem(
-        @PluralsRes val titleTextResId: Int,
+        @param:PluralsRes val titleTextResId: Int,
         val memberCount: Int
     ) : BaseWalletConnectConnectionItem() {
 
@@ -121,7 +120,7 @@ sealed class BaseWalletConnectConnectionItem : RecyclerListItem {
     }
 
     companion object {
-        val excludedItemFromDivider = listOf(
+        val excludedItemFromDivider: List<Int> = listOf(
             ItemType.DAPP_INFO_ITEM.ordinal,
             ItemType.TITLE_ITEM.ordinal,
             ItemType.EVENT_ITEM.ordinal,

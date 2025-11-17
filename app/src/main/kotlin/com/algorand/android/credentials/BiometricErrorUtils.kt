@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.credentials.provider.BiometricPromptResult
 import com.algorand.android.R
-import kotlin.toString
 
 object BiometricErrorUtils {
     @SuppressLint("StringFormatMatches")

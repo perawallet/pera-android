@@ -15,8 +15,8 @@ package com.algorand.android.models
 import android.os.Parcelable
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 sealed class TransactionSignData : Parcelable {

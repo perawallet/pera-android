@@ -19,10 +19,10 @@ import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.usecase.AsaProfileAccountSelectionPreviewUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AsaProfileAccountSelectionViewModel @Inject constructor(
@@ -30,9 +30,9 @@ class AsaProfileAccountSelectionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    val assetShortName = savedStateHandle.getOrThrow<String>(ASSET_SHORT_NAME_KEY)
+    val assetShortName: String = savedStateHandle.getOrThrow(ASSET_SHORT_NAME_KEY)
 
-    private val _accountSelectionFlow = MutableStateFlow<AsaProfileAccountSelectionPreview>(
+    private val _accountSelectionFlow = MutableStateFlow(
         asaProfileAccountSelectionPreviewUseCase.getInitialAccountSelectionPreview()
     )
     val accountSelectionFlow: StateFlow<AsaProfileAccountSelectionPreview> get() = _accountSelectionFlow

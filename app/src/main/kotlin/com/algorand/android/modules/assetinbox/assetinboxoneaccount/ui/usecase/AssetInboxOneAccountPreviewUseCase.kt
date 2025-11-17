@@ -6,9 +6,9 @@ import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.As
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountPreview
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class AssetInboxOneAccountPreviewUseCase @Inject constructor(
     private val getAssetInboxOneAccountPaginated: GetAssetInboxOneAccountPaginated,
@@ -19,7 +19,7 @@ class AssetInboxOneAccountPreviewUseCase @Inject constructor(
         return assetInboxOneAccountPreviewMapper.getInitialPreview()
     }
 
-    suspend fun getAssetInboxOneAccountPreview(
+    fun getAssetInboxOneAccountPreview(
         preview: AssetInboxOneAccountPreview,
         receiverAccountAddress: String,
     ): Flow<AssetInboxOneAccountPreview> = flow {

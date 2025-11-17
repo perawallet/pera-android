@@ -1,6 +1,6 @@
 package com.algorand.android.modules.collectibles.download
 
-import android.net.Uri
+import androidx.core.net.toUri
 import javax.inject.Inject
 
 class DownloadFileUseCase @Inject constructor(
@@ -8,7 +8,7 @@ class DownloadFileUseCase @Inject constructor(
 ) {
 
     fun execute(fileUrl: String, fileName: String?): Long {
-        val fileUri = Uri.parse(fileUrl)
+        val fileUri = fileUrl.toUri()
         val validFileName = fileName ?: fileUri.lastPathSegment.orEmpty()
         val downloadId = downloader.downloadFile(fileUri, validFileName)
 

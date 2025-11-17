@@ -33,11 +33,11 @@ import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToWriteDownInfoFragment
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.text.PeraBodyText
-import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import com.algorand.android.utils.browser.openRecoveryPassphraseSupportUrl
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,7 +49,7 @@ class BackupInfoFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val backupInfoViewModel: BackupInfoViewModel by viewModels()
@@ -62,7 +62,7 @@ class BackupInfoFragment : BaseInfoFragment() {
     }
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_shield),
             contentDescription = stringResource(R.string.shield),
@@ -71,14 +71,14 @@ class BackupInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.create_a_passphrase_backup)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier): Unit =
         PeraBodyText(
             text = stringResource(
                 id = R.string.creating_a_passphrase_backup
@@ -88,7 +88,7 @@ class BackupInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { navToWriteDownFragment() },
             modifier = modifier,
@@ -115,18 +115,24 @@ class BackupInfoFragment : BaseInfoFragment() {
         when {
             args.accountsToBackup.isNotEmpty() -> {
                 backupInfoViewModel.logOnboardingIUnderstandClickEvent()
-                nav(actionBackupInfoFragmentToWriteDownInfoFragment(
-                    args.accountsToBackup,
-                    null
-                ))
+                nav(
+                    actionBackupInfoFragmentToWriteDownInfoFragment(
+                        args.accountsToBackup,
+                        null
+                    )
+                )
             }
+
             accountCreation != null -> {
                 backupInfoViewModel.logOnboardingIUnderstandClickEvent()
-                nav(actionBackupInfoFragmentToWriteDownInfoFragment(
-                    arrayOf(),
-                    accountCreation
-                ))
+                nav(
+                    actionBackupInfoFragmentToWriteDownInfoFragment(
+                        arrayOf(),
+                        accountCreation
+                    )
+                )
             }
+
             else -> navBack()
         }
     }
@@ -159,6 +165,7 @@ class BackupInfoFragment : BaseInfoFragment() {
                 is OnboardingAccountType.HdKey -> {
                     backupInfoViewModel.createHdKeyAccount()
                 }
+
                 is OnboardingAccountType.Algo25 -> {
                     backupInfoViewModel.createAlgo25Account()
                 }
@@ -167,9 +174,5 @@ class BackupInfoFragment : BaseInfoFragment() {
             navBack()
             null
         }
-    }
-
-    companion object {
-        private const val ACCOUNT_CREATION_KEY = "accountCreation"
     }
 }

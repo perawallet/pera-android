@@ -20,10 +20,10 @@ import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselectio
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 @HiltViewModel
 class RekeyToStandardAccountSelectionViewModel @Inject constructor(
@@ -31,7 +31,7 @@ class RekeyToStandardAccountSelectionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseSingleAccountSelectionViewModel() {
 
-    val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(ACCOUNT_ADDRESS_KEY)
 
     override val singleAccountSelectionFieldsFlow: StateFlow<RekeyToStandardAccountSelectionPreview>
         get() = rekeyToAccountSingleAccountSelectionPreview

@@ -1,4 +1,3 @@
-
 package com.algorand.wallet.algosdk.transaction.sdk
 
 interface SignHdKeyTransaction {

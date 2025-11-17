@@ -24,6 +24,6 @@ class WCSessionValidityExtensionViewModel @Inject constructor(
 
     private val args = WCSessionValidityExtensionBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
 
-    val formattedExtendedSessionValidityDate = args.formattedExtendedSessionValidityDate
-    val formattedMaxExtendableSessionValidityDate = args.formattedMaxExtendableExpirationDate
+    val formattedExtendedSessionValidityDate: String = args.formattedExtendedSessionValidityDate
+    val formattedMaxExtendableSessionValidityDate: String = args.formattedMaxExtendableExpirationDate
 }

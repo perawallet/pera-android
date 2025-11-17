@@ -44,7 +44,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
     private val gson: Gson
 ) {
 
-    fun getInitialStatePreview(tokenDetail: TokenDetailInfo) = DiscoverDetailPreview(
+    fun getInitialStatePreview(tokenDetail: TokenDetailInfo): DiscoverDetailPreview = DiscoverDetailPreview(
         themePreference = sharedPreferences.getSavedThemePreference(),
         isLoading = true,
         reloadPageEvent = Event(Unit),
@@ -54,20 +54,20 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
     fun onPageRequestedShouldOverrideUrlLoading(
         previousState: DiscoverDetailPreview,
         url: String
-    ) = previousState.copy(
+    ): DiscoverDetailPreview = previousState.copy(
         externalPageRequestedEvent = Event(url)
     )
 
-    fun onPageFinished(previousState: DiscoverDetailPreview) = previousState.copy(
+    fun onPageFinished(previousState: DiscoverDetailPreview): DiscoverDetailPreview = previousState.copy(
         isLoading = false
     )
 
-    fun onError(previousState: DiscoverDetailPreview) = previousState.copy(
+    fun onError(previousState: DiscoverDetailPreview): DiscoverDetailPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onHttpError(previousState: DiscoverDetailPreview) = previousState.copy(
+    fun onHttpError(previousState: DiscoverDetailPreview): DiscoverDetailPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )
@@ -88,7 +88,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
         }
     }
 
-    suspend fun handleTokenDetailActionButtonClick(
+    fun handleTokenDetailActionButtonClick(
         data: String,
         previousState: DiscoverDetailPreview
     ): DiscoverDetailPreview {

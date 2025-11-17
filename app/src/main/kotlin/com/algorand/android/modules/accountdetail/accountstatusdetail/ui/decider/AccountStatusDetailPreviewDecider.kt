@@ -27,7 +27,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class AccountStatusDetailPreviewDecider @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
 
     fun decideTitleString(accountType: AccountType?): String {
@@ -75,6 +75,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     authAccountState
                 )
             }
+
             AccountType.HdKey -> context.getString(R.string.universal_wallet)
             null -> context.getString(R.string.no_auth)
         }
@@ -92,10 +93,12 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     AccountRegistrationType.Algo25, AccountRegistrationType.HdKey -> {
                         R.string.your_account_is_rekeyed_to_another
                     }
+
                     AccountRegistrationType.LedgerBle -> R.string.your_account_is_rekeyed_to_an_account_on
                     else -> R.string.your_account_is_rekeyed_to_unknown
                 }
             }
+
             null -> R.string.your_account_is_rekeyed_to_an
             AccountType.HdKey -> R.string.your_account_is_a_hd_wallet_address
         }

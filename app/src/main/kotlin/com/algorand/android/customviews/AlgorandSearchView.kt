@@ -24,7 +24,6 @@ import androidx.core.widget.doOnTextChanged
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomSearchBarBinding
 import com.algorand.android.utils.extensions.setIconAndVisibility
-import com.algorand.android.utils.requestFocusAndShowKeyboard
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 
@@ -111,14 +110,6 @@ class AlgorandSearchView @JvmOverloads constructor(
 
     fun setOnClickListener(onClick: () -> Unit) {
         binding.searchEditText.setOnClickListener { onClick() }
-    }
-
-    fun setAsNonFocusable() {
-        binding.searchEditText.isFocusable = false
-    }
-
-    fun setFocusAndOpenKeyboard() {
-        binding.searchEditText.requestFocusAndShowKeyboard()
     }
 
     private fun setOnDeleteButtonClick() {

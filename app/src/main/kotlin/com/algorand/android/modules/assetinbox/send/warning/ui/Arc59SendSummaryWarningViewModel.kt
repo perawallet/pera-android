@@ -39,6 +39,6 @@ class Arc59SendSummaryWarningViewModel @Inject constructor(
     }
 
     companion object {
-        const val ARC_59_SEND_SUMMARY_WARNING_NAV_ARGS_KEY = "arc59SendSummaryWarningNavArgs"
+        const val ARC_59_SEND_SUMMARY_WARNING_NAV_ARGS_KEY: String = "arc59SendSummaryWarningNavArgs"
     }
 }

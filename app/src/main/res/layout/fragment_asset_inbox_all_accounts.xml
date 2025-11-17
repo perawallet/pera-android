@@ -66,7 +66,6 @@
         app:constraint_referenced_ids="emptyStateTextView, emptyStateTitleTextView"
         tools:visibility="visible" />
 
-
     <include
         android:id="@+id/progressbar"
         layout="@layout/layout_full_screen_progress" />

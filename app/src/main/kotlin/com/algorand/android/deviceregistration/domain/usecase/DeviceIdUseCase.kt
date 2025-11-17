@@ -21,7 +21,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class DeviceIdUseCase @Inject constructor(
-    @Named(UserDeviceIdRepository.USER_DEVICE_ID_REPOSITORY_INJECTION_NAME)
+    @param:Named(UserDeviceIdRepository.USER_DEVICE_ID_REPOSITORY_INJECTION_NAME)
     private val userDeviceIdRepository: UserDeviceIdRepository,
     private val getActiveNodeUseCase: GetActiveNodeUseCase
 ) {

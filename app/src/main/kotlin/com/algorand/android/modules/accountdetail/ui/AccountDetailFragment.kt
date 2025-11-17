@@ -30,7 +30,6 @@ package com.algorand.android.modules.accountdetail.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
@@ -86,13 +85,11 @@ class AccountDetailFragment :
         }
     }
 
-    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val binding by viewBinding(FragmentAccountDetailBinding::bind)
 
     private val accountDetailViewModel: AccountDetailViewModel by viewModels()
-
-    private val args: AccountDetailFragmentArgs by navArgs()
 
     private val accountDetailSummaryCollector: suspend (AccountDetailSummary?) -> Unit = { summary ->
         if (summary != null) initAccountDetailSummary(summary)

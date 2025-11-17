@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.account.info.domain.model
 
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 
 data class AccountInformation(
@@ -34,15 +33,11 @@ data class AccountInformation(
         return !rekeyAdminAddress.isNullOrEmpty() && rekeyAdminAddress != address
     }
 
-    fun hasAsset(assetId: Long): Boolean {
-        return assetId == ALGO_ID || assetHoldings.any { it.assetId == assetId }
-    }
+    fun getAssetHoldingIds(): List<Long> = assetHoldings.map { it.assetId }
 
-    fun getAssetHoldingIds() = assetHoldings.map { it.assetId }
+    fun isCreated(): Boolean = createdAtRound != null
 
-    fun isCreated() = createdAtRound != null
+    fun isThereAnOptedInApp(): Boolean = totalAppsOptedIn > 0 || totalCreatedApps > 0
 
-    fun isThereAnOptedInApp() = totalAppsOptedIn > 0 || totalCreatedApps > 0
-
-    fun isThereAnOptedInAsset() = totalAssetsOptedIn > 0 || totalCreatedAssets > 0
+    fun isThereAnOptedInAsset(): Boolean = totalAssetsOptedIn > 0 || totalCreatedAssets > 0
 }

@@ -10,12 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.swap.assetswap.data.di
+package com.algorand.android.modules.walletconnect.connectionrequest.data.di
 
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.walletconnect.connectionrequest.data.repository.WCDomainDomainScammerStateRepositoryImpl
 import com.algorand.android.modules.walletconnect.connectionrequest.domain.repository.WCDomainScammerStateRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,11 +30,11 @@ object WCDomainScammerStateRepositoryModule {
     @Provides
     fun provideWCDomainScammerStateRepository(
         mobileAlgorandApi: MobileAlgorandApi,
-        hipoApiErrorHandler: RetrofitErrorHandler
+        peraApiErrorHandler: RetrofitErrorHandler
     ): WCDomainScammerStateRepository {
         return WCDomainDomainScammerStateRepositoryImpl(
             mobileAlgorandApi,
-            hipoApiErrorHandler
+            peraApiErrorHandler
         )
     }
 }

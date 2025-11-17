@@ -16,11 +16,11 @@ import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetStatus
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.mockito.kotlin.mock
+import java.math.BigInteger
 
 class AssetHoldingEntityMapperImplTest {
 
@@ -75,8 +75,7 @@ class AssetHoldingEntityMapperImplTest {
             amount = "10",
             isFrozen = false,
             isDeleted = false,
-            optedInAtRound = 0,
-            optedOutAtRound = null
+            optedInAtRound = 0
         )
         val EXPECTED_ENTITY = AssetHoldingEntity(
             algoAddress = ADDRESS,

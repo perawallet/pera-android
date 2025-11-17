@@ -19,6 +19,7 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.wallet.account.local.domain.model.LocalAccount.NoAuth
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -31,7 +32,7 @@ class IsThereAnyAccountWithAddressUseCaseTest {
     private val sut = IsThereAnyAccountWithAddressUseCase(getLocalAccounts)
 
     @Test
-    fun `EXPECT true WHEN account is found`() = runTest {
+    fun `EXPECT true WHEN account is found`(): TestResult = runTest {
         val localAccounts = listOf(
             HD_ACCOUNT,
             ALGO_25_ACCOUNT,
@@ -46,7 +47,7 @@ class IsThereAnyAccountWithAddressUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN account is not found`() = runTest {
+    fun `EXPECT false WHEN account is not found`(): TestResult = runTest {
         val localAccounts = listOf(
             NO_AUTH_ACCOUNT,
             LEDGER_BLE_ACCOUNT
@@ -59,7 +60,7 @@ class IsThereAnyAccountWithAddressUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN local account list is empty`() = runTest {
+    fun `EXPECT false WHEN local account list is empty`(): TestResult = runTest {
         coEvery { getLocalAccounts() } returns emptyList()
 
         val result = sut(ALGO_25_ADDRESS)

@@ -19,4 +19,3 @@
     android:layout_marginVertical="@dimen/spacing_xxxsmall"
     android:paddingHorizontal="@dimen/spacing_xlarge"
     tools:text="@string/alphabetically_z_to_a" />
-

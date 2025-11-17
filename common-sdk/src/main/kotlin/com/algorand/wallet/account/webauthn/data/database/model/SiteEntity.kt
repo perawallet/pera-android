@@ -32,7 +32,7 @@ import androidx.room.PrimaryKey
         Index("url", unique = true),
     ],
 )
-data class SiteEntity (
+data class SiteEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
     @ColumnInfo(name = "url") val url: String = "",
     @ColumnInfo(name = "package_name") val packageName: String = "",

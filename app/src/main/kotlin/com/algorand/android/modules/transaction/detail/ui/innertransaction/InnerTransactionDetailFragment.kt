@@ -17,8 +17,8 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.ui.BaseTransactionDetailFragment
@@ -28,13 +28,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class InnerTransactionDetailFragment : BaseTransactionDetailFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.inner_transactions,
         startIconResId = R.drawable.ic_left_arrow,
         startIconClick = ::onNavBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
@@ -45,7 +45,8 @@ class InnerTransactionDetailFragment : BaseTransactionDetailFragment() {
         }
     }
 
-    override val transactionDetailViewModel by viewModels<InnerTransactionDetailViewModel>()
+    override val transactionDetailViewModel: InnerTransactionDetailViewModel
+            by viewModels<InnerTransactionDetailViewModel>()
 
     private val innerTransactionListener = object : TransactionDetailAdapter.InnerTransactionListener {
         override fun onStandardTransactionClick(transaction: BaseTransactionDetail) {
@@ -57,7 +58,7 @@ class InnerTransactionDetailFragment : BaseTransactionDetailFragment() {
         }
     }
 
-    override val transactionDetailAdapter = TransactionDetailAdapter(
+    override val transactionDetailAdapter: TransactionDetailAdapter = TransactionDetailAdapter(
         innerTransactionListener = innerTransactionListener
     )
 

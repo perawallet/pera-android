@@ -50,18 +50,21 @@ class RekeyToStandardAccountIntroductionPreviewDecider @Inject constructor() {
                     add(AnnotatedString(stringResId = R.string.this_account_will_no_longer))
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
                 }
+
                 AccountType.LedgerBle -> {
                     add(AnnotatedString(stringResId = R.string.future_transactions_can_only_be))
                     add(AnnotatedString(stringResId = R.string.your_ledger_device_will_no_longer))
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
+
                 AccountType.Rekeyed, AccountType.RekeyedAuth -> {
                     add(AnnotatedString(stringResId = R.string.future_transactions_will_be_signed))
                     add(AnnotatedString(stringResId = R.string.this_account_will_continue))
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
+
                 AccountType.NoAuth, null -> Unit
             }
         }

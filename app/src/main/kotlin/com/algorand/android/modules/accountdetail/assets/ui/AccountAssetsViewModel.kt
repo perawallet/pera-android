@@ -24,7 +24,6 @@ import com.algorand.android.ui.accountdetail.assets.tracker.AccountAssetsEventTr
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +35,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountAssetsViewModel @Inject constructor(

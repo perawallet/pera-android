@@ -16,10 +16,11 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.installations.FirebaseInstallations
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.test.runTest
 
 class FirebaseAnalyticsRepositoryImplTest {
 
@@ -33,9 +34,9 @@ class FirebaseAnalyticsRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN successful task WHEN getFirebaseInstanceId called THEN returns installation id`() = runTest {
+    fun `GIVEN successful task WHEN getFirebaseInstanceId called THEN returns installation id`(): TestResult = runTest {
         val expectedId = "test-firebase-id-123"
-        every { mockFirebaseInstallations.getId() } returns mockTask
+        every { mockFirebaseInstallations.id } returns mockTask
         every { mockTask.isSuccessful } returns true
         every { mockTask.result } returns expectedId
 
@@ -51,9 +52,9 @@ class FirebaseAnalyticsRepositoryImplTest {
     }
 
     @Test(expected = Exception::class)
-    fun `GIVEN failed task WHEN getFirebaseInstanceId called THEN throws exception`() = runTest {
+    fun `GIVEN failed task WHEN getFirebaseInstanceId called THEN throws exception`(): TestResult = runTest {
         val expectedException = Exception("Task failed")
-        every { mockFirebaseInstallations.getId() } returns mockTask
+        every { mockFirebaseInstallations.id } returns mockTask
         every { mockTask.isSuccessful } returns false
         every { mockTask.exception } returns expectedException
         every { mockTask.addOnCompleteListener(any()) } answers {
@@ -65,15 +66,16 @@ class FirebaseAnalyticsRepositoryImplTest {
     }
 
     @Test(expected = Exception::class)
-    fun `GIVEN failed task with null exception WHEN getFirebaseInstanceId called THEN throws default exception`() = runTest {
-        every { mockFirebaseInstallations.getId() } returns mockTask
-        every { mockTask.isSuccessful } returns false
-        every { mockTask.exception } returns null
-        every { mockTask.addOnCompleteListener(any()) } answers {
-            firstArg<(Task<String>) -> Unit>().invoke(mockTask)
-            mockTask
-        }
+    fun `GIVEN failed task with null exception WHEN getFirebaseInstanceId called THEN throws default exception`(): TestResult =
+        runTest {
+            every { mockFirebaseInstallations.id } returns mockTask
+            every { mockTask.isSuccessful } returns false
+            every { mockTask.exception } returns null
+            every { mockTask.addOnCompleteListener(any()) } answers {
+                firstArg<(Task<String>) -> Unit>().invoke(mockTask)
+                mockTask
+            }
 
-        sut.getFirebaseInstanceId()
-    }
+            sut.getFirebaseInstanceId()
+        }
 }

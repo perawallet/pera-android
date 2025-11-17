@@ -14,11 +14,11 @@
 package com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model
 
 import android.os.Parcelable
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.AssetName
-import java.math.BigInteger
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class Arc59ReceiveDetailNavArgs(

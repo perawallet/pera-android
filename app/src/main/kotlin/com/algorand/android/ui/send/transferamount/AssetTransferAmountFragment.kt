@@ -42,7 +42,6 @@ import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
@@ -76,7 +75,9 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentAssetTransferAmountBinding::bind)
 
@@ -393,10 +394,6 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
 
     private fun showProgress() {
         binding.blockerProgressBar.root.show()
-    }
-
-    private fun hideProgress() {
-        binding.blockerProgressBar.root.hide()
     }
 
     private fun onAssetNotFound() {

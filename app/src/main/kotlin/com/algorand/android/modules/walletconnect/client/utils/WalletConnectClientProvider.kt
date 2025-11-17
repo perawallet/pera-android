@@ -20,9 +20,9 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class WalletConnectClientProvider @Inject constructor(
-    @Named(WalletConnectClientV1Impl.INJECTION_NAME)
+    @param:Named(WalletConnectClientV1Impl.INJECTION_NAME)
     private val walletConnectV1Client: WalletConnectClient,
-    @Named(WalletConnectClientV2Impl.INJECTION_NAME)
+    @param:Named(WalletConnectClientV2Impl.INJECTION_NAME)
     private val walletConnectV2Client: WalletConnectClient,
 ) {
 

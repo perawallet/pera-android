@@ -27,7 +27,7 @@ sealed class WalletConnectSignResult {
         val signedTransaction: List<ByteArray?>
     ) : WalletConnectSignResult()
 
-    sealed class Error(@StringRes val titleResId: Int) : WalletConnectSignResult() {
+    sealed class Error(@param:StringRes val titleResId: Int) : WalletConnectSignResult() {
         fun getMessage(context: Context): Pair<String, CharSequence> {
             val title = context.getString(titleResId)
             return when (this) {

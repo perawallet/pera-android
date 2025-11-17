@@ -17,9 +17,9 @@ import androidx.annotation.DrawableRes
 import com.algorand.android.R
 
 enum class GovernorIconResource(
-    @DrawableRes val iconResId: Int,
-    @ColorRes val backgroundColorResId: Int,
-    @ColorRes val iconTintResId: Int
+    @param:DrawableRes val iconResId: Int,
+    @param:ColorRes val backgroundColorResId: Int,
+    @param:ColorRes val iconTintResId: Int
 ) {
     WATCH(R.drawable.ic_crown_filled, R.color.background, R.color.wallet_1_icon_governor),
 

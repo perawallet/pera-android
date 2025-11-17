@@ -21,6 +21,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.net.toUri
 import com.algorand.android.utils.walletconnect.getRandomPeerMetaIconResId
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -87,11 +88,7 @@ fun Context.loadImage(uri: String, onResourceReady: (Drawable) -> Unit, onLoadFa
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                if (resource != null) {
-                    onResourceReady(resource)
-                } else {
-                    onLoadFailed?.invoke()
-                }
+                onResourceReady(resource)
                 return true
             }
         })
@@ -126,12 +123,8 @@ fun Context.loadImageWithCachedFirst(
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                if (resource != null) {
-                    onCachedResourceReady(resource)
-                    this@loadImageWithCachedFirst.loadImage(uri, onResourceReady, onLoadFailed)
-                } else {
-                    onCachedLoadFailed?.invoke()
-                }
+                onCachedResourceReady(resource)
+                this@loadImageWithCachedFirst.loadImage(uri, onResourceReady, onLoadFailed)
                 return true
             }
         })
@@ -194,9 +187,9 @@ fun copyBitmapToClipboard(context: Context, bitmap: Bitmap) {
     try {
         val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val uri = MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Copied Image", null)
-        val clip = ClipData.newUri(context.contentResolver, "Image", Uri.parse(uri))
+        val clip = ClipData.newUri(context.contentResolver, "Image", uri.toUri())
         clipboardManager.setPrimaryClip(clip)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         // Handle exception
     }
 }

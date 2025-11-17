@@ -45,8 +45,6 @@ class ParseNewDeepLinkPayloadImplTest {
             transactionStatus = "transactionStatus",
             mnemonic = "mnemonic",
             url = "url",
-            webImportQrCode = null,
-            notificationGroupType = null,
             fee = "1",
             votekey = "votekey",
             selkey = "selkey",
@@ -63,8 +61,7 @@ class ParseNewDeepLinkPayloadImplTest {
             backupId = "backupId",
             encryptionKey = "encryptionKey",
             action = "action",
-            receiverAddress = "receiverAddress",
-            lastPathSegment = null
+            receiverAddress = "receiverAddress"
         )
         assertEquals(expected, result)
     }

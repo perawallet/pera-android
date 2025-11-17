@@ -37,7 +37,7 @@ class WalletConnectArbitraryDataRequestPreviewUseCase @Inject constructor(
         return walletConnectArbitraryDataRequestPreviewMapper.mapToWalletConnectArbitraryDataRequestPreview()
     }
 
-    suspend fun updatePreviewWithLaunchBackBrowserNavigation(
+    fun updatePreviewWithLaunchBackBrowserNavigation(
         shouldSkipConfirmation: Boolean,
         preview: WalletConnectArbitraryDataRequestPreview,
         walletConnectSession: WalletConnectSession?

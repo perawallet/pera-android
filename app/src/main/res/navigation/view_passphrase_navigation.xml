@@ -29,7 +29,7 @@
     <dialog
         android:id="@+id/passphraseAcknowledgeBottomSheet"
         android:name="com.algorand.android.ui.passphrase.acknowledge.view.PassphraseAcknowledgeBottomSheet"
-        android:label="PassphraseAcknowledgeBottomSheet" >
+        android:label="PassphraseAcknowledgeBottomSheet">
 
         <argument
             android:name="accountAddress"

@@ -54,14 +54,6 @@ class PeraLineChartView(context: Context, attrs: AttributeSet? = null) : Abstrac
         viewState = ViewState.Error
     }
 
-    fun showLoading() {
-        viewState = ViewState.Loading
-    }
-
-    fun setData(chartData: List<Float>) {
-        viewState = ViewState.Data(chartData)
-    }
-
     private sealed interface ViewState {
         data object Idle : ViewState
         data object Loading : ViewState

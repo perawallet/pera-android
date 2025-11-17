@@ -31,7 +31,7 @@ import androidx.biometric.BiometricPrompt.ERROR_USER_CANCELED
 import androidx.fragment.app.FragmentActivity
 import com.algorand.android.utils.executer.MainDispatcherExecutor
 
-const val BIOMETRIC_AUTH_LEVEL = BIOMETRIC_WEAK
+const val BIOMETRIC_AUTH_LEVEL: Int = BIOMETRIC_WEAK
 
 fun Context.isBiometricAvailable(): Boolean {
     return BiometricManager.from(this).canAuthenticate(BIOMETRIC_AUTH_LEVEL) == BIOMETRIC_SUCCESS
@@ -60,6 +60,7 @@ fun FragmentActivity.showBiometricAuthentication(
             when (errorCode) {
                 ERROR_HW_NOT_PRESENT, ERROR_HW_UNAVAILABLE,
                 ERROR_LOCKOUT_PERMANENT, ERROR_UNABLE_TO_PROCESS, ERROR_NO_BIOMETRICS -> hardwareErrorCallback?.invoke()
+
                 ERROR_CANCELED, ERROR_USER_CANCELED, ERROR_NEGATIVE_BUTTON -> userCancelledErrorCallback?.invoke()
                 ERROR_LOCKOUT -> lockedOutErrorCallback?.invoke()
                 ERROR_TIMEOUT -> timeOutErrorCallback?.invoke()

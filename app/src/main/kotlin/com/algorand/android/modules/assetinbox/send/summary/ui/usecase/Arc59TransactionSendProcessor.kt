@@ -16,8 +16,8 @@ package com.algorand.android.modules.assetinbox.send.summary.ui.usecase
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.transaction.confirmation.domain.usecase.TransactionConfirmationUseCase
 import com.algorand.android.usecase.SendSignedTransactionUseCase
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 class Arc59TransactionSendProcessor @Inject constructor(
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,

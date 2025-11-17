@@ -16,6 +16,7 @@ import com.algorand.test.peraFixture
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -28,7 +29,7 @@ class IsThereAnyLocalAccountUseCaseTest {
     private val sut = IsThereAnyLocalAccountUseCase(getLocalAccounts)
 
     @Test
-    fun `EXPECT true WHEN there are local accounts`() = runTest {
+    fun `EXPECT true WHEN there are local accounts`(): TestResult = runTest {
         coEvery { getLocalAccounts() } returns LOCAL_ACCOUNTS
 
         val result = sut()
@@ -37,7 +38,7 @@ class IsThereAnyLocalAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN there are not any local accounts`() = runTest {
+    fun `EXPECT false WHEN there are not any local accounts`(): TestResult = runTest {
         coEvery { getLocalAccounts() } returns emptyList()
 
         val result = sut()

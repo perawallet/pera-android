@@ -23,8 +23,8 @@ import com.algorand.android.repository.TransactionsRepository
 import com.algorand.android.usecase.IsOnTestnetUseCase
 import com.algorand.android.utils.toSuggestedParams
 import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
-import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import javax.inject.Inject
 
 class CreateArc59ClaimTransactionUseCase @Inject constructor(

@@ -17,7 +17,6 @@ import android.text.Editable
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.recordException
 import java.math.BigDecimal
-import java.net.URLEncoder
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
@@ -30,25 +29,13 @@ fun String.formatAsAvatarTextOrThrow(maxLength: Int): String {
     return if (splitItem.size == 1) {
         splitItem.firstOrNull()
     } else {
-        splitItem.joinToString("") { s -> s.substring(0, 1) }
+        splitItem.joinToString("") { s -> s.take(1) }
     }?.take(maxLength)?.uppercase(Locale.ENGLISH).orEmpty()
 }
 
-fun String.replaceAt(start: Int, element: String): String {
-    if (start > length || start < 0) return this
-    val end = if (start + 1 > length) start else start + 1
-    return replaceRange(start, end, element)
-}
-
 fun String.appendAt(start: Int, element: String): String {
-    if (start > length || start < 0) return this
+    if (start !in 0..length) return this
     return replaceRange(start, start, element)
-}
-
-fun String.removeAt(start: Int): String {
-    if (start > length || start < 0) return this
-    val end = if (start + 1 > length) start else start + 1
-    return removeRange(start, end)
 }
 
 fun String.wrapWithBrackets(): String {
@@ -74,13 +61,6 @@ fun String.toBigDecimalWithLocale(): BigDecimal {
     }
 }
 
-fun String.capitalizeFirstChar(): String {
-    return lowercase(Locale.getDefault())
-        .replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-        }
-}
-
 fun String.capitalizeWords(): String = split(" ").joinToString(" ") { word ->
     word.replaceFirstChar { letter ->
         if (letter.isLowerCase()) letter.titlecase(Locale.getDefault()) else letter.toString()
@@ -89,10 +69,6 @@ fun String.capitalizeWords(): String = split(" ").joinToString(" ") { word ->
 
 fun String.addHashtagToStart(): String {
     return "#$this"
-}
-
-fun String.encodeToURL(charset: String = Charsets.UTF_8.name()): String {
-    return URLEncoder.encode(this, charset)
 }
 
 inline fun <T : CharSequence, R> T.mapNotBlank(block: (T) -> R): R? = if (isNotBlank()) block(this) else null

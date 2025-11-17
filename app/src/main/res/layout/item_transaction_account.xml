@@ -47,5 +47,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem[10]" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>

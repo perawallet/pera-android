@@ -16,7 +16,9 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
@@ -25,16 +27,19 @@ import com.algorand.android.ui.accountselection.BaseAccountSelectionFragment
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AsaProfileAccountSelectionFragment : BaseAccountSelectionFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         startIconClick = ::navBack,
         startIconResId = R.drawable.ic_left_arrow
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val asaProfileAccountSelectionViewModel by viewModels<AsaProfileAccountSelectionViewModel>()
 
@@ -75,14 +80,16 @@ class AsaProfileAccountSelectionFragment : BaseAccountSelectionFragment() {
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            asaProfileAccountSelectionViewModel.accountSelectionFlow.collectLatest(
-                asaProfileAccountSelectionPreviewCollector
-            )
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                asaProfileAccountSelectionViewModel.accountSelectionFlow.collectLatest(
+                    asaProfileAccountSelectionPreviewCollector
+                )
+            }
         }
     }
 
     companion object {
-        const val ASA_PROFILE_ACCOUNT_SELECTION_RESULT_KEY = "asaProfileAccountSelectionResult"
+        const val ASA_PROFILE_ACCOUNT_SELECTION_RESULT_KEY: String = "asaProfileAccountSelectionResult"
     }
 }

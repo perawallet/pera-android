@@ -26,8 +26,8 @@ import com.algorand.wallet.swap.domain.model.SwapHistoryPagingData
 import com.algorand.wallet.swap.domain.model.SwapHistoryStatus
 import com.algorand.wallet.swap.domain.model.SwapPairHistory
 import com.algorand.wallet.swap.domain.repository.SwapHistoryRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 internal class DefaultSwapHistoryRepository @Inject constructor(
     private val swapHistoryPagingSource: PagingSource<SwapHistoryPagingData, SwapHistory>,

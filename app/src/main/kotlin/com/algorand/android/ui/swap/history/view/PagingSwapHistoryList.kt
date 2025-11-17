@@ -118,7 +118,7 @@ private fun getItemDescription(item: SwapHistoryItem): AnnotatedString {
             val endIndex = startIndex + assetOutAmount.length
 
             withStyle(style = mainSpan) {
-                append(descriptionText.substring(0, startIndex))
+                append(descriptionText.take(startIndex))
             }
 
             withStyle(style = mainSpan.copy(fontWeight = boldWeight)) {

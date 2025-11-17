@@ -1,10 +1,12 @@
 package com.algorand.wallet.asset.data.database.model
 
 import androidx.room.ColumnInfo
+import androidx.room.RoomWarnings
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import java.math.BigDecimal
 import java.math.BigInteger
 
+@SuppressWarnings(RoomWarnings.QUERY_MISMATCH)
 internal data class PaginatedAssetCollectibleItemDto(
     @ColumnInfo(name = "algo_address")
     val address: String,

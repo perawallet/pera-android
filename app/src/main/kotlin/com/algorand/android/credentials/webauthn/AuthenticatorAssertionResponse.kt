@@ -12,7 +12,7 @@ class AuthenticatorAssertionResponse(
     packageName: String? = null,
     private val clientDataHash: ByteArray? = null,
 ) : AuthenticatorResponse {
-    override var clientJson = JSONObject()
+    override var clientJson: JSONObject = JSONObject()
     private var authenticatorData: ByteArray
     var signature: ByteArray = byteArrayOf()
 
@@ -45,8 +45,8 @@ class AuthenticatorAssertionResponse(
             flags = flags or 0x10
         }
         return rpHash +
-            byteArrayOf(flags.toByte()) +
-            byteArrayOf(0, 0, 0, 0)
+                byteArrayOf(flags.toByte()) +
+                byteArrayOf(0, 0, 0, 0)
     }
 
     /**

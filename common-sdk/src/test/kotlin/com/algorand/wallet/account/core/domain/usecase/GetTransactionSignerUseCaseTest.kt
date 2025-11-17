@@ -24,6 +24,7 @@ import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -42,7 +43,7 @@ class GetTransactionSignerUseCaseTest {
     private val sut = GetTransactionSignerUseCase(getAccountDetail, getLedgerBleAccount, getAccountRekeyAdminAddress)
 
     @Test
-    fun `EXPECT AccountNotFound WHEN signer address detail type is not found`() = runTest {
+    fun `EXPECT AccountNotFound WHEN signer address detail type is not found`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = null)
 
         val result = sut(ADDRESS)
@@ -52,7 +53,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT Algo25 WHEN signer account type is Algo25`() = runTest {
+    fun `EXPECT Algo25 WHEN signer account type is Algo25`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = AccountType.Algo25)
 
         val result = sut(ADDRESS)
@@ -62,7 +63,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT LedgerBle WHEN signer account type is ledger`() = runTest {
+    fun `EXPECT LedgerBle WHEN signer account type is ledger`(): TestResult = runTest {
         val ledgerBleAccount = peraFixture<LocalAccount.LedgerBle>().copy(
             algoAddress = ADDRESS
         )
@@ -80,7 +81,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT AccountNotFound WHEN signer account type is ledger but app does not have ledger details`() = runTest {
+    fun `EXPECT AccountNotFound WHEN signer account type is ledger but app does not have ledger details`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = LedgerBle)
         wheneverBlocking { getLedgerBleAccount(ADDRESS) } doReturn null
 
@@ -91,7 +92,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT NoAuth WHEN signer account type is NoAuth`() = runTest {
+    fun `EXPECT NoAuth WHEN signer account type is NoAuth`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = NoAuth)
 
         val result = sut(ADDRESS)
@@ -101,7 +102,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT NoAuth WHEN signer is rekeyed and app does not have auth details`() = runTest {
+    fun `EXPECT NoAuth WHEN signer is rekeyed and app does not have auth details`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = AccountType.Rekeyed)
 
         val result = sut(ADDRESS)
@@ -111,7 +112,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT AccountNotFound WHEN signer is rekeyed auth but auth info is not cached`() = runTest {
+    fun `EXPECT AccountNotFound WHEN signer is rekeyed auth but auth info is not cached`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = RekeyedAuth)
         wheneverBlocking { getAccountDetail("rekeyedAuth") } doReturn ACCOUNT_DETAIL.copy(
             accountRegistrationType = null
@@ -125,7 +126,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT AccountNotFound WHEN signer is rekeyed auth but rekey admin address is missing`() = runTest {
+    fun `EXPECT AccountNotFound WHEN signer is rekeyed auth but rekey admin address is missing`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = RekeyedAuth)
         wheneverBlocking { getAccountRekeyAdminAddress(ADDRESS) } doReturn null
 
@@ -136,7 +137,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT Algo25 WHEN signer is rekeyed auth and auth account registration type is Algo25`() = runTest {
+    fun `EXPECT Algo25 WHEN signer is rekeyed auth and auth account registration type is Algo25`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = RekeyedAuth)
         wheneverBlocking { getAccountDetail(AUTH_ADDRESS) } doReturn ACCOUNT_DETAIL.copy(
             accountRegistrationType = AccountRegistrationType.Algo25
@@ -149,7 +150,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT LedgerBle WHEN signer is rekeyed auth and auth account registration type is LedgerBle`() = runTest {
+    fun `EXPECT LedgerBle WHEN signer is rekeyed auth and auth account registration type is LedgerBle`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = RekeyedAuth)
         wheneverBlocking { getAccountDetail(AUTH_ADDRESS) } doReturn ACCOUNT_DETAIL.copy(
             accountRegistrationType = AccountRegistrationType.LedgerBle
@@ -168,7 +169,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT NoAuth WHEN signer is rekeyed auth and auth account registration type is NoAuth`() = runTest {
+    fun `EXPECT NoAuth WHEN signer is rekeyed auth and auth account registration type is NoAuth`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = RekeyedAuth)
         wheneverBlocking { getAccountDetail(AUTH_ADDRESS) } doReturn ACCOUNT_DETAIL.copy(
             accountRegistrationType = AccountRegistrationType.NoAuth
@@ -181,7 +182,7 @@ class GetTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT AuthAddressNotFound WHEN signer is rekeyed auth and auth registration type is missing`() = runTest {
+    fun `EXPECT AuthAddressNotFound WHEN signer is rekeyed auth and auth registration type is missing`(): TestResult = runTest {
         wheneverBlocking { getAccountDetail(ADDRESS) } doReturn ACCOUNT_DETAIL.copy(accountType = RekeyedAuth)
         wheneverBlocking { getAccountDetail(AUTH_ADDRESS) } doReturn ACCOUNT_DETAIL.copy(
             accountRegistrationType = null

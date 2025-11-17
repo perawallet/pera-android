@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.analytics
 
-import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.model.ReferrerData
+import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
@@ -23,7 +23,7 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
-internal class PeraReferrerQueryParamParserImpl @Inject constructor(): PeraReferrerQueryParamParser {
+internal class PeraReferrerQueryParamParserImpl @Inject constructor() : PeraReferrerQueryParamParser {
 
     override fun getReferrerData(queryString: String?): ReferrerData {
         val params = mutableMapOf<String, String>()

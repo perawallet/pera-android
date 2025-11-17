@@ -110,7 +110,7 @@ class AssetDetailV2ViewModel @Inject constructor(
         }
     }
 
-    fun getActiveNodeSlug() = networkSlugUseCase.getActiveNodeSlug()
+    fun getActiveNodeSlug(): String? = networkSlugUseCase.getActiveNodeSlug()
 
     private fun loadViewState(address: String, assetId: Long) {
         stateDelegate.updateState { ViewState.Loading }

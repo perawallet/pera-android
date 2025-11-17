@@ -20,15 +20,16 @@ import com.algorand.android.decider.DateFilterUseCase
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.ui.DateFilterPreview
 import com.algorand.android.models.ui.TransactionLoadStatePreview
+import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueFlow
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.modules.transactionhistory.ui.usecase.PendingTransactionsPreviewUseCase
 import com.algorand.android.modules.transactionhistory.ui.usecase.TransactionHistoryPreviewUseCase
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AssetDetailUseCase @Inject constructor(
@@ -39,10 +40,14 @@ class AssetDetailUseCase @Inject constructor(
     private val getAccountTotalValueFlow: GetAccountTotalValueFlow
 ) : BaseUseCase() {
 
-    val pendingTransactionDistinctUntilChangedListener
+    val pendingTransactionDistinctUntilChangedListener: (
+        List<BaseTransactionItem>?,
+        List<BaseTransactionItem>?
+    ) -> Boolean
         get() = pendingTransactionsPreviewUseCase.pendingFlowDistinctUntilChangedListener
 
-    fun getAccountBalanceFlow(publicKey: String) = getAccountTotalValueFlow(publicKey, includeAlgo = true)
+    fun getAccountBalanceFlow(publicKey: String): Flow<AccountTotalValue> =
+        getAccountTotalValueFlow(publicKey, includeAlgo = true)
 
     fun getTransactionFlow(
         publicKey: String,

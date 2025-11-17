@@ -18,7 +18,7 @@ import javax.inject.Inject
 class WalletConnectV2BlockchainDecider @Inject constructor() {
 
     fun decideBlockchain(name: String?): WalletConnectBlockchain {
-        return WalletConnectBlockchain.values().firstOrNull {
+        return WalletConnectBlockchain.entries.firstOrNull {
             it.value == name
         } ?: WalletConnectBlockchain.UNKNOWN
     }

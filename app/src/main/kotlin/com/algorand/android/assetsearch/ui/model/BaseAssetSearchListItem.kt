@@ -46,7 +46,7 @@ sealed class BaseAssetSearchListItem : RecyclerListItem {
         }
     }
 
-    data class SearchViewItem(@StringRes val searchViewHintResId: Int) : BaseAssetSearchListItem() {
+    data class SearchViewItem(@param:StringRes val searchViewHintResId: Int) : BaseAssetSearchListItem() {
 
         override val itemType: ItemType = ItemType.SEARCH_VIEW_ITEM
 

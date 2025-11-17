@@ -36,13 +36,13 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddre
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.math.BigInteger
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetTransferPreviewViewModel @Inject constructor(
@@ -117,7 +117,13 @@ class AssetTransferPreviewViewModel @Inject constructor(
                         is DataResource.Loading -> _sendAlgoResponseFlow.emit(Event(Resource.Loading))
                         is DataResource.Error -> {
                             if (it.exception != null) {
-                                _sendAlgoResponseFlow.emit(Event(Resource.Error.Api(it.exception!!)))
+                                _sendAlgoResponseFlow.emit(
+                                    Event(
+                                        Resource.Error.Api(
+                                            it.exception ?: return@collectLatest
+                                        )
+                                    )
+                                )
                             } else {
                                 _sendAlgoResponseFlow.emit(
                                     Event(GlobalWarning(R.string.error, AnnotatedString(R.string.an_error_occured)))

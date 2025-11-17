@@ -17,4 +17,3 @@
         android:bottomRightRadius="@dimen/spacing_xsmall"
         android:topRightRadius="@dimen/spacing_xsmall" />
 </shape>
-

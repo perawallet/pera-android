@@ -58,7 +58,8 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfig)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfig)
 
     private val binding by viewBinding(FragmentArc59SendSummaryBinding::bind)
 

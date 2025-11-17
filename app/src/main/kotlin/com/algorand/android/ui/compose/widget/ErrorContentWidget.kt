@@ -119,9 +119,7 @@ fun ErrorStateWidgetPreview() {
                 .padding(16.dp)
         ) {
             ErrorContentWidget(
-                message = stringResource(R.string.error_state_message_default),
-                isVisible = true,
-                showNavigateBackButton = true
+                message = stringResource(R.string.error_state_message_default)
             )
         }
     }
@@ -138,7 +136,6 @@ fun ErrorStateWidgetNoButtonPreview() {
         ) {
             ErrorContentWidget(
                 message = stringResource(R.string.error_state_message_default),
-                isVisible = true,
                 showNavigateBackButton = false
             )
         }

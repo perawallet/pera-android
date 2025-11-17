@@ -17,7 +17,6 @@
 
     <include app:graph="@navigation/rekeyed_account_info_navigation" />
 
-
     <fragment
         android:id="@+id/rescanRekeyedAccountSelectionFragment"
         android:name="com.algorand.android.ui.rekeyedaccounts.rescan.RescanRekeyedAccountSelectionFragment"

@@ -121,18 +121,23 @@ class AccountSelectionAdapter(
             is AccountSelectionPasteItemViewHolder -> {
                 holder.bind(getItem(position) as BaseAccountSelectionListItem.PasteItem)
             }
+
             is AccountSelectionHeaderItemViewHolder -> {
                 holder.bind(getItem(position) as BaseAccountSelectionListItem.HeaderItem)
             }
+
             is AccountSelectionContactItemViewHolder -> {
                 holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.ContactItem)
             }
+
             is AccountSelectionAccountItemViewHolder -> {
                 holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.AccountItem)
             }
+
             is AccountSelectionAccountErrorItemViewHolder -> {
                 holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem)
             }
+
             is AccountSelectionNftDomainAccountItemViewHolder -> {
                 holder.bind(getItem(position) as NftDomainAccountItem)
             }

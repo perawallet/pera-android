@@ -83,7 +83,6 @@
 
     </fragment>
 
-
     <fragment
         android:id="@+id/newAddressNamingFragment"
         android:name="com.algorand.android.ui.addressnaming.view.NewAddressNamingFragment"

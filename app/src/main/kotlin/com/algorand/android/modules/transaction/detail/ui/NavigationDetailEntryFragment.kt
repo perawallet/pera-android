@@ -23,7 +23,7 @@ import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetai
 
 class NavigationDetailEntryFragment : BaseFragment(R.layout.fragment_navigation_detail_entry) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val args by navArgs<NavigationDetailEntryFragmentArgs>()
 

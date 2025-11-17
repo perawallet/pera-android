@@ -14,11 +14,11 @@ package com.algorand.wallet.account.custom.domain.usecase
 
 import com.algorand.wallet.account.custom.domain.repository.CustomAccountInfoRepository
 import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class ClearAllCustomInformationUseCase @Inject constructor(
     private val customAccountInfoRepository: CustomAccountInfoRepository,

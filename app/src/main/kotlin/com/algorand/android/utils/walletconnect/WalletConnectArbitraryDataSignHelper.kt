@@ -19,10 +19,10 @@ import javax.inject.Inject
 class WalletConnectArbitraryDataSignHelper @Inject constructor() :
     ListQueuingHelper<WalletConnectArbitraryData, ByteArray>() {
 
-    override val totalItemCount
+    override val totalItemCount: Int
         get() = arbitraryDataToSignCount
 
-    override val currentItemIndex
+    override val currentItemIndex: Int
         get() = dequeuedItemList.filterNotNull().size + 1
 
     private var arbitraryDataToSignCount = enqueuedItemCount

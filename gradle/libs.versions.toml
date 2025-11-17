@@ -1,11 +1,7 @@
 [versions]
+# Android / Build
+jvm = "21"
 agp = "8.13.1"
-algoSdk = "2.10.1"
-algoGoMobilesdk = "1.0.5"
-peraWalletConnect = "1.0.9"
-xhdwalletapi = "1.2.2"
-dP256 = "1.0.2"
-ndk = "29.0.14206865"
 android-application = "8.13.1"
 android-compileSdk = "36"
 android-discover-staging = "5"
@@ -15,76 +11,110 @@ android-namespace = "com.algorand.android"
 android-targetSdk = "36"
 android-versionCode = "124"
 android-versionName = "6.202521.0"
+ndk = "29.0.14206865"
+
+# Pera / Algorand SDK
+algoSdk = "2.10.1"
+algoGoMobilesdk = "1.0.5"
+peraWalletConnect = "1.0.9"
+xhdwalletapi = "1.2.2"
+dP256 = "1.0.2"
+peraCompactDecimalFormat = "1.0.3"
+
+# Compose / UI
+compose = "1.9.2"
+compose-ui = "1.9.4"
 androidx-compose-fragment = "1.8.9"
 androidx-compose-material3 = "1.4.0"
 androidx-compose-material-icons-core = "1.7.8"
 androidx-compose-material-icons-extended = "1.7.8"
-appCompat = "1.7.1"
-biometric = "1.1.0"
-bip39 = "1.0.9"
-ble = "2.11.0"
-browser = "1.9.0"
-buildConfig = "5.7.1"
-constraintLayout = "2.2.1"
-compose = "1.9.2"
-compose-ui = "1.9.4"
 composeConstraintLayout = "1.1.1"
-converterGson = "3.0.0"
-converterMoshi = "3.0.0"
-coreKtx = "1.17.0"
-coroutines = "1.10.2"
-desugar = "2.1.5"
-detekt = "1.23.8"
-espresso = "3.7.0"
-firebaseBom = "34.5.0"
-firebaseCrashlyticsGradle = "3.0.6"
-firebasePerformance = "2.0.2"
+constraintLayout = "2.2.1"
+material = "1.13.0"
+lottie = "6.7.1"
+mpAndroidChart = "3.1.0"
 flexbox = "3.0.0"
-fragmentKtx = "1.8.9"
+
+# Image Loading
 glide = "5.0.5"
 glideCompose = "1.0.0-beta08"
-googleServicesVersion = "4.4.4"
-hilt = "2.57.2"
-hiltCompiler = "1.3.0"
-hiltCompose = "1.3.0"
-installreferrer = "2.2"
-javaWebSocket = "1.6.0"
-junit = "4.13.2"
-junitKtx = "1.3.0"
-koin = "4.1.1"
-kotlin = "2.2.0"
-ksp = "2.2.20-2.0.4"
-kotlinfixture = "1.2.0"
-kotlinxSerialization = "1.9.0"
-kover = "0.9.3"
-ktlint = "0.39.0"
+
+# Jetpack / AndroidX
+appCompat = "1.7.1"
+coreKtx = "1.17.0"
+fragmentKtx = "1.8.9"
 legacySupport = "1.0.0"
 lifecycle = "2.9.4"
 lifecycleExt = "2.2.0"
-lottie = "6.7.1"
-material = "1.13.0"
 media3Exoplayer = "1.8.0"
 media3Ui = "1.8.0"
+paging = "3.3.6"
+biometric = "1.1.0"
+browser = "1.9.0"
+credentials = "1.5.0"
+multidex = "2.0.1"
+
+# Navigation
+navigation = "2.9.6"
+
+# Dependency Injection
+hilt = "2.57.2"
+hiltCompiler = "1.3.0"
+hiltCompose = "1.3.0"
+koin = "4.1.1"
+
+# Firebase
+firebaseBom = "34.5.0"
+firebaseCrashlyticsGradle = "3.0.6"
+firebasePerformance = "2.0.2"
+googleServices = "4.4.4"
+
+# Kotlin / Coroutines / Serialization / KSP
+kotlin = "2.2.0"
+coroutines = "1.10.2"
+kotlinxSerialization = "1.9.0"
+ksp = "2.2.20-2.0.4"
+
+# Networking / JSON
+retrofit = "3.0.0"
+converterGson = "3.0.0"
+converterMoshi = "3.0.0"
+moshi = "1.15.2"
+okhttp = "5.3.0"
+javaWebSocket = "1.6.0"
+
+# Cryptography / Wallet
+bip39 = "1.0.9"
+tink = "1.19.0"
+
+# Tools / Build
+buildConfig = "5.7.1"
+desugar = "2.1.5"
+detekt = "1.23.8"
+ktlint = "0.39.0"
+kover = "0.9.3"
+
+# Database / Room
+room = "2.8.3"
+
+# Testing
+junit = "4.13.2"
+junitKtx = "1.3.0"
 mockito = "6.1.0"
 mockk = "1.14.6"
-moshi = "1.15.2"
-mpAndroidChart = "3.1.0"
-multidex = "2.0.1"
-navigation = "2.9.6"
-okhttp = "5.3.0"
-paging = "3.3.6"
-peraCompactDecimalFormat = "1.0.3"
-retrofit = "3.0.0"
-review = "2.0.2"
-room = "2.8.3"
+kotlinfixture = "1.2.0"
 runner = "1.7.0"
-tink = "1.19.0"
+espresso = "3.7.0"
+
+# Google Play / Misc
+review = "2.0.2"
+installreferrer = "2.2"
+ble = "2.11.0"
 zxing = "4.3.0"
-credentials = "1.5.0"
 
 [libraries]
 
-# AndroidX / Compose
+# AndroidX / Compose / UI
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Ui" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
 browser = { module = "androidx.browser:browser", version.ref = "browser" }
@@ -103,7 +133,15 @@ fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragm
 legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupport" }
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExt" }
+lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+
+# Jetpack / Paging / Extra
+paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 
 # Dependency Injection
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -129,7 +167,7 @@ navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-kt
 navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigation" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
 
-# Networking / Json Parsing
+# Networking / JSON
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
 java-websocket = { module = "org.java-websocket:Java-WebSocket", version.ref = "javaWebSocket" }
@@ -138,16 +176,14 @@ moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
-# Database / ORM
-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+# Database / Room
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 
-# Image Loading / Animations / Video Player
+# Image Loading / Animations / Charts
 glide-image = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
@@ -155,12 +191,11 @@ lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpAndroidChart" }
 
-# Sensors - Bluetooth / Camera
-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+# Sensors / BLE / QR
 ble = { module = "no.nordicsemi.android:ble", version.ref = "ble" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing" }
 
-# Wallet SDK - Security / Blockchain / Crypto
+# Wallet / Crypto
 algosdk = { module = "com.algorand:algosdk", version.ref = "algoSdk" }
 algorand-go-mobile = { group = "app.perawallet", name = "algosdk-android", version.ref = "algoGoMobilesdk" }
 pera-compact-decimal-format = { group = "io.github.perawallet", name = "peracompactdecimalformat", version.ref = "peraCompactDecimalFormat" }
@@ -168,11 +203,11 @@ kotlin-bip39 = { module = "cash.z.ecc.android:kotlin-bip39", version.ref = "bip3
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
 
 # Testing / Utilities
-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitKtx" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
-google-services = { module = "com.google.gms:google-services", version.ref = "googleServicesVersion" }
+google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
 kover-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
@@ -180,7 +215,6 @@ ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
 lifecycle-runtime-testing = { module = "androidx.lifecycle:lifecycle-runtime-testing", version.ref = "lifecycle" }
 mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 
 # Android / Google Libraries
@@ -197,17 +231,17 @@ wallet-connect-v1 = { module = "app.perawallet:pera-wallet-connect-v1", version.
 wallet-connect-v2 = { module = "app.perawallet:pera-wallet-connect-v2", version.ref = "peraWalletConnect" }
 xhdwalletapi = { module = "app.perawallet:xhdwalletapi-android", version.ref = "xhdwalletapi" }
 
-# Jetbrain / KMP
+# Kotlin / KMP
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 
 [bundles]
-firebase = ["firebase-analytics",
+firebase = [
+    "firebase-analytics",
     "firebase-config",
     "firebase-crashlytics",
     "firebase-messaging",
@@ -215,13 +249,38 @@ firebase = ["firebase-analytics",
 ]
 
 [plugins]
-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+# --- Android & Kotlin ---
 android-application = { id = "com.android.application", version.ref = "android-application" }
 android-library = { id = "com.android.library", version.ref = "android-application" }
-buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization" }
+
+# --- Compose ---
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+# --- Annotation processing ---
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+# --- Room ---
 room = { id = "androidx.room", version.ref = "room" }
+
+# --- Code Quality ---
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+
+# --- Dependency Injection ---
+hilt = { id = "dagger.hilt.android.plugin" }
+
+# --- Navigation ---
+navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin" }
+
+# --- Firebase ---
+google-services = { id = "com.google.gms.google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics" }
+firebase-perf = { id = "com.google.firebase.firebase-perf" }
+
+# --- BuildConfig ---
+buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
+java-lib = { id = "java-library" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm" }

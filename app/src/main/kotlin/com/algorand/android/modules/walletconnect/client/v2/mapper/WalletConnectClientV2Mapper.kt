@@ -35,7 +35,7 @@ class WalletConnectClientV2Mapper @Inject constructor(
     private val connectionStateMapper: WalletConnectConnectionStateMapper
 ) {
 
-    fun mapToPair(url: String) = Core.Params.Pair(url)
+    fun mapToPair(url: String): Core.Params.Pair = Core.Params.Pair(url)
 
     fun mapToSessionApprove(
         proposerPublicKey: String,

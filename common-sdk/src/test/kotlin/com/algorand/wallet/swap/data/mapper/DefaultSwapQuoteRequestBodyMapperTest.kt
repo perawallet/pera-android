@@ -15,9 +15,9 @@ package com.algorand.wallet.swap.data.mapper
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapTypeResponse
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 class DefaultSwapQuoteRequestBodyMapperTest {
 

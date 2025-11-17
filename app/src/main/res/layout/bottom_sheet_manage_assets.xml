@@ -37,7 +37,6 @@
         android:text="@string/sort"
         app:icon="@drawable/ic_sort" />
 
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/filterAssetsButton"
         style="@style/Button.Text.Options"

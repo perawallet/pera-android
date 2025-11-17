@@ -7,9 +7,9 @@ import com.algorand.android.utils.Event
 import com.algorand.wallet.asset.assetinbox.domain.model.AssetInboxRequest
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequests
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxValidAddresses
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
     private val getAssetInboxRequests: GetAssetInboxRequests,

@@ -48,7 +48,8 @@ class SecurityFragment : DaggerBaseFragment(R.layout.fragment_security) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val biometricSwitch: SwitchMaterial?
         get() = binding.enableFaceIDTouchIDListItem.getEndComponentViewStub()

@@ -16,9 +16,9 @@ import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseO
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import javax.inject.Inject
 
 internal class GetAllAccountsAllCollectibleDataFlowUseCase @Inject constructor(
     private val getAccountDetail: GetAccountDetail,
@@ -32,7 +32,7 @@ internal class GetAllAccountsAllCollectibleDataFlowUseCase @Inject constructor(
                 val assetData = if (accountInfo != null) {
                     getAccountCollectiblesData(accountInfo)
                 } else {
-                    emptyList<BaseOwnedCollectibleData>()
+                    emptyList()
                 }
                 getAccountDetail(address) to assetData
             }

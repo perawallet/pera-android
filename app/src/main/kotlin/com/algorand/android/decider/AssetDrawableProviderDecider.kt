@@ -76,18 +76,21 @@ class AssetDrawableProviderDecider @Inject constructor(
                 // This is unnecessary check but to keep consistency, I added this check, too
                 AlgoDrawableProvider
             }
+
             searchedAsset is BaseSearchedAsset.SearchedAsset -> {
                 AssetDrawableProvider(
                     assetName = AssetName.create(searchedAsset.fullName),
                     logoUri = searchedAsset.logo
                 )
             }
+
             searchedAsset is BaseSearchedAsset.SearchedCollectible -> {
                 CollectibleDrawableProvider(
                     assetName = AssetName.create(searchedAsset.fullName),
                     logoUri = searchedAsset.collectible?.primaryImageUrl
                 )
             }
+
             else -> AssetDrawableProvider(
                 assetName = AssetName.create(searchedAsset.fullName),
                 logoUri = searchedAsset.logo
@@ -105,12 +108,14 @@ class AssetDrawableProviderDecider @Inject constructor(
                     logoUri = asset.logoUri
                 )
             }
+
             asset is CollectibleDetail -> {
                 CollectibleDrawableProvider(
                     assetName = AssetName.create(assetName),
                     logoUri = asset.collectibleInfo.primaryImageUrl
                 )
             }
+
             else -> AssetDrawableProvider(
                 assetName = AssetName.create(assetName),
                 logoUri = asset.logoUri
@@ -127,12 +132,14 @@ class AssetDrawableProviderDecider @Inject constructor(
                     logoUri = assetLite.logoUrl
                 )
             }
+
             assetLite.type is AssetLite.Type.Collectible -> {
                 CollectibleDrawableProvider(
                     assetName = AssetName.create((assetLite.type as AssetLite.Type.Collectible).name),
                     logoUri = assetLite.logoUrl
                 )
             }
+
             else -> AssetDrawableProvider(
                 assetName = AssetName.create(assetLite.name),
                 logoUri = assetLite.logoUrl

@@ -27,8 +27,9 @@ import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class KeyRegTransactionSignManager @Inject constructor(
     ledgerBleSearchManager: LedgerBleSearchManager,
@@ -52,7 +53,7 @@ class KeyRegTransactionSignManager @Inject constructor(
 
     private var unsignedTransaction: KeyRegTransaction? = null
 
-    val keyRegTransactionSignResultFlow = signResultFlow.map {
+    val keyRegTransactionSignResultFlow: Flow<ExternalTransactionSignResult> = signResultFlow.map {
         when (it) {
             is Success<*> -> mapSignedTransaction(unsignedTransaction, it.signedTransactionsByteArray)
             else -> it

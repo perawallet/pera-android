@@ -17,13 +17,10 @@ import com.algorand.android.deviceregistration.data.model.DeviceRegistrationResp
 import com.algorand.android.deviceregistration.data.model.DeviceUpdateRequest
 import com.algorand.android.models.AssetSearchResponse
 import com.algorand.android.models.AssetSupportRequest
-import com.algorand.android.models.Feedback
-import com.algorand.android.models.FeedbackCategory
 import com.algorand.android.models.NotificationFilterRequest
 import com.algorand.android.models.Pagination
 import com.algorand.android.models.PushTokenDeleteRequest
 import com.algorand.android.models.TrackTransactionRequest
-import com.algorand.android.models.VerifiedAssetDetail
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel.Companion.SEARCH_RESULT_LIMIT
 import com.algorand.android.modules.currency.data.model.CurrencyOptionResponse
 import com.algorand.android.modules.nftdomain.data.model.NftDomainSearchResponse
@@ -49,12 +46,6 @@ import retrofit2.http.Url
 
 interface MobileAlgorandApi {
 
-    @POST("v1/feedback/")
-    suspend fun postFeedback(@Body feedback: Feedback): Response<Unit>
-
-    @GET("v1/feedback/categories/")
-    suspend fun getFeedbackCategories(): Response<List<FeedbackCategory>>
-
     @POST("v1/devices/")
     suspend fun postRegisterDevice(
         @Body deviceRegistrationRequest: DeviceRegistrationRequest
@@ -76,9 +67,6 @@ interface MobileAlgorandApi {
 
     @POST("v1/asset-requests/")
     suspend fun postAssetSupportRequest(@Body assetSupportRequest: AssetSupportRequest): Response<Unit>
-
-    @GET("v1/verified-assets/?limit=all")
-    suspend fun getVerifiedAssets(): Response<Pagination<VerifiedAssetDetail>>
 
     @GET("v2/devices/{device_id}/notifications/")
     suspend fun getNotifications(

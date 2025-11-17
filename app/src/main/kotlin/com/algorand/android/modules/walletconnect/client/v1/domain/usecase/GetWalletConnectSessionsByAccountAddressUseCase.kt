@@ -22,7 +22,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetWalletConnectSessionsByAccountAddressUseCase @Inject constructor(
-    @Named(WalletConnectRepository.INJECTION_NAME)
+    @param:Named(WalletConnectRepository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectRepository,
     private val sessionDetailMapper: WalletConnectSessionDetailMapper,
     private val getConnectedAccountsOfWalletConnectSessionUseCase: GetConnectedAccountsOfWalletConnectSessionUseCase,

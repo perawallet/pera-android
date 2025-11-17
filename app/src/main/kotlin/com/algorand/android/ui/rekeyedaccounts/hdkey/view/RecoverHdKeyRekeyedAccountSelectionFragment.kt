@@ -35,7 +35,10 @@ class RecoverHdKeyRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragme
         startIconResId = R.drawable.ic_left_arrow,
         startIconClick = ::navBack
     )
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val viewModel: RekeyedAccountSelectionViewModel by viewModels()
 

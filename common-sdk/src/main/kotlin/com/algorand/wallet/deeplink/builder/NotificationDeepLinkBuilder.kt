@@ -22,15 +22,15 @@ internal class NotificationDeepLinkBuilder : DeepLinkBuilder {
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {
             accountAddress != null &&
-                assetId != null &&
-                notificationGroupType != null &&
-                amount == null &&
-                walletConnectUrl == null &&
-                url == null &&
-                note == null &&
-                xnote == null &&
-                label == null &&
-                webImportQrCode == null
+                    assetId != null &&
+                    notificationGroupType != null &&
+                    amount == null &&
+                    walletConnectUrl == null &&
+                    url == null &&
+                    note == null &&
+                    xnote == null &&
+                    label == null &&
+                    webImportQrCode == null
         }
     }
 

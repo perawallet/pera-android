@@ -13,7 +13,6 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bottom_sheet_dialog_fragment_primary_background"
@@ -32,11 +31,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginBottom="@dimen/spacing_small"
         android:layout_marginStart="@dimen/spacing_large"
         android:layout_marginTop="@dimen/spacing_normal"
-        android:textColor="@color/text_gray"
-        android:text="@string/buy_crypto"/>
+        android:layout_marginBottom="@dimen/spacing_small"
+        android:text="@string/buy_crypto"
+        android:textColor="@color/text_gray" />
 
     <com.algorand.android.customviews.ListMenuItemView
         android:id="@+id/meldButton"
@@ -53,11 +52,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginBottom="@dimen/spacing_small"
         android:layout_marginStart="@dimen/spacing_large"
         android:layout_marginTop="@dimen/spacing_xxxxlarge"
-        android:textColor="@color/text_gray"
-        android:text="@string/sell_crypto"/>
+        android:layout_marginBottom="@dimen/spacing_small"
+        android:text="@string/sell_crypto"
+        android:textColor="@color/text_gray" />
 
     <com.algorand.android.customviews.ListMenuItemView
         android:id="@+id/bidaliButton"

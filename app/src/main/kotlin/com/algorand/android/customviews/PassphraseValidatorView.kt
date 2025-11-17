@@ -61,9 +61,11 @@ class PassphraseValidatorView @JvmOverloads constructor(
             FIRST_WORD_POSITION -> {
                 binding.firstWordTextView.isSelected = true
             }
+
             SECOND_WORD_POSITION -> {
                 binding.secondWordTextView.isSelected = true
             }
+
             THIRD_WORD_POSITION -> {
                 binding.thirdWordTextView.isSelected = true
             }

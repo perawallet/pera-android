@@ -20,13 +20,13 @@ open class ListQueuingHelper<E, D> @Inject constructor() {
     val currentItem: E?
         get() = _currentItem
 
-    protected open val totalItemCount
+    protected open val totalItemCount: Int
         get() = enqueuedItemCount
-    protected open val currentItemIndex
+    protected open val currentItemIndex: Int
         get() = dequeuedItemList.size + 1
 
-    protected val dequeuedItemList = mutableListOf<D?>()
-    protected var enqueuedItemCount = -1
+    protected val dequeuedItemList: MutableList<D?> = mutableListOf()
+    protected var enqueuedItemCount: Int = -1
     private val enqueuedItemList = mutableListOf<E>()
     private var _currentItem: E? by Delegates.observable(null) { _, _, newValue ->
         if (newValue != null) {

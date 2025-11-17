@@ -84,7 +84,7 @@
             android:paddingHorizontal="@dimen/spacing_xxlarge"
             android:layout_marginHorizontal="@dimen/spacing_xlarge"
             android:layout_marginTop="@dimen/spacing_xxlarge"
-            android:text="@string/try_again"/>
+            android:text="@string/try_again" />
     </LinearLayout>
 
     <include

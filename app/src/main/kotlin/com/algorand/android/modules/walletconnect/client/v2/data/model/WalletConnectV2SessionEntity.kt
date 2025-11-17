@@ -33,6 +33,6 @@ data class WalletConnectV2SessionEntity(
     val fallbackBrowserGroupResponse: String? = null
 ) {
     companion object {
-        const val WALLET_CONNECT_SESSION_V2_TABLE_SESSION_ID_COLUMN_NAME = "topic"
+        const val WALLET_CONNECT_SESSION_V2_TABLE_SESSION_ID_COLUMN_NAME: String = "topic"
     }
 }

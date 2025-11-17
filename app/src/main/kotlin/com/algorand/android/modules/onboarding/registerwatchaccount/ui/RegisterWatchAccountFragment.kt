@@ -47,7 +47,9 @@ class RegisterWatchAccountFragment : DaggerBaseFragment(R.layout.fragment_regist
         startIconClick = ::onBackClick
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val windowFocusChangeListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
         if (hasFocus) getLatestCopiedMessage()

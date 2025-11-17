@@ -32,6 +32,6 @@ interface TutorialRepository {
     suspend fun clearTutorialCache()
 
     companion object {
-        const val REPOSITORY_INJECTION_NAME = "tutorialRepository"
+        const val REPOSITORY_INJECTION_NAME: String = "tutorialRepository"
     }
 }

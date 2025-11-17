@@ -17,11 +17,6 @@ import android.webkit.JavascriptInterface
 class BidaliWebInterface private constructor(val listener: WebInterfaceListener) {
 
     @JavascriptInterface
-    fun onPaymentRequest(jsonData: String) {
-        listener.onPaymentRequest(jsonData)
-    }
-
-    @JavascriptInterface
     fun openUrl(jsonData: String) {
         listener.openUrl(jsonData)
     }
@@ -32,7 +27,7 @@ class BidaliWebInterface private constructor(val listener: WebInterfaceListener)
     }
 
     companion object {
-        const val WEB_INTERFACE_NAME = "bidaliWebInterface"
+        const val WEB_INTERFACE_NAME: String = "bidaliWebInterface"
         fun create(listener: WebInterfaceListener): BidaliWebInterface {
             return BidaliWebInterface(listener)
         }

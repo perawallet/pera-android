@@ -14,10 +14,12 @@ package com.algorand.android.discover.home.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilder
 import com.algorand.android.discover.common.ui.BaseDiscoverViewModel
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
+import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomePreviewUseCase
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
@@ -28,8 +30,8 @@ import com.algorand.android.utils.preference.ThemePreference
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
@@ -38,6 +40,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverHomeViewModel @Inject constructor(
@@ -59,11 +62,11 @@ class DiscoverHomeViewModel @Inject constructor(
         queryText = queryTextFlow.value,
     ).cachedIn(viewModelScope)
 
-    val assetSearchPaginationFlow
+    val assetSearchPaginationFlow: Flow<PagingData<DiscoverAssetItem>>
         get() = searchPaginationFlow
 
     private val _discoverHomePreviewFlow = MutableStateFlow(
-        discoverHomePreviewUseCase.getInitialStatePreview(savedStateHandle.get<String?>(URL_KEY)),
+        discoverHomePreviewUseCase.getInitialStatePreview(savedStateHandle[URL_KEY]),
     )
     val discoverHomePreviewFlow: StateFlow<DiscoverHomePreview>
         get() = _discoverHomePreviewFlow

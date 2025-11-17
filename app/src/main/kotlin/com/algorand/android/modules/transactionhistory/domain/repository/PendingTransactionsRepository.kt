@@ -20,6 +20,6 @@ interface PendingTransactionsRepository {
     suspend fun getPendingTransactions(publicKey: String, assetId: Long? = null): Result<List<PendingTransactionDTO>>
 
     companion object {
-        const val INJECTION_NAME = "pendingTransactionsRepositoryInjectionName"
+        const val INJECTION_NAME: String = "pendingTransactionsRepositoryInjectionName"
     }
 }

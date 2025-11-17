@@ -46,13 +46,13 @@ import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyCredentialEn
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.Instant
-import java.util.concurrent.atomic.AtomicInteger
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.concurrent.atomic.AtomicInteger
+import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @AndroidEntryPoint
@@ -95,6 +95,7 @@ class PasskeyProviderService : CredentialProviderService() {
                     )
                 }
             }
+
             else -> callback.onError(CreateCredentialUnknownException())
         }
     }
@@ -149,11 +150,11 @@ class PasskeyProviderService : CredentialProviderService() {
         val extras = Bundle().apply { putString(CRED_ID_KEY, entry.credentialId) }
         val intent = createNewPendingIntent(GET_PASSKEY_INTENT, extras)
         var entry = PublicKeyCredentialEntry.Builder(
-                applicationContext,
-                entry.username.orEmpty(),
-                intent,
-                entry.option
-            ).setDisplayName(entry.userDisplayName)
+            applicationContext,
+            entry.username.orEmpty(),
+            intent,
+            entry.option
+        ).setDisplayName(entry.userDisplayName)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             entry = entry.setBiometricPromptData(BiometricPromptDataBuilder.getDefaultPromptData())

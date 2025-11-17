@@ -2,7 +2,6 @@ package com.algorand.wallet.account.webauthn.data.repository
 
 import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
 import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
-import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.webauthn.data.database.dao.PasskeyDao
 import com.algorand.wallet.account.webauthn.data.database.dao.SiteDao
 import com.algorand.wallet.account.webauthn.data.database.model.PasskeyEntity
@@ -32,7 +31,7 @@ class PasskeyRepositoryImpl @Inject internal constructor(
     private val passkeyDao: PasskeyDao,
     private val siteDao: SiteDao,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-): PasskeyRepository {
+) : PasskeyRepository {
     /**
      * Clears all stored data in the repository by removing all entries
      * from both the passkeys and sites tables in the database.
@@ -53,11 +52,11 @@ class PasskeyRepositoryImpl @Inject internal constructor(
         }
     }
 
-    override suspend fun getAllCustomHdSeedInfo(): List<CustomHdSeedInfo>{
+    override suspend fun getAllCustomHdSeedInfo(): List<CustomHdSeedInfo> {
         return customHdSeedInfoRepository.getAllCustomInfo()
     }
 
-    override suspend fun getSitePasskeysSize(url: String): Int? {
+    override suspend fun getSitePasskeysSize(url: String): Int {
         return withContext(coroutineDispatcher) {
             siteDao.getPasskeySize(url)
         }
@@ -93,11 +92,13 @@ class PasskeyRepositoryImpl @Inject internal constructor(
             passkeyDao.getAllAsFlow()
         }
     }
+
     override suspend fun getSite(siteId: Long): SiteEntity? {
         return withContext(coroutineDispatcher) {
             siteDao.get(siteId)
         }
     }
+
     /**
      * Adds a new site to the database.
      *
@@ -173,7 +174,7 @@ class PasskeyRepositoryImpl @Inject internal constructor(
     override suspend fun addNewPasskey(passkeyMetadata: Passkey) {
         withContext(coroutineDispatcher) {
             val site = siteDao.get(passkeyMetadata.origin!!)
-            val siteId = site?.id ?: addSite(SiteEntity(url = passkeyMetadata.origin, name = ""))
+            val siteId = site?.id ?: addSite(SiteEntity(url = passkeyMetadata.origin))
 
             passkeyDao.insert(
                 PasskeyEntity(

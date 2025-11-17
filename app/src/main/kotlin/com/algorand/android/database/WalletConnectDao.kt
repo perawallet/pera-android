@@ -74,21 +74,21 @@ interface WalletConnectDao {
 
     @Transaction
     @Query("SELECT * FROM WalletConnectSessionAccountEntity WHERE connected_account_address = :accountAddress")
-    suspend fun getWCSessionListByAccountAddress(accountAddress: String): List<WalletConnectSessionByAccountsAddress>?
+    suspend fun getWCSessionListByAccountAddress(accountAddress: String): List<WalletConnectSessionByAccountsAddress>
 
     @Transaction
     @Query("SELECT * FROM WalletConnectSessionAccountEntity WHERE session_id = :sessionId")
-    suspend fun getConnectedAccountsOfSession(sessionId: Long): List<WalletConnectSessionAccountEntity>?
+    suspend fun getConnectedAccountsOfSession(sessionId: Long): List<WalletConnectSessionAccountEntity>
 
     @Transaction
     @Query("SELECT * FROM WalletConnectSessionEntity")
-    fun getAllWalletConnectSessionWithAccountAddresses(): Flow<List<WalletConnectSessionWithAccountsAddresses>?>
+    fun getAllWalletConnectSessionWithAccountAddresses(): Flow<List<WalletConnectSessionWithAccountsAddresses>>
 
     @Query("DELETE FROM WalletConnectSessionAccountEntity WHERE session_id = :sessionId AND connected_account_address = :accountAddress")
     suspend fun deleteWalletConnectAccountBySession(sessionId: Long, accountAddress: String)
 
     @Query("SELECT * FROM WalletConnectSessionEntity ORDER BY date_time_stamp ASC LIMIT :count")
-    suspend fun getWalletConnectSessionListOrderedByCreationTime(count: Int): List<WalletConnectSessionEntity>?
+    suspend fun getWalletConnectSessionListOrderedByCreationTime(count: Int): List<WalletConnectSessionEntity>
 
     @Query("SELECT COUNT(*) FROM WalletConnectSessionEntity")
     suspend fun getWalletConnectSessionCount(): Int

@@ -51,9 +51,11 @@ fun BaseFragment.isBluetoothEnabled(resultLauncher: ActivityResultLauncher<Inten
             is TransactionSignBaseFragment -> {
                 permissionDeniedOnTransactionData(R.string.please_ensure, R.string.bluetooth_location_services)
             }
+
             is WalletConnectTransactionRequestFragment -> {
                 permissionDeniedOnTransaction(R.string.please_ensure, R.string.bluetooth_location_services)
             }
+
             is BaseLedgerSearchFragment -> {
                 showGlobalError(getString(R.string.please_ensure), getString(R.string.bluetooth_location_services))
                 navBack()
@@ -71,10 +73,6 @@ fun Context.isLocationEnabled(): Boolean {
 
 fun showEnableBluetoothPopup(resultLauncher: ActivityResultLauncher<Intent>) {
     Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE).apply { resultLauncher.launch(this) }
-}
-
-fun requestLocationRequestFromUser(resultLauncher: ActivityResultLauncher<String>) {
-    resultLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
 }
 
 fun Context.checkIfBluetoothPermissionAreTaken(

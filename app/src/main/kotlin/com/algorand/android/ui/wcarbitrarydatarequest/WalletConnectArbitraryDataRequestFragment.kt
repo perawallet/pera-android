@@ -29,8 +29,6 @@ package com.algorand.android.ui.wcarbitrarydatarequest
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -60,7 +58,6 @@ import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.navigateBackSafe
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.sendErrorLog
-import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -71,7 +68,7 @@ import kotlinx.coroutines.flow.map
 class WalletConnectArbitraryDataRequestFragment :
     DaggerBaseFragment(R.layout.fragment_wallet_connect_arbitrary_data_request), ArbitraryDataRequestAction {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentWalletConnectArbitraryDataRequestBinding::bind)
     private val arbitraryDataRequestViewModel: WalletConnectArbitraryDataRequestViewModel by viewModels()
@@ -108,17 +105,6 @@ class WalletConnectArbitraryDataRequestFragment :
                 peerMeta = peerMeta
             )
         )
-    }
-
-    private val bleRequestLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        // Nothing to do
-    }
-
-    private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener { shouldStopResources ->
-        hideLoading()
-        if (shouldStopResources) {
-            arbitraryDataRequestViewModel.stopAllResources()
-        }
     }
 
     private val navToLaunchBackNavigationEventCollector: suspend (
@@ -249,26 +235,6 @@ class WalletConnectArbitraryDataRequestFragment :
         arbitraryDataRequestViewModel.processWalletConnectSignResult(result)
     }
 
-    private fun showLedgerWaitingForApprovalBottomSheet(
-        ledgerName: String?,
-        currentArbitraryDataIndex: Int?,
-        totalArbitraryDataCount: Int?,
-        isArbitraryDataIndicatorVisible: Boolean
-    ) {
-        if (ledgerLoadingDialog == null) {
-            ledgerLoadingDialog = LedgerLoadingDialog.createLedgerLoadingDialog(
-                ledgerName = ledgerName,
-                listener = ledgerLoadingDialogListener,
-                currentTransactionIndex = currentArbitraryDataIndex,
-                totalTransactionCount = totalArbitraryDataCount,
-                isTransactionIndicatorVisible = isArbitraryDataIndicatorVisible
-            )
-            ledgerLoadingDialog?.showWithStateCheck(childFragmentManager, ledgerName.orEmpty())
-        } else {
-            ledgerLoadingDialog?.updateTransactionIndicator(transactionIndex = currentArbitraryDataIndex)
-        }
-    }
-
     private fun onConfirmClick() {
         arbitraryDataRequestViewModel.arbitraryData ?: return
         confirmArbitraryData()
@@ -313,10 +279,6 @@ class WalletConnectArbitraryDataRequestFragment :
 
     private fun rejectRequest() {
         arbitraryDataRequestViewModel.rejectRequest()
-    }
-
-    internal fun permissionDeniedOnArbitraryData(@StringRes errorResId: Int, @StringRes titleResId: Int) {
-        showSigningError(WalletConnectSignResult.Error.Defined(AnnotatedString(errorResId), titleResId))
     }
 
     private fun initAppPreview() {

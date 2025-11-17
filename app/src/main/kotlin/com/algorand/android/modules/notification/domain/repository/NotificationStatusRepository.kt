@@ -18,6 +18,6 @@ interface NotificationStatusRepository {
     suspend fun getCachedLastSeenNotificationId(): Long?
 
     companion object {
-        const val REPOSITORY_INJECTION_NAME = "notificationStatusRepositoryInjection"
+        const val REPOSITORY_INJECTION_NAME: String = "notificationStatusRepositoryInjection"
     }
 }

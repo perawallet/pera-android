@@ -75,6 +75,6 @@ class WalletConnectCustomArbitraryDataHandler @Inject constructor(
     }
 
     companion object {
-        const val MAX_ARBITRARY_DATA_COUNT = 1000
+        const val MAX_ARBITRARY_DATA_COUNT: Int = 1000
     }
 }

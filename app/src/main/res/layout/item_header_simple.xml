@@ -21,4 +21,3 @@
     android:paddingHorizontal="@dimen/spacing_xlarge"
     android:layout_marginBottom="@dimen/spacing_small"
     tools:text="@string/assets" />
-

@@ -44,8 +44,8 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.filterNotNull
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_detail) {
@@ -147,7 +147,7 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
             context?.let {
                 showGlobalError(
                     error.parseError(it), tag =
-                    baseActivityTag
+                        baseActivityTag
                 )
             }
         }
@@ -243,6 +243,6 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
     }
 
     companion object {
-        const val REJECT_CONFIRMATION_ID = 1001L
+        const val REJECT_CONFIRMATION_ID: Long = 1001L
     }
 }

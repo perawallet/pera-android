@@ -12,4 +12,4 @@
 
 package com.algorand.android.modules.walletconnect.client.utils
 
-object WalletConnectClientNotFoundException : IllegalArgumentException()
+class WalletConnectClientNotFoundException : IllegalArgumentException()

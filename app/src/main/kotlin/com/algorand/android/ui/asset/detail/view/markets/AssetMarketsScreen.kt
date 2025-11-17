@@ -67,8 +67,7 @@ fun AssetMarketsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 24.dp)
     ) {
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
-        when (viewState) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             AssetMarketsViewModel.ViewState.Idle -> Unit
             is AssetMarketsViewModel.ViewState.Content -> {
                 var priceRenderer by remember { mutableStateOf(viewState.assetPriceRenderer) }

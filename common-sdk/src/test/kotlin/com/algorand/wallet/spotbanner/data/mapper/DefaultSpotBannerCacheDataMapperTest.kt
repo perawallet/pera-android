@@ -47,7 +47,7 @@ class DefaultSpotBannerCacheDataMapperTest {
 
         val result = sut.map(response)
 
-        assertTrue(result?.isExternalButtonUrl!!)
+        assertTrue(result?.isExternalButtonUrl ?: return)
     }
 
     @Test

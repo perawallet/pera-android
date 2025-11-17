@@ -19,13 +19,13 @@ import com.algorand.android.modules.baseledgersearch.instruction.step.base.ui.Ba
 
 class OpenAppOnLedgerBottomSheet : BaseLedgerPairInfoBottomSheet() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.step_three,
         startIconResId = R.drawable.ic_close,
         startIconClick = ::navBack
     )
 
-    override val instructions = listOf(
+    override val instructions: List<Int> = listOf(
         R.string.ledger_info_algorand_first_paragraph,
         R.string.ledger_info_algorand_second_paragraph
     )

@@ -7,8 +7,8 @@ import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.asset.domain.usecase.CacheAlgoAssetDetail
 import com.algorand.wallet.asset.manager.AlgoAssetDetailCacheManager
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 
 class AlgoAssetDetailCacheManagerImpl @Inject constructor(
     private val cacheManager: LifecycleAwareCacheManager,

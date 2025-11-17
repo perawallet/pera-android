@@ -15,11 +15,11 @@ package com.algorand.android.utils
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import androidx.core.net.toUri
 import com.algorand.android.R
 
-const val EMAIL_APPS_URI_SCHEME = "mailto:"
-const val PERA_VERIFICATION_MAIL_ADDRESS = "verification@perawallet.app"
+const val EMAIL_APPS_URI_SCHEME: String = "mailto:"
+const val PERA_VERIFICATION_MAIL_ADDRESS: String = "verification@perawallet.app"
 
 fun Context.composeReportAssetEmail(
     assetId: Long,
@@ -31,7 +31,7 @@ fun Context.composeReportAssetEmail(
 
     val emailIntent = Intent().apply {
         action = Intent.ACTION_SENDTO
-        data = Uri.parse(EMAIL_APPS_URI_SCHEME)
+        data = EMAIL_APPS_URI_SCHEME.toUri()
         putExtra(Intent.EXTRA_EMAIL, arrayOf(PERA_VERIFICATION_MAIL_ADDRESS))
         putExtra(Intent.EXTRA_SUBJECT, subject)
     }
@@ -48,7 +48,7 @@ fun Context.sendMailRequestUrl(
     onActivityNotFound: () -> Unit
 ) {
     try {
-        startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse(url)))
+        startActivity(Intent(Intent.ACTION_SENDTO, url.toUri()))
     } catch (activityNotFoundException: ActivityNotFoundException) {
         onActivityNotFound()
         recordException(activityNotFoundException)

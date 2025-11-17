@@ -44,7 +44,7 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentViewPassphraseBinding::bind)
 

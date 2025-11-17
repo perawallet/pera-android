@@ -21,7 +21,9 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentTransactionConfirmationBinding
@@ -32,11 +34,12 @@ import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transaction_confirmation) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentTransactionConfirmationBinding::bind)
 
@@ -116,16 +119,20 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
     }
 
     private fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            transactionConfirmationViewModel.transactionStatusPreviewFlow.collectLatest(
-                transactionStatusPreviewFlowCollector
-            )
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                transactionConfirmationViewModel.transactionStatusPreviewFlow.collectLatest(
+                    transactionStatusPreviewFlowCollector
+                )
+            }
         }
     }
 
     private fun popBackToHome() {
-        nav(TransactionConfirmationFragmentDirections
-            .actionTransactionConfirmationFragmentToHomeNavigation())
+        nav(
+            TransactionConfirmationFragmentDirections
+                .actionTransactionConfirmationFragmentToHomeNavigation()
+        )
     }
 
     private fun onBackPressed() {
@@ -134,6 +141,6 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
     }
 
     companion object {
-        const val TRANSACTION_CONFIRMATION_KEY = "transaction_confirmation_key"
+        const val TRANSACTION_CONFIRMATION_KEY: String = "transaction_confirmation_key"
     }
 }

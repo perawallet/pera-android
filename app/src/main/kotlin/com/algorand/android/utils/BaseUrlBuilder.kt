@@ -13,11 +13,12 @@
 package com.algorand.android.utils
 
 import android.net.Uri
+import androidx.core.net.toUri
 
 @SuppressWarnings("UnnecessaryAbstractClass")
 abstract class BaseUrlBuilder(baseUrl: String) {
 
-    private val builder: Uri.Builder = Uri.parse(baseUrl).buildUpon()
+    private val builder: Uri.Builder = baseUrl.toUri().buildUpon()
 
     protected fun addQuery(query: UrlQueryParam, value: String) {
         builder.appendQueryParameter(query.key, value)

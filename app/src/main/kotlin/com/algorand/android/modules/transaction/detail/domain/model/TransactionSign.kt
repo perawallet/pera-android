@@ -16,7 +16,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import com.algorand.android.R
 
-enum class TransactionSign(@ColorRes val color: Int, @StringRes val signTextRes: Int?) {
+enum class TransactionSign(@param:ColorRes val color: Int, @param:StringRes val signTextRes: Int?) {
     POSITIVE(color = R.color.positive, signTextRes = R.string.plus),
     NEGATIVE(color = R.color.negative, signTextRes = R.string.minus),
     NATURAL(color = R.color.text_main, signTextRes = null)

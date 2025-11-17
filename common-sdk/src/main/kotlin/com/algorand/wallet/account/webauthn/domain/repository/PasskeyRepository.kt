@@ -6,7 +6,6 @@ import com.algorand.wallet.account.webauthn.data.database.model.SiteEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteWithPasskeysQuery
 import com.algorand.wallet.account.webauthn.domain.model.Passkey
 import kotlinx.coroutines.flow.Flow
-import java.security.KeyPair
 
 /**
  * Provides an interface for managing passkeys and site-related data.

@@ -27,7 +27,7 @@
             app:argType="string" />
         <argument
             android:name="titleResId"
-            app:argType="integer"/>
+            app:argType="integer" />
         <action
             android:id="@+id/action_transactionConfirmationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"

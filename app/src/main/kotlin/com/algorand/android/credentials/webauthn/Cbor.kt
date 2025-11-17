@@ -1,13 +1,11 @@
 package com.algorand.android.credentials.webauthn
 
-import kotlin.collections.iterator
-
-const val TYPE_UNSIGNED_INT = 0x00
-const val TYPE_NEGATIVE_INT = 0x01
-const val TYPE_BYTE_STRING = 0x02
-const val TYPE_TEXT_STRING = 0x03
-const val TYPE_ARRAY = 0x04
-const val TYPE_MAP = 0x05
+const val TYPE_UNSIGNED_INT: Int = 0x00
+const val TYPE_NEGATIVE_INT: Int = 0x01
+const val TYPE_BYTE_STRING: Int = 0x02
+const val TYPE_TEXT_STRING: Int = 0x03
+const val TYPE_ARRAY: Int = 0x04
+const val TYPE_MAP: Int = 0x05
 
 class Cbor {
     fun encode(data: Any): ByteArray {
@@ -47,6 +45,7 @@ class Cbor {
         }
         throw IllegalArgumentException("Bad type")
     }
+
     @Suppress("MagicNumber")
     private fun createArg(type: Int, arg: Long): ByteArray {
         val t = type shl 5

@@ -20,7 +20,6 @@ import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.isValidAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.isAccountTypeEligible
 import javax.inject.Inject
 
 class AsbAccountImportParser @Inject constructor(
@@ -54,8 +53,6 @@ class AsbAccountImportParser @Inject constructor(
 
     suspend fun isAccountSupported(backupProtocolElement: BackupProtocolElement): Boolean {
         val accountPrivateKey = backupProtocolElement.privateKey?.decodeBase64ToByteArray()
-
-        val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType.orEmpty())
 
         if (isAccountTypeAlgo25(backupProtocolElement.accountType)) {
             val isSecretKeyValid = isAccountAddressMatchWithSecretKeyUseCase.invoke(

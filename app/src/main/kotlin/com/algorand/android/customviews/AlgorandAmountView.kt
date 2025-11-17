@@ -22,7 +22,6 @@ import androidx.core.content.res.use
 import com.algorand.android.R
 import com.algorand.android.models.TransactionSymbol
 import com.algorand.android.utils.ALGO_DECIMALS
-import com.algorand.android.utils.extensions.changeTextAppearance
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import java.math.BigInteger
@@ -45,12 +44,6 @@ class AlgorandAmountView @JvmOverloads constructor(
         }
     }
 
-    fun setAmountTextAppearance(textAppearance: Int) {
-        if (textAppearance != -1) {
-            changeTextAppearance(textAppearance)
-        }
-    }
-
     private fun setAmountTextColor(textColor: Int) {
         setTextColor(textColor)
     }
@@ -69,7 +62,7 @@ class AlgorandAmountView @JvmOverloads constructor(
         text = amount.formatAmount(ALGO_DECIMALS).formatAsAlgoAmount()
     }
 
-    fun setAmount(
+    private fun setAmount(
         formattedAmount: String,
         transactionSymbol: TransactionSymbol? = null,
         assetShortName: String?,
@@ -101,7 +94,7 @@ class AlgorandAmountView @JvmOverloads constructor(
         assetShortName: String?,
         assetDecimal: Int
     ) {
-        val formattedAmount = amount.formatAmount(assetDecimal, isCompact = false)
+        val formattedAmount = amount.formatAmount(assetDecimal)
         setAmount(formattedAmount, transactionSymbol, assetShortName)
     }
 

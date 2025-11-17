@@ -13,9 +13,9 @@ import androidx.paging.PagingData
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentNotificationCenterBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.notification.ui.adapter.NotificationAdapter
@@ -41,9 +41,8 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
-        toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
     )
 
     private val emptyState by lazy {
@@ -73,6 +72,7 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
             isCurrentStateError -> {
                 enableNotificationsErrorState((combinedLoadStates.refresh as LoadState.Error).error)
             }
+
             isLoading.not() && isNotificationListEmpty -> {
                 binding.screenStateView.setupUi(emptyState)
             }
@@ -141,7 +141,7 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
 
     override fun onResume() {
         super.onResume()
-        refreshList(changeRefreshTime = false)
+        refreshList()
     }
 
     private fun handleLoadState() {

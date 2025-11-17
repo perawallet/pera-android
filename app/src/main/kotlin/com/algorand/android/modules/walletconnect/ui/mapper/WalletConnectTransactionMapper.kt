@@ -20,7 +20,6 @@ import com.algorand.android.mapper.PaymentTransactionMapper
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.SignTxnOptions
 import com.algorand.android.models.WCAlgoTransactionRequest
-import com.algorand.android.models.WCArbitraryData
 import com.algorand.android.models.WalletConnectSession
 import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.APP_TRANSACTION
 import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.ASSET_CONFIGURATION
@@ -44,16 +43,6 @@ class WalletConnectTransactionMapper @Inject constructor(
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val gson: Gson
 ) {
-
-    fun parseArbitraryDataPayload(payload: List<*>): List<WCArbitraryData>? {
-        return try {
-            payload.map { rawArbitraryData ->
-                gson.fromJson(gson.toJson(rawArbitraryData), WCArbitraryData::class.java)
-            }
-        } catch (exception: Exception) {
-            null
-        }
-    }
 
     fun parseTransactionPayload(payload: List<*>): List<WCAlgoTransactionRequest>? {
         return try {

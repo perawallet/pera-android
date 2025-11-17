@@ -28,6 +28,6 @@ class DisablePasswordVerificationFragment : BasePasswordFragment() {
     )
 
     companion object {
-        const val DISABLE_PASSWORD_VERIFICATION_RESULT_KEY = "disable_password_verification_result"
+        const val DISABLE_PASSWORD_VERIFICATION_RESULT_KEY: String = "disable_password_verification_result"
     }
 }

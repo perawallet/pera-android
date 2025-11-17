@@ -29,13 +29,13 @@ import com.algorand.android.utils.isGreaterThan
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.math.BigInteger
+import javax.inject.Inject
 
 class Arc59SendSummaryPreviewUseCase @Inject constructor(
     private val getArc59SendSummary: GetArc59SendSummary,
@@ -115,7 +115,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         }
     }
 
-    suspend fun sendSignedTransaction(
+    fun sendSignedTransaction(
         preview: Arc59SendSummaryPreview,
         signedTransactions: List<Any?>
     ): Flow<Arc59SendSummaryPreview> = channelFlow {

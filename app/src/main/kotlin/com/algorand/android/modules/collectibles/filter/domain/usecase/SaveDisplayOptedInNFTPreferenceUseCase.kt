@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class SaveDisplayOptedInNFTPreferenceUseCase @Inject constructor(
-    @Named(CollectibleFiltersRepository.COLLECTIBLE_FILTERS_REPOSITORY_INJECTION_NAME)
+    @param:Named(CollectibleFiltersRepository.COLLECTIBLE_FILTERS_REPOSITORY_INJECTION_NAME)
     private val collectibleFiltersRepository: CollectibleFiltersRepository,
 ) {
 

@@ -16,8 +16,8 @@ import android.content.res.Resources
 import android.os.Parcelable
 import com.algorand.android.R
 import com.algorand.android.utils.extensions.formatAsAvatarTextOrThrow
-import java.util.Locale
 import kotlinx.parcelize.Parcelize
+import java.util.Locale
 
 @Parcelize
 class AssetName private constructor(
@@ -64,7 +64,7 @@ class AssetName private constructor(
 
     companion object {
 
-        val DEFAULT_ASSET_NAME_RES_ID = R.string.unnamed
+        val DEFAULT_ASSET_NAME_RES_ID: Int = R.string.unnamed
         private const val ASSET_AVATAR_MAX_LETTER_COUNT = 3
 
         fun create(assetName: String?): AssetName {

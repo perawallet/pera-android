@@ -18,10 +18,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AnnotatedString(
-    @StringRes
+    @param:StringRes
     val stringResId: Int,
-
     val replacementList: List<Pair<CharSequence, CharSequence>> = emptyList(),
-
     val customAnnotationList: List<Pair<CharSequence, Any>> = emptyList()
 ) : Parcelable

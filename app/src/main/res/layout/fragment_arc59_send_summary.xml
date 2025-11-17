@@ -104,7 +104,6 @@
         app:layout_constraintEnd_toStartOf="@id/endGuideLine"
         app:layout_constraintStart_toEndOf="@id/startGuideLine" />
 
-
     <TextView
         android:id="@+id/minBalanceFeeTextView"
         android:layout_width="wrap_content"
@@ -146,7 +145,6 @@
         app:layout_constraintBottom_toTopOf="@id/cancelButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/cancelButton"

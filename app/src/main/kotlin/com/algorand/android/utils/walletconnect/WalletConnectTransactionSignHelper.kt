@@ -19,10 +19,10 @@ import javax.inject.Inject
 class WalletConnectTransactionSignHelper @Inject constructor() :
     ListQueuingHelper<BaseWalletConnectTransaction, ByteArray>() {
 
-    override val totalItemCount
+    override val totalItemCount: Int
         get() = transactionToSignCount
 
-    override val currentItemIndex
+    override val currentItemIndex: Int
         get() = dequeuedItemList.filterNotNull().size + 1
 
     private var transactionToSignCount = enqueuedItemCount

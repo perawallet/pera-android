@@ -49,7 +49,9 @@ class EditContactFragment : BaseAddEditContactFragment() {
         titleResId = R.string.edit_contact
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val contactDatabaseId: Int by lazy { args.contactDatabaseId }
 
@@ -116,13 +118,13 @@ class EditContactFragment : BaseAddEditContactFragment() {
 
     override fun setContactNameInputLayout(algorandInputLayout: AlgorandInputLayout) {
         if (!args.contactName.isNullOrEmpty()) {
-            algorandInputLayout.text = args.contactName!!
+            algorandInputLayout.text = (args.contactName ?: return)
         }
     }
 
     override fun setContactAddressInputLayout(algorandInputLayout: AlgorandInputLayout) {
         if (!args.contactPublicKey.isNullOrEmpty()) {
-            algorandInputLayout.text = args.contactPublicKey!!
+            algorandInputLayout.text = (args.contactPublicKey ?: return)
         }
         algorandInputLayout.addTrailingIcon(R.drawable.ic_qr_scan, ::onScanQRClick)
     }

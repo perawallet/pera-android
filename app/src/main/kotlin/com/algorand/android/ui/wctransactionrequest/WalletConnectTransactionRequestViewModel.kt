@@ -117,7 +117,7 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
 
     fun handleStartDestinationAndArgs(transactionList: List<WalletConnectTransactionListItem>): Pair<Int, Bundle?> {
         val startDestination = if (
-            transactionList.count() == 1 &&
+            transactionList.size == 1 &&
             transactionList.first() is WalletConnectTransactionListItem.SingleTransactionItem
         ) {
             R.id.walletConnectSingleTransactionFragment

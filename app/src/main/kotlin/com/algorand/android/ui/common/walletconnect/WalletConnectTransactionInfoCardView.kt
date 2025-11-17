@@ -74,10 +74,6 @@ class WalletConnectTransactionInfoCardView(
         }
     }
 
-    fun setWalletConnectTransactionInfoCardViewListener(listener: WalletConnectTransactionInfoCardViewListener) {
-        this.listener = listener
-    }
-
     private fun initAssetName(assetName: String?, isAssetUnnamed: Boolean) {
         when {
             isAssetUnnamed -> {

@@ -25,11 +25,11 @@ import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc
 import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class Arc59ReceiveDetailPreviewUseCase @Inject constructor(
     private val createArc59ClaimTransaction: CreateArc59ClaimTransaction,

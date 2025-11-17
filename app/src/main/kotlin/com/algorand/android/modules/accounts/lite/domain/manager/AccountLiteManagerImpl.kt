@@ -29,8 +29,6 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlow
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,6 +44,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class AccountLiteManagerImpl @Inject constructor(
@@ -84,6 +84,7 @@ internal class AccountLiteManagerImpl @Inject constructor(
             is AccountLiteInitializationStatus.CurrencyDetailError -> {
                 flowOf(CurrencyCachingError(initializationStatus.error))
             }
+
             AccountLiteInitializationStatus.EmptyAccounts -> flowOf(EmptyLocalAccounts)
             AccountLiteInitializationStatus.Loading -> flowOf(AccountLiteCacheStatus.Loading)
             is AccountLiteInitializationStatus.ReadyForInitialization -> {
@@ -112,6 +113,7 @@ internal class AccountLiteManagerImpl @Inject constructor(
                     AccountLiteInitializationStatus.CurrencyDetailError(currencyStatus)
                 }
             }
+
             currencyStatus is CacheResult.Success -> getStatusWithAppCacheStatus(localAccounts, appCacheStatus)
             currencyStatus == null -> AccountLiteInitializationStatus.Loading
             else -> AccountLiteInitializationStatus.Loading

@@ -20,11 +20,11 @@ import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.algorand.android.modules.transactionhistory.domain.model.BaseTransaction
 import com.algorand.android.repository.TransactionsRepository.Companion.DEFAULT_TRANSACTION_COUNT
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
+import javax.inject.Inject
 
 class TransactionHistoryPaginationHelper @Inject constructor() {
 

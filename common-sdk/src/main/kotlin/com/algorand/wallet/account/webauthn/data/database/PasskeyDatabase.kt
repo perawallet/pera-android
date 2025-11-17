@@ -50,6 +50,6 @@ abstract class PasskeyDatabase : RoomDatabase() {
          *
          * This constant is utilized by the Room Database configuration for identifying the database file.
          */
-        const val DATABASE_NAME = "passkey_database"
+        const val DATABASE_NAME: String = "passkey_database"
     }
 }

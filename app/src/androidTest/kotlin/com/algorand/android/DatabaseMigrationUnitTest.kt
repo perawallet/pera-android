@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
 import com.algorand.android.database.AlgorandDatabase
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectSessionMeta
@@ -66,19 +66,19 @@ class DatabaseMigrationUnitTest {
 
     @Test
     fun insertNodeToDatabase() {
-        migratedDb!!.insertNodeToDatabaseLatestVersion()
+        (migratedDb ?: return).insertNodeToDatabaseLatestVersion()
         val queryString = "SELECT * FROM Node"
-        val cursor: Cursor = migratedDb!!.query(queryString, emptyArray())
+        val cursor: Cursor = (migratedDb ?: return).query(queryString, emptyArray())
         Log.d(TAG, "Node DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
         Log.d(TAG, "Node Count in Database: ${cursor.count}")
-        Assert.assertTrue("Nodes Count After Migration Not Successful", cursor.count == defaultNodeList.count())
+        Assert.assertTrue("Nodes Count After Migration Not Successful", cursor.count == defaultNodeList.size)
     }
 
     @Test
     fun insertUserToDatabase() {
-        migratedDb!!.insertUser("LastPublicKey")
+        (migratedDb ?: return).insertUser("LastPublicKey")
         val queryString = "SELECT * FROM User"
-        val cursor = migratedDb!!.query(queryString, emptyArray())
+        val cursor = (migratedDb ?: return).query(queryString, emptyArray())
         Log.d(TAG, "User DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
         Log.d(TAG, "User Count in Database: ${cursor.count}")
         Assert.assertTrue("Users Count After Migration Not Successful", cursor.count == 2)
@@ -86,9 +86,9 @@ class DatabaseMigrationUnitTest {
 
     @Test
     fun insertWalletConnectSessionToDatabase() {
-        migratedDb!!.insertWalletConnectSession()
+        (migratedDb ?: return).insertWalletConnectSession()
         val queryString = "SELECT * FROM WalletConnectSessionEntity"
-        val cursor = migratedDb!!.query(queryString, emptyArray())
+        val cursor = (migratedDb ?: return).query(queryString, emptyArray())
         Log.d(TAG, "WalletConnectSessionEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
         Log.d(TAG, "Session count in Database: ${cursor.count}")
         Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)
@@ -96,9 +96,9 @@ class DatabaseMigrationUnitTest {
 
     @Test
     fun insertWalletConnectSessionAccountToDatabase() {
-        migratedDb!!.insertWalletConnectSessionAccount()
+        (migratedDb ?: return).insertWalletConnectSessionAccount()
         val queryString = "SELECT * FROM WalletConnectSessionAccountEntity"
-        val cursor = migratedDb!!.query(queryString, emptyArray())
+        val cursor = (migratedDb ?: return).query(queryString, emptyArray())
         Log.d(TAG, "WalletConnectSessionAccountEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
         Log.d(TAG, "Connected account count in Database: ${cursor.count}")
         Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)

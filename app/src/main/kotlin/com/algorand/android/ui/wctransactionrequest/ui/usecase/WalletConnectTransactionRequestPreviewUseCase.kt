@@ -37,7 +37,7 @@ class WalletConnectTransactionRequestPreviewUseCase @Inject constructor(
         return walletConnectTransactionRequestPreviewMapper.mapToWalletConnectTransactionRequestPreview()
     }
 
-    suspend fun updatePreviewWithLaunchBackBrowserNavigation(
+    fun updatePreviewWithLaunchBackBrowserNavigation(
         shouldSkipConfirmation: Boolean,
         preview: WalletConnectTransactionRequestPreview,
         walletConnectSession: WalletConnectSession?

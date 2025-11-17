@@ -34,7 +34,7 @@ sealed class BaseTransactionItem : RecyclerListItem, Parcelable {
     }
 
     @Parcelize
-    data class ResourceTitleItem(@StringRes val stringRes: Int) : BaseTransactionItem(), Parcelable {
+    data class ResourceTitleItem(@param:StringRes val stringRes: Int) : BaseTransactionItem(), Parcelable {
         override val itemType: ItemType
             get() = ItemType.RESOURCE_TITLE_ITEM
 

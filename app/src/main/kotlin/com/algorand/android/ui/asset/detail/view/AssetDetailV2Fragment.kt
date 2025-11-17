@@ -87,7 +87,7 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             AssetDetailScreen(
                 assetDetailV2ViewModel,

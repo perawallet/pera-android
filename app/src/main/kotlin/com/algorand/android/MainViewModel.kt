@@ -105,7 +105,7 @@ class MainViewModel @Inject constructor(
 
     val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
 
-    var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+    private var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue && newValue && isAppUnlocked()) {
             handlePendingIntent(true)
         }

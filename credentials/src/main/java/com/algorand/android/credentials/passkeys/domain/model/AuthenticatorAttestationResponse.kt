@@ -16,10 +16,10 @@ import android.util.Log
 import com.algorand.android.credentials.passkeys.domain.PeraMessageDigest
 import com.algorand.android.credentials.passkeys.domain.WebAuthnUtils
 import com.algorand.android.credentials.passkeys.foundation.Cbor
-import java.nio.ByteBuffer
-import java.util.UUID
 import org.json.JSONArray
 import org.json.JSONObject
+import java.nio.ByteBuffer
+import java.util.UUID
 
 /**
  * This class is a duplicated version of the original [androidx.credentials.webauthn.AuthenticatorAttestationResponse]
@@ -79,12 +79,12 @@ internal class AuthenticatorAttestationResponse(
         val credIdLen = byteArrayOf((credentialId.size shr 8).toByte(), credentialId.size.toByte())
 
         return rpHash +
-            byteArrayOf(flags.toByte()) +
-            byteArrayOf(0, 0, 0, 0) +
-            aaguid +
-            credIdLen +
-            credentialId +
-            credentialPublicKey
+                byteArrayOf(flags.toByte()) +
+                byteArrayOf(0, 0, 0, 0) +
+                aaguid +
+                credIdLen +
+                credentialId +
+                credentialPublicKey
     }
 
     @Suppress("MagicNumber")

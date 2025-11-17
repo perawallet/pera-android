@@ -37,7 +37,8 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentDeveloperSettingsBinding::bind)
 

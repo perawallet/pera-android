@@ -15,11 +15,13 @@ package com.algorand.wallet.asset.data.database.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.RoomWarnings
 import com.algorand.wallet.asset.data.database.model.AssetCategoryEntity
 import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleItemDto
 import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
 
 @Dao
+@SuppressWarnings(RoomWarnings.QUERY_MISMATCH)
 internal interface PaginatedSwappableAssetDao {
 
     @Query(

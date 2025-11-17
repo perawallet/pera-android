@@ -21,9 +21,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.test.runTest
 
 class PeraReferrerManagerImplTest {
 
@@ -54,18 +55,19 @@ class PeraReferrerManagerImplTest {
     }
 
     @Test
-    fun `EXPECT URL retrieved and data saved WHEN fetchInstallReferrer is called with non-null URL`() = runTest {
-        coEvery { mockReferrerClient.getReferrerUrl() } returns testReferrerUrl
+    fun `EXPECT URL retrieved and data saved WHEN fetchInstallReferrer is called with non-null URL`(): TestResult =
+        runTest {
+            coEvery { mockReferrerClient.getReferrerUrl() } returns testReferrerUrl
 
-        sut.fetchInstallReferrer()
+            sut.fetchInstallReferrer()
 
-        coVerify { mockReferrerClient.getReferrerUrl() }
-        verify { mockQueryParamParser.getReferrerData(testReferrerUrl) }
-        coVerify { mockSaveReferrerData.invoke(testReferrerData) }
-    }
+            coVerify { mockReferrerClient.getReferrerUrl() }
+            verify { mockQueryParamParser.getReferrerData(testReferrerUrl) }
+            coVerify { mockSaveReferrerData.invoke(testReferrerData) }
+        }
 
     @Test
-    fun `EXPECT no data parsing or saving WHEN fetchInstallReferrer is called with null URL`() = runTest {
+    fun `EXPECT no data parsing or saving WHEN fetchInstallReferrer is called with null URL`(): TestResult = runTest {
         coEvery { mockReferrerClient.getReferrerUrl() } returns null
 
         sut.fetchInstallReferrer()
@@ -76,7 +78,7 @@ class PeraReferrerManagerImplTest {
     }
 
     @Test
-    fun `EXPECT URL parsed and data saved WHEN saveReferrerData is called directly`() = runTest {
+    fun `EXPECT URL parsed and data saved WHEN saveReferrerData is called directly`(): TestResult = runTest {
         sut.saveReferrerData(testReferrerUrl)
 
         verify { mockQueryParamParser.getReferrerData(testReferrerUrl) }

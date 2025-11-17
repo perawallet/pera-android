@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.mapNotNull
 @AndroidEntryPoint
 class RekeyToLedgerAccountIntroductionFragment : BaseIntroductionFragment() {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val rekeyInstructionViewModel: RekeyToLedgerAccountIntroductionViewModel by viewModels()
 

@@ -17,11 +17,11 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.ui.swap.widget.viewmodel.SwapProviderWidgetViewModel.ViewState.Content
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @HiltViewModel
 class DefaultSwapProviderWidgetViewModel @Inject constructor(

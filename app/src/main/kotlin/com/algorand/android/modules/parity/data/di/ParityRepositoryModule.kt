@@ -13,11 +13,11 @@
 package com.algorand.android.modules.parity.data.di
 
 import com.algorand.android.cache.SelectedCurrencyDetailSingleLocalCache
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.parity.data.mapper.CurrencyDetailDTOMapper
 import com.algorand.android.modules.parity.data.repository.ParityRepositoryImpl
 import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,13 +32,13 @@ class ParityRepositoryModule {
     @Named(ParityRepository.INJECTION_NAME)
     fun provideParityRepository(
         mobileAlgorandApi: MobileAlgorandApi,
-        hipoApiErrorHandler: RetrofitErrorHandler,
+        peraApiErrorHandler: RetrofitErrorHandler,
         selectedCurrencyDetailSingleLocalCache: SelectedCurrencyDetailSingleLocalCache,
         currencyDetailDTOMapper: CurrencyDetailDTOMapper
     ): ParityRepository {
         return ParityRepositoryImpl(
             mobileAlgorandApi = mobileAlgorandApi,
-            hipoApiErrorHandler = hipoApiErrorHandler,
+            peraApiErrorHandler = peraApiErrorHandler,
             selectedCurrencyDetailSingleLocalCache = selectedCurrencyDetailSingleLocalCache,
             currencyDetailDTOMapper = currencyDetailDTOMapper
         )

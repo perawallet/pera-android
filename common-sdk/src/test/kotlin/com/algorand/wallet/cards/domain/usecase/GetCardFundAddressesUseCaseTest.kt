@@ -20,6 +20,7 @@ import com.algorand.wallet.cards.domain.repository.CardRepository
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -32,14 +33,23 @@ class GetCardFundAddressesUseCaseTest {
     private val sut = GetCardFundAddressesUseCase(getLocalAccounts, cardRepository)
 
     @Test
-    fun `EXPECT fund addresses of auth addresses only WHEN there are no auth addresses as well`() = runTest {
-        coEvery { getLocalAccounts() } returns LOCAL_ACCOUNTS
-        coEvery { cardRepository.getCardFundAddresses(listOf("ledger", "hd_key", "algo_25")) } returns FUND_ADDRESSES
+    fun `EXPECT fund addresses of auth addresses only WHEN there are no auth addresses as well`(): TestResult =
+        runTest {
+            coEvery { getLocalAccounts() } returns LOCAL_ACCOUNTS
+            coEvery {
+                cardRepository.getCardFundAddresses(
+                    listOf(
+                        "ledger",
+                        "hd_key",
+                        "algo_25"
+                    )
+                )
+            } returns FUND_ADDRESSES
 
-        val result = sut()
+            val result = sut()
 
-        assertEquals(FUND_ADDRESSES, result)
-    }
+            assertEquals(FUND_ADDRESSES, result)
+        }
 
     private companion object {
         val LEDGER_ACCOUNT = peraFixture<LocalAccount.LedgerBle>().copy(algoAddress = "ledger")

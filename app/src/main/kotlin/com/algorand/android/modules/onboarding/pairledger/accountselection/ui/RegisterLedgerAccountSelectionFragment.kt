@@ -37,7 +37,8 @@ class RegisterLedgerAccountSelectionFragment : BaseLedgerAccountSelectionFragmen
         defaultViewModelProviderFactory
     }
 
-    override val ledgerAccountListAdapter = LedgerAccountSelectionAdapter(ledgerAccountListAdapterListener)
+    override val ledgerAccountListAdapter: LedgerAccountSelectionAdapter =
+        LedgerAccountSelectionAdapter(ledgerAccountListAdapterListener)
 
     override val baseLedgerAccountSelectionViewModel: BaseLedgerAccountSelectionViewModel
         get() = registerLedgerAccountSelectionViewModel
@@ -86,7 +87,7 @@ class RegisterLedgerAccountSelectionFragment : BaseLedgerAccountSelectionFragmen
     }
 
     override fun changeToolbarTitle() {
-        getAppToolbar()?.changeTitle(registerLedgerAccountSelectionViewModel.ledgerBluetoothName.orEmpty())
+        getAppToolbar()?.changeTitle(registerLedgerAccountSelectionViewModel.ledgerBluetoothName)
     }
 
     override fun setupConfirmButton(confirmationButton: MaterialButton) {

@@ -51,7 +51,7 @@ class CollectibleImagePreviewFragment : BaseFragment(R.layout.fragment_collectib
         backgroundColor = R.color.black
     )
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {

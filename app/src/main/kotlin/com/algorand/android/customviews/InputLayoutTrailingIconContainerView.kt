@@ -19,6 +19,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.core.view.children
+import androidx.core.view.isEmpty
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.marginStart
@@ -71,7 +72,7 @@ class InputLayoutTrailingIconContainerView(
 
     private fun addEndMargin(iconView: View) {
         val startMargin = context.resources.getDimensionPixelSize(
-            if (childCount == 0) R.dimen.spacing_zero else R.dimen.spacing_large
+            if (isEmpty()) R.dimen.spacing_zero else R.dimen.spacing_large
         )
         (iconView.layoutParams as? LayoutParams)?.setMargins(
             startMargin, iconView.marginTop, iconView.marginStart, iconView.marginBottom

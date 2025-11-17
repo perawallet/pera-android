@@ -16,13 +16,10 @@ package com.algorand.android.models.builder
 import com.algorand.android.R
 import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectArbitraryDataShortDetail
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.ALGO_DECIMALS
 import javax.inject.Inject
 
-class SingleArbitraryDataUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
-) {
+class SingleArbitraryDataUiBuilder @Inject constructor() {
 
     fun buildToolbarTitleRes(): Int {
         return R.string.arbitrary_data
@@ -36,7 +33,6 @@ class SingleArbitraryDataUiBuilder @Inject constructor(
 
     fun buildArbitraryDataShortDetail(
         arbitraryData: WalletConnectArbitraryData
-
     ): WalletConnectArbitraryDataShortDetail {
         return with(arbitraryData) {
             WalletConnectArbitraryDataShortDetail(

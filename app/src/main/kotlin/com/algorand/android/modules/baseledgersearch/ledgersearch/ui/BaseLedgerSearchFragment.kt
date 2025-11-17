@@ -46,12 +46,12 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.wallet.account.info.domain.model.AccountInformation
-import java.util.Timer
-import java.util.TimerTask
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.Timer
+import java.util.TimerTask
+import javax.inject.Inject
 
 abstract class BaseLedgerSearchFragment :
     DaggerBaseFragment(R.layout.fragment_ledger_search), LoadingDialogFragment.DismissListener {
@@ -75,7 +75,8 @@ abstract class BaseLedgerSearchFragment :
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentLedgerSearchBinding::bind)
 
@@ -124,18 +125,23 @@ abstract class BaseLedgerSearchFragment :
                 is LedgerBleResult.AccountResult -> {
                     onLedgerConnected(accountList, bluetoothDevice)
                 }
+
                 is LedgerBleResult.AppErrorResult -> {
                     showError(getString(errorMessageId))
                 }
+
                 is LedgerBleResult.LedgerErrorResult -> {
                     showError(errorMessage)
                 }
+
                 is LedgerBleResult.OnBondingFailed -> {
                     showError(getString(R.string.pairing_failed))
                 }
+
                 is LedgerBleResult.OnMissingBytes -> {
                     connectToLatestLedgerDelayed(device)
                 }
+
                 else -> {
                     sendErrorLog("Unhandled else case in BaseLedgerSearchFragment.ledgerResultObserver")
                 }

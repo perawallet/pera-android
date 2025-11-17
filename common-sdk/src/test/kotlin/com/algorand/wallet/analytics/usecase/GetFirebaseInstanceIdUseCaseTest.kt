@@ -15,10 +15,11 @@ package com.algorand.wallet.analytics.domain.usecase
 import com.algorand.wallet.analytics.domain.repository.FirebaseAnalyticsRepository
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.test.runTest
 
 class GetFirebaseInstanceIdUseCaseTest {
 
@@ -31,7 +32,7 @@ class GetFirebaseInstanceIdUseCaseTest {
     }
 
     @Test
-    fun `GIVEN repository returns id WHEN usecase invoked THEN returns same id`() = runTest {
+    fun `GIVEN repository returns id WHEN usecase invoked THEN returns same id`(): TestResult = runTest {
         val expectedId = "test-firebase-id-123"
         coEvery { mockRepository.getFirebaseInstanceId() } returns expectedId
 
@@ -41,7 +42,7 @@ class GetFirebaseInstanceIdUseCaseTest {
     }
 
     @Test(expected = Exception::class)
-    fun `GIVEN repository throws exception WHEN usecase invoked THEN exception is propagated`() = runTest {
+    fun `GIVEN repository throws exception WHEN usecase invoked THEN exception is propagated`(): TestResult = runTest {
         val expectedException = Exception("Repository error")
         coEvery { mockRepository.getFirebaseInstanceId() } throws expectedException
 

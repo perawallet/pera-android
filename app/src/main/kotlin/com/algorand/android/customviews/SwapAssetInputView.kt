@@ -15,27 +15,14 @@ package com.algorand.android.customviews
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Parcelable
-import android.text.Editable
-import android.text.InputFilter
-import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.View
-import android.widget.ImageView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import com.algorand.android.R
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.CustomSwapAssetInputBinding
 import com.algorand.android.models.CustomInputSavedState
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.extensions.hide
-import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.requestFocusAndShowKeyboard
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 
 class SwapAssetInputView(context: Context, attrs: AttributeSet? = null) : ConstraintLayout(context, attrs) {
@@ -48,19 +35,7 @@ class SwapAssetInputView(context: Context, attrs: AttributeSet? = null) : Constr
         initRootClickListener()
     }
 
-    private var textChangeListener: TextChangeListener? = null
-
     private var latestAmountInputValue: String = ""
-
-    private var textChangeWatcher: TextWatcher? = null
-
-    private val afterTextChangedListener: (Editable?) -> Unit = { editable ->
-        val newValue = editable.toString()
-        if (newValue != latestAmountInputValue) {
-            latestAmountInputValue = newValue
-            textChangeListener?.onTextChanged(newValue)
-        }
-    }
 
     private fun initAttributes(attrs: AttributeSet?) {
         context?.obtainStyledAttributes(attrs, R.styleable.SwapAssetInputView)?.use {
@@ -81,123 +56,15 @@ class SwapAssetInputView(context: Context, attrs: AttributeSet? = null) : Constr
         }
     }
 
-    fun clearSelectedAssetDetail() {
-        with(binding) {
-            chooseAssetButton.show()
-            assetDetailGroup.hide()
-            assetIconImageView.setImageResource(R.drawable.ic_asset_oval_bg)
-            amountEditText.setText("")
-            approximateValueTextView.text = ""
-            balanceTextView.isVisible = false
-        }
-    }
-
-    fun setChooseAssetButtonOnClickListener(onClick: () -> Unit) {
-        with(binding) {
-            assetShortNameContainer.setOnClickListener { onClick() }
-            chooseAssetButton.setOnClickListener { onClick() }
-        }
-    }
-
-    fun setOnTextChangedListener(listener: TextChangeListener) {
-        this.textChangeListener = listener
-        textChangeWatcher = binding.amountEditText.addTextChangedListener(afterTextChanged = afterTextChangedListener)
-    }
-
-    fun setAmountWithoutTriggeringTextChangeListener(amount: String) {
-        with(binding.amountEditText) {
-            removeTextChangedListener(textChangeWatcher)
-            setText(amount)
-            setSelection(
-                if (hasFocus()) {
-                    amount.length
-                } else {
-                    0
-                }
-            )
-            if (textChangeWatcher != null) {
-                addTextChangedListener(textChangeWatcher)
-            }
-        }
-    }
-
-    fun setApproximateValueText(approximateValue: String) {
-        binding.approximateValueTextView.text = approximateValue
-    }
-
-    fun setAssetDetails(
-        formattedBalance: String,
-        assetShortName: AssetName,
-        verificationTierConfiguration: VerificationTierConfiguration
-    ) {
-        setBalanceText(formattedBalance)
-        with(binding) {
-            assetShortNameTextView.apply {
-                text = assetShortName.getName(resources)
-                val verificationTierDrawable = verificationTierConfiguration.drawableResId?.let { drawableResId ->
-                    AppCompatResources.getDrawable(context, drawableResId)
-                }
-                setDrawable(end = verificationTierDrawable)
-            }
-            chooseAssetButton.hide()
-            assetDetailGroup.show()
-        }
-    }
-
-    fun setAssetDetails(
-        amount: String,
-        assetShortName: AssetName,
-        verificationTierConfiguration: VerificationTierConfiguration,
-        approximateValue: String
-    ) {
-        with(binding) {
-            assetShortNameTextView.apply {
-                text = assetShortName.getName(resources)
-                val verificationTierDrawable = verificationTierConfiguration.drawableResId?.let { drawableResId ->
-                    AppCompatResources.getDrawable(context, drawableResId)
-                }
-                setDrawable(end = verificationTierDrawable)
-            }
-            approximateValueTextView.text = approximateValue
-            amountEditText.setText(amount)
-            chooseAssetButton.hide()
-            assetDetailGroup.show()
-        }
-    }
-
-    fun setAmountTextColors(
-        primaryValueTextColorResId: Int,
-        secondaryValueTextColorResId: Int
-    ) {
-        val primaryTextColor = ContextCompat.getColor(context, primaryValueTextColorResId)
-        val secondaryTextColor = ContextCompat.getColor(context, secondaryValueTextColorResId)
-        with(binding) {
-            amountEditText.setTextColor(primaryTextColor)
-            approximateValueTextView.setTextColor(secondaryTextColor)
-        }
-    }
-
     fun setImageDrawable(drawable: Drawable?) {
         binding.assetIconImageView.setImageDrawable(drawable)
-    }
-
-    fun getImageView(): ImageView {
-        return binding.assetIconImageView
-    }
-
-    fun setInputFilter(inputFilter: InputFilter) {
-        binding.amountEditText.filters = arrayOf(inputFilter)
-    }
-
-    private fun setBalanceText(formattedBalance: String) {
-        binding.balanceTextView.text = resources.getString(R.string.balance_formatted, formattedBalance)
     }
 
     // Since there are 2 different SwapAssetInputView in the same layout, amountEditTexts have the same id
     // and this causes system to save & restore view states
     // Generating new id for amountEditText solves the issue
     private fun initViewIdAndConstraints() {
-        val newViewId = View.generateViewId()
+        val newViewId = generateViewId()
         binding.amountEditText.id = newViewId
         (binding.approximateValueTextView.layoutParams as? LayoutParams)?.run {
             topToBottom = newViewId
@@ -206,14 +73,10 @@ class SwapAssetInputView(context: Context, attrs: AttributeSet? = null) : Constr
         }
     }
 
-    fun showKeyboard() {
+    private fun showKeyboard() {
         with(binding.amountEditText) {
             if (isFocusable) requestFocusAndShowKeyboard()
         }
-    }
-
-    fun interface TextChangeListener {
-        fun onTextChanged(text: CharSequence?)
     }
 
     override fun onSaveInstanceState(): Parcelable {

@@ -34,9 +34,7 @@ class CreateAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
     private fun navToHomeNavigation() {
         nav(
             CreateAccountNameRegistrationFragmentDirections
-                .actionCreateAccountNameRegistrationFragmentToHomeNavigation(
-                    showConfetti = true
-                )
+                .actionCreateAccountNameRegistrationFragmentToHomeNavigation()
         )
     }
 }

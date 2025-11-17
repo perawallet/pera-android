@@ -51,7 +51,6 @@
             app:destination="@id/swapHistoryFragment" />
     </fragment>
 
-
     <fragment
         android:id="@+id/swapAssetInSelectionFragment"
         android:name="com.algorand.android.ui.swap.assetselection.view.SwapAssetInSelectionFragment"

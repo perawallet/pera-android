@@ -44,10 +44,6 @@ internal class CollectibleMediaMapperImplTest {
     @Test
     fun `EXPECT null WHEN all response fields are null`() {
         val collectibleMediaResponse = CollectibleMediaResponse(
-            mediaType = null,
-            downloadUrl = null,
-            previewUrl = null,
-            mediaTypeExtension = null
         )
 
         val result = sut(collectibleMediaResponse)

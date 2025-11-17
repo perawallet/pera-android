@@ -25,6 +25,6 @@ interface CollectibleFiltersRepository {
     suspend fun clearCollectibleFiltersPreferences()
 
     companion object {
-        const val COLLECTIBLE_FILTERS_REPOSITORY_INJECTION_NAME = "collectibleFiltersRepositoryInjection"
+        const val COLLECTIBLE_FILTERS_REPOSITORY_INJECTION_NAME: String = "collectibleFiltersRepositoryInjection"
     }
 }

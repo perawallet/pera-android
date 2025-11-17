@@ -19,4 +19,3 @@
     android:layout_marginBottom="28dp"
     android:maxLines="1"
     tools:text="@tools:sample/lorem[2]" />
-

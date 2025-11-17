@@ -108,6 +108,7 @@ fun AssetDetailScreen(
                                 listener
                             )
                         }
+
                         MARKETS_PAGE -> {
                             AssetMarketsScreen(headerViewModel, marketsViewModel, priceChartViewModel, listener)
                         }

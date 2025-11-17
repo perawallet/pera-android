@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetSwapFeatureRedDotVisibilityUseCase @Inject constructor(
-    @Named(SwapFeatureRedDotRepository.INJECTION_NAME)
+    @param:Named(SwapFeatureRedDotRepository.INJECTION_NAME)
     private val swapFeatureRedDotRepository: SwapFeatureRedDotRepository
 ) {
 

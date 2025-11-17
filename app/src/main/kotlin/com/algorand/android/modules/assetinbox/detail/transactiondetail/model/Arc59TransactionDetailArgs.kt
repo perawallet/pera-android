@@ -16,8 +16,8 @@ package com.algorand.android.modules.assetinbox.detail.transactiondetail.model
 import android.os.Parcelable
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.ReceiverAccountDetailPreview
 import com.algorand.android.utils.AssetName
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class Arc59TransactionDetailArgs(

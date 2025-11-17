@@ -23,11 +23,11 @@ import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class Arc59ReceiveDetailViewModel @Inject constructor(
@@ -77,9 +77,9 @@ class Arc59ReceiveDetailViewModel @Inject constructor(
         }
     }
 
-    fun getGainOnRejectAmount() = args.gainOnReject.formatAsAlgoString()
+    fun getGainOnRejectAmount(): String = args.gainOnReject.formatAsAlgoString()
 
     companion object {
-        const val ARC_59_RECEIVE_DETAIL_NAV_ARGS = "arc59ReceiveDetailNavArgs"
+        const val ARC_59_RECEIVE_DETAIL_NAV_ARGS: String = "arc59ReceiveDetailNavArgs"
     }
 }

@@ -1,11 +1,11 @@
 package com.algorand.android.modules.collectibles.common.di
 
-import com.algorand.android.modules.collectibles.common.mapper.OwnedCollectibleAudioDataMapperImpl
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountCollectibleDataFlow
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountCollectibleDataFlowUseCase
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactoryImpl
 import com.algorand.android.modules.collectibles.common.mapper.OwnedCollectibleAudioDataMapper
+import com.algorand.android.modules.collectibles.common.mapper.OwnedCollectibleAudioDataMapperImpl
 import com.algorand.android.modules.collectibles.common.mapper.OwnedCollectibleImageDataMapper
 import com.algorand.android.modules.collectibles.common.mapper.OwnedCollectibleImageDataMapperImpl
 import com.algorand.android.modules.collectibles.common.mapper.OwnedCollectibleMixedDataMapper

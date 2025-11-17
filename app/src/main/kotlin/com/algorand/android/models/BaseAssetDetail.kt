@@ -12,8 +12,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.wallet.asset.domain.util.AssetConstants
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -40,8 +39,4 @@ abstract class BaseAssetDetail {
     abstract val url: String?
     abstract val last24HoursAlgoPriceChangePercentage: BigDecimal?
     abstract val isAvailableOnDiscoverMobile: Boolean?
-
-    fun hasUsdValue(): Boolean {
-        return usdValue != null || assetId == AssetConstants.ALGO_ID
-    }
 }

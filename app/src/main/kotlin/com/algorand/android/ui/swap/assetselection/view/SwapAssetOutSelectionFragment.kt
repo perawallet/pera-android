@@ -44,7 +44,7 @@ class SwapAssetOutSelectionFragment : BaseFragment(0), SwapAssetOutSelectionScre
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             SwapAssetOutSelectionScreen(assetOutSelectionViewModel, this)
         }
@@ -66,6 +66,6 @@ class SwapAssetOutSelectionFragment : BaseFragment(0), SwapAssetOutSelectionScre
     }
 
     companion object {
-        const val SWAP_ASSET_OUT_ID_KEY = "swapAssetOutIdKey"
+        const val SWAP_ASSET_OUT_ID_KEY: String = "swapAssetOutIdKey"
     }
 }

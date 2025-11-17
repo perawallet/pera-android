@@ -20,6 +20,6 @@ interface NftDomainSearchRepository {
     suspend fun getSearchResults(query: String): Result<List<NftDomainSearchResultDTO>>
 
     companion object {
-        const val INJECTION_NAME = "nftDomainSearchRepositoryInjectionName"
+        const val INJECTION_NAME: String = "nftDomainSearchRepositoryInjectionName"
     }
 }

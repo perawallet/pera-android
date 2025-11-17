@@ -13,9 +13,8 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.wallet.asset.domain.util.AssetConstants
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class AccountInformation(
@@ -32,30 +31,7 @@ data class AccountInformation(
     val lastFetchedRound: Long?
 ) : Parcelable {
 
-    val assetHoldingMap: HashMap<Long, AssetHolding>
-        get() = allAssetHoldingMap.filterNot { it.value.isDeleted } as? HashMap<Long, AssetHolding> ?: hashMapOf()
-
-    fun isCreated(): Boolean {
-        return createdAtRound != null
-    }
-
     fun isRekeyed(): Boolean {
         return !rekeyAdminAddress.isNullOrEmpty() && rekeyAdminAddress != address
-    }
-
-    fun getAllAssetIds(): List<Long> {
-        return assetHoldingMap.keys.toList()
-    }
-
-    fun hasAsset(assetId: Long): Boolean {
-        return assetHoldingMap.containsKey(assetId) || assetId == AssetConstants.ALGO_ID
-    }
-
-    fun getAssetHoldingOrNull(assetId: Long): AssetHolding? {
-        return assetHoldingMap.get(assetId)
-    }
-
-    fun getAssetHoldingList(): List<AssetHolding> {
-        return assetHoldingMap.values.toList()
     }
 }

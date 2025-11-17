@@ -56,18 +56,23 @@ internal class CollectibleDetailMapperImpl @Inject constructor(
             CollectibleMediaTypeEntity.IMAGE -> {
                 imageCollectibleDetailMapper(entity, collectibleEntity, mediaEntities, traitEntities)
             }
+
             CollectibleMediaTypeEntity.VIDEO -> {
                 videoCollectibleDetailMapper(entity, collectibleEntity, mediaEntities, traitEntities)
             }
+
             CollectibleMediaTypeEntity.MIXED -> {
                 mixedCollectibleDetailMapper(entity, collectibleEntity, mediaEntities, traitEntities)
             }
+
             CollectibleMediaTypeEntity.AUDIO -> {
                 audioCollectibleDetailMapper(entity, collectibleEntity, mediaEntities, traitEntities)
             }
+
             CollectibleMediaTypeEntity.UNKNOWN -> {
                 unsupportedCollectibleDetailMapper(entity, collectibleEntity, mediaEntities, traitEntities)
             }
+
             null -> null
         }
     }

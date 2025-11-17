@@ -43,8 +43,8 @@ class PrismUrlBuilder private constructor(url: String) : BaseUrlBuilder(url.trim
 
     companion object {
 
-        const val DEFAULT_IMAGE_SIZE = 1024
-        const val DEFAULT_IMAGE_QUALITY = 70
+        const val DEFAULT_IMAGE_SIZE: Int = 1024
+        const val DEFAULT_IMAGE_QUALITY: Int = 70
 
         fun create(url: String): PrismUrlBuilder {
             return PrismUrlBuilder(url)

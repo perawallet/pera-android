@@ -18,7 +18,7 @@ import com.algorand.android.R
 import com.google.android.material.button.MaterialButton
 
 data class TextButton(
-    @StringRes private val stringResId: Int,
+    @param:StringRes private val stringResId: Int,
     override val backgroundTintResId: Int? = null,
     override val onClick: () -> Unit
 ) : BaseToolbarButton() {

@@ -37,9 +37,10 @@ import com.algorand.wallet.asset.domain.usecase.ClearSingleAssetCache
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetSingleAssetDetailFlow
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 class AssetAboutPreviewUseCase @Inject constructor(
     private val cacheSingleAssetDetail: CacheSingleAssetDetail,
@@ -59,7 +60,7 @@ class AssetAboutPreviewUseCase @Inject constructor(
         cacheSingleAssetDetail(assetId)
     }
 
-    fun getAssetAboutPreview(assetId: Long) = flow {
+    fun getAssetAboutPreview(assetId: Long): Flow<AssetAboutPreview> = flow {
         emit(assetAboutPreviewMapper.mapToAssetAboutPreviewInitialState())
         if (assetId == ALGO_ID) {
             val algoAssetDetail = getAsset(ALGO_ID) ?: return@flow

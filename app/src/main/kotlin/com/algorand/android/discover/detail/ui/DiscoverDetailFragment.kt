@@ -53,9 +53,8 @@ class DiscoverDetailFragment :
 
     override val discoverViewModel: DiscoverDetailViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
@@ -206,8 +205,7 @@ class DiscoverDetailFragment :
             DiscoverDetailFragmentDirections.actionDiscoverDetailFragmentToDiscoverDappNavigation(
                 dappUrl = url,
                 dappTitle = title ?: "",
-                favorites = favorites,
-                showFavorites = true
+                favorites = favorites
             )
         )
     }

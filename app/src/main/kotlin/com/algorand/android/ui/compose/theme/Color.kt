@@ -25,239 +25,226 @@ object ThemedColors {
 @Suppress("MagicNumber")
 object ColorPalette {
 
-    val Transparent = Color(0x00000000)
+    val Transparent: Color = Color(0x00000000)
 
     object White {
-        val Default = Color(0xFFFFFFFF)
-        val Alpha12 = Color(0x1FFFFFFF)
-        val Alpha16 = Color(0x29FFFFFF)
-        val Alpha60 = Color(0x99FFFFFF)
-        val Alpha84 = Color(0xD6FFFFFF)
+        val Default: Color = Color(0xFFFFFFFF)
+        val Alpha12: Color = Color(0x1FFFFFFF)
+        val Alpha16: Color = Color(0x29FFFFFF)
+        val Alpha60: Color = Color(0x99FFFFFF)
+        val Alpha84: Color = Color(0xD6FFFFFF)
     }
 
     object Black {
-        val Default = Color(0xFF000000)
-        val Alpha64 = Color(0xA3000000)
-        val Alpha86 = Color(0xDB000000)
+        val Default: Color = Color(0xFF000000)
+        val Alpha64: Color = Color(0xA3000000)
+        val Alpha86: Color = Color(0xDB000000)
     }
 
     object Turquoise {
-        val V900 = Color(0xFF0B4D68)
-        val V800 = Color(0xFF136880)
-        val V700 = Color(0xFF1F8E9D)
-        val V700Alpha10 = V700.copy(alpha = 0.1f)
-        val V700Alpha12 = V700.copy(alpha = 0.12f)
-        val V700Alpha20 = V700.copy(alpha = 0.2f)
-        val V700Alpha28 = V700.copy(alpha = 0.28f)
-        val V600 = Color(0xFF2CB7BC)
-        val V600Alpha12 = V600.copy(alpha = 0.12f)
-        val V500 = Color(0xFF3EDBD2)
-        val V500Alpha12 = V500.copy(alpha = 0.12f)
-        val V500Alpha24 = V500.copy(alpha = 0.24f)
-        val V400 = Color(0xFF6BE9D6)
-        val V300 = Color(0xFF8BF4DB)
-        val V200 = Color(0xFFB2FBE3)
-        val V100 = Color(0xFFD8FDEE)
-        val V50 = Color(0xFFEBFEF7)
+        val V900: Color = Color(0xFF0B4D68)
+        val V800: Color = Color(0xFF136880)
+        val V700: Color = Color(0xFF1F8E9D)
+        val V700Alpha10: Color = V700.copy(alpha = 0.1f)
+        val V700Alpha12: Color = V700.copy(alpha = 0.12f)
+        val V700Alpha20: Color = V700.copy(alpha = 0.2f)
+        val V700Alpha28: Color = V700.copy(alpha = 0.28f)
+        val V600: Color = Color(0xFF2CB7BC)
+        val V600Alpha12: Color = V600.copy(alpha = 0.12f)
+        val V500: Color = Color(0xFF3EDBD2)
+        val V500Alpha12: Color = V500.copy(alpha = 0.12f)
+        val V500Alpha24: Color = V500.copy(alpha = 0.24f)
+        val V400: Color = Color(0xFF6BE9D6)
+        val V300: Color = Color(0xFF8BF4DB)
+        val V200: Color = Color(0xFFB2FBE3)
+        val V100: Color = Color(0xFFD8FDEE)
+        val V50: Color = Color(0xFFEBFEF7)
     }
 
     object Purple {
-        val V900 = Color(0xFF231566)
-        val V800 = Color(0xFF34207B)
-        val V700 = Color(0xFF4C2F99)
-        val V600 = Color(0xFF6841B7)
-        val V500 = Color(0xFF8755D5)
-        val V400 = Color(0xFFAB7CE5)
-        val V400Alpha35 = V400.copy(alpha = 0.35f)
-        val V300 = Color(0xFFC499F1)
-        val V200 = Color(0xFFDDBCF9)
-        val V100 = Color(0xFFF0DDFC)
-        val V50 = Color(0xFFF7EEFD)
+        val V900: Color = Color(0xFF231566)
+        val V800: Color = Color(0xFF34207B)
+        val V700: Color = Color(0xFF4C2F99)
+        val V600: Color = Color(0xFF6841B7)
+        val V500: Color = Color(0xFF8755D5)
+        val V400: Color = Color(0xFFAB7CE5)
+        val V400Alpha35: Color = V400.copy(alpha = 0.35f)
+        val V300: Color = Color(0xFFC499F1)
+        val V200: Color = Color(0xFFDDBCF9)
+        val V100: Color = Color(0xFFF0DDFC)
+        val V50: Color = Color(0xFFF7EEFD)
     }
 
     object Salmon {
-        val V900 = Color(0xFF7A1128)
-        val V850 = Color(0xFFA91413)
-        val V850Alpha20 = V850.copy(alpha = 0.2f)
-        val V800 = Color(0xFF931D2D)
-        val V700 = Color(0xFFB72D37)
-        val V600 = Color(0xFFDB4645)
-        val V600Alpha10 = V600.copy(alpha = 0.1f)
-        val V500 = Color(0xFFFF6D5F)
-        val V500Alpha12 = V500.copy(alpha = 0.12f)
-        val V500Alpha24 = V500.copy(alpha = 0.24f)
-        val V400 = Color(0xFFFF9B86)
-        val V300 = Color(0xFFFFB69F)
-        val V200 = Color(0xFFFFD3BE)
-        val V100 = Color(0xFFFFECDF)
-        val V50 = Color(0xFFFFF5EF)
+        val V900: Color = Color(0xFF7A1128)
+        val V850: Color = Color(0xFFA91413)
+        val V850Alpha20: Color = V850.copy(alpha = 0.2f)
+        val V800: Color = Color(0xFF931D2D)
+        val V700: Color = Color(0xFFB72D37)
+        val V600: Color = Color(0xFFDB4645)
+        val V600Alpha10: Color = V600.copy(alpha = 0.1f)
+        val V500: Color = Color(0xFFFF6D5F)
+        val V500Alpha12: Color = V500.copy(alpha = 0.12f)
+        val V500Alpha24: Color = V500.copy(alpha = 0.24f)
+        val V400: Color = Color(0xFFFF9B86)
+        val V300: Color = Color(0xFFFFB69F)
+        val V200: Color = Color(0xFFFFD3BE)
+        val V100: Color = Color(0xFFFFECDF)
+        val V50: Color = Color(0xFFFFF5EF)
     }
 
     object Blush {
-        val V900 = Color(0xFF772552)
-        val V800 = Color(0xFF8E3B63)
-        val V700 = Color(0xFFB15D7D)
-        val V600 = Color(0xFFD5859D)
-        val V500 = Color(0xFFF8B7C4)
-        val V400 = Color(0xFFFAC9CE)
-        val V300 = Color(0xFFFCD5D5)
-        val V200 = Color(0xFFFEE5E3)
-        val V100 = Color(0xFFFEF3F1)
-        val V50 = Color(0xFFFFF9F8)
-
-        // These colors are not defined in Figma color palette
-        val Wallet1Icon = Color(0xFF9B0C48)
-        val Wallet1IconGovernor = Color(0xFF9B1F69)
+        val V900: Color = Color(0xFF772552)
+        val V800: Color = Color(0xFF8E3B63)
+        val V700: Color = Color(0xFFB15D7D)
+        val V600: Color = Color(0xFFD5859D)
+        val V500: Color = Color(0xFFF8B7C4)
+        val V400: Color = Color(0xFFFAC9CE)
+        val V300: Color = Color(0xFFFCD5D5)
+        val V200: Color = Color(0xFFFEE5E3)
+        val V100: Color = Color(0xFFFEF3F1)
+        val V50: Color = Color(0xFFFFF9F8)
     }
 
     object Gray {
-        val V900 = Color(0xFF18181B)
-        val V900Alpha60 = V900.copy(alpha = 0.6f)
-        val V900Alpha90 = V900.copy(alpha = 0.9f)
-        val V900Alpha12 = V900.copy(alpha = 0.12f)
-        val V800 = Color(0xFF27272A)
-        val V700 = Color(0xFF3F3F46)
-        val V600 = Color(0xFF52525B)
-        val V600Alpha92 = V600.copy(alpha = 0.92f)
-        val V500 = Color(0xFF71717A)
-        val V500Alpha50 = V500.copy(alpha = 0.5f)
-        val V400 = Color(0xFFA1A1AA)
-        val V400Alpha50 = V400.copy(alpha = 0.5f)
-        val V300 = Color(0xFFD4D4D8)
-        val V200 = Color(0xFFE4E4E7)
-        val V100 = Color(0xFFF1F1F2)
-        val V50 = Color(0xFFFAFAFA)
-
-        // These colors are not defined in Figma color palette
-        val HeroBackground = Color(0xFF1D1D21)
-        val BottomSheetLine = Color(0xFFE6E7E9)
-        val NftIconBackground = Color(0xFF292929)
-        val TrustedIconBackgroundOpacity = Color(0xFF291A304A)
+        val V900: Color = Color(0xFF18181B)
+        val V900Alpha60: Color = V900.copy(alpha = 0.6f)
+        val V900Alpha90: Color = V900.copy(alpha = 0.9f)
+        val V900Alpha12: Color = V900.copy(alpha = 0.12f)
+        val V800: Color = Color(0xFF27272A)
+        val V700: Color = Color(0xFF3F3F46)
+        val V600: Color = Color(0xFF52525B)
+        val V600Alpha92: Color = V600.copy(alpha = 0.92f)
+        val V500: Color = Color(0xFF71717A)
+        val V500Alpha50: Color = V500.copy(alpha = 0.5f)
+        val V400: Color = Color(0xFFA1A1AA)
+        val V400Alpha50: Color = V400.copy(alpha = 0.5f)
+        val V300: Color = Color(0xFFD4D4D8)
+        val V200: Color = Color(0xFFE4E4E7)
+        val V100: Color = Color(0xFFF1F1F2)
+        val V50: Color = Color(0xFFFAFAFA)
     }
 
     object Shimmer {
-        val HighlightLight = Color(0xFFE4E4E7)
-        val BaseLight = Color(0xFFF2F2F3)
+        val HighlightLight: Color = Color(0xFFE4E4E7)
+        val BaseLight: Color = Color(0xFFF2F2F3)
 
-        val HighlightDark = Color(0xFF1F1F23)
-        val BaseDark = Color(0xFF25252A)
+        val HighlightDark: Color = Color(0xFF1F1F23)
+        val BaseDark: Color = Color(0xFF25252A)
     }
 
     object Yellow {
-        val V600 = Color(0xFFC77700)
-        val V500 = Color(0xFFEDB21C)
-        val V400 = Color(0xFFFFEE55)
-        val V400Alpha50 = V400.copy(alpha = 0.5f)
-        val V400Alpha20 = V400.copy(alpha = 0.2f)
-        val V400Alpha10 = V400.copy(alpha = 0.1f)
-        val V400Alpha5 = V400.copy(alpha = 0.05f)
-        val V300 = Color(0xFFFFF387)
-        val V200 = Color(0xFFFFF8BA)
-        val V100 = Color(0xFFFFFBD4)
-        val V50 = Color(0xFFFFFDEA)
-
-        // These colors are not defined in Figma color palette
-        val Wallet2Icon = Color(0xFFFFEAC2)
+        val V600: Color = Color(0xFFC77700)
+        val V500: Color = Color(0xFFEDB21C)
+        val V400: Color = Color(0xFFFFEE55)
+        val V400Alpha50: Color = V400.copy(alpha = 0.5f)
+        val V400Alpha20: Color = V400.copy(alpha = 0.2f)
+        val V400Alpha10: Color = V400.copy(alpha = 0.1f)
+        val V400Alpha5: Color = V400.copy(alpha = 0.05f)
+        val V300: Color = Color(0xFFFFF387)
+        val V200: Color = Color(0xFFFFF8BA)
+        val V100: Color = Color(0xFFFFFBD4)
+        val V50: Color = Color(0xFFFFFDEA)
     }
 
     object Blue {
         // These colors are not defined in Figma color palette
-        val V900 = Color(0xFF1A304A)
-        val V800 = Color(0xFF48A7FE)
-        val V700 = Color(0xFFCC1A304A)
+        val V900: Color = Color(0xFF1A304A)
+        val V800: Color = Color(0xFF48A7FE)
+        val V700: Color = Color(0xCC1A304A)
     }
 
     object Pink {
         // These colors are not defined in Figma color palette
-        val V900 = Color(0xFFFFAEE3)
+        val V900: Color = Color(0xFFFFAEE3)
     }
 
     object Navy {
-        val V900 = Color(0xFF171835)
-        val V800 = Color(0xFF1A304A)
-        val V800Alpha80 = V800.copy(alpha = 0.8f)
-        val V800Alpha16 = V800.copy(alpha = 0.16f)
+        val V900: Color = Color(0xFF171835)
+        val V800: Color = Color(0xFF1A304A)
+        val V800Alpha80: Color = V800.copy(alpha = 0.8f)
+        val V800Alpha16: Color = V800.copy(alpha = 0.16f)
     }
 
     object Red {
         // These colors are not defined in Figma color palette
-        val V900 = Color(0xFF29FF6D5F)
+        val V900: Color = Color(0x29FF6D5F)
     }
 
     object Others {
         // These colors are not defined in Figma color palette
-        val V100 = Color(0xFF424F76)
-        val V200 = Color(0xFF9B0C48)
-        val V300 = Color(0XFFFFEAC2)
+        val V100: Color = Color(0xFF424F76)
+        val V200: Color = Color(0xFF9B0C48)
+        val V300: Color = Color(0XFFFFEAC2)
     }
 
     object Discover {
-        val HelperPurple = Purple.V400
-        val HelperPurpleAlpha35 = Purple.V400Alpha35
-        val HelperText = Gray.V900
-        val Warning = Salmon.V500
+        val HelperPurple: Color = Purple.V400
+        val HelperPurpleAlpha35: Color = Purple.V400Alpha35
+        val HelperText: Color = Gray.V900
+        val Warning: Color = Salmon.V500
     }
 
     object Verification {
-        val BadgeBackgroundGradientStart = Gray.V800
+        val BadgeBackgroundGradientStart: Color = Gray.V800
     }
 
     object Notification {
-        val IconPlaceholderTint = Gray.V400
-        val IconPlaceholderBorder = Gray.V800
+        val IconPlaceholderTint: Color = Gray.V400
+        val IconPlaceholderBorder: Color = Gray.V800
     }
 
     object Backup {
-        val BannerTitle = Black.Alpha64
-        val BannerDescription = Gray.V900
-        val BannerIcon = Gray.V900
-        val BannerIconBackground = Salmon.V850Alpha20
+        val BannerTitle: Color = Black.Alpha64
+        val BannerDescription: Color = Gray.V900
+        val BannerIcon: Color = Gray.V900
+        val BannerIconBackground: Color = Salmon.V850Alpha20
     }
 
     object Divider {
-        val Dark = Gray.V800
+        val Dark: Color = Gray.V800
     }
 
     object Chart {
-        val TimeFrameButton = Gray.V800
-        val TimeFrameDefaultText = Gray.V500
+        val TimeFrameButton: Color = Gray.V800
+        val TimeFrameDefaultText: Color = Gray.V500
     }
 
     object WalletConnect {
-        val AccountSelectionBorder = Gray.V800
-        val DappIconBackground = Gray.V800
-        val DappIconBorder = Transparent
+        val AccountSelectionBorder: Color = Gray.V800
+        val DappIconBackground: Color = Gray.V800
+        val DappIconBorder: Color = Transparent
     }
 
     object TextField {
-        val DefaultBackground = Gray.V700
-        val TypingColor = Gray.V100
-        val FocusedLine = Gray.V100
-        val UnfocusedLine = Gray.V700
-        val SearchBarIcon = Gray.V500
+        val DefaultBackground: Color = Gray.V700
+        val TypingColor: Color = Gray.V100
+        val FocusedLine: Color = Gray.V100
+        val UnfocusedLine: Color = Gray.V700
+        val SearchBarIcon: Color = Gray.V500
     }
 
     object Transaction {
-        val ConfirmedText = Turquoise.V600
-        val AmountPositive = Turquoise.V600
-        val AmountNegative = Salmon.V500
+        val ConfirmedText: Color = Turquoise.V600
+        val AmountPositive: Color = Turquoise.V600
+        val AmountNegative: Color = Salmon.V500
     }
 
     object Governance {
-        val BannerIcon = White.Default
+        val BannerIcon: Color = White.Default
     }
 
     object Password {
-        val UnfilledDigitIcon = Gray.V700
+        val UnfilledDigitIcon: Color = Gray.V700
     }
 
     object Market {
-        val NegativeValueBackground = Salmon.V600Alpha10
-        val PositiveValueBackground = Turquoise.V500Alpha24
+        val NegativeValueBackground: Color = Salmon.V600Alpha10
+        val PositiveValueBackground: Color = Turquoise.V500Alpha24
     }
 
     object Node {
-        val ConnectedTestnetText = Yellow.V600
+        val ConnectedTestnetText: Color = Yellow.V600
     }
 }
 

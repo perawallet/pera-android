@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class TransactionDetailTooltipDisplayPreferenceUseCase @Inject constructor(
-    @Named(TooltipDisplayPreferenceRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(TooltipDisplayPreferenceRepository.REPOSITORY_INJECTION_NAME)
     private val tooltipDisplayPreferenceRepository: TooltipDisplayPreferenceRepository
 ) {
 

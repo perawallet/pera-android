@@ -13,7 +13,7 @@
 package com.algorand.android.utils
 
 object FontIdentifier {
-    const val DM_MONO_REGULAR_FONT_IDENTIFIER = "dmmono_regular"
+    const val DM_MONO_REGULAR_FONT_IDENTIFIER: String = "dmmono_regular"
 
-    const val FONT_ATTRIBUTE_DEF_TYPE = "font"
+    const val FONT_ATTRIBUTE_DEF_TYPE: String = "font"
 }

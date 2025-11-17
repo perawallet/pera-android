@@ -23,6 +23,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -39,7 +40,7 @@ class NoAuthAccountRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT all accounts WHEN getAll is invoked`() = runTest {
+    fun `EXPECT all accounts WHEN getAll is invoked`(): TestResult = runTest {
         val entities = listOf(NoAuthEntity("address1"), NoAuthEntity("address2"))
         coEvery { noAuthDao.getAll() } returns entities
         coEvery { noAuthMapper(entities[0]) } returns LocalAccount.NoAuth("address1")
@@ -53,7 +54,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account WHEN getAccount is invoked`() = runTest {
+    fun `EXPECT account WHEN getAccount is invoked`(): TestResult = runTest {
         coEvery { noAuthDao.get("address1") } returns NoAuthEntity("address1")
         coEvery { noAuthMapper(NoAuthEntity("address1")) } returns LocalAccount.NoAuth("address1")
 
@@ -64,7 +65,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`() = runTest {
+    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`(): TestResult = runTest {
         coEvery { noAuthDao.get("non_existent_address") } returns null
 
         val result = sut.getAccount("non_existent_address")
@@ -74,7 +75,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`() = runTest {
+    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`(): TestResult = runTest {
         val expectedCountFlow = MutableStateFlow(3)
         coEvery { noAuthDao.getTableSizeAsFlow() } returns expectedCountFlow
 
@@ -85,7 +86,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+    fun `EXPECT account count WHEN getAccountCount is invoked`(): TestResult = runTest {
         val expectedCount = 3
         coEvery { noAuthDao.getTableSize() } returns expectedCount
 
@@ -95,7 +96,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
+    fun `EXPECT all addresses WHEN getAllAddresses is invoked`(): TestResult = runTest {
         val addresses = listOf("address1", "address2")
         coEvery { noAuthDao.getAllAddresses() } returns addresses
 
@@ -105,7 +106,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
+    fun `EXPECT account to be added to database WHEN addAccount is invoked`(): TestResult = runTest {
         val account = LocalAccount.NoAuth("address")
         val entity = NoAuthEntity("address")
         coEvery { noAuthEntityMapper(account) } returns entity
@@ -117,7 +118,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`() = runTest {
+    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`(): TestResult = runTest {
         coEvery { noAuthDao.delete("address") } returns Unit
 
         sut.deleteAccount("address")
@@ -126,7 +127,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`() = runTest {
+    fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`(): TestResult = runTest {
         coEvery { noAuthDao.clearAll() } returns Unit
 
         sut.deleteAllAccounts()
@@ -135,7 +136,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`() = runTest {
+    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`(): TestResult = runTest {
         val entitiesFlow = MutableStateFlow(
             listOf(
                 NoAuthEntity("address1"),
@@ -158,7 +159,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN isAddressExists returns true`() = runTest {
+    fun `EXPECT true WHEN isAddressExists returns true`(): TestResult = runTest {
         coEvery { noAuthDao.isAddressExists("address1") } returns true
 
         val result = sut.isAddressExists("address1")
@@ -167,7 +168,7 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN isAddressExists returns false`() = runTest {
+    fun `EXPECT false WHEN isAddressExists returns false`(): TestResult = runTest {
         coEvery { noAuthDao.isAddressExists("address1") } returns false
 
         val result = sut.isAddressExists("address1")

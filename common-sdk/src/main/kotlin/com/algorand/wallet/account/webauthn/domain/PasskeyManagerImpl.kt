@@ -64,7 +64,7 @@ class PasskeyManagerImpl @Inject internal constructor(
      * @return A KeyPair object containing the generated public and private keys.
      */
     override fun derivePasskey(seedId: Int, origin: String, userHandle: String): KeyPair {
-        var entropy = runBlocking { hdSeedRepository.getEntropy(seedId) }
+        val entropy = runBlocking { hdSeedRepository.getEntropy(seedId) }
         val key = xPasskey.genDerivedMainKeyWithBIP39(Mnemonics.MnemonicCode(entropy!!).joinToString(" "))
         entropy.clearFromMemory()
         return xPasskey.genDomainSpecificKeypair(key, origin, userHandle.lowercase())

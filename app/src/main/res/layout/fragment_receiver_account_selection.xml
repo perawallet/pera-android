@@ -42,7 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchView"
         app:layout_goneMarginTop="@dimen/spacing_normal"
-        tools:listitem="@layout/item_receiver_account" />
+        tools:listitem="@layout/item_account" />
 
     <com.algorand.android.customviews.ScreenStateView
         android:id="@+id/screenStateView"

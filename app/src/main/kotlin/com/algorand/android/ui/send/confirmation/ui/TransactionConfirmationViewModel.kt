@@ -20,11 +20,11 @@ import com.algorand.android.ui.send.confirmation.ui.model.TransactionStatusPrevi
 import com.algorand.android.ui.send.confirmation.ui.usecase.TransactionConfirmationPreviewUseCase
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class TransactionConfirmationViewModel @Inject constructor(
@@ -36,7 +36,7 @@ class TransactionConfirmationViewModel @Inject constructor(
     private val transactionId = savedStateHandle.get<String>(TRANSACTION_ID_KEY)
     private val titleResId = savedStateHandle.get<Int>(TITLE_RES_ID_KEY)
 
-    private val _transactionStatusPreviewFlow = MutableStateFlow<TransactionStatusPreview>(
+    private val _transactionStatusPreviewFlow = MutableStateFlow(
         transactionConfirmationPreviewUseCase.getTransactionLoadingPreview()
     )
     val transactionStatusPreviewFlow: StateFlow<TransactionStatusPreview> = _transactionStatusPreviewFlow
@@ -69,13 +69,9 @@ class TransactionConfirmationViewModel @Inject constructor(
         return transactionId
     }
 
-    fun getTitleResId(): Int? {
-        return titleResId
-    }
-
     companion object {
         private const val NAV_BACK_DURATION = 2000L
-        const val TRANSACTION_ID_KEY = "transactionId"
-        const val TITLE_RES_ID_KEY = "titleResId"
+        const val TRANSACTION_ID_KEY: String = "transactionId"
+        const val TITLE_RES_ID_KEY: String = "titleResId"
     }
 }

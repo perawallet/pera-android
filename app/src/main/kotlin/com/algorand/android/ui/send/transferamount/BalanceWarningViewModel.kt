@@ -17,9 +17,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class BalanceWarningViewModel @Inject constructor(

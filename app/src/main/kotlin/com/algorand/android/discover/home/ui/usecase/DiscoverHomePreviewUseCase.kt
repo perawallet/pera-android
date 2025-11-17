@@ -88,7 +88,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         discoverSearchAssetUseCase.searchAsset(assetSearchQuery)
     }
 
-    fun getInitialStatePreview(url: String?) = DiscoverHomePreview(
+    fun getInitialStatePreview(url: String?): DiscoverHomePreview = DiscoverHomePreview(
         themePreference = sharedPreferences.getSavedThemePreference(),
         isLoading = true,
         tokenDetailScreenRequestEvent = null,
@@ -98,9 +98,10 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         loadCustomUrlEvent = if (!url.isNullOrBlank()) Event(url) else null
     )
 
-    fun getPreviewWithHandleQueryChangeForScrollEvent(previousPreview: DiscoverHomePreview) = previousPreview.copy(
-        handleQueryChangeForScrollEvent = Event(Unit)
-    )
+    fun getPreviewWithHandleQueryChangeForScrollEvent(previousPreview: DiscoverHomePreview): DiscoverHomePreview =
+        previousPreview.copy(
+            handleQueryChangeForScrollEvent = Event(Unit)
+        )
 
     fun updateSearchScreenLoadState(
         isListEmpty: Boolean,
@@ -122,30 +123,31 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     fun requestSearchVisible(
         isVisible: Boolean,
         previousState: DiscoverHomePreview
-    ) = previousState.copy(
+    ): DiscoverHomePreview = previousState.copy(
         isListEmpty = if (isVisible) previousState.isListEmpty else false,
         isSearchActivated = isVisible
     )
 
-    fun requestLoadHomepage(previousState: DiscoverHomePreview) = previousState.copy(
+    fun requestLoadHomepage(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = true,
         loadHomeEvent = Event(Unit)
     )
 
-    fun onPageRequestedShouldOverrideUrlLoading(previousState: DiscoverHomePreview) = previousState.copy(
-        isLoading = true
-    )
+    fun onPageRequestedShouldOverrideUrlLoading(previousState: DiscoverHomePreview): DiscoverHomePreview =
+        previousState.copy(
+            isLoading = true
+        )
 
-    fun onPageFinished(previousState: DiscoverHomePreview) = previousState.copy(
+    fun onPageFinished(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = false
     )
 
-    fun onError(previousState: DiscoverHomePreview) = previousState.copy(
+    fun onError(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onHttpError(previousState: DiscoverHomePreview) = previousState.copy(
+    fun onHttpError(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )
@@ -170,7 +172,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     fun pushNewScreen(
         data: String,
         previousState: DiscoverHomePreview
-    ) = previousState.copy(
+    ): DiscoverHomePreview = previousState.copy(
         urlElementRequestEvent = Event(
             gson.fromJson(data, UrlElement::class.java)
         )
@@ -179,7 +181,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     fun pushTokenDetailScreen(
         data: String,
         previousState: DiscoverHomePreview
-    ) = previousState.copy(
+    ): DiscoverHomePreview = previousState.copy(
         tokenDetailScreenRequestEvent = Event(
             gson.fromJson(data, TokenDetailInfo::class.java)
         )
@@ -189,7 +191,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         return gson.fromJson<OpenSystemBrowserRequest>(json)
     }
 
-    suspend fun handleTokenDetailActionButtonClick(
+    fun handleTokenDetailActionButtonClick(
         data: String,
         previousState: DiscoverHomePreview
     ): DiscoverHomePreview {

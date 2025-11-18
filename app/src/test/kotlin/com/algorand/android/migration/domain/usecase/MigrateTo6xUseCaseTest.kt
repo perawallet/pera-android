@@ -24,6 +24,7 @@ import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -44,7 +45,7 @@ class MigrateTo6xUseCaseTest {
     )
 
     @Test
-    fun `EXPECT accounts migrated successfully WHEN local accounts exist`() = runTest {
+    fun `EXPECT accounts migrated successfully WHEN local accounts exist`(): TestResult = runTest {
         val localAccounts = listOf(standardAccount, watchAccount, ledgerAccount, rekeyedAccount)
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns localAccounts
         every { aesPlatformManager.encryptByteArray(SECRET_KEY) } returns ENCRYPTED_SECRET_KEY
@@ -60,7 +61,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT standard account migrated correctly`() = runTest {
+    fun `EXPECT standard account migrated correctly`(): TestResult = runTest {
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns listOf(standardAccount)
         every { aesPlatformManager.encryptByteArray(SECRET_KEY) } returns ENCRYPTED_SECRET_KEY
 
@@ -92,7 +93,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT watch account migrated correctly`() = runTest {
+    fun `EXPECT watch account migrated correctly`(): TestResult = runTest {
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns listOf(watchAccount)
 
         val capturedAccount = mutableListOf<AccountCreation>()
@@ -122,7 +123,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT ledger account migrated correctly`() = runTest {
+    fun `EXPECT ledger account migrated correctly`(): TestResult = runTest {
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns listOf(ledgerAccount)
 
         val capturedAccount = mutableListOf<AccountCreation>()
@@ -164,7 +165,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT rekeyed account migrated correctly`() = runTest {
+    fun `EXPECT rekeyed account migrated correctly`(): TestResult = runTest {
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns listOf(rekeyedAccount)
 
         val capturedAccount = mutableListOf<AccountCreation>()
@@ -194,7 +195,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT zero accounts migrated WHEN no local accounts exist`() = runTest {
+    fun `EXPECT zero accounts migrated WHEN no local accounts exist`(): TestResult = runTest {
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns emptyList()
 
         val result = sut.invoke()
@@ -204,7 +205,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error result WHEN exception is thrown`() = runTest {
+    fun `EXPECT error result WHEN exception is thrown`(): TestResult = runTest {
         val exception = RuntimeException("Test exception")
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } throws exception
         coEvery { peraExceptionLogger.logException(exception) } returns Unit
@@ -216,7 +217,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT watch account WHEN legacy account is Standard and secret key is empty`() = runTest {
+    fun `EXPECT watch account WHEN legacy account is Standard and secret key is empty`(): TestResult = runTest {
         val account = standardAccount.copy(
             detail = mockk<Account.Detail.Standard> {
                 every { secretKey } returns byteArrayOf()
@@ -242,7 +243,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT watch account WHEN legacy account is Rekeyed and secret key is empty`() = runTest {
+    fun `EXPECT watch account WHEN legacy account is Rekeyed and secret key is empty`(): TestResult = runTest {
         val account = rekeyedAccount.copy(
             detail = mockk<Account.Detail.Rekeyed> {
                 every { secretKey } returns byteArrayOf()
@@ -268,7 +269,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT watch account WHEN legacy account is RekeyedAuth and secret key is empty`() = runTest {
+    fun `EXPECT watch account WHEN legacy account is RekeyedAuth and secret key is empty`(): TestResult = runTest {
         val account = rekeyedAuthAccount.copy(
             detail = mockk<Account.Detail.RekeyedAuth> {
                 every { secretKey } returns byteArrayOf()
@@ -294,7 +295,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT watch account WHEN legacy account is Rekeyed and secret key is null`() = runTest {
+    fun `EXPECT watch account WHEN legacy account is Rekeyed and secret key is null`(): TestResult = runTest {
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns listOf(rekeyedAccount)
         val capturedAccount = mutableListOf<AccountCreation>()
         coEvery { accountAdditionUseCase.addNewAccount(capture(capturedAccount)) } returns Unit
@@ -315,7 +316,7 @@ class MigrateTo6xUseCaseTest {
     }
 
     @Test
-    fun `EXPECT watch account WHEN legacy account is RekeyedAuth and secret key is null`() = runTest {
+    fun `EXPECT watch account WHEN legacy account is RekeyedAuth and secret key is null`(): TestResult = runTest {
         coEvery { getLocalAccountsFromSharedPref.getLocalAccountsFromSharedPref() } returns listOf(rekeyedAuthAccount)
         val capturedAccount = mutableListOf<AccountCreation>()
         coEvery { accountAdditionUseCase.addNewAccount(capture(capturedAccount)) } returns Unit

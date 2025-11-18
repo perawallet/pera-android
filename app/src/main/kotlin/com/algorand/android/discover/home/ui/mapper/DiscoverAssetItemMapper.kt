@@ -12,8 +12,8 @@
 
 package com.algorand.android.discover.home.ui.mapper
 
-import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset.DiscoverSearchedAsset
+import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName

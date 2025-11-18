@@ -19,7 +19,4 @@ data class GetPasskeyCredentialEntry(
     val credentialId: String,
     val username: String?,
     val userDisplayName: String?
-) {
-    val requestJson: String
-        get() = option.requestJson
-}
+)

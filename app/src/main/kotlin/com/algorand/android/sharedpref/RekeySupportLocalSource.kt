@@ -27,7 +27,7 @@ class RekeySupportLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Boolean {
-        return sharedPref.getBoolean(key, defaultRekeySupportPreference)
+        return sharedPref.getBoolean(key, DEFAULT_REKEY_SUPPORT_PREFERENCE)
     }
 
     override fun saveData(data: Boolean) {
@@ -36,6 +36,6 @@ class RekeySupportLocalSource @Inject constructor(
 
     companion object {
         private const val REKEY_SUPPORT_KEY = "rekey_support"
-        const val defaultRekeySupportPreference = false
+        const val DEFAULT_REKEY_SUPPORT_PREFERENCE: Boolean = false
     }
 }

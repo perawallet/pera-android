@@ -21,14 +21,15 @@ import com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase.Undo
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class UndoRekeyConfirmationViewModel @Inject constructor(
@@ -37,10 +38,11 @@ class UndoRekeyConfirmationViewModel @Inject constructor(
 ) : BaseRekeyConfirmationViewModel() {
 
     private val navArgs = UndoRekeyConfirmationFragmentArgs.fromSavedStateHandle(savedStateHandle)
-    val accountAddress = navArgs.accountAddress
+    val accountAddress: String = navArgs.accountAddress
 
     private val _undoRekeyConfirmationPreviewFlow = MutableStateFlow<UndoRekeyConfirmationPreview?>(null)
-    override val baseRekeyConfirmationFieldsFlow = _undoRekeyConfirmationPreviewFlow.asStateFlow()
+    override val baseRekeyConfirmationFieldsFlow: StateFlow<UndoRekeyConfirmationPreview?> =
+        _undoRekeyConfirmationPreviewFlow.asStateFlow()
 
     private var sendTransactionJob: Job? = null
 

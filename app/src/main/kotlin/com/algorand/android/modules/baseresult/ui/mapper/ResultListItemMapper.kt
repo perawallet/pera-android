@@ -16,7 +16,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
-import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
@@ -35,14 +34,6 @@ class ResultListItemMapper @Inject constructor() {
         )
     }
 
-    fun mapToSingularTitleItem(
-        @StringRes titleTextResId: Int
-    ): ResultListItem.TitleItem.Singular {
-        return ResultListItem.TitleItem.Singular(
-            titleTextResId = titleTextResId
-        )
-    }
-
     fun mapToPluralTitleItem(
         @PluralsRes titleTextResId: Int,
         quantity: Int
@@ -53,16 +44,6 @@ class ResultListItemMapper @Inject constructor() {
         )
     }
 
-    fun mapToSingularDescriptionItem(
-        annotatedString: AnnotatedString,
-        isClickable: Boolean
-    ): ResultListItem.DescriptionItem.Singular {
-        return ResultListItem.DescriptionItem.Singular(
-            annotatedString = annotatedString,
-            isClickable = isClickable
-        )
-    }
-
     fun mapToPluralDescriptionItem(
         pluralAnnotatedString: PluralAnnotatedString,
         isClickable: Boolean
@@ -70,26 +51,6 @@ class ResultListItemMapper @Inject constructor() {
         return ResultListItem.DescriptionItem.Plural(
             pluralAnnotatedString = pluralAnnotatedString,
             isClickable = isClickable
-        )
-    }
-
-    fun mapToSingularInfoBoxItem(
-        @DrawableRes infoIconResId: Int,
-        @ColorRes infoIconTintResId: Int,
-        @StringRes infoTitleTextResId: Int,
-        @ColorRes infoTitleTintResId: Int,
-        infoDescriptionAnnotatedString: AnnotatedString,
-        @ColorRes infoDescriptionTintResId: Int,
-        @ColorRes infoBoxTintColorResId: Int
-    ): ResultListItem.InfoBoxItem.Singular {
-        return ResultListItem.InfoBoxItem.Singular(
-            infoIconResId = infoIconResId,
-            infoIconTintResId = infoIconTintResId,
-            infoTitleTextResId = infoTitleTextResId,
-            infoTitleTintResId = infoTitleTintResId,
-            infoDescriptionAnnotatedString = infoDescriptionAnnotatedString,
-            infoDescriptionTintResId = infoDescriptionTintResId,
-            infoBoxTintColorResId = infoBoxTintColorResId
         )
     }
 

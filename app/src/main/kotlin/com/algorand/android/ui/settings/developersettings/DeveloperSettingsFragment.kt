@@ -37,7 +37,8 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentDeveloperSettingsBinding::bind)
 
@@ -52,7 +53,6 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
     override fun onResume() {
         super.onResume()
         binding.dispenserListItem.isVisible = developerSettingsViewModel.isConnectedToTestnet()
-        binding.createLegacyAlgo25ListItem.isVisible = developerSettingsViewModel.showCreateLegacyAlgo25Account()
         binding.developerOptionsListItem.isVisible = developerSettingsViewModel.showDeveloperOptions()
     }
 

@@ -29,7 +29,7 @@ sealed class SingleAccountSelectionListItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class TitleItem(
-        @StringRes val textResId: Int
+        @param:StringRes val textResId: Int
     ) : SingleAccountSelectionListItem() {
 
         override val itemType: ItemType
@@ -72,7 +72,7 @@ sealed class SingleAccountSelectionListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&
-                accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
+                    accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

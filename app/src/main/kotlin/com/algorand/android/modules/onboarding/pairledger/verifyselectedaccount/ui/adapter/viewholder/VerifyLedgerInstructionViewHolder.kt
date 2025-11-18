@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemLedgerVerifyInstructionBinding
 
 class VerifyLedgerInstructionViewHolder(
-    private val binding: ItemLedgerVerifyInstructionBinding
+    binding: ItemLedgerVerifyInstructionBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     companion object {
         fun create(parent: ViewGroup): VerifyLedgerInstructionViewHolder {

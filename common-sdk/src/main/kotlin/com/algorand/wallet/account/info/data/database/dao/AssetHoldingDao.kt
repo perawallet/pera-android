@@ -21,8 +21,8 @@ import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.foundation.database.util.DaoUtils.executeChunked
 import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
-import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
+import java.math.BigInteger
 
 @Dao
 internal interface AssetHoldingDao {

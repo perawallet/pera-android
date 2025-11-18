@@ -29,6 +29,7 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -65,17 +66,18 @@ class LocalAccountsNameServiceManagerImplTest {
     }
 
     @Test
-    fun `EXPECT cache manager to be initialized and listener to be set WHEN initialize is invoked`() = runTest {
-        val lifecycleOwner = TestLifecycleOwner()
+    fun `EXPECT cache manager to be initialized and listener to be set WHEN initialize is invoked`(): TestResult =
+        runTest {
+            val lifecycleOwner = TestLifecycleOwner()
 
-        sut.initialize(lifecycleOwner.lifecycle)
+            sut.initialize(lifecycleOwner.lifecycle)
 
-        verify { cacheManager.setListener(sut) }
-        verify { lifecycleOwner.lifecycle.addObserver(cacheManager) }
-    }
+            verify { cacheManager.setListener(sut) }
+            verify { lifecycleOwner.lifecycle.addObserver(cacheManager) }
+        }
 
     @Test
-    fun `EXPECT manager to run WHEN there is account and token is ready`() = runTest {
+    fun `EXPECT manager to run WHEN there is account and token is ready`(): TestResult = runTest {
         val lifecycleOwner = TestLifecycleOwner()
         every { getLocalAccountCountFlow() } returns flowOf(1)
         every { getFirebaseTokenStatusFlow() } returns flowOf(FirebaseTokenStatus.Success)
@@ -88,7 +90,7 @@ class LocalAccountsNameServiceManagerImplTest {
     }
 
     @Test
-    fun `EXPECT nothing WHEN there is account but token is not ready`() = runTest {
+    fun `EXPECT nothing WHEN there is account but token is not ready`(): TestResult = runTest {
         val lifecycleOwner = TestLifecycleOwner()
         every { getLocalAccountCountFlow() } returns flowOf(1)
         every { getFirebaseTokenStatusFlow() } returns flowOf(FirebaseTokenStatus.Loading)
@@ -100,7 +102,7 @@ class LocalAccountsNameServiceManagerImplTest {
     }
 
     @Test
-    fun `EXPECT nothing WHEN there is no account but token is ready`() = runTest {
+    fun `EXPECT nothing WHEN there is no account but token is ready`(): TestResult = runTest {
         val lifecycleOwner = TestLifecycleOwner()
         every { getLocalAccountCountFlow() } returns flowOf(0)
         every { getFirebaseTokenStatusFlow() } returns flowOf(FirebaseTokenStatus.Success)
@@ -112,7 +114,7 @@ class LocalAccountsNameServiceManagerImplTest {
     }
 
     @Test
-    fun `EXPECT name service cache to be updated WHEN manager job is run`() = runTest {
+    fun `EXPECT name service cache to be updated WHEN manager job is run`(): TestResult = runTest {
         coEvery { getLocalAccountsAddresses() } returns listOf("address1", "address2")
 
         sut.onStartJob(this)

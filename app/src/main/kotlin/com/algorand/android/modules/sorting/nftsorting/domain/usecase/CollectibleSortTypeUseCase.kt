@@ -18,7 +18,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class CollectibleSortTypeUseCase @Inject constructor(
-    @Named(CollectibleSortPreferencesRepository.INJECTION_NAME)
+    @param:Named(CollectibleSortPreferencesRepository.INJECTION_NAME)
     private val collectibleSortPreferencesRepository: CollectibleSortPreferencesRepository
 ) {
 

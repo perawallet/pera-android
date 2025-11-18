@@ -47,6 +47,7 @@ fun PeraPercentageText(modifier: Modifier = Modifier, percentage: Float) {
                 ArrowIcon(R.drawable.ic_arrow_up_line, PeraTheme.colors.helper.positive)
                 Spacer(modifier = Modifier.width(6.dp))
             }
+
             percentage < 0f -> {
                 ArrowIcon(R.drawable.ic_arrow_down_line, PeraTheme.colors.helper.negative)
                 Spacer(modifier = Modifier.width(6.dp))

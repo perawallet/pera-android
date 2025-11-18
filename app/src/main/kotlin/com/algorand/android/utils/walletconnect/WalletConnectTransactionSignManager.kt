@@ -47,9 +47,9 @@ import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class WalletConnectTransactionSignManager @Inject constructor(
     private val walletConnectSignValidator: WalletConnectSignValidator,
@@ -69,19 +69,19 @@ class WalletConnectTransactionSignManager @Inject constructor(
     private var transaction: WalletConnectTransaction? = null
 
     private val signHelperListener = object : ListQueuingHelper.Listener<BaseWalletConnectTransaction, ByteArray> {
-        override fun onAllItemsDequeued(signedTransactions: List<ByteArray?>) {
+        override fun onAllItemsDequeued(dequeuedItemList: List<ByteArray?>) {
             transaction?.run {
-                _signResultLiveData.postValue(Success(session.sessionIdentifier, requestId, signedTransactions))
+                _signResultLiveData.postValue(Success(session.sessionIdentifier, requestId, dequeuedItemList))
             }
         }
 
         override fun onNextItemToBeDequeued(
-            transaction: BaseWalletConnectTransaction,
+            item: BaseWalletConnectTransaction,
             currentItemIndex: Int,
             totalItemCount: Int
         ) {
             currentScope.launch {
-                transaction.signTransaction(
+                item.signTransaction(
                     currentTransactionIndex = currentItemIndex,
                     totalTransactionCount = totalItemCount
                 )
@@ -124,10 +124,11 @@ class WalletConnectTransactionSignManager @Inject constructor(
                         currentTransactionIndex = currentTransactionIndex,
                         totalTransactionCount = totalTransactionCount,
                         isTransactionIndicatorVisible = totalTransactionCount != null &&
-                            currentTransactionIndex != null &&
-                            totalTransactionCount > 1
+                                currentTransactionIndex != null &&
+                                totalTransactionCount > 1
                     ).apply(::postResult)
                 }
+
                 is SignedTransactionResult -> signHelper.cacheDequeuedItem(transactionByteArray)
                 is LedgerErrorResult -> postResult(Api(errorMessage))
                 is AppErrorResult -> postResult(Defined(AnnotatedString(errorMessageId), titleResId))
@@ -153,6 +154,7 @@ class WalletConnectTransactionSignManager @Inject constructor(
                 is WalletConnectSignResult.CanBeSigned -> {
                     signHelper.initItemsToBeEnqueued(transactionList.flatten())
                 }
+
                 is WalletConnectSignResult.Error -> postResult(result)
                 else -> {
                     sendErrorLog("Unhandled else case in WalletConnectSignManager.signTransaction")
@@ -173,6 +175,7 @@ class WalletConnectTransactionSignManager @Inject constructor(
                 currentTransactionIndex = currentTransactionIndex,
                 totalTransactionCount = totalTransactionCount
             )
+
             else -> cacheNullDequeuedItem()
         }
     }

@@ -23,15 +23,15 @@ import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagination
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository.Companion.REPOSITORY_INJECTION_NAME
 import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Named
 
 class SearchAssetUseCase @Inject constructor(
-    @Named(REPOSITORY_INJECTION_NAME) private val assetSearchRepository: AssetSearchRepository,
+    @param:Named(REPOSITORY_INJECTION_NAME) private val assetSearchRepository: AssetSearchRepository,
     private val assetSearchPagination: AssetSearchPagination,
     private val searchedAssetMapper: SearchedAssetMapper,
     private val getAssetFavoriteStatuses: GetAssetFavoriteStatuses

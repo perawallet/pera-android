@@ -16,11 +16,6 @@ sealed class PasteableWatchAccountSelectionResult {
 
     abstract val accountAddress: String
 
-    data class NFDomain(
-        val nfDomainName: String,
-        override val accountAddress: String
-    ) : PasteableWatchAccountSelectionResult()
-
     data class Account(
         override val accountAddress: String
     ) : PasteableWatchAccountSelectionResult()

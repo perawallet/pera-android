@@ -21,6 +21,7 @@ import com.algorand.wallet.account.local.domain.usecase.UpdateInvalidAlgo25Accou
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -45,7 +46,7 @@ class DefaultAccount6xMigrationManagerTest {
     )
 
     @Test
-    fun `EXPECT accounts to be migrated WHEN they are not migrated before`() = runTest {
+    fun `EXPECT accounts to be migrated WHEN they are not migrated before`(): TestResult = runTest {
         coEvery { getMigratedTo6xCheck() } returns false
 
         sut.migrateTo6xIfNeeded()
@@ -58,7 +59,7 @@ class DefaultAccount6xMigrationManagerTest {
     }
 
     @Test
-    fun `EXPECT accounts to be migrated only once`() = runTest {
+    fun `EXPECT accounts to be migrated only once`(): TestResult = runTest {
         coEvery { getMigratedTo6xCheck() } returns true
 
         sut.migrateTo6xIfNeeded()
@@ -68,7 +69,7 @@ class DefaultAccount6xMigrationManagerTest {
     }
 
     @Test
-    fun `EXPECT secret keys to be validated WHEN they are not validated before`() = runTest {
+    fun `EXPECT secret keys to be validated WHEN they are not validated before`(): TestResult = runTest {
         coEvery { getMigratedTo6xCheck() } returns true
         coEvery { isSecretKeyValidatedForMigratedAccounts() } returns false
 
@@ -81,7 +82,7 @@ class DefaultAccount6xMigrationManagerTest {
     }
 
     @Test
-    fun `EXPECT secret keys to not be validated WHEN they are already validated before`() = runTest {
+    fun `EXPECT secret keys to not be validated WHEN they are already validated before`(): TestResult = runTest {
         coEvery { getMigratedTo6xCheck() } returns true
         coEvery { isSecretKeyValidatedForMigratedAccounts() } returns true
 
@@ -94,7 +95,7 @@ class DefaultAccount6xMigrationManagerTest {
     }
 
     @Test
-    fun `EXPECT account migration and then secret key validation`() = runTest {
+    fun `EXPECT account migration and then secret key validation`(): TestResult = runTest {
         coEvery { getMigratedTo6xCheck() } returnsMany listOf(false, true, true)
         coEvery { isSecretKeyValidatedForMigratedAccounts() } returnsMany listOf(false, true)
 

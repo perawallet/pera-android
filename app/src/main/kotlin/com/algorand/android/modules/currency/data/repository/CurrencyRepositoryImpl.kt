@@ -12,22 +12,22 @@
 
 package com.algorand.android.modules.currency.data.repository
 
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.modules.currency.data.local.CurrencyLocalSource
 import com.algorand.android.modules.currency.data.mapper.CurrencyOptionMapper
 import com.algorand.android.modules.currency.domain.model.CurrencyOption
 import com.algorand.android.modules.currency.domain.repository.CurrencyRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithPeraApiErrorHandler
 import com.algorand.android.sharedpref.SharedPrefLocalSource
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class CurrencyRepositoryImpl @Inject constructor(
     private val currencyLocalSource: CurrencyLocalSource,
     private val currencyOptionMapper: CurrencyOptionMapper,
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler
+    private val peraApiErrorHandler: RetrofitErrorHandler
 ) : CurrencyRepository {
 
     override fun setPrimaryCurrencyChangeListener(listener: SharedPrefLocalSource.OnChangeListener<String>) {
@@ -47,7 +47,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrencyOptionList(): Result<List<CurrencyOption>> {
-        val currencyOptionResponseResult = requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        val currencyOptionResponseResult = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             mobileAlgorandApi.getCurrencies()
         }
         return currencyOptionResponseResult.map { currencyOptionResponseList ->

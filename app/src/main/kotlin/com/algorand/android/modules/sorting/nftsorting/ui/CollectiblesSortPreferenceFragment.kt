@@ -15,17 +15,20 @@ package com.algorand.android.modules.sorting.nftsorting.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentCollectibleSortPreferenceBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.sorting.nftsorting.ui.model.CollectibleSortPreferencePreview
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CollectiblesSortPreferenceFragment : BaseFragment(R.layout.fragment_collectible_sort_preference) {
@@ -36,7 +39,9 @@ class CollectiblesSortPreferenceFragment : BaseFragment(R.layout.fragment_collec
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentCollectibleSortPreferenceBinding::bind)
 
@@ -71,10 +76,12 @@ class CollectiblesSortPreferenceFragment : BaseFragment(R.layout.fragment_collec
     }
 
     private fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            collectibleSortPreferenceViewModel.collectibleSortPreferencePreviewFlow.collectLatest(
-                collectibleSortPreferencePreviewObserver
-            )
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                collectibleSortPreferenceViewModel.collectibleSortPreferencePreviewFlow.collectLatest(
+                    collectibleSortPreferencePreviewObserver
+                )
+            }
         }
     }
 

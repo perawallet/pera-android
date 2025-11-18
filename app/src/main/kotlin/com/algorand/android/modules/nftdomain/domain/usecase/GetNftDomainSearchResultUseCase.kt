@@ -21,7 +21,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetNftDomainSearchResultUseCase @Inject constructor(
-    @Named(NftDomainSearchRepository.INJECTION_NAME)
+    @param:Named(NftDomainSearchRepository.INJECTION_NAME)
     private val nftDomainSearchRepository: NftDomainSearchRepository,
     private val nftDomainSearchResultMapper: NftDomainSearchResultMapper,
     private val nftDomainServiceMapper: NftDomainServiceMapper

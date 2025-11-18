@@ -20,11 +20,11 @@ import com.algorand.wallet.transaction.data.service.TransactionsAlgodApiService
 import com.algorand.wallet.transaction.data.service.TransactionsMobileApiService
 import com.algorand.wallet.transaction.domain.model.TransactionId
 import com.algorand.wallet.transaction.domain.repository.TransactionRepository
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import javax.inject.Inject
 
 internal class DefaultTransactionRepository @Inject constructor(
     private val transactionsAlgodApiService: TransactionsAlgodApiService,

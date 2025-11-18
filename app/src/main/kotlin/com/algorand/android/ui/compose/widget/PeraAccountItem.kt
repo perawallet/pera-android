@@ -42,7 +42,7 @@ fun PeraAccountItem(
     iconDrawablePreview: AccountIconDrawablePreview,
     displayName: AccountDisplayName,
     onCopyAddress: (String) -> Unit = {},
-    onAccountClick: (String) -> Unit = { }
+    onAccountClick: (String) -> Unit = {}
 ) {
     val longClickModifier = Modifier.pointerInput(Unit) {
         detectTapGestures(

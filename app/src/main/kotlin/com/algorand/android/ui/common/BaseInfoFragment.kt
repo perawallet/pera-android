@@ -54,13 +54,10 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
     abstract fun PrimaryButton(modifier: Modifier, sheetState: SheetState)
 
     @Composable
-    open fun Warning(modifier: Modifier) = Unit
+    open fun Warning(modifier: Modifier): Unit = Unit
 
     @Composable
-    open fun SecondaryButton(modifier: Modifier) = Unit
-
-    @Composable
-    open fun TopStartButton(modifier: Modifier) = Unit
+    open fun SecondaryButton(modifier: Modifier): Unit = Unit
 
     @Suppress("LongMethod")
     @OptIn(ExperimentalMaterial3Api::class)
@@ -129,9 +126,8 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                             contentColor = PeraTheme.colors.text.main
                         ) {
                             BottomSheetContent(
-                                sheetState,
-                                { showBottomSheet.value = false }
-                            )
+                                sheetState
+                            ) { showBottomSheet.value = false }
                         }
                     }
                 }
@@ -141,9 +137,9 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    open fun BottomSheetContent(sheetState: SheetState, onDismiss: () -> Unit) = Unit
+    open fun BottomSheetContent(sheetState: SheetState, onDismiss: () -> Unit): Unit = Unit
 
     companion object {
-        const val HALF_SIZE = 0.5F
+        const val HALF_SIZE: Float = 0.5F
     }
 }

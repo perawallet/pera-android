@@ -38,8 +38,8 @@ data class WalletConnectSessionItem(
     }
 
     data class ConnectedSessionAccountItem(
-        @DrawableRes val backgroundResource: Int?,
-        @ColorRes val textColor: Int,
+        @param:DrawableRes val backgroundResource: Int?,
+        @param:ColorRes val textColor: Int,
         val displayName: String
     )
 }

@@ -31,6 +31,7 @@ class WalletConnectSessionIdentifierDecider @Inject constructor(
             WalletConnectVersionIdentifier.VERSION_1 -> {
                 walletConnectV1SessionIdentifierMapper.mapToSessionIdentifier(sessionId.toLong())
             }
+
             WalletConnectVersionIdentifier.VERSION_2 -> {
                 walletConnectV2SessionIdentifierMapper.mapToSessionIdentifier(sessionId)
             }

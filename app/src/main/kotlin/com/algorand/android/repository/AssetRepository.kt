@@ -16,20 +16,20 @@ import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.AssetSupportRequest
 import com.algorand.android.models.Result
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithPeraApiErrorHandler
 import com.algorand.android.network.safeApiCall
 import javax.inject.Inject
 
 class AssetRepository @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler,
+    private val peraApiErrorHandler: RetrofitErrorHandler,
 ) {
     suspend fun postAssetSupportRequest(assetSupportRequest: AssetSupportRequest): Result<Unit> {
         return safeApiCall { requestPostAssetSupportRequest(assetSupportRequest) }
     }
 
     private suspend fun requestPostAssetSupportRequest(assetSupportRequest: AssetSupportRequest) =
-        requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             mobileAlgorandApi.postAssetSupportRequest(assetSupportRequest)
         }
 }

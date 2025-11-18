@@ -33,8 +33,8 @@ class TransactionLoadStatePreviewMapper @Inject constructor(
     ): TransactionLoadStatePreview {
         return TransactionLoadStatePreview(
             isTransactionListVisible = (combinedLoadStates.refresh is LoadState.Error).not() &&
-                (isLastStateError && combinedLoadStates.refresh is Loading).not() &&
-                itemCount != 0,
+                    (isLastStateError && combinedLoadStates.refresh is Loading).not() &&
+                    itemCount != 0,
             isScreenStateViewVisible = transactionsScreenStateVisibilityDecider.decideScreenStateViewVisibility(
                 combinedLoadStates,
                 itemCount,

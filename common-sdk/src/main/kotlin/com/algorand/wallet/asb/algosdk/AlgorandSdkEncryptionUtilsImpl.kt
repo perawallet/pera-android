@@ -14,12 +14,9 @@ package com.algorand.wallet.asb.algosdk
 
 import android.util.Base64.NO_WRAP
 import app.perawallet.gomobilesdk.sdk.Sdk
-import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import javax.inject.Inject
 
-internal class AlgorandSdkEncryptionUtilsImpl @Inject constructor(
-    private val base64Manager: Base64Manager
-) : AlgorandSdkEncryptionUtils {
+internal class AlgorandSdkEncryptionUtilsImpl @Inject constructor() : AlgorandSdkEncryptionUtils {
 
     override fun encryptContent(content: ByteArray, key: ByteArray): String? {
         return try {
@@ -29,7 +26,7 @@ internal class AlgorandSdkEncryptionUtilsImpl @Inject constructor(
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -43,7 +40,7 @@ internal class AlgorandSdkEncryptionUtilsImpl @Inject constructor(
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

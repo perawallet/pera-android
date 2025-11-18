@@ -22,21 +22,15 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.algorand.android.modules.currency.domain.model.Currency
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
-
-@Suppress("MagicNumber")
-val algoTotalSupply: BigDecimal = BigDecimal.valueOf(10_000_000_000L)
 
 @Suppress("MagicNumber")
 val minBalancePerAssetAsBigInteger: BigInteger = BigInteger.valueOf(100_000L)
 
-const val MIN_FEE = 1000L
-const val DATA_SIZE_FOR_MAX = 270
-const val ROUND_THRESHOLD = 1000L
-const val SHORTENED_ADDRESS_LETTER_COUNT = 4
+const val MIN_FEE: Long = 1000L
+const val DATA_SIZE_FOR_MAX: Int = 270
+const val ROUND_THRESHOLD: Long = 1000L
+const val SHORTENED_ADDRESS_LETTER_COUNT: Int = 4
 
 fun DialogFragment.showWithStateCheck(fragmentManager: FragmentManager?, tag: String = "") {
     if (fragmentManager != null && fragmentManager.isStateSaved.not()) {
@@ -65,7 +59,7 @@ fun TextView.setDrawable(
     top: Drawable? = null,
     end: Drawable? = null,
     bottom: Drawable? = null
-) = setCompoundDrawablesRelativeWithIntrinsicBounds(start, top, end, bottom)
+): Unit = setCompoundDrawablesRelativeWithIntrinsicBounds(start, top, end, bottom)
 
 fun EditText.addByteLimiter(maximumLimitInByte: Int) {
     doAfterTextChanged { text ->
@@ -88,6 +82,7 @@ fun EditText.onAction(action: Int, runAction: () -> Unit) {
                 runAction.invoke()
                 true
             }
+
             else -> false
         }
     }
@@ -122,27 +117,8 @@ fun EditText.addFilterNotLetters() {
 fun String.decodeBase64(): ByteArray? {
     return try {
         Base64.decode(this, Base64.DEFAULT)
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         // TODO Log firebase
-        null
-    }
-}
-
-// TODO: Remove this whenever web import/export encryption/decryption parts are refactored
-fun ByteArray.encodeBase64(): String? {
-    return try {
-        Base64.encodeToString(this, Base64.DEFAULT)
-    } catch (exception: Exception) {
-        // TODO Log firebase
-        null
-    }
-}
-
-fun String.decodeUrl(charset: String = StandardCharsets.UTF_8.name()): String? {
-    return try {
-        URLDecoder.decode(this, charset)
-    } catch (exception: Exception) {
-        recordException(exception)
         null
     }
 }

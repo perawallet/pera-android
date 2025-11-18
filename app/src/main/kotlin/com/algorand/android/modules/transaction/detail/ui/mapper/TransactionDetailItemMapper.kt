@@ -57,38 +57,6 @@ class TransactionDetailItemMapper @Inject constructor() {
         return TransactionDetailItem.StandardTransactionItem.RoundItem(labelTextRes = labelTextRes, round = round)
     }
 
-    fun mapToPendingStatusItem(
-        @StringRes transactionStatusTextRes: Int,
-        @DrawableRes transactionStatusBackgroundColor: Int,
-        @StringRes labelTextRes: Int,
-        @StyleRes transactionStatusTextStyleRes: Int,
-        @ColorRes transactionStatusTextColorRes: Int
-    ): TransactionDetailItem.StandardTransactionItem.StatusItem.PendingItem {
-        return TransactionDetailItem.StandardTransactionItem.StatusItem.PendingItem(
-            transactionStatusTextRes = transactionStatusTextRes,
-            transactionStatusBackgroundRes = transactionStatusBackgroundColor,
-            labelTextRes = labelTextRes,
-            transactionStatusTextStyleRes = transactionStatusTextStyleRes,
-            transactionStatusTextColorRes = transactionStatusTextColorRes
-        )
-    }
-
-    fun mapToFailedStatusItem(
-        @StringRes transactionStatusTextRes: Int,
-        @DrawableRes transactionStatusBackgroundColor: Int,
-        @StringRes labelTextRes: Int,
-        @StyleRes transactionStatusTextStyleRes: Int,
-        @ColorRes transactionStatusTextColorRes: Int
-    ): TransactionDetailItem.StandardTransactionItem.StatusItem.FailedItem {
-        return TransactionDetailItem.StandardTransactionItem.StatusItem.FailedItem(
-            transactionStatusTextRes = transactionStatusTextRes,
-            transactionStatusBackgroundRes = transactionStatusBackgroundColor,
-            labelTextRes = labelTextRes,
-            transactionStatusTextStyleRes = transactionStatusTextStyleRes,
-            transactionStatusTextColorRes = transactionStatusTextColorRes
-        )
-    }
-
     fun mapToSuccessStatusItem(
         @StringRes transactionStatusTextRes: Int,
         @DrawableRes transactionStatusBackgroundColor: Int,

@@ -35,6 +35,7 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -44,7 +45,7 @@ import org.junit.Before
 import org.junit.Test
 
 class AssetInboxCacheManagerImplTest {
-    
+
     private val testDispatcher = UnconfinedTestDispatcher()
 
     private val cacheManager: LifecycleAwareCacheManager = mockk(relaxed = true)
@@ -77,17 +78,18 @@ class AssetInboxCacheManagerImplTest {
 
 
     @Test
-    fun `EXPECT cache manager to be initialized and listener to be set WHEN initialize is invoked`() = runTest {
-        val lifecycleOwner = TestLifecycleOwner()
+    fun `EXPECT cache manager to be initialized and listener to be set WHEN initialize is invoked`(): TestResult =
+        runTest {
+            val lifecycleOwner = TestLifecycleOwner()
 
-        sut.initialize(lifecycleOwner.lifecycle)
+            sut.initialize(lifecycleOwner.lifecycle)
 
-        verify { cacheManager.setListener(sut) }
-        verify { lifecycleOwner.lifecycle.addObserver(cacheManager) }
-    }
+            verify { cacheManager.setListener(sut) }
+            verify { lifecycleOwner.lifecycle.addObserver(cacheManager) }
+        }
 
     @Test
-    fun `EXPECT manager to run WHEN account cache is initialized`() = runTest {
+    fun `EXPECT manager to run WHEN account cache is initialized`(): TestResult = runTest {
         val lifecycleOwner = TestLifecycleOwner()
         every { getAccountDetailCacheStatusFlow() } returns flowOf(
             AccountCacheStatus.IDLE,
@@ -103,7 +105,7 @@ class AssetInboxCacheManagerImplTest {
     }
 
     @Test
-    fun `EXPECT cache to be updated WHEN manager job runs and api call succeeds`() = runTest {
+    fun `EXPECT cache to be updated WHEN manager job runs and api call succeeds`(): TestResult = runTest {
         val lifecycleOwner = TestLifecycleOwner()
         every { getAccountDetailCacheStatusFlow() } returns flowOf(AccountCacheStatus.INITIALIZED)
         coEvery { getAssetInboxValidAddresses() } returns listOf("address")
@@ -117,7 +119,7 @@ class AssetInboxCacheManagerImplTest {
     }
 
     @Test
-    fun `EXPECT cache to be cleared WHEN manager job runs and api call fails`() = runTest {
+    fun `EXPECT cache to be cleared WHEN manager job runs and api call fails`(): TestResult = runTest {
         val lifecycleOwner = TestLifecycleOwner()
         every { getAccountDetailCacheStatusFlow() } returns flowOf(AccountCacheStatus.INITIALIZED)
         coEvery { getAssetInboxValidAddresses() } returns listOf("address")
@@ -131,7 +133,7 @@ class AssetInboxCacheManagerImplTest {
     }
 
     @Test
-    fun `EXPECT cache to be cleared WHEN manager job starts`() = runTest {
+    fun `EXPECT cache to be cleared WHEN manager job starts`(): TestResult = runTest {
         val lifecycleOwner = TestLifecycleOwner()
         every { getAccountDetailCacheStatusFlow() } returns flowOf(AccountCacheStatus.INITIALIZED)
         coEvery { getAssetInboxValidAddresses() } returns listOf("address")

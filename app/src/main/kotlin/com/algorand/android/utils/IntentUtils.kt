@@ -24,9 +24,8 @@ import com.algorand.android.BuildConfig
 import java.io.File
 import java.io.FileOutputStream
 
-const val IMAGE_FILE_MIME_TYPE = "image/jpeg"
-const val CSV_FILE_MIME_TYPE = "text/csv"
-const val IMAGE_READ_REQUEST = 1010
+const val IMAGE_FILE_MIME_TYPE: String = "image/jpeg"
+const val CSV_FILE_MIME_TYPE: String = "text/csv"
 
 private const val IMAGE_QUALITY = 100
 
@@ -75,18 +74,6 @@ fun Fragment.shareFile(file: File, type: String, activityResultLauncher: Activit
     }
 
     return file
-}
-
-fun Context.startActivityWithPackageNameIfPossible(packageName: String): Boolean {
-    try {
-        packageManager.getLaunchIntentForPackage(packageName)?.let {
-            startActivity(it)
-            return true
-        }
-    } catch (activityNotFoundException: ActivityNotFoundException) {
-        recordException(activityNotFoundException)
-    }
-    return false
 }
 
 fun Context.startActivityWithPackageName(packageName: String, onActivityStartFailed: () -> Unit) {

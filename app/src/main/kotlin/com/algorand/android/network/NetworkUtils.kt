@@ -12,10 +12,10 @@
 
 package com.algorand.android.network
 
-import com.algorand.android.models.Result
 import com.algorand.android.exceptions.RetrofitErrorHandler
-import java.io.IOException
+import com.algorand.android.models.Result
 import retrofit2.Response
+import java.io.IOException
 
 /**
  * Wrap a suspending API [call] in try/catch. In case an exception is thrown, a [Result.Error] is
@@ -45,13 +45,13 @@ suspend fun <T : Any> request(
     }
 }
 
-suspend fun <T : Any> requestWithHipoErrorHandler(
-    hipoApiErrorHandler: RetrofitErrorHandler,
+suspend fun <T : Any> requestWithPeraApiErrorHandler(
+    peraApiErrorHandler: RetrofitErrorHandler,
     doRequest: suspend () -> Response<T>
 ): Result<T> {
     return request(
         doRequest = doRequest,
-        onFailed = { errorResponse -> hipoApiErrorHandler.getMessageAsResultError(errorResponse) }
+        onFailed = { errorResponse -> peraApiErrorHandler.getMessageAsResultError(errorResponse) }
     )
 }
 

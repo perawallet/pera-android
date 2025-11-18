@@ -17,6 +17,6 @@ import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.utils.Event
 
 class PeraNotificationManager {
-    val newNotificationLiveData =
-        MutableLiveData<Event<NotificationMetadata>>(Event(NotificationMetadata()).apply { consume() })
+    val newNotificationLiveData: MutableLiveData<Event<NotificationMetadata>> =
+        MutableLiveData(Event(NotificationMetadata()).apply { consume() })
 }

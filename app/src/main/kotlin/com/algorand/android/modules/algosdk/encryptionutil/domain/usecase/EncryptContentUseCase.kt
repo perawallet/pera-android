@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class EncryptContentUseCase @Inject constructor(
-    @Named(AlgorandSdkEncryptionUtils.INJECTION_NAME)
+    @param:Named(AlgorandSdkEncryptionUtils.INJECTION_NAME)
     private val algorandSdkEncryptionUtils: AlgorandSdkEncryptionUtils
 ) {
 

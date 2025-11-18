@@ -46,7 +46,7 @@ class NFTFilterDisplayWatchAccountNFTsLocalSource @Inject constructor(
     }
 
     companion object {
-        const val NFT_FILTER_DISPLAY_WATCH_ACCOUNT_NFTS_DEFAULT_PREFERENCES = true
+        const val NFT_FILTER_DISPLAY_WATCH_ACCOUNT_NFTS_DEFAULT_PREFERENCES: Boolean = true
         private const val NFT_FILTER_DISPLAY_WATCH_ACCOUNT_NFTS_KEY = "nft_filter_display_watch_account_nfts"
     }
 }

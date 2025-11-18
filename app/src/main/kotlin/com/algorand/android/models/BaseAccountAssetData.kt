@@ -13,13 +13,13 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.asset.domain.model.VerificationTier
+import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlinx.parcelize.Parcelize
 
 sealed class BaseAccountAssetData : Parcelable {
 
@@ -227,9 +227,6 @@ sealed class BaseAccountAssetData : Parcelable {
             abstract val collectibleName: String?
             abstract val collectionName: String?
             abstract val primaryImageUrl: String?
-
-            val avatarDisplayText: String
-                get() = collectibleName ?: name ?: shortName ?: id.toString()
 
             override val verificationTier: VerificationTier?
                 get() = null

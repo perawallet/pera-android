@@ -62,6 +62,6 @@ internal class CollectibleMapperImpl @Inject constructor(
 
     private fun CollectibleResponse.isValid(): Boolean {
         return standard != null || mediaType != null || primaryImageUrl != null || title != null ||
-            collection != null || !collectibleMedias.isNullOrEmpty()
+                collection != null || !collectibleMedias.isNullOrEmpty()
     }
 }

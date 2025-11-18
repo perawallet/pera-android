@@ -28,7 +28,7 @@ class CollectibleSortPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getCollectibleSortPreference(
         defaultValue: CollectibleSortPreference
     ): CollectibleSortPreference {
-        return CollectibleSortPreference.values().firstOrNull {
+        return CollectibleSortPreference.entries.firstOrNull {
             it.name == collectibleSortPreferencesLocalSource.getDataOrNull()
         } ?: defaultValue
     }

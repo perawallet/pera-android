@@ -36,10 +36,12 @@ fun AddressNamingScreenPreview() {
         override fun saveCustomName(name: String) {}
 
         override val state: StateFlow<AddressNamingViewModel.ViewState>
-            get() = MutableStateFlow(AddressNamingViewModel.ViewState.Content(
-                "address",
-                currentName = "ADDDRRR...DDDSSS"
-            ))
+            get() = MutableStateFlow(
+                AddressNamingViewModel.ViewState.Content(
+                    "address",
+                    currentName = "ADDDRRR...DDDSSS"
+                )
+            )
         override val viewEvent: Flow<AddressNamingViewModel.ViewEvent>
             get() = MutableSharedFlow()
     }

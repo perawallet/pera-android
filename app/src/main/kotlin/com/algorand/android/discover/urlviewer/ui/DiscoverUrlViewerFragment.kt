@@ -51,9 +51,8 @@ class DiscoverUrlViewerFragment :
 
     override val discoverViewModel: DiscoverUrlViewerViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration(
-        toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
     )
 
     private val discoverUrlViewerPreviewCollector: suspend (DiscoverUrlViewerPreview) -> Unit = { preview ->

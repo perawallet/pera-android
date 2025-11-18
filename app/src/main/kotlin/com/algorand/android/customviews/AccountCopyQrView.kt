@@ -23,7 +23,6 @@ import com.algorand.android.R
 import com.algorand.android.databinding.CustomAccountCopyQrViewBinding
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.viewbinding.viewBinding
 
 class AccountCopyQrView @JvmOverloads constructor(
@@ -51,10 +50,6 @@ class AccountCopyQrView @JvmOverloads constructor(
 
     fun setAccountName(name: String) {
         binding.accountNameTextView.text = name
-    }
-
-    fun hideSelectedAccountTextView() {
-        binding.selectedAccountLabelTextView.hide()
     }
 
     fun setListener(listener: Listener) {

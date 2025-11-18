@@ -37,16 +37,16 @@ import com.algorand.android.utils.getZonedDateTimeFromTimeStamp
 import com.algorand.android.utils.isGreaterThan
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssets
-import java.math.BigInteger
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import java.math.BigInteger
+import javax.inject.Inject
+import javax.inject.Named
 
 class TransactionHistoryUseCase @Inject constructor(
-    @Named(TransactionHistoryRepository.INJECTION_NAME)
+    @param:Named(TransactionHistoryRepository.INJECTION_NAME)
     private val transactionHistoryRepository: TransactionHistoryRepository,
     private val transactionHistoryPaginationHelper: TransactionHistoryPaginationHelper,
     private val baseTransactionMapper: BaseTransactionMapper,
@@ -159,7 +159,7 @@ class TransactionHistoryUseCase @Inject constructor(
             transactionList.filter { txn ->
                 val timestampAsZonedDateTime = txn.roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp()
                 return@filter timestampAsZonedDateTime?.isAfter(dateRange.from) ?: true &&
-                    timestampAsZonedDateTime?.isBefore(dateRange.to) ?: true
+                        timestampAsZonedDateTime?.isBefore(dateRange.to) ?: true
             }
         }
     }
@@ -213,9 +213,11 @@ class TransactionHistoryUseCase @Inject constructor(
             isSelfTransaction(publicKey, senderAddress, receiverAddress) -> {
                 baseTransactionMapper.mapToPayTransactionSelf(transactionDTO = transactionDTO)
             }
+
             isReceiveTransaction(publicKey, closeToAddress, receiverAddress) -> {
                 baseTransactionMapper.mapToPayTransactionReceive(transactionDTO = transactionDTO)
             }
+
             else -> {
                 baseTransactionMapper.mapToPayTransactionSend(transactionDTO = transactionDTO)
             }
@@ -235,21 +237,27 @@ class TransactionHistoryUseCase @Inject constructor(
                 !closeToAddress.isNullOrBlank() && closeToAddress == publicKey -> {
                     mapToAssetTransactionReceiveOptOut(transactionDTO = transactionDTO)
                 }
+
                 !closeToAddress.isNullOrBlank() && amount.isGreaterThan(BigInteger.ZERO) -> {
                     mapToAssetTransactionSendOptOut(closeToAddress = closeToAddress, transactionDTO = transactionDTO)
                 }
+
                 !closeToAddress.isNullOrBlank() -> {
                     mapToAssetTransactionOptOut(closeToAddress = closeToAddress, transactionDTO = transactionDTO)
                 }
+
                 isSelfOptInTransaction(publicKey, senderAddress, receiverAddress, amount) -> {
                     mapToAssetTransactionSelfOptIn(transactionDTO = transactionDTO)
                 }
+
                 isSelfTransaction(publicKey, senderAddress, receiverAddress) -> {
                     mapToAssetTransactionSelf(transactionDTO = transactionDTO)
                 }
+
                 isReceiveTransaction(publicKey, closeToAddress, receiverAddress) -> {
                     mapToAssetTransactionReceive(transactionDTO = transactionDTO)
                 }
+
                 else -> mapToAssetTransactionSend(transactionDTO)
             }
         }

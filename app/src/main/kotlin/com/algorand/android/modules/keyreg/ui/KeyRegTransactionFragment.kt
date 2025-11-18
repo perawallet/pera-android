@@ -60,7 +60,7 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val keyRegTransactionViewModel by viewModels<KeyRegTransactionViewModel>()
@@ -79,23 +79,23 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
     }
 
     private var transactionNote: Pair<String?, Boolean>
-        by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
-            with(binding) {
-                if (isNoteEnabled) {
-                    addEditNoteButton.show()
-                    addEditNoteButton.setOnClickListener {
-                        onAddEditNoteClicked()
-                    }
-                    if (note.isNullOrBlank()) {
-                        setLayoutForAddNote()
+            by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
+                with(binding) {
+                    if (isNoteEnabled) {
+                        addEditNoteButton.show()
+                        addEditNoteButton.setOnClickListener {
+                            onAddEditNoteClicked()
+                        }
+                        if (note.isNullOrBlank()) {
+                            setLayoutForAddNote()
+                        } else {
+                            setLayoutForEditNote(note)
+                        }
                     } else {
-                        setLayoutForEditNote(note)
+                        setLayoutForBlockedNote(note)
                     }
-                } else {
-                    setLayoutForBlockedNote(note)
                 }
             }
-        }
 
     private val isTransactionConfirmedCollector: suspend (String?) -> Unit = { transactionId ->
         if (transactionId == KeyRegTransactionViewModel.TRANSACTION_ERROR) {
@@ -194,7 +194,7 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
     private fun showTransactionCancelledError(result: TransactionCancelled) {
         dismissLedgerDialog()
         val annotatedString = (result.error as? Error.Defined)?.description
-            ?: AnnotatedString(R.string.an_error_occured)
+            ?: AnnotatedString(R.string.an_error_occurred)
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }
@@ -345,6 +345,6 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
     }
 
     companion object {
-        const val ADD_EDIT_NOTE_BUTTON_VERTICAL_BIAS = 0.5f
+        const val ADD_EDIT_NOTE_BUTTON_VERTICAL_BIAS: Float = 0.5f
     }
 }

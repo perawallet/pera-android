@@ -12,21 +12,9 @@
 
 package com.algorand.android.ui.common.warningconfirmation
 
-import javax.inject.Inject
-import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.tracking.onboarding.register.OnboardingCreateAccountReadyEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class WriteDownInfoViewModel @Inject constructor(
-    private val onboardingCreateAccountReadyEventTracker: OnboardingCreateAccountReadyEventTracker
-) : BaseViewModel() {
-
-    fun logOnboardingReadyToBeginClickEvent() {
-        viewModelScope.launch {
-            onboardingCreateAccountReadyEventTracker.logOnboardingCreateAccountReadyEvent()
-        }
-    }
-}
+class WriteDownInfoViewModel @Inject constructor() : BaseViewModel()

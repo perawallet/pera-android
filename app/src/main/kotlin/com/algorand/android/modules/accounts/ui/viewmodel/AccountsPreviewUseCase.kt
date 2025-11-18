@@ -12,8 +12,6 @@
 
 package com.algorand.android.modules.accounts.ui.viewmodel
 
-import androidx.navigation.NavDirections
-import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.CurrencyCachingError
@@ -23,29 +21,26 @@ import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheS
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Loading
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
-import com.algorand.android.modules.accounts.ui.view.AccountsFragmentDirections
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
 import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.usecase.GetSpotBannersFlow
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class AccountsPreviewUseCase @Inject constructor(
     private val accountPreviewMapper: AccountPreviewMapper,
     private val portfolioValueItemMapper: PortfolioValueItemMapper,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val peraConnectivityManager: PeraConnectivityManager,
     private val accountPreviewProcessor: AccountPreviewProcessor,
     private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
@@ -108,25 +103,6 @@ class AccountsPreviewUseCase @Inject constructor(
                 SpotBannerFlowData(address, isBackedUp, cachedInfo?.primaryAccountValue, cachedInfo?.type)
             }
         }
-    }
-
-    suspend fun getSwapNavigationDirection(): NavDirections? {
-        var swapNavDirection: NavDirections? = null
-        swapNavigationDestinationHelper.getSwapNavigationDestination(
-            onNavToIntroduction = {
-                swapNavDirection = AccountsFragmentDirections.actionAccountsFragmentToSwapIntroductionNavigation()
-            },
-            onNavToAccountSelection = {
-                swapNavDirection = AccountsFragmentDirections.actionAccountsFragmentToSwapAccountSelectionNavigation()
-            },
-            onNavToSwap = { accountAddress ->
-                swapNavDirection = AccountsFragmentDirections.actionAccountsFragmentToSwapNavigation(accountAddress)
-            },
-            onNavToSwapV2 = { accountAddress ->
-                swapNavDirection = HomeNavigationDirections.actionGlobalSwapV2Navigation(accountAddress)
-            }
-        )
-        return swapNavDirection
     }
 
     private suspend fun getAlgoPriceErrorState(

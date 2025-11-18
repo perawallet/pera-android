@@ -45,7 +45,7 @@ class AssetInboxOneAccountFragment :
         startIconResId = R.drawable.ic_left_arrow,
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentAssetInboxOneAccountBinding::bind)

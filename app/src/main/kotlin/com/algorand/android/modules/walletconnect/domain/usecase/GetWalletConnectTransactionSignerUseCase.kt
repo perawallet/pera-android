@@ -33,10 +33,12 @@ internal class GetWalletConnectTransactionSignerUseCase @Inject constructor(
                 val address = signer.address.decodedAddress ?: return null
                 getForcedSigner(address)
             }
+
             is WalletConnectTransactionSigner.Sender -> {
                 val address = signer.address.decodedAddress ?: return null
                 getTransactionSigner(address)
             }
+
             else -> null
         }
     }

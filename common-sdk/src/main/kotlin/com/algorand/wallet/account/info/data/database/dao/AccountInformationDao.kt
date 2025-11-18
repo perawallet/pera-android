@@ -20,8 +20,8 @@ import com.algorand.wallet.account.info.data.database.model.AccountInformationEn
 import com.algorand.wallet.account.info.data.database.model.AccountLiteInformationDao
 import com.algorand.wallet.account.info.data.model.AccountAssetAndAppsCountDto
 import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
-import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
+import java.math.BigInteger
 
 @Dao
 internal interface AccountInformationDao {

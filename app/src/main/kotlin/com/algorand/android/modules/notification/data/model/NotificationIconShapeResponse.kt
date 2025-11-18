@@ -14,6 +14,7 @@ package com.algorand.android.modules.notification.data.model
 
 import com.google.gson.annotations.SerializedName
 
+@Suppress("unused")
 enum class NotificationIconShapeResponse {
     @SerializedName("circle")
     CIRCLE,

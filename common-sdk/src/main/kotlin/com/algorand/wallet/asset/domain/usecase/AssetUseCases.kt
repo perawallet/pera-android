@@ -18,8 +18,8 @@ import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.foundation.PeraResult
-import java.math.BigDecimal
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
 
 fun interface ClearAssetCache {
     suspend operator fun invoke()

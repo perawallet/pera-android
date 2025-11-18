@@ -18,6 +18,6 @@ interface WalletConnectSessionDetailPreviewStateProvider :
     WalletConnectSessionDetailPreviewInformationBadgeProvider {
 
     companion object {
-        const val INJECTION_NAME = "walletConnectSessionDetailPreviewStateProviderInjectionName"
+        const val INJECTION_NAME: String = "walletConnectSessionDetailPreviewStateProviderInjectionName"
     }
 }

@@ -26,6 +26,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -44,14 +45,14 @@ class DefaultSpotBannerRepositoryTest {
     )
 
     @Test
-    fun `EXPECT cache to be cleared`() = runTest {
+    fun `EXPECT cache to be cleared`(): TestResult = runTest {
         sut.clearBannerCache()
 
         coVerify { spotBannerCache.clear() }
     }
 
     @Test
-    fun `EXPECT banner to be dismissed and removed from cache WHEN dismissBanner is invoked`() = runTest {
+    fun `EXPECT banner to be dismissed and removed from cache WHEN dismissBanner is invoked`(): TestResult = runTest {
         sut.dismissBanner(DEVICE_ID, BANNER_1.id)
 
         coVerify { spotBannerCache.remove(BANNER_1.id) }
@@ -59,7 +60,7 @@ class DefaultSpotBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT banners to be cached WHEN there are banners to cache`() = runTest {
+    fun `EXPECT banners to be cached WHEN there are banners to cache`(): TestResult = runTest {
         coEvery { spotBannerApiService.getSpotBanners(DEVICE_ID) } returns listOf(BANNER_1_RESPONSE, BANNER_2_RESPONSE)
         every { spotBannerCacheDataMapper.map(BANNER_1_RESPONSE) } returns BANNER_1_CACHE_DATA
         every { spotBannerCacheDataMapper.map(BANNER_2_RESPONSE) } returns null
@@ -70,7 +71,7 @@ class DefaultSpotBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT empty cache WHEN fetching banners fails`() = runTest {
+    fun `EXPECT empty cache WHEN fetching banners fails`(): TestResult = runTest {
         coEvery { spotBannerApiService.getSpotBanners(DEVICE_ID) } throws Exception()
 
         sut.cacheBanners(DEVICE_ID)
@@ -79,7 +80,7 @@ class DefaultSpotBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT banner flow to be updated WHEN cache is updated`() = runTest {
+    fun `EXPECT banner flow to be updated WHEN cache is updated`(): TestResult = runTest {
         val cacheFlow = MutableStateFlow(emptyList<SpotBannerCacheData>())
         every { spotBannerCache.observe() } returns cacheFlow
         every { spotBannerMapper.map(BANNER_1_CACHE_DATA) } returns BANNER_1
@@ -98,7 +99,7 @@ class DefaultSpotBannerRepositoryTest {
     private companion object {
         const val DEVICE_ID = "device-id"
         val BANNER_1 = peraFixture<SpotBanner.Generic>().copy(id = 1L)
-        val BANNER_1_CACHE_DATA = peraFixture<SpotBannerCacheData>().copy(1L)
+        val BANNER_1_CACHE_DATA = peraFixture<SpotBannerCacheData>().copy(id = 1L)
         val BANNER_1_RESPONSE = peraFixture<SpotBannerResponse>().copy(id = 1L)
         val BANNER_2_RESPONSE = peraFixture<SpotBannerResponse>().copy(id = 2L)
     }

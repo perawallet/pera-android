@@ -21,9 +21,9 @@ import com.algorand.android.ui.settings.node.ui.mapper.NodeSettingsPreviewMapper
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import com.algorand.android.utils.TESTNET_NETWORK_SLUG
 import com.algorand.android.utils.defaultNodeList
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
 class NodeSettingsUseCase @Inject constructor(
     private val nodeRepository: NodeRepository,

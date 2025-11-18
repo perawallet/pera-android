@@ -16,9 +16,9 @@ import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59TransactionPayload
 import com.algorand.android.repository.TransactionsRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class CreateArc59TransactionsUseCase @Inject constructor(
     private val createArc59SendTransaction: CreateArc59SendTransaction,

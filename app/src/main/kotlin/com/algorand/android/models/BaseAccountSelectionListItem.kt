@@ -21,7 +21,7 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
     abstract override fun areItemsTheSame(other: RecyclerListItem): Boolean
     abstract override fun areContentsTheSame(other: RecyclerListItem): Boolean
 
-    data class HeaderItem(@StringRes val titleRes: Int) : BaseAccountSelectionListItem() {
+    data class HeaderItem(@param:StringRes val titleRes: Int) : BaseAccountSelectionListItem() {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is HeaderItem && titleRes == other.titleRes
@@ -71,8 +71,8 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is AccountItem &&
-                    other.accountListItem.itemConfiguration.accountAddress ==
-                    accountListItem.itemConfiguration.accountAddress
+                        other.accountListItem.itemConfiguration.accountAddress ==
+                        accountListItem.itemConfiguration.accountAddress
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -91,8 +91,8 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is AccountErrorItem &&
-                    other.accountListItem.itemConfiguration.accountAddress ==
-                    accountListItem.itemConfiguration.accountAddress
+                        other.accountListItem.itemConfiguration.accountAddress ==
+                        accountListItem.itemConfiguration.accountAddress
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {

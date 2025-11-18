@@ -29,7 +29,8 @@ import kotlinx.coroutines.flow.map
 @AndroidEntryPoint
 class RekeyToLedgerAccountSelectionFragment : BaseLedgerAccountSelectionFragment() {
 
-    override val ledgerAccountListAdapter = LedgerAccountSelectionAdapter(ledgerAccountListAdapterListener)
+    override val ledgerAccountListAdapter: LedgerAccountSelectionAdapter =
+        LedgerAccountSelectionAdapter(ledgerAccountListAdapterListener)
 
     override val baseLedgerAccountSelectionViewModel: BaseLedgerAccountSelectionViewModel
         get() = rekeyLedgerAccountSelectionViewModel

@@ -19,8 +19,9 @@ import com.algorand.android.modules.webimport.loading.ui.model.WebImportLoadingP
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.core.domain.usecase.CacheAccountDetail
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class WebImportLoadingPreviewUseCase @Inject constructor(
     private val webImportAccountDecryptionUseCase: WebImportAccountDecryptionUseCase,
@@ -34,7 +35,7 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
     fun importEncryptedBackup(
         previousState: WebImportLoadingPreview,
         webImportQrCode: WebImportQrCode
-    ) = flow {
+    ): Flow<WebImportLoadingPreview> = flow {
         emit(previousState.copy(isLoadingVisible = true))
         webImportAccountDecryptionUseCase.importEncryptedBackup(
             backupId = webImportQrCode.backupId,
@@ -45,8 +46,10 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
                     cacheAccounts(it.data.importedAccountList)
                     emit(getSuccessStateOfImportRequest(previousState, it.data))
                 }
+
                 is DataResource.Error -> emit(getErrorStateOfImportRequest(previousState, it.exception))
-                is DataResource.Loading -> { /* TODO handle loading if needed in future */ }
+                is DataResource.Loading -> { /* TODO handle loading if needed in future */
+                }
             }
         }
     }

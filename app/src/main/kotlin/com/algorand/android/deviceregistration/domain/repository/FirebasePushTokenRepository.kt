@@ -31,6 +31,6 @@ interface FirebasePushTokenRepository {
     suspend fun deleteDeviceFromApi(deleteDeviceDTO: DeleteDeviceDTO): Flow<Result<Any>>
 
     companion object {
-        const val FIREBASE_PUSH_TOKEN_REPOSITORY_INJECTION_NAME = "firebasePushTokenInjection"
+        const val FIREBASE_PUSH_TOKEN_REPOSITORY_INJECTION_NAME: String = "firebasePushTokenInjection"
     }
 }

@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.room)
+    alias(libs.plugins.room.module)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinx.serialization)
-    id("kotlin-parcelize")
-    id("dagger.hilt.android.plugin")
-    id("io.gitlab.arturbosch.detekt") version (libs.versions.detekt)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.hilt)
 }
 
 apply(from = "../app/quality.gradle")
@@ -29,8 +29,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_21.toString()
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
     }
 
     buildFeatures {
@@ -61,10 +63,14 @@ dependencies {
     ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.espresso.core)
 }
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+ksp {
+    arg("room.verifySchema", "false")
 }

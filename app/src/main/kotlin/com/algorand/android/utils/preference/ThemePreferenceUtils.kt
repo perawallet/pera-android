@@ -15,13 +15,16 @@ package com.algorand.android.utils.preference
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import com.algorand.android.R
 import com.algorand.android.ui.settings.selection.ThemeListItem
 
 private const val THEME_PREFERENCE_KEY = "theme_preference_key"
 
 fun SharedPreferences.saveThemePreference(themePreference: ThemePreference) {
-    edit().putString(THEME_PREFERENCE_KEY, themePreference.name).apply()
+    edit {
+        putString(THEME_PREFERENCE_KEY, themePreference.name).apply()
+    }
 }
 
 fun SharedPreferences.getSavedThemePreference(): ThemePreference {
@@ -30,7 +33,7 @@ fun SharedPreferences.getSavedThemePreference(): ThemePreference {
 }
 
 enum class ThemePreference(
-    @StringRes val visibleNameResId: Int
+    @param:StringRes val visibleNameResId: Int
 ) {
     SYSTEM_DEFAULT(R.string.system_default),
     LIGHT(R.string.light),

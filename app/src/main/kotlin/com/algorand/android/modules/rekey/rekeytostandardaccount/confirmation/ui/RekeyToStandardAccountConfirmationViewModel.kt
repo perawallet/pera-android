@@ -22,7 +22,6 @@ import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui
 import com.algorand.android.modules.transaction.refactor.usecase.CreateRekeyTransactionData
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
@@ -39,8 +39,8 @@ class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
 ) : BaseRekeyConfirmationViewModel() {
 
     private val navArgs = RekeyToStandardAccountConfirmationFragmentArgs.fromSavedStateHandle(savedStateHandle)
-    val accountAddress = navArgs.accountAddress
-    val authAccountAddress = navArgs.authAccountAddress
+    val accountAddress: String = navArgs.accountAddress
+    val authAccountAddress: String = navArgs.authAccountAddress
 
     private val _previewFlow = MutableStateFlow<RekeyToStandardAccountConfirmationPreview?>(null)
     override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields?>

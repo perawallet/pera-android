@@ -41,7 +41,7 @@ class AssetDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Abst
             QuickActionButtonContainer {
                 quickActionItems.forEach {
                     when (it) {
-                        is SwapButton -> SwapQuickActionButton(it.isSelected) { listener?.onSwapClick() }
+                        is SwapButton -> SwapQuickActionButton { listener?.onSwapClick() }
                         BuyAlgoButton -> BuySellQuickActionButton { listener?.onBuyAlgoClick() }
                         ReceiveButton -> ReceiveQuickActionButton { listener?.onReceiveClick() }
                         SendButton -> SendQuickActionButton { listener?.onSendClick() }

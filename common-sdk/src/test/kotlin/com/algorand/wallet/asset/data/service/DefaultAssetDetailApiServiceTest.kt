@@ -23,6 +23,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -36,7 +37,7 @@ class DefaultAssetDetailApiServiceTest {
     private val sut = DefaultAssetDetailApiService(apiService, errorLogger, isFeatureToggleEnabled)
 
     @Test
-    fun `EXPECT getAssetDetail to use v1 endpoint WHEN device id is null`() = runTest {
+    fun `EXPECT getAssetDetail to use v1 endpoint WHEN device id is null`(): TestResult = runTest {
         coEvery { apiService.getAssetDetail(ASSET_ID) } returns ASSET_RESPONSE
 
         val result = sut.getAssetDetail(ASSET_ID, deviceId = null)
@@ -46,31 +47,33 @@ class DefaultAssetDetailApiServiceTest {
     }
 
     @Test
-    fun `EXPECT getAssetDetail to use v1 endpoint WHEN asset detail v2 feature toggle is disabled`() = runTest {
-        coEvery { apiService.getAssetDetail(ASSET_ID) } returns ASSET_RESPONSE
-        every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns false
+    fun `EXPECT getAssetDetail to use v1 endpoint WHEN asset detail v2 feature toggle is disabled`(): TestResult =
+        runTest {
+            coEvery { apiService.getAssetDetail(ASSET_ID) } returns ASSET_RESPONSE
+            every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns false
 
-        val result = sut.getAssetDetail(ASSET_ID, DEVICE_ID)
+            val result = sut.getAssetDetail(ASSET_ID, DEVICE_ID)
 
-        coVerify(exactly = 0) { apiService.getAssetDetailV2(any(), any()) }
-        assertEquals(ASSET_RESPONSE, result)
-    }
-
-    @Test
-    fun `EXPECT getAssetDetail to use v1 endpoint and log error WHEN v2 endpoint throws an exception`() = runTest {
-        val exception = Exception()
-        coEvery { apiService.getAssetDetail(ASSET_ID) } returns ASSET_RESPONSE
-        coEvery { apiService.getAssetDetailV2(DEVICE_ID_QUERY, ASSET_ID) } throws exception
-        every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns true
-
-        val result = sut.getAssetDetail(ASSET_ID, DEVICE_ID)
-
-        assertEquals(ASSET_RESPONSE, result)
-        verify { errorLogger.logError(exception) }
-    }
+            coVerify(exactly = 0) { apiService.getAssetDetailV2(any(), any()) }
+            assertEquals(ASSET_RESPONSE, result)
+        }
 
     @Test
-    fun `EXPECT getAssetDetail to use v2 endpoint WHEN device id is not null and asset detail v2 feature toggle is enabled`() =
+    fun `EXPECT getAssetDetail to use v1 endpoint and log error WHEN v2 endpoint throws an exception`(): TestResult =
+        runTest {
+            val exception = Exception()
+            coEvery { apiService.getAssetDetail(ASSET_ID) } returns ASSET_RESPONSE
+            coEvery { apiService.getAssetDetailV2(DEVICE_ID_QUERY, ASSET_ID) } throws exception
+            every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns true
+
+            val result = sut.getAssetDetail(ASSET_ID, DEVICE_ID)
+
+            assertEquals(ASSET_RESPONSE, result)
+            verify { errorLogger.logError(exception) }
+        }
+
+    @Test
+    fun `EXPECT getAssetDetail to use v2 endpoint WHEN device id is not null and asset detail v2 feature toggle is enabled`(): TestResult =
         runTest {
             every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns true
             coEvery { apiService.getAssetDetailV2(DEVICE_ID_QUERY, ASSET_ID) } returns ASSET_RESPONSE
@@ -81,7 +84,7 @@ class DefaultAssetDetailApiServiceTest {
         }
 
     @Test
-    fun `EXPECT getAssetsById to use v1 endpoint WHEN device id is null`() = runTest {
+    fun `EXPECT getAssetsById to use v1 endpoint WHEN device id is null`(): TestResult = runTest {
         coEvery { apiService.getAssetsByIds(ASSET_IDS_QUERY, INCLUDE_DELETED) } returns ASSETS_PAGINATION_RESPONSE
 
         val result = sut.getAssetsByIds(ASSET_IDS, deviceId = null, INCLUDE_DELETED)
@@ -91,7 +94,7 @@ class DefaultAssetDetailApiServiceTest {
     }
 
     @Test
-    fun `EXPECT getAssetsById to use v2 endpoint WHEN device id is not null`() = runTest {
+    fun `EXPECT getAssetsById to use v2 endpoint WHEN device id is not null`(): TestResult = runTest {
         coEvery { apiService.getAssetsByIdsV2(ASSETS_BY_ID_REQUEST_BODY) } returns ASSETS_PAGINATION_RESPONSE
         every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns true
 
@@ -102,17 +105,18 @@ class DefaultAssetDetailApiServiceTest {
     }
 
     @Test
-    fun `EXPECT getAssetsById to use v1 endpoint and log error WHEN v2 endpoint throws an exception`() = runTest {
-        val exception = Exception()
-        coEvery { apiService.getAssetsByIds(ASSET_IDS_QUERY, INCLUDE_DELETED) } returns ASSETS_PAGINATION_RESPONSE
-        coEvery { apiService.getAssetsByIdsV2(ASSETS_BY_ID_REQUEST_BODY) } throws exception
-        every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns true
+    fun `EXPECT getAssetsById to use v1 endpoint and log error WHEN v2 endpoint throws an exception`(): TestResult =
+        runTest {
+            val exception = Exception()
+            coEvery { apiService.getAssetsByIds(ASSET_IDS_QUERY, INCLUDE_DELETED) } returns ASSETS_PAGINATION_RESPONSE
+            coEvery { apiService.getAssetsByIdsV2(ASSETS_BY_ID_REQUEST_BODY) } throws exception
+            every { isFeatureToggleEnabled(ASSET_DETAIL_V2_FEATURE_TOGGLE) } returns true
 
-        val result = sut.getAssetsByIds(ASSET_IDS, DEVICE_ID, INCLUDE_DELETED)
+            val result = sut.getAssetsByIds(ASSET_IDS, DEVICE_ID, INCLUDE_DELETED)
 
-        assertEquals(ASSETS_PAGINATION_RESPONSE, result)
-        verify { errorLogger.logError(exception) }
-    }
+            assertEquals(ASSETS_PAGINATION_RESPONSE, result)
+            verify { errorLogger.logError(exception) }
+        }
 
     private companion object {
         const val ASSET_IDS_QUERY = "1,2,3"

@@ -23,6 +23,6 @@ interface NotificationPermissionRepository {
     fun getAskNotificationPermissionEventFlow(): StateFlow<CacheResult<Event<Unit>>?>
 
     companion object {
-        const val INJECTION_NAME = "notificationPermissionRepositoryInjectionName"
+        const val INJECTION_NAME: String = "notificationPermissionRepositoryInjectionName"
     }
 }

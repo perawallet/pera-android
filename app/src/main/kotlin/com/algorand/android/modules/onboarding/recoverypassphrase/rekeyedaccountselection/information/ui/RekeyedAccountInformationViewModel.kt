@@ -18,11 +18,11 @@ import com.algorand.android.modules.basefoundaccount.information.ui.BaseFoundAcc
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.model.RekeyedAccountInformationPreview
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.usecase.RekeyedAccountInformationPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RekeyedAccountInformationViewModel @Inject constructor(

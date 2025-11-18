@@ -18,17 +18,17 @@ import androidx.annotation.StringRes
 import com.algorand.android.R
 
 data class ToolbarConfiguration(
-    @StringRes
+    @param:StringRes
     val titleResId: Int? = null,
-    @StringRes
+    @param:StringRes
     val subtitleResId: Int? = null,
-    @DrawableRes
+    @param:DrawableRes
     val startIconResId: Int? = null,
-    @ColorRes
+    @param:ColorRes
     val backgroundColor: Int? = null,
     val startIconClick: (() -> Unit)? = null,
-    @ColorRes
+    @param:ColorRes
     val startIconColor: Int? = null,
-    @ColorRes
+    @param:ColorRes
     val titleColor: Int = R.color.primary_text_color,
 )

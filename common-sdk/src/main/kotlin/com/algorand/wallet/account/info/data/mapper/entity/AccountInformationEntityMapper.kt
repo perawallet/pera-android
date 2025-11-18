@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.account.info.data.mapper.entity
 
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
+import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 
 internal interface AccountInformationEntityMapper {
     operator fun invoke(response: AccountInformationResponse): AccountInformationEntity?

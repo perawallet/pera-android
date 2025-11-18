@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.asset.data.mapper.model.collectible
 
+import com.algorand.wallet.asset.data.database.model.CollectibleStandardTypeEntity
 import com.algorand.wallet.asset.data.model.collectible.CollectibleStandardTypeResponse
 import com.algorand.wallet.asset.domain.model.CollectibleStandardType
-import com.algorand.wallet.asset.data.database.model.CollectibleStandardTypeEntity
 
 internal interface CollectibleStandardTypeMapper {
     operator fun invoke(response: CollectibleStandardTypeResponse): CollectibleStandardType

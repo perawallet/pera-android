@@ -21,8 +21,8 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
 import com.algorand.android.databinding.BottomSheetTransactionTipsBinding
-import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.browser.openTransactionInfoUrl
+import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 

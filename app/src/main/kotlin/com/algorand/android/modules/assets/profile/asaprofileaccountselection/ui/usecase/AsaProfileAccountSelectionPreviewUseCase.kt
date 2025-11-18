@@ -15,9 +15,9 @@ package com.algorand.android.modules.assets.profile.asaprofileaccountselection.u
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.mapper.AsaProfileAccountSelectionPreviewMapper
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.model.AsaProfileAccountSelectionPreview
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class AsaProfileAccountSelectionPreviewUseCase @Inject constructor(
     private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,

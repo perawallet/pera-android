@@ -25,8 +25,8 @@ import com.algorand.android.utils.TESTNET_NETWORK_SLUG
 import com.algorand.android.utils.flatten
 import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.mapToNotNullableListOrNull
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 sealed class SwapQuoteTransaction : Parcelable {
 
@@ -36,19 +36,14 @@ sealed class SwapQuoteTransaction : Parcelable {
     abstract val transactionNodeNetworkSlug: String
 
     abstract val isTransactionConfirmationNeed: Boolean
-    open val delayAfterConfirmation: Long? = null
-
-    fun areTransactionsInQuoteValid(): Boolean {
-        return unsignedTransactions.all { isTransactionValid(it.decodedTransaction) }
-    }
 
     protected open fun isTransactionValid(transaction: RawTransaction?): Boolean {
         if (transaction == null) return false
         return with(transaction) {
             closeToAddress == null &&
-                assetCloseToAddress == null &&
-                rekeyAddress == null &&
-                validTransactionTypeList.contains(transactionType)
+                    assetCloseToAddress == null &&
+                    rekeyAddress == null &&
+                    validTransactionTypeList.contains(transactionType)
         }
     }
 
@@ -94,13 +89,6 @@ sealed class SwapQuoteTransaction : Parcelable {
 
         override val isTransactionConfirmationNeed: Boolean
             get() = true
-
-        override val delayAfterConfirmation: Long
-            get() = OPT_IN_CONFIRMATION_DELAY
-
-        companion object {
-            private const val OPT_IN_CONFIRMATION_DELAY = 1000L // 1 Sec
-        }
     }
 
     @Parcelize

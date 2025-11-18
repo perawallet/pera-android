@@ -15,7 +15,7 @@ package com.algorand.android.models
 import androidx.annotation.StringRes
 
 data class RegisterIntroPreview(
-    @StringRes val titleRes: Int,
+    @param:StringRes val titleRes: Int,
     val isSkipButtonVisible: Boolean,
     val isCloseButtonVisible: Boolean,
     val hasHdWallet: Boolean

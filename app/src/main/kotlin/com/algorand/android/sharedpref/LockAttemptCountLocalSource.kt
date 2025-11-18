@@ -27,7 +27,7 @@ class LockAttemptCountLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Int {
-        return sharedPref.getInt(key, defaultLockAttemptCountPreference)
+        return sharedPref.getInt(key, DEFAULT_LOCK_ATTEMPT_COUNT_PREFERENCE)
     }
 
     override fun saveData(data: Int) {
@@ -36,6 +36,6 @@ class LockAttemptCountLocalSource @Inject constructor(
 
     companion object {
         private const val LOCK_ATTEMPT_COUNT_KEY = "lock_attempt_count"
-        const val defaultLockAttemptCountPreference = 0
+        const val DEFAULT_LOCK_ATTEMPT_COUNT_PREFERENCE: Int = 0
     }
 }

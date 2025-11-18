@@ -19,10 +19,10 @@ import com.algorand.wallet.analytics.domain.model.FirebaseTokenStatus
 import com.algorand.wallet.analytics.domain.usecase.GetFirebaseTokenStatusFlow
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
 import com.algorand.wallet.nameservice.domain.usecase.InitializeAccountNameService
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
 internal class LocalAccountsNameServiceManagerImpl @Inject constructor(
     private val cacheManager: LifecycleAwareCacheManager,

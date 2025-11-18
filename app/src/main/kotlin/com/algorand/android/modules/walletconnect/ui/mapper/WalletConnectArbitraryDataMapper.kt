@@ -32,7 +32,7 @@ class WalletConnectArbitraryDataMapper @Inject constructor(
             payload.map { rawArbitraryData ->
                 gson.fromJson(gson.toJson(rawArbitraryData), WCArbitraryData::class.java)
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

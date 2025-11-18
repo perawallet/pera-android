@@ -18,7 +18,7 @@ import javax.inject.Inject
 class WalletConnectV2EventDecider @Inject constructor() {
 
     fun decideEvent(name: String): WalletConnectEvent {
-        return WalletConnectEvent.values().firstOrNull {
+        return WalletConnectEvent.entries.firstOrNull {
             it.value == name
         } ?: WalletConnectEvent.UNKNOWN
     }

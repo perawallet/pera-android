@@ -19,6 +19,7 @@ import com.algorand.wallet.transaction.domain.repository.TransactionRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -30,7 +31,7 @@ class SendSignedTransactionUseCaseTest {
     private val sut = SendSignedTransactionUseCase(transactionRepository)
 
     @Test
-    fun `EXPECT error WHEN sending transaction fails`() = runTest {
+    fun `EXPECT error WHEN sending transaction fails`(): TestResult = runTest {
         coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Error(Exception())
 
         val result = sut(TXN_BYTE_ARRAY, WAIT_FOR_CONFIRMATION)
@@ -39,7 +40,7 @@ class SendSignedTransactionUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN waiting is required and it fails`() = runTest {
+    fun `EXPECT error WHEN waiting is required and it fails`(): TestResult = runTest {
         coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
         coEvery { transactionRepository.waitForConfirmation(TXN_ID, MAX_ROUND) } returns PeraResult.Error(Exception())
 
@@ -49,24 +50,25 @@ class SendSignedTransactionUseCaseTest {
     }
 
     @Test
-    fun `EXPECT success WHEN waiting is not required and sending transaction is successful`() = runTest {
+    fun `EXPECT success WHEN waiting is not required and sending transaction is successful`(): TestResult = runTest {
         coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
 
         val result = sut(TXN_BYTE_ARRAY, waitForConfirmation = false)
 
-        assertEquals(result.getDataOrNull()!!, TXN_ID)
+        assertEquals(result.getDataOrNull() ?: return@runTest, TXN_ID)
     }
 
     @Test
-    fun `EXPECT success WHEN waiting is required and sending transaction and waiting are successful`() = runTest {
-        coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
-        coEvery { transactionRepository.waitForConfirmation(TXN_ID, MAX_ROUND) } returns PeraResult.Success(TXN_ID)
-        val result = sut(TXN_BYTE_ARRAY, WAIT_FOR_CONFIRMATION)
-        assertEquals(result.getDataOrNull()!!, TXN_ID)
-    }
+    fun `EXPECT success WHEN waiting is required and sending transaction and waiting are successful`(): TestResult =
+        runTest {
+            coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
+            coEvery { transactionRepository.waitForConfirmation(TXN_ID, MAX_ROUND) } returns PeraResult.Success(TXN_ID)
+            val result = sut(TXN_BYTE_ARRAY, WAIT_FOR_CONFIRMATION)
+            assertEquals(result.getDataOrNull() ?: return@runTest, TXN_ID)
+        }
 
     @Test
-    fun `EXPECT txn to be tracked WHEN sending transaction is successful`() = runTest {
+    fun `EXPECT txn to be tracked WHEN sending transaction is successful`(): TestResult = runTest {
         coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
 
         sut(TXN_BYTE_ARRAY, waitForConfirmation = false)
@@ -75,14 +77,15 @@ class SendSignedTransactionUseCaseTest {
     }
 
     @Test
-    fun `EXPECT txn to be tracked WHEN waiting is required and sending and waiting are successful`() = runTest {
-        coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
-        coEvery { transactionRepository.waitForConfirmation(TXN_ID, MAX_ROUND) } returns PeraResult.Success(TXN_ID)
+    fun `EXPECT txn to be tracked WHEN waiting is required and sending and waiting are successful`(): TestResult =
+        runTest {
+            coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
+            coEvery { transactionRepository.waitForConfirmation(TXN_ID, MAX_ROUND) } returns PeraResult.Success(TXN_ID)
 
-        sut(TXN_BYTE_ARRAY, WAIT_FOR_CONFIRMATION)
+            sut(TXN_BYTE_ARRAY, WAIT_FOR_CONFIRMATION)
 
-        coVerify { transactionRepository.trackTransaction(TXN_ID) }
-    }
+            coVerify { transactionRepository.trackTransaction(TXN_ID) }
+        }
 
     private companion object {
         val TXN_BYTE_ARRAY = byteArrayOf(1, 2, 3)

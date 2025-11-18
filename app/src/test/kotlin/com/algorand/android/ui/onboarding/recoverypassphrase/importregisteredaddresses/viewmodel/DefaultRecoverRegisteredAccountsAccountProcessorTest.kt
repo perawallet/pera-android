@@ -26,6 +26,7 @@ import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.TEN
 import kotlinx.coroutines.test.runTest
@@ -57,7 +58,7 @@ class DefaultRecoverRegisteredAccountsAccountProcessorTest {
     )
 
     @Test
-    fun `EXPECT account items with usd values WHEN selected currency is usd`() = runTest {
+    fun `EXPECT account items with usd values WHEN selected currency is usd`(): TestResult = runTest {
         every { isPrimaryCurrencyAlgo() } returns false
         every { isPrimaryCurrencyUsd() } returns true
         every { registeredHdKeyItemMapper(REGISTERED_HD_KEY, ONE, USD.symbol) } returns REGISTERED_HD_KEY_ITEM
@@ -69,7 +70,7 @@ class DefaultRecoverRegisteredAccountsAccountProcessorTest {
     }
 
     @Test
-    fun `EXPECT account items with usd values WHEN selected currency is algo`() = runTest {
+    fun `EXPECT account items with usd values WHEN selected currency is algo`(): TestResult = runTest {
         every { isPrimaryCurrencyAlgo() } returns true
         every { isPrimaryCurrencyUsd() } returns false
         every { registeredHdKeyItemMapper(REGISTERED_HD_KEY, ONE, USD.symbol) } returns REGISTERED_HD_KEY_ITEM
@@ -81,7 +82,7 @@ class DefaultRecoverRegisteredAccountsAccountProcessorTest {
     }
 
     @Test
-    fun `EXPECT account items with selected currency value WHEN selected currency is not usd or algo`() = runTest {
+    fun `EXPECT account items with selected currency value WHEN selected currency is not usd or algo`(): TestResult = runTest {
         every { isPrimaryCurrencyAlgo() } returns false
         every { isPrimaryCurrencyUsd() } returns false
         every { getUsdToPrimaryCurrencyConversionRate() } returns TEN

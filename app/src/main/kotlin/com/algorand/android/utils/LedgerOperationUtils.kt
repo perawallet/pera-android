@@ -30,19 +30,10 @@ fun Int.shiftOneByteLeft(): Int {
     return this shl BIT_COUNT
 }
 
-// byteArrayOf(10, 2, 15, 11) -> 0A020F0B
-fun ByteArray.toHexString(): String {
-    val hexStringBuilder = StringBuilder()
-    forEach { byte ->
-        hexStringBuilder.append(String.format("%02X", byte))
-    }
-    return hexStringBuilder.toString()
-}
-
 fun getAccountIndexAsByteArray(accountIndex: Int): ByteArray {
     return mutableListOf<Byte>().apply {
         for (i in LedgerBleConnectionManager.ACCOUNT_INDEX_DATA_SIZE - 1 downTo 0) {
-            add(accountIndex.shr(i * Byte.Companion.SIZE_BITS).toByte())
+            add(accountIndex.shr(i * Byte.SIZE_BITS).toByte())
         }
     }.toByteArray()
 }

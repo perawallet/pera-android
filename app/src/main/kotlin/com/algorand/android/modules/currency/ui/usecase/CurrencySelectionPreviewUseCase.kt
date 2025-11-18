@@ -21,9 +21,9 @@ import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.currency.ui.mapper.CurrencyListItemMapper
 import com.algorand.android.ui.settings.selection.CurrencyListItem
 import com.algorand.android.utils.DataResource
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class CurrencySelectionPreviewUseCase @Inject constructor(
     private val currencyListItemMapper: CurrencyListItemMapper,
@@ -54,6 +54,7 @@ class CurrencySelectionPreviewUseCase @Inject constructor(
                     val currencyListItems = createCurrencyListItems(queryFilteredList)
                     DataResource.Success(currencyListItems)
                 }
+
                 is DataResource.Error.Api -> DataResource.Error.Api(dataResource.exception, dataResource.code)
                 is DataResource.Error.Local -> DataResource.Error.Local(dataResource.exception)
                 is DataResource.Loading -> DataResource.Loading()

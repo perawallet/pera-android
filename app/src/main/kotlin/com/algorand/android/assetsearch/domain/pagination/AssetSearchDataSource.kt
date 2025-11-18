@@ -69,11 +69,12 @@ class AssetSearchDataSource(
                 }
                 LoadResult.Page(data = assetSearchDtos, prevKey = null, nextKey = result.data.next)
             }
+
             is Result.Error -> LoadResult.Error<String, AssetSearchDTO>(result.exception)
         }
     }
 
     companion object {
-        val DEFAULT_ASSET_QUERY = AssetSearchQuery.createDefaultQuery()
+        val DEFAULT_ASSET_QUERY: AssetSearchQuery = AssetSearchQuery.createDefaultQuery()
     }
 }

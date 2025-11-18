@@ -14,7 +14,7 @@ package com.algorand.android.utils
 
 @SuppressWarnings("LargeClass")
 object PassphraseKeywordUtils {
-    const val SUGGESTED_WORD_COUNT = 3
+    const val SUGGESTED_WORD_COUNT: Int = 3
 
     fun getSuggestedWords(wordCount: Int, prefix: String): List<String> {
         if (prefix.isEmpty()) {
@@ -32,7 +32,7 @@ object PassphraseKeywordUtils {
         itemCount: Int,
         perItemCount: Int,
     ): List<PassphraseValidationItem> {
-        val diffWords = (predefinedWords - words).shuffled().toMutableList()
+        val diffWords = (predefinedWords - words.toSet()).shuffled().toMutableList()
         val validationItems = mutableListOf<PassphraseValidationItem>()
 
         words.withIndex()

@@ -12,7 +12,8 @@
 
 package com.algorand.wallet.foundation.database.converters
 
-import androidx.room.*
+import androidx.room.ProvidedTypeConverter
+import androidx.room.TypeConverter
 import java.math.BigDecimal
 
 @ProvidedTypeConverter

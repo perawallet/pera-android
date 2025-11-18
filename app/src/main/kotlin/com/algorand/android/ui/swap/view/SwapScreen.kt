@@ -86,6 +86,7 @@ fun SwapScreen(
                         listener = listener
                     )
                 }
+
                 NoAccountState -> {
                     SwapToolbar(scope, swapViewModel, listener)
                     SwapScreenNoAccountState(
@@ -95,6 +96,7 @@ fun SwapScreen(
                         listener::onCreateAccountClick
                     )
                 }
+
                 Introduction -> SwapScreenIntroductionState(listener = listener)
             }
         }

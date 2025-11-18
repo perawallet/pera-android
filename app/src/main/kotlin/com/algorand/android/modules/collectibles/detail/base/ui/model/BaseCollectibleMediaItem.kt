@@ -58,8 +58,8 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is ImageCollectibleMediaItem &&
-                other.previewUrl == previewUrl &&
-                other.downloadUrl == downloadUrl
+                    other.previewUrl == previewUrl &&
+                    other.downloadUrl == downloadUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -85,8 +85,8 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is GifCollectibleMediaItem &&
-                other.previewUrl == previewUrl &&
-                other.downloadUrl == downloadUrl
+                    other.previewUrl == previewUrl &&
+                    other.downloadUrl == downloadUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -112,8 +112,8 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is VideoCollectibleMediaItem &&
-                other.previewUrl == previewUrl &&
-                other.downloadUrl == downloadUrl
+                    other.previewUrl == previewUrl &&
+                    other.downloadUrl == downloadUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -139,8 +139,8 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is VideoCollectibleMediaItem &&
-                other.previewUrl == previewUrl &&
-                other.downloadUrl == downloadUrl
+                    other.previewUrl == previewUrl &&
+                    other.downloadUrl == downloadUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -166,8 +166,8 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is UnsupportedCollectibleMediaItem &&
-                other.previewUrl == previewUrl &&
-                other.downloadUrl == downloadUrl
+                    other.previewUrl == previewUrl &&
+                    other.downloadUrl == downloadUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -193,8 +193,8 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is NoMediaCollectibleMediaItem &&
-                other.previewUrl == previewUrl &&
-                other.downloadUrl == downloadUrl
+                    other.previewUrl == previewUrl &&
+                    other.downloadUrl == downloadUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

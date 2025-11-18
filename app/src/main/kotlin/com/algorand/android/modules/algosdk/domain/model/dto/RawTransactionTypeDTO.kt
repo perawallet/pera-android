@@ -13,7 +13,6 @@
 package com.algorand.android.modules.algosdk.domain.model.dto
 
 enum class RawTransactionTypeDTO {
-
     PAY_TRANSACTION,
     ASSET_TRANSACTION,
     APP_TRANSACTION,

@@ -19,6 +19,6 @@ interface AccountDetailAccountsItemProcessor {
     fun getAccountDetailsItemsFlow(address: String, query: String?): Flow<List<AccountDetailAccountsItem>>
 
     companion object {
-        const val QUICK_ACTIONS_INDEX = 2
+        const val QUICK_ACTIONS_INDEX: Int = 2
     }
 }

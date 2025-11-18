@@ -18,10 +18,11 @@ import com.algorand.wallet.account.info.domain.repository.AccountInformationRepo
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.math.BigInteger
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 class GetAccountMinBalanceUseCaseTest {
 
@@ -33,7 +34,7 @@ class GetAccountMinBalanceUseCaseTest {
     private val sut = GetAccountMinBalanceUseCase(getAccountInformation, accountInformationRepository)
 
     @Test
-    fun `EXPECT cache min balance WHEN exist in cache`() = runTest {
+    fun `EXPECT cache min balance WHEN exist in cache`(): TestResult = runTest {
         coEvery { accountInformationRepository.getCachedAccountMinRequiredBalance(ADDRESS) } returns MIN_BALANCE
 
         val result = sut(ADDRESS)
@@ -42,7 +43,7 @@ class GetAccountMinBalanceUseCaseTest {
     }
 
     @Test
-    fun `EXPECT zero WHEN account information is null`() = runTest {
+    fun `EXPECT zero WHEN account information is null`(): TestResult = runTest {
         coEvery { getAccountInformation(ADDRESS) } returns null
 
         val result = sut(ADDRESS)
@@ -51,7 +52,7 @@ class GetAccountMinBalanceUseCaseTest {
     }
 
     @Test
-    fun `EXPECT zero WHEN account is closed`() = runTest {
+    fun `EXPECT zero WHEN account is closed`(): TestResult = runTest {
         coEvery { getAccountInformation(ADDRESS) } returns EMPTY_ACCOUNT
 
         val result = sut(ADDRESS)
@@ -60,7 +61,7 @@ class GetAccountMinBalanceUseCaseTest {
     }
 
     @Test
-    fun `EXPECT min balance`() = runTest {
+    fun `EXPECT min balance`(): TestResult = runTest {
         val account = EMPTY_ACCOUNT.copy(
             totalAssetsOptedIn = 6,
             totalAppsOptedIn = 4,
@@ -73,17 +74,17 @@ class GetAccountMinBalanceUseCaseTest {
         val result = sut(ADDRESS)
 
         val expected = MIN_BALANCE +
-            (MIN_BALANCE_TO_KEEP_PER_OPTED_IN_ASSET * 6.toBigInteger()) +
-            (MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS * 4.toBigInteger()) +
-            (MIN_BALANCE_TO_KEEP_PER_CREATED_APPS * 3.toBigInteger()) +
-            (MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_INT * 4.toBigInteger()) +
-            (MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_BYTE_SLICE * 3.toBigInteger()) +
-            (MIN_BALANCE_TO_KEEP_PER_APP_EXTRA_PAGES * 2.toBigInteger())
+                (MIN_BALANCE_TO_KEEP_PER_OPTED_IN_ASSET * 6.toBigInteger()) +
+                (MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS * 4.toBigInteger()) +
+                (MIN_BALANCE_TO_KEEP_PER_CREATED_APPS * 3.toBigInteger()) +
+                (MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_INT * 4.toBigInteger()) +
+                (MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_BYTE_SLICE * 3.toBigInteger()) +
+                (MIN_BALANCE_TO_KEEP_PER_APP_EXTRA_PAGES * 2.toBigInteger())
         assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT min balance WHEN account is rekeyed`() = runTest {
+    fun `EXPECT min balance WHEN account is rekeyed`(): TestResult = runTest {
         val rekeyedAccount = EMPTY_ACCOUNT.copy(rekeyAdminAddress = "authAddress")
         coEvery { getAccountInformation(ADDRESS) } returns rekeyedAccount
 
@@ -93,7 +94,7 @@ class GetAccountMinBalanceUseCaseTest {
     }
 
     @Test
-    fun `EXPECT min balance WHEN account has opt-in assets`() = runTest {
+    fun `EXPECT min balance WHEN account has opt-in assets`(): TestResult = runTest {
         val account = EMPTY_ACCOUNT.copy(totalAssetsOptedIn = 5)
         coEvery { getAccountInformation(ADDRESS) } returns account
 
@@ -104,7 +105,7 @@ class GetAccountMinBalanceUseCaseTest {
     }
 
     @Test
-    fun `EXPECT min balance WHEN account has opt-in apps`() = runTest {
+    fun `EXPECT min balance WHEN account has opt-in apps`(): TestResult = runTest {
         val account = EMPTY_ACCOUNT.copy(totalAppsOptedIn = 5)
         coEvery { getAccountInformation(ADDRESS) } returns account
 

@@ -10,6 +10,8 @@
  * limitations under the License
  */
 
+@file:Suppress("unused")
+
 package com.algorand.android.utils
 
 import kotlinx.coroutines.CoroutineScope

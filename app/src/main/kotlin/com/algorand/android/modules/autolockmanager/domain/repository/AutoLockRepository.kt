@@ -19,6 +19,6 @@ interface AutoLockRepository {
     fun getAppAtBackgroundTime(): Long?
 
     companion object {
-        const val INJECTION_NAME = "autoLockRepositoryInjection"
+        const val INJECTION_NAME: String = "autoLockRepositoryInjection"
     }
 }

@@ -25,13 +25,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MeldAccountSelectionFragment : BaseAccountSelectionFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         startIconClick = ::navBack,
         startIconResId = R.drawable.ic_close,
         titleResId = R.string.select_account
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val meldAccountSelectionViewModel by viewModels<MeldAccountSelectionViewModel>()
 
@@ -52,6 +54,6 @@ class MeldAccountSelectionFragment : BaseAccountSelectionFragment() {
     }
 
     companion object {
-        const val ACCOUNT_SELECTION_RESULT_KEY = "account_selection_result_key"
+        const val ACCOUNT_SELECTION_RESULT_KEY: String = "account_selection_result_key"
     }
 }

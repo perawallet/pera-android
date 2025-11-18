@@ -21,9 +21,9 @@ import com.algorand.wallet.asset.assetinbox.domain.usecase.ClearAssetInboxCache
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequests
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxValidAddresses
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 internal class AssetInboxCacheManagerImpl @Inject constructor(
     private val cacheManager: LifecycleAwareCacheManager,

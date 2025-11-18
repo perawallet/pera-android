@@ -28,8 +28,9 @@ import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class Arc59SendTransactionSignManager @Inject constructor(
     private val arc59SignedTransactionDetailMapper: Arc59SignedTransactionDetailMapper,
@@ -54,7 +55,7 @@ class Arc59SendTransactionSignManager @Inject constructor(
 
     private var unsignedTransactions: List<Arc59SendTransaction>? = null
 
-    val arc59SendTransactionSignResultFlow = signResultFlow.map {
+    val arc59SendTransactionSignResultFlow: Flow<ExternalTransactionSignResult> = signResultFlow.map {
         when (it) {
             is Success<*> -> mapSignedTransactions(
                 unsignedTransactions,
@@ -77,7 +78,7 @@ class Arc59SendTransactionSignManager @Inject constructor(
         val signedTransactionDetails =
             arc59SignedTransactionDetailMapper(transactions, signedTransactions)
         return if (signedTransactionDetails.isNullOrEmpty()) {
-            Error.Defined(AnnotatedString(R.string.an_error_occured))
+            Error.Defined(AnnotatedString(R.string.an_error_occurred))
         } else {
             Success(signedTransactionDetails)
         }

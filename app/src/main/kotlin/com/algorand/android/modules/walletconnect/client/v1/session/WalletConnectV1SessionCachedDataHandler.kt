@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.walletconnect.client.v1.session
 
+import app.perawallet.walletconnectv1.impls.WCSession
 import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectV1SessionCachedData.Companion.INITIAL_RETRY_COUNT
 import com.algorand.android.utils.popIfOrNull
 import javax.inject.Inject
@@ -22,9 +23,10 @@ class WalletConnectV1SessionCachedDataHandler @Inject constructor() {
 
     private val connectedSessions: MutableList<WalletConnectV1SessionCachedData> = mutableListOf()
 
-    fun getSessionById(id: Long) = getCachedDataById(id)?.session
+    fun getSessionById(id: Long): WCSession? = getCachedDataById(id)?.session
 
-    fun getCachedDataById(id: Long) = getConnectedSessions { sessions -> sessions.firstOrNull { it.sessionId == id } }
+    fun getCachedDataById(id: Long): WalletConnectV1SessionCachedData? =
+        getConnectedSessions { sessions -> sessions.firstOrNull { it.sessionId == id } }
 
     fun addNewCachedData(sessionCachedData: WalletConnectV1SessionCachedData) {
         getConnectedSessions { sessions ->

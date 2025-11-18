@@ -20,7 +20,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class CacheWalletConnectV2PairUriUseCase @Inject constructor(
-    @Named(WalletConnectV2Repository.INJECTION_NAME)
+    @param:Named(WalletConnectV2Repository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectV2Repository,
     private val walletConnectV2PairUriMapper: WalletConnectV2PairUriMapper
 ) {

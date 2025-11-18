@@ -18,10 +18,10 @@ import com.algorand.wallet.account.custom.data.mapper.model.CustomHdSeedInfoMapp
 import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
 import com.algorand.wallet.account.custom.domain.model.HdSeedOrderIndex
 import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class CustomHdSeedInfoRepositoryImpl @Inject constructor(
     private val customHdSeedInfoDao: CustomHdSeedInfoDao,

@@ -31,11 +31,11 @@ import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.Fi
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.SearchKeyword
 import com.algorand.wallet.asset.domain.usecase.GetAssetCollectibleLitesFlow
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import javax.inject.Inject
 
 internal class DefaultAccountDetailAssetsItemProcessor @Inject constructor(
     private val accountDetailAssetItemMapper: AccountDetailAssetItemMapper,

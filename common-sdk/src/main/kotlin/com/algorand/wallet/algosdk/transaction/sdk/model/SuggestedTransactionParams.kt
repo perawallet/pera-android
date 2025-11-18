@@ -21,6 +21,7 @@ data class SuggestedTransactionParams(
 ) {
     data class TransactionFee(val fee: Long, val type: FeeType) {
 
+        @Suppress("unused")
         sealed interface FeeType {
             data object Suggested : FeeType
             data object Flat : FeeType

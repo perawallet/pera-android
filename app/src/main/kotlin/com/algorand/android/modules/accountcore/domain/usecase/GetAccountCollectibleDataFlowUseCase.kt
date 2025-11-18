@@ -16,9 +16,9 @@ import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseO
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class GetAccountCollectibleDataFlowUseCase @Inject constructor(
     private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory,

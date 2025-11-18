@@ -16,10 +16,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class DateFilterPreview(
-    @DrawableRes
+    @param:DrawableRes
     val filterButtonIconResId: Int,
     val title: String? = null,
-    @StringRes
+    @param:StringRes
     val titleResId: Int? = null,
     val useFilterIconsOwnTint: Boolean
 )

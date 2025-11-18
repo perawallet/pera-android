@@ -13,6 +13,7 @@
 package com.algorand.android.sharedpref
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 abstract class SharedPrefLocalSource<K>(protected val sharedPref: SharedPreferences) {
 
@@ -27,7 +28,7 @@ abstract class SharedPrefLocalSource<K>(protected val sharedPref: SharedPreferen
     private var listenerList: MutableSet<OnChangeListener<K>> = mutableSetOf()
 
     fun clear() {
-        sharedPref.edit().remove(key).apply()
+        sharedPref.edit { remove(key) }
         triggerListener { it.onValueChanged(null) }
     }
 
@@ -40,9 +41,9 @@ abstract class SharedPrefLocalSource<K>(protected val sharedPref: SharedPreferen
     }
 
     protected fun saveData(action: (SharedPreferences.Editor) -> Unit) {
-        sharedPref.edit().apply {
+        sharedPref.edit {
             action(this)
-        }.apply()
+        }
         triggerListener { it.onValueChanged(getDataOrNull()) }
     }
 

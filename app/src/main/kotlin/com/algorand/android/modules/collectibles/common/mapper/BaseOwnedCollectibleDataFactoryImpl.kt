@@ -67,6 +67,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is VideoCollectibleDetail -> {
                 ownedCollectibleVideoDataMapper(
                     collectibleDetail = collectibleDetail,
@@ -78,6 +79,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is MixedCollectibleDetail -> {
                 ownedCollectibleMixedDataMapper(
                     collectibleDetail = collectibleDetail,
@@ -89,6 +91,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is AudioCollectibleDetail -> {
                 ownedCollectibleAudioDataMapper(
                     collectibleDetail = collectibleDetail,
@@ -100,6 +103,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is UnsupportedCollectibleDetail -> {
                 ownedCollectibleNotSupportedDataMapper(
                     collectibleDetail = collectibleDetail,

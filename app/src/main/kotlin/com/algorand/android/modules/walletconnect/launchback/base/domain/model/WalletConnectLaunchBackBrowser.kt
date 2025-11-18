@@ -94,7 +94,9 @@ enum class WalletConnectLaunchBackBrowser(
     MIUI(MIUI_GROUP, BuildConfig.MIUI_PACKAGE_NAME);
 
     companion object {
-        fun getBrowserListByGroup(browserGroup: WalletConnectLaunchBackBrowserGroup) =
-            values().filter { it.browserGroup == browserGroup }
+        fun getBrowserListByGroup(
+            browserGroup: WalletConnectLaunchBackBrowserGroup
+        ): List<WalletConnectLaunchBackBrowser> =
+            entries.filter { it.browserGroup == browserGroup }
     }
 }

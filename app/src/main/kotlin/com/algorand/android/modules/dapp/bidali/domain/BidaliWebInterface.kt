@@ -14,6 +14,7 @@ package com.algorand.android.modules.dapp.bidali.domain
 
 import android.webkit.JavascriptInterface
 
+@Suppress("unused")
 class BidaliWebInterface private constructor(val listener: WebInterfaceListener) {
 
     @JavascriptInterface
@@ -32,7 +33,7 @@ class BidaliWebInterface private constructor(val listener: WebInterfaceListener)
     }
 
     companion object {
-        const val WEB_INTERFACE_NAME = "bidaliWebInterface"
+        const val WEB_INTERFACE_NAME: String = "bidaliWebInterface"
         fun create(listener: WebInterfaceListener): BidaliWebInterface {
             return BidaliWebInterface(listener)
         }

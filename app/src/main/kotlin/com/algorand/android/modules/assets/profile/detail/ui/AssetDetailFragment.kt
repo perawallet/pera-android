@@ -69,7 +69,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         startIconResId = R.drawable.ic_left_arrow
     )
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentAssetDetailBinding::bind)
 
@@ -235,16 +235,12 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
     }
 
     private fun initAssetLineChart() {
-        val isChartFeatureEnabled = assetDetailViewModel.isChartFeatureEnabled()
-        binding.assetLineChart.isVisible = isChartFeatureEnabled
-        if (isChartFeatureEnabled) {
-            binding.assetLineChart.setContent {
-                PeraTheme {
-                    StatefulPeraLineChart(
-                        viewModel = assetLineChartViewModel,
-                        listener = chartListener
-                    )
-                }
+        binding.assetLineChart.setContent {
+            PeraTheme {
+                StatefulPeraLineChart(
+                    viewModel = assetLineChartViewModel,
+                    listener = chartListener
+                )
             }
         }
     }

@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ApplicationOpenCountPreferenceUseCase @Inject constructor(
-    @Named(ApplicationOpenCountPreferenceRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(ApplicationOpenCountPreferenceRepository.REPOSITORY_INJECTION_NAME)
     private val applicationOpenCountPreferenceRepository: ApplicationOpenCountPreferenceRepository
 ) {
 

@@ -15,9 +15,9 @@ package com.algorand.android.models
 import android.os.Parcelable
 import com.algorand.android.utils.MONTH_DAY_PATTERN
 import com.algorand.android.utils.MONTH_DAY_YEAR_PATTERN
+import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class DateRange(val from: ZonedDateTime? = null, val to: ZonedDateTime? = null) : Parcelable {
@@ -28,6 +28,7 @@ data class DateRange(val from: ZonedDateTime? = null, val to: ZonedDateTime? = n
             DateFilter.Today, DateFilter.Yesterday -> {
                 from?.format(DateTimeFormatter.ofPattern(MONTH_DAY_PATTERN))
             }
+
             DateFilter.LastWeek -> {
                 if (from != null && to != null) {
                     val monthDayFormatter = DateTimeFormatter.ofPattern(MONTH_DAY_PATTERN)
@@ -42,9 +43,11 @@ data class DateRange(val from: ZonedDateTime? = null, val to: ZonedDateTime? = n
                     null
                 }
             }
+
             DateFilter.LastMonth -> {
                 "${from?.format(DateTimeFormatter.ofPattern(MONTH_DAY_PATTERN))} - ${to?.dayOfMonth}"
             }
+
             is DateFilter.CustomRange -> {
                 if (from != null && to != null) {
                     val monthDayYearFormatter = DateTimeFormatter.ofPattern(MONTH_DAY_YEAR_PATTERN)

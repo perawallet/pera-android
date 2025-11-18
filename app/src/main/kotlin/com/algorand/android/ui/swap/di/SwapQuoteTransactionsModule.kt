@@ -21,8 +21,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import javax.inject.Named
 import retrofit2.Retrofit
+import javax.inject.Named
 
 @Module
 @InstallIn(ViewModelComponent::class)

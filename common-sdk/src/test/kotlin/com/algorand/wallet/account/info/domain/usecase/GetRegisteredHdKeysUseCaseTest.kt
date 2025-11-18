@@ -26,6 +26,7 @@ import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -52,7 +53,7 @@ class GetRegisteredHdKeysUseCaseTest {
     )
 
     @Test
-    fun `EXPECT first registered hd key WHEN there is no active hd account`() = runTest {
+    fun `EXPECT first registered hd key WHEN there is no active hd account`(): TestResult = runTest {
         val registeredHdKey = peraFixture<RegisteredHdKey>()
         coEvery { getActiveHdAccounts(ENTROPY) } returns emptyList()
         coEvery { getLocalAccountsAddresses() } returns emptyList()
@@ -67,7 +68,7 @@ class GetRegisteredHdKeysUseCaseTest {
     }
 
     @Test
-    fun `EXPECT first registered hd key WHEN all addresses are filtered out`() = runTest {
+    fun `EXPECT first registered hd key WHEN all addresses are filtered out`(): TestResult = runTest {
         val registeredHdKey = peraFixture<RegisteredHdKey>()
         coEvery { getActiveHdAccounts(ENTROPY) } returns listOf(ACTIVE_HD_ACCOUNT_1, ACTIVE_HD_ACCOUNT_2)
         coEvery { getLocalAccountsAddresses() } returns listOf(ADDRESS_1, ADDRESS_2)
@@ -88,7 +89,7 @@ class GetRegisteredHdKeysUseCaseTest {
     }
 
     @Test
-    fun `EXPECT registered hd keys WHEN there are active hd accounts`() = runTest {
+    fun `EXPECT registered hd keys WHEN there are active hd accounts`(): TestResult = runTest {
         coEvery { getActiveHdAccounts(ENTROPY) } returns listOf(ACTIVE_HD_ACCOUNT_1, ACTIVE_HD_ACCOUNT_2)
         coEvery { getLocalAccountsAddresses() } returns listOf(ADDRESS_1, ADDRESS_2)
         coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_1) } returns listOf(FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS)
@@ -118,7 +119,7 @@ class GetRegisteredHdKeysUseCaseTest {
     }
 
     @Test
-    fun `EXPECT addresses to be filtered out WHEN fast lookup is null or account is not exist`() = runTest {
+    fun `EXPECT addresses to be filtered out WHEN fast lookup is null or account is not exist`(): TestResult = runTest {
         coEvery {
             getActiveHdAccounts(ENTROPY)
         } returns listOf(ACTIVE_HD_ACCOUNT_1, ACTIVE_HD_ACCOUNT_2, ACTIVE_HD_ACCOUNT_3)

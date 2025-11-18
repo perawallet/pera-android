@@ -26,6 +26,6 @@ class WcConnectionLaunchBackTitleAnnotatedStringProviderV1Impl : WcConnectionLau
     }
 
     companion object {
-        const val INJECTION_NAME = "wcConnectionLaunchBackBrowserTitleAnnotatedStringV1InjectionName"
+        const val INJECTION_NAME: String = "wcConnectionLaunchBackBrowserTitleAnnotatedStringV1InjectionName"
     }
 }

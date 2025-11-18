@@ -61,6 +61,7 @@ class WalletConnectSingleTransactionAssetInfoView @JvmOverloads constructor(
                         formattedSelectedCurrencyValue = formattedSelectedCurrencyValue
                     )
                 }
+
                 assetName != null -> {
                     setAssetNameAndIdGroup(
                         assetName = assetName.getName(context.resources),
@@ -69,6 +70,7 @@ class WalletConnectSingleTransactionAssetInfoView @JvmOverloads constructor(
                         accountAddress = fromDisplayedAddress?.fullAddress
                     )
                 }
+
                 isAssetUnnamed -> setAssetNameAsUnnamed()
                 applicationId != null -> setAppIdGroup(applicationId = applicationId)
                 appOnComplete != null -> setAppOnCompleteGroup(appOnComplete = appOnComplete)

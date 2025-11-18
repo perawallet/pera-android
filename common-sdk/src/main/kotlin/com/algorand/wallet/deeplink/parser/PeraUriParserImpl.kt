@@ -71,6 +71,6 @@ internal class PeraUriParserImpl @Inject constructor() : PeraUriParser {
     }
 
     private companion object {
-        val URI_REGEX = Regex("""^([a-zA-Z][a-zA-Z\d+.-]*):\/\/([^\/?#]*)?(\/[^?#]*)?(\?[^#]*)?(#.*)?$""")
+        val URI_REGEX = Regex("""^([a-zA-Z][a-zA-Z\d+.-]*)://([^/?#]*)?(/[^?#]*)?(\?[^#]*)?(#.*)?$""")
     }
 }

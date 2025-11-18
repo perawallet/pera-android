@@ -25,7 +25,7 @@ import java.math.BigInteger
 // TODO: 13.01.2022 send_algo_navigation graph will be separated into multiple graphs
 class SendAlgoFragment : BaseFragment(R.layout.fragment_send_algo) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val args by navArgs<SendAlgoFragmentArgs>()
 
@@ -37,21 +37,26 @@ class SendAlgoFragment : BaseFragment(R.layout.fragment_send_algo) {
             transactionData != null -> {
                 SendAlgoFragmentDirections.actionSendAlgoFragmentToAssetTransferPreviewFragment(transactionData)
             }
+
             assetTransaction == null || assetTransaction.senderAddress.isEmpty() -> {
                 SendAlgoFragmentDirections.actionSendAlgoFragmentToSenderAccountSelectionFragment(assetTransaction)
             }
+
             assetTransaction.assetId == -1L -> {
                 SendAlgoFragmentDirections.actionSendAlgoFragmentToAssetSelectionFragment(assetTransaction)
             }
+
             assetTransaction.amount isEqualTo BigInteger.ZERO -> {
                 SendAlgoFragmentDirections.actionSendAlgoFragmentToAssetTransferAmountFragment(
                     assetTransaction = assetTransaction,
                     shouldPopulateAmountWithMax = args.shouldPopulateAmountWithMax
                 )
             }
+
             assetTransaction.receiverUser == null -> {
                 SendAlgoFragmentDirections.actionSendAlgoFragmentToReceiverAccountSelectionFragment(assetTransaction)
             }
+
             else -> throw Exception("$logTag Unknown direction")
         }.apply { nav(this) }
     }

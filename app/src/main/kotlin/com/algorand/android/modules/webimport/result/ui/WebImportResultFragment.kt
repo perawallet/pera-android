@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class WebImportResultFragment : BaseFragment(R.layout.fragment_web_import_result) {
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val webImportResultViewModel: WebImportResultViewModel by viewModels()
 

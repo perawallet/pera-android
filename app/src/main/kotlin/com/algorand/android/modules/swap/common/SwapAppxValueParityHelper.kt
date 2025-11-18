@@ -13,7 +13,6 @@
 package com.algorand.android.modules.swap.common
 
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.parity.domain.usecase.PrimaryCurrencyParityCalculationUseCase
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
@@ -22,10 +21,7 @@ import javax.inject.Inject
 
 class SwapAppxValueParityHelper @Inject constructor(
     private val primaryCurrencyParityCalculationUseCase: PrimaryCurrencyParityCalculationUseCase,
-    private val parityUseCase: ParityUseCase
 ) {
-
-    fun getDisplayedCurrencySymbol(): String = parityUseCase.getPrimaryCurrencySymbolOrName()
 
     fun getDisplayedParityCurrencyValue(
         assetAmount: BigInteger,

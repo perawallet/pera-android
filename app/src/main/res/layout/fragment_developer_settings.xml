@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -37,7 +38,6 @@
         android:id="@+id/createLegacyAlgo25ListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:endViewLayoutResource="@layout/layout_right_arrow"
         app:settingIcon="@drawable/ic_wallet"
         app:settingTitle="@string/create_legacy_algo25_account" />

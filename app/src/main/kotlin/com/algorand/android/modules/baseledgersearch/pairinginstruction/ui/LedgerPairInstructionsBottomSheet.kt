@@ -40,6 +40,6 @@ class LedgerPairInstructionsBottomSheet : BaseBottomSheet(
     }
 
     companion object {
-        const val BLUETOOTH_DEVICE_KEY = "bluetooth_device_key"
+        const val BLUETOOTH_DEVICE_KEY: String = "bluetooth_device_key"
     }
 }

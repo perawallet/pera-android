@@ -20,15 +20,15 @@ internal class AccountAddressDeepLinkBuilder : DeepLinkBuilder {
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {
             accountAddress != null &&
-                walletConnectUrl == null &&
-                assetId == null &&
-                amount == null &&
-                note == null &&
-                xnote == null &&
-                url == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null &&
-                type != "keyreg"
+                    walletConnectUrl == null &&
+                    assetId == null &&
+                    amount == null &&
+                    note == null &&
+                    xnote == null &&
+                    url == null &&
+                    webImportQrCode == null &&
+                    notificationGroupType == null &&
+                    type != "keyreg"
         }
     }
 

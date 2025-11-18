@@ -52,10 +52,12 @@ internal class DefaultTransactionHistoryItemMapper @Inject constructor() : Trans
                     val formattedAmount = formatAmount(ALGO_ID, payment.amount, Currency.ALGO.symbol)
                     TransactionHistoryItem.Receive(id, payment.amount, senderAddress, formattedAmount)
                 }
+
                 PaymentType.Self -> {
                     val formattedAmount = formatAmount(ALGO_ID, payment.amount, Currency.ALGO.symbol)
                     TransactionHistoryItem.Self(id, formattedAmount)
                 }
+
                 is PaymentType.Send -> {
                     val formattedAmount = formatSendAmount(ALGO_ID, payment.amount, Currency.ALGO.symbol)
                     val receiverAddress = (payment.type as PaymentType.Send).receiverAddress
@@ -80,11 +82,13 @@ internal class DefaultTransactionHistoryItemMapper @Inject constructor() : Trans
                 val formattedAmount = formatSendAmount(assetId, sendOptOut.amount, unitName)
                 TransactionHistoryItem.SendOptOut(txId, formattedAmount)
             }
+
             is AssetTransferType.ReceiveOptOut -> {
                 val receiveOptOut = assetTransfer.type as AssetTransferType.ReceiveOptOut
                 val formattedAmount = formatAmount(assetId, receiveOptOut.amount, unitName)
                 TransactionHistoryItem.ReceiveOptOut(transactionHistory.id, formattedAmount)
             }
+
             is AssetTransferType.Receive -> {
                 TransactionHistoryItem.Receive(
                     id = transactionHistory.id,
@@ -93,9 +97,11 @@ internal class DefaultTransactionHistoryItemMapper @Inject constructor() : Trans
                     formattedAmount = formatAmount(assetId, assetTransferType.amount, unitName)
                 )
             }
+
             is AssetTransferType.Self -> {
                 TransactionHistoryItem.Self(txId, formatAmount(assetId, assetTransferType.amount, unitName))
             }
+
             is AssetTransferType.Send -> {
                 TransactionHistoryItem.Send(
                     id = transactionHistory.id,

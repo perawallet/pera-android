@@ -24,7 +24,6 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.setPadding
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomPassphrasesBoxViewBinding
-import com.algorand.android.utils.FontIdentifier
 import com.algorand.android.utils.MNEMONIC_DELIMITER_REGEX
 import com.algorand.android.utils.PassphraseViewUtils
 import com.algorand.android.utils.setColor
@@ -44,12 +43,7 @@ class PassphrasesBoxView @JvmOverloads constructor(
     }
 
     private val passphraseTextSize = resources.getDimensionPixelSize(R.dimen.text_size_13)
-    private val passphraseFont = resources.getIdentifier(
-        FontIdentifier.DM_MONO_REGULAR_FONT_IDENTIFIER,
-        FontIdentifier.FONT_ATTRIBUTE_DEF_TYPE,
-        context.packageName
-    )
-    private val passphraseFontFace = ResourcesCompat.getFont(context, passphraseFont)
+    private val passphraseFontFace = ResourcesCompat.getFont(context, R.font.dmmono_regular)
 
     fun setPassphrases(passphrases: String) {
         val passphrasesAsList = splitPassphrases(passphrases)
@@ -57,7 +51,7 @@ class PassphrasesBoxView @JvmOverloads constructor(
     }
 
     fun setPassphrases(passphrases: List<String>) {
-        val itemCount = passphrases.count()
+        val itemCount = passphrases.size
         val itemCountPerColumn = PassphraseViewUtils.calculateMiddleIndexOfPassphrases(passphrases.size)
 
         val leftColumnItems = passphrases.subList(0, itemCountPerColumn)

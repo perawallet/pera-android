@@ -14,7 +14,7 @@ package com.algorand.android.utils
 
 import kotlin.math.max
 
-const val MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS = 100000
+const val MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS: Int = 100000
 
 private const val REKEY_BYTE_ARRAY_SIZE = 30
 

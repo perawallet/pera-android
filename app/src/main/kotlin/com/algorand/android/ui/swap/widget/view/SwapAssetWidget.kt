@@ -77,6 +77,7 @@ private fun BalanceContent(viewState: ViewState) {
                 color = PeraTheme.colors.text.gray
             )
         }
+
         ViewState.Loading -> Box { /* Shimmer */ }
         ViewState.Error, ViewState.Idle -> Unit
     }

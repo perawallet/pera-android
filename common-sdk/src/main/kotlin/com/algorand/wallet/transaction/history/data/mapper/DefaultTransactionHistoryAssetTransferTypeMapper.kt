@@ -21,6 +21,7 @@ import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.T
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type.AssetTransfer.AssetTransferType.ReceiveOptOut
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistory.Type.AssetTransfer.AssetTransferType.SendOptOut
 import com.algorand.wallet.utils.formatToBigDecimal
+import com.algorand.wallet.utils.isZero
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
@@ -70,7 +71,7 @@ internal class DefaultTransactionHistoryAssetTransferTypeMapper @Inject construc
             isReceiveOptOut(address, closeToAddress) -> ReceiveOptOut(assetAmount)
             isSendOptOut(closeToAddress, assetAmount) -> SendOptOut(assetAmount)
             !closeToAddress.isNullOrBlank() -> OptOut
-            isSelfTransaction(address, sender, receiver) && assetAmount == ZERO -> AssetTransferType.OptIn
+            isSelfTransaction(address, sender, receiver) && assetAmount.isZero() -> AssetTransferType.OptIn
             isSelfTransaction(address, sender, receiver) -> AssetTransferType.Self(assetAmount)
             isReceiveTransaction(address, receiver, closeToAddress) -> AssetTransferType.Receive(assetAmount)
             else -> AssetTransferType.Send(receiver ?: return null, assetAmount)

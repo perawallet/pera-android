@@ -23,9 +23,9 @@ import com.algorand.android.deviceregistration.domain.repository.UserDeviceIdRep
 import com.algorand.android.models.Result
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.request
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class UserDeviceIdRepositoryImpl @Inject constructor(
     private val mainnetDeviceIdLocalSource: MainnetDeviceIdLocalSource,

@@ -26,7 +26,7 @@ class BidaliAssetMapper @Inject constructor() {
         isMainnet: Boolean
     ): List<BidaliAsset> {
         return if (isMainnet) {
-            MainnetBidaliSupportedCurrency.values()
+            MainnetBidaliSupportedCurrency.entries
                 .map { bidaliCurrency ->
                     val currency = ownedAssetDataList.firstOrNull { it.id == bidaliCurrency.assetId }
                     BidaliAsset.MainnetBidaliAsset(
@@ -35,7 +35,7 @@ class BidaliAssetMapper @Inject constructor() {
                     )
                 }
         } else {
-            TestnetBidaliSupportedCurrency.values()
+            TestnetBidaliSupportedCurrency.entries
                 .map { bidaliCurrency ->
                     val currency = ownedAssetDataList.firstOrNull { it.id == bidaliCurrency.assetId }
                     BidaliAsset.TestnetBidaliAsset(

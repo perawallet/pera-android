@@ -19,11 +19,11 @@ import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import com.algorand.android.usecase.NodeSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class NodeSettingsViewModel @Inject constructor(

@@ -22,10 +22,10 @@ import com.algorand.android.modules.baseresult.ui.model.BaseResultPreviewFields
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class AsbAccountRestoreResultViewModel @Inject constructor(

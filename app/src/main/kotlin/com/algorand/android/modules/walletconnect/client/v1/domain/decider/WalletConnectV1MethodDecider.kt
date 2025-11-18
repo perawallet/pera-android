@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class WalletConnectV1MethodDecider @Inject constructor() {
     fun decideMethod(name: String): WalletConnectMethod {
-        return WalletConnectMethod.values().firstOrNull {
+        return WalletConnectMethod.entries.firstOrNull {
             it.value == name
         } ?: WalletConnectMethod.UNKNOWN
     }

@@ -110,6 +110,6 @@ fun PeraCardPreview() {
                 text = stringResource(R.string.recommended)
             )
         },
-        onClick = { }
+        onClick = {}
     )
 }

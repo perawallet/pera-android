@@ -14,7 +14,6 @@
 
 package com.algorand.android.modules.accounts.lite.domain.manager
 
-import com.algorand.android.models.Node
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.CurrencyCachingError
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.EmptyLocalAccounts
@@ -23,14 +22,11 @@ import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLites
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.SortAccountsBySortingPreference
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
-import com.algorand.android.usecase.NodeSettingsUseCase
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlow
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,6 +42,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class AccountLiteManagerImpl @Inject constructor(
@@ -53,7 +51,6 @@ internal class AccountLiteManagerImpl @Inject constructor(
     private val getLocalAccountsFlow: GetLocalAccountsFlow,
     private val getAppCacheStatusFlow: GetAppCacheStatusFlow,
     private val parityUseCase: ParityUseCase,
-    private val nodeSettingsUseCase: NodeSettingsUseCase,
     private val sortAccountsBySortingPreference: SortAccountsBySortingPreference
 ) : AccountLiteManager {
 
@@ -66,7 +63,6 @@ internal class AccountLiteManagerImpl @Inject constructor(
             getLocalAccountsFlow().distinctUntilChanged(),
             getAppCacheStatusFlow(),
             parityUseCase.getSelectedCurrencyDetailCacheFlow(),
-            nodeSettingsUseCase.getAllNodeAsFlow(),
             ::getAccountLiteInitializationStatus
         )
             .distinctUntilChanged()
@@ -84,6 +80,7 @@ internal class AccountLiteManagerImpl @Inject constructor(
             is AccountLiteInitializationStatus.CurrencyDetailError -> {
                 flowOf(CurrencyCachingError(initializationStatus.error))
             }
+
             AccountLiteInitializationStatus.EmptyAccounts -> flowOf(EmptyLocalAccounts)
             AccountLiteInitializationStatus.Loading -> flowOf(AccountLiteCacheStatus.Loading)
             is AccountLiteInitializationStatus.ReadyForInitialization -> {
@@ -100,8 +97,7 @@ internal class AccountLiteManagerImpl @Inject constructor(
     private fun getAccountLiteInitializationStatus(
         localAccounts: List<LocalAccount>,
         appCacheStatus: AppCacheStatus,
-        currencyStatus: CacheResult<SelectedCurrencyDetail>?,
-        nodes: List<Node>
+        currencyStatus: CacheResult<SelectedCurrencyDetail>?
     ): AccountLiteInitializationStatus {
         return when {
             localAccounts.isEmpty() -> AccountLiteInitializationStatus.EmptyAccounts
@@ -112,6 +108,7 @@ internal class AccountLiteManagerImpl @Inject constructor(
                     AccountLiteInitializationStatus.CurrencyDetailError(currencyStatus)
                 }
             }
+
             currencyStatus is CacheResult.Success -> getStatusWithAppCacheStatus(localAccounts, appCacheStatus)
             currencyStatus == null -> AccountLiteInitializationStatus.Loading
             else -> AccountLiteInitializationStatus.Loading

@@ -29,8 +29,8 @@ import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.model.TopSwapPairs
 import com.algorand.wallet.transaction.domain.model.TransactionId
-import java.math.BigDecimal
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
 
 fun interface GetSwapQuotes {
     suspend operator fun invoke(payload: SwapQuotePayload): PeraResult<SwapQuotes>

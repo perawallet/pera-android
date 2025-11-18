@@ -37,7 +37,7 @@ class AccountsAddressScanActionViewModel @Inject constructor(
 ) : BaseViewModel(), EventViewModel<AccountsAddressScanActionViewModel.ViewEvent> by eventDelegate {
 
     private val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
-    private val label: String? = savedStateHandle.getOrElse<String?>(LABEL_KEY, null)
+    private val label: String? = savedStateHandle.getOrElse(LABEL_KEY, null)
     private var transactionTargetUserDisplayName: String = ""
 
     init {

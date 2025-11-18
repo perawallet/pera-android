@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.algosdk.transaction.usecase
 
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 class CalculateTransactionFeeUseCaseTest {
 

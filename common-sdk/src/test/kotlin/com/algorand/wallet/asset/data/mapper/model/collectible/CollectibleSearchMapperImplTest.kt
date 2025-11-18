@@ -33,7 +33,7 @@ internal class CollectibleSearchMapperImplTest {
 
     @Test
     fun `EXPECT null WHEN response fields are null`() {
-        val collectibleSearchResponse = CollectibleSearchResponse(null, null)
+        val collectibleSearchResponse = CollectibleSearchResponse()
 
         val result = sut(collectibleSearchResponse)
 

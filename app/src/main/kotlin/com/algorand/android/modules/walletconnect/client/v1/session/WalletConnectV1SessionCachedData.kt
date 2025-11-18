@@ -65,9 +65,6 @@ class WalletConnectV1SessionCachedData(
             is Session.Status.Approved -> callback?.onSessionApproved(this, status.clientId)
             is Session.Status.Closed -> callback?.onSessionKilled(this)
             is Session.Status.Error -> callback?.onSessionError(this, status)
-            else -> {
-                sendErrorLog("Unhandled else case in WalletConnectSessionCachedData")
-            }
         }
     }
 
@@ -75,7 +72,7 @@ class WalletConnectV1SessionCachedData(
 
         private val logTag = WalletConnectV1SessionCachedData::class.java.simpleName
 
-        const val INITIAL_RETRY_COUNT = 1
+        const val INITIAL_RETRY_COUNT: Int = 1
         private const val MAX_SESSION_RETRY_COUNT = 10
 
         fun create(

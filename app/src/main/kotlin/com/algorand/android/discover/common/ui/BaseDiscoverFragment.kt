@@ -33,10 +33,10 @@ import com.algorand.android.utils.getCustomLongClickableSpan
 import com.algorand.android.utils.preference.ThemePreference
 
 abstract class BaseDiscoverFragment(
-    @LayoutRes private val layoutResId: Int,
+    @param:LayoutRes private val layoutResId: Int,
 ) : BasePeraWebViewFragment(layoutResId) {
 
-    override val basePeraWebViewViewModel
+    override val basePeraWebViewViewModel: BaseDiscoverViewModel
         get() = discoverViewModel
     abstract val discoverViewModel: BaseDiscoverViewModel
 
@@ -78,7 +78,7 @@ abstract class BaseDiscoverFragment(
     protected fun getWebViewThemeFromThemePreference(themePreference: ThemePreference): WebViewTheme {
         val themeFromSystem = when (
             resources.configuration.uiMode and
-                Configuration.UI_MODE_NIGHT_MASK
+                    Configuration.UI_MODE_NIGHT_MASK
         ) {
             Configuration.UI_MODE_NIGHT_YES -> WebViewTheme.DARK
             Configuration.UI_MODE_NIGHT_NO -> WebViewTheme.LIGHT

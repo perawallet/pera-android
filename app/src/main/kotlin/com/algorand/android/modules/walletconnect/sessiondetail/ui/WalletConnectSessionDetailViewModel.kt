@@ -19,12 +19,12 @@ import com.algorand.android.modules.walletconnect.sessiondetail.ui.model.WalletC
 import com.algorand.android.modules.walletconnect.sessiondetail.ui.usecase.WalletConnectSessionDetailPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectSessionDetailViewModel @Inject constructor(
@@ -43,15 +43,6 @@ class WalletConnectSessionDetailViewModel @Inject constructor(
 
     init {
         initSessionDetailPreview()
-    }
-
-    fun onExtendSessionClick() {
-        viewModelScope.launchIO {
-            _sessionDetailPreview.update { currentPreview ->
-                if (currentPreview == null) return@launchIO
-                walletConnectSessionDetailPreviewUseCase.getExtendClickedPreview(sessionIdentifier, currentPreview)
-            }
-        }
     }
 
     fun onExtendSessionApproved() {

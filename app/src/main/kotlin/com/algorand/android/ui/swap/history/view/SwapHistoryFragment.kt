@@ -42,7 +42,7 @@ class SwapHistoryFragment : BaseFragment(0), SwapHistoryScreenListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             PeraTheme {
                 SwapHistoryScreen(swapHistoryViewModel, listener = this)

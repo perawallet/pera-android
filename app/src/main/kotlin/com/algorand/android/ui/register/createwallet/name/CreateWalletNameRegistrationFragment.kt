@@ -27,9 +27,7 @@ class CreateWalletNameRegistrationFragment : BaseNameRegistrationFragment() {
         nameRegistrationViewModel.logEvent(PeraEvent.ONBOARDING_NAME_WALLET_COMPLETE)
         nav(
             CreateWalletNameRegistrationFragmentDirections
-                .actionCreateWalletNameRegistrationFragmentToHomeNavigation(
-                    showConfetti = true
-                )
+                .actionCreateWalletNameRegistrationFragmentToHomeNavigation()
         )
     }
 }

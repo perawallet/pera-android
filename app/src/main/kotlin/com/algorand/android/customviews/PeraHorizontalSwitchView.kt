@@ -92,6 +92,7 @@ class PeraHorizontalSwitchView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 parent.requestDisallowInterceptTouchEvent(true)
             }
+
             MotionEvent.ACTION_UP -> {
                 triggerListener(event.x)
                 ViewCompat.postInvalidateOnAnimation(this)

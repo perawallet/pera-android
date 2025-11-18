@@ -30,22 +30,23 @@ import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.flow
 
 class WebImportAccountDecryptionUseCase @Inject constructor(
     private val gson: Gson,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val getAccountDetail: GetAccountDetail,
-    @Named(WebImportAccountRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(WebImportAccountRepository.REPOSITORY_INJECTION_NAME)
     private val webImportAccountRepository: WebImportAccountRepository
 ) {
 
-    suspend fun importEncryptedBackup(
+    fun importEncryptedBackup(
         backupId: String,
         encryptionKey: String
-    ) = flow<DataResource<ImportedAccountResult>> {
+    ): Flow<DataResource<ImportedAccountResult>> = flow {
         emit(DataResource.Loading())
         webImportAccountRepository
             .importEncryptedBackup(backupId).use(
@@ -66,17 +67,23 @@ class WebImportAccountDecryptionUseCase @Inject constructor(
             )
     }
 
-    private fun createWebImportDecryptedContent(content: String, encryptionKey: String): Result<String> {
-        encryptionKey.decodeBase64OrByteArray()?.let { byteArray ->
-            val decryption = content
-                .decodeBase64OrByteArray()
-                ?.decrypt(byteArray) ?: return Result.Error(DecryptionException(0))
-            return if (decryption.errorCode == 0L) {
-                Result.Success(String(decryption.decryptedData))
-            } else {
-                Result.Error(DecryptionException(decryption.errorCode))
-            }
-        } ?: return Result.Error(DecryptionException(null))
+    private fun createWebImportDecryptedContent(
+        content: String,
+        encryptionKey: String
+    ): Result<String> {
+
+        val keyBytes = encryptionKey.decodeBase64OrByteArray()
+            ?: return Result.Error(DecryptionException())
+
+        val decrypted = content.decodeBase64OrByteArray()
+            ?.decrypt(secretKey = keyBytes)
+            ?: return Result.Error(DecryptionException())
+
+        return if (decrypted.errorCode == 0L) {
+            Result.Success(String(decrypted.decryptedData))
+        } else {
+            Result.Error(DecryptionException(decrypted.errorCode))
+        }
     }
 
     private suspend fun handleDecryptionResult(result: Result<String>): DataResource<ImportedAccountResult> {
@@ -104,6 +111,7 @@ class WebImportAccountDecryptionUseCase @Inject constructor(
                 }
                 return DataResource.Success(ImportedAccountResult(importedAccounts, unimportedAccounts))
             }
+
             is Result.Error -> {
                 return DataResource.Error.Local(result.exception)
             }

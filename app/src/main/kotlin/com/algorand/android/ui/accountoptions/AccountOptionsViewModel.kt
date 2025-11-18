@@ -29,12 +29,12 @@ import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountOptionsViewModel @Inject constructor(
@@ -48,10 +48,10 @@ class AccountOptionsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
-    val accountAddress = savedStateHandle.get<String>(ACCOUNT_ADDRESS).orEmpty()
+    val accountAddress: String = savedStateHandle.get<String>(ACCOUNT_ADDRESS).orEmpty()
 
-    val notificationFilterOperationFlow = MutableStateFlow<Resource<Unit>?>(null)
-    val notificationFilterCheckFlow = MutableStateFlow<Boolean?>(null)
+    val notificationFilterOperationFlow: MutableStateFlow<Resource<Unit>?> = MutableStateFlow(null)
+    val notificationFilterCheckFlow: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     private val _accountOptionsPreviewFlow = MutableStateFlow<AccountOptionsPreview?>(null)
     val accountOptionsPreviewFlow: StateFlow<AccountOptionsPreview?>
         get() = _accountOptionsPreviewFlow

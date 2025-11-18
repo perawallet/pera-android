@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -9,7 +10,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License
   -->
-
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -226,8 +226,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xxxxlarge"
                 android:text="@string/description"
-                android:visibility="gone"
                 android:textAppearance="@style/TextAppearance.Body.Large.Sans.Medium"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/startGuideLine"
                 app:layout_constraintTop_toBottomOf="@id/collectibleTraitsLayout" />
 

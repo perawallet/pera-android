@@ -21,7 +21,7 @@ class TransactionTipsRepository @Inject constructor(
 ) {
 
     fun shouldShowTransactionTips(): Boolean {
-        return transactionTipsLocalSource.getData(TransactionTipsLocalSource.defaultTransactionTipsPreference)
+        return transactionTipsLocalSource.getData(true)
     }
 
     fun setTransactionTipsAsShowed() {

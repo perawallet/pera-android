@@ -12,12 +12,12 @@
 
 package com.algorand.android.ui.lockpreference
 
-import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.onboarding.password.OnboardingSetPinCodeCompletedEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ChoosePasswordViewModel @Inject constructor(

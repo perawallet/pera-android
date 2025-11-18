@@ -25,8 +25,9 @@ import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.isValidNFTDomain
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class WatchAccountRegistrationPreviewUseCase @Inject constructor(
     private val getNftDomainSearchResultUseCase: GetNftDomainSearchResultUseCase,
@@ -62,7 +63,10 @@ class WatchAccountRegistrationPreviewUseCase @Inject constructor(
         }
     }
 
-    fun initWatchAccountRegistrationPreviewFlow(copiedMessage: String, query: String) = flow {
+    fun initWatchAccountRegistrationPreviewFlow(
+        copiedMessage: String,
+        query: String
+    ): Flow<WatchAccountRegistrationPreview> = flow {
         val nfDomainItemList = createNfDomainItemList(query)
         val accountAddressItem = createAccountAddressItem(copiedMessage)
         val pasteableAccounts = mutableListOf<BasePasteableWatchAccountItem>().apply {

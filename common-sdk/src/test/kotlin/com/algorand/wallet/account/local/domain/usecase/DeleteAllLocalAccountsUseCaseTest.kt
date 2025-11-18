@@ -20,6 +20,7 @@ import com.algorand.wallet.account.local.domain.repository.NoAuthAccountReposito
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -41,7 +42,7 @@ class DeleteAllLocalAccountsUseCaseTest {
     )
 
     @Test
-    fun `EXPECT all account repositories to delete all accounts`() = runTest {
+    fun `EXPECT all account repositories to delete all accounts`(): TestResult = runTest {
         sut()
 
         coVerify { hdKeyAccountRepository.deleteAllAccounts() }

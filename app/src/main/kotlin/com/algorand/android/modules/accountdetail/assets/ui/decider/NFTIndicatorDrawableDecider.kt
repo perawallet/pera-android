@@ -34,6 +34,7 @@ class NFTIndicatorDrawableDecider @Inject constructor() {
                 !isOwned -> createOvalOptedInIndicator()
                 else -> null
             }
+
             GRID -> when {
                 isHoldingByWatchAccount -> createRectWatchAccountIndicator()
                 !isOwned -> createRectOptedInIndicator()

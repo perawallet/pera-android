@@ -17,7 +17,7 @@ import androidx.navigation.NavDirections
 import com.algorand.android.models.ExceptionErrorParser
 import com.algorand.android.utils.Resource
 
-data class NavigationException(val directions: NavDirections) : Exception(), ExceptionErrorParser {
+data class NavigationException(private val directions: NavDirections) : Exception(), ExceptionErrorParser {
     override fun getAsResourceError(): Resource.Error {
         return Resource.Error.Navigation(directions)
     }

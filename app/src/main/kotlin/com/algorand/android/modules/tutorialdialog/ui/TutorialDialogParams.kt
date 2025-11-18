@@ -17,13 +17,13 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class TutorialDialogParams(
-    @DrawableRes var tutorialImageRes: Int? = null,
-    @DimenRes var tutorialImagePadding: Int? = null,
-    @StringRes var tutorialTitleRes: Int? = null,
-    @StringRes var tutorialDescriptionRes: Int? = null,
-    @StringRes var tutorialPrimaryButtonTextRes: Int? = null,
-    @StringRes var tutorialSecondaryButtonTextRes: Int? = null,
-    @StringRes var tutorialTagTextResId: Int? = null,
+    @param:DrawableRes var tutorialImageRes: Int? = null,
+    @param:DimenRes var tutorialImagePadding: Int? = null,
+    @param:StringRes var tutorialTitleRes: Int? = null,
+    @param:StringRes var tutorialDescriptionRes: Int? = null,
+    @param:StringRes var tutorialPrimaryButtonTextRes: Int? = null,
+    @param:StringRes var tutorialSecondaryButtonTextRes: Int? = null,
+    @param:StringRes var tutorialTagTextResId: Int? = null,
     var primaryButtonClickListener: (() -> Unit)? = null,
     var secondaryButtonClickListener: (() -> Unit)? = null
 )

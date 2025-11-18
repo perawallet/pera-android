@@ -40,13 +40,13 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val biometricRegistrationViewModel: BiometricRegistrationViewModel by viewModels()
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_faceid),
             contentDescription = stringResource(R.string.face_id),
@@ -55,14 +55,14 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.enable_biometric_authentication)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier): Unit =
         PeraBodyText(
             modifier = modifier,
             text = stringResource(id = R.string.your_faceid_or_fingerprintid)
@@ -70,7 +70,7 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { checkBiometricAuthentication() },
             modifier = modifier,
@@ -78,7 +78,7 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun SecondaryButton(modifier: Modifier) =
+    override fun SecondaryButton(modifier: Modifier): Unit =
         PeraSecondaryButton(
             onClick = { navigateToHomeNavigation() },
             modifier = modifier,
@@ -94,7 +94,6 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
                 biometricRegistrationViewModel.setBiometricRegistrationPreference(true)
                 handleNextNavigation()
             },
-            failCallBack = null,
             hardwareErrorCallback = ::showUnsuccessfulBiometricRegistrationDialog
         )
     }

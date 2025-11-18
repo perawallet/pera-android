@@ -19,6 +19,6 @@ interface PeraClipboardManager {
     suspend fun getTextFromClipboard(): String?
 
     companion object {
-        const val INJECTION_NAME = "peraClipboardManagerInjectionName"
+        const val INJECTION_NAME: String = "peraClipboardManagerInjectionName"
     }
 }

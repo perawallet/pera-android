@@ -109,6 +109,6 @@ class PreviousRekeyUndoneConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
     }
 
     companion object {
-        const val PREVIOUS_REKEY_UNDONE_CONFIRMATION_KEY = "previous_rekey_undone_confirmation"
+        const val PREVIOUS_REKEY_UNDONE_CONFIRMATION_KEY: String = "previous_rekey_undone_confirmation"
     }
 }

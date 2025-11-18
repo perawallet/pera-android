@@ -27,7 +27,9 @@ class RekeyedAccountInformationFragment : BaseFoundAccountInformationFragment() 
         startIconClick = ::navBack,
         startIconResId = R.drawable.ic_left_arrow
     )
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val rekeyedAccountInformationViewModel: RekeyedAccountInformationViewModel by viewModels()
 

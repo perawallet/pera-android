@@ -13,8 +13,8 @@
 package com.algorand.android.modules.algosdk.domain.model
 
 import android.os.Parcelable
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class ApplicationCallStateSchema(

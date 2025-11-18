@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class WalletConnectErrorProvider @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val errorMapper: WalletConnectErrorMapper
 ) {
 
@@ -47,26 +47,6 @@ class WalletConnectErrorProvider @Inject constructor(
         return createWalletConnectError(errorMessage, WalletConnectErrorReason.MismatchingNodes)
     }
 
-    fun getMissingSecretKeyError(): WalletConnectError {
-        val errorMessage = context.getString(R.string.missing_private_keys_pera)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.MissingSecretKey)
-    }
-
-    fun getUnauthorizedMethodError(methodName: String): WalletConnectError {
-        val errorMessage = context.getString(R.string.unauthorized_wc_method_connected, methodName)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnauthorizedMethod)
-    }
-
-    fun getUnauthorizedEventError(eventName: String): WalletConnectError {
-        val errorMessage = context.getString(R.string.unauthorized_wc_event_connected, eventName)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnauthorizedEvent)
-    }
-
-    fun getUnauthorizedChainError(chainName: String): WalletConnectError {
-        val errorMessage = context.getString(R.string.unauthorized_wc_chain_connected, chainName)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnauthorizedChain)
-    }
-
     fun getUnknownTransactionType(): WalletConnectError {
         val errorMessage = context.getString(R.string.unsupported_transaction_type_this)
         return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnknownTransactionType)
@@ -75,26 +55,6 @@ class WalletConnectErrorProvider @Inject constructor(
     fun getMultisigTransactionError(): WalletConnectError {
         val errorMessage = context.getString(R.string.multisig_required_this_transaction)
         return createWalletConnectError(errorMessage, WalletConnectErrorReason.MultisigTransaction)
-    }
-
-    fun getUnsupportedMethodsError(): WalletConnectError {
-        val errorMessage = context.getString(R.string.unsupported_wc_method_pera)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnsupportedMethods)
-    }
-
-    fun getUnsupportedEventsError(): WalletConnectError {
-        val errorMessage = context.getString(R.string.unsupported_wc_events_pera)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnsupportedEvents)
-    }
-
-    fun getUnsupportedChainsError(): WalletConnectError {
-        val errorMessage = context.getString(R.string.unsupported_blockchain_pera_wallet)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnsupportedChains)
-    }
-
-    fun getUnsupportedNamespaceKeyError(): WalletConnectError {
-        val errorMessage = context.getString(R.string.unsupported_blockchain_pera_wallet)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.UnsupportedNamespaceKey)
     }
 
     fun getMaxTransactionLimitError(maxTxnLimit: Int): WalletConnectError {
@@ -142,22 +102,7 @@ class WalletConnectErrorProvider @Inject constructor(
         return createWalletConnectError(errorMessage, WalletConnectErrorReason.MissingSigner)
     }
 
-    fun getSessionNotFoundError(): WalletConnectError {
-        val errorMessage = context.getString(R.string.pera_wallet_could_not_locate)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.SessionNotFound)
-    }
-
-    fun getRejectedChainsError(requestedChains: List<String>, activeChain: String): WalletConnectError {
-        val formattedChains = requestedChains.joinToString(REQUESTED_CHAINS_CHAIN_SEPARATOR)
-        val errorMessage = context.getString(R.string.user_rejected_chain_this, formattedChains, activeChain)
-        return createWalletConnectError(errorMessage, WalletConnectErrorReason.RejectedChains)
-    }
-
     private fun createWalletConnectError(message: String, errorReason: WalletConnectErrorReason): WalletConnectError {
         return errorMapper.mapToError(message, context.getString(errorReason.category.titleResId), errorReason)
-    }
-
-    companion object {
-        private const val REQUESTED_CHAINS_CHAIN_SEPARATOR = " & "
     }
 }

@@ -35,7 +35,7 @@ class SwapAssetInSelectionFragment : BaseFragment(0), SwapAssetInSelectionScreen
 
     private val args by navArgs<SwapAssetInSelectionFragmentArgs>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             SwapAssetInSelectionScreen(assetInSelectionViewModel, listener = this)
         }
@@ -56,6 +56,6 @@ class SwapAssetInSelectionFragment : BaseFragment(0), SwapAssetInSelectionScreen
     }
 
     companion object {
-        const val SWAP_ASSET_IN_ID_KEY = "swapAssetInIdKey"
+        const val SWAP_ASSET_IN_ID_KEY: String = "swapAssetInIdKey"
     }
 }

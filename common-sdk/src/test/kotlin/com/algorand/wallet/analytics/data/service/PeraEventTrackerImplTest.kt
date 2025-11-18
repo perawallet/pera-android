@@ -22,6 +22,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -47,7 +48,7 @@ class PeraEventTrackerImplTest {
     )
 
     @Test
-    fun `EXPECT event logged with referral data WHEN logEvent is called with only event name`() = runTest {
+    fun `EXPECT event logged with referral data WHEN logEvent is called with only event name`(): TestResult = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
         coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
@@ -61,24 +62,25 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `EXPECT event logged with merged data WHEN logEvent is called with event name and payload`() = runTest {
-        coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
+    fun `EXPECT event logged with merged data WHEN logEvent is called with event name and payload`(): TestResult =
+        runTest {
+            coEvery { mockGetReferrerData.invoke() } returns testReferrerData
+            coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
-        val eventName = "test_event_with_payload"
-        val payload = mapOf(
-            "string_param" to "string_value",
-            "int_param" to 42,
-            "boolean_param" to true
-        )
+            val eventName = "test_event_with_payload"
+            val payload = mapOf(
+                "string_param" to "string_value",
+                "int_param" to 42,
+                "boolean_param" to true
+            )
 
-        sut.logEvent(eventName, payload)
+            sut.logEvent(eventName, payload)
 
-        verify(exactly = 1) { mockFirebaseAnalytics.logEvent(eq(eventName), any()) }
-    }
+            verify(exactly = 1) { mockFirebaseAnalytics.logEvent(eq(eventName), any()) }
+        }
 
     @Test
-    fun `EXPECT event logged successfully WHEN referral data has null fields`() = runTest {
+    fun `EXPECT event logged successfully WHEN referral data has null fields`(): TestResult = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
         coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
@@ -100,7 +102,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `EXPECT event logged with all data types WHEN payload contains various data types`() = runTest {
+    fun `EXPECT event logged with all data types WHEN payload contains various data types`(): TestResult = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
         coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
@@ -123,7 +125,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `EXPECT event logged with only referral data WHEN payload is empty`() = runTest {
+    fun `EXPECT event logged with only referral data WHEN payload is empty`(): TestResult = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
         coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
@@ -136,7 +138,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `EXPECT true strongbox value added to bundle WHEN strongbox check returns true`() = runTest {
+    fun `EXPECT true strongbox value added to bundle WHEN strongbox check returns true`(): TestResult = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
         coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
@@ -148,7 +150,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `EXPECT false strongbox value added to bundle WHEN strongbox check returns false`() = runTest {
+    fun `EXPECT false strongbox value added to bundle WHEN strongbox check returns false`(): TestResult = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
         coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns false
 

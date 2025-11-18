@@ -13,10 +13,8 @@
 package com.algorand.android.modules.walletconnect.connectedapps.ui.mapper
 
 import android.net.Uri
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.connectedapps.ui.model.WalletConnectSessionItem
+import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectSessionIdentifierMapper
 import javax.inject.Inject
 
@@ -46,18 +44,6 @@ class WalletConnectSessionItemMapper @Inject constructor(
             connectedAccountItems = connectedAccountItems,
             isConnected = isConnected,
             isShowingDetails = isShowingDetails
-        )
-    }
-
-    fun mapToConnectedSessionAccountItem(
-        @DrawableRes backgroundResource: Int?,
-        @ColorRes textColor: Int,
-        displayName: String
-    ): WalletConnectSessionItem.ConnectedSessionAccountItem {
-        return WalletConnectSessionItem.ConnectedSessionAccountItem(
-            backgroundResource = backgroundResource,
-            textColor = textColor,
-            displayName = displayName
         )
     }
 }

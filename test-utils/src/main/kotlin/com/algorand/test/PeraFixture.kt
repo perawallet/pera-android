@@ -12,11 +12,12 @@
 
 package com.algorand.test
 
+import com.appmattus.kotlinfixture.Fixture
 import com.appmattus.kotlinfixture.kotlinFixture
 
 class PeraFixture(private val listItemSize: Int) {
 
-    val fixture = kotlinFixture {
+    val fixture: Fixture = kotlinFixture {
         repeatCount { listItemSize }
     }
 

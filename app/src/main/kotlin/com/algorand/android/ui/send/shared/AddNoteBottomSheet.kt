@@ -18,8 +18,8 @@ import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
-import com.algorand.android.databinding.BottomSheetAddNoteBinding
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.databinding.BottomSheetAddNoteBinding
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -71,6 +71,6 @@ class AddNoteBottomSheet : BaseBottomSheet(
 
     companion object {
         private const val NOTE_MAX_SIZE_IN_BYTE = 1024
-        const val ADD_NOTE_RESULT_KEY = "add_note_result"
+        const val ADD_NOTE_RESULT_KEY: String = "add_note_result"
     }
 }

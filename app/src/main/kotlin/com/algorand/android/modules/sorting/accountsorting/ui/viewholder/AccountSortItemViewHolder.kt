@@ -29,13 +29,11 @@ class AccountSortItemViewHolder(
 
     override fun bind(item: BaseAccountSortingListItem) {
         if (item !is BaseAccountSortingListItem.AccountSortListItem) return
-        with(binding) {
-            with(item.accountListItem.itemConfiguration) {
-                setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.primaryDisplayName)
-                setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
-                setAccountItemDragButton()
-            }
+        with(item.accountListItem.itemConfiguration) {
+            setAccountStartIconDrawable(accountIconDrawablePreview)
+            setAccountTitleText(accountDisplayName?.primaryDisplayName)
+            setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
+            setAccountItemDragButton()
         }
     }
 

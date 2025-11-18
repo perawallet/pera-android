@@ -14,7 +14,7 @@ package com.algorand.android.modules.autolockmanager.ui.usecase
 
 import com.algorand.android.modules.autolockmanager.domain.usecase.SetAppAtBackgroundTimeUseCase
 import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase
-import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase.Companion.appAtBackgroundDefaultPreference
+import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase.Companion.APP_AT_BACKGROUND_DEFAULT_PREFERENCE
 import javax.inject.Inject
 
 class AutoLockManagerUseCase @Inject constructor(
@@ -27,7 +27,7 @@ class AutoLockManagerUseCase @Inject constructor(
     }
 
     fun clearAppAtBackgroundTime() {
-        setAppAtBackgroundTimeUseCase.invoke(appAtBackgroundDefaultPreference)
+        setAppAtBackgroundTimeUseCase.invoke(APP_AT_BACKGROUND_DEFAULT_PREFERENCE)
     }
 
     suspend fun shouldAppLocked(): Boolean {

@@ -15,5 +15,5 @@ package com.algorand.android.ui.addressnaming.model
 import androidx.annotation.StringRes
 
 data class AddressNamingScreenConfig(
-    @StringRes val buttonResId: Int
+    @param:StringRes val buttonResId: Int
 )

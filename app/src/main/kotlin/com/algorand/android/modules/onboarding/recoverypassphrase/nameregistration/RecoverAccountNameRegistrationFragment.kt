@@ -28,9 +28,7 @@ class RecoverAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
     override fun navToNextFragment() {
         nav(
             RecoverAccountNameRegistrationFragmentDirections
-                .actionRecoverAccountNameRegistrationFragmentToHomeNavigation(
-                    showConfetti = true
-                )
+                .actionRecoverAccountNameRegistrationFragmentToHomeNavigation()
         )
     }
 }

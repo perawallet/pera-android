@@ -43,7 +43,7 @@ fun MenuListCardItemPreview(
 
 private class MenuListCardItemPreviewProvider : PreviewParameterProvider<MenuCardsViewModel> {
 
-    override val values: Sequence<MenuCardsViewModel> = listOf<MenuCardsViewModel>(
+    override val values: Sequence<MenuCardsViewModel> = listOf(
         createViewModel(Idle),
         createViewModel(Loading),
         createViewModel(Waitlisted),

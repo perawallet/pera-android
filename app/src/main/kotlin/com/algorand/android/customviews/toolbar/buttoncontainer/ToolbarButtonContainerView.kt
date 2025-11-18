@@ -19,6 +19,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.LayoutRes
 import androidx.core.view.children
+import androidx.core.view.isEmpty
 import androidx.core.view.marginBottom
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
@@ -44,7 +45,7 @@ class ToolbarButtonContainerView(context: Context, attrs: AttributeSet? = null) 
 
     private fun addEndMargin(button: View) {
         val endMargin = context.resources.getDimensionPixelSize(
-            if (childCount == 0) R.dimen.spacing_large else R.dimen.spacing_small
+            if (isEmpty()) R.dimen.spacing_large else R.dimen.spacing_small
         )
 
         (button.layoutParams as? LayoutParams)?.setMargins(

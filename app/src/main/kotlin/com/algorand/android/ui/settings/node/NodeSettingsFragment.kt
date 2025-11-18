@@ -40,7 +40,9 @@ class NodeSettingsFragment : DaggerBaseFragment(R.layout.fragment_node_settings)
         if (preview != null) initPreview(preview)
     }
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val nodeSettingsViewModel: NodeSettingsViewModel by viewModels()
 

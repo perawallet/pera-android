@@ -12,6 +12,7 @@
 
 package com.algorand.android.nft.domain.usecase
 
+import com.algorand.android.models.ui.CollectibleTransactionApprovePreview
 import com.algorand.android.nft.mapper.CollectibleTransactionApprovePreviewMapper
 import com.algorand.android.usecase.AccountNameIconUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
@@ -20,8 +21,9 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
     private val collectibleTransactionApprovePreviewMapper: CollectibleTransactionApprovePreviewMapper,
@@ -38,7 +40,7 @@ class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
         fee: Float,
         nftDomainName: String?,
         nftDomainLogoUrl: String?
-    ) = flow {
+    ): Flow<CollectibleTransactionApprovePreview> = flow {
         val (senderDisplayText, senderAccountIcon) = accountNameIconUseCase.getAccountDisplayTextAndIcon(
             senderPublicKey
         )
@@ -49,9 +51,9 @@ class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
         val isOwnedByTheUser = isAssetOwnedByAccount(senderPublicKey, nftId)
         val nftDetail = getCollectibleDetail(nftId)
         val isOptOutGroupVisible = isOwnedByTheUser &&
-            !isHoldingByWatchAccount &&
-            nftDetail?.assetInfo?.creator?.publicKey != senderPublicKey &&
-            senderPublicKey != receiverPublicKey
+                !isHoldingByWatchAccount &&
+                nftDetail?.assetInfo?.creator?.publicKey != senderPublicKey &&
+                senderPublicKey != receiverPublicKey
 
         val collectibleTransactionApprovePreview = collectibleTransactionApprovePreviewMapper.mapToPreview(
             senderAccountPublicKey = senderPublicKey,

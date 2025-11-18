@@ -37,6 +37,7 @@ internal interface PaginatedCollectibleDao {
         asset.usd_value AS usd_value,
         asset.decimals AS decimals,
         asset.verification_tier AS verification_tier,
+        asset.is_favorite AS is_favorite,
         
         collectible.title AS title,
         collectible.primary_image_url AS primary_image_url,

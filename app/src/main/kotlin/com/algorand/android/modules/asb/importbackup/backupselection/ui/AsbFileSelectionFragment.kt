@@ -43,7 +43,9 @@ class AsbFileSelectionFragment : BaseFragment(R.layout.fragment_asb_file_selecti
         startIconResId = R.drawable.ic_left_arrow,
         startIconClick = ::navBack
     )
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentAsbFileSelectionBinding::bind)
 

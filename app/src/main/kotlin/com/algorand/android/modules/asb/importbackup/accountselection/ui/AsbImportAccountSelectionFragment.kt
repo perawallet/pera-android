@@ -26,12 +26,14 @@ import kotlinx.coroutines.flow.map
 
 class AsbImportAccountSelectionFragment : BaseMultipleAccountSelectionFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         startIconClick = ::navBack,
         startIconResId = R.drawable.ic_left_arrow
     )
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
-    override val multipleAccountSelectionAdapter = MultipleAccountSelectionAdapter(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
+    override val multipleAccountSelectionAdapter: MultipleAccountSelectionAdapter = MultipleAccountSelectionAdapter(
         listener = multipleAccountSelectionAdapterListener
     )
     override val multipleAccountSelectionViewModel: BaseMultipleAccountSelectionViewModel

@@ -34,19 +34,19 @@ abstract class BaseAccountResultListItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class ImageItem(
-        @DrawableRes val drawableResId: Int,
-        @DimenRes val width: Int,
-        @DimenRes val height: Int,
-        @ColorRes val drawableTintResId: Int? = null
+        @param:DrawableRes val drawableResId: Int,
+        @param:DimenRes val width: Int,
+        @param:DimenRes val height: Int,
+        @param:ColorRes val drawableTintResId: Int? = null
     ) : BaseAccountResultListItem() {
 
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.IMAGE
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is ImageItem &&
-                drawableResId == other.drawableResId &&
-                drawableTintResId == other.drawableTintResId
+                    drawableResId == other.drawableResId &&
+                    drawableTintResId == other.drawableTintResId
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -55,14 +55,14 @@ abstract class BaseAccountResultListItem : RecyclerListItem {
     }
 
     data class TextItem(
-        @StringRes @PluralsRes
+        @param:StringRes @param:PluralsRes
         val textResId: Int,
         val textIntParam: Int? = null,
-        @StyleRes val textAppearanceResId: Int = R.style.TextAppearance_Body,
-        @ColorRes val textColorResId: Int? = null
+        @param:StyleRes val textAppearanceResId: Int = R.style.TextAppearance_Body,
+        @param:ColorRes val textColorResId: Int? = null
     ) : BaseAccountResultListItem() {
 
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.TEXT
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
@@ -75,25 +75,25 @@ abstract class BaseAccountResultListItem : RecyclerListItem {
     }
 
     data class WarningBoxItem(
-        @StringRes val titleResId: Int,
-        @StringRes @PluralsRes
+        @param:StringRes val titleResId: Int,
+        @param:StringRes @param:PluralsRes
         val descriptionResId: Int,
-        @DrawableRes val iconResId: Int,
+        @param:DrawableRes val iconResId: Int,
         val textIntParam: Int? = null,
-        @StyleRes val titleTextAppearanceResId: Int = R.style.TextAppearance_Body,
-        @StyleRes val descriptionTextAppearanceResId: Int = R.style.TextAppearance_Body,
-        @ColorRes val iconColorResId: Int? = null,
-        @ColorRes val backgroundColorResId: Int? = null,
-        @ColorRes val textColorResId: Int? = null
+        @param:StyleRes val titleTextAppearanceResId: Int = R.style.TextAppearance_Body,
+        @param:StyleRes val descriptionTextAppearanceResId: Int = R.style.TextAppearance_Body,
+        @param:ColorRes val iconColorResId: Int? = null,
+        @param:ColorRes val backgroundColorResId: Int? = null,
+        @param:ColorRes val textColorResId: Int? = null
     ) : BaseAccountResultListItem() {
 
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.WARNING_BOX
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is WarningBoxItem && titleResId == other.titleResId &&
-                descriptionResId == other.descriptionResId &&
-                iconResId == other.iconResId
+                    descriptionResId == other.descriptionResId &&
+                    iconResId == other.iconResId
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -105,7 +105,7 @@ abstract class BaseAccountResultListItem : RecyclerListItem {
         val address: String,
         val accountAssetIconNameConfiguration: AccountAssetIconNameConfiguration
     ) : BaseAccountResultListItem() {
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.ACCOUNT
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {

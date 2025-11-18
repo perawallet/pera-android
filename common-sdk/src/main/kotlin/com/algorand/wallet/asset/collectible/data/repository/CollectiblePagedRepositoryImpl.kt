@@ -26,9 +26,9 @@ import com.algorand.wallet.asset.collectible.domain.repository.CollectiblePagedR
 import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleItemDto
 import com.algorand.wallet.asset.data.mapper.model.AssetLiteMapper
 import com.algorand.wallet.asset.domain.model.AssetLite
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class CollectiblePagedRepositoryImpl @Inject constructor(
     private val paginatedCollectibleDao: PaginatedCollectibleDao,

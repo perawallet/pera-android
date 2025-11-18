@@ -15,11 +15,9 @@ package com.algorand.android.customviews.passphraseinput
 import android.content.Context
 import android.text.Editable
 import android.util.AttributeSet
-import android.view.View.OnFocusChangeListener
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.core.widget.addTextChangedListener
 import com.algorand.android.R
 import com.algorand.android.customviews.PasteAwareEditText
@@ -70,7 +68,7 @@ class PassphraseInput @JvmOverloads constructor(
     }
 
     init {
-        id = ViewCompat.generateViewId()
+        id = generateViewId()
         initRootView()
         isFocusableInTouchMode = true
     }

@@ -30,13 +30,13 @@ class AddAssetAccountSelectionPreviewUseCase @Inject constructor(
     private val accountSelectionListItemMapper: AccountSelectionListItemMapper
 ) {
 
-    fun getInitialStatePreview() = addAssetAccountSelectionPreviewMapper.mapToAddAssetSelectionPreview(emptyList())
+    fun getInitialStatePreview(): AddAssetAccountSelectionPreview =
+        addAssetAccountSelectionPreviewMapper.mapToAddAssetSelectionPreview(emptyList())
 
     suspend fun getAddAssetAccountSelectionPreview(): AddAssetAccountSelectionPreview {
         val selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
         val sortedAccountListItems = getAuthAccountItemsByAssetIds(
             accountFilterAssetId = null,
-            excludedAccountTypes = null,
             onLoadedAccountConfiguration = {
                 createLoadedAccountConfiguration(
                     accountLite = this,

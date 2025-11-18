@@ -56,12 +56,12 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.IOException
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.IOException
+import javax.inject.Inject
 
 @HiltViewModel
 class SwapConfirmationViewModel @Inject constructor(
@@ -128,26 +128,31 @@ class SwapConfirmationViewModel @Inject constructor(
                     setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
                     displayLedgerNotFoundDialog()
                 }
+
                 is LedgerWaitingForApproval -> displayLedgerWaitingForApprovalDialog(result)
                 Loading -> stateDelegate.onState<ViewState.Content> { contentState ->
                     if (contentState.contentState != ContentState.Loading) {
                         stateDelegate.updateState { contentState.copy(contentState = ContentState.Loading) }
                     }
                 }
+
                 is ExternalTransactionSignResult.Error.Api -> {
                     setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
                     displayError(Api(result.errorMessage))
                 }
+
                 is ExternalTransactionSignResult.Error.Defined -> {
                     setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
                     displayError(Local(result.description))
                 }
+
                 is TransactionCancelled -> {
                     setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
                     val error = (result.error as? ExternalTransactionSignResult.Error.Defined)?.description
                     val errorType = if (error != null) Local(error) else Generic
                     displayError(errorType)
                 }
+
                 ExternalTransactionSignResult.NotInitialized -> Unit
             }
         }

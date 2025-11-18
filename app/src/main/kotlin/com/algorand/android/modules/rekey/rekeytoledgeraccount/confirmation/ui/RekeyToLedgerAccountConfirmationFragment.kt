@@ -33,7 +33,9 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     override val baseRekeyConfirmationViewModel: BaseRekeyConfirmationViewModel
         get() = rekeyToLedgerAccountConfirmationViewModel

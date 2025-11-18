@@ -21,7 +21,7 @@ sealed class PasswordScreenType {
     class VerificationScreenType(override val navigationResultKey: String?) : PasswordScreenType()
 
     class ReEnterScreenType(
-        @StringRes val nextScreenTitleResId: Int,
+        @param:StringRes val nextScreenTitleResId: Int,
         override val navigationResultKey: String? = null
     ) : PasswordScreenType()
 }

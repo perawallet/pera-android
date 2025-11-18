@@ -26,7 +26,7 @@ class AssetSortPreferencesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAssetSortPreference(defaultValue: AssetSortPreference): AssetSortPreference {
-        return AssetSortPreference.values().firstOrNull {
+        return AssetSortPreference.entries.firstOrNull {
             it.name == assetSortPreferencesLocalSource.getDataOrNull()
         } ?: defaultValue
     }

@@ -20,6 +20,7 @@ import com.algorand.wallet.swap.domain.repository.SwapSelectedAssetRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -32,7 +33,7 @@ class GetSelectedSwapAssetDetailUseCaseTest {
     private val sut = GetSelectedSwapAssetDetailUseCase(fetchAndCacheAssets, selectedAssetDetailRepository)
 
     @Test
-    fun `EXPECT cached asset detail WHEN exists`() = runTest {
+    fun `EXPECT cached asset detail WHEN exists`(): TestResult = runTest {
         coEvery { selectedAssetDetailRepository.getSelectedAssetDetails(ADDRESS, ASSET_ID) } returns ASSET_DETAIL
 
         val result = sut(ADDRESS, ASSET_ID)
@@ -42,7 +43,7 @@ class GetSelectedSwapAssetDetailUseCaseTest {
     }
 
     @Test
-    fun `EXPECT asset detail to be cached WHEN not exists`() = runTest {
+    fun `EXPECT asset detail to be cached WHEN not exists`(): TestResult = runTest {
         coEvery {
             selectedAssetDetailRepository.getSelectedAssetDetails(ADDRESS, ASSET_ID)
         } returnsMany listOf(null, ASSET_DETAIL)
@@ -55,7 +56,7 @@ class GetSelectedSwapAssetDetailUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN asset detail not found after fetching`() = runTest {
+    fun `EXPECT error WHEN asset detail not found after fetching`(): TestResult = runTest {
         coEvery { selectedAssetDetailRepository.getSelectedAssetDetails(ADDRESS, ASSET_ID) } returns null
 
         val result = sut(ADDRESS, ASSET_ID)

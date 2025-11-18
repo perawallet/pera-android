@@ -14,44 +14,63 @@ package com.algorand.android.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Point
+import android.os.Build
 import android.view.View
+import android.view.WindowInsetsController
 import android.view.WindowManager
+import android.view.WindowMetrics
 
 fun Activity.showDarkStatusBarIcons() {
-    var flags: Int = window.decorView.systemUiVisibility // get current flag
-    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // add LIGHT_STATUS_BAR to flag
-    window.decorView.systemUiVisibility = flags
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        window.insetsController?.setSystemBarsAppearance(
+            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+        )
+    } else {
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility =
+            window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    }
 }
 
 fun Activity.showLightStatusBarIcons() {
-    var flags: Int = window.decorView.systemUiVisibility // get current flag
-    flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // use XOR here for remove LIGHT_STATUS_BAR from flags
-    window.decorView.systemUiVisibility = flags
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        window.insetsController?.setSystemBarsAppearance(
+            0,
+            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+        )
+    } else {
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility =
+            window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+    }
 }
 
 fun Context.getDisplaySize(): Point {
-    val displaySize = Point()
-    val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    windowManager.defaultDisplay.getSize(displaySize)
-    return displaySize
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        val windowManager = getSystemService(WindowManager::class.java)
+        val metrics: WindowMetrics = windowManager.currentWindowMetrics
+        val bounds = metrics.bounds
+        Point(bounds.width(), bounds.height())
+    } else {
+        val displaySize = Point()
+        @Suppress("DEPRECATION")
+        (getSystemService(Context.WINDOW_SERVICE) as WindowManager)
+            .defaultDisplay.getSize(displaySize)
+        displaySize
+    }
 }
 
 // TODO: 20.01.2022 There is an issue on Android 12 to making app blurry when putting the app into background
 //  https://github.com/Hipo/algorand-android/pull/781#discussion_r787853240
 fun Activity.disableScreenCapture() {
-    window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_SECURE,
+        WindowManager.LayoutParams.FLAG_SECURE
+    )
 }
 
 fun Activity.enableScreenCapture() {
     window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-}
-
-fun Float.pxToDp(resources: Resources): Float {
-    return this / resources.displayMetrics.density
-}
-
-fun Float.dpToPX(resources: Resources): Float {
-    return this * resources.displayMetrics.density
 }

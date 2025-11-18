@@ -27,7 +27,7 @@ class BiometricRegistrationLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Boolean {
-        return sharedPref.getBoolean(key, defaultBiometricRegistrationPreference)
+        return sharedPref.getBoolean(key, DEFAULT_BIOMETRIC_REGISTRATION_PREFERENCE)
     }
 
     override fun saveData(data: Boolean) {
@@ -36,6 +36,6 @@ class BiometricRegistrationLocalSource @Inject constructor(
 
     companion object {
         private const val USE_BIOMETRIC_KEY = "use_biometric"
-        const val defaultBiometricRegistrationPreference = false
+        const val DEFAULT_BIOMETRIC_REGISTRATION_PREFERENCE: Boolean = false
     }
 }

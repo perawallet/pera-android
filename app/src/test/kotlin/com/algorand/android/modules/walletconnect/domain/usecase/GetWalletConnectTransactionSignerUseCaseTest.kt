@@ -21,6 +21,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
+import kotlinx.coroutines.test.TestResult
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlinx.coroutines.test.runTest
@@ -41,7 +42,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     )
 
     @Test
-    fun `EXPECT null WHEN signer is sender and decoded address is null`() = runTest {
+    fun `EXPECT null WHEN signer is sender and decoded address is null`(): TestResult = runTest {
         val signer = WalletConnectTransactionSigner.Sender(WC_ADDRESS.copy(decodedAddress = null))
 
         val result = sut(signer)
@@ -50,7 +51,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT null WHEN signer is rekeyed and decoded address is null`() = runTest {
+    fun `EXPECT null WHEN signer is rekeyed and decoded address is null`(): TestResult = runTest {
         val signer = WalletConnectTransactionSigner.Rekeyed(WC_ADDRESS.copy(decodedAddress = null))
 
         val result = sut(signer)
@@ -59,7 +60,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT algo25 WHEN signer is rekeyed and registration type is algo25`() = runTest {
+    fun `EXPECT algo25 WHEN signer is rekeyed and registration type is algo25`(): TestResult = runTest {
         whenever(getAccountRegistrationType(DECODED_ADDRESS)).thenReturn(AccountRegistrationType.Algo25)
         val signer = WalletConnectTransactionSigner.Rekeyed(WC_ADDRESS)
 
@@ -70,7 +71,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT ledger ble WHEN signer is rekeyed and registration type is ledger ble`() = runTest {
+    fun `EXPECT ledger ble WHEN signer is rekeyed and registration type is ledger ble`(): TestResult = runTest {
         whenever(getAccountRegistrationType(DECODED_ADDRESS)).thenReturn(AccountRegistrationType.LedgerBle)
         whenever(getLedgerBleAccount(DECODED_ADDRESS)).thenReturn(LOCAL_LEDGER_BLE)
         val signer = WalletConnectTransactionSigner.Rekeyed(WC_ADDRESS)
@@ -86,7 +87,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT null WHEN signer is rekeyed, registration type is ledger but ledger details is null`() = runTest {
+    fun `EXPECT null WHEN signer is rekeyed, registration type is ledger but ledger details is null`(): TestResult = runTest {
         whenever(getAccountRegistrationType(DECODED_ADDRESS)).thenReturn(AccountRegistrationType.LedgerBle)
         whenever(getLedgerBleAccount(DECODED_ADDRESS)).thenReturn(null)
         val signer = WalletConnectTransactionSigner.Rekeyed(WC_ADDRESS)
@@ -97,7 +98,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT no auth WHEN signer is rekeyed and registration type is no auth`() = runTest {
+    fun `EXPECT no auth WHEN signer is rekeyed and registration type is no auth`(): TestResult = runTest {
         whenever(getAccountRegistrationType(DECODED_ADDRESS)).thenReturn(AccountRegistrationType.NoAuth)
         val signer = WalletConnectTransactionSigner.Rekeyed(WC_ADDRESS)
 
@@ -108,7 +109,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT HdKey WHEN signer is rekeyed and registration type is hd key`() = runTest {
+    fun `EXPECT HdKey WHEN signer is rekeyed and registration type is hd key`(): TestResult = runTest {
         whenever(getAccountRegistrationType(DECODED_ADDRESS)).thenReturn(AccountRegistrationType.HdKey)
         val signer = WalletConnectTransactionSigner.Rekeyed(WC_ADDRESS)
 
@@ -119,7 +120,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT null WHEN signer is rekeyed and auth account registration type is null`() = runTest {
+    fun `EXPECT null WHEN signer is rekeyed and auth account registration type is null`(): TestResult = runTest {
         whenever(getAccountRegistrationType(DECODED_ADDRESS)).thenReturn(null)
         val signer = WalletConnectTransactionSigner.Rekeyed(WC_ADDRESS)
 
@@ -129,7 +130,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT sender signer WHEN wc signer is sender address`() = runTest {
+    fun `EXPECT sender signer WHEN wc signer is sender address`(): TestResult = runTest {
         whenever(getTransactionSigner(DECODED_ADDRESS)).thenReturn(TransactionSigner.Algo25(DECODED_ADDRESS))
         val signer = WalletConnectTransactionSigner.Sender(WC_ADDRESS)
 
@@ -140,7 +141,7 @@ class GetWalletConnectTransactionSignerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT nul WHEN wc signer is not rekeyed or sender`() = runTest {
+    fun `EXPECT nul WHEN wc signer is not rekeyed or sender`(): TestResult = runTest {
         val unsignable = WalletConnectTransactionSigner.Unsignable(peraFixture())
         val multisig = WalletConnectTransactionSigner.Multisig(peraFixture())
         val displayOnly = WalletConnectTransactionSigner.DisplayOnly

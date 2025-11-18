@@ -26,14 +26,14 @@ class WalletConnectBaseAsaProfileViewModel @Inject constructor(
     asaProfilePreviewUseCase: AsaProfilePreviewUseCase
 ) : BaseAsaProfileViewModel(asaProfilePreviewUseCase) {
 
-    override val accountAddress: String? get() = savedStateHandle.getOrElse<String?>(ACCOUNT_ADDRESS_KEY, null)
-    override val assetId: Long = savedStateHandle.getOrThrow<Long>(ASSET_ID_KEY)
+    override val accountAddress: String? get() = savedStateHandle.getOrElse(ACCOUNT_ADDRESS_KEY, null)
+    override val assetId: Long = savedStateHandle.getOrThrow(ASSET_ID_KEY)
 
     init {
         initAsaPreviewFlow()
     }
 
     fun setSelectedAccountAddress(accountAddress: String) {
-        savedStateHandle.set(ACCOUNT_ADDRESS_KEY, accountAddress)
+        savedStateHandle[ACCOUNT_ADDRESS_KEY] = accountAddress
     }
 }

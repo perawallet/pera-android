@@ -37,7 +37,9 @@ class SenderAccountSelectionFragment : TransactionSignBaseFragment(R.layout.frag
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val senderAccountSelectionViewModel: SenderAccountSelectionViewModel by viewModels()
 

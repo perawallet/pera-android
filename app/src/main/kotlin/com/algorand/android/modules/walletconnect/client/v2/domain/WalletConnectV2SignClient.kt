@@ -27,7 +27,7 @@ import javax.inject.Singleton
 
 @Singleton
 class WalletConnectV2SignClient @Inject constructor(
-    @Named(WalletConnectV2Repository.INJECTION_NAME)
+    @param:Named(WalletConnectV2Repository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectV2Repository
 ) {
 

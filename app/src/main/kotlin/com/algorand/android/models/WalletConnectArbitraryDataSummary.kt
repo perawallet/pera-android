@@ -17,8 +17,8 @@ import android.os.Parcelable
 import androidx.annotation.StringRes
 import com.algorand.android.R
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class WalletConnectArbitraryDataSummary(
@@ -27,6 +27,6 @@ data class WalletConnectArbitraryDataSummary(
     val accountBalance: BigInteger? = null,
     val transactionAmount: BigInteger? = null,
     val summaryTitle: AnnotatedString? = null,
-    @StringRes val showMoreButtonText: Int = R.string.show_all_details,
+    @param:StringRes val showMoreButtonText: Int = R.string.show_all_details,
     val formattedSelectedCurrencyValue: String? = null
 ) : Parcelable

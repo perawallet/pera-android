@@ -62,7 +62,7 @@ internal object PasskeyModule {
         return Room.databaseBuilder(
             context = context,
             klass = PasskeyDatabase::class.java,
-            name = PasskeyDatabase.Companion.DATABASE_NAME
+            name = PasskeyDatabase.DATABASE_NAME
         ).build()
     }
 

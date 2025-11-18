@@ -55,7 +55,7 @@ class InitializeWalletConnectV2ClientUseCase @Inject constructor(
         }
 
         val firebaseAccessToken = firebasePushTokenUseCase.getPushTokenOrNull()?.data.orEmpty()
-        val enableEncrypted: Boolean = false
+        val enableEncrypted = false
 
         Web3Wallet.registerDeviceToken(
             firebaseAccessToken = firebaseAccessToken,

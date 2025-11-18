@@ -28,16 +28,16 @@ import com.algorand.android.RekeyToStandardAccountNavigationDirections
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
-import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val rekeyToStandardAccountVerifyInfoViewModel by viewModels<RekeyToStandardAccountVerifyInfoViewModel>()
 
@@ -53,7 +53,7 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
     }
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = stringResource(id = R.string.check),
@@ -62,7 +62,7 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.account_successfully_rekeyed)
@@ -82,7 +82,7 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { popRekeyToStandardAccountNavigationUp() },
             modifier = modifier,

@@ -97,7 +97,7 @@ class WalletConnectFirebaseEventLogger(
                 DAPP_URL_PARAM to peerMeta.url,
                 SESSION_TOPIC_PARAM to sessionProposal.proposalIdentifier.proposalIdentifier,
                 CONNECTED_ACCOUNT_ADDRESS_PARAM to connectedAccountAddresses.toAccountAddressesString(),
-                TOTAL_ACCOUNT_ACCOUNT_PARAM to connectedAccountAddresses.count()
+                TOTAL_ACCOUNT_ACCOUNT_PARAM to connectedAccountAddresses.size
             )
         }
 

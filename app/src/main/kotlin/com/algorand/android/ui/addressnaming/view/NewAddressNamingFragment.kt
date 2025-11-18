@@ -35,7 +35,9 @@ class NewAddressNamingFragment : BaseFragment(0), AddressNamingScreenListener {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val viewModel: DefaultAddressNamingViewModel by viewModels()
 

@@ -34,11 +34,11 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Idle
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountsLineChartViewModel @Inject constructor(
@@ -75,7 +75,7 @@ class AccountsLineChartViewModel @Inject constructor(
         return ((state.value as? ViewState.Content)?.contentState as? ContentState.Data)
             ?.chartData
             ?.getOrNull(index)
-            as? AccountsLineChartData
+                as? AccountsLineChartData
     }
 
     override fun displaySelectedPeriodValues(period: PeraLineChartPeriodChip) {

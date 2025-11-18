@@ -22,6 +22,7 @@ import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -34,7 +35,8 @@ class PreviousRekeyUndoneConfirmationViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _undoRekeyVerifyInfoPreviewFlow = MutableStateFlow<PreviousRekeyUndoneConfirmationPreview?>(null)
-    val undoRekeyVerifyInfoPreviewFlow = _undoRekeyVerifyInfoPreviewFlow.asStateFlow()
+    val undoRekeyVerifyInfoPreviewFlow: StateFlow<PreviousRekeyUndoneConfirmationPreview?> =
+        _undoRekeyVerifyInfoPreviewFlow.asStateFlow()
 
     private val navArgs = PreviousRekeyUndoneConfirmationBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     private val accountAddress = navArgs.accountAddress

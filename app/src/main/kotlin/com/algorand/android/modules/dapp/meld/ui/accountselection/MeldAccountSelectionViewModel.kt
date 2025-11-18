@@ -17,10 +17,10 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class MeldAccountSelectionViewModel @Inject constructor(

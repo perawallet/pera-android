@@ -26,7 +26,7 @@ class OverrideFeatureFlagsFragment : BaseFragment(0) {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             OverrideFeatureFlagsScreen(::navBack)
         }

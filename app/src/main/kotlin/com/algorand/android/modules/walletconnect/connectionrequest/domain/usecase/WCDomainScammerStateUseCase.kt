@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class WCDomainScammerStateUseCase @Inject constructor(
-    @Named(WCDomainScammerStateRepository.INJECTION_NAME)
+    @param:Named(WCDomainScammerStateRepository.INJECTION_NAME)
     private val wcDomainScammerStateRepository: WCDomainScammerStateRepository
 ) {
     suspend operator fun invoke(domain: String): Boolean {

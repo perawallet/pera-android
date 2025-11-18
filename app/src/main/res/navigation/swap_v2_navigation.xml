@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -50,7 +51,6 @@
             android:id="@+id/action_swapFragment_to_swapHistoryFragment"
             app:destination="@id/swapHistoryFragment" />
     </fragment>
-
 
     <fragment
         android:id="@+id/swapAssetInSelectionFragment"
@@ -118,14 +118,17 @@
         android:name="com.algorand.android.modules.swap.priceimpact.ui.PriceImpactInfoBottomSheet"
         android:label="PriceImpactInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_base_information" />
+
     <dialog
         android:id="@+id/swapSlippageToleranceInfoBottomSheet"
         android:name="com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceInfoBottomSheet"
         android:label="SlippageToleranceInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_base_information" />
+
     <dialog
         android:id="@+id/swapExchangeFeeInfoBottomSheet"
         android:name="com.algorand.android.modules.swap.confirmswap.ui.ExchangeFeeInfoBottomSheet"
         android:label="ExchangeFeeInfoBottomSheet"
         tools:layout="@layout/bottom_sheet_base_information" />
+
 </navigation>

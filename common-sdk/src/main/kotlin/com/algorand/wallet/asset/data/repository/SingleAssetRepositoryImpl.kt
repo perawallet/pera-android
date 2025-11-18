@@ -18,9 +18,9 @@ import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.repository.SingleAssetRepository
 import com.algorand.wallet.foundation.cache.CacheResult
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import javax.inject.Inject
 
 internal class SingleAssetRepositoryImpl @Inject constructor(
     private val assetDetailApi: AssetDetailApiService,

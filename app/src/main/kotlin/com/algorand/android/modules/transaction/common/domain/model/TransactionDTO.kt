@@ -37,7 +37,7 @@ data class TransactionDTO(
     val accessListSize: Int? = null
 )
 
-fun TransactionDTO.getReceiverAddress(): String? {
+fun TransactionDTO.getReceiverAddress(): String {
     return payment?.receiverAddress ?: assetTransfer?.receiverAddress
     ?: assetFreezeTransaction?.receiverAddress.orEmpty()
 }

@@ -13,10 +13,10 @@
 package com.algorand.android.network
 
 import com.algorand.android.models.Node
-import javax.inject.Singleton
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Singleton
 
 @Singleton
 class AlgodInterceptor : PeraInterceptor() {

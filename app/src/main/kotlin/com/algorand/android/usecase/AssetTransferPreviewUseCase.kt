@@ -27,9 +27,9 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmo
 import com.algorand.wallet.asset.domain.usecase.FetchAsset
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import kotlinx.coroutines.flow.Flow
 import java.math.BigInteger
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 
 class AssetTransferPreviewUseCase @Inject constructor(
     private val assetTransferPreviewMapper: AssetTransferPreviewMapper,
@@ -87,7 +87,7 @@ class AssetTransferPreviewUseCase @Inject constructor(
         } + (receiverMinBalanceFee ?: 0)
     }
 
-    suspend fun sendSignedTransaction(
+    fun sendSignedTransaction(
         signedTransactionDetail: SignedTransactionDetail
     ): Flow<DataResource<String>> {
         return sendSignedTransactionUseCase.sendSignedTransaction(signedTransactionDetail)

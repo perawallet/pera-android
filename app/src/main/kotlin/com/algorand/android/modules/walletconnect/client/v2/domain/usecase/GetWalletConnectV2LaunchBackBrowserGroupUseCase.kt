@@ -18,7 +18,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetWalletConnectV2LaunchBackBrowserGroupUseCase @Inject constructor(
-    @Named(WalletConnectV2Repository.INJECTION_NAME)
+    @param:Named(WalletConnectV2Repository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectV2Repository
 ) {
 

@@ -27,7 +27,7 @@ class SwapAddressSelectionFragment : BaseFragment(0) {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             SwapAddressSelectionScreen(
                 onAddressClick = ::onAddressClick,
@@ -42,6 +42,6 @@ class SwapAddressSelectionFragment : BaseFragment(0) {
     }
 
     companion object {
-        const val SWAP_ADDRESS_SELECTION_KEY = "swapAddressSelectionKey"
+        const val SWAP_ADDRESS_SELECTION_KEY: String = "swapAddressSelectionKey"
     }
 }

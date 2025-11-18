@@ -24,11 +24,14 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import kotlinx.coroutines.flow.map
 
-abstract class BaseFoundAccountInformationFragment : BaseFragment(R.layout.fragment_base_found_account_information) {
+abstract class BaseFoundAccountInformationFragment : BaseFragment(
+    R.layout.fragment_base_found_account_information
+) {
 
     protected abstract val baseFoundAccountInformationViewModel: BaseFoundAccountInformationViewModel
 
-    protected val binding by viewBinding(FragmentBaseFoundAccountInformationBinding::bind)
+    protected val binding: FragmentBaseFoundAccountInformationBinding
+            by viewBinding(FragmentBaseFoundAccountInformationBinding::bind)
 
     private val foundAccountInformationAdapterListener = object : FoundAccountInformationAdapter.Listener {
         override fun onAccountItemLongClick(accountAddress: String) {

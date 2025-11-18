@@ -34,7 +34,7 @@ class SwapGroupDetailFragment : BaseFragment(0), SwapGroupDetailScreenListener {
 
     private val args: SwapGroupDetailFragmentArgs by navArgs()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             SwapGroupDetailScreen(viewModel, this@SwapGroupDetailFragment)
         }

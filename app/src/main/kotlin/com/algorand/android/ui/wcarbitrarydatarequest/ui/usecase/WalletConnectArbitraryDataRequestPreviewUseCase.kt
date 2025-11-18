@@ -37,7 +37,7 @@ class WalletConnectArbitraryDataRequestPreviewUseCase @Inject constructor(
         return walletConnectArbitraryDataRequestPreviewMapper.mapToWalletConnectArbitraryDataRequestPreview()
     }
 
-    suspend fun updatePreviewWithLaunchBackBrowserNavigation(
+    fun updatePreviewWithLaunchBackBrowserNavigation(
         shouldSkipConfirmation: Boolean,
         preview: WalletConnectArbitraryDataRequestPreview,
         walletConnectSession: WalletConnectSession?
@@ -52,6 +52,7 @@ class WalletConnectArbitraryDataRequestPreviewUseCase @Inject constructor(
         return preview.copy(navToLaunchBackNavigationEvent = Event(walletConnectSession.sessionIdentifier))
     }
 
+    @Suppress("unused")
     private suspend fun extendSessionExpirationDateIfCan(sessionIdentifier: WalletConnectSessionIdentifier) {
         val isSessionExtendable = walletConnectManager.isSessionExtendable(sessionIdentifier)
         if (isSessionExtendable == true) {

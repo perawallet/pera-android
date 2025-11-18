@@ -14,14 +14,14 @@ package com.algorand.android.customviews.alertview.ui
 
 import com.algorand.android.models.AlertMetadata
 import com.algorand.android.notification.domain.model.NotificationMetadata
-import java.util.ArrayDeque
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.ArrayDeque
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class AlertDialogQueueManager @Inject constructor() {

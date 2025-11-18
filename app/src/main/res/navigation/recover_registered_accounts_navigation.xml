@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -82,7 +83,6 @@
             app:destination="@id/newAddressNamingFragment" />
 
     </fragment>
-
 
     <fragment
         android:id="@+id/newAddressNamingFragment"

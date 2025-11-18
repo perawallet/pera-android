@@ -32,6 +32,7 @@ class WalletConnectV1SessionDetailPreviewInformationBadgeProviderImpl(
     }
 
     companion object {
-        const val INJECTION_NAME = "walletConnectV1SessionDetailPreviewInformationBadgeProviderImplInjectionName"
+        const val INJECTION_NAME: String =
+            "walletConnectV1SessionDetailPreviewInformationBadgeProviderImplInjectionName"
     }
 }

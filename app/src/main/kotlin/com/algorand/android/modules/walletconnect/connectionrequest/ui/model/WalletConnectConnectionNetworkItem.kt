@@ -16,5 +16,5 @@ import androidx.annotation.ColorRes
 
 data class WalletConnectConnectionNetworkItem(
     val networkName: String,
-    @ColorRes val tintResId: Int
+    @param:ColorRes val tintResId: Int
 )

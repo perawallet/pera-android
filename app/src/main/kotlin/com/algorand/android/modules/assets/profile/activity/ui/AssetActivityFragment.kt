@@ -47,7 +47,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AssetActivityFragment : BaseFragment(R.layout.fragment_asset_activity) {
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val assetActivityViewModel: AssetActivityViewModel by viewModels()
 

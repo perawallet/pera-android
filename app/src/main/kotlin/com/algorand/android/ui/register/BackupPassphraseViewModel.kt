@@ -29,8 +29,8 @@ import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class BackupPassphraseViewModel @Inject constructor(
@@ -83,6 +83,7 @@ class BackupPassphraseViewModel @Inject constructor(
                     peraBip39Sdk.getMnemonicFromEntropy(entropy)?.split(" ") ?: emptyList()
                 } ?: emptyList()
             }
+
             is LocalAccount.Algo25 -> {
                 getAlgo25SecretKey(address = localAccount.algoAddress)?.let { secretKey ->
                     try {
@@ -93,6 +94,7 @@ class BackupPassphraseViewModel @Inject constructor(
                     }
                 } ?: emptyList()
             }
+
             else -> emptyList()
         }
 
@@ -108,6 +110,7 @@ class BackupPassphraseViewModel @Inject constructor(
                     }
                 }
             }
+
             is AccountCreation.Type.Algo25 -> {
                 (accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey?.let { encryptedAlgo25Key ->
                     aesPlatformManager.decryptByteArray(encryptedAlgo25Key).let { secretKey ->
@@ -120,6 +123,7 @@ class BackupPassphraseViewModel @Inject constructor(
                     }
                 } ?: emptyList()
             }
+
             else -> emptyList()
         }
 

@@ -35,16 +35,6 @@ class AssetSearchPagerBuilder private constructor() {
         )
     }
 
-    fun setResultLimit(resultLimit: Int): AssetSearchPagerBuilder {
-        searchResultLimit = resultLimit
-        return this
-    }
-
-    fun setPrefetchDistance(distance: Int): AssetSearchPagerBuilder {
-        prefetchDistance = distance
-        return this
-    }
-
     private fun createPagingConfig(): PagingConfig {
         return PagingConfig(
             pageSize = searchResultLimit,
@@ -57,6 +47,6 @@ class AssetSearchPagerBuilder private constructor() {
         private const val DEFAULT_SEARCH_RESULT_LIMIT = 50
         private const val DEFAULT_PREFETCH_DISTANCE = 25
 
-        fun create() = AssetSearchPagerBuilder()
+        fun create(): AssetSearchPagerBuilder = AssetSearchPagerBuilder()
     }
 }

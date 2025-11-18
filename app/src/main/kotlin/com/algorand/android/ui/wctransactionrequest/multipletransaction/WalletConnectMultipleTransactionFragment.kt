@@ -31,7 +31,7 @@ class WalletConnectMultipleTransactionFragment : BaseFragment(
     R.layout.fragment_wallet_connect_multiple_transaction
 ) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val toolbarConfiguration = ToolbarConfiguration(titleResId = R.string.unsigned_transactions)
 

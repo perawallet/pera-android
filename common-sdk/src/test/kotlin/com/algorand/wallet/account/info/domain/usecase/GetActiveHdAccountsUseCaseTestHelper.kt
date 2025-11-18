@@ -37,7 +37,7 @@ internal class GetActiveHdAccountsUseCaseTestHelper(accountCount: Int, addressCo
     fun getAccountIndexAndAddressesPair(): List<Pair<Int, List<HdKeyAddressLite>>> {
         return accounts.map { (account, addresses) ->
             account.index to addresses.map {
-                HdKeyAddressLite(it.address, HdKeyAddressIndex(account.index, 0, keyIndex = it.index))
+                HdKeyAddressLite(it.address, HdKeyAddressIndex(account.index, keyIndex = it.index))
             }
         }
     }
@@ -66,7 +66,7 @@ internal class GetActiveHdAccountsUseCaseTestHelper(accountCount: Int, addressCo
 
     fun getHdKeyDetails(accountIndex: Int): List<HdKeyAddressLite> {
         return accounts[AccountIndex(accountIndex)]!!.map { address ->
-            HdKeyAddressLite(address.address, HdKeyAddressIndex(accountIndex, 0, keyIndex = address.index))
+            HdKeyAddressLite(address.address, HdKeyAddressIndex(accountIndex, keyIndex = address.index))
         }
     }
 

@@ -24,8 +24,8 @@ import com.algorand.wallet.transaction.history.domain.model.TransactionHistory
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistoryPagingData
 import com.algorand.wallet.transaction.history.domain.model.TransactionHistorySwapGroupDetail
 import com.algorand.wallet.transaction.history.domain.repository.TransactionHistoryRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 internal class DefaultTransactionHistoryRepository @Inject constructor(
     private val transactionHistoryPagingSource: PagingSource<TransactionHistoryPagingData, TransactionHistory>,

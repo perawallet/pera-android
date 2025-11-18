@@ -15,12 +15,12 @@ package com.algorand.android.notification.domain.usecase
 import com.algorand.android.notification.domain.repository.NotificationPermissionRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.Event
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.StateFlow
 
 class GetAskNotificationPermissionEventFlowUseCase @Inject constructor(
-    @Named(NotificationPermissionRepository.INJECTION_NAME)
+    @param:Named(NotificationPermissionRepository.INJECTION_NAME)
     private val notificationPermissionRepository: NotificationPermissionRepository
 ) {
 

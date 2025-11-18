@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -36,7 +37,6 @@
         android:layout_marginTop="@dimen/spacing_normal"
         android:text="@string/sort"
         app:icon="@drawable/ic_sort" />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/filterAssetsButton"

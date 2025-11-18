@@ -12,17 +12,4 @@
 
 package com.algorand.android.modules.swap.utils
 
-import java.math.BigDecimal
-import java.math.BigInteger
-
-val defaultPeraSwapFee: BigDecimal = BigDecimal.ZERO
-val defaultExchangeSwapFee: BigDecimal = BigDecimal.ZERO
-
-@Suppress("MagicNumber")
-val swapFeePadding: BigDecimal = BigDecimal.valueOf(0.665)
-
-const val PERA_FEE_WALLET_ADDRESS = "V73GWLED56UUKKGOESJYHQADILUFMDM4RIBZZOLOOR4RKONZFDXYTVPMRM"
-
-fun getAccountMinBalanceToSwap(accountMinBalance: BigInteger): BigInteger {
-    return accountMinBalance.add(swapFeePadding.toBigInteger())
-}
+const val PERA_FEE_WALLET_ADDRESS: String = "V73GWLED56UUKKGOESJYHQADILUFMDM4RIBZZOLOOR4RKONZFDXYTVPMRM"

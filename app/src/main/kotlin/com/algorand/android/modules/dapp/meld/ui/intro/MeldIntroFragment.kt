@@ -41,7 +41,9 @@ class MeldIntroFragment : BaseFragment(R.layout.fragment_meld_intro) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val args by navArgs<MeldIntroFragmentArgs>()
     private val meldIntroViewModel by viewModels<MeldIntroViewModel>()

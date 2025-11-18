@@ -14,18 +14,9 @@ package com.algorand.android.utils
 
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.R
 import kotlin.properties.Delegates
-
-// TODO remove addDivider and use addCustomDivider in refactor
-fun RecyclerView.addDivider(@DrawableRes dividerResId: Int) {
-    addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
-        AppCompatResources.getDrawable(context, R.drawable.horizontal_divider_20dp)?.let { setDrawable(it) }
-    })
-}
 
 fun RecyclerView.addCustomDivider(
     @DrawableRes drawableResId: Int,

@@ -12,9 +12,4 @@
 
 package com.algorand.android.utils.browser
 
-const val ALGORAND_DISCORD_URL = "https://discord.com/invite/84AActu3at"
-const val ALGORAND_TELEGRAM_URL = "https://t.me/algorand"
-const val ALGORAND_TWITTER_USERNAME = "Algorand"
-const val ALGORAND_WEBSITE_URL = "https://algorand.com"
-
 fun createTwitterProfileUrl(twitterUsername: String): String = BASE_TWITTER_URL + twitterUsername

@@ -15,13 +15,12 @@ package com.algorand.android.utils
 import android.util.Base64
 import com.google.crypto.tink.Aead
 
-const val KEYSET_HANDLE = "ALGORAND_KEYSET"
-const val ENCRYPTED_SHARED_PREF_NAME = "ALGORAND_ENCR_ACCOUNTS"
-const val ALGORAND_KEYSTORE_URI = "android-keystore://algorand_keystore_key"
-const val KEY_TEMPLATE_AES256_GCM = "AES256_GCM"
-const val PROVIDER_NAME = "Pera Wallet"
-const val BACKUP_PROTOCOL_VERSION = "1.0"
-const val BACKUP_PROTOCOL_SUITE = "HMAC-SHA256:sodium_secretbox_easy"
+const val KEYSET_HANDLE: String = "ALGORAND_KEYSET"
+const val ENCRYPTED_SHARED_PREF_NAME: String = "ALGORAND_ENCR_ACCOUNTS"
+const val ALGORAND_KEYSTORE_URI: String = "android-keystore://algorand_keystore_key"
+const val KEY_TEMPLATE_AES256_GCM: String = "AES256_GCM"
+const val BACKUP_PROTOCOL_VERSION: String = "1.0"
+const val BACKUP_PROTOCOL_SUITE: String = "HMAC-SHA256:sodium_secretbox_easy"
 
 fun Aead.encryptString(value: String?): String? {
     return try {
@@ -55,7 +54,7 @@ fun String.decodeBase64OrByteArray(): ByteArray? {
     // Try the ByteArray (old) method first. If that does not work, we use the decoding in base64 (new) method.
     return try {
         this.getAsByteArray()
-    } catch (exc: Exception) {
+    } catch (_: Exception) {
         this.decodeBase64()
     }
 }

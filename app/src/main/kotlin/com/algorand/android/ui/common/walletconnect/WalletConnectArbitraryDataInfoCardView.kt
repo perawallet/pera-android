@@ -56,10 +56,6 @@ class WalletConnectArbitraryDataInfoCardView(
         }
     }
 
-    fun setWalletConnectArbitraryDataInfoCardViewListener(listener: WalletConnectArbitraryDataInfoCardViewListener) {
-        this.listener = listener
-    }
-
     private fun initFromAddress(
         displayedAddress: BaseWalletConnectDisplayedAddress?,
         accountIconDrawablePreview: AccountIconDrawablePreview?

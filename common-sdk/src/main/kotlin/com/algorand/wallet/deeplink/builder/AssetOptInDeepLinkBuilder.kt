@@ -21,14 +21,14 @@ internal class AssetOptInDeepLinkBuilder : DeepLinkBuilder {
         return with(payload) {
             val doesDeeplinkHaveAssetOptInQueries = assetId != null && amount == "0"
             doesDeeplinkHaveAssetOptInQueries &&
-                accountAddress == null &&
-                walletConnectUrl == null &&
-                note == null &&
-                xnote == null &&
-                url == null &&
-                label == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null
+                    accountAddress == null &&
+                    walletConnectUrl == null &&
+                    note == null &&
+                    xnote == null &&
+                    url == null &&
+                    label == null &&
+                    webImportQrCode == null &&
+                    notificationGroupType == null
         }
     }
 

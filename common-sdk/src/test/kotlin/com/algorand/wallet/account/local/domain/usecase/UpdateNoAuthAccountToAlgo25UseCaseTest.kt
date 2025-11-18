@@ -15,6 +15,7 @@ package com.algorand.wallet.account.local.domain.usecase
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -29,7 +30,7 @@ class UpdateNoAuthAccountToAlgo25UseCaseTest {
     )
 
     @Test
-    fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`() = runTest {
+    fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`(): TestResult = runTest {
         sut(ADDRESS, SECRET_KEY)
 
         coVerify { deleteLocalAccount(ADDRESS) }

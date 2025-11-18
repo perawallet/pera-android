@@ -23,6 +23,6 @@ interface AlgorandSdkBackupUtils {
     suspend fun derivePrivateKeyFromMnemonics(mnemonics: String): ByteArray?
 
     companion object {
-        const val INJECTION_NAME = "algorandSdkBackupUtilsInjectionName"
+        const val INJECTION_NAME: String = "algorandSdkBackupUtilsInjectionName"
     }
 }

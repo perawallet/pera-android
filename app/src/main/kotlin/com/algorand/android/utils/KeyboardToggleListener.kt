@@ -21,7 +21,7 @@ class KeyboardToggleListener(
     private val onKeyboardToggleAction: (shown: Boolean) -> Unit
 ) : ViewTreeObserver.OnGlobalLayoutListener {
 
-    var isKeyboardShown = false
+    private var isKeyboardShown: Boolean = false
     private val minimumKeyboardHeight by lazy {
         root.resources.getDimensionPixelSize(R.dimen.minimum_keyboard_height)
     }

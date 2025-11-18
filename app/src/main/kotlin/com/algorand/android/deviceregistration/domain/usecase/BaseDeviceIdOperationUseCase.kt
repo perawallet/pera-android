@@ -28,10 +28,10 @@ open class BaseDeviceIdOperationUseCase(
         return Locale.getDefault().language ?: Locale.ENGLISH.language
     }
 
-    protected fun getApplicationName() = BuildConfig.APPLICATION_NAME
+    protected fun getApplicationName(): String = BuildConfig.APPLICATION_NAME
 
     companion object {
-        const val PLATFORM_NAME = "android"
-        const val REGISTER_DEVICE_FAIL_DELAY = 1500L
+        const val PLATFORM_NAME: String = "android"
+        const val REGISTER_DEVICE_FAIL_DELAY: Long = 1500L
     }
 }

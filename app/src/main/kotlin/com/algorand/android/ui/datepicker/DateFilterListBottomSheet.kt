@@ -90,6 +90,6 @@ class DateFilterListBottomSheet : DaggerBaseBottomSheet(R.layout.bottom_sheet_da
     }
 
     companion object {
-        const val DATE_FILTER_RESULT = "date_filter_result"
+        const val DATE_FILTER_RESULT: String = "date_filter_result"
     }
 }

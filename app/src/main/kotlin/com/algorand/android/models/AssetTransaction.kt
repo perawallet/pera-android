@@ -14,8 +14,8 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class AssetTransaction(

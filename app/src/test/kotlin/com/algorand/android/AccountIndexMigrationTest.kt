@@ -58,7 +58,7 @@ class AccountIndexMigrationTest {
 
     @Test
     fun checkMigrationHelperIfItsMigrationSuccessfully() {
-        val accountList = listOf<Account>(
+        val accountList = listOf(
             Account.create("watch1", Account.Detail.Watch),
             Account.create("standard1", Account.Detail.Standard(byteArrayOf())),
             Account.create("watch2", Account.Detail.Watch),
@@ -68,7 +68,7 @@ class AccountIndexMigrationTest {
 
         val migratedAccounts = accountIndexMigrationHelper.getMigratedValues(accountList)
 
-        val expectedListResult = listOf<Account>(
+        val expectedListResult = listOf(
             Account.create("watch1", Account.Detail.Watch, index = 0),
             Account.create("standard1", Account.Detail.Standard(byteArrayOf()), index = 1),
             Account.create("watch2", Account.Detail.Watch, index = 2),

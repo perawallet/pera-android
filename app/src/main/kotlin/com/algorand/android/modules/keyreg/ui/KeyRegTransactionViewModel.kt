@@ -27,6 +27,7 @@ import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -44,11 +45,11 @@ class KeyRegTransactionViewModel @Inject constructor(
     )
 
     private val _confirmedTransactionIdState = MutableStateFlow<String?>(null)
-    val confirmedTransactionIdState
+    val confirmedTransactionIdState: StateFlow<String?>
         get() = _confirmedTransactionIdState.asStateFlow()
 
     private val _previewState = MutableStateFlow<KeyRegTransactionPreview?>(null)
-    val previewState
+    val previewState: StateFlow<KeyRegTransactionPreview?>
         get() = _previewState.asStateFlow()
 
     fun initUi() {
@@ -94,8 +95,8 @@ class KeyRegTransactionViewModel @Inject constructor(
     }
 
     companion object {
-        const val KEY_REG_DETAIL = "keyRegTransactionDetail"
-        const val TAG = "KeyRegTransactionViewModel"
-        const val TRANSACTION_ERROR = "transaction_error"
+        const val KEY_REG_DETAIL: String = "keyRegTransactionDetail"
+        const val TAG: String = "KeyRegTransactionViewModel"
+        const val TRANSACTION_ERROR: String = "transaction_error"
     }
 }

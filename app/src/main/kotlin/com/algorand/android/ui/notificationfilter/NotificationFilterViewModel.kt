@@ -25,11 +25,11 @@ import com.algorand.android.utils.Resource
 import com.algorand.android.utils.preference.isNotificationActivated
 import com.algorand.android.utils.preference.setNotificationPreference
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class NotificationFilterViewModel @Inject constructor(
@@ -42,8 +42,8 @@ class NotificationFilterViewModel @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) : BaseViewModel() {
 
-    val notificationFilterOperation = MutableStateFlow<Resource<Unit>?>(null)
-    val notificationFilterListStateFlow = MutableStateFlow<List<AccountNotificationOption>>(listOf())
+    val notificationFilterOperation: MutableStateFlow<Resource<Unit>?> = MutableStateFlow(null)
+    val notificationFilterListStateFlow: MutableStateFlow<List<AccountNotificationOption>> = MutableStateFlow(listOf())
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -62,7 +62,6 @@ class NotificationFilterViewModel @Inject constructor(
                         accountItemConfigurationMapper(
                             accountAddress = address,
                             accountDisplayName = getAccountDisplayName(this),
-                            accountType = null,
                             accountIconDrawablePreview = getAccountIconDrawablePreview(this),
                             showWarningIcon = true
                         )

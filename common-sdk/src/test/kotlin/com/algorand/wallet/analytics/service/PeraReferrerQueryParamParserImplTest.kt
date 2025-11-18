@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.data.service
+package com.algorand.wallet.analytics.service
 
-import com.algorand.wallet.analytics.PeraReferrerQueryParamParserImpl
+import com.algorand.wallet.analytics.data.service.PeraReferrerQueryParamParserImpl
 import com.algorand.wallet.analytics.domain.model.ReferrerData
 import org.junit.Assert.assertEquals
 import org.junit.Before

@@ -83,7 +83,7 @@ abstract class CoreMainActivity : BaseActivity() {
 
     private val bottomNavMenuViewModel: BottomNavigationMenuViewModel by viewModels()
 
-    var isBottomBarNavigationVisible by Delegates.observable(false) { _, oldValue, newValue ->
+    var isBottomBarNavigationVisible: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             binding.bottomNavigationView.isVisible = newValue
             setWindowInsetsForSystemBars()
@@ -118,7 +118,7 @@ abstract class CoreMainActivity : BaseActivity() {
         }
     }
 
-    protected val binding by viewBinding(ActivityMainBinding::inflate)
+    protected val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
 
     private var isConnectedToTestNet: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {

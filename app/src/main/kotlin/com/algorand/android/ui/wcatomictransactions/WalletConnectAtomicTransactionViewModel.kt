@@ -13,12 +13,12 @@
 
 package com.algorand.android.ui.wcatomictransactions
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.builder.WalletConnectTransactionListBuilder
 import com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectAtomicTransactionViewModel @Inject constructor(

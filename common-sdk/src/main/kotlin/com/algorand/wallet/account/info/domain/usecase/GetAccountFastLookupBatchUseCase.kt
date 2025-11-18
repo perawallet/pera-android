@@ -13,10 +13,10 @@
 package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
-import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
 internal class GetAccountFastLookupBatchUseCase @Inject constructor(
     private val getAccountFastLookup: GetAccountFastLookup

@@ -42,7 +42,7 @@ class DiscoverHomeUseCase @Inject constructor(
         return gson.toJson(tokenDetailInfoMapper.mapToTokenDetailInfo(assetId.toString(), null))
     }
 
-    suspend fun getSendDeviceIdJSFunctionOrNull(callingUrl: String): String? {
+    fun getSendDeviceIdJSFunctionOrNull(callingUrl: String): String? {
         val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
         return if (deviceId != null && isValidDiscoverURL(callingUrl)) {
             getSendDeviceId(deviceId, gson)

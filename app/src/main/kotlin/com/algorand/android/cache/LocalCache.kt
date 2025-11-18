@@ -38,10 +38,6 @@ abstract class LocalCache<KEY, VALUE> {
         cacheValue(key, value)
     }
 
-    open suspend fun putAll(keyValuePair: List<Pair<KEY, CacheResult<VALUE>>>) {
-        cacheAll(keyValuePair)
-    }
-
     fun getOrNull(key: KEY): CacheResult<VALUE>? = cacheMapFlow.value.getOrElse(key) { null }
 
     suspend fun remove(key: KEY): CacheResult<VALUE>? {

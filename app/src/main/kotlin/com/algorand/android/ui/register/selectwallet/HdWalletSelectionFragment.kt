@@ -77,7 +77,7 @@ class HdWalletSelectionFragment : DaggerBaseFragment(0) {
     private val toolbarConfiguration =
         ToolbarConfiguration(backgroundColor = R.color.primary_background)
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         statusBarConfiguration = statusBarConfiguration
     )

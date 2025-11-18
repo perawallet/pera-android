@@ -19,7 +19,7 @@ class SetLockAttemptCountUseCase @Inject constructor(
     private val securityRepository: SecurityRepository
 ) {
 
-    suspend operator fun invoke(lockAttemptCount: Int) {
+    operator fun invoke(lockAttemptCount: Int) {
         securityRepository.setLockAttemptCount(lockAttemptCount)
     }
 }

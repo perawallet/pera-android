@@ -44,7 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
@@ -188,11 +187,7 @@ private fun getTermsOfServiceText(onClick: () -> Unit): AnnotatedString {
                     fontStyle = PeraTheme.typography.footnote.sansMedium.fontStyle
                 )
             ),
-            linkInteractionListener = object : LinkInteractionListener {
-                override fun onClick(link: LinkAnnotation) {
-                    onClick()
-                }
-            }
+            linkInteractionListener = { onClick() }
         )
         withLink(annotation) {
             append(stringResource(R.string.terms_of_service))

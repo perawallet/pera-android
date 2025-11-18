@@ -19,7 +19,7 @@ import com.algorand.android.databinding.ItemCollectibleInfoViewBinding
 import com.algorand.android.models.BaseViewHolder
 
 class InfoViewItemViewHolder(
-    private val binding: ItemCollectibleInfoViewBinding
+    binding: ItemCollectibleInfoViewBinding
 ) : BaseViewHolder<BaseAssetSearchListItem>(binding.root) {
 
     override fun bind(item: BaseAssetSearchListItem) {

@@ -20,10 +20,10 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class WCConnectionLaunchBackSessionInformationAnnotatedStringProvider @Inject constructor(
-    @Named(WcConnectionLaunchBackSessionInformationAnnotatedStringProviderV1Impl.INJECTION_NAME)
+    @param:Named(WcConnectionLaunchBackSessionInformationAnnotatedStringProviderV1Impl.INJECTION_NAME)
     private val wcConnectionLaunchBackSessionInformationAnnotatedStringProviderV1Impl:
     WCConnectionLaunchBackSessionInformationAnnotatedStringProvider,
-    @Named(WCConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl.INJECTION_NAME)
+    @param:Named(WCConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl.INJECTION_NAME)
     private val wcConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl:
     WCConnectionLaunchBackSessionInformationAnnotatedStringProvider
 ) {
@@ -35,6 +35,7 @@ class WCConnectionLaunchBackSessionInformationAnnotatedStringProvider @Inject co
             WalletConnectVersionIdentifier.VERSION_1 -> {
                 wcConnectionLaunchBackSessionInformationAnnotatedStringProviderV1Impl
             }
+
             WalletConnectVersionIdentifier.VERSION_2 -> {
                 wcConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl
             }

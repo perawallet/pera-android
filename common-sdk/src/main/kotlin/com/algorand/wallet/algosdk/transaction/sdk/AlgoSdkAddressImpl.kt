@@ -25,7 +25,7 @@ internal class AlgoSdkAddressImpl @Inject constructor(
     override fun isValid(address: String): Boolean {
         return try {
             Sdk.isValidAddress(address)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -34,7 +34,7 @@ internal class AlgoSdkAddressImpl @Inject constructor(
         return try {
             val address = Sdk.generateAddressFromPublicKey(publicKey)
             AlgorandAddress(address, publicKey)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -42,7 +42,7 @@ internal class AlgoSdkAddressImpl @Inject constructor(
     override fun generateAddressFromPublicKey(addressBase64: String): AlgorandAddress? {
         val publicKey = try {
             base64Manager.decode(addressBase64, Base64.DEFAULT)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             return null
         }
         return generateAddressFromPublicKey(publicKey)

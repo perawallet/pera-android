@@ -13,15 +13,15 @@
 
 package com.algorand.android.repository
 
-import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase.Companion.defaultLockPenaltyRemainingTimePreference
+import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase.Companion.DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE
 import com.algorand.android.sharedpref.BiometricRegistrationLocalSource
-import com.algorand.android.sharedpref.BiometricRegistrationLocalSource.Companion.defaultBiometricRegistrationPreference
+import com.algorand.android.sharedpref.BiometricRegistrationLocalSource.Companion.DEFAULT_BIOMETRIC_REGISTRATION_PREFERENCE
 import com.algorand.android.sharedpref.LockAttemptCountLocalSource
-import com.algorand.android.sharedpref.LockAttemptCountLocalSource.Companion.defaultLockAttemptCountPreference
+import com.algorand.android.sharedpref.LockAttemptCountLocalSource.Companion.DEFAULT_LOCK_ATTEMPT_COUNT_PREFERENCE
 import com.algorand.android.sharedpref.LockPenaltyRemainingTimeLocalSource
 import com.algorand.android.sharedpref.LockPreferencesLocalSource
 import com.algorand.android.sharedpref.RekeySupportLocalSource
-import com.algorand.android.sharedpref.RekeySupportLocalSource.Companion.defaultRekeySupportPreference
+import com.algorand.android.sharedpref.RekeySupportLocalSource.Companion.DEFAULT_REKEY_SUPPORT_PREFERENCE
 import javax.inject.Inject
 
 class SecurityRepository @Inject constructor(
@@ -34,7 +34,7 @@ class SecurityRepository @Inject constructor(
 
     fun canAskLockPreferences(): Boolean {
         return lockPreferencesLocalSource.getData(
-            LockPreferencesLocalSource.defaultLockPreferences
+            LockPreferencesLocalSource.DEFAULT_LOCK_PREFERENCES
         ) != LockPreferencesLocalSource.DONT_SHOW_AGAIN_COUNT
     }
 
@@ -47,11 +47,11 @@ class SecurityRepository @Inject constructor(
     }
 
     fun isBiometricActive(): Boolean {
-        return biometricRegistrationLocalSource.getData(defaultBiometricRegistrationPreference)
+        return biometricRegistrationLocalSource.getData(DEFAULT_BIOMETRIC_REGISTRATION_PREFERENCE)
     }
 
     fun isRekeySupportEnabled(): Boolean {
-        return rekeySupportLocalSource.getData(defaultRekeySupportPreference)
+        return rekeySupportLocalSource.getData(DEFAULT_REKEY_SUPPORT_PREFERENCE)
     }
 
     fun setLockPenaltyRemainingTime(penaltyRemainingTime: Long) {
@@ -59,7 +59,7 @@ class SecurityRepository @Inject constructor(
     }
 
     fun getLockPenaltyRemainingTime(): Long {
-        return lockPenaltyRemainingTimeLocalSource.getData(defaultLockPenaltyRemainingTimePreference)
+        return lockPenaltyRemainingTimeLocalSource.getData(DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE)
     }
 
     fun setLockAttemptCount(lockAttemptCount: Int) {
@@ -67,6 +67,6 @@ class SecurityRepository @Inject constructor(
     }
 
     fun getLockAttemptCount(): Int {
-        return lockAttemptCountLocalSource.getData(defaultLockAttemptCountPreference)
+        return lockAttemptCountLocalSource.getData(DEFAULT_LOCK_ATTEMPT_COUNT_PREFERENCE)
     }
 }

@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class SaveHideZeroBalanceAssetsPreferenceUseCase @Inject constructor(
-    @Named(AssetFilterRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(AssetFilterRepository.REPOSITORY_INJECTION_NAME)
     private val assetFilterRepository: AssetFilterRepository
 ) {
 

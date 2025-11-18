@@ -69,17 +69,14 @@ data class WalletConnectSessionDetailPreview(
     )
 
     data class InformationBadge(
-        @StringRes val badgeTextResId: Int,
-        @StringRes val informationTextResId: Int
+        @param:StringRes val badgeTextResId: Int,
+        @param:StringRes val informationTextResId: Int
     )
 
     data class CheckSessionStatus(
-        @StringRes val buttonTextResId: Int,
-        @ColorRes val buttonTextColorResId: Int,
+        @param:StringRes val buttonTextResId: Int,
+        @param:ColorRes val buttonTextColorResId: Int,
         val isButtonEnabled: Boolean,
-        @DrawableRes val buttonStartIconResId: Int?
-    ) {
-        val buttonStartIconTintResId: Int
-            get() = buttonTextColorResId
-    }
+        @param:DrawableRes val buttonStartIconResId: Int?
+    )
 }

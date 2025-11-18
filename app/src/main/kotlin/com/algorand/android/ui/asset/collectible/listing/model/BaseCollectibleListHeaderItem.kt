@@ -59,7 +59,7 @@ sealed interface BaseCollectibleListHeaderItem : RecyclerListItem {
     }
 
     data class SearchViewItem(
-        @StringRes val searchViewHintResId: Int,
+        @param:StringRes val searchViewHintResId: Int,
         val query: String,
         val onGridListViewSelectedEvent: Event<Unit>? = null,
         val onLinearListViewSelectedEvent: Event<Unit>? = null
@@ -77,7 +77,7 @@ sealed interface BaseCollectibleListHeaderItem : RecyclerListItem {
     }
 
     companion object {
-        val excludedItemFromDivider = listOf(
+        val excludedItemFromDivider: List<Int> = listOf(
             ItemType.TITLE_TEXT_VIEW_ITEM.value,
             ItemType.SEARCH_VIEW_ITEM.value,
             ItemType.INFO_VIEW_ITEM.value

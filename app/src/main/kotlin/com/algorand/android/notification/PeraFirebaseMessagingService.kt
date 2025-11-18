@@ -16,7 +16,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -132,7 +131,7 @@ class PeraFirebaseMessagingService : PushMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setDefaults(Notification.DEFAULT_ALL)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         val channelId = getString(R.string.app_name)
         val channel = NotificationChannel(

@@ -27,17 +27,18 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.clipboard.manager.PeraClipboardManager
 import com.algorand.android.utils.extensions.decodeBase64ToString
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
+import javax.inject.Named
 
 class AsbFileSelectionPreviewUseCase @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val asbFileSelectionPreviewMapper: AsbFileSelectionPreviewMapper,
-    @Named(PeraClipboardManager.INJECTION_NAME)
+    @param:Named(PeraClipboardManager.INJECTION_NAME)
     private val peraClipboardManager: PeraClipboardManager,
     private val fileUploadStateMapper: FileUploadStateMapper,
     private val asbFileContentValidator: AsbFileContentValidator,
@@ -51,7 +52,7 @@ class AsbFileSelectionPreviewUseCase @Inject constructor(
         return preview.copy(navToAsbEnterKeyFragmentEvent = Event(safeCipherText))
     }
 
-    fun updatePreviewWithClipboardData(preview: AsbFileSelectionPreview) = flow {
+    fun updatePreviewWithClipboardData(preview: AsbFileSelectionPreview): Flow<AsbFileSelectionPreview> = flow {
         val clipboardData = peraClipboardManager.getTextFromClipboard()
         if (clipboardData.isNullOrBlank()) {
             val titleAnnotatedString = AnnotatedString(R.string.nothing_to_paste)
@@ -83,7 +84,10 @@ class AsbFileSelectionPreviewUseCase @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     @SuppressWarnings("LongMethod")
-    fun updatePreviewWithSelectedFile(preview: AsbFileSelectionPreview, fileLocationUri: Uri?) = flow {
+    fun updatePreviewWithSelectedFile(
+        preview: AsbFileSelectionPreview,
+        fileLocationUri: Uri?
+    ): Flow<AsbFileSelectionPreview> = flow {
         if (fileLocationUri == null) {
             emit(createUploadFileErrorState(preview))
             return@flow

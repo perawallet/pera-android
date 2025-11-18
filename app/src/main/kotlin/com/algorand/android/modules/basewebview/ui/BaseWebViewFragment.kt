@@ -15,4 +15,6 @@ package com.algorand.android.modules.basewebview.ui
 import androidx.annotation.LayoutRes
 import com.algorand.android.core.BaseFragment
 
-abstract class BaseWebViewFragment(@LayoutRes private val layoutResId: Int) : BaseFragment(layoutResId)
+abstract class BaseWebViewFragment(
+    @param:LayoutRes private val layoutResId: Int
+) : BaseFragment(layoutResId)

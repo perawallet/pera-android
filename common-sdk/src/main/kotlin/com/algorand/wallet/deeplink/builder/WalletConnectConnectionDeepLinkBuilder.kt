@@ -20,15 +20,15 @@ internal class WalletConnectConnectionDeepLinkBuilder : DeepLinkBuilder {
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {
             walletConnectUrl != null &&
-                accountAddress == null &&
-                assetId == null &&
-                amount == null &&
-                note == null &&
-                url == null &&
-                xnote == null &&
-                label == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null
+                    accountAddress == null &&
+                    assetId == null &&
+                    amount == null &&
+                    note == null &&
+                    url == null &&
+                    xnote == null &&
+                    label == null &&
+                    webImportQrCode == null &&
+                    notificationGroupType == null
         }
     }
 

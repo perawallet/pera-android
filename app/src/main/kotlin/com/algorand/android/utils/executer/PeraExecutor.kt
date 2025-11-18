@@ -13,9 +13,9 @@
 package com.algorand.android.utils.executer
 
 import com.algorand.android.utils.recordException
-import java.util.concurrent.Executor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
+import java.util.concurrent.Executor
 
 abstract class PeraExecutor(private val coroutineDispatcher: CoroutineDispatcher) : Executor {
     override fun execute(command: Runnable) {

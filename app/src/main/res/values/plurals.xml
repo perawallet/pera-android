@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,4 +10,166 @@
   ~ limitations under the License
   -->
 
-<resources></resources>
+<resources>
+    <plurals name="app_connected">
+        <item quantity="one">1 app connected</item>
+        <item quantity="other">%1$d apps connected</item>
+    </plurals>
+
+    <plurals name="requested_permission">
+        <item quantity="one">Requested permissions</item>
+        <item quantity="other">Requested permissions</item>
+    </plurals>
+
+    <plurals name="networks">
+        <item quantity="one">Network</item>
+        <item quantity="other">Networks</item>
+    </plurals>
+
+    <plurals name="account_found">
+        <item quantity="one">1 Account Found</item>
+        <item quantity="other">%1$d Accounts Found</item>
+    </plurals>
+
+    <plurals name="account_count">
+        <item quantity="one">Account</item>
+        <item quantity="other">%1$d Accounts</item>
+    </plurals>
+
+    <plurals name="select_accounts">
+        <item quantity="one">Select Account</item>
+        <item quantity="other">Select Accounts</item>
+    </plurals>
+
+    <plurals name="n_accounts_were_imported_from_pera_web">
+        <item quantity="one">%1$d account was imported from Pera Web</item>
+        <item quantity="other">%1$d accounts were imported from Pera Web</item>
+    </plurals>
+
+    <plurals name="n_accounts_were_not_imported_because">
+        <item quantity="one">%1$d account was not imported because it was previously imported.</item>
+        <item quantity="other">%1$d accounts were not imported because they were previously imported.</item>
+    </plurals>
+
+    <plurals name="accounts_restored">
+        <item quantity="one">Account restored</item>
+        <item quantity="other">Accounts restored</item>
+    </plurals>
+
+    <plurals name="accounts_were_restored">
+        <item quantity="one">1 account was restored from backup file</item>
+        <item quantity="other">%1$d accounts were restored from backup file</item>
+    </plurals>
+
+    <plurals name="account_was_not_restored_because_exist">
+        <item quantity="one">1 account was not restored because it already exist in your wallet</item>
+        <item quantity="other">%1$d accounts were not restored because they already exist in your wallet</item>
+    </plurals>
+
+    <plurals name="account_was_not_restored_because_unsupported">
+        <item quantity="one">1 account was not restored because it has an unsupported account type</item>
+        <item quantity="other">%1$d accounts were not restored because they have an unsupported account type</item>
+    </plurals>
+
+    <plurals name="account_was_not_restored">
+        <item quantity="one">1 account was not restored. It may already exist in your wallet or be unsupported account type</item>
+        <item quantity="other">%1$d accounts were not restored. They may already exist in your wallet or be unsupported account types</item>
+    </plurals>
+
+    <plurals name="you_can_t_remove_this_account">
+        <item quantity="one">You can\'t remove this account before removing its %1$d rekeyed account</item>
+        <item quantity="other">You can\'t remove this account before removing its %1$d rekeyed accounts</item>
+    </plurals>
+
+    <plurals name="select_accounts_to_add_desc">
+        <item quantity="zero">We found that there are no address registered to this wallet</item>
+        <item quantity="one">We found that there is one address registered to this wallet</item>
+        <item quantity="other">We found that there are %1$d addresses registered to this wallet</item>
+    </plurals>
+
+    <plurals name="search_address_count">
+        <item quantity="zero">No addresses</item>
+        <item quantity="one">1 address</item>
+        <item quantity="other">%1$d addresses</item>
+    </plurals>
+
+    <plurals name="confirm_transactions">
+        <item quantity="one">Confirm</item>
+        <item quantity="other">Confirm all</item>
+    </plurals>
+
+    <plurals name="count_inner_txns">
+        <item quantity="one">%1$d inner txn</item>
+        <item quantity="other">%1$d inner txns</item>
+    </plurals>
+
+    <plurals name="show_count_inner_txns">
+        <item quantity="one">Show %1$d TXN</item>
+        <item quantity="other">Show %1$d TXNS</item>
+    </plurals>
+
+    <plurals name="count_inner_transactions">
+        <item quantity="one">%1$d Inner Transaction</item>
+        <item quantity="other">%1$d Inner Transactions</item>
+    </plurals>
+
+    <plurals name="sender_plural">
+        <item quantity="one">Sender</item>
+        <item quantity="other">Senders</item>
+    </plurals>
+
+    <plurals name="show_count_more_assets">
+        <item quantity="one">Show +%1$d more asset</item>
+        <item quantity="other">Show +%1$d more assets</item>
+    </plurals>
+
+    <plurals name="assets">
+        <item quantity="one">Asset</item>
+        <item quantity="other">Assets</item>
+    </plurals>
+
+    <plurals name="asset_requests">
+        <item quantity="one">%1$d Asset Request</item>
+        <item quantity="other">%1$d Asset Requests</item>
+    </plurals>
+
+    <plurals name="incoming_assets">
+        <item quantity="one">1 incoming asset</item>
+        <item quantity="other">%1$d incoming assets</item>
+    </plurals>
+
+    <plurals name="nft_count">
+        <item quantity="one">%1$d NFT</item>
+        <item quantity="other">%1$d NFTs</item>
+    </plurals>
+
+    <plurals name="walletconnect_events">
+        <item quantity="one">WalletConnect event</item>
+        <item quantity="other">WalletConnect events</item>
+    </plurals>
+
+    <plurals name="rekeyed_accounts_found">
+        <item quantity="one">Rekeyed account found</item>
+        <item quantity="other">%1$d rekeyed accounts found</item>
+    </plurals>
+
+    <plurals name="warning_with_count">
+        <item quantity="one"> %1$d Warning</item>
+        <item quantity="other"> %1$d Warnings</item>
+    </plurals>
+
+    <plurals name="min_ago">
+        <item quantity="one">%1$s minute ago</item>
+        <item quantity="other">%1$s minutes ago</item>
+    </plurals>
+
+    <plurals name="hours_ago">
+        <item quantity="one">%1$s hour ago</item>
+        <item quantity="other">%1$s hours ago</item>
+    </plurals>
+
+    <plurals name="days_ago">
+        <item quantity="one">%1$s day ago</item>
+        <item quantity="other">%1$s days ago</item>
+    </plurals>
+</resources>

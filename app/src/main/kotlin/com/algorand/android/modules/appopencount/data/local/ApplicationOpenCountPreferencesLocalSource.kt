@@ -27,7 +27,10 @@ class ApplicationOpenCountPreferencesLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Int? {
-        return if (sharedPref.contains(key)) sharedPref.getInt(key, defaultApplicationOpenCountPreferences) else null
+        return if (sharedPref.contains(key)) sharedPref.getInt(
+            key,
+            DEFAULT_APPLICATION_OPEN_COUNT_PREFERENCES
+        ) else null
     }
 
     override fun saveData(data: Int) {
@@ -36,6 +39,6 @@ class ApplicationOpenCountPreferencesLocalSource @Inject constructor(
 
     companion object {
         private const val APPLICATION_OPEN_COUNT_KEY = "applicationOpenCount"
-        const val defaultApplicationOpenCountPreferences = 0
+        const val DEFAULT_APPLICATION_OPEN_COUNT_PREFERENCES: Int = 0
     }
 }

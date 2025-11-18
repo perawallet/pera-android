@@ -19,10 +19,10 @@ import com.algorand.android.modules.walletconnect.connectedapps.ui.model.WalletC
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectConnectedAppsViewModel @Inject constructor(

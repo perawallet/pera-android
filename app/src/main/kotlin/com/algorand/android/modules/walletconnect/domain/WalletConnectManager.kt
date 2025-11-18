@@ -54,9 +54,6 @@ import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.math.pow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -69,6 +66,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.math.pow
 
 @Singleton
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
@@ -291,11 +291,11 @@ class WalletConnectManager @Inject constructor(
                 )
                 logWalletConnectRequestConfirmation()
                 _requestResultLiveData.postValue(
-                    Event(Resource.Success(AnnotatedString(R.string.transaction_succesfully_confirmed)))
+                    Event(Resource.Success(AnnotatedString(R.string.transaction_successfully_confirmed)))
                 )
                 _walletConnectRequestLiveData.postValue(null)
             } else {
-                _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occured))))
+                _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occurred))))
                 val exception = Exception("Wallet connect sign result is not Success: $walletConnectSignResult")
                 recordException(exception)
             }
@@ -330,12 +330,6 @@ class WalletConnectManager @Inject constructor(
         }
     }
 
-    suspend fun getWalletConnectSessionsWithPairId(topic: String): List<WalletConnect.SessionDetail> {
-        return walletConnectClientManager.getAllWalletConnectSessions().filter {
-            it.topic == topic
-        }
-    }
-
     fun isValidWalletConnectUrl(url: String): Boolean {
         return walletConnectClientManager.isValidWalletConnectUrl(url)
     }
@@ -356,14 +350,6 @@ class WalletConnectManager @Inject constructor(
         sessionIdentifier: WalletConnectSessionIdentifier
     ): Long? {
         return walletConnectClientManager.getSessionExpirationDateExtendedTimeStampAsSec(sessionIdentifier)
-    }
-
-    suspend fun getSessionExpirationDateTimeStampAsSec(sessionIdentifier: SessionIdentifier): Long? {
-        return walletConnectClientManager.getSessionExpirationDateTimeStampAsSec(sessionIdentifier)
-    }
-
-    suspend fun getSessionExpirationDateTimeStampAsSec(sessionIdentifier: WalletConnectSessionIdentifier): Long? {
-        return walletConnectClientManager.getSessionExpirationDateTimeStampAsSec(sessionIdentifier)
     }
 
     suspend fun getMaxSessionExpirationDateTimeStampAsSec(sessionIdentifier: WalletConnectSessionIdentifier): Long? {

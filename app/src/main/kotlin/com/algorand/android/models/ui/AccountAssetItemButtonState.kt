@@ -19,13 +19,13 @@ import androidx.annotation.StringRes
 import com.algorand.android.R
 
 enum class AccountAssetItemButtonState(
-    @ColorRes val backgroundColorResId: Int?,
-    @ColorRes val strokeColorResId: Int?,
-    @ColorRes val iconTintColorResId: Int?,
-    @DrawableRes val iconDrawableResId: Int?,
-    @DimenRes val actionButtonSizeDimenResId: Int?,
-    @DimenRes val actionButtonIconSizeDimenResId: Int?,
-    @StringRes val actionButtonTextResId: Int?,
+    @param:ColorRes val backgroundColorResId: Int?,
+    @param:ColorRes val strokeColorResId: Int?,
+    @param:ColorRes val iconTintColorResId: Int?,
+    @param:DrawableRes val iconDrawableResId: Int?,
+    @param:DimenRes val actionButtonSizeDimenResId: Int?,
+    @param:DimenRes val actionButtonIconSizeDimenResId: Int?,
+    @param:StringRes val actionButtonTextResId: Int?,
     val isEnabled: Boolean
 ) {
     PROGRESS(

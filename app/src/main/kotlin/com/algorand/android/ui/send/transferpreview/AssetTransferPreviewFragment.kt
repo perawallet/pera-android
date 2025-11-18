@@ -63,7 +63,9 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val assetTransferPreviewViewModel: AssetTransferPreviewViewModel by viewModels()
 
@@ -74,23 +76,23 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     private var transactionNote: Pair<String?, Boolean>
-        by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
-            with(binding) {
-                if (isNoteEnabled) {
-                    addEditNoteButton.show()
-                    addEditNoteButton.setOnClickListener {
-                        onAddEditNoteClicked()
-                    }
-                    if (note.isNullOrBlank()) {
-                        setLayoutForAddNote()
+            by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
+                with(binding) {
+                    if (isNoteEnabled) {
+                        addEditNoteButton.show()
+                        addEditNoteButton.setOnClickListener {
+                            onAddEditNoteClicked()
+                        }
+                        if (note.isNullOrBlank()) {
+                            setLayoutForAddNote()
+                        } else {
+                            setLayoutForEditNote(note)
+                        }
                     } else {
-                        setLayoutForEditNote(note)
+                        setLayoutForBlockedNote(note)
                     }
-                } else {
-                    setLayoutForBlockedNote(note)
                 }
             }
-        }
 
     private val sendAlgoResponseCollector: suspend (Event<Resource<String>>?) -> Unit = {
         it?.consume()?.use(
@@ -109,7 +111,7 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
         }
     }
 
-    override val transactionFragmentListener = object : TransactionFragmentListener {
+    override val transactionFragmentListener: TransactionFragmentListener = object : TransactionFragmentListener {
         override fun onSignTransactionLoading() {
             showProgress()
         }
@@ -398,6 +400,6 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     companion object {
-        const val ADD_EDIT_NOTE_BUTTON_VERTICAL_BIAS = 0.5f
+        const val ADD_EDIT_NOTE_BUTTON_VERTICAL_BIAS: Float = 0.5f
     }
 }

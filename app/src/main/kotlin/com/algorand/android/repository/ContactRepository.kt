@@ -16,19 +16,10 @@ package com.algorand.android.repository
 import com.algorand.android.database.ContactDao
 import com.algorand.android.models.User
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 
 class ContactRepository @Inject constructor(
     private val contactDao: ContactDao
 ) {
-
-    fun getContactsByName(query: String): Flow<List<User>> {
-        return contactDao.getUsersWithNameFilteredAsFlow(query)
-    }
-
-    fun getContacts(): Flow<List<User>> {
-        return contactDao.getAllAsFlow()
-    }
 
     suspend fun getAllContacts(): List<User> {
         return contactDao.getAll()

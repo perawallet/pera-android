@@ -40,9 +40,9 @@ import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
-import java.math.BigDecimal
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
 
 abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profile),
     AssetAboutFragment.AssetAboutTabListener {
@@ -55,9 +55,9 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
 
     abstract val asaProfileViewModel: BaseAsaProfileViewModel
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    protected val binding by viewBinding(FragmentAsaProfileBinding::bind)
+    protected val binding: FragmentAsaProfileBinding by viewBinding(FragmentAsaProfileBinding::bind)
 
     private val formattedAssetPriceCollector: suspend (String?) -> Unit = {
         binding.assetPriceTextView.text = it
@@ -252,6 +252,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                         }
                     }
                 }
+
                 is AsaStatusPreview.RemovalStatus.AssetRemovalStatus -> {
                     text = getString(
                         R.string.pair_value_format,
@@ -259,6 +260,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                         asaStatusPreview.assetShortName?.assetName
                     )
                 }
+
                 is AsaStatusPreview.TransferStatus -> {
                     text = getString(
                         R.string.pair_value_format,
@@ -266,9 +268,11 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                         asaStatusPreview.assetShortName?.assetName
                     )
                 }
+
                 is AsaStatusPreview.AccountSelectionStatus -> {
                     // no value text for account selection case
                 }
+
                 is AsaStatusPreview.RemovalStatus.CollectibleRemovalStatus -> {
                     // no value text for  collectible removal status case
                 }

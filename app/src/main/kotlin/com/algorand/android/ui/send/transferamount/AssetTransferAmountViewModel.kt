@@ -27,14 +27,14 @@ import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.math.BigDecimal
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.BigInteger
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetTransferAmountViewModel @Inject constructor(
@@ -44,7 +44,7 @@ class AssetTransferAmountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
-    var assetTransaction = savedStateHandle.getOrThrow<AssetTransaction>(ASSET_TRANSACTION_KEY)
+    var assetTransaction: AssetTransaction = savedStateHandle.getOrThrow(ASSET_TRANSACTION_KEY)
         private set
     private val shouldPopulateAmountWithMax = savedStateHandle.getOrElse(SHOULD_POPULATE_AMOUNT_WITH_MAX, false)
 

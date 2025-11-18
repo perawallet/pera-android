@@ -13,7 +13,6 @@
 package com.algorand.android.modules.walletconnect.mapper
 
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.algorand.android.modules.walletconnect.domain.model.WalletConnectVersionIdentifier
 import javax.inject.Inject
 
 class WalletConnectSessionSettleMapper @Inject constructor() {
@@ -26,20 +25,6 @@ class WalletConnectSessionSettleMapper @Inject constructor() {
             session = session,
             versionIdentifier = session.versionIdentifier,
             clientId = clientId
-        )
-    }
-
-    fun mapToSessionSettleError(
-        errorMessage: String,
-        versionIdentifier: WalletConnectVersionIdentifier,
-        throwable: Throwable?,
-        sessionIdentifier: WalletConnect.SessionIdentifier?
-    ): WalletConnect.Session.Settle.Error {
-        return WalletConnect.Session.Settle.Error(
-            errorMessage = errorMessage,
-            versionIdentifier = versionIdentifier,
-            throwable = throwable,
-            sessionIdentifier = sessionIdentifier
         )
     }
 }

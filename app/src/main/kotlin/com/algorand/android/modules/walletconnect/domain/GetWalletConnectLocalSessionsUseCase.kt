@@ -14,8 +14,8 @@ package com.algorand.android.modules.walletconnect.domain
 
 import com.algorand.android.modules.walletconnect.client.v1.domain.usecase.GetWalletConnectSessionsWithAccountsUseCase
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class GetWalletConnectLocalSessionsUseCase @Inject constructor(
     private val getAllWalletConnectSessionWithAccountAddressesUseCase: GetWalletConnectSessionsWithAccountsUseCase

@@ -14,8 +14,8 @@ package com.algorand.android.modules.transaction.detail.ui.standardtransaction
 
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.transaction.detail.ui.BaseTransactionDetailFragment
 import com.algorand.android.modules.transaction.detail.ui.adapter.TransactionDetailAdapter
@@ -25,17 +25,18 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class StandardTransactionDetailFragment : BaseTransactionDetailFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_close,
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
-    override val transactionDetailViewModel by viewModels<StandardTransactionDetailViewModel>()
+    override val transactionDetailViewModel: StandardTransactionDetailViewModel
+            by viewModels<StandardTransactionDetailViewModel>()
 
     private val transactionDetailLongClickListener = object : TransactionDetailAdapter.LongPressListener {
         override fun onAddressLongClick(publicKey: String) {
@@ -51,7 +52,7 @@ class StandardTransactionDetailFragment : BaseTransactionDetailFragment() {
         onAddButtonClicked(it)
     }
 
-    override val transactionDetailAdapter = TransactionDetailAdapter(
+    override val transactionDetailAdapter: TransactionDetailAdapter = TransactionDetailAdapter(
         extrasExtrasClickListener = transactionDetailClickListener,
         longPressListener = transactionDetailLongClickListener,
         tooltipListener = transactionDetailTooltipListener,

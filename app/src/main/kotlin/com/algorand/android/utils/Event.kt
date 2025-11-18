@@ -14,7 +14,7 @@ package com.algorand.android.utils
 
 open class Event<out T>(private val content: T) {
 
-    var consumed = false
+    var consumed: Boolean = false
         private set // Allow external read but not write
 
     /**

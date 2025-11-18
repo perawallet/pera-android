@@ -19,10 +19,10 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
-import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import javax.inject.Inject
 
 internal class GetRegisteredHdKeysUseCase @Inject constructor(
     private val getLocalAccountsAddresses: GetLocalAccountsAddresses,
@@ -66,7 +66,7 @@ internal class GetRegisteredHdKeysUseCase @Inject constructor(
         bip39Wallet: Bip39Wallet,
         localAccountAddresses: List<String>
     ): List<RegisteredHdKey> {
-        val index = HdKeyAddressIndex(accountIndex = 0, changeIndex = 0, keyIndex = 0)
+        val index = HdKeyAddressIndex()
         val address = bip39Wallet.generateAddressLite(index).address
         val hdAccountAddress = ActiveHdAccount.HdAccountAddress(address, 0, 0, 0, null)
         val isAlreadyImported = localAccountAddresses.contains(address)

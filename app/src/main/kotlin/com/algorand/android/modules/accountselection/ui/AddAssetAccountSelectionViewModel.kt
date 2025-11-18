@@ -20,10 +20,10 @@ import com.algorand.android.modules.accountselection.ui.model.AddAssetAccountSel
 import com.algorand.android.modules.accountselection.ui.usecase.AddAssetAccountSelectionPreviewUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AddAssetAccountSelectionViewModel @Inject constructor(
@@ -33,7 +33,7 @@ class AddAssetAccountSelectionViewModel @Inject constructor(
 
     private val assetId = savedStateHandle.getOrThrow<Long>(ASSET_ID_KEY)
 
-    private val _addAssetAccountSelectionPreviewFlow = MutableStateFlow<AddAssetAccountSelectionPreview>(
+    private val _addAssetAccountSelectionPreviewFlow = MutableStateFlow(
         addAssetAccountSelectionPreviewUseCase.getInitialStatePreview()
     )
     val addAssetAccountSelectionPreviewFlow: StateFlow<AddAssetAccountSelectionPreview>

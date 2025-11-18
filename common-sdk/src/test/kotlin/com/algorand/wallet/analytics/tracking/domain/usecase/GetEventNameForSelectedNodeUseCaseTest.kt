@@ -15,6 +15,7 @@ package com.algorand.wallet.analytics.tracking.domain.usecase
 import com.algorand.wallet.node.domain.usecase.IsSelectedNodeTestnet
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -26,7 +27,7 @@ class GetEventNameForSelectedNodeUseCaseTest {
     private val sut = GetEventNameForSelectedNodeUseCase(isSelectedNodeTestnet)
 
     @Test
-    fun `EXPECT t_ prefix WHEN selected node is testnet`() = runTest {
+    fun `EXPECT t_ prefix WHEN selected node is testnet`(): TestResult = runTest {
         coEvery { isSelectedNodeTestnet() } returns true
 
         val result = sut("some_event_name")
@@ -36,7 +37,7 @@ class GetEventNameForSelectedNodeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT the same event name WHEN selected node is not testnet`() = runTest {
+    fun `EXPECT the same event name WHEN selected node is not testnet`(): TestResult = runTest {
         coEvery { isSelectedNodeTestnet() } returns false
 
         val result = sut("some_event_name")

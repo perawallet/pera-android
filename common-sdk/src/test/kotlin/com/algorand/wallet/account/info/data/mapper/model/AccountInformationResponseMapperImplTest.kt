@@ -34,11 +34,7 @@ class AccountInformationResponseMapperImplTest {
             accountInformation = AccountInformationResponsePayloadResponse(
                 address = ADDRESS,
                 amount = "0",
-                participation = null,
-                rekeyAdminAddress = null,
                 allAssetHoldingList = emptyList(),
-                createdAtRound = null,
-                appStateSchemaResponse = null,
                 appsTotalExtraPages = 0,
                 totalAppsOptedIn = 0,
                 totalAssetsOptedIn = 0,

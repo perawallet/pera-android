@@ -58,7 +58,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
         )
 
         val accountsTitleItem = baseWalletConnectConnectionItemMapper.mapToTitleItem(
-            memberCount = accountItems.count(),
+            memberCount = accountItems.size,
             titleTextResId = R.plurals.select_accounts
         )
         val algorandNamepace = sessionProposal.requiredNamespaces[WalletConnectBlockchain.ALGORAND]
@@ -67,13 +67,13 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
             walletConnectNetworkItemMapper.mapToWalletConnectConnectionNetworkItem(it)
         }.orEmpty()
 
-        val networkCount = networkList.count()
+        val networkCount = networkList.size
         val networkItem = baseWalletConnectConnectionItemMapper.mapToWalletConnectConnectionNetworkItem(
             networkCount = networkCount,
             walletConnectConnectionNetworkList = networkList
         )
 
-        val eventCount = eventList.count()
+        val eventCount = eventList.size
         val eventItem = baseWalletConnectConnectionItemMapper.mapToEventItem(
             eventCount = eventCount,
             eventList = eventList
@@ -103,7 +103,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
 
     private suspend fun getAccountItems(): List<BaseWalletConnectConnectionItem.AccountItem> {
         val sortedAccountList = createSortedAccountList()
-        val isThereOnlyOneAccount = sortedAccountList.count() == 1
+        val isThereOnlyOneAccount = sortedAccountList.size == 1
         val preSelectedButtonState = if (isThereOnlyOneAccount) CHECKED else UNCHECKED
 
         return sortedAccountList.map { accountLite ->
@@ -136,6 +136,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
                 is BaseWalletConnectConnectionItem.EventItem,
                 is BaseWalletConnectConnectionItem.NetworkItem,
                 is BaseWalletConnectConnectionItem.DappInfoItem -> it
+
                 is BaseWalletConnectConnectionItem.AccountItem -> updateSelectedItemButtonState(it, accountAddress)
             }
         }

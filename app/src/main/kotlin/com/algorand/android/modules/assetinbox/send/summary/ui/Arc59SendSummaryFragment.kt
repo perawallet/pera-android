@@ -58,7 +58,8 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfig)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfig)
 
     private val binding by viewBinding(FragmentArc59SendSummaryBinding::bind)
 
@@ -104,7 +105,7 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
     private fun showTransactionCancelledError(result: TransactionCancelled) {
         dismissLedgerDialog()
         val annotatedString = (result.error as? Error.Defined)?.description
-            ?: AnnotatedString(R.string.an_error_occured)
+            ?: AnnotatedString(R.string.an_error_occurred)
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }

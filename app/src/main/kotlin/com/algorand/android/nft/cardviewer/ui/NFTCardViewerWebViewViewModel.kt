@@ -23,7 +23,7 @@ class NFTCardViewerWebViewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    val nftCardViewUrl = savedStateHandle.getOrThrow<String>(NFT_CARD_VIEW_URL)
+    val nftCardViewUrl: String = savedStateHandle.getOrThrow(NFT_CARD_VIEW_URL)
 
     companion object {
         private const val NFT_CARD_VIEW_URL = "nftCardViewUrl"

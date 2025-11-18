@@ -51,9 +51,6 @@ internal interface AssetDetailDao {
         )
     }
 
-    @Query("DELETE FROM asset_detail WHERE asset_id = :assetId")
-    suspend fun deleteAllByAssetId(assetId: Long)
-
     @Query("SELECT * FROM asset_detail WHERE asset_id = :assetId")
     suspend fun getByAssetId(assetId: Long): AssetDetailEntity?
 
@@ -84,5 +81,5 @@ internal interface AssetDetailDao {
     @Query("SELECT asset_id, is_favorite FROM asset_detail WHERE asset_id IN (:assetIds)")
     suspend fun getFavoriteStatuses(
         assetIds: List<Long>
-    ): Map<@MapColumn("asset_id") Long, @MapColumn("is_favorite") Boolean?>
+    ): Map<@MapColumn("asset_id") Long, @MapColumn("is_favorite") Boolean>
 }

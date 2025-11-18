@@ -66,7 +66,7 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
 
     override lateinit var binding: FragmentDiscoverHomeBinding
 
-    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val discoverHomePreviewCollector: suspend (DiscoverHomePreview) -> Unit = { preview ->
         with(preview) {
@@ -373,8 +373,7 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
             DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToDiscoverDappNavigation(
                 dappUrl = url,
                 dappTitle = title ?: "",
-                favorites = favorites,
-                showFavorites = true
+                favorites = favorites
             )
         )
     }

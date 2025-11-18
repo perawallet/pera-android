@@ -34,7 +34,7 @@ internal class AssetCreatorMapperImplTest {
 
     @Test
     fun `EXPECT assert creator WHEN at least one response field is not null`() {
-        val response = AssetCreatorResponse(publicKey = "address", id = null, isVerifiedAssetCreator = null)
+        val response = AssetCreatorResponse(publicKey = "address")
 
         val result = sut(response)
 
@@ -44,7 +44,7 @@ internal class AssetCreatorMapperImplTest {
 
     @Test
     fun `EXPECT null WHEN all response fields are null`() {
-        val response = AssetCreatorResponse(publicKey = null, id = null, isVerifiedAssetCreator = null)
+        val response = AssetCreatorResponse()
 
         val result = sut(response)
 

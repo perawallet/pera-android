@@ -36,7 +36,9 @@ class CollectibleReceiverAccountSelectionFragment :
         startIconResId = R.drawable.ic_close
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentCollectibleReceiverAccountSelectionBinding::bind)
 

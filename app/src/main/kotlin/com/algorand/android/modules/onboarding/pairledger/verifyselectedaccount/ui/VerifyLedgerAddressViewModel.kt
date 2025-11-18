@@ -38,14 +38,15 @@ class VerifyLedgerAddressViewModel @Inject constructor(
     private val lockPreferencesUseCase: LockPreferencesUseCase
 ) : BaseViewModel() {
 
-    val currentLedgerAddressesListLiveData = MutableLiveData<List<VerifyLedgerAddressListItem>>()
+    val currentLedgerAddressesListLiveData: MutableLiveData<List<VerifyLedgerAddressListItem>> =
+        MutableLiveData<List<VerifyLedgerAddressListItem>>()
 
-    val awaitingLedgerAccountLiveData = MutableLiveData<LedgerAccount?>()
+    val awaitingLedgerAccountLiveData: MutableLiveData<LedgerAccount?> = MutableLiveData<LedgerAccount?>()
 
-    val awaitingLedgerAccount
+    val awaitingLedgerAccount: LedgerAccount?
         get() = awaitingLedgerAccountLiveData.value
 
-    val isVerifyOperationsDoneLiveData = MutableLiveData<Event<Boolean>?>()
+    val isVerifyOperationsDoneLiveData: MutableLiveData<Event<Boolean>?> = MutableLiveData()
 
     private val listLock = Any()
 

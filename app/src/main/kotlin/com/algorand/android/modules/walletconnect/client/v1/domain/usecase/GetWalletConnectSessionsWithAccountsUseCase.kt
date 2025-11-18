@@ -18,13 +18,13 @@ import com.algorand.android.modules.walletconnect.client.v1.mapper.WalletConnect
 import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectV1SessionCachedDataHandler
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectSessionDetailMapper
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import javax.inject.Inject
+import javax.inject.Named
 
 class GetWalletConnectSessionsWithAccountsUseCase @Inject constructor(
-    @Named(WalletConnectRepository.INJECTION_NAME)
+    @param:Named(WalletConnectRepository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectRepository,
     private val sessionDetailMapper: WalletConnectSessionDetailMapper,
     private val getConnectedAccountsOfWalletConnectSessionUseCase: GetConnectedAccountsOfWalletConnectSessionUseCase,

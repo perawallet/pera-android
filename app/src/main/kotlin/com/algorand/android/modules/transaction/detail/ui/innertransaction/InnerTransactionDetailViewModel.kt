@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.transaction.detail.ui.innertransaction
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.transaction.detail.domain.usecase.InnerTransactionDetailPreviewUseCase
@@ -20,6 +19,7 @@ import com.algorand.android.modules.transaction.detail.ui.BaseTransactionDetailV
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class InnerTransactionDetailViewModel @Inject constructor(
@@ -27,8 +27,8 @@ class InnerTransactionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseTransactionDetailViewModel() {
 
-    val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
-    val transactionId = savedStateHandle.getOrThrow<String>(TRANSACTION_ID_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(ACCOUNT_ADDRESS_KEY)
+    val transactionId: String = savedStateHandle.getOrThrow(TRANSACTION_ID_KEY)
 
     init {
         initTransactionDetailPreview()

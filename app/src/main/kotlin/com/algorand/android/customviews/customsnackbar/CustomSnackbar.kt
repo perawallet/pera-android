@@ -91,9 +91,9 @@ class CustomSnackbar private constructor() {
     }
 
     data class Builder(
-        @StringRes private var titleTextResId: Int? = null,
-        @StringRes private var descriptionTextResId: Int? = null,
-        @StringRes private var actionButtonTextResId: Int? = null,
+        @param:StringRes private var titleTextResId: Int? = null,
+        @param:StringRes private var descriptionTextResId: Int? = null,
+        @param:StringRes private var actionButtonTextResId: Int? = null,
         private var actionButtonClickListener: (Snackbar.() -> Unit)? = null
     ) {
 

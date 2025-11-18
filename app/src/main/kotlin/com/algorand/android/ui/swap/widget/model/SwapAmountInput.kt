@@ -12,15 +12,15 @@
 
 package com.algorand.android.ui.swap.widget.model
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.Locale
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class SwapAmountInput(val locale: Locale) {
 
-    val amountInputFlow = MutableStateFlow<Input>(Input("", null))
+    val amountInputFlow: MutableStateFlow<Input> = MutableStateFlow<Input>(Input("", null))
     private val symbols = DecimalFormatSymbols.getInstance(locale)
     private val inputRegex = Regex("^\\d*([.,]?\\d*)$")
 
@@ -40,14 +40,14 @@ class SwapAmountInput(val locale: Locale) {
             if (input.isBlank()) return null
             val amountNumber = getFormatter().parse(input)?.toString()
             if (!amountNumber.isNullOrBlank()) BigDecimal(amountNumber) else null
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
 
     private fun getFormatter(): NumberFormat = NumberFormat.getInstance(Locale.getDefault())
 
-    fun getNormalizedInput(input: String): String? {
+    private fun getNormalizedInput(input: String): String? {
         val normalizedInput = input.replace(symbols.groupingSeparator, symbols.decimalSeparator)
         return if (inputRegex.matches(normalizedInput)) normalizedInput else null
     }

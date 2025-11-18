@@ -31,6 +31,6 @@ class WcArbitraryDataLaunchBackDescriptionAnnotatedStringProviderV1Impl :
     }
 
     companion object {
-        const val INJECTION_NAME = "wcArbitraryDataLaunchBackDescriptionAnnotatedStringV1InjectionName"
+        const val INJECTION_NAME: String = "wcArbitraryDataLaunchBackDescriptionAnnotatedStringV1InjectionName"
     }
 }

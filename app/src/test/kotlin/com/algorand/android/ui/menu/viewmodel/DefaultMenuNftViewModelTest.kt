@@ -23,6 +23,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -53,7 +54,7 @@ class DefaultMenuNftViewModelTest {
     }
 
     @Test
-    fun `EXPECT content state with 3 recently added nft urls`() = runTest {
+    fun `EXPECT content state with 3 recently added nft urls`(): TestResult = runTest {
         val collectibleUrls = listOf("url1", "url2", "url3")
         coEvery { getRecentlyAddedCollectibleUrls(3) } returns collectibleUrls
 

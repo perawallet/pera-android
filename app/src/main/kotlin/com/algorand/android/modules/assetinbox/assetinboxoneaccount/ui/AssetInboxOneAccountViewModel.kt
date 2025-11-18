@@ -25,11 +25,11 @@ import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetInboxOneAccountViewModel @Inject constructor(
@@ -60,6 +60,6 @@ class AssetInboxOneAccountViewModel @Inject constructor(
     }
 
     companion object {
-        const val ASSET_INBOX_ONE_ACCOUNT_NAV_ARGS_KEY = "assetInboxOneAccountNavArgs"
+        const val ASSET_INBOX_ONE_ACCOUNT_NAV_ARGS_KEY: String = "assetInboxOneAccountNavArgs"
     }
 }

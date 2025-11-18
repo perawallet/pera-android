@@ -18,10 +18,10 @@ import com.algorand.android.models.DateRange
 import com.algorand.android.modules.transaction.csv.domain.usecase.CreateCsvUseCase
 import com.algorand.android.modules.transaction.csv.ui.mapper.CsvStatusPreviewMapper
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
-import java.io.File
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.io.File
+import javax.inject.Inject
 
 class CsvStatusPreviewUseCase @Inject constructor(
     private val createCsvUseCase: CreateCsvUseCase,

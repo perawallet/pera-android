@@ -18,9 +18,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentWalletConnectSessionsBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.modules.walletconnect.sessions.ui.adapter.WalletConnectSessionItemAdapter
@@ -50,7 +50,9 @@ class WalletConnectSessionsFragment : DaggerBaseFragment(R.layout.fragment_walle
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val walletConnectSessionsViewModel by viewModels<WalletConnectSessionsViewModel>()
 

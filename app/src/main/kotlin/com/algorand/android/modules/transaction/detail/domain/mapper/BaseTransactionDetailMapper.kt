@@ -85,8 +85,6 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
                 noteInBase64 = noteInBase64,
                 assetId = createdAssetIndex ?: assetConfiguration?.assetId,
-                closeToAccountAddress = null, // Asset Configuration Transaction does not contain close to address
-                transactionAmount = null, // Asset Configuration Transaction does not contain amount
                 transactionCloseAmount = closeAmount,
                 name = assetConfiguration?.name,
                 unitName = assetConfiguration?.unitName,
@@ -141,7 +139,6 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = null,
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),

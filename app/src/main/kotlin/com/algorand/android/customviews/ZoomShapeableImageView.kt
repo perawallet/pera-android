@@ -41,7 +41,7 @@ class ZoomShapeableImageView(context: Context, attrs: AttributeSet) :
     private val last = PointF()
     private val start = PointF()
 
-    private val matrixBounds = FloatArray(MATRIX_SIZE) { 0f }
+    private val matrixBounds = FloatArray(MATRIX_SIZE)
 
     private var redundantXSpace = 0f
     private var redundantYSpace = 0f
@@ -87,15 +87,18 @@ class ZoomShapeableImageView(context: Context, attrs: AttributeSet) :
             MotionEvent.ACTION_DOWN -> {
                 onEventActionDown(event)
             }
+
             MotionEvent.ACTION_MOVE -> {
                 when (mode) {
                     Mode.DRAG -> onActionMoveDrag(curr, y, x)
                     else -> {}
                 }
             }
+
             MotionEvent.ACTION_UP -> {
                 onEventActionUp(curr)
             }
+
             MotionEvent.ACTION_POINTER_UP -> {
                 mode = Mode.NONE
             }
@@ -116,6 +119,7 @@ class ZoomShapeableImageView(context: Context, attrs: AttributeSet) :
                 else if (y + deltaY < -bottom)
                     deltaY = -(y + bottom)
             }
+
             scaleHeight < viewHeight -> {
                 deltaY = 0f
                 if (x + deltaX > 0)
@@ -123,6 +127,7 @@ class ZoomShapeableImageView(context: Context, attrs: AttributeSet) :
                 else if (x + deltaX < -right)
                     deltaX = -(x + right)
             }
+
             else -> {
                 if (x + deltaX > 0)
                     deltaX = -x

@@ -29,8 +29,6 @@ import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionI
 import com.algorand.android.usecase.AccountHistoryUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -42,6 +40,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.File
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountHistoryViewModel @Inject constructor(
@@ -69,7 +69,7 @@ class AccountHistoryViewModel @Inject constructor(
         get() = _csvStatusPreviewFlow
     private val _csvStatusPreviewFlow = MutableStateFlow<CsvStatusPreview?>(null)
 
-    val accountAddress = savedStateHandle.getOrThrow<String>(PUBLIC_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
 
     init {
         startAccountBalanceFlow()
@@ -173,7 +173,7 @@ class AccountHistoryViewModel @Inject constructor(
     }
 
     companion object {
-        const val PUBLIC_KEY = "public_key"
+        const val PUBLIC_KEY: String = "public_key"
         private const val PENDING_TRANSACTION_DELAY = 800L
     }
 }

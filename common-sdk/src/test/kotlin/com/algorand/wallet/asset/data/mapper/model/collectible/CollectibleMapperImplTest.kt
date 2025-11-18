@@ -74,13 +74,7 @@ internal class CollectibleMapperImplTest {
         every { collectibleMediaTypeMapper(CollectibleMediaTypeEntity.IMAGE) } returns CollectibleMediaType.IMAGE
 
         val collectibleResponse = CollectibleResponse(
-            standard = null,
-            mediaType = null,
-            primaryImageUrl = null,
-            title = null,
-            collection = null,
             collectibleMedias = emptyList(),
-            description = null,
             traits = emptyList()
         )
 

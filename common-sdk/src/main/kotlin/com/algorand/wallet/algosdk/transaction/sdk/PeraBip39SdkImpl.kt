@@ -20,7 +20,7 @@ internal class PeraBip39SdkImpl @Inject constructor() : PeraBip39Sdk {
     override fun getSeedFromEntropy(entropy: ByteArray): ByteArray? {
         return try {
             Mnemonics.MnemonicCode(entropy).toSeed()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -28,7 +28,7 @@ internal class PeraBip39SdkImpl @Inject constructor() : PeraBip39Sdk {
     override fun getEntropyFromMnemonic(mnemonic: String): ByteArray? {
         return try {
             Mnemonics.MnemonicCode(mnemonic).toEntropy()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -39,7 +39,7 @@ internal class PeraBip39SdkImpl @Inject constructor() : PeraBip39Sdk {
                 String(charArray)
             }
             mnemonic
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

@@ -22,9 +22,9 @@ import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleLi
 import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleListingViewModelDelegate
 import com.algorand.wallet.account.detail.domain.model.AccountType.NoAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @HiltViewModel
 class SharedCollectibleListingViewModel @Inject constructor(

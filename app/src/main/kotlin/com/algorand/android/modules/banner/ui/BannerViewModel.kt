@@ -13,14 +13,14 @@
 package com.algorand.android.modules.banner.ui
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import com.algorand.android.modules.banner.ui.model.BannerPreview
 import com.algorand.android.modules.banner.ui.usecase.BannerPreviewUseCase
+import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class BannerViewModel @Inject constructor(

@@ -40,13 +40,13 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.text.DecimalFormat
 import javax.inject.Inject
 import kotlin.math.absoluteValue
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 @HiltViewModel
 class AssetHoldingViewModel @Inject constructor(

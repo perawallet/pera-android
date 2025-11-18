@@ -17,12 +17,12 @@ import com.algorand.wallet.account.local.data.mapper.entity.LedgerBleEntityMappe
 import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class LedgerBleAccountRepositoryImpl @Inject constructor(
     private val ledgerBleDao: LedgerBleDao,

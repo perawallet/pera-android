@@ -51,18 +51,21 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
+
                 AccountType.LedgerBle -> {
                     add(AnnotatedString(stringResId = R.string.future_transactions_will_be))
                     add(AnnotatedString(stringResId = R.string.ff_you_already_have_a_ledger))
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
+
                 AccountType.Rekeyed, AccountType.RekeyedAuth -> {
                     add(AnnotatedString(stringResId = R.string.future_transactions_will_be_signed_by))
                     add(AnnotatedString(stringResId = R.string.this_account_will_continue))
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
+
                 AccountType.NoAuth, null -> Unit
             }
         }

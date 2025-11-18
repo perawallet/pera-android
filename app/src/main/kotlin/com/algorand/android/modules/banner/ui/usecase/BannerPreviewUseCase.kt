@@ -19,42 +19,42 @@ import javax.inject.Inject
 
 class BannerPreviewUseCase @Inject constructor() {
 
-    fun getInitialStatePreview() = BannerPreview(
+    fun getInitialStatePreview(): BannerPreview = BannerPreview(
         isLoading = true,
         reloadPageEvent = Event(Unit)
     )
 
-    fun requestLoadHomepage(previousState: BannerPreview) = previousState.copy(
+    fun requestLoadHomepage(previousState: BannerPreview): BannerPreview = previousState.copy(
         isLoading = true,
         reloadPageEvent = Event(Unit)
     )
 
-    fun onPreviousNavButtonClicked(previousState: BannerPreview) = previousState.copy(
+    fun onPreviousNavButtonClicked(previousState: BannerPreview): BannerPreview = previousState.copy(
         webViewGoBackEvent = Event(Unit)
     )
 
-    fun onNextNavButtonClicked(previousState: BannerPreview) = previousState.copy(
+    fun onNextNavButtonClicked(previousState: BannerPreview): BannerPreview = previousState.copy(
         webViewGoForwardEvent = Event(Unit)
     )
 
-    fun onPageRequested(previousState: BannerPreview) = previousState.copy(
+    fun onPageRequested(previousState: BannerPreview): BannerPreview = previousState.copy(
         isLoading = true
     )
 
-    fun onPageFinished(previousState: BannerPreview) = previousState.copy(
+    fun onPageFinished(previousState: BannerPreview): BannerPreview = previousState.copy(
         isLoading = false
     )
 
-    fun onError(previousState: BannerPreview) = previousState.copy(
+    fun onError(previousState: BannerPreview): BannerPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onPageUrlChanged(previousState: BannerPreview) = previousState.copy(
+    fun onPageUrlChanged(previousState: BannerPreview): BannerPreview = previousState.copy(
         pageUrlChangedEvent = Event(Unit)
     )
 
-    fun onHttpError(previousState: BannerPreview) = previousState.copy(
+    fun onHttpError(previousState: BannerPreview): BannerPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )

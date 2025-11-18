@@ -46,7 +46,7 @@ sealed class WalletConnectTransactionListItem : Parcelable, RecyclerListItem {
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is AppPreviewItem && peerMeta == other.peerMeta && message == message
+            return other is AppPreviewItem && peerMeta == other.peerMeta && message == other.message
         }
     }
 

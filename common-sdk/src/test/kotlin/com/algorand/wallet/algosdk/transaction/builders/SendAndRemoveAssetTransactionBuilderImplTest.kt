@@ -7,9 +7,9 @@ import com.algorand.wallet.algosdk.transaction.sdk.model.SendAndRemoveAssetTrans
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 class SendAndRemoveAssetTransactionBuilderImplTest {
 

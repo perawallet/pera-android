@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.register.recoveraccounttypeselection
 
-import GroupChoiceWidget
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +33,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -59,6 +59,7 @@ import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.theme.PeraTheme.typography
+import com.algorand.android.ui.compose.widget.GroupChoiceWidget
 import com.algorand.android.ui.compose.widget.PeraCard
 import com.algorand.android.ui.compose.widget.text.PeraHighlightedGrayText
 import com.algorand.android.ui.compose.widget.text.PeraHighlightedGreenText
@@ -83,7 +84,9 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
         backgroundColor = R.color.primary_background
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val accountRecoveryTypeSelectionViewModel: AccountRecoveryTypeSelectionViewModel by viewModels()
 
@@ -204,7 +207,7 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
             }
         )
         if (showBottomSheet.value) {
-            androidx.compose.material3.ModalBottomSheet(
+            ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet.value = false
                 },

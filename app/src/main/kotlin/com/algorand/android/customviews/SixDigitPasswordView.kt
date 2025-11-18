@@ -67,13 +67,14 @@ class SixDigitPasswordView @JvmOverloads constructor(
                 setImageResource(R.drawable.filled_password_digit)
                 animateEnteringPin(this)
             }
+
             isPasswordFilled() -> listener?.onPinCodeCompleted(password.toString())
         }
     }
 
     fun removeLastDigit() {
         password.removeLastOrNull()
-        if (password.size in 0..PASSWORD_LENGTH - 1) {
+        if (password.size in 0 until PASSWORD_LENGTH) {
             digitViewList[password.size].setImageResource(R.drawable.unfilled_password_digit)
         }
     }

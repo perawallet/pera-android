@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.foundation.security
 
-import javax.inject.Inject
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import javax.inject.Inject
 
 internal class SecurityProvidersFactoryImpl @Inject constructor() : SecurityProvidersFactory {
 

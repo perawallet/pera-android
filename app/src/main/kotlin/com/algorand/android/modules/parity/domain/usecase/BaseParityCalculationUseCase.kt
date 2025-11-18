@@ -13,8 +13,6 @@
 package com.algorand.android.modules.parity.domain.usecase
 
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.models.AssetHolding
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.parity.domain.mapper.ParityValueMapper
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
@@ -26,7 +24,6 @@ abstract class BaseParityCalculationUseCase(
     private val parityValueMapper: ParityValueMapper
 ) : BaseUseCase() {
 
-    abstract fun getAssetParityValue(assetHolding: AssetHolding, assetItem: BaseAssetDetail): ParityValue
     abstract fun getAssetParityValue(assetAmount: BigInteger, assetUsdValue: BigDecimal, assetDecimal: Int): ParityValue
     abstract fun getAlgoParityValue(algoAmount: BigInteger): ParityValue
 

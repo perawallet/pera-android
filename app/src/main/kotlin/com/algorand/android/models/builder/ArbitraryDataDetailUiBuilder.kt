@@ -24,15 +24,9 @@ import javax.inject.Inject
 
 class ArbitraryDataDetailUiBuilder @Inject constructor() {
 
-    fun buildArbitraryDataDetail(
-        arbitraryData: WalletConnectArbitraryData
-    ): WalletConnectArbitraryData {
-        return arbitraryData
-    }
-
     fun buildArbitraryDataRequestInfo(
         arbitraryData: WalletConnectArbitraryData
-    ): ArbitraryDataRequestInfo? {
+    ): ArbitraryDataRequestInfo {
         with(arbitraryData) {
             return ArbitraryDataRequestInfo(
                 fromDisplayedAddress = BaseWalletConnectDisplayedAddress.ShortenedAddress(
@@ -40,7 +34,6 @@ class ArbitraryDataDetailUiBuilder @Inject constructor() {
                     signerAccount?.address.orEmpty()
                 ),
                 fromAccountIconDrawablePreview = signerAccount?.accountIconDrawablePreview,
-                toAccountIconDrawablePreview = null,
                 toDisplayedAddress = BaseWalletConnectDisplayedAddress.FullAddress(
                     arbitraryData.peerMeta?.name.orEmpty()
                 ),
@@ -57,7 +50,7 @@ class ArbitraryDataDetailUiBuilder @Inject constructor() {
 
     fun buildArbitraryDataRequestDataInfo(
         arbitraryData: WalletConnectArbitraryData
-    ): ArbitraryDataRequestDataInfo? {
+    ): ArbitraryDataRequestDataInfo {
         return ArbitraryDataRequestDataInfo(
             data = arbitraryData.message.orEmpty()
         )

@@ -20,12 +20,12 @@ import com.algorand.wallet.block.domain.usecase.ShouldUpdateAccountCache
 import com.algorand.wallet.block.domain.usecase.UpdateLastKnownBlockNumber
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
 import com.algorand.wallet.cache.domain.usecase.UpdateAccountCache
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 internal class AccountCacheManagerImpl @Inject constructor(
     private val cacheManager: LifecycleAwareCacheManager,
@@ -36,7 +36,7 @@ internal class AccountCacheManagerImpl @Inject constructor(
     private val getLocalAccountCountFlow: GetLocalAccountCountFlow
 ) : AccountCacheManager {
 
-    private val _cacheStatusFlow = MutableStateFlow<AccountCacheManagerStatus>(AccountCacheManagerStatus.IDLE)
+    private val _cacheStatusFlow = MutableStateFlow(AccountCacheManagerStatus.IDLE)
     override val cacheStatusFlow = _cacheStatusFlow.asStateFlow()
 
     private val cacheManagerListener = object : LifecycleAwareCacheManager.CacheManagerListener {

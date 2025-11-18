@@ -19,7 +19,7 @@ import com.algorand.android.utils.Event
 data class WatchAccountRegistrationPreview(
     val pasteableAccounts: List<BasePasteableWatchAccountItem>,
     val isActionButtonEnabled: Boolean,
-    @StringRes val errorMessageResId: Int?,
+    @param:StringRes val errorMessageResId: Int?,
     val showAccountAlreadyExistErrorEvent: Event<Unit>?,
     val showAccountIsNotValidErrorEvent: Event<Unit>?,
     val navToNameRegistrationEvent: Event<AccountCreation>?

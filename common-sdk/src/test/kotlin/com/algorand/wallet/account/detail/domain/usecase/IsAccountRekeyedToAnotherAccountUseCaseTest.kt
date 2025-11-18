@@ -14,8 +14,8 @@ package com.algorand.wallet.account.detail.domain.usecase
 
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -27,7 +27,7 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
     private val sut = IsAccountRekeyedToAnotherAccountUseCase(getAccountRekeyAdminAddress)
 
     @Test
-    fun `EXPECT false WHEN admin address is null`() = runTest {
+    fun `EXPECT false WHEN admin address is null`(): TestResult = runTest {
         val address = "some-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns null
 
@@ -37,7 +37,7 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN admin address is blank`() = runTest {
+    fun `EXPECT false WHEN admin address is blank`(): TestResult = runTest {
         val address = "some-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns ""
 
@@ -47,7 +47,7 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN admin address is the same as the given address`() = runTest {
+    fun `EXPECT false WHEN admin address is the same as the given address`(): TestResult = runTest {
         val address = "some-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns address
 
@@ -57,7 +57,7 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN admin address is different`() = runTest {
+    fun `EXPECT true WHEN admin address is different`(): TestResult = runTest {
         val address = "some-address"
         val adminAddress = "other-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns adminAddress

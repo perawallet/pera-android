@@ -13,14 +13,13 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class AssetHolding(
     val assetId: Long,
     val amount: BigInteger,
     val isDeleted: Boolean,
-    val optedInAtRound: Long?,
-    var status: AssetStatus = AssetStatus.OWNED_BY_ACCOUNT
+    val optedInAtRound: Long?
 ) : Parcelable

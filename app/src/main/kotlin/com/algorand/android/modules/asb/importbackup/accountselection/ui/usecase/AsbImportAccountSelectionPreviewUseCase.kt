@@ -38,8 +38,9 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
@@ -107,7 +108,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
     fun updatePreviewWithRestoredAccounts(
         preview: AsbImportAccountSelectionPreview,
         backupProtocolElements: Array<BackupProtocolElement>
-    ) = flow {
+    ): Flow<AsbImportAccountSelectionPreview> = flow {
         emit(preview.copy(isLoadingVisible = true))
         val selectedAccounts = getSelectedAccountAddressList(preview.multipleAccountSelectionList)
         val accountImportMap = selectedAccounts.mapNotNull { address ->
@@ -247,6 +248,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
                     val encryptedPrivateKey = aesPlatformManager.encryptByteArray(safeAccountPrivateKey)
                     AccountCreation.Type.Algo25(encryptedPrivateKey)
                 }
+
                 NO_AUTH_ACCOUNT_TYPE_NAME -> AccountCreation.Type.NoAuth
                 else -> return@mapNotNull null
             }

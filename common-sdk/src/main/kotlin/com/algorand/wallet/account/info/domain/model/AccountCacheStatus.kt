@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.info.domain.model
 
+@Suppress("unused")
 enum class AccountCacheStatus {
     IDLE,
     LOADING,

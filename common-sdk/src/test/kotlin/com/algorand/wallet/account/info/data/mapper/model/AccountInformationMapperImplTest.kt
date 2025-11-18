@@ -151,8 +151,6 @@ class AccountInformationMapperImplTest {
             accountInformation = AccountInformationResponsePayloadResponse(
                 address = "address",
                 amount = "10",
-                participation = null,
-                rekeyAdminAddress = null,
                 allAssetHoldingList = listOf(ASSET_HOLDING_RESPONSE),
                 createdAtRound = 1234,
                 appStateSchemaResponse = APP_STATE_SCHEMA_RESPONSE,

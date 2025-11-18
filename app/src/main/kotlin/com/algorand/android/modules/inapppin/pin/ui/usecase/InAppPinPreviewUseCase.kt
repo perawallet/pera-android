@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.inapppin.pin.ui.usecase
 
-import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase.Companion.defaultLockPenaltyRemainingTimePreference
+import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase.Companion.DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE
 import com.algorand.android.modules.inapppin.pin.ui.mapper.InAppPinPreviewMapper
 import com.algorand.android.modules.inapppin.pin.ui.model.InAppPinPreview
 import com.algorand.android.modules.security.domain.usecase.GetLockAttemptCountUseCase
@@ -20,19 +20,20 @@ import com.algorand.android.modules.security.domain.usecase.GetLockPenaltyRemain
 import com.algorand.android.modules.security.domain.usecase.IsBiometricActiveUseCase
 import com.algorand.android.modules.security.domain.usecase.SetLockAttemptCountUseCase
 import com.algorand.android.modules.security.domain.usecase.SetLockPenaltyRemainingTimeUseCase
-import com.algorand.android.sharedpref.LockAttemptCountLocalSource.Companion.defaultLockAttemptCountPreference
+import com.algorand.android.sharedpref.LockAttemptCountLocalSource.Companion.DEFAULT_LOCK_ATTEMPT_COUNT_PREFERENCE
 import com.algorand.android.usecase.DeleteAllDataUseCase
 import com.algorand.android.usecase.EncryptedPinUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.ONE_SECOND_IN_MILLIS
 import com.algorand.android.utils.getTimeAsMinSecondPair
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
 class InAppPinPreviewUseCase @Inject constructor(
     private val inAppPinPreviewMapper: InAppPinPreviewMapper,
@@ -45,7 +46,7 @@ class InAppPinPreviewUseCase @Inject constructor(
     private val setLockPenaltyRemainingTimeUseCase: SetLockPenaltyRemainingTimeUseCase
 ) {
 
-    fun updatePreviewWithDeletionOfAllData(preview: InAppPinPreview?) = flow {
+    fun updatePreviewWithDeletionOfAllData(preview: InAppPinPreview?): Flow<InAppPinPreview> = flow {
         if (preview == null) return@flow
         deleteAllDataUseCase.deleteAllData()
         clearLockRelatedPreferences()
@@ -62,7 +63,7 @@ class InAppPinPreviewUseCase @Inject constructor(
         return preview.copy(pinPenaltyPreview = pinPenaltyPreview)
     }
 
-    fun updatePreviewWithPenaltyPreview(preview: InAppPinPreview?) = channelFlow {
+    fun updatePreviewWithPenaltyPreview(preview: InAppPinPreview?): Flow<InAppPinPreview> = channelFlow {
         if (preview == null) return@channelFlow
         val pinAttemptCount = getLockAttemptCountUseCase.invoke()
         val remainingTime = calculatePinPenaltyTime(pinAttemptCount)
@@ -78,7 +79,7 @@ class InAppPinPreviewUseCase @Inject constructor(
         send(pinEntryPreview)
     }.flowOn(Dispatchers.IO)
 
-    suspend fun updatePreviewWithEnteredPinCode(preview: InAppPinPreview?, pinCode: String): InAppPinPreview? {
+    fun updatePreviewWithEnteredPinCode(preview: InAppPinPreview?, pinCode: String): InAppPinPreview? {
         if (preview == null) return null
         val isEnteredPinCodeCorrect = encryptedPinUseCase.getEncryptedPin() == pinCode
         val pinAttemptCount = getLockAttemptCountUseCase.invoke()
@@ -99,7 +100,7 @@ class InAppPinPreviewUseCase @Inject constructor(
         return preview.copy(pinEntryPreview = pinEntryPreview)
     }
 
-    suspend fun updatePreviewWithBiometricAuthSucceed(preview: InAppPinPreview?): InAppPinPreview? {
+    fun updatePreviewWithBiometricAuthSucceed(preview: InAppPinPreview?): InAppPinPreview? {
         if (preview == null) return null
 
         clearLockRelatedPreferences()
@@ -108,7 +109,7 @@ class InAppPinPreviewUseCase @Inject constructor(
         return preview.copy(pinEntryPreview = pinEntryPreview)
     }
 
-    fun getInAppPinPreview() = channelFlow {
+    fun getInAppPinPreview(): Flow<InAppPinPreview> = channelFlow {
         val initialPreview = inAppPinPreviewMapper.mapToInAppPinPreview()
         val remainingTime = getLockPenaltyRemainingTimeUseCase.invoke()
         val isPenaltyActive = isPenaltyActive(remainingTime)
@@ -143,10 +144,10 @@ class InAppPinPreviewUseCase @Inject constructor(
             pinPenaltyPreview = pinPenaltyPreview.copy(formattedRemainingPenaltyTime = formattedRemainingPenaltyTime)
             emit(initialPreview.copy(pinPenaltyPreview = pinPenaltyPreview))
         }
-        setLockPenaltyRemainingTimeUseCase.invoke(defaultLockPenaltyRemainingTimePreference)
+        setLockPenaltyRemainingTimeUseCase.invoke(DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE)
     }
 
-    private suspend fun createPinEntryFlow(initialPreview: InAppPinPreview): InAppPinPreview {
+    private fun createPinEntryFlow(initialPreview: InAppPinPreview): InAppPinPreview {
         val isBiometricActive = isBiometricActiveUseCase.invoke()
         val pinEntryPreview = inAppPinPreviewMapper.mapToPinEntryPreview(
             askBiometricAuthEvent = if (isBiometricActive) Event(Unit) else null,
@@ -155,7 +156,7 @@ class InAppPinPreviewUseCase @Inject constructor(
     }
 
     private fun isPenaltyActive(remainingPenaltyTime: Long): Boolean {
-        return remainingPenaltyTime != defaultLockPenaltyRemainingTimePreference
+        return remainingPenaltyTime != DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE
     }
 
     private fun isPinAttemptCountExceed(attemptCount: Int): Boolean {
@@ -166,9 +167,9 @@ class InAppPinPreviewUseCase @Inject constructor(
         return attemptCount / PENALTY_PER_INTERVAL * PENALTY_PER_ATTEMPT
     }
 
-    private suspend fun clearLockRelatedPreferences() {
-        setLockPenaltyRemainingTimeUseCase.invoke(defaultLockPenaltyRemainingTimePreference)
-        setLockAttemptCountUseCase.invoke(defaultLockAttemptCountPreference)
+    private fun clearLockRelatedPreferences() {
+        setLockPenaltyRemainingTimeUseCase.invoke(DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE)
+        setLockAttemptCountUseCase.invoke(DEFAULT_LOCK_ATTEMPT_COUNT_PREFERENCE)
     }
 
     private fun formatPenaltyRemainingTime(remainingTime: Long): String {

@@ -102,7 +102,7 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
         val nameServiceName = nameService?.nameServiceName.orEmpty()
         val isAccountMatchedNfDomain = nameServiceName.isNotBlank()
         return when {
-            isAccountRenamed -> customAccountName.orEmpty()
+            isAccountRenamed -> customAccountName
             isAccountMatchedNfDomain -> nameServiceName
             else -> address.toShortenedAddress()
         }
@@ -129,13 +129,14 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
     }
 
     private fun getAccountTypeName(type: AccountType?): String? {
-        return when (type) {
+        val stringRes = when (type) {
             AccountType.LedgerBle -> R.string.ledger_account
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.string.rekeyed_account
             AccountType.NoAuth -> R.string.watch_account
             AccountType.HdKey -> R.string.hd_account
             else -> null
-        }?.run { resources.getString(this) }
+        }
+        return stringRes?.let { resources.getString(it) }
     }
 
     private fun getAccountDisplayNameWithAccountAddressOnly(address: String): AccountDisplayName {

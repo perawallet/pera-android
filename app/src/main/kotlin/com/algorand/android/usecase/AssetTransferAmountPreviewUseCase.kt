@@ -118,15 +118,19 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
             is AssetTransferAmountValidationPreviewResult.AmountIsValidResult -> {
                 preview.copy(amountIsValidEvent = Event(amountValidationPreviewResult.selectedAmount))
             }
+
             is AssetTransferAmountValidationPreviewResult.AmountIsMoreThanBalanceResult -> {
                 preview.copy(amountIsMoreThanBalanceEvent = Event(Unit))
             }
+
             is AssetTransferAmountValidationPreviewResult.InsufficientBalanceToPayFeeResult -> {
                 preview.copy(insufficientBalanceToPayFeeEvent = Event(Unit))
             }
+
             is AssetTransferAmountValidationPreviewResult.MinimumBalanceIsViolatedResult -> {
                 preview.copy(minimumBalanceIsViolatedResultEvent = Event(preview.senderAddress))
             }
+
             else -> preview
         }
     }
@@ -189,17 +193,21 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
                 isAmountMoreThanBalance == true -> {
                     AssetTransferAmountValidationPreviewResult.AmountIsMoreThanBalanceResult
                 }
+
                 isBalanceInsufficientForPayingFee == true -> {
                     AssetTransferAmountValidationPreviewResult.InsufficientBalanceToPayFeeResult
                 }
+
                 isMinimumBalanceViolated == true -> {
                     AssetTransferAmountValidationPreviewResult.MinimumBalanceIsViolatedResult
                 }
+
                 isAmountMoreThanBalance == false &&
-                    isBalanceInsufficientForPayingFee == false &&
-                    isMinimumBalanceViolated == false -> {
+                        isBalanceInsufficientForPayingFee == false &&
+                        isMinimumBalanceViolated == false -> {
                     AssetTransferAmountValidationPreviewResult.AmountIsValidResult(selectedAmount)
                 }
+
                 else -> null
             }
         }

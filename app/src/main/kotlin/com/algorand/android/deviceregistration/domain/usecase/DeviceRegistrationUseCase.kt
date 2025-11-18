@@ -14,7 +14,6 @@ package com.algorand.android.deviceregistration.domain.usecase
 
 import com.algorand.android.utils.DataResource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.net.HttpURLConnection
 import javax.inject.Inject

@@ -12,16 +12,18 @@
 
 package com.algorand.android.nft.ui.nftreceiveaccountselection
 
-import javax.inject.Inject
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.nft.domain.usecase.CollectibleReceiverAccountSelectionPreviewUseCase
+import com.algorand.android.nft.ui.model.CollectibleReceiverAccountSelectionPreview
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 @HiltViewModel
 class CollectibleReceiverAccountSelectionViewModel @Inject constructor(
     private val collectibleReceiverAccountSelectionPreviewUseCase: CollectibleReceiverAccountSelectionPreviewUseCase
 ) : BaseViewModel() {
 
-    val collectibleReceiverAccountSelectionPreviewFlow
+    val collectibleReceiverAccountSelectionPreviewFlow: Flow<CollectibleReceiverAccountSelectionPreview>
         get() = collectibleReceiverAccountSelectionPreviewUseCase.getAccountListItems()
 }

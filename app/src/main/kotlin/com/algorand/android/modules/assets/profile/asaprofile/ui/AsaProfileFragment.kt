@@ -32,7 +32,7 @@ import java.math.BigInteger
 @AndroidEntryPoint
 class AsaProfileFragment : BaseAsaProfileFragment() {
 
-    override val asaProfileViewModel by viewModels<AsaProfileViewModel>()
+    override val asaProfileViewModel: AsaProfileViewModel by viewModels<AsaProfileViewModel>()
 
     override fun onStart() {
         super.onStart()

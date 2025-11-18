@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -59,31 +60,6 @@
         <action
             android:id="@+id/action_discoverDetailFragment_to_meldNavigation"
             app:destination="@id/meldNavigation" />
-        <action
-            android:id="@+id/action_discoverDetailFragment_to_swapAccountSelectionNavigation"
-            app:destination="@id/swapAccountSelectionNavigation">
-            <argument
-                android:name="fromAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-            <argument
-                android:name="toAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-        </action>
-        <action
-            android:id="@+id/action_discoverDetailFragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation">
-            <argument
-                android:name="fromAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-            <argument
-                android:name="toAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
-        </action>
-
         <action
             android:id="@+id/action_discoverDetailFragment_to_swapV2Navigation"
             app:destination="@id/swapV2Navigation">

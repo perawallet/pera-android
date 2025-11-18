@@ -19,13 +19,13 @@ import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionPreview
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.usecase.RekeyLedgerAccountSelectionPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RekeyToLedgerAccountSelectionViewModel @Inject constructor(

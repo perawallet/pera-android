@@ -19,9 +19,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentContactsBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.User
@@ -42,7 +42,7 @@ class ContactsFragment : DaggerBaseFragment(R.layout.fragment_contacts) {
         titleResId = R.string.contacts
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )

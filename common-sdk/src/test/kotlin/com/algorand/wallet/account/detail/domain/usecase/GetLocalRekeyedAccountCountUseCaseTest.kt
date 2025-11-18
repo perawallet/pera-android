@@ -17,6 +17,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -28,13 +29,18 @@ class GetLocalRekeyedAccountCountUseCaseTest {
     private val sut = GetLocalRekeyedAccountCountUseCase(getLocalAccountsAddresses, accountInformationRepository)
 
     @Test
-    fun `EXPECT rekeyed account count WHEN invoke is called`() = runTest {
+    fun `EXPECT rekeyed account count WHEN invoke is called`(): TestResult = runTest {
         val authAddress = "authAddress"
         val localAddresses = listOf("address1", "address2")
         val expectedCount = 2
 
         coEvery { getLocalAccountsAddresses() } returns localAddresses
-        coEvery { accountInformationRepository.getFilteredRekeyedAccountCount(authAddress, localAddresses) } returns expectedCount
+        coEvery {
+            accountInformationRepository.getFilteredRekeyedAccountCount(
+                authAddress,
+                localAddresses
+            )
+        } returns expectedCount
 
         val result = sut.invoke(authAddress)
 

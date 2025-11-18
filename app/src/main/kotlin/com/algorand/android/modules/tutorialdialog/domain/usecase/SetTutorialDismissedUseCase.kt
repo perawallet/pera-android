@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class SetTutorialDismissedUseCase @Inject constructor(
-    @Named(TutorialRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(TutorialRepository.REPOSITORY_INJECTION_NAME)
     private val tutorialRepository: TutorialRepository
 ) {
 

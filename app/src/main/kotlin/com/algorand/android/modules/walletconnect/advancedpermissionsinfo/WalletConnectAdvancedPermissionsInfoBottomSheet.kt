@@ -15,7 +15,6 @@ package com.algorand.android.modules.walletconnect.advancedpermissionsinfo
 import android.widget.TextView
 import com.algorand.android.R
 import com.algorand.android.modules.informationbottomsheet.ui.BaseInformationBottomSheet
-import com.algorand.android.utils.browser.openWalletConnectAdvancedPermissionsUrl
 import com.google.android.material.button.MaterialButton
 
 class WalletConnectAdvancedPermissionsInfoBottomSheet : BaseInformationBottomSheet() {
@@ -32,9 +31,5 @@ class WalletConnectAdvancedPermissionsInfoBottomSheet : BaseInformationBottomShe
             setText(R.string.close)
             setOnClickListener { navBack() }
         }
-    }
-
-    private fun descriptionUrlClicked() {
-        context?.openWalletConnectAdvancedPermissionsUrl()
     }
 }

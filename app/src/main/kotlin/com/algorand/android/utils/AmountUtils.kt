@@ -23,7 +23,7 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
-const val TWO_DECIMALS = 2
+const val TWO_DECIMALS: Int = 2
 
 fun getNumberFormat(
     decimals: Int,
@@ -81,19 +81,6 @@ fun BigInteger?.formatAmount(
 ): String {
     return (this ?: BigInteger.ZERO).toBigDecimal(decimals)
         .formatAmount(decimals, isDecimalFixed, isCompact, isFiat = isFiat)
-}
-
-fun BigInteger?.formatAmountByCollectibleFractionalDigit(
-    decimals: Int,
-    isDecimalFixed: Boolean = false,
-    isCompact: Boolean = false
-): String {
-    return (this ?: BigInteger.ZERO).toBigDecimal(decimals).formatAmount(
-        decimals = decimals,
-        isDecimalFixed = isDecimalFixed,
-        isCompact = isCompact,
-        fractionalDigit = CollectibleFractionalDigit
-    )
 }
 
 fun BigDecimal?.formatAmountByCollectibleFractionalDigit(

@@ -20,7 +20,7 @@ data class PendingTransactionDTO(
     val detail: PendingTransactionDetailDTO?
 ) {
 
-    fun isAlgorand() = detail?.assetId == null
+    private fun isAlgorand(): Boolean = detail?.assetId == null
     fun getAssetId(): Long? = if (isAlgorand()) {
         ALGO_ID
     } else {

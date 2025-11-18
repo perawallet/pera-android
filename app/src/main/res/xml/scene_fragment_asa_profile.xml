@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -66,11 +67,11 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </ConstraintOverride>
+        </Constraint>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
             <Layout
@@ -103,11 +104,11 @@
             android:id="@id/loadingLayout"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </ConstraintOverride>
+        </Constraint>
 
     </ConstraintSet>
 
@@ -153,11 +154,11 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </ConstraintOverride>
+        </Constraint>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
             <Layout
@@ -190,11 +191,11 @@
             android:id="@id/loadingLayout"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </ConstraintOverride>
+        </Constraint>
 
     </ConstraintSet>
 

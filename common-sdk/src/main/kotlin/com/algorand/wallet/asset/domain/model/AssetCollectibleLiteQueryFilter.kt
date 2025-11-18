@@ -26,6 +26,5 @@ sealed interface AssetCollectibleLiteQueryFilter {
 
     data class ExcludedAssetIds(val excludedAssetIds: List<Long>) : AssetCollectibleLiteQueryFilter {
         constructor(excludedAssetId: Long) : this(listOf(excludedAssetId))
-        constructor(vararg excludedAssetIds: Long) : this(excludedAssetIds.toList())
     }
 }

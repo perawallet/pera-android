@@ -25,6 +25,6 @@ interface AlgorandSDKUtils {
     fun generateAccountAddressFromPublicKey(addressBase64: String): AlgorandAddressDTO?
 
     companion object {
-        const val INJECTION_NAME = "algorandSDKUtilsInjectionName"
+        const val INJECTION_NAME: String = "algorandSDKUtilsInjectionName"
     }
 }

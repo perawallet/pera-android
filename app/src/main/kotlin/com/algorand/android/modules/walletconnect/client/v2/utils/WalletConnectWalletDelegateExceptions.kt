@@ -20,12 +20,6 @@ sealed class WalletConnectWalletDelegateExceptions(message: String?) : Exception
 
         abstract val sessionTopic: String
 
-        class MissingPeerMetaDataExceptionInRequest(
-            override val sessionTopic: String,
-            override val message: String?,
-            val requestId: Long
-        ) : MissingPeerMetaDataException(message)
-
         class MissingPeerMetaDataExceptionInSessionSettle(
             override val sessionTopic: String,
             override val message: String?

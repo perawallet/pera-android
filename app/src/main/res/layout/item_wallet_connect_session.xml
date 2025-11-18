@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -81,7 +82,6 @@
         app:layout_goneMarginStart="0dp"
         tools:text="24 April at 7:35 PM" />
 
-
     <LinearLayout
         android:id="@+id/connectionsIndicatorLinearLayout"
         android:layout_width="wrap_content"
@@ -93,7 +93,6 @@
         app:layout_constraintStart_toStartOf="@id/dateTextView"
         app:layout_constraintTop_toBottomOf="@id/dateTextView"
         app:layout_goneMarginTop="@dimen/spacing_xsmall" />
-
 
     <TextView
         android:id="@+id/connectedTextView"

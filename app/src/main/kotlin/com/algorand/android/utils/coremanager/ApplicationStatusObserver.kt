@@ -14,9 +14,9 @@ package com.algorand.android.utils.coremanager
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Singleton
 class ApplicationStatusObserver @Inject constructor() : DefaultLifecycleObserver {

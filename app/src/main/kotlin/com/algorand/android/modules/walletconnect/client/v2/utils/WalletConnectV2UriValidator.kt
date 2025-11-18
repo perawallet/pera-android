@@ -46,7 +46,7 @@ object WalletConnectV2UriValidator {
 
         val pairUri: URI = try {
             URI(properUriString)
-        } catch (e: URISyntaxException) {
+        } catch (_: URISyntaxException) {
             return null
         }
 

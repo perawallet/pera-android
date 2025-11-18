@@ -25,7 +25,7 @@ import com.algorand.android.modules.basewebview.ui.BaseWebViewFragment
 import com.algorand.android.utils.sendMailRequestUrl
 
 abstract class BasePeraWebViewFragment(
-    @LayoutRes private val layoutResId: Int,
+    @param:LayoutRes private val layoutResId: Int,
 ) : BaseWebViewFragment(layoutResId) {
 
     abstract val binding: ViewBinding
@@ -34,43 +34,44 @@ abstract class BasePeraWebViewFragment(
 
     abstract val basePeraWebViewViewModel: BasePeraWebViewViewModel
 
-    protected val peraWebViewClientListener = object : PeraWebViewClient.PeraWebViewClientListener {
-        override fun onWalletConnectUrlDetected(url: String) {
-            handleWalletConnectUrl(url)
-        }
+    protected val peraWebViewClientListener: PeraWebViewClient.PeraWebViewClientListener =
+        object : PeraWebViewClient.PeraWebViewClientListener {
+            override fun onWalletConnectUrlDetected(url: String) {
+                handleWalletConnectUrl(url)
+            }
 
-        override fun onEmailRequested(url: String) {
-            handleMailRequestUrl(url)
-        }
+            override fun onEmailRequested(url: String) {
+                handleMailRequestUrl(url)
+            }
 
-        override fun onPageRequestedShouldOverrideUrlLoading(url: String): Boolean {
-            return basePeraWebViewViewModel.onPageRequestedShouldOverrideUrlLoading(url)
-        }
+            override fun onPageRequestedShouldOverrideUrlLoading(url: String): Boolean {
+                return basePeraWebViewViewModel.onPageRequestedShouldOverrideUrlLoading(url)
+            }
 
-        override fun onPageStarted() {
-            basePeraWebViewViewModel.onPageStarted()
-        }
+            override fun onPageStarted() {
+                basePeraWebViewViewModel.onPageStarted()
+            }
 
-        override fun onPageFinished(title: String?, url: String?) {
-            basePeraWebViewViewModel.onPageFinished(title, url)
-        }
+            override fun onPageFinished(title: String?, url: String?) {
+                basePeraWebViewViewModel.onPageFinished(title, url)
+            }
 
-        override fun onError() {
-            basePeraWebViewViewModel.onError()
-        }
+            override fun onError() {
+                basePeraWebViewViewModel.onError()
+            }
 
-        override fun onHttpError() {
-            basePeraWebViewViewModel.onHttpError()
-        }
+            override fun onHttpError() {
+                basePeraWebViewViewModel.onHttpError()
+            }
 
-        override fun onPageUrlChanged() {
-            basePeraWebViewViewModel.onPageUrlChanged()
-        }
+            override fun onPageUrlChanged() {
+                basePeraWebViewViewModel.onPageUrlChanged()
+            }
 
-        override fun onRenderProcessGone() {
-            basePeraWebViewViewModel.destroyWebView()
+            override fun onRenderProcessGone() {
+                basePeraWebViewViewModel.destroyWebView()
+            }
         }
-    }
 
     open fun onSendMailRequestFailed() {}
 

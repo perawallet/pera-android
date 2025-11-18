@@ -30,6 +30,6 @@ interface TransactionDetailRepository {
     suspend fun clearInnerTransactionStackCache()
 
     companion object {
-        const val TRANSACTION_DETAIL_REPOSITORY_INJECTION_NAME = "transactionDetailRepositoryInjection"
+        const val TRANSACTION_DETAIL_REPOSITORY_INJECTION_NAME: String = "transactionDetailRepositoryInjection"
     }
 }

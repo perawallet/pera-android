@@ -23,11 +23,11 @@ import com.algorand.wallet.utils.date.RelativeTimeDifference
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class PasskeysViewModel @Inject constructor(

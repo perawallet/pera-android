@@ -25,7 +25,7 @@ class BidaliIntroPreviewUseCase @Inject constructor(
     private val isOnMainnetUseCase: IsOnMainnetUseCase
 ) {
 
-    fun getInitialStatePreview() = BidaliIntroPreview(
+    fun getInitialStatePreview(): BidaliIntroPreview = BidaliIntroPreview(
         navigateEvent = null,
         showNotAvailableErrorEvent = null
     )

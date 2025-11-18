@@ -20,6 +20,6 @@ interface TransactionConfirmationRepository {
     suspend fun waitForConfirmation(txnId: String, maxRoundToWait: Int): Result<TransactionConfirmationDTO>
 
     companion object {
-        const val INJECTION_NAME = "transactionConfirmationRepositoryInjectionName"
+        const val INJECTION_NAME: String = "transactionConfirmationRepositoryInjectionName"
     }
 }

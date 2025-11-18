@@ -22,11 +22,12 @@ import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.junit.Assert.assertEquals
-import org.junit.Test
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class Algo25AccountRepositoryImplTest {
 
@@ -42,7 +43,7 @@ class Algo25AccountRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`() = runTest {
+    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`(): TestResult = runTest {
         val entitiesFlow = MutableStateFlow(
             listOf(
                 Algo25Entity("address1", byteArrayOf()),
@@ -65,7 +66,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts WHEN getAll is invoked`() = runTest {
+    fun `EXPECT all accounts WHEN getAll is invoked`(): TestResult = runTest {
         val entities = listOf(
             Algo25Entity("encryptedAddress1", "encryptedSecretKey1".toByteArray()),
             Algo25Entity("encryptedAddress2", "encryptedSecretKey2".toByteArray())
@@ -87,7 +88,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account WHEN getAccount is invoked`() = runTest {
+    fun `EXPECT account WHEN getAccount is invoked`(): TestResult = runTest {
         val entity = Algo25Entity("address", "encryptedSecretKey".toByteArray())
         coEvery { algo25Dao.get("address") } returns entity
         coEvery { algo25Mapper(entity) } returns LocalAccount.Algo25("address")
@@ -100,7 +101,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`() = runTest {
+    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`(): TestResult = runTest {
         coEvery { algo25Dao.get("non_existent_address") } returns null
 
         val result = sut.getAccount("non_existent_address")
@@ -110,7 +111,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`() = runTest {
+    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`(): TestResult = runTest {
         val expectedCountFlow = MutableStateFlow(5)
         coEvery { algo25Dao.getTableSizeAsFlow() } returns expectedCountFlow
 
@@ -121,7 +122,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+    fun `EXPECT account count WHEN getAccountCount is invoked`(): TestResult = runTest {
         val expectedCount = 3
         coEvery { algo25Dao.getTableSize() } returns expectedCount
 
@@ -131,7 +132,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
+    fun `EXPECT all addresses WHEN getAllAddresses is invoked`(): TestResult = runTest {
         val addresses = listOf("address1", "address2", "address3")
         coEvery { algo25Dao.getAllAddresses() } returns addresses
 
@@ -141,7 +142,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
+    fun `EXPECT account to be added to database WHEN addAccount is invoked`(): TestResult = runTest {
         val privateKey = byteArrayOf(1, 2, 3)
         val account = LocalAccount.Algo25("address")
         val algo25Entity = Algo25Entity("address", byteArrayOf())
@@ -155,7 +156,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`() = runTest {
+    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`(): TestResult = runTest {
         val address = "address"
         coEvery { algo25Dao.delete(address) } returns Unit
 
@@ -166,7 +167,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`() = runTest {
+    fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`(): TestResult = runTest {
         coEvery { algo25Dao.clearAll() } returns Unit
 
         val result = sut.deleteAllAccounts()
@@ -176,7 +177,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT secret key WHEN getSecretKey is invoked`() = runTest {
+    fun `EXPECT secret key WHEN getSecretKey is invoked`(): TestResult = runTest {
         val encryptedSK = "encryptedSecretKey".toByteArray()
         val decryptedSK = byteArrayOf(1, 2, 3)
         coEvery { algo25Dao.get("address") } returns Algo25Entity("address", encryptedSK)
@@ -188,7 +189,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getSecretKey is invoked with a non-existent address`() = runTest {
+    fun `EXPECT null WHEN getSecretKey is invoked with a non-existent address`(): TestResult = runTest {
         coEvery { algo25Dao.get("non_existent_address") } returns null
 
         val result = sut.getSecretKey("non_existent_address")

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -59,37 +60,37 @@
         android:id="@+id/toolbarTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_xxsmall"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:layout_marginTop="@dimen/spacing_xxsmall"
+        android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         app:autoSizeMaxTextSize="@dimen/text_size_15"
         app:autoSizeMinTextSize="@dimen/text_size_11"
         app:autoSizeTextType="uniform"
-        app:layout_goneMarginBottom="@dimen/spacing_xxsmall"
-        android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/toolbarSubtitleTextView"
         app:layout_constraintEnd_toEndOf="@id/parentEndGuideline"
         app:layout_constraintStart_toStartOf="@id/parentStartGuideline"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginBottom="@dimen/spacing_xxsmall"
         tools:text="@tools:sample/lorem[25]" />
 
     <TextView
         android:id="@+id/toolbarSubtitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/spacing_xxsmall"
         android:drawablePadding="@dimen/spacing_xxsmall"
         android:ellipsize="end"
         android:gravity="center"
-        android:layout_marginBottom="@dimen/spacing_xxsmall"
         android:maxLines="1"
-        app:autoSizeMaxTextSize="@dimen/text_size_15"
-        app:autoSizeMinTextSize="@dimen/text_size_11"
-        app:autoSizeTextType="uniform"
         android:textAppearance="@style/TextAppearance.Footnote.Sans"
         android:textColor="@color/secondary_text_color"
         android:visibility="gone"
+        app:autoSizeMaxTextSize="@dimen/text_size_15"
+        app:autoSizeMinTextSize="@dimen/text_size_11"
+        app:autoSizeTextType="uniform"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/parentEndGuideline"

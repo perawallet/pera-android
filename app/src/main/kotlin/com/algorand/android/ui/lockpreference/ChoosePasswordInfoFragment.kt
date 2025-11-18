@@ -48,7 +48,7 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
     private val toolbarConfiguration =
         ToolbarConfiguration(backgroundColor = R.color.tertiary_background)
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val args by navArgs<ChoosePasswordInfoFragmentArgs>()
@@ -71,7 +71,7 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
     }
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_locked),
             contentDescription = stringResource(id = R.string.check),
@@ -80,14 +80,14 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.increase_your_security)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier): Unit =
         PeraBodyText(
             text = stringResource(id = R.string.this_6_digit_pin),
             modifier = modifier
@@ -95,7 +95,7 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { navigateToChoosePasswordFragment() },
             modifier = modifier,
@@ -103,7 +103,7 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun SecondaryButton(modifier: Modifier) =
+    override fun SecondaryButton(modifier: Modifier): Unit =
         PeraSecondaryButton(
             onClick = { onCancelClick() },
             modifier = modifier,

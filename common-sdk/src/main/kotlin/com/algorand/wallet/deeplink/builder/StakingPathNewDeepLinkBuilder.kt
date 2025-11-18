@@ -18,7 +18,7 @@ import com.algorand.wallet.deeplink.model.DeepLinkPayload
 internal class StakingPathNewDeepLinkBuilder : NewDeepLinkBuilder {
 
 
-    override fun createDeepLink(payload: DeepLinkPayload): DeepLink? {
+    override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return DeepLink.Staking(payload.path)
     }
 }

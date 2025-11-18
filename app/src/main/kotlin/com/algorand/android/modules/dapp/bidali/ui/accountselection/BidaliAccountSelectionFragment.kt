@@ -27,14 +27,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class BidaliAccountSelectionFragment : BaseAccountSelectionFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         startIconClick = ::navBack,
         startIconResId = R.drawable.ic_close,
         titleResId = R.string.buy_gift_cards_with_bidali,
         titleColor = R.color.text_main
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val bidaliAccountSelectionPreviewCollector: suspend (BidaliAccountSelectionPreview) -> Unit = { preview ->
         with(preview) {

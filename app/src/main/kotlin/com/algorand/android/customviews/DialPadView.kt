@@ -15,7 +15,6 @@ package com.algorand.android.customviews
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.use
 import androidx.core.view.children
@@ -81,8 +80,8 @@ class DialPadView @JvmOverloads constructor(
     private fun setButtonSize(size: Int) {
         applyAllViews { view ->
             with(view) {
-                (layoutParams as ViewGroup.LayoutParams).height = size
-                (layoutParams as ViewGroup.LayoutParams).width = size
+                (layoutParams as LayoutParams).height = size
+                (layoutParams as LayoutParams).width = size
             }
         }
     }

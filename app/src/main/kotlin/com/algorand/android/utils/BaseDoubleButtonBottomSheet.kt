@@ -68,6 +68,6 @@ abstract class BaseDoubleButtonBottomSheet : BaseBottomSheet(
     }
 
     companion object {
-        const val RESULT_KEY = "result_key"
+        const val RESULT_KEY: String = "result_key"
     }
 }

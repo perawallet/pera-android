@@ -52,7 +52,7 @@ class BaseAppCallTransactionDetailUiBuilder @Inject constructor() :
         }
     }
 
-    override fun buildTransactionRequestExtraFields(txn: BaseAppCallTransaction): TransactionRequestExtraFields? {
+    override fun buildTransactionRequestExtraFields(txn: BaseAppCallTransaction): TransactionRequestExtraFields {
         return with(txn) {
             TransactionRequestExtraFields(
                 rejectVersion = rejectVersion,

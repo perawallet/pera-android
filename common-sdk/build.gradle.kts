@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.room)
     alias(libs.plugins.ksp)
-    id("kotlin-parcelize")
-    id("dagger.hilt.android.plugin")
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.room.module)
+    alias(libs.plugins.hilt)
 }
 
 apply(from = "./test-coverage/kover.gradle")
@@ -92,4 +92,8 @@ dependencies {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+ksp {
+    arg("room.verifySchema", "false")
 }

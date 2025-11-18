@@ -28,7 +28,7 @@ class CustomAccountInfoEntityMapperImplTest {
     }
 
     @Test
-    fun  `EXPECT correct entity WHEN domain model has valid data`() {
+    fun `EXPECT correct entity WHEN domain model has valid data`() {
         val customAccountInfo = CustomAccountInfo(
             address = "TESTADDRESS123456789",
             customName = "Test Account",

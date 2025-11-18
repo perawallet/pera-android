@@ -18,11 +18,11 @@ import com.algorand.android.nft.ui.nftfilters.model.CollectibleFiltersPreview
 import com.algorand.android.nft.ui.nftfilters.usecase.CollectibleFiltersPreviewUseCase
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CollectibleFiltersViewModel @Inject constructor(
@@ -30,7 +30,8 @@ class CollectibleFiltersViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _collectibleFiltersPreviewFlow = MutableStateFlow<CollectibleFiltersPreview?>(null)
-    val collectibleFiltersPreviewFlow get() = _collectibleFiltersPreviewFlow
+    val collectibleFiltersPreviewFlow: MutableStateFlow<CollectibleFiltersPreview?>
+        get() = _collectibleFiltersPreviewFlow
 
     init {
         initCollectibleFiltersPreviewFlow()

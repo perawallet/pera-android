@@ -44,7 +44,8 @@ class LockFragment : DaggerBaseFragment(R.layout.fragment_lock) {
 
     private val statusBarConfiguration = StatusBarConfiguration(backgroundColor = R.color.tertiary_background)
 
-    override val fragmentConfiguration = FragmentConfiguration(statusBarConfiguration = statusBarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(statusBarConfiguration = statusBarConfiguration)
 
     private val lockViewModel: LockViewModel by viewModels()
 

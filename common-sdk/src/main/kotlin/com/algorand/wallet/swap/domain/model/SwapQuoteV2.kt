@@ -15,9 +15,9 @@ package com.algorand.wallet.swap.domain.model
 import android.os.Parcelable
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlinx.parcelize.Parcelize
 
 // TODO rename this when legacy swap quotes are removed
 @Parcelize

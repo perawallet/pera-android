@@ -13,7 +13,7 @@
 package com.algorand.android.tooltip.data.repository
 
 import com.algorand.android.tooltip.data.local.TransactionDetailCopyAddressTooltipLocalSource
-import com.algorand.android.tooltip.data.local.TransactionDetailCopyAddressTooltipLocalSource.Companion.defaultTransactionDetailTooltipPreference
+import com.algorand.android.tooltip.data.local.TransactionDetailCopyAddressTooltipLocalSource.Companion.DEFAULT_TRANSACTION_DETAIL_TOOLTIP_PREFERENCE
 import com.algorand.android.tooltip.domain.repository.TooltipDisplayPreferenceRepository
 
 class TooltipDisplayPreferenceRepositoryImpl(
@@ -21,7 +21,7 @@ class TooltipDisplayPreferenceRepositoryImpl(
 ) : TooltipDisplayPreferenceRepository {
 
     override fun isTransactionDetailCopyAddressTipShown(): Boolean {
-        return transactionDetailCopyAddressLocalSource.getData(defaultTransactionDetailTooltipPreference)
+        return transactionDetailCopyAddressLocalSource.getData(DEFAULT_TRANSACTION_DETAIL_TOOLTIP_PREFERENCE)
     }
 
     override fun setTransactionDetailCopyAddressTipPreference(isShown: Boolean) {

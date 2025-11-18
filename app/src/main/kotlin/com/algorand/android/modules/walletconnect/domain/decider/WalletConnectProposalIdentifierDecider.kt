@@ -31,6 +31,7 @@ class WalletConnectProposalIdentifierDecider @Inject constructor(
             WalletConnectVersionIdentifier.VERSION_1 -> {
                 walletConnectV1ProposalIdentifierMapper.mapToProposalIdentifier(proposalIdentifier.toLong())
             }
+
             WalletConnectVersionIdentifier.VERSION_2 -> {
                 walletConnectV2ProposalIdentifierMapper.mapToProposalIdentifier(proposalIdentifier)
             }

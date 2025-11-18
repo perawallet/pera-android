@@ -18,11 +18,11 @@ import com.algorand.android.modules.inapppin.pin.ui.model.InAppPinPreview
 import com.algorand.android.modules.inapppin.pin.ui.usecase.InAppPinPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 @HiltViewModel
 class InAppPinViewModel @Inject constructor(

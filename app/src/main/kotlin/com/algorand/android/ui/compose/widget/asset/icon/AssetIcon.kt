@@ -60,7 +60,7 @@ sealed interface AssetIconDrawable {
     data object AlgoDrawable : AssetIconDrawable
     data class AssetDrawable(private val url: String, val unitName: String?) : AssetIconDrawable {
 
-        fun isUrlValid() = url.isNotBlank()
+        fun isUrlValid(): Boolean = url.isNotBlank()
 
         fun getImageUrl(containerWidthPx: Int): String {
             return PrismUrlBuilder.create(url)

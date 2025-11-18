@@ -25,20 +25,21 @@ import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.utils.analytics.logScreen
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.toShortenedAddress
 import com.google.firebase.analytics.FirebaseAnalytics
 
-abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(layoutResId) {
+abstract class BaseFragment(
+    @param:LayoutRes private val layoutResId: Int
+) : Fragment(layoutResId) {
 
     protected val firebaseAnalytics: FirebaseAnalytics by lazy {
         FirebaseAnalytics.getInstance(requireContext())
     }
     abstract val fragmentConfiguration: FragmentConfiguration
 
-    protected val fragmentTag: String = this::class.simpleName.orEmpty()
+    private val fragmentTag: String = this::class.simpleName.orEmpty()
     protected val baseActivityTag: String
         get() = (activity as? BaseActivity)?.getTag().orEmpty()
 
@@ -92,7 +93,7 @@ abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(
         }
     }
 
-    protected fun showTopToast(title: String? = null, description: String? = null) {
+    private fun showTopToast(title: String? = null, description: String? = null) {
         (activity as? BaseActivity)?.showTopToast(title, description)
     }
 
@@ -130,13 +131,6 @@ abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(
         tag: String = fragmentTag
     ) {
         (activity as? MainActivity)?.showAlertSuccess(title, successMessage, tag)
-    }
-
-    fun showForegroundNotification(
-        notificationMetadata: NotificationMetadata,
-        tag: String = fragmentTag
-    ) {
-        (activity as? MainActivity)?.showForegroundNotification(notificationMetadata, tag)
     }
 
     fun showMaxAccountLimitExceededError() {

@@ -21,7 +21,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class NotificationStatusUseCase @Inject constructor(
-    @Named(NotificationStatusRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(NotificationStatusRepository.REPOSITORY_INJECTION_NAME)
     private val notificationStatusRepository: NotificationStatusRepository,
     private val deviceIdUseCase: DeviceIdUseCase,
     private val lastSeenNotificationDTOMapper: LastSeenNotificationDTOMapper

@@ -17,7 +17,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
@@ -38,14 +37,6 @@ open class BaseResultPreviewUseCase(
         )
     }
 
-    protected fun createSingularTitleItem(
-        @StringRes titleTextResId: Int
-    ): ResultListItem.TitleItem.Singular {
-        return resultListItemMapper.mapToSingularTitleItem(
-            titleTextResId = titleTextResId
-        )
-    }
-
     protected fun createPluralTitleItem(
         @PluralsRes titleTextResId: Int,
         quantity: Int
@@ -53,16 +44,6 @@ open class BaseResultPreviewUseCase(
         return resultListItemMapper.mapToPluralTitleItem(
             titleTextResId = titleTextResId,
             quantity = quantity
-        )
-    }
-
-    protected fun createSingularDescriptionItem(
-        annotatedString: AnnotatedString,
-        isClickable: Boolean
-    ): ResultListItem.DescriptionItem.Singular {
-        return resultListItemMapper.mapToSingularDescriptionItem(
-            annotatedString = annotatedString,
-            isClickable = isClickable
         )
     }
 

@@ -18,13 +18,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.algorand.android.R
 import com.algorand.android.modules.accountsorting.domain.usecase.GetAssetCollectibleLiteSortType
-import com.algorand.android.ui.asset.remove.view.RemoveAssetsViewModel.ViewState
 import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem
 import com.algorand.android.ui.asset.remove.model.RemoveAssetHeaderItem
 import com.algorand.android.ui.asset.remove.model.RemoveAssetHeaderItem.DescriptionViewItem
 import com.algorand.android.ui.asset.remove.model.RemoveAssetHeaderItem.SearchViewItem
 import com.algorand.android.ui.asset.remove.model.RemoveAssetHeaderItem.TitleViewItem
 import com.algorand.android.ui.asset.remove.model.RemoveAssetItemProcessorData
+import com.algorand.android.ui.asset.remove.view.RemoveAssetsViewModel.ViewState
 import com.algorand.android.ui.asset.remove.viewmodel.RemoveAssetItemProcessor
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyAssetCanAddressOptOut
@@ -32,7 +32,6 @@ import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteSortType
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -41,6 +40,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RemoveAssetsViewModel @Inject constructor(
@@ -51,7 +51,7 @@ class RemoveAssetsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
-    val accountAddress = savedStateHandle.getOrThrow<String>(PUBLIC_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
 
     private val assetQueryFlow = MutableStateFlow("")
 
@@ -66,6 +66,10 @@ class RemoveAssetsViewModel @Inject constructor(
         }
     }
 
+    @OptIn(
+        kotlinx.coroutines.FlowPreview::class,
+        kotlinx.coroutines.ExperimentalCoroutinesApi::class
+    )
     private suspend fun initializeAssetQueryFlow() {
         assetQueryFlow.debounce(QUERY_DEBOUNCE)
             .distinctUntilChanged()

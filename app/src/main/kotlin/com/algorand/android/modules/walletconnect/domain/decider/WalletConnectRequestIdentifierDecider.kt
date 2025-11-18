@@ -31,6 +31,7 @@ class WalletConnectRequestIdentifierDecider @Inject constructor(
             WalletConnectVersionIdentifier.VERSION_1 -> {
                 walletConnectV1RequestIdentifierMapper.mapToRequestIdentifier(requestId)
             }
+
             WalletConnectVersionIdentifier.VERSION_2 -> {
                 walletConnectV2RequestIdentifierMapper.mapToRequestIdentifier(requestId)
             }

@@ -34,9 +34,9 @@ import com.algorand.android.utils.viewbinding.viewBinding
 @UnstableApi
 abstract class MediaPlayerFragment : BaseFragment(R.layout.fragment_media_player) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    protected val binding by viewBinding(FragmentMediaPlayerBinding::bind)
+    protected val binding: FragmentMediaPlayerBinding by viewBinding(FragmentMediaPlayerBinding::bind)
 
     abstract val mediaPlayerViewModel: MediaPlayerViewModel
 

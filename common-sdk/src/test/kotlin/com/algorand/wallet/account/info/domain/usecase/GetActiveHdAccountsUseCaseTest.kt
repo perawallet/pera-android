@@ -22,6 +22,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -42,7 +43,7 @@ class GetActiveHdAccountsUseCaseTest {
     )
 
     @Test
-    fun `EXPECT empty list WHEN the first 5 accounts addresses are closed or fast lookup null`() = runTest {
+    fun `EXPECT empty list WHEN the first 5 accounts addresses are closed or fast lookup null`(): TestResult = runTest {
         val accountCount = 5
         val testHelper = GetActiveHdAccountsUseCaseTestHelper(accountCount, addressCount = 5)
         mockPeraBip39SdkGenerateHdKeyAddress(testHelper)
@@ -60,7 +61,7 @@ class GetActiveHdAccountsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT fifth account WHEN first four accounts are closed`() = runTest {
+    fun `EXPECT fifth account WHEN first four accounts are closed`(): TestResult = runTest {
         val accountCount = 10
         val testHelper = GetActiveHdAccountsUseCaseTestHelper(accountCount, addressCount = 5)
         val inactiveAccounts0to4 = (0 until 4).map { testHelper.getInactiveAccountFastLookupResult(it) }
@@ -85,7 +86,7 @@ class GetActiveHdAccountsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT first 20 accounts WHEN 21, 22, 23, 24, 25 accounts are inactive`() = runTest {
+    fun `EXPECT first 20 accounts WHEN 21, 22, 23, 24, 25 accounts are inactive`(): TestResult = runTest {
         val accountCount = 25
         val testHelper = GetActiveHdAccountsUseCaseTestHelper(accountCount, addressCount = 5)
         val activeAccounts = (0 until 20).map { testHelper.getActiveAccountFastLookupResult(it) }
@@ -116,7 +117,7 @@ class GetActiveHdAccountsUseCaseTest {
         testHelper.getAccountIndexAndAddressesPair().forEach { (accountIndex, addresses) ->
             addresses.forEachIndexed { addressIndex, address ->
                 every {
-                    bip39Wallet.generateAddressLite(HdKeyAddressIndex(accountIndex, 0, addressIndex))
+                    bip39Wallet.generateAddressLite(HdKeyAddressIndex(accountIndex, keyIndex = addressIndex))
                 } returns address
             }
         }

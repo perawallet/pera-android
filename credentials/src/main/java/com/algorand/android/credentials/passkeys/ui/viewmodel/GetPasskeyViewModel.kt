@@ -30,8 +30,8 @@ import com.algorand.android.credentials.passkeys.validator.GetPasskeyIntentValid
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 internal class GetPasskeyViewModel @Inject constructor(
@@ -42,8 +42,7 @@ internal class GetPasskeyViewModel @Inject constructor(
 
     fun processIntent(intent: Intent) {
         viewModelScope.launch {
-            val result = getPasskeyIntentValidator.validate(intent)
-            when (result) {
+            when (val result = getPasskeyIntentValidator.validate(intent)) {
                 AppInfoNotFound -> finishWithError(R.string.calling_app_info_not_found)
                 FailedToValidateOrigin -> finishWithError(R.string.failed_to_validate_origin)
                 FailedToValidateRP -> finishWithError(R.string.failed_to_validate_rp)

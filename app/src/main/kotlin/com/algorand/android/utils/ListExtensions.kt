@@ -12,26 +12,6 @@
 
 package com.algorand.android.utils
 
-inline fun FloatArray.partitionIndexed(predicate: (Int, Float) -> Boolean): Pair<List<Float>, List<Float>> {
-    var index = 0
-    return partition {
-        predicate(index++, it)
-    }
-}
-
-/**
- * Takes number list and returns Retrofit Query compatible string for array queries
- * @param [1, 12, 123]
- * @return 1,12,123
- */
-fun List<Number>.toQueryString(): String {
-    return toString().replace(Regex("([^0-9,])"), "")
-}
-
-fun List<*>.toCsvString(): String {
-    return joinToString(",")
-}
-
 fun <T> MutableList<T>.popIfOrNull(predicate: (T) -> Boolean): T? {
     val element = firstOrNull { predicate(it) } ?: return null
     remove(element)

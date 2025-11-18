@@ -110,6 +110,6 @@ class RemoveAccountConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
     }
 
     companion object {
-        const val ACCOUNT_REMOVE_CONFIRMATION_KEY = "account_remove_confirmation"
+        const val ACCOUNT_REMOVE_CONFIRMATION_KEY: String = "account_remove_confirmation"
     }
 }

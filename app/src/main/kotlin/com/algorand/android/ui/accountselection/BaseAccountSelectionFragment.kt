@@ -21,7 +21,6 @@ import androidx.core.view.isVisible
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentBaseAccountSelectionBinding
-import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
@@ -75,7 +74,7 @@ abstract class BaseAccountSelectionFragment : BaseFragment(R.layout.fragment_bas
         }
     }
 
-    protected val accountAdapter = AccountSelectionAdapter(accountSelectionListener)
+    protected val accountAdapter: AccountSelectionAdapter = AccountSelectionAdapter(accountSelectionListener)
 
     private val windowFocusChangeListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
         if (hasFocus) handleCopiedItemIfNeed()
@@ -128,17 +127,9 @@ abstract class BaseAccountSelectionFragment : BaseFragment(R.layout.fragment_bas
         binding.progressBar.root.hide()
     }
 
-    protected fun setScreenStateViewVisibility(isVisible: Boolean) {
-        binding.screenStateView.isVisible = isVisible
-    }
-
-    protected fun setScreenStateView(screenState: ScreenState) {
-        binding.screenStateView.setupUi(screenState)
-    }
-
     private fun handleCopiedItemIfNeed() {
         if (willCopiedItemBeHandled) {
-            onCopiedItemHandled(context?.getTextFromClipboard()?.toString())
+            onCopiedItemHandled(context?.getTextFromClipboard())
         }
     }
 }

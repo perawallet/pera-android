@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.walletconnect.launchback.multiplebrowser.base.ui.adapter.viewholder
+package com.algorand.android.modules.walletconnect.launchback.base.ui.adapter.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

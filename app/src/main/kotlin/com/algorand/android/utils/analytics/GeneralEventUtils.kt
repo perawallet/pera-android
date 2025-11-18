@@ -16,28 +16,14 @@ import androidx.core.os.bundleOf
 import com.algorand.wallet.asset.domain.util.AssetConstants
 import com.google.firebase.analytics.FirebaseAnalytics
 
-private const val REKEY_EVENT_KEY = "rekey"
-
-fun FirebaseAnalytics.logRekeyEvent() {
-    logEvent(REKEY_EVENT_KEY, null)
-}
-
 private const val CURRENCY_CHANGE_EVENT_KEY = "currency_change"
 private const val CURRENCY_ID_KEY = "currency_id"
-
-private const val LANGUAGE_CHANGE_EVENT_KEY = "language_change"
-private const val LANGUAGE_ID_KEY = "language_id"
 
 private const val ALGO_ASSET_ID = "algos"
 
 fun FirebaseAnalytics.logCurrencyChange(newCurrencyId: String) {
     val bundle = bundleOf(CURRENCY_ID_KEY to newCurrencyId)
     logEvent(CURRENCY_CHANGE_EVENT_KEY, bundle)
-}
-
-fun FirebaseAnalytics.logLanguageChange(newLanguageId: String) {
-    val bundle = bundleOf(LANGUAGE_ID_KEY to newLanguageId)
-    logEvent(LANGUAGE_CHANGE_EVENT_KEY, bundle)
 }
 
 fun FirebaseAnalytics.logScreen(page: String) {

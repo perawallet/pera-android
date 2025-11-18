@@ -26,6 +26,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -40,14 +41,14 @@ class SingleAssetRepositoryImplTest {
     private val sut = SingleAssetRepositoryImpl(assetDetailApi, assetCache, assetMapper)
 
     @Test
-    fun `EXPECT clear to be cached()`() = runTest {
+    fun `EXPECT clear to be cached()`(): TestResult = runTest {
         sut.clearCache()
 
         verify { assetCache.clear() }
     }
 
     @Test
-    fun `EXPECT asset to be cached WHEN fetching succeeds`() = runTest {
+    fun `EXPECT asset to be cached WHEN fetching succeeds`(): TestResult = runTest {
         coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id, DEVICE_ID) } returns ASSET_RESPONSE
         every { assetMapper(ASSET_RESPONSE) } returns ASSET_DETAIL
         val cacheSlot = slot<CacheResult.Success<Asset>>()
@@ -60,7 +61,7 @@ class SingleAssetRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT error to be cached WHEN fetching fails`() = runTest {
+    fun `EXPECT error to be cached WHEN fetching fails`(): TestResult = runTest {
         coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id, DEVICE_ID) } throws Exception()
         val cacheSlot = slot<CacheResult<Asset>>()
         every { assetCache.put(capture(cacheSlot)) } returns Unit
@@ -72,7 +73,7 @@ class SingleAssetRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT nothing to be cached WHEN fetching succeeds but mapping fails`() = runTest {
+    fun `EXPECT nothing to be cached WHEN fetching succeeds but mapping fails`(): TestResult = runTest {
         coEvery { assetDetailApi.getAssetDetail(ASSET_DETAIL.id, DEVICE_ID) } returns ASSET_RESPONSE
         every { assetMapper(ASSET_RESPONSE) } returns null
 

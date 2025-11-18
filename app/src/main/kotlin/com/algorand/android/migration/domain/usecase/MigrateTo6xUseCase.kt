@@ -57,6 +57,7 @@ internal class MigrateTo6xUseCase @Inject constructor(
             is Account.Detail.Standard,
             is Account.Detail.Rekeyed,
             is Account.Detail.RekeyedAuth -> createStandardAccount(localAccount)
+
             is Account.Detail.Ledger -> createLedgerAccount(localAccount)
             is Account.Detail.Watch -> createWatchAccount(localAccount)
 

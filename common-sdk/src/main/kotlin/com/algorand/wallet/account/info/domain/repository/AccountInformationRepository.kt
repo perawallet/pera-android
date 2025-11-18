@@ -19,8 +19,8 @@ import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.lite.domain.model.AccountLiteInformation
 import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
 import com.algorand.wallet.foundation.PeraResult
-import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
+import java.math.BigInteger
 
 internal interface AccountInformationRepository {
 

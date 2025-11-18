@@ -118,16 +118,6 @@ fun PeraScrimText(modifier: Modifier = Modifier, text: String) {
 }
 
 @Composable
-fun PeraFootnoteText(modifier: Modifier = Modifier, text: String) {
-    Text(
-        modifier = modifier,
-        text = text,
-        style = PeraTheme.typography.body.regular.sansMedium,
-        color = PeraTheme.colors.link.primary,
-    )
-}
-
-@Composable
 fun PeraWarningText(modifier: Modifier = Modifier, text: String) {
     Row(modifier = modifier) {
         Image(

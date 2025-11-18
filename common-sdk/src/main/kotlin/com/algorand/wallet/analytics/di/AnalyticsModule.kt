@@ -13,12 +13,12 @@
 package com.algorand.wallet.analytics.di
 
 import android.content.Context
-import com.algorand.wallet.analytics.PeraReferrerQueryParamParserImpl
 import com.algorand.wallet.analytics.data.repository.FirebaseAnalyticsRepositoryImpl
 import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
 import com.algorand.wallet.analytics.data.service.PeraEventTrackerImpl
 import com.algorand.wallet.analytics.data.service.PeraExceptionLoggerImpl
 import com.algorand.wallet.analytics.data.service.PeraReferrerManagerImpl
+import com.algorand.wallet.analytics.data.service.PeraReferrerQueryParamParserImpl
 import com.algorand.wallet.analytics.domain.repository.FirebaseAnalyticsRepository
 import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker

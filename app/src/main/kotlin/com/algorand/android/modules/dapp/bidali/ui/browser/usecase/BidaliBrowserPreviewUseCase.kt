@@ -42,7 +42,7 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
     fun getInitialStatePreview(
         title: String,
         url: String
-    ) = BidaliBrowserPreview(
+    ): BidaliBrowserPreview = BidaliBrowserPreview(
         isLoading = true,
         reloadPageEvent = Event(Unit),
         title = title,
@@ -54,22 +54,22 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
         previousState: BidaliBrowserPreview,
         title: String,
         url: String
-    ) = previousState.copy(
+    ): BidaliBrowserPreview = previousState.copy(
         isLoading = true,
         reloadPageEvent = Event(Unit),
         title = title,
         url = url
     )
 
-    fun onPreviousNavButtonClicked(previousState: BidaliBrowserPreview) = previousState.copy(
+    fun onPreviousNavButtonClicked(previousState: BidaliBrowserPreview): BidaliBrowserPreview = previousState.copy(
         webViewGoBackEvent = Event(Unit)
     )
 
-    fun onNextNavButtonClicked(previousState: BidaliBrowserPreview) = previousState.copy(
+    fun onNextNavButtonClicked(previousState: BidaliBrowserPreview): BidaliBrowserPreview = previousState.copy(
         webViewGoForwardEvent = Event(Unit)
     )
 
-    fun onPageStarted(previousState: BidaliBrowserPreview) = previousState.copy(
+    fun onPageStarted(previousState: BidaliBrowserPreview): BidaliBrowserPreview = previousState.copy(
         isLoading = true,
         pageStartedEvent = Event(Unit)
     )
@@ -78,23 +78,23 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
         previousState: BidaliBrowserPreview,
         title: String?,
         url: String?
-    ) = previousState.copy(
+    ): BidaliBrowserPreview = previousState.copy(
         isLoading = false,
         title = title ?: previousState.title,
         url = url ?: previousState.url,
         toolbarSubtitle = getBaseUrlOrNull(url) ?: previousState.toolbarSubtitle
     )
 
-    fun onError(previousState: BidaliBrowserPreview) = previousState.copy(
+    fun onError(previousState: BidaliBrowserPreview): BidaliBrowserPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onPageUrlChanged(previousState: BidaliBrowserPreview) = previousState.copy(
+    fun onPageUrlChanged(previousState: BidaliBrowserPreview): BidaliBrowserPreview = previousState.copy(
         pageUrlChangedEvent = Event(Unit)
     )
 
-    fun onHttpError(previousState: BidaliBrowserPreview) = previousState.copy(
+    fun onHttpError(previousState: BidaliBrowserPreview): BidaliBrowserPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )
@@ -112,7 +112,7 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
                     onPaymentRequestEvent = Event(it)
                 )
             } ?: previousState
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             previousState
         }
     }
@@ -129,7 +129,7 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
                     openUrlRequestEvent = Event(it)
                 )
             } ?: previousState
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             previousState
         }
     }

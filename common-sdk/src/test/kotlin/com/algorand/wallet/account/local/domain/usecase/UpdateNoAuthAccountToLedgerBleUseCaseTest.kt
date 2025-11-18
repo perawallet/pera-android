@@ -15,6 +15,7 @@ package com.algorand.wallet.account.local.domain.usecase
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -26,7 +27,7 @@ class UpdateNoAuthAccountToLedgerBleUseCaseTest {
     private val sut = UpdateNoAuthAccountToLedgerBleUseCase(deleteLocalAccount, saveLedgerBleAccount)
 
     @Test
-    fun `EXPECT noAuthAccount to be deleted and new LedgerBleAccount to be created`() = runTest {
+    fun `EXPECT noAuthAccount to be deleted and new LedgerBleAccount to be created`(): TestResult = runTest {
         sut(ADDRESS, DEVICE_MAC_ADDRESS, BLE_ADDRESS, INDEX_IN_LEDGER)
 
         coVerify { deleteLocalAccount(ADDRESS) }

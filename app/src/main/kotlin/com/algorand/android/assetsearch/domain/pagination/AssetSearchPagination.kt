@@ -17,21 +17,23 @@ import com.algorand.android.assetsearch.domain.model.AssetSearchDTO
 import com.algorand.android.assetsearch.domain.model.AssetSearchQuery
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 class AssetSearchPagination @Inject constructor() {
 
     private val querySharedFlow = MutableSharedFlow<AssetSearchQuery>()
     private lateinit var assetSearchPager: AssetSearchPager
 
+    @OptIn(FlowPreview::class)
     fun initPagination(
         assetSearchPagerBuilder: AssetSearchPagerBuilder,
         scope: CoroutineScope,

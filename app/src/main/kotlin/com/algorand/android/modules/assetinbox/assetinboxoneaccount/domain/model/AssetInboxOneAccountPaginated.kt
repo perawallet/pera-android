@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.assetinbox.assetinboxoneaccount.domain.model
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.utils.AssetName
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import java.math.BigInteger
 
 data class AssetInboxOneAccountPaginated(

@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.perawebview
 
-import com.algorand.android.modules.perawebview.model.PeraWebMessage
 import com.algorand.android.modules.peraserializer.PeraSerializer
+import com.algorand.android.modules.perawebview.model.PeraWebMessage
 import javax.inject.Inject
 
 class PeraWebMessageBuilderImpl @Inject constructor(

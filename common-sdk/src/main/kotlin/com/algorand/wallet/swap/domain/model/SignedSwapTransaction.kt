@@ -28,7 +28,7 @@ data class SignedSwapTransaction(
 
         data object OptIn : Type {
             override val isConfirmationRequired: Boolean = true
-            override val confirmationDelay: Long? = 1000L
+            override val confirmationDelay: Long = 1000L
         }
 
         data object Swap : Type {

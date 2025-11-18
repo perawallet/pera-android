@@ -12,11 +12,11 @@
 
 package com.algorand.wallet.asset.data.mapper.model
 
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.model.NodeAssetDetailResponse
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.VerificationTier
-import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import javax.inject.Inject
 
 internal class AssetDetailMapperImpl @Inject constructor(

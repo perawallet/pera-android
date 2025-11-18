@@ -19,8 +19,8 @@ import com.algorand.android.credentials.passkeys.validator.domain.model.AssetLin
 import com.algorand.android.credentials.passkeys.validator.domain.repository.AppInfoValidationRepository
 import com.algorand.wallet.foundation.PeraResult
 import com.google.gson.JsonElement
-import javax.inject.Inject
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 internal class DefaultAppInfoValidationRepository @Inject constructor(
     private val gStaticApiService: GStaticApiService,

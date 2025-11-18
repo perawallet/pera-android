@@ -135,5 +135,5 @@ sealed interface DeepLink {
 
     data object Home : DeepLink
 
-    data class Fido(val uri: String): DeepLink
+    data class Fido(val uri: String) : DeepLink
 }

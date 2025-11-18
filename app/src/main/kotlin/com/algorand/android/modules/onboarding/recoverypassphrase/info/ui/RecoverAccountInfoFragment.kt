@@ -50,7 +50,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     private val args: RecoverAccountInfoFragmentArgs by navArgs()
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,7 +72,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
     }
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_key),
             contentDescription = stringResource(id = R.string.key),

@@ -28,6 +28,6 @@ interface AssetSearchRepository {
     suspend fun getAssetsByUrl(url: String): Result<Pagination<AssetSearchDTO>>
 
     companion object {
-        const val REPOSITORY_INJECTION_NAME = "assetSearchRepositoryInjection"
+        const val REPOSITORY_INJECTION_NAME: String = "assetSearchRepositoryInjection"
     }
 }

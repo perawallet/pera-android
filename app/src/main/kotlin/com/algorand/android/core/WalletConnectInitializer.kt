@@ -18,9 +18,9 @@ import androidx.lifecycle.coroutineScope
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.modules.walletconnect.domain.WalletConnectSessionsStatusManager
 import com.algorand.android.utils.launchIO
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class WalletConnectInitializer @Inject constructor(
     private val walletConnectManager: WalletConnectManager,

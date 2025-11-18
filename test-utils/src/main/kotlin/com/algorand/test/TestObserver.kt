@@ -12,9 +12,6 @@
 
 package com.algorand.test
 
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -23,8 +20,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class TestObserver<T>(private val flow: Flow<T>, coroutineScope: CoroutineScope) {
+class TestObserver<T>(flow: Flow<T>, coroutineScope: CoroutineScope) {
     private val emittedValues = mutableListOf<T>()
     private var flowError: Throwable? = null
     private val job: Job = flow.onEach {
@@ -32,14 +31,6 @@ class TestObserver<T>(private val flow: Flow<T>, coroutineScope: CoroutineScope)
     }.catch {
         flowError = it
     }.launchIn(coroutineScope)
-
-    fun assertError() {
-        assertNotNull(flowError)
-    }
-
-    fun assertError(throwable: Throwable) {
-        assertEquals(flowError, throwable)
-    }
 
     fun assertNoValue() {
         assertTrue(emittedValues.isEmpty())
@@ -55,17 +46,15 @@ class TestObserver<T>(private val flow: Flow<T>, coroutineScope: CoroutineScope)
         assertSequence(values.toList())
     }
 
-    fun assertSize(size: Int) {
+    private fun assertSize(size: Int) {
         assertEquals(size, emittedValues.size)
     }
 
-    fun getValues() = emittedValues
+    private fun getValues(): MutableList<T> = emittedValues
 
     fun stopObserving() {
         job.cancel()
     }
-
-    fun getFlow() = flow
 
     fun value(): T = getValues().last()
 

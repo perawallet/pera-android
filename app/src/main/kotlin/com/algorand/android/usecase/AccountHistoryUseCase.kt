@@ -23,9 +23,9 @@ import com.algorand.android.models.ui.TransactionLoadStatePreview
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.modules.transactionhistory.ui.usecase.PendingTransactionsPreviewUseCase
 import com.algorand.android.modules.transactionhistory.ui.usecase.TransactionHistoryPreviewUseCase
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class AccountHistoryUseCase @Inject constructor(
     private val transactionHistoryPreviewUseCase: TransactionHistoryPreviewUseCase,
@@ -34,7 +34,10 @@ class AccountHistoryUseCase @Inject constructor(
     private val transactionLoadStateUseCase: TransactionLoadStateUseCase
 ) : BaseUseCase() {
 
-    val pendingTransactionDistinctUntilChangedListener
+    val pendingTransactionDistinctUntilChangedListener: (
+        List<BaseTransactionItem>?,
+        List<BaseTransactionItem>?
+    ) -> Boolean
         get() = pendingTransactionsPreviewUseCase.pendingFlowDistinctUntilChangedListener
 
     fun getTransactionPaginationFlow(

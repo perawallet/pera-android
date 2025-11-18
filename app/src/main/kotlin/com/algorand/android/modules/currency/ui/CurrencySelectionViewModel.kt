@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.currency.ui
 
-import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.ui.CurrencySelectionPreview
@@ -29,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CurrencySelectionViewModel @Inject constructor(

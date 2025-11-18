@@ -68,7 +68,11 @@ class VerifiableLedgerAddressViewHolder(
         customizeCard(backgroundColor = R.color.transparent, newStrokeColor = R.color.secondary_text_color)
     }
 
-    private fun setStatusText(@StringRes textResId: Int, @ColorRes colorResId: Int, @StyleRes styleResId: Int) {
+    private fun setStatusText(
+        @StringRes textResId: Int,
+        @ColorRes colorResId: Int,
+        @StyleRes styleResId: Int
+    ) {
         with(binding.statusTextView) {
             changeTextAppearance(styleResId)
             setText(textResId)
@@ -76,7 +80,10 @@ class VerifiableLedgerAddressViewHolder(
         }
     }
 
-    private fun customizeCard(@ColorRes backgroundColor: Int, @ColorRes newStrokeColor: Int = R.color.transparent) {
+    private fun customizeCard(
+        @ColorRes backgroundColor: Int,
+        @ColorRes newStrokeColor: Int = R.color.transparent
+    ) {
         with(binding.root) {
             strokeColor = ContextCompat.getColor(context, newStrokeColor)
             setCardBackgroundColor(ContextCompat.getColor(context, backgroundColor))

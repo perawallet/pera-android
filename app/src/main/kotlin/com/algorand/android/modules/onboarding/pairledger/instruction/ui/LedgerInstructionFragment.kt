@@ -17,9 +17,9 @@ import android.view.View
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentLedgerInstructionBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
@@ -36,7 +36,9 @@ class LedgerInstructionFragment : DaggerBaseFragment(R.layout.fragment_ledger_in
 
     private val binding by viewBinding(FragmentLedgerInstructionBinding::bind)
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

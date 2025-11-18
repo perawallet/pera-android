@@ -17,6 +17,6 @@ enum class NFTListingViewType {
     GRID;
 
     companion object {
-        val DEFAULT_VIEW_TYPE = GRID
+        val DEFAULT_VIEW_TYPE: NFTListingViewType = GRID
     }
 }

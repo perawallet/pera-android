@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class PopInnerTransactionFromStackCacheUseCase @Inject constructor(
-    @Named(TransactionDetailRepository.TRANSACTION_DETAIL_REPOSITORY_INJECTION_NAME)
+    @param:Named(TransactionDetailRepository.TRANSACTION_DETAIL_REPOSITORY_INJECTION_NAME)
     private val transactionDetailRepository: TransactionDetailRepository
 ) {
 

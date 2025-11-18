@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~   ~ you may not use this file except in compliance with the License.
@@ -21,8 +22,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:paddingHorizontal="@dimen/spacing_xlarge"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/spacing_xlarge">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/collectibleImageView"
@@ -179,10 +180,10 @@
             android:id="@+id/optInExpenseTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_error"
             android:drawablePadding="@dimen/spacing_small"
-            android:drawableTint="@color/text_gray_lighter"
             android:textColor="@color/text_gray"
+            app:drawableStartCompat="@drawable/ic_error"
+            app:drawableTint="@color/text_gray_lighter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

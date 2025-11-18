@@ -35,9 +35,6 @@ internal interface CollectibleDao {
         )
     }
 
-    @Query("DELETE FROM collectible WHERE collectible_asset_id = :collectibleAssetId")
-    suspend fun deleteAllByCollectibleAssetId(collectibleAssetId: Long)
-
     @Query("SELECT * FROM collectible WHERE collectible_asset_id = :collectibleAssetId")
     suspend fun getByCollectibleAssetId(collectibleAssetId: Long): CollectibleEntity?
 

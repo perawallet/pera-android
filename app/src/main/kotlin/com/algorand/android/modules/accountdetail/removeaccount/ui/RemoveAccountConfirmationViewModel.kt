@@ -19,10 +19,10 @@ import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveA
 import com.algorand.android.modules.accountdetail.removeaccount.ui.usecase.RemoveAccountConfirmationPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 @HiltViewModel
 class RemoveAccountConfirmationViewModel @Inject constructor(

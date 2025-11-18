@@ -19,6 +19,7 @@ import com.algorand.wallet.cards.domain.repository.CardRepository
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -31,14 +32,23 @@ class IsCountryWaitlistedForCardsUseCaseTest {
     private val sut = IsCountryWaitlistedForCardsUseCase(getLocalAccounts, cardRepository)
 
     @Test
-    fun `EXPECT country waitlist status of auth addresses only WHEN there are no auth addresses as well`() = runTest {
-        coEvery { getLocalAccounts() } returns LOCAL_ACCOUNTS
-        coEvery { cardRepository.isCountryWaitlisted(listOf("ledger", "hd_key", "algo_25")) } returns WAITLIST_RESULT
+    fun `EXPECT country waitlist status of auth addresses only WHEN there are no auth addresses as well`(): TestResult =
+        runTest {
+            coEvery { getLocalAccounts() } returns LOCAL_ACCOUNTS
+            coEvery {
+                cardRepository.isCountryWaitlisted(
+                    listOf(
+                        "ledger",
+                        "hd_key",
+                        "algo_25"
+                    )
+                )
+            } returns WAITLIST_RESULT
 
-        val result = sut()
+            val result = sut()
 
-        assertEquals(WAITLIST_RESULT, result)
-    }
+            assertEquals(WAITLIST_RESULT, result)
+        }
 
     private companion object {
         val LEDGER_ACCOUNT = peraFixture<LocalAccount.LedgerBle>().copy(algoAddress = "ledger")

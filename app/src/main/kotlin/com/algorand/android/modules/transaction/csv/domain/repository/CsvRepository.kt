@@ -27,7 +27,6 @@ interface CsvRepository {
     ): Result<InputStream>
 
     companion object {
-        const val INJECTION_NAME = "csvRepositoryInjectionName"
-        const val MAX_TXN_REQUEST_COUNT = 1000
+        const val INJECTION_NAME: String = "csvRepositoryInjectionName"
     }
 }

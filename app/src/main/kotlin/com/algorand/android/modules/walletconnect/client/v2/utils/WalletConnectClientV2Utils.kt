@@ -16,7 +16,7 @@ import com.algorand.android.modules.walletconnect.domain.model.WalletConnectVers
 
 object WalletConnectClientV2Utils {
 
-    fun getWalletConnectV2VersionIdentifier() = WalletConnectVersionIdentifier.VERSION_2
+    fun getWalletConnectV2VersionIdentifier(): WalletConnectVersionIdentifier = WalletConnectVersionIdentifier.VERSION_2
 
     fun isValidWalletConnectV2Url(url: String): Boolean {
         return WalletConnectV2UriValidator.isValidWCUri(url)

@@ -32,7 +32,6 @@ import com.algorand.wallet.transaction.history.domain.usecase.GetTransactionHist
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +39,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @HiltViewModel
 class TransactionHistoryViewModel @Inject constructor(
@@ -92,9 +92,11 @@ class TransactionHistoryViewModel @Inject constructor(
                     val formattedDate = secondItem?.history?.time?.formatAsDate().orEmpty()
                     PaginationMediatorItem(history = null, historyItem = Date(formattedDate))
                 }
+
                 firstItem?.history != null && secondItem?.history != null -> {
                     PaginationMediatorItem(history = null, historyItem = TransactionHistoryItem.Separator)
                 }
+
                 else -> null
             }
         }.map { it.historyItem }

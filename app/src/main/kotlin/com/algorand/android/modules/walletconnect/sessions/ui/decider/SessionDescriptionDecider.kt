@@ -28,6 +28,7 @@ class SessionDescriptionDecider @Inject constructor() {
             WalletConnectVersionIdentifier.VERSION_1 -> {
                 createConnectedOnAnnotatedString(formattedConnectionDate)
             }
+
             WalletConnectVersionIdentifier.VERSION_2 -> {
                 if (formattedExpirationDate != null) {
                     AnnotatedString(

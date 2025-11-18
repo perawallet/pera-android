@@ -17,9 +17,9 @@ import com.algorand.android.nft.ui.model.RequestOptInConfirmationPreview
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.sendErrorLog
-import javax.inject.Inject
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class RequestOptInConfirmationPreviewUseCase @Inject constructor(
     private val requestOptInConfirmationMapper: RequestOptInConfirmationMapper,
@@ -34,7 +34,7 @@ class RequestOptInConfirmationPreviewUseCase @Inject constructor(
         collectibleId: Long,
         senderPublicKey: String,
         previousState: RequestOptInConfirmationPreview
-    ) = flow {
+    ): Flow<RequestOptInConfirmationPreview> = flow {
         emit(previousState.copy(isLoadingVisible = true))
         with(previousState) {
             sendAssetOptInRequestUseCase.sendAssetOptInRequest(

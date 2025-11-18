@@ -14,16 +14,15 @@ package com.algorand.android.customviews
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.View.OnTouchListener
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isVisible
 import com.algorand.android.R
@@ -62,7 +61,7 @@ class TopToast(
         popupWindow = PopupWindow(context).apply {
             animationStyle = R.style.TopToastAnimationStyle
             contentView = binding.root
-            setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, R.color.transparent)))
+            setBackgroundDrawable(ContextCompat.getColor(context, R.color.transparent).toDrawable())
             this.setTouchInterceptor(onPopupWindowTouchListener)
         }
     }

@@ -31,9 +31,9 @@ import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.Fi
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutZeroAmount
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.repository.AssetCollectibleLiteRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class AssetCollectibleLiteRepositoryImpl @Inject constructor(
     private val assetCollectibleLiteSortTypeQueryMapper: AssetCollectibleLiteSortTypeQueryMapper,

@@ -20,7 +20,7 @@ class AlgorandSdkBackupUtilsImpl : AlgorandSdkBackupUtils {
     override suspend fun generateBackupKey(): ByteArray? {
         return try {
             Sdk.generateBackupPrivateKey()
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -28,7 +28,7 @@ class AlgorandSdkBackupUtilsImpl : AlgorandSdkBackupUtils {
     override suspend fun generateBackupCipherKey(key: String, input: ByteArray): ByteArray? {
         return try {
             Sdk.generateBackupCipherKey(key, input)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -36,7 +36,7 @@ class AlgorandSdkBackupUtilsImpl : AlgorandSdkBackupUtils {
     override suspend fun generateMnemonicsFromBackupKey(backupKey: ByteArray): String? {
         return try {
             Sdk.backupMnemonicFromKey(backupKey)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -44,7 +44,7 @@ class AlgorandSdkBackupUtilsImpl : AlgorandSdkBackupUtils {
     override suspend fun derivePrivateKeyFromMnemonics(mnemonics: String): ByteArray? {
         return try {
             Sdk.backupMnemonicToKey(mnemonics)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

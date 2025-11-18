@@ -18,6 +18,7 @@ import com.algorand.wallet.foundation.cache.DefaultFlowInMemoryCache
 import com.algorand.wallet.foundation.cache.FakeInMemoryCache
 import com.algorand.wallet.foundation.cache.FlowInMemoryCache
 import com.algorand.wallet.spotbanner.data.model.SpotBannerCacheData
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -33,7 +34,7 @@ class DefaultSpotBannerInMemoryCacheTest {
     private val sut = DefaultSpotBannerInMemoryCache(persistentCache)
 
     @Test
-    fun `EXPECT cache to be cleared`() = runTest {
+    fun `EXPECT cache to be cleared`(): TestResult = runTest {
         inMemoryCache.put(arrayOf(SPOT_BANNER_CACHE_1))
 
         sut.clear()
@@ -42,7 +43,7 @@ class DefaultSpotBannerInMemoryCacheTest {
     }
 
     @Test
-    fun `EXPECT cache to be updated with new banners only`() = runTest {
+    fun `EXPECT cache to be updated with new banners only`(): TestResult = runTest {
         inMemoryCache.put(arrayOf(SPOT_BANNER_CACHE_1))
 
         sut.put(listOf(SPOT_BANNER_CACHE_1, SPOT_BANNER_CACHE_2))
@@ -53,7 +54,7 @@ class DefaultSpotBannerInMemoryCacheTest {
     }
 
     @Test
-    fun `EXPECT banner to be removed from cache`() = runTest {
+    fun `EXPECT banner to be removed from cache`(): TestResult = runTest {
         inMemoryCache.put(arrayOf(SPOT_BANNER_CACHE_1, SPOT_BANNER_CACHE_2))
 
         sut.remove(SPOT_BANNER_CACHE_1.id)
@@ -63,7 +64,7 @@ class DefaultSpotBannerInMemoryCacheTest {
     }
 
     @Test
-    fun `EXPECT cache to be observed`() = runTest {
+    fun `EXPECT cache to be observed`(): TestResult = runTest {
         persistentCache.put(arrayOf(SPOT_BANNER_CACHE_1, SPOT_BANNER_CACHE_2))
 
         val testObserver = sut.observe().test()

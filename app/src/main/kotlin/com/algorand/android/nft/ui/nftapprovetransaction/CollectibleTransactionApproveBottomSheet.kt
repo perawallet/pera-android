@@ -110,6 +110,6 @@ class CollectibleTransactionApproveBottomSheet :
     }
 
     companion object {
-        const val COLLECTIBLE_TXN_APPROVE_KEY = "collectible_transaction_approved"
+        const val COLLECTIBLE_TXN_APPROVE_KEY: String = "collectible_transaction_approved"
     }
 }

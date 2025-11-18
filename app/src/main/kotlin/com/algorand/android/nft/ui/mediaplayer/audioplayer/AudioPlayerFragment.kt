@@ -15,6 +15,7 @@ package com.algorand.android.nft.ui.mediaplayer.audioplayer
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.viewModels
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.PlayerView
 import com.algorand.android.R
 import com.algorand.android.nft.ui.mediaplayer.MediaPlayerFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,13 +24,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AudioPlayerFragment : MediaPlayerFragment() {
 
-    override val mediaPlayerViewModel by viewModels<AudioPlayerViewModel>()
+    override val mediaPlayerViewModel: AudioPlayerViewModel by viewModels<AudioPlayerViewModel>()
 
     override fun initUi() {
         super.initUi()
         binding.playerView.run {
             defaultArtwork = AppCompatResources.getDrawable(context, R.drawable.bg_audio_media_art_works)
-            useArtwork = true
+            artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_FIT
         }
     }
 }

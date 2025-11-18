@@ -48,6 +48,6 @@ class WarningConfirmationBottomSheet : BaseBottomSheet(
     }
 
     companion object {
-        const val WARNING_CONFIRMATION_KEY = "delete_confirmation_key"
+        const val WARNING_CONFIRMATION_KEY: String = "delete_confirmation_key"
     }
 }

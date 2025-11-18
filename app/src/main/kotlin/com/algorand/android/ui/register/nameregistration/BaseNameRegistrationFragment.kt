@@ -49,7 +49,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
 
     protected val nameRegistrationViewModel: NameRegistrationViewModel by viewModels()
 
-    protected val binding by viewBinding(FragmentNameRegistrationBinding::bind)
+    protected val binding: FragmentNameRegistrationBinding by viewBinding(FragmentNameRegistrationBinding::bind)
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -70,7 +70,9 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
         updateUiWithNameRegistrationPreview(preview)
     }
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

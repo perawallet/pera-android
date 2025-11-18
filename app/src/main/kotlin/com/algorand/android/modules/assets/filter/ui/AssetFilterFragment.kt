@@ -17,9 +17,9 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentAssetFilterBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.filter.ui.model.AssetFilterPreview
 import com.algorand.android.utils.Event
@@ -38,7 +38,9 @@ class AssetFilterFragment : BaseFragment(R.layout.fragment_asset_filter) {
         titleResId = R.string.filter_assets
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val assetFilterViewModel by viewModels<AssetFilterViewModel>()
 
@@ -117,6 +119,6 @@ class AssetFilterFragment : BaseFragment(R.layout.fragment_asset_filter) {
     }
 
     companion object {
-        const val ASSET_FILTER_PREFERENCES_CHANGED_KEY = "asset_filter_preferences_changed"
+        const val ASSET_FILTER_PREFERENCES_CHANGED_KEY: String = "asset_filter_preferences_changed"
     }
 }

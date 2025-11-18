@@ -146,7 +146,7 @@ private fun ContentStateContent(
                 }
 
                 val isPrimaryButtonEnabled = state.selectedAddresses.isNotEmpty() ||
-                    (state.registeredAccounts.size == 1 && state.registeredAccounts[0].isImportedToDB)
+                        (state.registeredAccounts.size == 1 && state.registeredAccounts[0].isImportedToDB)
                 PeraPrimaryButton(
                     onClick = viewModel::importSelectedAccounts,
                     modifier = Modifier.fillMaxWidth(),

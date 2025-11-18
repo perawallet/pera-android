@@ -26,15 +26,15 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
-import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class WatchAccountResultInfoFragment : BaseInfoFragment() {
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val watchAccountResultInfoViewModel: WatchAccountResultInfoViewModel by viewModels()
 
@@ -44,7 +44,7 @@ class WatchAccountResultInfoFragment : BaseInfoFragment() {
     }
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = stringResource(id = R.string.check),
@@ -54,8 +54,7 @@ class WatchAccountResultInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) {
-        val state = watchAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
-        val titleText = when (state) {
+        val titleText = when (val state = watchAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value) {
             is WatchAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.titleTextRes)
             else -> ""
         }
@@ -95,6 +94,7 @@ class WatchAccountResultInfoFragment : BaseInfoFragment() {
             text = firstButtonText
         )
     }
+
     private fun onContinueClick() {
         if (watchAccountResultInfoViewModel.shouldForceLockNavigation()) {
             navToForceLockNavigation()

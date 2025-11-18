@@ -64,7 +64,7 @@ abstract class BaseAddAssetFragment(@LayoutRes layoutResId: Int) : BaseFragment(
         }
     }
 
-    protected val assetSearchAdapter = AssetSearchAdapter(assetSearchAdapterListener)
+    protected val assetSearchAdapter: AssetSearchAdapter = AssetSearchAdapter(assetSearchAdapterListener)
 
     private val assetSearchPaginationCollector: suspend (PagingData<BaseAssetSearchListItem>) -> Unit = { pagingData ->
         assetSearchAdapter.submitData(pagingData)

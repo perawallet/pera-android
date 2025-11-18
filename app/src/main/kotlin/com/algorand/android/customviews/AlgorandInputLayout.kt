@@ -110,16 +110,16 @@ class AlgorandInputLayout @JvmOverloads constructor(
     }
 
     private fun loadAttrs() {
-        context.obtainStyledAttributes(attrs, R.styleable.CustomInputLayout).use { attrs ->
-            text = attrs.getString(R.styleable.CustomInputLayout_text).orEmpty()
-            hint = attrs.getString(R.styleable.CustomInputLayout_hint).orEmpty()
-            error = attrs.getString(R.styleable.CustomInputLayout_error).orEmpty()
-            helper = attrs.getString(R.styleable.CustomInputLayout_helper).orEmpty()
-            isSingleLine = attrs.getBoolean(R.styleable.CustomInputLayout_singleLine, false)
-            maxCharacter = attrs.getInteger(R.styleable.CustomInputLayout_maxCharacter, -1)
-            inputType = attrs.getInt(R.styleable.CustomInputLayout_android_inputType, InputType.TYPE_CLASS_TEXT)
-            imeOptions = attrs.getInt(R.styleable.CustomInputLayout_android_imeOptions, EditorInfo.IME_ACTION_DONE)
-            isClearButtonEnabled = attrs.getBoolean(R.styleable.CustomInputLayout_showClearButton, false)
+        context.obtainStyledAttributes(attrs, R.styleable.AlgorandInputLayout).use { attrs ->
+            text = attrs.getString(R.styleable.AlgorandInputLayout_text).orEmpty()
+            hint = attrs.getString(R.styleable.AlgorandInputLayout_hint).orEmpty()
+            error = attrs.getString(R.styleable.AlgorandInputLayout_error).orEmpty()
+            helper = attrs.getString(R.styleable.AlgorandInputLayout_helper).orEmpty()
+            isSingleLine = attrs.getBoolean(R.styleable.AlgorandInputLayout_singleLine, false)
+            maxCharacter = attrs.getInteger(R.styleable.AlgorandInputLayout_maxCharacter, -1)
+            inputType = attrs.getInt(R.styleable.AlgorandInputLayout_android_inputType, InputType.TYPE_CLASS_TEXT)
+            imeOptions = attrs.getInt(R.styleable.AlgorandInputLayout_android_imeOptions, EditorInfo.IME_ACTION_DONE)
+            isClearButtonEnabled = attrs.getBoolean(R.styleable.AlgorandInputLayout_showClearButton, false)
         }
     }
 
@@ -129,13 +129,6 @@ class AlgorandInputLayout @JvmOverloads constructor(
             if (isClearButtonEnabled) {
                 binding.iconContainerView.changeClearButtonVisibility(it.toString().isNotBlank())
             }
-        }
-    }
-
-    fun setImeOptionsNext(callback: () -> Unit) {
-        with(editText) {
-            imeOptions = EditorInfo.IME_ACTION_NEXT
-            onAction(EditorInfo.IME_ACTION_NEXT, callback)
         }
     }
 
@@ -164,20 +157,6 @@ class AlgorandInputLayout @JvmOverloads constructor(
             iconContainerView.post {
                 textInputEditText.updatePadding(right = iconContainerView.width)
             }
-        }
-    }
-
-    fun setInputFilter(inputFilter: InputFilter) {
-        editText.filters += inputFilter
-    }
-
-    fun setOnEditorEnterClickListener(onClick: () -> Unit) {
-        editText.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                onClick()
-                return@setOnEditorActionListener true
-            }
-            false
         }
     }
 

@@ -20,9 +20,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class WarningConfirmation(
-    @DrawableRes val drawableRes: Int,
-    @StringRes val titleRes: Int,
-    @StringRes val descriptionRes: Int,
-    @StringRes val positiveButtonTextRes: Int,
-    @StringRes val negativeButtonTextRes: Int
+    @param:DrawableRes val drawableRes: Int,
+    @param:StringRes val titleRes: Int,
+    @param:StringRes val descriptionRes: Int,
+    @param:StringRes val positiveButtonTextRes: Int,
+    @param:StringRes val negativeButtonTextRes: Int
 ) : Parcelable

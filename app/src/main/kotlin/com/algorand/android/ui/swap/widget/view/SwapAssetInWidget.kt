@@ -139,6 +139,7 @@ private fun SecondaryAmountText(viewState: ViewState) {
                 color = PeraTheme.colors.text.gray
             )
         }
+
         Loading -> ShimmerTextBox(textStyle, width = 80.dp)
     }
 }
@@ -183,6 +184,7 @@ private fun getErrorMessage(quoteState: SwapQuoteDetail.SwapQuoteState.NonSwappa
                 stringResource(R.string.asa_balance_is_not_sufficient)
             }
         }
+
         is InsufficientBalanceForFee -> {
             val minBalance = (quoteState.exception as InsufficientBalanceForFee).minRequiredBalance
             val annotatedString = AnnotatedString(

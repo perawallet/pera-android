@@ -33,7 +33,7 @@ class WalletConnectSingleArbitraryDataFragment : BaseFragment(
     R.layout.fragment_wallet_connect_single_arbitrary_data
 ) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val toolbarConfiguration = ToolbarConfiguration(titleResId = R.string.arbitrary_data_request)
 
@@ -76,10 +76,8 @@ class WalletConnectSingleArbitraryDataFragment : BaseFragment(
         val arbitraryDataShortDetail = walletConnectSingleArbitraryDataViewModel.buildArbitraryDataShortDetail(
             args.arbitraryData.arbitraryData
         )
-        binding.arbitraryDataMessageTextView.setText(
-            walletConnectSingleArbitraryDataViewModel
-                .buildArbitraryDataMessage(args.arbitraryData.arbitraryData)
-        )
+        binding.arbitraryDataMessageTextView.text = walletConnectSingleArbitraryDataViewModel
+            .buildArbitraryDataMessage(args.arbitraryData.arbitraryData)
         binding.arbitraryDataShortDetailView.setArbitraryDataShortDetail(
             arbitraryDataShortDetail,
             showArbitraryDataDetailListener

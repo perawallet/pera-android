@@ -35,6 +35,6 @@ class RegisterWatchAccountQrScannerFragment : BaseQrScannerFragment(R.id.registe
     }
 
     companion object {
-        const val ACCOUNT_ADDRESS_SCAN_RESULT_KEY = "account_address_scan_result_key"
+        const val ACCOUNT_ADDRESS_SCAN_RESULT_KEY: String = "account_address_scan_result_key"
     }
 }

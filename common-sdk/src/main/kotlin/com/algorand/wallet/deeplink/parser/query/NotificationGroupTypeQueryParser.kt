@@ -25,7 +25,7 @@ internal class NotificationGroupTypeQueryParser : DeepLinkQueryParser<Notificati
             else -> null
         }
     }
-    
+
     private companion object {
         const val NOTIFICATION_ACTION_ASSET_TRANSACTIONS = "asset/transactions"
         const val NOTIFICATION_ACTION_ASSET_OPTIN = "asset/opt-in"

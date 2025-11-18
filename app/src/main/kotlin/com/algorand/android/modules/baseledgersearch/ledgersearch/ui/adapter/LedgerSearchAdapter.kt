@@ -46,6 +46,7 @@ class LedgerSearchAdapter(
                     }
                 }
             }
+
             R.layout.item_ledger_search_loading -> LedgerLoadingItemViewHolder.create(parent)
             else -> throw Exception("$logTag: List Item is Unknown.")
         }

@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.analytics.domain.service
 
-interface PeraReferrerManager{
+interface PeraReferrerManager {
     suspend fun fetchInstallReferrer()
     suspend fun saveReferrerData(referrerUrl: String)
 }

@@ -21,6 +21,7 @@ import javax.inject.Inject
 internal class DefaultSignedSwapTransactionMapper @Inject constructor() : SignedSwapTransactionMapper {
 
     override fun invoke(result: ExternalTransactionSignResult.Success<*>): List<SignedSwapTransaction>? {
+        @Suppress("UNCHECKED_CAST")
         val signedTxns = result.signedTransaction as? List<SwapQuoteTransaction> ?: return null
         return signedTxns.map { swapTransaction ->
             val txnByteArrays = swapTransaction.getSignedTransactionsByteArray() ?: return null

@@ -30,7 +30,8 @@ class BackupAccountSelectionPreviewUseCase @Inject constructor(
     private val accountSelectionListItemMapper: AccountSelectionListItemMapper
 ) {
 
-    fun getInitialStatePreview() = backupAccountSelectionPreviewMapper.mapToBackupAccountSelectionPreview(emptyList())
+    fun getInitialStatePreview(): BackupAccountSelectionPreview =
+        backupAccountSelectionPreviewMapper.mapToBackupAccountSelectionPreview(emptyList())
 
     suspend fun getBackupAccountSelectionPreview(): BackupAccountSelectionPreview {
         val selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()

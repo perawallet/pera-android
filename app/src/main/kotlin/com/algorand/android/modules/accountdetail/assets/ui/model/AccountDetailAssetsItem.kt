@@ -131,7 +131,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val id: Long,
                     override val name: AssetName,
                     override val shortName: AssetName,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val verificationTierConfiguration: VerificationTierConfiguration,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider
                 ) : AssetItem() {
@@ -149,7 +149,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val id: Long,
                     override val name: AssetName,
                     override val shortName: AssetName,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val verificationTierConfiguration: VerificationTierConfiguration,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider
                 ) : AssetItem() {
@@ -176,7 +176,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val name: AssetName,
                     override val shortName: AssetName,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val collectionName: String?
                 ) : NFTItem() {
 
@@ -194,7 +194,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val name: AssetName,
                     override val shortName: AssetName,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val collectionName: String?
                 ) : NFTItem() {
 
@@ -225,7 +225,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
     }
 
     companion object {
-        val excludedItemFromDivider = AccountDetailAccountsItem.ItemType.entries
+        val excludedItemFromDivider: List<Int> = AccountDetailAccountsItem.ItemType.entries
             .map { it.viewType } + ItemType.NO_ASSET_FOUND.viewType
     }
 }

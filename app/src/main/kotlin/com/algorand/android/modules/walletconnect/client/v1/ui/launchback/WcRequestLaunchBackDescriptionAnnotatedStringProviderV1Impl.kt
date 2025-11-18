@@ -31,6 +31,6 @@ class WcRequestLaunchBackDescriptionAnnotatedStringProviderV1Impl :
     }
 
     companion object {
-        const val INJECTION_NAME = "wcTransactionLaunchBackDescriptionAnnotatedStringV1InjectionName"
+        const val INJECTION_NAME: String = "wcTransactionLaunchBackDescriptionAnnotatedStringV1InjectionName"
     }
 }

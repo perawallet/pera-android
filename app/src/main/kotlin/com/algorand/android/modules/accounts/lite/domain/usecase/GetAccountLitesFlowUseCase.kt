@@ -28,9 +28,6 @@ import com.algorand.wallet.account.lite.domain.usecase.GetAssetHoldingsLiteFlow
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetsLiteInformationFlow
-import java.math.BigDecimal
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -40,6 +37,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import java.math.BigInteger
+import javax.inject.Inject
 
 internal class GetAccountLitesFlowUseCase @Inject constructor(
     private val getAccountsLiteInformationFlow: GetAccountsLiteInformationFlow,

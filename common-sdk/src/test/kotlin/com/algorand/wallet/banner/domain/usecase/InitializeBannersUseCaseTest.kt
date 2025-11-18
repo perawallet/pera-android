@@ -19,6 +19,7 @@ import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -29,7 +30,7 @@ class InitializeBannersUseCaseTest {
     private val sut = InitializeBannersUseCase(bannerRepository)
 
     @Test
-    fun `EXPECT cache to be cleared and nothing else WHEN get banners returns error`() = runTest {
+    fun `EXPECT cache to be cleared and nothing else WHEN get banners returns error`(): TestResult = runTest {
         coEvery { bannerRepository.getBanners(DEVICE_ID) } returns PeraResult.Error(Exception())
 
         sut(DEVICE_ID)
@@ -39,7 +40,7 @@ class InitializeBannersUseCaseTest {
     }
 
     @Test
-    fun `EXPECT dismissed banners to be filtered and first banner to be cached`() = runTest {
+    fun `EXPECT dismissed banners to be filtered and first banner to be cached`(): TestResult = runTest {
         val banners = listOf(BANNER_1, BANNER_2, BANNER_3)
         coEvery { bannerRepository.getBanners(DEVICE_ID) } returns PeraResult.Success(banners)
         coEvery { bannerRepository.getDismissedBannerIdList() } returns listOf(BANNER_1.bannerId)

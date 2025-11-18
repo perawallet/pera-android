@@ -38,57 +38,9 @@ import com.algorand.android.customviews.CenteredImageSpan
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.utils.exceptions.InvalidAnnotationException
-import com.algorand.wallet.asset.domain.util.AssetConstants
-import java.util.Locale
 
 fun Appendable.appendSpace() {
     append(" ")
-}
-
-fun SpannableStringBuilder.addAssetName(
-    context: Context,
-    fullName: String?,
-    shortName: String?,
-    showTickerWithFullName: Boolean = true
-) {
-    val isFullNameNullOrBlank = fullName.isNullOrBlank()
-    val isShortNameNullOrBlank = shortName.isNullOrBlank()
-    if (!isFullNameNullOrBlank) {
-        append(fullName)
-        if (showTickerWithFullName.not()) {
-            return
-        }
-    }
-    if (!isShortNameNullOrBlank) {
-        if (!isFullNameNullOrBlank) {
-            appendSpace()
-        }
-        color(ContextCompat.getColor(context, R.color.gray_500)) {
-            append(context.getString(R.string.ticker_asset_format, shortName?.uppercase(Locale.ENGLISH)))
-        }
-    }
-    if (isFullNameNullOrBlank && isShortNameNullOrBlank) {
-        addUnnamedAssetName(context)
-    }
-}
-
-fun SpannableStringBuilder.addAssetId(context: Context, assetId: Long?, textColor: Int? = null) {
-    if (assetId != null && assetId != AssetConstants.ALGO_ID) {
-        append("  ") // Tried to put \t but it's broken for SpannedString.
-        color(ContextCompat.getColor(context, textColor ?: R.color.gray_500)) {
-            append(assetId.toString())
-        }
-    }
-}
-
-fun SpannableStringBuilder.addVerifiedIcon(
-    context: Context,
-    iconRes: Int = R.drawable.ic_verified_asset
-) {
-    inSpans(CenteredImageSpan(context, iconRes)) {
-        appendSpace()
-    }
-    appendSpace()
 }
 
 fun SpannableStringBuilder.addUnnamedAssetName(context: Context) {
@@ -97,13 +49,6 @@ fun SpannableStringBuilder.addUnnamedAssetName(context: Context) {
             append(context.getString(R.string.unnamed))
         }
     }
-}
-
-fun SpannableStringBuilder.addAlgorandIcon(context: Context) {
-    inSpans(CenteredImageSpan(context, R.drawable.ic_algo_sign)) {
-        appendSpace()
-    }
-    appendSpace()
 }
 
 fun TextView.setXmlStyledString(
@@ -139,6 +84,7 @@ fun TextView.setXmlStyledString(
                     }
                 }
             }
+
             "url" -> {
                 setOnClickListener { onUrlClick?.invoke(annotation.value) }
             }
@@ -264,9 +210,11 @@ private fun replaceAnnotatedStringsWithTheirReplacements(
                     spannableString.applySpan(span, annotation)
                 }
             }
+
             "font" -> {
                 spannableString.applyFontAnnotation(context, annotation)
             }
+
             "replacement" -> {
                 replacementList.find { (key, _) ->
                     key == annotation.value
@@ -274,6 +222,7 @@ private fun replaceAnnotatedStringsWithTheirReplacements(
                     spannableString.replaceAnnotation(annotation, replacementValue)
                 }
             }
+
             "iconReplacement" -> {
                 replacementList.find { (key, _) ->
                     key == annotation.value
@@ -281,6 +230,7 @@ private fun replaceAnnotatedStringsWithTheirReplacements(
                     spannableString.replaceIconAnnotation(context, annotation, replacementValue)
                 }
             }
+
             "custom" -> {
                 val customAnnotation = customAnnotations.find { it.first == annotation.value }
                 if (customAnnotation != null) {

@@ -17,9 +17,9 @@ import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.asset.assetinbox.domain.AssetInboxCacheManager
 import com.algorand.wallet.asset.manager.AlgoAssetDetailCacheManager
 import com.algorand.wallet.nameservice.domain.manager.LocalAccountsNameServiceManager
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class InitializeAppCacheImpl @Inject constructor(
     private val accountCacheManager: AccountCacheManager,

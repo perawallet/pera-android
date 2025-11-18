@@ -35,7 +35,7 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
         assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
     }
 
-    override val assetActionViewModel by viewModels<TransferBalanceActionViewModel>()
+    override val assetActionViewModel: TransferBalanceActionViewModel by viewModels<TransferBalanceActionViewModel>()
 
     override fun setDescriptionTextView(textView: TextView) {
         textView.text = context?.getXmlStyledString(
@@ -72,6 +72,6 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
     }
 
     companion object {
-        const val TRANSFER_ASSET_ACTION_RESULT = "transfer_asset_action_result"
+        const val TRANSFER_ASSET_ACTION_RESULT: String = "transfer_asset_action_result"
     }
 }

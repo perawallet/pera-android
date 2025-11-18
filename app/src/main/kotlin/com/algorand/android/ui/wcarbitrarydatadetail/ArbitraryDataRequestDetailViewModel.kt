@@ -7,8 +7,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- *  limitations under the License
- *
+ * limitations under the License
  */
 
 package com.algorand.android.ui.wcarbitrarydatadetail
@@ -19,22 +18,16 @@ import com.algorand.android.models.ArbitraryDataRequestDataInfo
 import com.algorand.android.models.ArbitraryDataRequestInfo
 import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.builder.ArbitraryDataDetailUiBuilder
-import com.algorand.android.network.AlgodInterceptor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ArbitraryDataRequestDetailViewModel @Inject constructor(
-    private val algodInterceptor: AlgodInterceptor,
     private val arbitraryDataDetailUiBuilder: ArbitraryDataDetailUiBuilder
 ) : ViewModel() {
 
-    fun getNetworkSlug(): String? {
-        return algodInterceptor.currentActiveNode?.networkSlug
-    }
-
     fun buildArbitraryDataRequestInfo(arbitraryData: WalletConnectArbitraryData):
-            ArbitraryDataRequestInfo? {
+            ArbitraryDataRequestInfo {
         return arbitraryDataDetailUiBuilder.buildArbitraryDataRequestInfo(arbitraryData)
     }
 
@@ -42,7 +35,7 @@ class ArbitraryDataRequestDetailViewModel @Inject constructor(
         return arbitraryDataDetailUiBuilder.buildArbitraryDataRequestAmountInfo(arbitraryData)
     }
 
-    fun buildArbitraryDataRequestDataInfo(arbitraryData: WalletConnectArbitraryData): ArbitraryDataRequestDataInfo? {
+    fun buildArbitraryDataRequestDataInfo(arbitraryData: WalletConnectArbitraryData): ArbitraryDataRequestDataInfo {
         return arbitraryDataDetailUiBuilder.buildArbitraryDataRequestDataInfo(arbitraryData)
     }
 }

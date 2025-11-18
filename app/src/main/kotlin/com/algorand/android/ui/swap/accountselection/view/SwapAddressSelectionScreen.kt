@@ -44,9 +44,11 @@ fun SwapAddressSelectionScreen(
     onAddressClick: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
         val viewState = viewModel.state.collectAsStateWithLifecycle().value
         PeraToolbar(
             text = "",

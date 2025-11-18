@@ -70,6 +70,7 @@ class OverrideFeatureFlagsViewModel @Inject constructor(
                             clearOverriddenFeatureFlag(featureToggle.key)
                             featureFlag.copy(status = Remote)
                         }
+
                         Remote -> {
                             overrideFeatureFlagStatus(featureToggle.key, !featureFlag.remoteValue)
                             featureFlag.copy(status = Overridden(!featureFlag.remoteValue))

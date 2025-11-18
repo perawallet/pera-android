@@ -45,13 +45,29 @@ class CardsViewModel @Inject constructor(
 
     private val args = CardsFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
-    private val _cardsPreviewFlow = MutableStateFlow<CardsPreview>(CardsPreview())
+    private val _cardsPreviewFlow = MutableStateFlow(CardsPreview())
     val cardsPreviewFlow: StateFlow<CardsPreview>
         get() = _cardsPreviewFlow.asStateFlow()
 
     override fun onPageFinished(title: String?, url: String?) {
         super.onPageFinished(title, url)
         _cardsPreviewFlow.value = cardsPreviewFlow.value.copy(onPageFinished = Event(Unit))
+    }
+
+    override fun onError() {
+        viewModelScope.launch {
+            _cardsPreviewFlow.update {
+                it.copy(errorEvent = Event(WebViewError.NO_CONNECTION))
+            }
+        }
+    }
+
+    override fun onHttpError() {
+        viewModelScope.launch {
+            _cardsPreviewFlow.update {
+                it.copy(errorEvent = Event(WebViewError.HTTP_ERROR))
+            }
+        }
     }
 
     fun getAuthorizedAddresses() {
@@ -72,32 +88,12 @@ class CardsViewModel @Inject constructor(
         }
     }
 
-    override fun onError() {
-        viewModelScope.launch {
-            _cardsPreviewFlow.update {
-                it.copy(errorEvent = Event(WebViewError.NO_CONNECTION))
-            }
-        }
-    }
-
-    override fun onHttpError() {
-        viewModelScope.launch {
-            _cardsPreviewFlow.update {
-                it.copy(errorEvent = Event(WebViewError.HTTP_ERROR))
-            }
-        }
-    }
-
     fun getOpenSystemBrowserUrl(jsonPayload: String): String? {
         return parseOpenSystemBrowserUrl(jsonPayload)
     }
 
     fun getPrimaryCurrencyId(): String {
         return currencyUseCase.getPrimaryCurrencyId()
-    }
-
-    fun isConnectedToTestnet(): Boolean {
-        return getIsActiveNodeTestnetUseCase.invoke()
     }
 
     fun getCardsUrl(): String {
@@ -107,5 +103,9 @@ class CardsViewModel @Inject constructor(
             CARDS_MAINNET_URL
 
         return "$cardsBaseUrl/${args.path.orEmpty()}"
+    }
+
+    private fun isConnectedToTestnet(): Boolean {
+        return getIsActiveNodeTestnetUseCase.invoke()
     }
 }

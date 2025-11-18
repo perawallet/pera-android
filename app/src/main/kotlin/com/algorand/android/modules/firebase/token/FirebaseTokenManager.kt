@@ -29,8 +29,6 @@ import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.banner.common.domain.usecase.InitializeAllBanners
 import com.google.firebase.messaging.FirebaseMessaging
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,6 +37,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // TODO: separate this class into smaller classes
 @Singleton
@@ -97,7 +97,7 @@ class FirebaseTokenManager @Inject constructor(
                 FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
                     firebasePushTokenUseCase.setPushToken(token)
                 }
-            } catch (exception: Exception) {
+            } catch (_: Exception) {
                 // TODO: Re-active last activated node in case of failure
                 _firebaseTokenResultEventFlow.emit(firebaseTokenResultMapper.mapToTokenLoaded())
             }

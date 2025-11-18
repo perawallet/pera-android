@@ -57,7 +57,7 @@ sealed class AccountSelectionListItem : RecyclerListItem, Parcelable {
         val accountDisplayName: AccountDisplayName,
         val accountIconDrawablePreview: AccountIconDrawablePreview,
         var isSelected: Boolean = false,
-        @DrawableRes val selectorDrawableRes: Int,
+        @param:DrawableRes val selectorDrawableRes: Int,
         val selectedLedgerAccount: SelectedLedgerAccount
     ) : AccountSelectionListItem() {
 

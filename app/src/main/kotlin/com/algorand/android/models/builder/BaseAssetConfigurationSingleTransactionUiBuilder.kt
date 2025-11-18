@@ -17,22 +17,22 @@ import com.algorand.android.R
 import com.algorand.android.models.BaseAssetConfigurationTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
 import com.algorand.android.models.WalletConnectTransactionShortDetail
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
-class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
-) : WalletConnectSingleTransactionUiBuilder<BaseAssetConfigurationTransaction> {
+class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor() :
+    WalletConnectSingleTransactionUiBuilder<BaseAssetConfigurationTransaction> {
 
     override fun buildToolbarTitleRes(txn: BaseAssetConfigurationTransaction): Int {
         return when (txn) {
             is BaseAssetConfigurationTransaction.BaseAssetCreationTransaction -> {
                 R.string.asset_creation_request
             }
+
             is BaseAssetConfigurationTransaction.BaseAssetDeletionTransaction -> {
                 R.string.asset_deletion_request
             }
+
             is BaseAssetConfigurationTransaction.BaseAssetReconfigurationTransaction -> {
                 R.string.asset_reconfiguration_request
             }
@@ -58,6 +58,7 @@ class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor(
             is BaseAssetConfigurationTransaction.BaseAssetCreationTransaction -> {
                 buildAssetCreationTransactionAmount(txn)
             }
+
             else -> buildGeneralAmountInfo(txn)
         }
     }

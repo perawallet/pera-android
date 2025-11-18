@@ -80,11 +80,11 @@ data class CollectibleListItem(
     }
 
     companion object {
-        val singleColumnItemList = listOf(
+        val singleColumnItemList: List<Int> = listOf(
             ItemType.GRID_SIMPLE_NFT_ITEM.value,
             ItemType.GRID_SIMPLE_PENDING_ITEM.value
         )
-        val excludedItemFromDivider = BaseCollectibleListHeaderItem.excludedItemFromDivider + listOf(
+        val excludedItemFromDivider: List<Int> = BaseCollectibleListHeaderItem.excludedItemFromDivider + listOf(
             ItemType.GRID_SIMPLE_NFT_ITEM.value,
             ItemType.GRID_SIMPLE_PENDING_ITEM.value,
             ItemType.PLACEHOLDER_ITEM.value

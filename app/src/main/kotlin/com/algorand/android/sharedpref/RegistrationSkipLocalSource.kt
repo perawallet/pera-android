@@ -27,7 +27,7 @@ class RegistrationSkipLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Boolean {
-        return sharedPref.getBoolean(key, defaultRegisterSkipPreference)
+        return sharedPref.getBoolean(key, DEFAULT_REGISTER_SKIP_PREFERENCE)
     }
 
     override fun saveData(data: Boolean) {
@@ -36,6 +36,6 @@ class RegistrationSkipLocalSource @Inject constructor(
 
     companion object {
         private const val REGISTER_SKIP_KEY = "register_skip_key"
-        const val defaultRegisterSkipPreference = false
+        const val DEFAULT_REGISTER_SKIP_PREFERENCE = false
     }
 }

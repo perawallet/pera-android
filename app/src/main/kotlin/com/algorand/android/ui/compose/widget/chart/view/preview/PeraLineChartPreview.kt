@@ -30,7 +30,7 @@ fun PeraLineChartPreview() {
     }
 
     val initialNumber = Random.nextDouble(until = 20.0)
-    val numbers = mutableListOf<Float>(initialNumber.toFloat())
+    val numbers = mutableListOf(initialNumber.toFloat())
     repeat(100) { index ->
         numbers.add(generateNumber(numbers[index]))
     }

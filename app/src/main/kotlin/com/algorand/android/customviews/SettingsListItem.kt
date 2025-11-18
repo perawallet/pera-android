@@ -17,7 +17,6 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.use
-import androidx.core.view.isVisible
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomSettingsListItemBinding
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -34,14 +33,6 @@ class SettingsListItem @JvmOverloads constructor(
     init {
         setLayoutAttributes()
         initAttributes(attrs)
-    }
-
-    fun updateSubTitle(charSequence: CharSequence) {
-        binding.settingSubTitleTextView.text = charSequence
-    }
-
-    fun updateSubTitleVisibility(isVisible: Boolean) {
-        binding.settingSubTitleTextView.isVisible = isVisible
     }
 
     /**

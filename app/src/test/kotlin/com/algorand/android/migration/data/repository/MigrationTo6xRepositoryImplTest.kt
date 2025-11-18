@@ -16,6 +16,7 @@ import com.algorand.wallet.foundation.cache.PersistentCache
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -28,7 +29,7 @@ class MigrationTo6xRepositoryImplTest {
     private var sut = MigrationTo6xRepositoryImpl(migrationTo6xCache, secretKeyValidationCache)
 
     @Test
-    fun `EXPECT false WHEN getMigratedTo6xCheck is called and cache returns null`() = runTest {
+    fun `EXPECT false WHEN getMigratedTo6xCheck is called and cache returns null`(): TestResult = runTest {
         every { migrationTo6xCache.get() } returns null
 
         val result = sut.getMigratedTo6xCheck()
@@ -37,7 +38,7 @@ class MigrationTo6xRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN getMigratedTo6xCheck is called and cache returns true`() = runTest {
+    fun `EXPECT true WHEN getMigratedTo6xCheck is called and cache returns true`(): TestResult = runTest {
         every { migrationTo6xCache.get() } returns true
 
         val result = sut.getMigratedTo6xCheck()
@@ -46,7 +47,7 @@ class MigrationTo6xRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN getMigratedTo6xCheck is called and cache returns false`() = runTest {
+    fun `EXPECT false WHEN getMigratedTo6xCheck is called and cache returns false`(): TestResult = runTest {
         every { migrationTo6xCache.get() } returns false
 
         val result = sut.getMigratedTo6xCheck()
@@ -55,7 +56,7 @@ class MigrationTo6xRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN isSecretKeyValidatedForMigratedAccounts is called and cache returns null`() = runTest {
+    fun `EXPECT false WHEN isSecretKeyValidatedForMigratedAccounts is called and cache returns null`(): TestResult = runTest {
         every { secretKeyValidationCache.get() } returns null
 
         val result = sut.isSecretKeyValidatedForMigratedAccounts()
@@ -64,7 +65,7 @@ class MigrationTo6xRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN isSecretKeyValidatedForMigratedAccounts is called and cache returns true`() = runTest {
+    fun `EXPECT true WHEN isSecretKeyValidatedForMigratedAccounts is called and cache returns true`(): TestResult = runTest {
         every { secretKeyValidationCache.get() } returns true
 
         val result = sut.isSecretKeyValidatedForMigratedAccounts()
@@ -73,7 +74,7 @@ class MigrationTo6xRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN isSecretKeyValidatedForMigratedAccounts is called and cache returns false`() = runTest {
+    fun `EXPECT false WHEN isSecretKeyValidatedForMigratedAccounts is called and cache returns false`(): TestResult = runTest {
         every { secretKeyValidationCache.get() } returns false
 
         val result = sut.isSecretKeyValidatedForMigratedAccounts()
@@ -82,7 +83,7 @@ class MigrationTo6xRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT secret key validation cache to be set to true`() = runTest {
+    fun `EXPECT secret key validation cache to be set to true`(): TestResult = runTest {
         sut.setSecretKeyValidatedForMigratedAccounts()
 
         verify { secretKeyValidationCache.put(true) }

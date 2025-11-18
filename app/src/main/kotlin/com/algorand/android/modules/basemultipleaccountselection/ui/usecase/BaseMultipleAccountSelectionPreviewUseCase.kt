@@ -56,9 +56,11 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
                 is MultipleAccountSelectionListItem.AccountItem -> {
                     item.copy(accountViewButtonState = accountItemCheckBoxState)
                 }
+
                 is MultipleAccountSelectionListItem.AccountHeaderItem -> {
                     item.copy(checkboxState = headerCheckBoxState)
                 }
+
                 else -> item
             }
         }
@@ -78,6 +80,7 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
                         item
                     }
                 }
+
                 else -> item
             }
         }

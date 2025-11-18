@@ -15,13 +15,13 @@ package com.algorand.android.customviews
 import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -58,7 +58,7 @@ class Tooltip(
             isClippingEnabled = true
             isOutsideTouchable = true
             contentView = binding.root
-            setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, R.color.transparent)))
+            setBackgroundDrawable(ContextCompat.getColor(context, R.color.transparent).toDrawable())
         }
     }
 
@@ -139,8 +139,8 @@ class Tooltip(
     }
 
     companion object {
-        const val POSITION_X_INDEX = 0
-        const val POSITION_Y_INDEX = 1
+        const val POSITION_X_INDEX: Int = 0
+        const val POSITION_Y_INDEX: Int = 1
         private const val AUTO_DISMISS_DELAY = 5_000L
     }
 }

@@ -14,10 +14,10 @@ package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import javax.inject.Inject
 
 internal class GetAccountDetailCacheStatusFlowUseCase @Inject constructor(
     private val getLocalAccountCountFlow: GetLocalAccountCountFlow,

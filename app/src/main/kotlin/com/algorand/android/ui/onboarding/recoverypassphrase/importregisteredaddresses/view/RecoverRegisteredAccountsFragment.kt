@@ -34,7 +34,7 @@ class RecoverRegisteredAccountsFragment : BaseFragment(0), RecoverRegisteredAcco
 
     private val viewModel: RecoverRegisteredAccountsViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = ToolbarConfiguration(backgroundColor = R.color.primary_background),
         statusBarConfiguration = StatusBarConfiguration(backgroundColor = R.color.tertiary_background)
     )

@@ -48,18 +48,18 @@ abstract class AlgorandDatabase : RoomDatabase() {
     abstract fun walletConnect(): WalletConnectDao
 
     companion object {
-        const val LATEST_DB_VERSION = 12
+        const val LATEST_DB_VERSION: Int = 12
 
-        val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE Node ADD COLUMN networkSlug TEXT NOT NULL DEFAULT ''")
+        val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE Node ADD COLUMN networkSlug TEXT NOT NULL DEFAULT ''")
             }
         }
 
-        val MIGRATION_4_5 = object : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("DROP TABLE Node")
-                database.execSQL(
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE Node")
+                db.execSQL(
                     """
                         CREATE TABLE Node (name TEXT NOT NULL, indexer_address TEXT NOT NULL,
                             indexer_api_key TEXT NOT NULL, algod_address TEXT NOT NULL, algod_api_key TEXT NOT NULL,
@@ -71,17 +71,17 @@ abstract class AlgorandDatabase : RoomDatabase() {
             }
         }
 
-        val MIGRATION_5_6 = object : Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
+        val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
                     "CREATE TABLE IF NOT EXISTS NotificationFilter (`public_key` TEXT NOT NULL, PRIMARY KEY(`public_key`))"
                 )
             }
         }
 
-        val MIGRATION_6_7 = object : Migration(6, 7) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
                     """
                         CREATE TABLE IF NOT EXISTS WalletConnectSessionEntity (
                             id INTEGER NOT NULL,
@@ -94,7 +94,7 @@ abstract class AlgorandDatabase : RoomDatabase() {
                         )
                     """.trimIndent()
                 )
-                database.execSQL(
+                db.execSQL(
                     """
                         CREATE TABLE IF NOT EXISTS WalletConnectSessionHistoryEntity (
                             id INTEGER NOT NULL,
@@ -109,22 +109,22 @@ abstract class AlgorandDatabase : RoomDatabase() {
             }
         }
 
-        val MIGRATION_7_8 = object : Migration(7, 8) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE Node ADD COLUMN mobile_algorand_address TEXT NOT NULL DEFAULT ''")
+        val MIGRATION_7_8: Migration = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE Node ADD COLUMN mobile_algorand_address TEXT NOT NULL DEFAULT ''")
             }
         }
 
-        val MIGRATION_8_9 = object : Migration(8, 9) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE WalletConnectSessionEntity ADD COLUMN fallback_browser_group_response TEXT")
-                database.execSQL("ALTER TABLE WalletConnectSessionHistoryEntity ADD COLUMN fallback_browser_group_response TEXT")
+        val MIGRATION_8_9: Migration = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE WalletConnectSessionEntity ADD COLUMN fallback_browser_group_response TEXT")
+                db.execSQL("ALTER TABLE WalletConnectSessionHistoryEntity ADD COLUMN fallback_browser_group_response TEXT")
             }
         }
 
-        val MIGRATION_9_10 = object : Migration(9, 10) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
+        val MIGRATION_9_10: Migration = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
                     """
                         CREATE TABLE IF NOT EXISTS WalletConnectSessionAccountEntity (
                             id INTEGER NOT NULL,
@@ -137,7 +137,7 @@ abstract class AlgorandDatabase : RoomDatabase() {
                         )
                     """.trimIndent()
                 )
-                with(database.query("SELECT * FROM WalletConnectSessionEntity") ?: return) {
+                with(db.query("SELECT * FROM WalletConnectSessionEntity") ?: return) {
                     while (moveToNext()) {
                         // Get session id
                         val sessionIdIndex = getColumnIndexOrThrow("id")
@@ -146,7 +146,7 @@ abstract class AlgorandDatabase : RoomDatabase() {
                         val connectedAccountPublicKeyIndex = getColumnIndexOrThrow("connected_account_public_key")
                         val connectedAccountPublicKey = getString(connectedAccountPublicKeyIndex)
                         // Insert the new account address into new table
-                        database.execSQL(
+                        db.execSQL(
                             """
                             INSERT INTO WalletConnectSessionAccountEntity (session_id, connected_account_address) 
                             VALUES ($sessionId, '$connectedAccountPublicKey')
@@ -156,7 +156,7 @@ abstract class AlgorandDatabase : RoomDatabase() {
                 }
 
                 // Drop connected_account_public_key column in WalletConnectSessionEntity table
-                database.execSQL(
+                db.execSQL(
                     """
                         CREATE TABLE WalletConnectSessionEntity_backup (
                             id INTEGER NOT NULL,
@@ -169,30 +169,30 @@ abstract class AlgorandDatabase : RoomDatabase() {
                         )
                     """.trimIndent()
                 )
-                database.execSQL(
+                db.execSQL(
                     """
                     INSERT INTO WalletConnectSessionEntity_backup
                     SELECT id, peer_meta, wc_session, date_time_stamp, is_connected, fallback_browser_group_response
                     FROM WalletConnectSessionEntity
                     """.trimIndent()
                 )
-                database.execSQL("DROP TABLE WalletConnectSessionEntity")
-                database.execSQL("ALTER TABLE WalletConnectSessionEntity_backup RENAME TO WalletConnectSessionEntity")
+                db.execSQL("DROP TABLE WalletConnectSessionEntity")
+                db.execSQL("ALTER TABLE WalletConnectSessionEntity_backup RENAME TO WalletConnectSessionEntity")
 
                 // // Drop WalletConnectSessionHistoryEntity table, no need to keep it
-                database.execSQL("DROP TABLE WalletConnectSessionHistoryEntity")
+                db.execSQL("DROP TABLE WalletConnectSessionHistoryEntity")
             }
         }
 
-        val MIGRATION_10_11 = object : Migration(10, 11) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE WalletConnectSessionEntity ADD COLUMN is_subscribed INTEGER NOT NULL DEFAULT 0")
+        val MIGRATION_10_11: Migration = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE WalletConnectSessionEntity ADD COLUMN is_subscribed INTEGER NOT NULL DEFAULT 0")
             }
         }
 
-        val MIGRATION_11_12 = object : Migration(11, 12) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
+        val MIGRATION_11_12: Migration = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
                     """
                         CREATE TABLE IF NOT EXISTS WalletConnectV1SessionRequestIdEntity (
                             id INTEGER NOT NULL,
@@ -201,7 +201,7 @@ abstract class AlgorandDatabase : RoomDatabase() {
                         )
                     """.trimIndent()
                 )
-                database.execSQL(
+                db.execSQL(
                     """
                         CREATE TABLE IF NOT EXISTS WalletConnectV1TransactionRequestIdEntity (
                             id INTEGER NOT NULL,
@@ -213,6 +213,6 @@ abstract class AlgorandDatabase : RoomDatabase() {
             }
         }
 
-        const val DATABASE_NAME = "algorand-db"
+        const val DATABASE_NAME: String = "algorand-db"
     }
 }

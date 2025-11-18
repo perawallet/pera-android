@@ -20,8 +20,8 @@ import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.asset.domain.model.AssetDetail
-import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
+import java.math.BigInteger
 
 fun interface GetAccountCollectibleDataFlow {
     operator fun invoke(address: String): Flow<List<BaseOwnedCollectibleData>>

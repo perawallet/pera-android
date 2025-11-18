@@ -32,7 +32,7 @@ sealed class BaseWalletConnectDisplayedAddress {
 
     data class FullAddress(override val displayValue: String) : BaseWalletConnectDisplayedAddress() {
         override val isSingleLine: Boolean = false
-        override val fullAddress = displayValue
+        override val fullAddress: String = displayValue
     }
 
     companion object {
@@ -43,7 +43,7 @@ sealed class BaseWalletConnectDisplayedAddress {
             val isDecodedAddressUsersAddress = account?.address == decodedAddress
             return when {
                 account == null || !isDecodedAddressUsersAddress -> FullAddress(decodedAddress)
-                account.name.isNullOrBlank().not() -> CustomName(account.name, decodedAddress)
+                account.name.isBlank().not() -> CustomName(account.name, decodedAddress)
                 else -> ShortenedAddress(decodedAddress.toShortenedAddress(), decodedAddress)
             }
         }

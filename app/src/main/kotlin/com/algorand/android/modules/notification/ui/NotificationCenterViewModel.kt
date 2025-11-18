@@ -17,6 +17,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
@@ -28,13 +29,14 @@ import com.algorand.android.modules.notification.ui.usecase.NotificationCenterPr
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.ZonedDateTime
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import javax.inject.Inject
 
 @HiltViewModel
 class NotificationCenterViewModel @Inject constructor(
@@ -47,7 +49,7 @@ class NotificationCenterViewModel @Inject constructor(
 
     private var notificationDataSource: NotificationDataSource? = null
 
-    val notificationPaginationFlow = Pager(
+    val notificationPaginationFlow: SharedFlow<PagingData<NotificationListItem>> = Pager(
         config = PagingConfig(
             pageSize = DEFAULT_NOTIFICATION_COUNT
         ),

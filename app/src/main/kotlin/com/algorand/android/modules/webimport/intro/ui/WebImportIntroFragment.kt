@@ -31,7 +31,9 @@ class WebImportIntroFragment : BaseFragment(R.layout.fragment_web_import_intro) 
         startIconClick = ::navBack,
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentWebImportIntroBinding::bind)
 

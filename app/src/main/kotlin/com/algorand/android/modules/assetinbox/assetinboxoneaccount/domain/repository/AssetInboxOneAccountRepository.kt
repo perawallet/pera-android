@@ -26,6 +26,6 @@ interface AssetInboxOneAccountRepository {
     ): Result<AssetInboxOneAccountPaginated>
 
     companion object {
-        const val INJECTION_NAME = "assetInboxOneAccountRepositoryInjectionName"
+        const val INJECTION_NAME: String = "assetInboxOneAccountRepositoryInjectionName"
     }
 }

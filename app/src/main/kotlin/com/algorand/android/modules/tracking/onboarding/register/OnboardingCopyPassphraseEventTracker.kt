@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.tracking.onboarding.register
 
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.android.modules.tracking.onboarding.BaseOnboardingEvenTracker
 import com.algorand.android.usecase.RegistrationUseCase
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import javax.inject.Inject
 
 class OnboardingCopyPassphraseEventTracker @Inject constructor(

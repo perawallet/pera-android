@@ -21,8 +21,8 @@ import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ManageAssetsViewModel @Inject constructor(
@@ -32,7 +32,7 @@ class ManageAssetsViewModel @Inject constructor(
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val navArgs = ManageAssetsBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
-    val publicKey = navArgs.publicKey
+    val publicKey: String = navArgs.publicKey
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle)

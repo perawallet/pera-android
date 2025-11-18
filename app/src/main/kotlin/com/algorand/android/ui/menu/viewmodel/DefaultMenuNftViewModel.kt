@@ -19,9 +19,9 @@ import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel.ViewState
 import com.algorand.wallet.asset.domain.usecase.GetRecentlyAddedCollectibleUrls
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DefaultMenuNftViewModel @Inject constructor(

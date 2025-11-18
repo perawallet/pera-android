@@ -51,8 +51,8 @@ internal class GetAccountMnemonicUseCase @Inject constructor(
             return PeraResult.Error(IllegalArgumentException("Account is not an HD key account."))
         }
 
-        val entropy = getHdEntropy(localAccount.seedId) ?:
-            return PeraResult.Error(IllegalArgumentException("HD entropy not found for seed"))
+        val entropy = getHdEntropy(localAccount.seedId)
+            ?: return PeraResult.Error(IllegalArgumentException("HD entropy not found for seed"))
 
         val mnemonic = bip39Sdk.getMnemonicFromEntropy(entropy)
         return getAccountMnemonic(mnemonic, HdKey)

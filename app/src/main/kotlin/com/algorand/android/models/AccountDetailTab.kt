@@ -15,6 +15,7 @@ package com.algorand.android.models
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+@Suppress("unused")
 @Parcelize
 enum class AccountDetailTab(val tabIndex: Int) : Parcelable {
     ASSETS(tabIndex = 0),

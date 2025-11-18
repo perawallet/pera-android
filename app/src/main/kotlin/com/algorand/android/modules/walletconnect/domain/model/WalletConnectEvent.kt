@@ -22,8 +22,4 @@ enum class WalletConnectEvent(val value: String) {
     ACCOUNT_CHANGED(ACCOUNT_CHANGED_VALUE),
 
     UNKNOWN("");
-
-    companion object {
-        fun getDefaultEventList() = listOf(ACCOUNT_CHANGED)
-    }
 }

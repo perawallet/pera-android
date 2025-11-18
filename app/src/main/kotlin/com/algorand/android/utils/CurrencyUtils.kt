@@ -19,14 +19,13 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
-const val ALGO_FULL_NAME = "Algo"
-const val ALGO_SHORT_NAME = "ALGO"
-const val ALGO_DECIMALS = 6
-const val DEFAULT_ASSET_DECIMAL = 0
-const val POSITIVE_SIGN = "+"
-const val NEGATIVE_SIGN = "-"
-const val NO_PRICE_SIGN = "-"
-const val SMALLER_SIGN = "<"
+const val ALGO_FULL_NAME: String = "Algo"
+const val ALGO_SHORT_NAME: String = "ALGO"
+const val ALGO_DECIMALS: Int = 6
+const val DEFAULT_ASSET_DECIMAL: Int = 0
+const val POSITIVE_SIGN: String = "+"
+const val NEGATIVE_SIGN: String = "-"
+const val SMALLER_SIGN: String = "<"
 private const val FIAT_MAX_DECIMAL = 6
 private const val FIAT_MIN_DECIMAL = 2
 

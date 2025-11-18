@@ -25,11 +25,12 @@ import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.wallet.asb.domain.model.AsbBackupAccount
 import com.algorand.wallet.asb.domain.model.AsbBackupData
+import com.algorand.wallet.asb.domain.usecase.RestoreEncryptedBackupProtocolPayload
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.usecase.RestoreEncryptedBackupProtocolPayload
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class AsbKeyEnterPreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: AsbKeyEnterPreviewMapper,
@@ -107,7 +108,10 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun updatePreviewWithKeyValidation(preview: AsbKeyEnterPreview, cipherText: String) = flow {
+    fun updatePreviewWithKeyValidation(
+        preview: AsbKeyEnterPreview,
+        cipherText: String
+    ): Flow<AsbKeyEnterPreview> = flow {
         val areAllFieldsValid = passphraseInputConfigurationUtil.areAllFieldsValid(
             passphrasesMap = preview.passphraseInputGroupConfiguration.passphraseInputConfigurationList
         )
@@ -152,7 +156,6 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
             val accountType = when (it.accountType) {
                 is AsbBackupAccount.AccountType.Algo25 -> ALGO_25_ACCOUNT_TYPE_NAME
                 AsbBackupAccount.AccountType.Watch -> NO_AUTH_ACCOUNT_TYPE_NAME
-                else -> null
             }
             BackupProtocolElement(
                 address = it.address,

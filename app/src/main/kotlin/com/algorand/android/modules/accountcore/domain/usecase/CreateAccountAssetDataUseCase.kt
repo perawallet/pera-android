@@ -52,10 +52,12 @@ internal class CreateAccountAssetDataUseCase @Inject constructor(
                     val assetData = createAccountPendingDeletionAssetData(assetDetail)
                     pendingDeletionAssetDataList.add(assetData)
                 }
+
                 AssetStatus.PENDING_FOR_ADDITION -> {
                     val assetData = createAccountPendingAdditionAssetData(assetDetail)
                     pendingAdditionAssetDataList.add(assetData)
                 }
+
                 AssetStatus.OWNED_BY_ACCOUNT -> {
                     val assetData = createAccountOwnedAssetData(assetDetail, assetHolding)
                     ownedAssetDataList.add(assetData)

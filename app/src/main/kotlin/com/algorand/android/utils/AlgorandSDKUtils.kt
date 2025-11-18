@@ -27,12 +27,8 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 
-const val ENCRYPTION_SEPARATOR_CHAR = ","
-const val SDK_RESULT_SUCCESS = 0L
-const val SDK_RESULT_ERROR_INVALID_SECRET_KEY = 1L
-const val SDK_RESULT_ERROR_RANDOM_GENERATOR_ERROR_KEY = 2L
-const val SDK_RESULT_ERROR_INVALID_ENCRYPTED_DATA_LENGTH_KEY = 3L
-const val SDK_RESULT_ERROR_DECRYPTION_ERROR_LENGTH_KEY = 4L
+const val ENCRYPTION_SEPARATOR_CHAR: String = ","
+const val SDK_RESULT_SUCCESS: Long = 0L
 
 fun ByteArray.signTx(secretKey: ByteArray): ByteArray {
     return Sdk.signTransaction(secretKey, this)
@@ -290,7 +286,7 @@ fun groupWalletConnectTransactions(
             }
         }
         txnGroupList.groupBy { it.first }.map { it.value.map { it.second } }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -321,10 +317,6 @@ fun List<ByteArray>.flatten(): ByteArray {
     return ByteArrayOutputStream().apply {
         this@flatten.forEach { write(it) }
     }.toByteArray()
-}
-
-fun ByteArray.encrypt(secretKey: ByteArray): Encryption {
-    return Sdk.encrypt(this, secretKey)
 }
 
 fun ByteArray.decrypt(secretKey: ByteArray): Encryption {

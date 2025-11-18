@@ -46,29 +46,32 @@ abstract class BaseLedgerAccountSelectionFragment : DaggerBaseFragment(R.layout.
         startIconClick = ::navBack
     )
 
-    protected val binding by viewBinding(FragmentLedgerAccountSelectionBinding::bind)
+    protected val binding: FragmentLedgerAccountSelectionBinding
+            by viewBinding(FragmentLedgerAccountSelectionBinding::bind)
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
-    protected val ledgerAccountListAdapterListener = object : LedgerAccountSelectionAdapter.Listener {
-        override fun onAccountClick(accountItem: AccountSelectionListItem.AccountItem) {
-            baseLedgerAccountSelectionViewModel.onNewAccountSelected(accountItem)
-        }
+    protected val ledgerAccountListAdapterListener: LedgerAccountSelectionAdapter.Listener =
+        object : LedgerAccountSelectionAdapter.Listener {
+            override fun onAccountClick(accountItem: AccountSelectionListItem.AccountItem) {
+                baseLedgerAccountSelectionViewModel.onNewAccountSelected(accountItem)
+            }
 
-        override fun onAccountInfoClick(accountItem: AccountSelectionListItem.AccountItem) {
-            nav(
-                MainNavigationDirections.actionGlobalLedgerAccountInformationBottomSheet(
-                    selectedLedgerAccountSelectionListItem = accountItem,
-                    authLedgerAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getAuthAccountOf(
-                        accountSelectionListItem = accountItem
-                    ),
-                    rekeyedAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getRekeyedAccountOf(
-                        accountSelectionListItem = accountItem
+            override fun onAccountInfoClick(accountItem: AccountSelectionListItem.AccountItem) {
+                nav(
+                    MainNavigationDirections.actionGlobalLedgerAccountInformationBottomSheet(
+                        selectedLedgerAccountSelectionListItem = accountItem,
+                        authLedgerAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getAuthAccountOf(
+                            accountSelectionListItem = accountItem
+                        ),
+                        rekeyedAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getRekeyedAccountOf(
+                            accountSelectionListItem = accountItem
+                        )
                     )
                 )
-            )
+            }
         }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

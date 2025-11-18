@@ -39,7 +39,8 @@ class ThemeSelectionFragment : DaggerBaseFragment(R.layout.fragment_selection_li
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentSelectionListBinding::bind)
 

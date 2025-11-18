@@ -22,65 +22,40 @@ import com.algorand.android.utils.getLastWeekRange
 import kotlinx.parcelize.Parcelize
 
 sealed class DateFilter(
-    @DrawableRes val iconResId: Int,
-    @StringRes val titleResId: Int
+    @param:DrawableRes val iconResId: Int,
+    @param:StringRes val titleResId: Int
 ) : Parcelable, RecyclerListItem {
 
     open var isSelected: Boolean = false
 
     @Parcelize
     object AllTime : DateFilter(R.drawable.ic_default_date, R.string.all_time) {
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is AllTime && isSelected == other.isSelected
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is AllTime && this == other
-        }
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = this === other
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
     }
 
     @Parcelize
     object Today : DateFilter(R.drawable.ic_default_date, R.string.today) {
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is Today && isSelected == other.isSelected
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is Today && this == other
-        }
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = this === other
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
     }
 
     @Parcelize
     object Yesterday : DateFilter(R.drawable.ic_yesterday, R.string.yesterday) {
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is Yesterday && isSelected == other.isSelected
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is Yesterday && this == other
-        }
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = this === other
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
     }
 
     @Parcelize
     object LastWeek : DateFilter(R.drawable.ic_week, R.string.last_week) {
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is LastWeek && isSelected == other.isSelected
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is LastWeek && this == other
-        }
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = this === other
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
     }
 
     @Parcelize
     object LastMonth : DateFilter(R.drawable.ic_default_date, R.string.last_month) {
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is LastMonth && isSelected == other.isSelected
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is LastMonth && this == other
-        }
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = this === other
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
     }
 
     @Parcelize
@@ -108,7 +83,7 @@ sealed class DateFilter(
     }
 
     companion object {
-        val DEFAULT_DATE_FILTER by lazy { AllTime }
+        val DEFAULT_DATE_FILTER: AllTime by lazy { AllTime }
 
         fun getDateFilterList(customRange: CustomRange? = null): MutableList<DateFilter> {
             return mutableListOf(

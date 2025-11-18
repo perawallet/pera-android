@@ -33,9 +33,9 @@ import com.algorand.android.utils.formatAsCurrency
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class LedgerInformationUseCase @Inject constructor(

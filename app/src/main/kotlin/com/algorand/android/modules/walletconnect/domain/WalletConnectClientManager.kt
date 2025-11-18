@@ -169,12 +169,6 @@ class WalletConnectClientManager @Inject constructor(
         }.flatten()
     }
 
-    suspend fun getDisconnectedWalletConnectSessions(): List<WalletConnect.SessionDetail> {
-        return walletConnectClientProvider.getClients().map { client ->
-            client.getDisconnectedWalletConnectSessions()
-        }.flatten()
-    }
-
     suspend fun setAllSessionsDisconnected() {
         walletConnectClientProvider.getClients().forEach { client ->
             client.setAllSessionsDisconnected()
@@ -206,7 +200,7 @@ class WalletConnectClientManager @Inject constructor(
         val identifier = with(sessionIdentifier) {
             sessionIdentifierDecider.decideSessionIdentifier(this.sessionIdentifier, versionIdentifier)
         }
-        return client?.extendSessionExpirationDate(identifier) ?: Result.failure(WalletConnectClientNotFoundException)
+        return client?.extendSessionExpirationDate(identifier) ?: Result.failure(WalletConnectClientNotFoundException())
     }
 
     suspend fun isSessionExtendable(sessionIdentifier: WalletConnectSessionIdentifier): Boolean? {
@@ -240,21 +234,6 @@ class WalletConnectClientManager @Inject constructor(
         return client?.getSessionExpirationDateExtendedTimeStampAsSec(identifier)
     }
 
-    suspend fun getSessionExpirationDateTimeStampAsSec(sessionIdentifier: WalletConnect.SessionIdentifier): Long? {
-        val client = walletConnectClientProvider
-            .provideClient(sessionIdentifier.versionIdentifier) as? WalletConnectSessionExpirationManager
-        return client?.getSessionExpirationDateExtendedTimeStampAsSec(sessionIdentifier)
-    }
-
-    suspend fun getSessionExpirationDateTimeStampAsSec(sessionIdentifier: WalletConnectSessionIdentifier): Long? {
-        val client = walletConnectClientProvider
-            .provideClient(sessionIdentifier.versionIdentifier) as? WalletConnectSessionExpirationManager
-        val identifier = with(sessionIdentifier) {
-            sessionIdentifierDecider.decideSessionIdentifier(this.sessionIdentifier, versionIdentifier)
-        }
-        return client?.getSessionExpirationDateExtendedTimeStampAsSec(identifier)
-    }
-
     suspend fun getMaxSessionExpirationDateTimeStampAsSec(sessionIdentifier: WalletConnectSessionIdentifier): Long? {
         val client = walletConnectClientProvider
             .provideClient(sessionIdentifier.versionIdentifier) as? WalletConnectSessionExpirationManager
@@ -276,7 +255,7 @@ class WalletConnectClientManager @Inject constructor(
         val identifier = with(sessionIdentifier) {
             sessionIdentifierDecider.decideSessionIdentifier(this.sessionIdentifier, versionIdentifier)
         }
-        return client?.checkStatus(identifier) ?: Result.failure(WalletConnectClientNotFoundException)
+        return client?.checkStatus(identifier) ?: Result.failure(WalletConnectClientNotFoundException())
     }
 
     private fun getClient(sessionIdentifier: WalletConnect.SessionIdentifier): WalletConnectClient {

@@ -20,11 +20,11 @@ import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class DefaultSwapSelectedAssetDetailMapperTest {
 

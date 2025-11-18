@@ -16,5 +16,5 @@ package com.algorand.android.models
 import androidx.annotation.StringRes
 
 data class TransactionRequestOfflineKeyRegInfo(
-    @StringRes val participationStatusResId: Int
+    @param:StringRes val participationStatusResId: Int
 )

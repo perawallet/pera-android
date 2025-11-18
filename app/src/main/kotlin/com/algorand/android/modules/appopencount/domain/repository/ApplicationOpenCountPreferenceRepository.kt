@@ -19,6 +19,6 @@ interface ApplicationOpenCountPreferenceRepository {
     suspend fun getApplicationOpenCount(): Int
 
     companion object {
-        const val REPOSITORY_INJECTION_NAME = "applicationOpenCountPreferenceRepositoryInjection"
+        const val REPOSITORY_INJECTION_NAME: String = "applicationOpenCountPreferenceRepositoryInjection"
     }
 }

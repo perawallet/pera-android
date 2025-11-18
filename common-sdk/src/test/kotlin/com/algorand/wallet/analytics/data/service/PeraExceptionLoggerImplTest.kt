@@ -16,6 +16,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -29,7 +30,7 @@ class PeraExceptionLoggerImplTest {
     )
 
     @Test
-    fun `EXPECT exception recorded WHEN logException is called`() = runTest {
+    fun `EXPECT exception recorded WHEN logException is called`(): TestResult = runTest {
         val exception = RuntimeException("Test exception")
 
         sut.logException(exception)

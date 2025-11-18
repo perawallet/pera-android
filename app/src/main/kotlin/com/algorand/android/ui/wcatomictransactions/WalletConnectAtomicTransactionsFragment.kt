@@ -40,7 +40,7 @@ class WalletConnectAtomicTransactionsFragment : DaggerBaseFragment(
         titleResId = R.string.multiple_transaction_request
     )
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentWalletConnectAtomicTransactionsBinding::bind)
     private val args by navArgs<WalletConnectAtomicTransactionsFragmentArgs>()

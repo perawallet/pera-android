@@ -21,6 +21,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -33,7 +34,7 @@ class DefaultAlgo25NoAuthRepositoryTest {
     private val sut = DefaultAlgo25NoAuthRepository(algo25NoAuthDao, noAuthEntityMapper, aesPlatformManager)
 
     @Test
-    fun `EXPECT Algo25 accounts with invalid secret keys to be updated as NoAuth accounts`() = runTest {
+    fun `EXPECT Algo25 accounts with invalid secret keys to be updated as NoAuth accounts`(): TestResult = runTest {
         every { aesPlatformManager.decryptByteArray(VALID_ENCRYPTED_SECRET_KEY) } returns VALID_SECRET_KEY
         every { aesPlatformManager.decryptByteArray(EMPTY_ENCRYPTED_SECRET_KEY) } returns byteArrayOf()
         every { aesPlatformManager.decryptByteArray(DEFAULT_VALUE_ENCRYPTED_SECRET_KEY) } returns byteArrayOf(0)

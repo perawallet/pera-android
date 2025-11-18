@@ -121,6 +121,6 @@ class CustomDateRangeUseCase @Inject constructor(
         private const val DEFAULT_DAY_DIFFERENCE_BETWEEN_FROM_AND_TO = 1L
 
         // This date corresponds to 01.01.2019
-        const val DEFAULT_MIN_DATE_IN_MILLIS = 1546290000000
+        const val DEFAULT_MIN_DATE_IN_MILLIS: Long = 1546290000000
     }
 }

@@ -20,9 +20,9 @@ import com.algorand.android.modules.dapp.bidali.ui.intro.usecase.BidaliIntroPrev
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class BidaliIntroViewModel @Inject constructor(
@@ -30,7 +30,7 @@ class BidaliIntroViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    val accountAddress = savedStateHandle.getOrElse<String?>(ACCOUNT_ADDRESS_KEY, null)
+    val accountAddress: String? = savedStateHandle.getOrElse(ACCOUNT_ADDRESS_KEY, null)
 
     private val _bidaliIntroPreviewFlow = MutableStateFlow(
         bidaliIntroPreviewUseCase.getInitialStatePreview()

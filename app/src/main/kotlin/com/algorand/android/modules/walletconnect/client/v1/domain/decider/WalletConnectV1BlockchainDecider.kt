@@ -24,6 +24,7 @@ class WalletConnectV1BlockchainDecider @Inject constructor() {
             WalletConnectV1ChainIdentifier.MAINNET.id,
             WalletConnectV1ChainIdentifier.TESTNET.id,
             WalletConnectV1ChainIdentifier.MAINNET_BACKWARD_SUPPORTABILITY.id -> WalletConnectBlockchain.ALGORAND
+
             else -> WalletConnectBlockchain.UNKNOWN
         }
     }

@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class DeleteWalletConnectAccountBySessionUseCase @Inject constructor(
-    @Named(WalletConnectRepository.INJECTION_NAME)
+    @param:Named(WalletConnectRepository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectRepository
 ) {
 

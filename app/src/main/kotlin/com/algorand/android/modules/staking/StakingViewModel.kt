@@ -24,12 +24,12 @@ import com.algorand.android.modules.staking.model.StakingPreview
 import com.algorand.android.utils.Event
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class StakingViewModel @Inject constructor(
@@ -40,7 +40,7 @@ class StakingViewModel @Inject constructor(
     private val gson: Gson
 ) : BasePeraWebViewViewModel() {
 
-    private val _stakingPreviewFlow = MutableStateFlow<StakingPreview>(StakingPreview())
+    private val _stakingPreviewFlow = MutableStateFlow(StakingPreview())
     val stakingPreviewFlow: StateFlow<StakingPreview?>
         get() = _stakingPreviewFlow.asStateFlow()
 

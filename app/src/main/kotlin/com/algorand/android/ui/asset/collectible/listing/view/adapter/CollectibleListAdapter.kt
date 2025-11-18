@@ -28,7 +28,7 @@ import com.algorand.android.ui.common.listhelper.viewholders.PagingPlaceholderVi
 
 class CollectibleListAdapter(
     private val listener: CollectibleListAdapterListener
-) : PagingDataAdapter<CollectibleListItem, BaseViewHolder<CollectibleListItem>>(BaseDiffUtil<CollectibleListItem>()) {
+) : PagingDataAdapter<CollectibleListItem, BaseViewHolder<CollectibleListItem>>(BaseDiffUtil()) {
 
     private val ownedNFTClickItemListener = NFTItemClickListener { nftId, nftOwnerId ->
         listener.onOwnedNFTItemClick(nftId, nftOwnerId)

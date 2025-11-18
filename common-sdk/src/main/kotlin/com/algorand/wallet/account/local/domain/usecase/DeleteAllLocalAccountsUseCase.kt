@@ -17,11 +17,11 @@ import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepositor
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class DeleteAllLocalAccountsUseCase @Inject constructor(
     private val hdKeyAccountRepository: HdKeyAccountRepository,

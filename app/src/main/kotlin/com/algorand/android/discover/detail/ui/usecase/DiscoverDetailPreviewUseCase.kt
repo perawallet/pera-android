@@ -28,7 +28,6 @@ import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.utils.getSendDeviceId
 import com.algorand.android.discover.utils.isValidDiscoverURL
-import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.discover.detail.DiscoverDetailEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
@@ -39,14 +38,13 @@ import javax.inject.Inject
 class DiscoverDetailPreviewUseCase @Inject constructor(
     private val buySellActionRequestMapper: BuySellActionRequestMapper,
     private val sharedPreferences: SharedPreferences,
-    private val discoverSwapNavigationDestinationHelper: DiscoverSwapNavigationDestinationHelper,
     private val discoverDetailEventTracker: DiscoverDetailEventTracker,
     private val deviceIdUseCase: DeviceIdUseCase,
     private val discoverDappFavoritesMapper: DiscoverDappFavoritesMapper,
     private val gson: Gson
 ) {
 
-    fun getInitialStatePreview(tokenDetail: TokenDetailInfo) = DiscoverDetailPreview(
+    fun getInitialStatePreview(tokenDetail: TokenDetailInfo): DiscoverDetailPreview = DiscoverDetailPreview(
         themePreference = sharedPreferences.getSavedThemePreference(),
         isLoading = true,
         reloadPageEvent = Event(Unit),
@@ -56,20 +54,20 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
     fun onPageRequestedShouldOverrideUrlLoading(
         previousState: DiscoverDetailPreview,
         url: String
-    ) = previousState.copy(
+    ): DiscoverDetailPreview = previousState.copy(
         externalPageRequestedEvent = Event(url)
     )
 
-    fun onPageFinished(previousState: DiscoverDetailPreview) = previousState.copy(
+    fun onPageFinished(previousState: DiscoverDetailPreview): DiscoverDetailPreview = previousState.copy(
         isLoading = false
     )
 
-    fun onError(previousState: DiscoverDetailPreview) = previousState.copy(
+    fun onError(previousState: DiscoverDetailPreview): DiscoverDetailPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onHttpError(previousState: DiscoverDetailPreview) = previousState.copy(
+    fun onHttpError(previousState: DiscoverDetailPreview): DiscoverDetailPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )
@@ -90,7 +88,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
         }
     }
 
-    suspend fun handleTokenDetailActionButtonClick(
+    fun handleTokenDetailActionButtonClick(
         data: String,
         previousState: DiscoverDetailPreview
     ): DiscoverDetailPreview {
@@ -108,29 +106,11 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
             }
 
             BuySellActionRequest.Destination.SWAP -> {
-                discoverSwapNavigationDestinationHelper.getSwapNavigationDestination(
-                    onNavToIntroduction = {
-                        swapNavDirection = DiscoverDetailFragmentDirections
-                            .actionDiscoverDetailFragmentToSwapIntroductionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToAccountSelection = {
-                        swapNavDirection = DiscoverDetailFragmentDirections
-                            .actionDiscoverDetailFragmentToSwapAccountSelectionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToSwapV2 = {
-                        swapNavDirection = DiscoverDetailFragmentDirections
-                            .actionDiscoverDetailFragmentToSwapV2Navigation(
-                                assetInId = buySellActionRequest.assetInId ?: -1L,
-                                assetOutId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    }
-                )
+                swapNavDirection = DiscoverDetailFragmentDirections
+                    .actionDiscoverDetailFragmentToSwapV2Navigation(
+                        assetInId = buySellActionRequest.assetInId ?: -1L,
+                        assetOutId = buySellActionRequest.assetOutId ?: -1L
+                    )
             }
 
             BuySellActionRequest.Destination.ONRAMP -> {}

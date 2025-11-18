@@ -23,6 +23,7 @@ import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -44,7 +45,7 @@ class DefaultAssetBalanceHistoryRepositoryTest {
         )
 
     @Test
-    fun `EXPECT Error WHEN fetching asset balance history fails`() = runTest {
+    fun `EXPECT Error WHEN fetching asset balance history fails`(): TestResult = runTest {
         coEvery {
             assetBalanceHistoryApiService.getAssetBalanceHistory(
                 ADDRESS_QUERY,
@@ -60,7 +61,7 @@ class DefaultAssetBalanceHistoryRepositoryTest {
     }
 
     @Test
-    fun `EXPECT mapped result WHEN fetching succeeds`() = runTest {
+    fun `EXPECT mapped result WHEN fetching succeeds`(): TestResult = runTest {
         coEvery {
             assetBalanceHistoryApiService.getAssetBalanceHistory(
                 ADDRESS_QUERY,

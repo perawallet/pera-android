@@ -33,7 +33,7 @@ class WalletConnectSingleTransactionFragment : BaseFragment(
     R.layout.fragment_wallet_connect_single_transaction
 ) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val walletConnectSingleTransactionViewModel: WalletConnectSingleTransactionViewModel by viewModels()
 

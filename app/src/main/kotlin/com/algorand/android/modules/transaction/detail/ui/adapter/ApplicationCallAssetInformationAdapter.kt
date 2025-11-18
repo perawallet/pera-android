@@ -20,8 +20,8 @@ import com.algorand.android.modules.transaction.detail.ui.model.BaseApplicationC
 import com.algorand.android.modules.transaction.detail.ui.viewholder.ApplicationCallAssetInformationViewHolder
 
 class ApplicationCallAssetInformationAdapter : ListAdapter<
-    BaseApplicationCallAssetInformationListItem,
-    BaseViewHolder<BaseApplicationCallAssetInformationListItem>>(
+        BaseApplicationCallAssetInformationListItem,
+        BaseViewHolder<BaseApplicationCallAssetInformationListItem>>(
     BaseDiffUtil()
 ) {
 
@@ -37,6 +37,7 @@ class ApplicationCallAssetInformationAdapter : ListAdapter<
             BaseApplicationCallAssetInformationListItem.ItemType.ASSET_INFORMATION.ordinal -> {
                 createAssetInformationViewHolder(parent)
             }
+
             else -> throw Exception("$logTag list item is unknown")
         }
     }

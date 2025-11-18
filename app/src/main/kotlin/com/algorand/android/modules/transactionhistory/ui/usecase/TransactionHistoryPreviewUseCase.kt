@@ -20,10 +20,10 @@ import com.algorand.android.modules.transactionhistory.domain.usecase.Transactio
 import com.algorand.android.modules.transactionhistory.ui.mapper.TransactionItemMapper
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.wallet.asset.domain.usecase.GetAsset
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class TransactionHistoryPreviewUseCase @Inject constructor(
     private val transactionHistoryUseCase: TransactionHistoryUseCase,

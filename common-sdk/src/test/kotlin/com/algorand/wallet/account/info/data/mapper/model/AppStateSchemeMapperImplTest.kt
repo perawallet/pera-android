@@ -33,7 +33,7 @@ class AppStateSchemeMapperImplTest {
 
     @Test
     fun `EXPECT mapped scheme with default values WHEN response fields are null`() {
-        val response = AppStateSchemaResponse(numByteSlice = null, numUint = null)
+        val response = AppStateSchemaResponse()
 
         val result = sut(response)
 

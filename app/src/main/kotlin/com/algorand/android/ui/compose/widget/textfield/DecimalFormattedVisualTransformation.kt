@@ -36,7 +36,7 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
 
         val formattedInteger = try {
             DecimalFormat("#,###", symbols).format(integerPart.toLong())
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             integerPart
         }
 

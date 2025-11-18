@@ -13,7 +13,6 @@
 package com.algorand.android.customviews
 
 import android.content.Context
-import android.text.method.MovementMethod
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -44,14 +43,6 @@ class NumberedListItemView @JvmOverloads constructor(
 
     fun setDescriptionText(text: CharSequence) {
         binding.descriptionTextView.setTextAndVisibility(text.toString())
-    }
-
-    fun setDescriptionMovementMethod(movementMethod: MovementMethod) {
-        binding.descriptionTextView.movementMethod = movementMethod
-    }
-
-    fun setDescriptionHighlightColor(color: Int) {
-        binding.descriptionTextView.highlightColor = color
     }
 
     private fun initAttributes(attrs: AttributeSet?) {

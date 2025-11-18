@@ -13,7 +13,6 @@
 package com.algorand.android.modules.walletconnect.mapper
 
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.algorand.android.modules.walletconnect.domain.model.WalletConnectVersionIdentifier
 import javax.inject.Inject
 
 class WalletConnectSessionUpdateMapper @Inject constructor() {
@@ -23,12 +22,5 @@ class WalletConnectSessionUpdateMapper @Inject constructor() {
             sessionIdentifier = sessionIdentifier,
             versionIdentifier = sessionIdentifier.versionIdentifier
         )
-    }
-
-    fun mapToSessionUpdateError(
-        message: String?,
-        versionIdentifier: WalletConnectVersionIdentifier
-    ): WalletConnect.Session.Update {
-        return WalletConnect.Session.Update.Error(message = message, versionIdentifier = versionIdentifier)
     }
 }

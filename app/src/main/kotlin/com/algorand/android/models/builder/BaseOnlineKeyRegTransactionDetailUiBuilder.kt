@@ -37,7 +37,7 @@ class BaseOnlineKeyRegTransactionDetailUiBuilder @Inject constructor() : BaseKey
         }
     }
 
-    override fun buildTransactionRequestExtraFields(txn: BaseKeyRegTransaction): TransactionRequestExtraFields? {
+    override fun buildTransactionRequestExtraFields(txn: BaseKeyRegTransaction): TransactionRequestExtraFields {
         return with(txn) {
             TransactionRequestExtraFields(
                 rejectVersion = rejectVersion,

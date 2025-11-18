@@ -18,12 +18,12 @@ import com.algorand.android.modules.transaction.confirmation.data.mapper.Transac
 import com.algorand.android.modules.transaction.confirmation.domain.model.TransactionConfirmationDTO
 import com.algorand.android.modules.transaction.confirmation.domain.repository.TransactionConfirmationRepository
 import com.algorand.android.utils.recordException
-import javax.inject.Named
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Named
 
 class TransactionConfirmationRepositoryImpl(
-    @Named(AlgorandSDKUtils.INJECTION_NAME)
+    @param:Named(AlgorandSDKUtils.INJECTION_NAME)
     private val algorandSDKUtils: AlgorandSDKUtils,
     private val transactionConfirmationDTOMapper: TransactionConfirmationDTOMapper
 ) : TransactionConfirmationRepository {

@@ -45,8 +45,8 @@ sealed class CacheResult<T> {
 
     class Error<T> private constructor(
         val exception: Throwable,
-        val previouslyCachedData: T? = null,
-        val previouslyCachedDataCreationTimestamp: Long? = null,
+        private val previouslyCachedData: T? = null,
+        private val previouslyCachedDataCreationTimestamp: Long? = null,
         val code: Int? = null
     ) : CacheResult<T>() {
 
@@ -84,6 +84,6 @@ sealed class CacheResult<T> {
     fun getDataOrNull(): T? = (this as? Success)?.data
 
     companion object {
-        fun createCreationTimestamp() = System.currentTimeMillis()
+        fun createCreationTimestamp(): Long = System.currentTimeMillis()
     }
 }

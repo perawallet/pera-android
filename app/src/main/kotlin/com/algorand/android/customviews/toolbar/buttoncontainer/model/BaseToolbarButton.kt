@@ -24,7 +24,7 @@ abstract class BaseToolbarButton {
     abstract fun initAttributes(view: View)
 
     @IdRes
-    val id = View.generateViewId()
+    val id: Int = View.generateViewId()
 
     protected fun setBackgroundTint(view: View) {
         backgroundTintResId?.let { tintResId ->

@@ -36,7 +36,9 @@ class RekeyToStandardAccountConfirmationFragment : BaseRekeyConfirmationFragment
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     override fun onStart() {
         super.onStart()

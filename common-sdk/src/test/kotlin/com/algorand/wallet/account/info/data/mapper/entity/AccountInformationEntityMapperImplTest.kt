@@ -17,10 +17,10 @@ import com.algorand.wallet.account.info.data.database.model.AccountInformationEn
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.model.AccountInformationResponsePayloadResponse
 import com.algorand.wallet.account.info.data.model.AppStateSchemaResponse
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.math.BigInteger
 
 class AccountInformationEntityMapperImplTest {
 

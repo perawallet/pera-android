@@ -18,5 +18,5 @@ import androidx.annotation.StringRes
 data class TooltipConfig(
     val anchor: View,
     val offsetX: Int = 0,
-    @StringRes val tooltipTextResId: Int
+    @param:StringRes val tooltipTextResId: Int
 )

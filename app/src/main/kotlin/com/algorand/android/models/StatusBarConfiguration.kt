@@ -16,7 +16,7 @@ import androidx.annotation.ColorRes
 import com.algorand.android.R
 
 data class StatusBarConfiguration(
-    @ColorRes
+    @param:ColorRes
     val backgroundColor: Int = R.color.primary_background,
     val showNodeStatus: Boolean = true,
     var showLightStatusBarIcons: Boolean = false

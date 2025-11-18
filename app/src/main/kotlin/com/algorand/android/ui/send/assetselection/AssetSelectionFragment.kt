@@ -43,7 +43,9 @@ class AssetSelectionFragment : TransactionSignBaseFragment(R.layout.fragment_ass
         startIconResId = R.drawable.ic_left_arrow
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentAssetSelectionBinding::bind)
 

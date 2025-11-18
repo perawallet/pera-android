@@ -30,6 +30,7 @@ data class CreateAccount(
             val keyIndex: Int,
             val derivationType: Int
         ) : Type
+
         data class Algo25(val encryptedSecretKey: ByteArray) : Type
         data class LedgerBle(val deviceMacAddress: String, val indexInLedger: Int, val bluetoothName: String?) : Type
         data object NoAuth : Type

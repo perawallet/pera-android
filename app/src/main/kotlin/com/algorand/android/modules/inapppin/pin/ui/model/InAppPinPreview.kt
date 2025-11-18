@@ -21,9 +21,9 @@ data class InAppPinPreview(
 
     val isBackPressDispatchersEnabled: Boolean get() = pinPenaltyPreview != null
 
-    val isPinPenaltyPreviewVisible get() = pinPenaltyPreview != null
+    val isPinPenaltyPreviewVisible: Boolean get() = pinPenaltyPreview != null
 
-    val isPinEntryPreviewVisible get() = pinEntryPreview != null
+    val isPinEntryPreviewVisible: Boolean get() = pinEntryPreview != null
 
     data class PinEntryPreview(
         val askBiometricAuthEvent: Event<Unit>?,

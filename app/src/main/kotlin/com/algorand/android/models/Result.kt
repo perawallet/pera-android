@@ -30,6 +30,7 @@ sealed class Result<out T : Any> {
                 is IOException -> {
                     Resource.Error.Annotated(AnnotatedString(R.string.the_internet_connection))
                 }
+
                 else -> Resource.Error.Api(exception)
             }
         }

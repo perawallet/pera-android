@@ -64,7 +64,7 @@ class AlgorandTabLayout @JvmOverloads constructor(
         setTabs(leftTabText, rightTabText)
     }
 
-    fun setTabs(leftTabText: String?, rightTabText: String?) {
+    private fun setTabs(leftTabText: String?, rightTabText: String?) {
         if (tabCount >= 0) {
             this.removeAllTabs()
         }

@@ -24,6 +24,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -40,7 +41,7 @@ class LedgerBleAccountRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT all accounts WHEN getAll is invoked`() = runTest {
+    fun `EXPECT all accounts WHEN getAll is invoked`(): TestResult = runTest {
         val entities = listOf(LEDGER_BLE_1_ENTITY, LEDGER_BLE_2_ENTITY)
         coEvery { ledgerBleDao.getAll() } returns entities
         coEvery { ledgerBleMapper(LEDGER_BLE_1_ENTITY) } returns LEDGER_BLE_1
@@ -54,7 +55,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account WHEN getAccount is invoked`() = runTest {
+    fun `EXPECT account WHEN getAccount is invoked`(): TestResult = runTest {
         coEvery { ledgerBleDao.get(LEDGER_BLE_1_ENTITY.algoAddress) } returns LEDGER_BLE_1_ENTITY
         coEvery { ledgerBleMapper(LEDGER_BLE_1_ENTITY) } returns LEDGER_BLE_1
 
@@ -65,7 +66,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`() = runTest {
+    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`(): TestResult = runTest {
         coEvery { ledgerBleDao.get("non_existent_address") } returns null
 
         val result = sut.getAccount("non_existent_address")
@@ -75,7 +76,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`() = runTest {
+    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`(): TestResult = runTest {
         val expectedCountFlow = MutableStateFlow(3)
         coEvery { ledgerBleDao.getTableSizeAsFlow() } returns expectedCountFlow
 
@@ -86,7 +87,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+    fun `EXPECT account count WHEN getAccountCount is invoked`(): TestResult = runTest {
         val expectedCount = 3
         coEvery { ledgerBleDao.getTableSize() } returns expectedCount
 
@@ -96,7 +97,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
+    fun `EXPECT all addresses WHEN getAllAddresses is invoked`(): TestResult = runTest {
         val addresses = listOf("address1", "address2")
         coEvery { ledgerBleDao.getAllAddresses() } returns addresses
 
@@ -106,7 +107,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
+    fun `EXPECT account to be added to database WHEN addAccount is invoked`(): TestResult = runTest {
         coEvery { ledgerBleEntityMapper(LEDGER_BLE_1) } returns LEDGER_BLE_1_ENTITY
         coEvery { ledgerBleDao.insert(LEDGER_BLE_1_ENTITY) } returns Unit
 
@@ -116,7 +117,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`() = runTest {
+    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`(): TestResult = runTest {
         coEvery { ledgerBleDao.delete("address") } returns Unit
 
         sut.deleteAccount("address")
@@ -125,7 +126,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`() = runTest {
+    fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`(): TestResult = runTest {
         coEvery { ledgerBleDao.clearAll() } returns Unit
 
         sut.deleteAllAccounts()
@@ -134,7 +135,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`() = runTest {
+    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`(): TestResult = runTest {
         val entitiesFlow = MutableStateFlow(
             listOf(
                 LEDGER_BLE_1_ENTITY,

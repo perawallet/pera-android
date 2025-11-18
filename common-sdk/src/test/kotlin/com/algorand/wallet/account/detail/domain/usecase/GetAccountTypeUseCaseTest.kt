@@ -5,6 +5,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -25,14 +26,14 @@ class GetAccountTypeUseCaseTest {
     private val sut = GetAccountTypeUseCase(getLocalAccounts, getAccountRekeyAdminAddress)
 
     @Test
-    fun `EXPECT null WHEN account information is null`() = runTest {
+    fun `EXPECT null WHEN account information is null`(): TestResult = runTest {
         val result = sut(ADDRESS)
 
         assertNull(result)
     }
 
     @Test
-    fun `EXPECT null WHEN address is not in local accounts`() = runTest {
+    fun `EXPECT null WHEN address is not in local accounts`(): TestResult = runTest {
         val localAccounts = listOf(NO_AUTH_ACCOUNT.copy(algoAddress = "no_auth_address"))
         whenever(getLocalAccounts()).thenReturn(localAccounts)
 
@@ -42,7 +43,7 @@ class GetAccountTypeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT Algo25 WHEN account is not rekeyed and is Algo25`() = runTest {
+    fun `EXPECT Algo25 WHEN account is not rekeyed and is Algo25`(): TestResult = runTest {
         val localAccount = ALGO_25_ACCOUNT.copy(algoAddress = ADDRESS)
         whenever(getLocalAccounts()).thenReturn(listOf(localAccount))
 
@@ -52,7 +53,7 @@ class GetAccountTypeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT LedgerBle WHEN account is not rekeyed and is LedgerBle`() = runTest {
+    fun `EXPECT LedgerBle WHEN account is not rekeyed and is LedgerBle`(): TestResult = runTest {
         val localAccount = LEDGER_BLE_ACCOUNT.copy(algoAddress = ADDRESS)
         whenever(getLocalAccounts()).thenReturn(listOf(localAccount))
 
@@ -62,7 +63,7 @@ class GetAccountTypeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT NoAuth WHEN account is not rekeyed and is NoAuth`() = runTest {
+    fun `EXPECT NoAuth WHEN account is not rekeyed and is NoAuth`(): TestResult = runTest {
         val localAccount = NO_AUTH_ACCOUNT.copy(algoAddress = ADDRESS)
         whenever(getLocalAccounts()).thenReturn(listOf(localAccount))
 
@@ -72,7 +73,7 @@ class GetAccountTypeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT HdKey WHEN account is not rekeyed and is HdKey`() = runTest {
+    fun `EXPECT HdKey WHEN account is not rekeyed and is HdKey`(): TestResult = runTest {
         val localAccount = HD_KEY_ACCOUNT.copy(algoAddress = ADDRESS)
         whenever(getLocalAccounts()).thenReturn(listOf(localAccount))
 
@@ -82,7 +83,7 @@ class GetAccountTypeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT RekeyedAuth WHEN account is rekeyed and has auth signer`() = runTest {
+    fun `EXPECT RekeyedAuth WHEN account is rekeyed and has auth signer`(): TestResult = runTest {
         val localAccounts = listOf(
             NO_AUTH_ACCOUNT.copy(algoAddress = "no_auth"),
             ALGO_25_ACCOUNT.copy(algoAddress = "algo_25")
@@ -96,7 +97,7 @@ class GetAccountTypeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT Rekeyed WHEN account is rekeyed, app doesnt have auth details and its type is not NoAuth`() = runTest {
+    fun `EXPECT Rekeyed WHEN account is rekeyed, app doesnt have auth details and its type is not NoAuth`(): TestResult = runTest {
         val localAccounts = listOf(
             ALGO_25_ACCOUNT.copy(algoAddress = "rekeyed_algo_25")
         )
@@ -109,7 +110,7 @@ class GetAccountTypeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT NoAuth WHEN account is rekeyed, app doesnt have auth details and its type is NoAuth`() = runTest {
+    fun `EXPECT NoAuth WHEN account is rekeyed, app doesnt have auth details and its type is NoAuth`(): TestResult = runTest {
         val localAccounts = listOf(
             NO_AUTH_ACCOUNT.copy(algoAddress = "no_auth")
         )

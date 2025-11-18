@@ -12,8 +12,6 @@
 
 package com.algorand.android.credentials.passkeys.foundation
 
-import kotlin.collections.iterator
-
 /**
  * This class is a duplicated version of the original [androidx.credentials.webauthn.Cbor]
  * from the WebAuthn library, which is restricted to library-only usage.

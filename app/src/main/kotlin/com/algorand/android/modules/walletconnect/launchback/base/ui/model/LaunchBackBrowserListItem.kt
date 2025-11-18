@@ -20,9 +20,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class LaunchBackBrowserListItem(
-    @DrawableRes
+    @param:DrawableRes
     val iconDrawableResId: Int,
-    @StringRes
+    @param:StringRes
     val nameStringResId: Int,
     val packageName: String
 ) : RecyclerListItem, Parcelable {

@@ -41,7 +41,8 @@ class BaseAddAssetPreviewUseCase @Inject constructor(
         )
     }
 
-    fun createInitialBaseAddAssetPreview() = baseAddAssetPreviewMapper.mapToInitialBaseAddAssetPreview()
+    fun createInitialBaseAddAssetPreview(): BaseAddAssetPreview =
+        baseAddAssetPreviewMapper.mapToInitialBaseAddAssetPreview()
 
     fun createBaseAddAssetPreviewWithLoadState(
         combinedLoadStates: CombinedLoadStates,
@@ -56,7 +57,8 @@ class BaseAddAssetPreviewUseCase @Inject constructor(
         }
     }
 
-    fun getPreviewWithHandleQueryChangeForScrollEvent(previousPreview: BaseAddAssetPreview) = previousPreview.copy(
-        handleQueryChangeForScrollEvent = Event(Unit)
-    )
+    fun getPreviewWithHandleQueryChangeForScrollEvent(previousPreview: BaseAddAssetPreview): BaseAddAssetPreview =
+        previousPreview.copy(
+            handleQueryChangeForScrollEvent = Event(Unit)
+        )
 }

@@ -44,9 +44,8 @@ class BannerFragment : BasePeraWebViewFragment(R.layout.fragment_banner) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
-        toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
     )
 
     override lateinit var binding: FragmentBannerBinding
@@ -155,18 +154,12 @@ class BannerFragment : BasePeraWebViewFragment(R.layout.fragment_banner) {
                     errorTitleTextView.text = getString(R.string.well_this_is_unexpected)
                     errorDescriptionTextView.text = getString(R.string.we_encountered_an_unexpected)
                 }
+
                 WebViewError.NO_CONNECTION -> {
                     errorTitleTextView.text = getString(R.string.no_internet_connection)
                     errorDescriptionTextView.text = getString(R.string.you_dont_seem_to_be_connected)
                 }
             }
-        }
-    }
-
-    private fun removeErrorState() {
-        with(binding) {
-            webView.show()
-            errorScreenState.hide()
         }
     }
 }

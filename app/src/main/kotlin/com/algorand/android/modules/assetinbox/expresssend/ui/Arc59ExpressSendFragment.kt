@@ -33,7 +33,7 @@ class Arc59ExpressSendFragment : BaseFragment(R.layout.fragment_arc59_express_se
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentArc59ExpressSendBinding::bind)

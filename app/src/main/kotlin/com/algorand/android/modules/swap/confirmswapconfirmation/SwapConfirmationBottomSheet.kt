@@ -47,7 +47,7 @@ class SwapConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
         materialButton.apply {
             setText(R.string.confirm_swap)
             setOnClickListener {
-                setFragmentNavigationResult<Boolean>(CONFIRMATION_SUCCESS_KEY, true)
+                setFragmentNavigationResult(CONFIRMATION_SUCCESS_KEY, true)
                 navBack()
             }
         }
@@ -83,6 +83,6 @@ class SwapConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
     companion object {
         private const val FAQ_URL_ANNOTATION_KEY = "faq_url"
         private const val PRICE_IMPACT_PERCENTAGE_REPLACEMENT_KEY = "price_impact_percentage"
-        const val CONFIRMATION_SUCCESS_KEY = "confirmation_success_key"
+        const val CONFIRMATION_SUCCESS_KEY: String = "confirmation_success_key"
     }
 }

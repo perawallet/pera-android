@@ -21,6 +21,6 @@ interface WebImportAccountRepository {
     ): Result<ImportBackupResponseDTO>
 
     companion object {
-        const val REPOSITORY_INJECTION_NAME = "webImportAccountRepositoryInjection"
+        const val REPOSITORY_INJECTION_NAME: String = "webImportAccountRepositoryInjection"
     }
 }

@@ -18,7 +18,7 @@ import androidx.annotation.DrawableRes
 import com.algorand.android.R
 
 data class IconButton(
-    @DrawableRes private val iconResId: Int,
+    @param:DrawableRes private val iconResId: Int,
     override val backgroundTintResId: Int? = null,
     override val onClick: () -> Unit
 ) : BaseToolbarButton() {

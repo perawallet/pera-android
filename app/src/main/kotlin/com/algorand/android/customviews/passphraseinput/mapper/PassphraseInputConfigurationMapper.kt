@@ -17,20 +17,6 @@ import javax.inject.Inject
 
 class PassphraseInputConfigurationMapper @Inject constructor() {
 
-    fun mapToValidFocused(
-        input: String,
-        order: Int,
-        index: Int,
-        imeOptions: Int
-    ): PassphraseInputConfiguration.Valid.Focused {
-        return PassphraseInputConfiguration.Valid.Focused(
-            input = input,
-            order = order,
-            index = index,
-            imeOptions = imeOptions
-        )
-    }
-
     fun mapToValidUnfocused(
         input: String,
         order: Int,
@@ -38,20 +24,6 @@ class PassphraseInputConfigurationMapper @Inject constructor() {
         imeOptions: Int
     ): PassphraseInputConfiguration.Valid.Unfocused {
         return PassphraseInputConfiguration.Valid.Unfocused(
-            input = input,
-            order = order,
-            index = index,
-            imeOptions = imeOptions
-        )
-    }
-
-    fun mapToInvalidFocused(
-        input: String,
-        order: Int,
-        index: Int,
-        imeOptions: Int
-    ): PassphraseInputConfiguration.Invalid.Focused {
-        return PassphraseInputConfiguration.Invalid.Focused(
             input = input,
             order = order,
             index = index,

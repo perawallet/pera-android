@@ -50,7 +50,7 @@ internal class PasskeyCallingAppInfoValidator @Inject constructor(
     private fun isWebRequest(callingAppInfo: CallingAppInfo): Boolean {
         try {
             callingAppInfo.getOrigin(INVALID_ALLOWLIST)
-        } catch (e: IllegalStateException) {
+        } catch (_: IllegalStateException) {
             return true
         }
         return false
@@ -59,20 +59,20 @@ internal class PasskeyCallingAppInfoValidator @Inject constructor(
     private companion object {
 
         const val INVALID_ALLOWLIST = "{\"apps\": [\n" +
-            "   {\n" +
-            "      \"type\": \"android\", \n" +
-            "      \"info\": {\n" +
-            "         \"package_name\": \"androidx.credentials.test\",\n" +
-            "         \"signatures\" : [\n" +
-            "         {\"build\": \"release\",\n" +
-            "             \"cert_fingerprint_sha256\": \"HELLO\"\n" +
-            "         },\n" +
-            "         {\"build\": \"ud\",\n" +
-            "         \"cert_fingerprint_sha256\": \"YELLOW\"\n" +
-            "         }]\n" +
-            "      }\n" +
-            "    }\n" +
-            "]}\n" +
-            "\n"
+                "   {\n" +
+                "      \"type\": \"android\", \n" +
+                "      \"info\": {\n" +
+                "         \"package_name\": \"androidx.credentials.test\",\n" +
+                "         \"signatures\" : [\n" +
+                "         {\"build\": \"release\",\n" +
+                "             \"cert_fingerprint_sha256\": \"HELLO\"\n" +
+                "         },\n" +
+                "         {\"build\": \"ud\",\n" +
+                "         \"cert_fingerprint_sha256\": \"YELLOW\"\n" +
+                "         }]\n" +
+                "      }\n" +
+                "    }\n" +
+                "]}\n" +
+                "\n"
     }
 }

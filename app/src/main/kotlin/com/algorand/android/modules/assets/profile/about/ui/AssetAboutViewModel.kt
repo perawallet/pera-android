@@ -21,10 +21,10 @@ import com.algorand.android.usecase.NetworkSlugUseCase
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetAboutViewModel @Inject constructor(
@@ -34,7 +34,7 @@ class AssetAboutViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val assetId = savedStateHandle.getOrThrow<Long>(ASSET_ID_KEY)
-    val isBottomPaddingNeeded = savedStateHandle.getOrElse(IS_BOTTOM_PADDING_NEEDED_KEY, false)
+    val isBottomPaddingNeeded: Boolean = savedStateHandle.getOrElse(IS_BOTTOM_PADDING_NEEDED_KEY, false)
 
     private val _assetAboutPreviewFlow = MutableStateFlow<AssetAboutPreview?>(null)
     val assetAboutPreviewFlow: StateFlow<AssetAboutPreview?> get() = _assetAboutPreviewFlow
@@ -69,7 +69,7 @@ class AssetAboutViewModel @Inject constructor(
     }
 
     companion object {
-        const val ASSET_ID_KEY = "assetId"
-        const val IS_BOTTOM_PADDING_NEEDED_KEY = "isBottomPaddingNeeded"
+        const val ASSET_ID_KEY: String = "assetId"
+        const val IS_BOTTOM_PADDING_NEEDED_KEY: String = "isBottomPaddingNeeded"
     }
 }

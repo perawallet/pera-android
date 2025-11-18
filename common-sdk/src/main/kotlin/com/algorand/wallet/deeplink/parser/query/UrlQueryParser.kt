@@ -23,7 +23,7 @@ internal class UrlQueryParser(
         val urlQuery = peraUri.getQueryParam(URL_QUERY_KEY) ?: return null
         return try {
             base64Manager.decode(urlQuery).takeIf { it.isNotEmpty() }?.decodeToString()
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

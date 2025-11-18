@@ -30,7 +30,7 @@ import com.algorand.android.utils.Resource
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ReceiverAccountSelectionViewModel @Inject constructor(
@@ -50,7 +51,7 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val assetTransaction = savedStateHandle.get<AssetTransaction>(ASSET_TRANSACTION_KEY)!!
+    val assetTransaction: AssetTransaction = savedStateHandle.get<AssetTransaction>(ASSET_TRANSACTION_KEY)!!
 
     private val _selectableAccountFlow = MutableStateFlow<List<BaseAccountSelectionListItem>?>(null)
     val selectableAccountFlow: StateFlow<List<BaseAccountSelectionListItem>?> = _selectableAccountFlow
@@ -134,6 +135,7 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         }
     }
 
+    @OptIn(FlowPreview::class)
     private fun combineLatestCopiedMessageAndQueryFlow() {
         viewModelScope.launch {
             combine(

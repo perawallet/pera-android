@@ -108,6 +108,7 @@ fun AssetDetailScreen(
                                 listener
                             )
                         }
+
                         MARKETS_PAGE -> {
                             AssetMarketsScreen(headerViewModel, marketsViewModel, priceChartViewModel, listener)
                         }
@@ -181,7 +182,7 @@ private fun ErrorState(onRetryClick: () -> Unit) {
             modifier = Modifier.padding(24.dp),
             iconResId = null,
             titleResId = null,
-            descriptionResId = R.string.an_error_occured,
+            descriptionResId = R.string.an_error_occurred,
             buttonTextResId = R.string.retry,
             onClick = onRetryClick
         )

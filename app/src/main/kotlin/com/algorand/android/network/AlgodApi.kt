@@ -12,11 +12,8 @@
 
 package com.algorand.android.network
 
-import com.algorand.android.models.BlockResponse
-import com.algorand.android.models.NextBlockResponse
 import com.algorand.android.models.NodeAssetDetailResponse
 import com.algorand.android.models.SendTransactionResponse
-import com.algorand.android.models.TotalAlgoSupply
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.accountasset.data.model.AccountAssetDetailResponse
 import com.algorand.android.modules.accountasset.data.model.AccountDetailWithoutAssetsResponse
@@ -38,17 +35,8 @@ interface AlgodApi {
     @POST("v2/transactions")
     suspend fun sendSignedTransaction(@Body rawTransactionData: RequestBody): Response<SendTransactionResponse>
 
-    @GET("v2/status/wait-for-block-after/{waitedBlockNumber}")
-    suspend fun getWaitForBlock(@Path("waitedBlockNumber") waitedBlockNumber: Long): Response<NextBlockResponse>
-
     @GET("v2/accounts/{public_key}/transactions/pending")
     suspend fun getPendingTransactions(@Path("public_key") publicKey: String): Response<PendingTransactionsResponse>
-
-    @GET("v2/ledger/supply")
-    suspend fun getTotalAmountOfAlgoInSystem(): Response<TotalAlgoSupply>
-
-    @GET("/v2/blocks/{block_id}")
-    suspend fun getBlockById(@Path("block_id") blockId: Long): Response<BlockResponse>
 
     @GET("/v2/assets/{asset_id}")
     suspend fun getAssetDetail(

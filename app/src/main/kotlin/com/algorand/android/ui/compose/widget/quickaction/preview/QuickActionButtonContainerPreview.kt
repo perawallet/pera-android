@@ -23,8 +23,8 @@ import com.algorand.android.ui.compose.widget.quickaction.SecondaryQuickActionBu
 @Composable
 fun QuickActionButtonContainerPreview() {
     QuickActionButtonContainer {
-        PrimaryQuickActionButton(R.drawable.ic_swap, "Swap", showIndicator = true) { }
-        SecondaryQuickActionButton(R.drawable.ic_staking, "Stake") { }
-        SecondaryQuickActionButton(R.drawable.ic_buy_sell_small, "Buy/Sell") { }
+        PrimaryQuickActionButton(R.drawable.ic_swap, "Swap", showIndicator = true) {}
+        SecondaryQuickActionButton(R.drawable.ic_staking, "Stake") {}
+        SecondaryQuickActionButton(R.drawable.ic_buy_sell_small, "Buy/Sell") {}
     }
 }

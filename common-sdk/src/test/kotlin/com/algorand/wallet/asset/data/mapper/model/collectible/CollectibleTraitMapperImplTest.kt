@@ -35,7 +35,7 @@ internal class CollectibleTraitMapperImplTest {
 
     @Test
     fun `EXPECT null WHEN response fields are null`() {
-        val response = CollectibleTraitResponse(name = null, value = null)
+        val response = CollectibleTraitResponse()
 
         val result = sut(response)
 

@@ -14,12 +14,12 @@ package com.algorand.android.modules.tutorialdialog.domain.usecase
 
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.modules.tutorialdialog.domain.repository.TutorialRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.Flow
 
 class GetCachedTutorialUseCase @Inject constructor(
-    @Named(TutorialRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(TutorialRepository.REPOSITORY_INJECTION_NAME)
     private val tutorialRepository: TutorialRepository
 ) {
     suspend fun getCachedTutorial(): Flow<Tutorial?> {

@@ -42,7 +42,9 @@ class AsbKeyEnterFragment : BaseFragment(R.layout.fragment_asb_key_enter),
         startIconClick = ::navBack,
         startIconResId = R.drawable.ic_left_arrow
     )
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentAsbKeyEnterBinding::bind)
     private val asbKeyEnterViewModel by viewModels<AsbKeyEnterViewModel>()

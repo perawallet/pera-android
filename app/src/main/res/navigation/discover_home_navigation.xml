@@ -17,8 +17,6 @@
     android:id="@+id/discoverHomeNavigation"
     app:startDestination="@id/discoverHomeFragment">
 
-    <include app:graph="@navigation/discover_dapp_navigation" />
-
     <include app:graph="@navigation/discover_url_viewer_navigation" />
 
     <fragment

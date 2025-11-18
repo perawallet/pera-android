@@ -16,17 +16,15 @@
     android:id="@+id/loginNavigation"
     app:startDestination="@id/registerIntroFragment">
 
-    <include app:graph="@navigation/recover_with_passphrase_navigation" />
-
     <include app:graph="@navigation/register_watch_account_navigation" />
-
-    <include app:graph="@navigation/create_account_name_registration_navigation" />
 
     <include app:graph="@navigation/create_wallet_name_registration_navigation" />
 
     <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
     <include app:graph="@navigation/recovery_type_selection_navigation" />
+
+    <include app:graph="@navigation/asb_import_navigation" />
 
     <action
         android:id="@+id/action_global_to_homeNavigation"

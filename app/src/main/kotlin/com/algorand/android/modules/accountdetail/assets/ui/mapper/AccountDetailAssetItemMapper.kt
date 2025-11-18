@@ -37,10 +37,10 @@ import com.algorand.android.ui.common.amount.SimpleFormattedAmount
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.formatting.FormatAmountByCollectibleFractionalDigit
 import com.algorand.android.utils.isGreaterThan
-import com.algorand.android.utils.orZero
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.model.AssetLite.Type
+import com.algorand.wallet.utils.orZero
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

@@ -26,8 +26,8 @@ import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAssetAmount
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.android.utils.multiplyOrZero
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.utils.multiplyOrZero
 import javax.inject.Inject
 
 class AssetInboxOneAccountPreviewMapperImpl @Inject constructor(

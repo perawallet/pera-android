@@ -16,7 +16,7 @@ package com.algorand.android.ui.common.amount
 import android.icu.text.CompactDecimalFormat
 import android.icu.text.NumberFormat
 import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Asset.getMaxFractionalDigit
-import com.algorand.android.utils.isLesserThan
+import com.algorand.wallet.utils.isLesserThan
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.TEN

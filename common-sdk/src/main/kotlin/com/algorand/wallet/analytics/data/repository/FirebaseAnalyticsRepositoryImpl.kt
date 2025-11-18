@@ -24,7 +24,7 @@ class FirebaseAnalyticsRepositoryImpl @Inject constructor(
 ) : FirebaseAnalyticsRepository {
 
     override suspend fun getFirebaseInstanceId(): String = suspendCoroutine { continuation ->
-        firebaseInstallations.getId()
+        firebaseInstallations.id
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     continuation.resume(task.result)

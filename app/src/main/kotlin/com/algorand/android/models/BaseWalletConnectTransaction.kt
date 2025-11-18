@@ -62,14 +62,8 @@ abstract class BaseWalletConnectTransaction : Parcelable {
 
     open val transactionAmount: BigInteger? = null
 
-    val transactionMessage: String?
-        get() = rawTransactionPayload.message
-
     val formattedRekeyToAccountAddress: String
         get() = getRekeyToAccountAddress()?.decodedAddress.orEmpty()
-
-    val formattedCloseToAccountAddress: String
-        get() = getCloseToAccountAddress()?.decodedAddress.orEmpty()
 
     val decodedTransaction: ByteArray?
         get() = rawTransactionPayload.transactionMsgPack.decodeBase64()

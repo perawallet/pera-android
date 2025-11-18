@@ -10,7 +10,6 @@
  * limitations under the License
  */
 
-
 package com.algorand.wallet.account.core.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountInformation

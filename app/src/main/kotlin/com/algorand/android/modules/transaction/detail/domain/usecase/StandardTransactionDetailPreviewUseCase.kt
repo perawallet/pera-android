@@ -28,6 +28,7 @@ import com.algorand.android.utils.formatNumberWithDecimalSeparators
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -53,7 +54,7 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
         transactionId: String,
         publicKey: String,
         isInnerTransaction: Boolean
-    ) = flow {
+    ): Flow<TransactionDetailPreview> = flow {
         emit(transactionDetailPreviewMapper.mapTo(isLoading = true, transactionDetailItemList = emptyList()))
         getTransactionDetailUseCase.getTransactionDetail(transactionId).collect { transactionDetailResource ->
             transactionDetailResource.useSuspended(

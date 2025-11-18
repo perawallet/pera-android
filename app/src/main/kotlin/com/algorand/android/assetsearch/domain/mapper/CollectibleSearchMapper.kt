@@ -12,8 +12,8 @@
 
 package com.algorand.android.assetsearch.domain.mapper
 
-import com.algorand.android.assetsearch.domain.model.CollectibleSearchDTO
 import com.algorand.android.assetsearch.domain.model.CollectibleSearch
+import com.algorand.android.assetsearch.domain.model.CollectibleSearchDTO
 import javax.inject.Inject
 
 class CollectibleSearchMapper @Inject constructor() {

@@ -38,15 +38,15 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
         val formattedCompactTotalSupplyText: String?
     ) : BaseAssetAboutListItem() {
 
-        override val itemType = ItemType.STATISTICS_ITEM
+        override val itemType: ItemType = ItemType.STATISTICS_ITEM
 
         val hasPriceInfo: Boolean
             get() = formattedPriceText.isNullOrBlank().not()
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is StatisticsItem &&
-                formattedPriceText == other.formattedPriceText &&
-                formattedCompactTotalSupplyText == other.formattedCompactTotalSupplyText
+                    formattedPriceText == other.formattedPriceText &&
+                    formattedCompactTotalSupplyText == other.formattedCompactTotalSupplyText
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -64,7 +64,7 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
         val projectWebsiteUrl: String?
     ) : BaseAssetAboutListItem() {
 
-        override val itemType = ItemType.ABOUT_ASSET_ITEM
+        override val itemType: ItemType = ItemType.ABOUT_ASSET_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AboutAssetItem && assetId == other.assetId
@@ -85,13 +85,13 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
         abstract val titleTextResId: Int
         abstract val descriptionTextResId: Int
 
-        override val itemType = ItemType.BADGE_DESCRIPTION_ITEM
+        override val itemType: ItemType = ItemType.BADGE_DESCRIPTION_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is BadgeDescriptionItem &&
-                drawableResId == other.drawableResId &&
-                titleTextResId == other.titleTextResId &&
-                descriptionTextResId == other.descriptionTextResId
+                    drawableResId == other.drawableResId &&
+                    titleTextResId == other.titleTextResId &&
+                    descriptionTextResId == other.descriptionTextResId
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -127,7 +127,7 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
 
         data class AssetDescriptionItem(val descriptionText: String) : BaseAssetDescriptionItem() {
 
-            override val itemType = ItemType.ASSET_DESCRIPTION_ITEM
+            override val itemType: ItemType = ItemType.ASSET_DESCRIPTION_ITEM
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is AssetDescriptionItem && descriptionText == other.descriptionText
@@ -138,9 +138,9 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
             }
         }
 
-        data class AlgoDescriptionItem(@StringRes val descriptionTextResId: Int) : BaseAssetDescriptionItem() {
+        data class AlgoDescriptionItem(@param:StringRes val descriptionTextResId: Int) : BaseAssetDescriptionItem() {
 
-            override val itemType = ItemType.ALGO_DESCRIPTION_ITEM
+            override val itemType: ItemType = ItemType.ALGO_DESCRIPTION_ITEM
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is AlgoDescriptionItem && descriptionTextResId == other.descriptionTextResId
@@ -158,13 +158,13 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
         val twitterUrl: String?
     ) : BaseAssetAboutListItem() {
 
-        override val itemType = ItemType.SOCIAL_MEDIA_ITEM
+        override val itemType: ItemType = ItemType.SOCIAL_MEDIA_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is SocialMediaItem &&
-                discordUrl == other.discordUrl &&
-                telegramUrl == other.telegramUrl &&
-                twitterUrl == other.twitterUrl
+                    discordUrl == other.discordUrl &&
+                    telegramUrl == other.telegramUrl &&
+                    twitterUrl == other.twitterUrl
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -177,7 +177,7 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
         val assetId: Long
     ) : BaseAssetAboutListItem() {
 
-        override val itemType = ItemType.REPORT_ITEM
+        override val itemType: ItemType = ItemType.REPORT_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is ReportItem && assetName == other.assetName && assetId == other.assetId
@@ -190,14 +190,9 @@ sealed class BaseAssetAboutListItem : RecyclerListItem {
 
     object DividerItem : BaseAssetAboutListItem() {
 
-        override val itemType = ItemType.DIVIDER_ITEM
+        override val itemType: ItemType = ItemType.DIVIDER_ITEM
 
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is DividerItem && this == other
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is DividerItem && this == other
-        }
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = this === other
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
     }
 }

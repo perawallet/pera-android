@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.asset.data.mapper.model
 
+import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
 import com.algorand.wallet.asset.data.model.VerificationTierResponse
 import com.algorand.wallet.asset.domain.model.VerificationTier
-import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
 import javax.inject.Inject
 
 internal class VerificationTierMapperImpl @Inject constructor() : VerificationTierMapper {

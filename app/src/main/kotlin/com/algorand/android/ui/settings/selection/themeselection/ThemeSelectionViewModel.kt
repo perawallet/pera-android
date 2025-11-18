@@ -13,13 +13,13 @@
 package com.algorand.android.ui.settings.selection.themeselection
 
 import android.content.SharedPreferences
-import javax.inject.Inject
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.ui.settings.selection.ThemeListItem
 import com.algorand.android.utils.preference.ThemePreference
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.algorand.android.utils.preference.saveThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class ThemeSelectionViewModel @Inject constructor(
@@ -28,7 +28,7 @@ class ThemeSelectionViewModel @Inject constructor(
 
     fun getThemeList(): List<ThemeListItem> {
         val currentThemePreference = sharedPref.getSavedThemePreference()
-        return ThemePreference.values().map { themePreference ->
+        return ThemePreference.entries.map { themePreference ->
             themePreference.convertToThemeListItem(isSelected = themePreference == currentThemePreference)
         }
     }

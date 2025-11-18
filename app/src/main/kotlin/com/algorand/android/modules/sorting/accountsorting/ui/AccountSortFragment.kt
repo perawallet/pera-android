@@ -44,7 +44,8 @@ class AccountSortFragment : BaseFragment(R.layout.fragment_account_sort) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentAccountSortBinding::bind)
 
@@ -135,6 +136,6 @@ class AccountSortFragment : BaseFragment(R.layout.fragment_account_sort) {
     }
 
     companion object {
-        const val ACCOUNT_SORT_RESULT_KEY = "accountSortingUpdated"
+        const val ACCOUNT_SORT_RESULT_KEY: String = "accountSortingUpdated"
     }
 }

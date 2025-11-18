@@ -136,6 +136,7 @@ class AccountsAdapter(
             CHART.ordinal -> {
                 AccountListWalletChartViewHolder.create(parent, accountsLineChartViewModel, accountAdapterListener)
             }
+
             else -> throw Exception("$logTag: Item View Type is Unknown.")
         }
     }

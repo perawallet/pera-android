@@ -46,6 +46,6 @@ class RecoverOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     companion object {
-        const val RESULT_KEY = "recover_options_result"
+        const val RESULT_KEY: String = "recover_options_result"
     }
 }

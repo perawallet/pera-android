@@ -45,7 +45,7 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
         }
     }
 
-    protected val binding by viewBinding(BottomSheetAssetActionBinding::bind)
+    protected val binding: BottomSheetAssetActionBinding by viewBinding(BottomSheetAssetActionBinding::bind)
 
     abstract val assetActionViewModel: BaseAssetActionViewModel
 

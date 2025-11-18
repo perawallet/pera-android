@@ -22,13 +22,13 @@ sealed class AssetOperationResult {
     abstract val assetId: Long
 
     data class AssetAdditionOperationResult(
-        @StringRes override val resultTitleResId: Int,
+        @param:StringRes override val resultTitleResId: Int,
         override val assetName: AssetName,
         override val assetId: Long
     ) : AssetOperationResult()
 
     data class AssetRemovalOperationResult(
-        @StringRes override val resultTitleResId: Int,
+        @param:StringRes override val resultTitleResId: Int,
         override val assetName: AssetName,
         override val assetId: Long
     ) : AssetOperationResult()

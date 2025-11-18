@@ -12,7 +12,7 @@
 
 package com.algorand.android.repository
 
-import com.algorand.android.models.NextBlockResponse
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.models.SendTransactionResponse
 import com.algorand.android.models.TrackTransactionRequest
@@ -22,17 +22,16 @@ import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.getMessageAsResultError
 import com.algorand.android.network.request
 import com.algorand.android.network.safeApiCall
-import com.algorand.android.exceptions.RetrofitErrorHandler
-import javax.inject.Inject
-import javax.inject.Singleton
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class TransactionsRepository @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
     private val algodApi: AlgodApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler
+    private val peraApiErrorHandler: RetrofitErrorHandler
 ) {
 
     suspend fun getTransactionParams(): Result<TransactionParams> =
@@ -42,19 +41,6 @@ class TransactionsRepository @Inject constructor(
         with(algodApi.getTransactionParams()) {
             return if (isSuccessful && body() != null) {
                 Result.Success(body() as TransactionParams)
-            } else {
-                Result.Error(Exception())
-            }
-        }
-    }
-
-    suspend fun getWaitForBlock(waitedBlockNumber: Long): Result<NextBlockResponse> =
-        safeApiCall { requestGetWaitForBlock(waitedBlockNumber) }
-
-    private suspend fun requestGetWaitForBlock(waitedBlockNumber: Long): Result<NextBlockResponse> {
-        with(algodApi.getWaitForBlock(waitedBlockNumber)) {
-            return if (isSuccessful && body() != null) {
-                Result.Success(body() as NextBlockResponse)
             } else {
                 Result.Error(Exception())
             }
@@ -83,11 +69,11 @@ class TransactionsRepository @Inject constructor(
             mobileAlgorandApi.trackTransaction(trackTransactionRequest)
         },
         onFailed = { errorResponse ->
-            hipoApiErrorHandler.getMessageAsResultError(errorResponse)
+            peraApiErrorHandler.getMessageAsResultError(errorResponse)
         }
     )
 
     companion object {
-        const val DEFAULT_TRANSACTION_COUNT = 15
+        const val DEFAULT_TRANSACTION_COUNT: Int = 15
     }
 }

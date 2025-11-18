@@ -26,6 +26,6 @@ interface ParityRepository {
     suspend fun fetchCurrencyDetailDTO(currencyPreference: String): Result<CurrencyDetailDTO>
 
     companion object {
-        const val INJECTION_NAME = "parityRepositoryInjectionName"
+        const val INJECTION_NAME: String = "parityRepositoryInjectionName"
     }
 }

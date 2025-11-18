@@ -79,7 +79,8 @@ abstract class BaseQrScannerFragment(
         showNodeStatus = false
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(statusBarConfiguration = statusBarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(statusBarConfiguration = statusBarConfiguration)
 
     private val onWindowFocusChangeListener = ViewTreeObserver.OnWindowFocusChangeListener {
         resumeCameraIfPossibleOrPause()
@@ -201,7 +202,7 @@ abstract class BaseQrScannerFragment(
     }
 
     private fun onGetLocalSessionsSuccess(wcSessions: List<WalletConnect.SessionDetail>) {
-        val numberOfSessions = wcSessions.count()
+        val numberOfSessions = wcSessions.size
         binding.appConnectedButton.apply {
             isVisible = numberOfSessions > 0
             text = resources.getQuantityString(

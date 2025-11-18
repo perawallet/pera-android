@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.assets.profile.activity.ui
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
@@ -27,7 +26,6 @@ import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionI
 import com.algorand.android.usecase.AssetDetailUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -39,6 +37,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.File
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetActivityViewModel @Inject constructor(
@@ -152,8 +152,8 @@ class AssetActivityViewModel @Inject constructor(
     }
 
     companion object {
-        const val ADDRESS_KEY = "accountAddress"
-        const val ASSET_ID_KEY = "assetId"
+        const val ADDRESS_KEY: String = "accountAddress"
+        const val ASSET_ID_KEY: String = "assetId"
         private const val PENDING_TRANSACTION_DELAY = 800L
     }
 }

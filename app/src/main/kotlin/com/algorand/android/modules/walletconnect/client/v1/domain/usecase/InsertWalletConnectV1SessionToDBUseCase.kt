@@ -20,7 +20,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class InsertWalletConnectV1SessionToDBUseCase @Inject constructor(
-    @Named(WalletConnectRepository.INJECTION_NAME)
+    @param:Named(WalletConnectRepository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectRepository,
     private val walletConnectSessionDtoMapper: WalletConnectSessionDtoMapper,
     private val sessionAccountDtoMapper: WalletConnectSessionAccountDtoMapper

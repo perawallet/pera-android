@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class NFTCardViewerWebViewFragment : BaseWebViewFragment(R.layout.fragment_nft_card_viewer_web_view) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentNftCardViewerWebViewBinding::bind)
 

@@ -12,12 +12,9 @@
 
 package com.algorand.android.modules.accountcore.ui.model
 
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.models.ButtonConfiguration
 import com.algorand.android.models.GovernorIconResource
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import java.math.BigDecimal
 
@@ -50,47 +47,4 @@ sealed class BaseItemConfiguration {
         val accountAssetCount: Int? = null,
         val startSmallIconResource: Int? = null
     ) : BaseItemConfiguration()
-
-    sealed class BaseAssetItemConfiguration : BaseItemConfiguration() {
-
-        abstract val verificationTierConfiguration: VerificationTierConfiguration?
-        abstract val assetId: Long
-        abstract val assetIconDrawableProvider: BaseAssetDrawableProvider?
-        abstract val primaryAssetName: AssetName?
-        abstract val secondaryAssetName: AssetName?
-        abstract val showWithAssetId: Boolean?
-
-        data class AssetItemConfiguration(
-            override val assetId: Long,
-            override val primaryValue: BigDecimal? = null,
-            override val primaryValueText: String? = null,
-            override val secondaryValue: BigDecimal? = null,
-            override val secondaryValueText: String? = null,
-            override val primaryAssetName: AssetName? = null,
-            override val secondaryAssetName: AssetName? = null,
-            override val verificationTierConfiguration: VerificationTierConfiguration? = null,
-            override val assetIconDrawableProvider: BaseAssetDrawableProvider? = null,
-            override val showWithAssetId: Boolean? = null,
-            override val checkButtonConfiguration: ButtonConfiguration? = null,
-            override val dragButtonConfiguration: ButtonConfiguration? = null,
-            override val actionButtonConfiguration: ButtonConfiguration? = null,
-            val isPending: Boolean? = null
-        ) : BaseAssetItemConfiguration()
-
-        data class CollectibleItemConfiguration(
-            override val assetId: Long,
-            override val primaryValue: BigDecimal? = null,
-            override val primaryValueText: String? = null,
-            override val secondaryValue: BigDecimal? = null,
-            override val secondaryValueText: String? = null,
-            override val primaryAssetName: AssetName? = null,
-            override val secondaryAssetName: AssetName? = null,
-            override val verificationTierConfiguration: VerificationTierConfiguration? = null,
-            override val assetIconDrawableProvider: BaseAssetDrawableProvider? = null,
-            override val showWithAssetId: Boolean? = null,
-            override val checkButtonConfiguration: ButtonConfiguration? = null,
-            override val dragButtonConfiguration: ButtonConfiguration? = null,
-            override val actionButtonConfiguration: ButtonConfiguration? = null
-        ) : BaseAssetItemConfiguration()
-    }
 }

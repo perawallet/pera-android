@@ -37,8 +37,8 @@ sealed class BaseAccountSortingListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is SortTypeListItem &&
-                accountSortingType == other.accountSortingType &&
-                isChecked == other.isChecked
+                    accountSortingType == other.accountSortingType &&
+                    isChecked == other.isChecked
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -46,7 +46,7 @@ sealed class BaseAccountSortingListItem : RecyclerListItem {
         }
     }
 
-    data class HeaderListItem(@StringRes val headerTextResId: Int) : BaseAccountSortingListItem() {
+    data class HeaderListItem(@param:StringRes val headerTextResId: Int) : BaseAccountSortingListItem() {
 
         override val itemType: ItemType = ItemType.HEADER
 
@@ -67,8 +67,8 @@ sealed class BaseAccountSortingListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountSortListItem &&
-                other.accountListItem.itemConfiguration.accountAddress ==
-                accountListItem.itemConfiguration.accountAddress
+                    other.accountListItem.itemConfiguration.accountAddress ==
+                    accountListItem.itemConfiguration.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

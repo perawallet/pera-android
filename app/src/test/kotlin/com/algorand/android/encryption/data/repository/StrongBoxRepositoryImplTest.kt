@@ -16,6 +16,7 @@ import com.algorand.wallet.foundation.cache.PersistentCache
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -27,7 +28,7 @@ class StrongBoxRepositoryImplTest {
     private var sut: StrongBoxRepositoryImpl = StrongBoxRepositoryImpl(strongBoxUsedStorage)
 
     @Test
-    fun `EXPECT value saved to storage WHEN saveStrongBoxUsed is called`() = runTest {
+    fun `EXPECT value saved to storage WHEN saveStrongBoxUsed is called`(): TestResult = runTest {
         val check = true
 
         sut.saveStrongBoxUsed(check)
@@ -36,7 +37,7 @@ class StrongBoxRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT storage value returned WHEN getStrongBoxUsed is called`() = runTest {
+    fun `EXPECT storage value returned WHEN getStrongBoxUsed is called`(): TestResult = runTest {
         val expectedValue = true
         coEvery { strongBoxUsedStorage.get() } returns expectedValue
 
@@ -46,7 +47,7 @@ class StrongBoxRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false returned WHEN getStrongBoxUsed is called and storage returns null`() = runTest {
+    fun `EXPECT false returned WHEN getStrongBoxUsed is called and storage returns null`(): TestResult = runTest {
         coEvery { strongBoxUsedStorage.get() } returns null
 
         val result = sut.getStrongBoxUsed()

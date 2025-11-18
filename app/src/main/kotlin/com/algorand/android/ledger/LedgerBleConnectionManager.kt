@@ -25,11 +25,11 @@ import com.algorand.android.utils.getAccountIndexAsByteArray
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.removeExcessBytes
 import com.algorand.android.utils.shiftOneByteLeft
-import java.io.ByteArrayOutputStream
-import java.util.UUID
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.callback.DataReceivedCallback
 import no.nordicsemi.android.ble.data.Data
+import java.io.ByteArrayOutputStream
+import java.util.UUID
 
 // Use with dagger.
 // https://github.com/NordicSemiconductor/Android-BLE-Library/blob/master/MIGRATION.md
@@ -111,6 +111,7 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                         overrideMtu(mtuValue.toInt())
                     }
                 }
+
                 DATA_CLA -> {
                     val movedSequence = data.getByte(offset++)?.removeExcessBytes()?.shiftOneByteLeft()
                     val sequence = data.getByte(offset++)?.removeExcessBytes()
@@ -127,8 +128,8 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                             return
                         }
 
-                        val movedMsgSize = (data.getByte(offset++)!!.removeExcessBytes()).shiftOneByteLeft()
-                        val msgSize = data.getByte(offset++)!!.removeExcessBytes()
+                        val movedMsgSize = ((data.getByte(offset++) ?: return).removeExcessBytes()).shiftOneByteLeft()
+                        val msgSize = (data.getByte(offset++) ?: return).removeExcessBytes()
                         remainingBytes = msgSize + movedMsgSize
                     }
 
@@ -150,11 +151,13 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                         remainingBytes == 0 -> {
                             handleSuccessfulData(bluetoothDevice, actionBytesOutputStream.toByteArray())
                         }
+
                         remainingBytes > 0 -> {
                             // wait for the next message
                             currentSequence += 1
                         }
-                        remainingBytes < 0 -> {
+
+                        else -> {
                             resetReceiver("Minus byte is remaining. Something is wrong. $remainingBytes")
                         }
                     }
@@ -180,6 +183,7 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                         OPERATION_CANCELLED_CODES.any { data.contentEquals(it) } -> {
                             ledgerBleObserver.onOperationCancelled()
                         }
+
                         data.contentEquals(NEXT_PAGE_CODE) -> return
                         else -> {
                             disconnect().enqueue()
@@ -190,12 +194,14 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                         }
                     }
                 }
+
                 data.size > ERROR_DATA_SIZE -> {
                     ledgerBleObserver.onDataReceived(
                         device = ledgerDevice,
                         data = data.dropLast(RETURN_CODE_BYTE_COUNT).toByteArray()
                     )
                 }
+
                 else -> {
                     recordException(
                         Exception("LedgerBleConnectionManager::handleSuccessfulData:: {data.size} is lower than 2")
@@ -395,7 +401,7 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
         private const val P2_LAST = 0x00
         private const val P2_MORE = 0x80
 
-        const val ACCOUNT_INDEX_DATA_SIZE = 0x04
+        const val ACCOUNT_INDEX_DATA_SIZE: Int = 0x04
 
         // this need one more byte which is index of the account.
         // toByte is evaluated at compile time so, it's ok this way.

@@ -34,14 +34,14 @@ abstract class BaseAddAssetViewModel(
 
     protected abstract val searchPaginationFlow: Flow<PagingData<BaseAssetSearchListItem>>
 
-    protected val assetSearchPagerBuilder = AssetSearchPagerBuilder.create()
+    protected val assetSearchPagerBuilder: AssetSearchPagerBuilder = AssetSearchPagerBuilder.create()
 
     private val _baseAddAssetPreviewFlow =
         MutableStateFlow(baseAddAssetPreviewUseCase.createInitialBaseAddAssetPreview())
     val baseAddAssetPreviewFlow: StateFlow<BaseAddAssetPreview>
         get() = _baseAddAssetPreviewFlow
 
-    val assetSearchPaginationFlow
+    val assetSearchPaginationFlow: Flow<PagingData<BaseAssetSearchListItem>>
         get() = searchPaginationFlow
 
     fun createAssetAdditionLoadStatePreview(
@@ -78,6 +78,6 @@ abstract class BaseAddAssetViewModel(
     }
 
     companion object {
-        const val SEARCH_RESULT_LIMIT = 50
+        const val SEARCH_RESULT_LIMIT: Int = 50
     }
 }

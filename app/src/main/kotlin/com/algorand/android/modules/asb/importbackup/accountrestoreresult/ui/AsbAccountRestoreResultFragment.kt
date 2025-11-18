@@ -28,12 +28,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AsbAccountRestoreResultFragment : BaseResultFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_close,
         startIconClick = ::popImportBackupNavigationUp
     )
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
-    override val baseResultAdapter = BaseResultAdapter(accountItemListener)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
+    override val baseResultAdapter: BaseResultAdapter = BaseResultAdapter(accountItemListener)
     override val baseResultViewModel: BaseResultViewModel get() = asbAccountRestoreResultViewModel
 
     private val asbAccountRestoreResultViewModel by viewModels<AsbAccountRestoreResultViewModel>()

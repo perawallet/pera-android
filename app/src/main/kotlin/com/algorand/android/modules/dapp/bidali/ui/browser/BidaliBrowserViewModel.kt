@@ -24,11 +24,11 @@ import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class BidaliBrowserViewModel @Inject constructor(

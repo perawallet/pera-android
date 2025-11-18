@@ -44,7 +44,7 @@ class AssetInboxAllAccountsFragment :
         startIconResId = R.drawable.ic_left_arrow,
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentAssetInboxAllAccountsBinding::bind)
@@ -57,7 +57,8 @@ class AssetInboxAllAccountsFragment :
         }
     }
 
-    protected val accountAdapter = InboxAccountSelectionAdapter(inboxAccountSelectionListener)
+    private val accountAdapter: InboxAccountSelectionAdapter =
+        InboxAccountSelectionAdapter(inboxAccountSelectionListener)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -23,10 +23,10 @@ import com.algorand.wallet.foundation.json.JsonSerializerImpl
 import com.google.gson.Gson
 import io.mockk.every
 import io.mockk.mockk
-import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.io.File
 
 class RestoreEncryptedBackupProtocolPayloadUseCaseTest {
 
@@ -100,7 +100,7 @@ class RestoreEncryptedBackupProtocolPayloadUseCaseTest {
             )
         )
 
-        val FILE_PATH = "./src/test/resources/wallet/asb/domain/usecase"
+        const val FILE_PATH = "./src/test/resources/wallet/asb/domain/usecase"
         val DECRYPTED_CONTENT = File("${FILE_PATH}/decrypted_content.json").readText()
     }
 }

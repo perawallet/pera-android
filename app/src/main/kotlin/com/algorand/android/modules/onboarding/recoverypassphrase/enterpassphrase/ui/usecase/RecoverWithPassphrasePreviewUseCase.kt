@@ -37,9 +37,10 @@ import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.manager.Base64Manager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 @Suppress("LongParameterList")
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
@@ -140,11 +141,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     fun validateEnteredMnemonics(
         preview: RecoverWithPassphrasePreview,
         onboardingAccountType: OnboardingAccountType
-    ) = flow {
+    ): Flow<RecoverWithPassphrasePreview> = flow {
         try {
             emit(preview.copy(showLoadingDialogEvent = Event(Unit)))
             var accountAddress = ""
-            var mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
+            val mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
             val recoveredAccount = getAccount(onboardingAccountType, mnemonics, accountAddress) ?: run {
                 // Handle the case where account creation fails (e.g., invalid mnemonic)
                 val copiedPreview = preview.copy(
@@ -201,7 +202,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 val updatedPreview = preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
                 emit(updatedPreview)
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             emit(preview.copy(onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))))
         }
     }
@@ -233,6 +234,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                     creationType = RECOVER
                 )
             }
+
             OnboardingAccountType.HdKey -> {
                 // only entropy is needed for next screen (importing registered addresses)
                 val entropy = peraBip39Sdk.getEntropyFromMnemonic(mnemonics) ?: return null

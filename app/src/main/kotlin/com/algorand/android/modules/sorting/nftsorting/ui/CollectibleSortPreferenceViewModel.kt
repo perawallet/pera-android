@@ -17,10 +17,10 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.sorting.nftsorting.ui.model.CollectibleSortPreferencePreview
 import com.algorand.android.modules.sorting.nftsorting.ui.usecase.CollectibleSortPreferencePreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CollectibleSortPreferenceViewModel @Inject constructor(

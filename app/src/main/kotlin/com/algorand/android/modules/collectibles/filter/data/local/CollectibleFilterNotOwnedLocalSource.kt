@@ -43,7 +43,7 @@ class CollectibleFilterNotOwnedLocalSource @Inject constructor(
     }
 
     companion object {
-        const val FILTER_NOT_OWNED_COLLECTIBLES_DEFAULT_VALUE = true
+        const val FILTER_NOT_OWNED_COLLECTIBLES_DEFAULT_VALUE: Boolean = true
         private const val COLLECTIBLE_FILTER_NOT_OWNED_KEY = "collectible_filter_not_owned"
     }
 }

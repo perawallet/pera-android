@@ -30,8 +30,8 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HdWalletSelectionViewModel @Inject constructor(
@@ -90,7 +90,7 @@ class HdWalletSelectionViewModel @Inject constructor(
             val entropy = getHdEntropy(seedId) ?: return@launchIO
             val nextHdAccountIndex = maxAccountIndex + 1
             val wallet = bip39WalletProvider.getBip39Wallet(entropy)
-            val index = HdKeyAddressIndex(nextHdAccountIndex, changeIndex = 0, keyIndex = 0)
+            val index = HdKeyAddressIndex(nextHdAccountIndex)
             val hdKeyAddress = wallet.generateAddress(index)
             val accountCreation = AccountCreation(
                 address = hdKeyAddress.address,

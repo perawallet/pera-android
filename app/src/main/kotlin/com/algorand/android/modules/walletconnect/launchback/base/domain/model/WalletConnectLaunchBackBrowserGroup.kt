@@ -39,6 +39,6 @@ enum class WalletConnectLaunchBackBrowserGroup(val value: String) {
 
     companion object {
         fun getByDeeplinkResponse(deeplinkResponse: String): WalletConnectLaunchBackBrowserGroup =
-            values().firstOrNull { it.value == deeplinkResponse } ?: OTHER_GROUP
+            entries.firstOrNull { it.value == deeplinkResponse } ?: OTHER_GROUP
     }
 }

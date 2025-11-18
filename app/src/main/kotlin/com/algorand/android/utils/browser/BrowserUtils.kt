@@ -36,35 +36,34 @@ import com.algorand.android.utils.MAINNET_NETWORK_SLUG
 import com.algorand.android.utils.extensions.appendAt
 import com.algorand.android.utils.recordException
 
-const val PRIVACY_POLICY_URL = "https://perawallet.app/privacy-policy/"
-const val TERMS_AND_SERVICES_URL = "https://perawallet.app/terms-and-services/"
-const val DISPENSER_URL = "https://lora.algokit.io/testnet/fund"
+const val PRIVACY_POLICY_URL: String = "https://perawallet.app/privacy-policy/"
+const val TERMS_AND_SERVICES_URL: String = "https://perawallet.app/terms-and-services/"
+const val DISPENSER_URL: String = "https://lora.algokit.io/testnet/fund"
 private const val PERA_EXPLORER_URL = "explorer.perawallet.app"
 private const val MARKET_PAGE_URL = "https://play.google.com/store/apps/details?id=com.algorand.android"
 private const val SUPPORT_CENTER_URL = "https://perawallet.app/support/"
 private const val TRANSACTION_INFO_URL = "https://perawallet.app/support/transactions/"
 private const val RECOVERY_PASSPHRASE_SUPPORT_URL = "https://perawallet.app/support/passphrase/"
 private const val WATCH_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/watch-accounts/"
-private const val WC_ADVANCED_PERMISSIONS_URL = "https://perawallet.app/support/walletconnect-advanced-options"
-private const val VESTIGE_TERMS_OF_SERVICE_URL = "https://about.vestige.fi/disclaimer/terms-of-service"
 private const val TINYMAN_FAQ_PRICE_IMPACT_URL = "https://docs.tinyman.org/faq#what-is-a-price-impact"
 
-const val RECOVER_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/recover-account/"
-const val LEDGER_SUPPORT_URL = "https://perawallet.app/support/ledger/"
-const val ASA_VERIFICATION_URL = "https://explorer.perawallet.app/asa-verification/"
-const val BASE_TWITTER_URL = "https://twitter.com/"
-const val BLANK_URL = "about:blank"
-const val REKEY_SUPPORT_URL = "https://perawallet.app/support/rekey/"
-const val ASSET_INBOX_SUPPORT_URL = "https://perawallet.app/support/asset-inbox/"
-const val WATCH_SUPPORT_URL = "https://perawallet.app/support/watch-accounts/"
-const val HD_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/hd-wallets/"
-const val ALGO25_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/create-new-account/"
-const val RECOVER_OR_IMPORT_ACCOUNT_SUPPORT_URL =
+const val RECOVER_ACCOUNT_SUPPORT_URL: String = "https://perawallet.app/support/recover-account/"
+const val LEDGER_SUPPORT_URL: String = "https://perawallet.app/support/ledger/"
+const val ASA_VERIFICATION_URL: String = "https://explorer.perawallet.app/asa-verification/"
+const val BASE_TWITTER_URL: String = "https://twitter.com/"
+const val BLANK_URL: String = "about:blank"
+const val REKEY_SUPPORT_URL: String = "https://perawallet.app/support/rekey/"
+const val ASSET_INBOX_SUPPORT_URL: String = "https://perawallet.app/support/asset-inbox/"
+const val WATCH_SUPPORT_URL: String = "https://perawallet.app/support/watch-accounts/"
+const val HD_ACCOUNT_SUPPORT_URL: String = "https://perawallet.app/support/hd-wallets/"
+const val ALGO25_ACCOUNT_SUPPORT_URL: String = "https://perawallet.app/support/create-new-account/"
+const val RECOVER_OR_IMPORT_ACCOUNT_SUPPORT_URL: String =
     "https://support.perawallet.app/en/article/recover-or-import-an-algorand-account-with-recovery-passphrase-11gdh1y/"
-const val SWAP_INFO_SUPPORT_URL = "https://support.perawallet.app/en/article/pera-swap-swapping-with-pera-1ep84ky/"
+const val SWAP_INFO_SUPPORT_URL: String =
+    "https://support.perawallet.app/en/article/pera-swap-swapping-with-pera-1ep84ky/"
 
-const val HTTPS_PROTOCOL = "https://"
-const val HTTP_PROTOCOL = "http://"
+const val HTTPS_PROTOCOL: String = "https://"
+const val HTTP_PROTOCOL: String = "http://"
 
 fun Context.openTermsAndServicesUrl() {
     openUrl(TERMS_AND_SERVICES_URL)
@@ -146,16 +145,8 @@ fun Context.openWatchAccountSupportUrl() {
     openUrl(WATCH_ACCOUNT_SUPPORT_URL)
 }
 
-fun Context.openWalletConnectAdvancedPermissionsUrl() {
-    openUrl(WC_ADVANCED_PERMISSIONS_URL)
-}
-
 fun Context.openASAVerificationUrl() {
     openUrl(ASA_VERIFICATION_URL)
-}
-
-fun Context.openVestigeTermsOfServiceUrl() {
-    openUrl(VESTIGE_TERMS_OF_SERVICE_URL)
 }
 
 fun Context.openGroupTransactionInPeraExplorer(groupId: String?, networkSlug: String?) {

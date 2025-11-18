@@ -38,10 +38,6 @@ class RecyclerViewPositionVisibilityHandler(position: Int, listener: Listener) {
         recyclerView.addOnScrollListener(onScrollListener)
     }
 
-    fun removeOnScrollListener(recyclerView: RecyclerView) {
-        recyclerView.removeOnScrollListener(onScrollListener)
-    }
-
     fun interface Listener {
         fun onItemVisibilityChange(isVisible: Boolean)
     }

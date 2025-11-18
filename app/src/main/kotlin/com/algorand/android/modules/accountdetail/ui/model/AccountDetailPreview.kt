@@ -13,11 +13,9 @@
 package com.algorand.android.modules.accountdetail.ui.model
 
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
-import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.utils.Event
 
 data class AccountDetailPreview(
     val accountDetailSummary: AccountDetailSummary,
-    val swapNavigationDestinationEvent: Event<SwapNavigationDestination>?,
     val navBackEvent: Event<Unit>? = null
 )

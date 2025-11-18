@@ -33,7 +33,7 @@ class BaseOfflineKeyRegTransactionDetailUiBuilder @Inject constructor() :
 
     override fun buildTransactionRequestExtraFields(
         txn: BaseKeyRegTransaction
-    ): TransactionRequestExtraFields? {
+    ): TransactionRequestExtraFields {
         return with(txn) {
             TransactionRequestExtraFields(
                 rejectVersion = rejectVersion,

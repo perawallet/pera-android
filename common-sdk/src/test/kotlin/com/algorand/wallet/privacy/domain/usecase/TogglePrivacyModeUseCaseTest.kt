@@ -17,6 +17,7 @@ import com.algorand.wallet.privacy.domain.repository.PrivacyModeRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -27,7 +28,7 @@ class TogglePrivacyModeUseCaseTest {
     private val sut = TogglePrivacyModeUseCase(privacyModeRepository)
 
     @Test
-    fun `EXPECT privacy disabled WHEN current state is enabled`() = runTest {
+    fun `EXPECT privacy disabled WHEN current state is enabled`(): TestResult = runTest {
         coEvery { privacyModeRepository.getPrivacyMode() } returns PrivacyMode.Enabled
 
         sut()
@@ -36,7 +37,7 @@ class TogglePrivacyModeUseCaseTest {
     }
 
     @Test
-    fun `EXPECT privacy enabled WHEN current state is disabled`() = runTest {
+    fun `EXPECT privacy enabled WHEN current state is disabled`(): TestResult = runTest {
         coEvery { privacyModeRepository.getPrivacyMode() } returns PrivacyMode.Disabled
 
         sut()

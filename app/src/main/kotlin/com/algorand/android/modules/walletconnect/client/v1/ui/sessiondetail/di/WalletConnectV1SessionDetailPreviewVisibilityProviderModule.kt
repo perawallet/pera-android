@@ -30,7 +30,7 @@ object WalletConnectV1SessionDetailPreviewVisibilityProviderModule {
     @Provides
     @Named(WalletConnectV1SessionDetailPreviewVisibilityProviderImpl.INJECTION_NAME)
     fun provideWalletConnectSessionDetailPreviewVisibilityProvider():
-        WalletConnectSessionDetailPreviewVisibilityProvider {
+            WalletConnectSessionDetailPreviewVisibilityProvider {
         return WalletConnectV1SessionDetailPreviewVisibilityProviderImpl()
     }
 

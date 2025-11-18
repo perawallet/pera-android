@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.info.data.model
 
+@Suppress("unused")
 internal enum class IndexerAccountFetchRequestExcludes(val query: String) {
     ALL("all"),
     ASSETS("assets"),

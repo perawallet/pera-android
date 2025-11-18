@@ -16,7 +16,7 @@ import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 
 internal class HomeNewDeepLinkBuilder : NewDeepLinkBuilder {
-    override fun createDeepLink(payload: DeepLinkPayload): DeepLink? {
+    override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return DeepLink.Home
     }
 }

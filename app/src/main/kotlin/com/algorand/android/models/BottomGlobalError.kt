@@ -15,6 +15,6 @@ package com.algorand.android.models
 import androidx.annotation.StringRes
 
 data class BottomGlobalError(
-    @StringRes val titleResId: Int,
+    @param:StringRes val titleResId: Int,
     val errorCode: Int?
 )

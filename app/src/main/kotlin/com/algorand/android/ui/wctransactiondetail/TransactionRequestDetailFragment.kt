@@ -40,7 +40,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class TransactionRequestDetailFragment : DaggerBaseFragment(
     R.layout.fragment_transaction_request_detail
 ) {
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,

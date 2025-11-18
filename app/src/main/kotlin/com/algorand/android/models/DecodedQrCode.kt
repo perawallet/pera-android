@@ -14,8 +14,8 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import androidx.annotation.StringRes
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 sealed class DecodedQrCode : Parcelable {
 
@@ -49,12 +49,12 @@ sealed class DecodedQrCode : Parcelable {
         abstract val titleRes: Int
 
         @Parcelize
-        data class WalletConnect(@StringRes override val titleRes: Int) : Error()
+        data class WalletConnect(@param:StringRes override val titleRes: Int) : Error()
 
         @Parcelize
-        data class Mnemonic(@StringRes override val titleRes: Int) : Error()
+        data class Mnemonic(@param:StringRes override val titleRes: Int) : Error()
 
         @Parcelize
-        data class PublicKey(@StringRes override val titleRes: Int) : Error()
+        data class PublicKey(@param:StringRes override val titleRes: Int) : Error()
     }
 }

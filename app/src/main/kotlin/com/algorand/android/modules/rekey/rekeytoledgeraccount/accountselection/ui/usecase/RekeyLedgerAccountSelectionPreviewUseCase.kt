@@ -22,12 +22,13 @@ import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.mapper.RekeyLedgerAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionPreview
-import com.algorand.android.utils.extensions.addFirst as addFirstToList
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import javax.inject.Inject
+import com.algorand.android.utils.extensions.addFirst as addFirstToList
 
 class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
     private val rekeyLedgerAccountSelectionPreviewMapper: RekeyLedgerAccountSelectionPreviewMapper,
@@ -56,12 +57,12 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun getRekeyLedgerAccountSelectionPreview(
+    fun getRekeyLedgerAccountSelectionPreview(
         ledgerAccountsNavArgs: List<RekeyLedgerAccountSelectionNavArgs.LedgerAccountsNavArgs>,
         bluetoothAddress: String,
         bluetoothName: String?,
         accountAddress: String
-    ) = flow {
+    ): Flow<RekeyLedgerAccountSelectionPreview> = flow {
         val ledgerAccounts = mutableListOf<AccountSelectionListItem>().apply {
             ledgerAccountsNavArgs.forEachIndexed { index, ledgerAccount ->
 

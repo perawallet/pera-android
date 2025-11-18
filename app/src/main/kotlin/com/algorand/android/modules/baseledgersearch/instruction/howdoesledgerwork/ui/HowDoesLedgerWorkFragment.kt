@@ -22,13 +22,15 @@ import com.algorand.android.modules.baseledgersearch.instruction.base.ui.BaseLed
 
 class HowDoesLedgerWorkFragment : BaseLedgerInstructionFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.how_does_it_work,
         startIconResId = R.drawable.ic_close,
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

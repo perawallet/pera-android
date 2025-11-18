@@ -19,6 +19,6 @@ interface AlgorandSdkEncryptionUtils {
     fun decryptContent(encryptedContent: String, key: ByteArray): String?
 
     companion object {
-        const val INJECTION_NAME = "algorandSdkEncryptionUtilsInjectionName"
+        const val INJECTION_NAME: String = "algorandSdkEncryptionUtilsInjectionName"
     }
 }

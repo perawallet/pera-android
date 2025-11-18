@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation
 
-import com.algorand.android.modules.accountsorting.ui.domain.model.AccountSortingType
 import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.modules.accountsorting.ui.domain.model.AccountSortingType
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetDefaultAccountSortingType
 import javax.inject.Inject
 

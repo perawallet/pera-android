@@ -18,13 +18,13 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapConfigurationViewModel.
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.math.BigInteger
+import javax.inject.Inject
 
 private typealias AssetContentState = SwapAssetSelectionViewModel.ViewState.Content
 
@@ -62,6 +62,7 @@ class DefaultSwapConfigurationViewModel @Inject constructor(
                 val isSwitchButtonEnabled = assetHolding != null && assetHolding.amount > BigInteger.ZERO
                 ViewState.Content(isSwitchButtonEnabled)
             }
+
             else -> ViewState.Idle
         }
     }

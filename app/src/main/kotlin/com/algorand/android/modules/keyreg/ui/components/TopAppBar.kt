@@ -44,7 +44,7 @@ fun scaffoldTopAppBar(onBackClick: () -> Unit = {}) {
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = PeraTheme.colors.background.primary,
         )
     )

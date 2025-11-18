@@ -42,8 +42,7 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 
 @Composable
 fun AssetDetailHeader(viewModel: AssetDetailHeaderViewModel) {
-    val viewState = viewModel.state.collectAsStateWithLifecycle().value
-    when (viewState) {
+    when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
         Idle -> Unit
         is Content -> {
             Row(

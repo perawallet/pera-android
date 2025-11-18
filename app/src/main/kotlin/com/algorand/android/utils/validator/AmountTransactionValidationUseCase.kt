@@ -95,8 +95,8 @@ class AmountTransactionValidationUseCase @Inject constructor(
         val isThereAppOptedIn = isAccountOptedInToAnyApp(address)
         val amountAsBigInteger = amount.formatAmountAsBigInteger(ownedAssetData.decimals)
         return ownedAssetData.isAlgo &&
-            (ownedAssetData.amount - amountAsBigInteger - MIN_FEE.toBigInteger()) isLesserThan requiredMinBalance &&
-            (isThereAnotherAsset || isThereAppOptedIn)
+                (ownedAssetData.amount - amountAsBigInteger - MIN_FEE.toBigInteger()) isLesserThan requiredMinBalance &&
+                (isThereAnotherAsset || isThereAppOptedIn)
     }
 
     suspend fun getAmountAsBigInteger(amount: BigDecimal, assetId: Long): BigInteger? {

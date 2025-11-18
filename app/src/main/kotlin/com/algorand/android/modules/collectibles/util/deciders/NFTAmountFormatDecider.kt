@@ -44,9 +44,11 @@ class NFTAmountFormatDecider @Inject constructor() {
             fractionalDecimal == 0 -> {
                 safeAmount.formatAmountByCollectibleFractionalDigit(decimals = fractionalDecimal, isCompact = true)
             }
+
             safeAmount < BigDecimal.ONE -> {
-                safeAmount.formatAmountByCollectibleFractionalDigit(decimals = safeFractionalDecimal, isCompact = false)
+                safeAmount.formatAmountByCollectibleFractionalDigit(decimals = safeFractionalDecimal)
             }
+
             else -> {
                 safeAmount.formatAmountByCollectibleFractionalDigit(decimals = safeFractionalDecimal, isCompact = true)
             }

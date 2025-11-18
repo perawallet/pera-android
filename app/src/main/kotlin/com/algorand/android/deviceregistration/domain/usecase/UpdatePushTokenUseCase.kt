@@ -18,13 +18,13 @@ import com.algorand.android.deviceregistration.domain.repository.UserDeviceIdRep
 import com.algorand.android.models.Result
 import com.algorand.android.utils.DataResource
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+import javax.inject.Named
 
 class UpdatePushTokenUseCase @Inject constructor(
-    @Named(UserDeviceIdRepository.USER_DEVICE_ID_REPOSITORY_INJECTION_NAME)
+    @param:Named(UserDeviceIdRepository.USER_DEVICE_ID_REPOSITORY_INJECTION_NAME)
     private val userDeviceIdRepository: UserDeviceIdRepository,
     private val deviceUpdateDTOMapper: DeviceUpdateDTOMapper,
     getLocalAccounts: GetLocalAccounts
@@ -37,8 +37,9 @@ class UpdatePushTokenUseCase @Inject constructor(
                 is Result.Success -> {
                     emit(DataResource.Success(it.data))
                 }
+
                 is Result.Error -> {
-                    emit(DataResource.Error.Api<String>(it.exception, it.code))
+                    emit(DataResource.Error.Api(it.exception, it.code))
                 }
             }
         }

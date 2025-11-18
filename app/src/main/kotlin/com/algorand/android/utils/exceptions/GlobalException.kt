@@ -19,9 +19,9 @@ import com.algorand.android.models.ExceptionErrorParser
 import com.algorand.android.utils.Resource
 
 data class GlobalException(
-    @StringRes val titleRes: Int? = null,
-    val descriptionString: AnnotatedString? = null,
-    @StringRes val descriptionRes: Int
+    @param:StringRes val titleRes: Int? = null,
+    private val descriptionString: AnnotatedString? = null,
+    @param:StringRes val descriptionRes: Int
 ) : Exception(), ExceptionErrorParser {
     override fun getAsResourceError(): Resource.Error {
         val descriptionString = descriptionString ?: AnnotatedString(stringResId = descriptionRes)

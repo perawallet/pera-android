@@ -38,7 +38,7 @@ internal class DeterministicBip39SignManager @Inject constructor(
         return try {
             val key = deterministicSigner.genDerivedMainKeyWithBIP39(Mnemonics.MnemonicCode(entropy).joinToString(" "))
             deterministicSigner.genDomainSpecificKeypair(key, origin, userHandle)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         } finally {
             entropy.clearFromMemory()

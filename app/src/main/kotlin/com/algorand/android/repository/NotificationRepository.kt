@@ -14,36 +14,42 @@ package com.algorand.android.repository
 
 import com.algorand.android.database.NotificationFilterDao
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.NotificationFilter
 import com.algorand.android.models.NotificationFilterRequest
+import com.algorand.android.models.Pagination
+import com.algorand.android.models.Result
+import com.algorand.android.modules.notification.data.model.NotificationResponse
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithPeraApiErrorHandler
 import com.algorand.android.sharedpref.NotificationRefreshTimeLocalSource
 import com.algorand.android.utils.Resource
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class NotificationRepository @Inject constructor(
     private val notificationFilterDao: NotificationFilterDao,
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoApiErrorHandler: RetrofitErrorHandler,
+    private val peraApiErrorHandler: RetrofitErrorHandler,
     private val deviceIdUseCase: DeviceIdUseCase,
     private val notificationRefreshTimeLocalSource: NotificationRefreshTimeLocalSource
 ) {
 
-    suspend fun getNotifications(notificationUserId: String) = requestWithHipoErrorHandler(hipoApiErrorHandler) {
+    suspend fun getNotifications(
+        notificationUserId: String
+    ): Result<Pagination<NotificationResponse>> = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
         mobileAlgorandApi.getNotifications(notificationUserId)
     }
 
-    suspend fun getNotificationsMore(nextUrl: String) = requestWithHipoErrorHandler(hipoApiErrorHandler) {
-        mobileAlgorandApi.getNotificationsMore(nextUrl)
-    }
+    suspend fun getNotificationsMore(nextUrl: String): Result<Pagination<NotificationResponse>> =
+        requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            mobileAlgorandApi.getNotificationsMore(nextUrl)
+        }
 
     private suspend fun putNotificationFilter(
         deviceId: String,
         publicKey: String,
         notificationFilterRequest: NotificationFilterRequest
-    ) = requestWithHipoErrorHandler(hipoApiErrorHandler) {
+    ) = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
         mobileAlgorandApi.putNotificationFilter(deviceId, publicKey, notificationFilterRequest)
     }
 

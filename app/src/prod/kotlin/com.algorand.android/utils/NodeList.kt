@@ -12,7 +12,9 @@
 
 package com.algorand.android.utils
 
-val defaultNodeList = listOf(
+import com.algorand.android.models.Node
+
+val defaultNodeList: List<Node> = listOf(
     mainNetNode.copy(
         isActive = true
     ),

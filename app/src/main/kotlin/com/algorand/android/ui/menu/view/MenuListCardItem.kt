@@ -81,7 +81,7 @@ private fun ErrorState(onRetryClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CardDescriptionText(R.string.an_error_occured)
+                CardDescriptionText(R.string.an_error_occurred)
                 PeraSecondaryButton(
                     onClick = onRetryClick,
                     text = stringResource(R.string.retry)

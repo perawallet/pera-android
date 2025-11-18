@@ -25,6 +25,7 @@ import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnoth
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -51,7 +52,7 @@ class CreateKeyRegTransactionUseCaseTest {
     )
 
     @Test
-    fun `EXPECT error WHEN transaction params returns error`() = runTest {
+    fun `EXPECT error WHEN transaction params returns error`(): TestResult = runTest {
         coEvery { getTransactionParams() } returns Result.Error(IllegalArgumentException())
 
         val result = sut(ONLINE_KEY_REG_TXN_DETAIL)
@@ -60,7 +61,7 @@ class CreateKeyRegTransactionUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN transaction byte array is null`() = runTest {
+    fun `EXPECT error WHEN transaction byte array is null`(): TestResult = runTest {
         coEvery { getTransactionParams() } returns Result.Success(TRANSACTION_PARAMS)
         coEvery { buildKeyRegOnlineTransaction(ONLINE_TXN_PAYLOAD) } returns null
 
@@ -70,7 +71,7 @@ class CreateKeyRegTransactionUseCaseTest {
     }
 
     @Test
-    fun `EXPECT online txn array WHEN payload is for online txn`() = runTest {
+    fun `EXPECT online txn array WHEN payload is for online txn`(): TestResult = runTest {
         val onlineTxnByteArray = "txnByteArray".toByteArray()
         coEvery { getTransactionParams() } returns Result.Success(TRANSACTION_PARAMS)
         coEvery { buildKeyRegOnlineTransaction(ONLINE_TXN_PAYLOAD) } returns onlineTxnByteArray
@@ -82,7 +83,7 @@ class CreateKeyRegTransactionUseCaseTest {
     }
 
     @Test
-    fun `EXPECT offline txn array WHEN payload is for offline txn`() = runTest {
+    fun `EXPECT offline txn array WHEN payload is for offline txn`(): TestResult = runTest {
         val offlineTxnByteArray = "txnByteArray".toByteArray()
         coEvery { getTransactionParams() } returns Result.Success(TRANSACTION_PARAMS)
         coEvery { buildKeyRegOfflineTransaction(OFFLINE_TXN_PAYLOAD) } returns offlineTxnByteArray

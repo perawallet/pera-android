@@ -16,12 +16,13 @@ import com.algorand.test.peraFixture
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import kotlinx.coroutines.test.runTest
 
 class IsThereAnyCachedSuccessAccountUseCaseTest {
 
@@ -31,7 +32,7 @@ class IsThereAnyCachedSuccessAccountUseCaseTest {
     private val sut = IsThereAnyCachedSuccessAccountUseCase(accountInformationRepository, getLocalAccounts)
 
     @Test
-    fun `EXPECT true WHEN there are cached accounts and excludeNoAuthAccounts is false`() = runTest {
+    fun `EXPECT true WHEN there are cached accounts and excludeNoAuthAccounts is false`(): TestResult = runTest {
         val successAccounts = listOf(NO_AUTH_ACCOUNT.algoAddress)
         val localAccounts = listOf(NO_AUTH_ACCOUNT, ALGO_25_ACCOUNT)
         whenever(getLocalAccounts()).thenReturn(localAccounts)
@@ -43,7 +44,7 @@ class IsThereAnyCachedSuccessAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN there are auth cached accounts and excludeNoAuthAccounts is true`() = runTest {
+    fun `EXPECT true WHEN there are auth cached accounts and excludeNoAuthAccounts is true`(): TestResult = runTest {
         val successAccounts = listOf(ALGO_25_ACCOUNT.algoAddress)
         val localAccounts = listOf(NO_AUTH_ACCOUNT, ALGO_25_ACCOUNT)
         whenever(getLocalAccounts()).thenReturn(localAccounts)
@@ -55,7 +56,7 @@ class IsThereAnyCachedSuccessAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN there are no cached accounts and excludeNoAuthAccounts is false`() = runTest {
+    fun `EXPECT false WHEN there are no cached accounts and excludeNoAuthAccounts is false`(): TestResult = runTest {
         val localAccounts = listOf(NO_AUTH_ACCOUNT, ALGO_25_ACCOUNT)
         whenever(getLocalAccounts()).thenReturn(localAccounts)
         whenever(accountInformationRepository.getAllSuccessfullyCachedAccountAddresses()).thenReturn(emptyList())
@@ -66,7 +67,7 @@ class IsThereAnyCachedSuccessAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN there are no cached accounts and excludeNoAuthAccounts is true`() = runTest {
+    fun `EXPECT false WHEN there are no cached accounts and excludeNoAuthAccounts is true`(): TestResult = runTest {
         val localAccounts = listOf(NO_AUTH_ACCOUNT, ALGO_25_ACCOUNT)
         whenever(getLocalAccounts()).thenReturn(localAccounts)
         whenever(accountInformationRepository.getAllSuccessfullyCachedAccountAddresses()).thenReturn(emptyList())

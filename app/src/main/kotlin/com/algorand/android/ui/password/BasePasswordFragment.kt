@@ -36,7 +36,7 @@ abstract class BasePasswordFragment : DaggerBaseFragment(R.layout.fragment_base_
 
     protected abstract val screenType: PasswordScreenType
 
-    protected val binding by viewBinding(FragmentBasePasswordBinding::bind)
+    protected val binding: FragmentBasePasswordBinding by viewBinding(FragmentBasePasswordBinding::bind)
 
     private val lockPasswordViewModel: LockPasswordViewModel by viewModels()
 
@@ -62,7 +62,9 @@ abstract class BasePasswordFragment : DaggerBaseFragment(R.layout.fragment_base_
         startIconClick = ::onBackPressed
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val dialPadListener = object : DialPadView.DialPadListener {
         override fun onNumberClick(number: Int) {

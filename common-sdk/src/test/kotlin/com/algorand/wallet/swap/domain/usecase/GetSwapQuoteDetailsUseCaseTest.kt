@@ -27,11 +27,12 @@ import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.math.BigInteger
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class GetSwapQuoteDetailsUseCaseTest {
 
@@ -44,7 +45,7 @@ class GetSwapQuoteDetailsUseCaseTest {
     private val sut = GetSwapQuoteDetailsUseCase(getAccountAssetHolding, getAccountMinBalance, getSwapFeePadding)
 
     @Test
-    fun `EXPECT insufficient algo balance WHEN account does not have enough algo for txn`() = runTest {
+    fun `EXPECT insufficient algo balance WHEN account does not have enough algo for txn`(): TestResult = runTest {
         val quote = QUOTE.copy(
             assetInAmount = QUOTE.assetInAmount.copy(amount = BigDecimal.TEN),
             assetInDetail = QUOTE.assetInDetail.copy(assetId = ALGO_ID, fractionDecimals = ALGO_DECIMALS)
@@ -58,7 +59,7 @@ class GetSwapQuoteDetailsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT insufficient asset balance WHEN account does not have enough asset for txn`() = runTest {
+    fun `EXPECT insufficient asset balance WHEN account does not have enough asset for txn`(): TestResult = runTest {
         val quote = QUOTE.copy(
             assetInAmount = QUOTE.assetInAmount.copy(amount = BigDecimal.TEN),
             assetInDetail = QUOTE.assetInDetail.copy(assetId = ASSET_ID, fractionDecimals = 0, shortName = "NAME")
@@ -72,7 +73,7 @@ class GetSwapQuoteDetailsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT insufficient balance to pay fees WHEN asset in is algo and account does not have enough algo for fees and txn`() =
+    fun `EXPECT insufficient balance to pay fees WHEN asset in is algo and account does not have enough algo for fees and txn`(): TestResult =
         runTest {
             val accountBalance = BigInteger.valueOf(4_664_000) // 4 ALGO + 0.664 ALGO fee padding
             val quote = QUOTE.copy(

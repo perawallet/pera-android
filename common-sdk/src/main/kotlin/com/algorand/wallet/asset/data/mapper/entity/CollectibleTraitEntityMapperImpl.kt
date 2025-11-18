@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.asset.data.mapper.entity
 
-import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
+import com.algorand.wallet.asset.data.model.AssetResponse
 import javax.inject.Inject
 
 internal class CollectibleTraitEntityMapperImpl @Inject constructor() : CollectibleTraitEntityMapper {

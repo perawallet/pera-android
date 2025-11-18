@@ -31,7 +31,7 @@ sealed class BaseApplicationCallAssetInformationListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AssetInformationItem &&
-                assetItemConfiguration.assetId == other.assetItemConfiguration.assetId
+                    assetItemConfiguration.assetId == other.assetItemConfiguration.assetId
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

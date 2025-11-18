@@ -56,5 +56,6 @@ class AssetTransferAmountPreviewMapper @Inject constructor() {
         )
     }
 
-    fun mapToAssetNotFoundStatePreview() = AssetTransferAmountPreview(assetNotFoundErrorEvent = Event(Unit))
+    fun mapToAssetNotFoundStatePreview(): AssetTransferAmountPreview =
+        AssetTransferAmountPreview(assetNotFoundErrorEvent = Event(Unit))
 }

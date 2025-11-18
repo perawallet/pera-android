@@ -39,7 +39,7 @@ class CurrencyLocalSource @Inject constructor(
     }
 
     companion object {
-        val defaultCurrencyPreference = Currency.ALGO.id
+        val defaultCurrencyPreference: String = Currency.ALGO.id
         private const val CURRENCY_PREFERENCE_KEY = "currency_preference_key"
     }
 }

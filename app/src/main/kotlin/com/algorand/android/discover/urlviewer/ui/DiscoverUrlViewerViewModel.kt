@@ -22,10 +22,10 @@ import com.algorand.android.discover.urlviewer.ui.usecase.DiscoverUrlViewerUseCa
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.preference.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverUrlViewerViewModel @Inject constructor(
@@ -47,7 +47,7 @@ class DiscoverUrlViewerViewModel @Inject constructor(
             _discoverUrlViewerPreviewFlow
                 .emit(
                     discoverUrlViewerPreviewUseCase
-                    .onPageRequestedShouldOverrideUrlLoading(_discoverUrlViewerPreviewFlow.value)
+                        .onPageRequestedShouldOverrideUrlLoading(_discoverUrlViewerPreviewFlow.value)
                 )
         }
         return false

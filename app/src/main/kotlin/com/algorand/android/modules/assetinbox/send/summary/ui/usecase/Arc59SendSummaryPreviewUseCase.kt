@@ -29,13 +29,13 @@ import com.algorand.android.utils.isGreaterThan
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.math.BigInteger
+import javax.inject.Inject
 
 class Arc59SendSummaryPreviewUseCase @Inject constructor(
     private val getArc59SendSummary: GetArc59SendSummary,
@@ -59,7 +59,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
     ): Flow<Arc59SendSummaryPreview> = flow {
         val assetDetail = getAsset(assetId)
         if (assetDetail == null) {
-            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occured))
+            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occurred))
             val newPreview = preview.copy(isLoading = false, showError = errorEvent)
             emit(newPreview)
             return@flow
@@ -82,7 +82,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         preview: Arc59SendSummaryPreview
     ): Flow<Arc59SendSummaryPreview> = flow {
         if (preview.summary == null) {
-            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occured))
+            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occurred))
             emit(preview.copy(isLoading = false, showError = errorEvent))
         } else {
             if (!hasAccountEnoughAlgo(args.senderPublicKey, preview.summary.totalProtocolAndMbrFee)) {
@@ -115,13 +115,13 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         }
     }
 
-    suspend fun sendSignedTransaction(
+    fun sendSignedTransaction(
         preview: Arc59SendSummaryPreview,
         signedTransactions: List<Any?>
     ): Flow<Arc59SendSummaryPreview> = channelFlow {
         val safeSignedTransactions = signedTransactions.filterIsInstance<SignedTransactionDetail>()
         if (safeSignedTransactions.isEmpty()) {
-            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occured))
+            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occurred))
             send(preview.copy(isLoading = false, showError = errorEvent))
             return@channelFlow
         }

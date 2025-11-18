@@ -19,6 +19,6 @@ interface TooltipDisplayPreferenceRepository {
     fun setTransactionDetailCopyAddressTipPreference(isShown: Boolean)
 
     companion object {
-        const val REPOSITORY_INJECTION_NAME = "tooltipDisplayPreferenceRepositoryInjection"
+        const val REPOSITORY_INJECTION_NAME: String = "tooltipDisplayPreferenceRepositoryInjection"
     }
 }

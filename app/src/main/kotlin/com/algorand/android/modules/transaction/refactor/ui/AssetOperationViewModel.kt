@@ -34,7 +34,6 @@ import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +42,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetOperationViewModel @Inject constructor(
@@ -109,9 +109,9 @@ class AssetOperationViewModel @Inject constructor(
                         val errorResourceId = when (dataResource.exception) {
                             is AccountAlreadyOptedIntoAssetException -> R.string.you_are_already
                             is TransactionConfirmationAwaitException -> R.string.transaction_confirmation_timed_out
-                            is TransactionIdNullException -> R.string.an_error_occured
+                            is TransactionIdNullException -> R.string.an_error_occurred
                             is AssetAlreadyPendingForRemovalException -> R.string.this_asset_is
-                            else -> R.string.an_error_occured
+                            else -> R.string.an_error_occurred
                         }
                         val assetName = getAsset(transaction.assetId)?.fullName.orEmpty()
                         val error = Resource.Error.GlobalWarning(
@@ -123,6 +123,7 @@ class AssetOperationViewModel @Inject constructor(
                         )
                         _assetOperationResultFlow.emit(Event(error))
                     }
+
                     else -> sendErrorLog("Unhandled else case in MainViewModel.sendSignedTransaction")
                 }
             }

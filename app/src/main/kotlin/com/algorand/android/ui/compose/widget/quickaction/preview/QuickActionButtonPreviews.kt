@@ -41,9 +41,8 @@ fun QuickActionButtonPreviews() {
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SwapQuickActionButton(isSelected = false) { }
-        SwapQuickActionButton(isSelected = true) { }
-        BuySellQuickActionButton { }
+        SwapQuickActionButton {}
+        BuySellQuickActionButton {}
         StakeQuickActionButton {}
         SendQuickActionButton {}
         AssetInboxQuickActionButton(isSelected = false) {}

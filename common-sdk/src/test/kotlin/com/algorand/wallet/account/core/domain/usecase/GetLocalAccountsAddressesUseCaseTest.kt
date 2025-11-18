@@ -18,6 +18,7 @@ import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepos
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddressesUseCase
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -48,7 +49,7 @@ class GetLocalAccountsAddressesUseCaseTest {
     }
 
     @Test
-    fun `EXPECT all addresses combined from different repositories`() = runTest(testDispatcher) {
+    fun `EXPECT all addresses combined from different repositories`(): TestResult = runTest(testDispatcher) {
         val hdKeyAddresses = listOf("hdKey1", "hdKey2")
         val algo25Addresses = listOf("algo25-1")
         val ledgerBleAddresses = listOf("ledger-1", "ledger-2")
@@ -66,7 +67,7 @@ class GetLocalAccountsAddressesUseCaseTest {
     }
 
     @Test
-    fun `EXPECT empty list when all repositories return empty`() = runTest(testDispatcher) {
+    fun `EXPECT empty list when all repositories return empty`(): TestResult = runTest(testDispatcher) {
         wheneverBlocking { hdKeyAccountRepository.getAllAddresses() } doReturn emptyList()
         wheneverBlocking { algo25AccountRepository.getAllAddresses() } doReturn emptyList()
         wheneverBlocking { ledgerBleAccountRepository.getAllAddresses() } doReturn emptyList()

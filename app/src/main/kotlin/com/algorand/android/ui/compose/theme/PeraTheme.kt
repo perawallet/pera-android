@@ -15,11 +15,12 @@ package com.algorand.android.ui.compose.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.algorand.android.ui.compose.typography.PeraTypography
 import com.algorand.android.ui.compose.typography.peraTypography
 
-val localPeraColors = staticCompositionLocalOf {
+val localPeraColors: ProvidableCompositionLocal<PeraColor> = staticCompositionLocalOf {
     ThemedColors.defaultColor
 }
 

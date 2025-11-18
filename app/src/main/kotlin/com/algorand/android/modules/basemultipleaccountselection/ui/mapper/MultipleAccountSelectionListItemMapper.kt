@@ -15,7 +15,6 @@ package com.algorand.android.modules.basemultipleaccountselection.ui.mapper
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import com.algorand.android.customviews.TriStatesCheckBox
-import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
@@ -29,14 +28,6 @@ class MultipleAccountSelectionListItemMapper @Inject constructor() {
     ): MultipleAccountSelectionListItem.TitleItem {
         return MultipleAccountSelectionListItem.TitleItem(
             textResId = textResId
-        )
-    }
-
-    fun mapToDescriptionItem(
-        annotatedString: AnnotatedString
-    ): MultipleAccountSelectionListItem.DescriptionItem {
-        return MultipleAccountSelectionListItem.DescriptionItem(
-            annotatedString = annotatedString
         )
     }
 

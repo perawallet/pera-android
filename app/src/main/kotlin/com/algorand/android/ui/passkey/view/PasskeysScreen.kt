@@ -89,8 +89,7 @@ fun PasskeysScreen(viewModel: PasskeysViewModel = hiltViewModel(), onBackClick: 
                 )
             }
         )
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
-        when (viewState) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             Empty -> EmptyState()
             is Content -> {

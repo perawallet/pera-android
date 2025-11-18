@@ -14,6 +14,7 @@ package com.algorand.wallet.swap.data.model
 
 import com.google.gson.annotations.SerializedName
 
+@Suppress("unused")
 internal enum class SwapTypeResponse {
     @SerializedName("fixed-input")
     FIXED_INPUT,

@@ -18,5 +18,5 @@ import com.algorand.android.nft.ui.mediaplayer.MediaPlayerFragment
 
 @UnstableApi
 class VideoPlayerFragment : MediaPlayerFragment() {
-    override val mediaPlayerViewModel by viewModels<VideoPlayerViewModel>()
+    override val mediaPlayerViewModel: VideoPlayerViewModel by viewModels<VideoPlayerViewModel>()
 }

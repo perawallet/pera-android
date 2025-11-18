@@ -34,8 +34,6 @@ import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -44,6 +42,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.math.BigInteger
+import javax.inject.Inject
 
 internal class AccountInformationRepositoryImpl @Inject constructor(
     private val indexerApi: AccountInformationApiService,

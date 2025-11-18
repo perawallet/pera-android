@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.algosdk.bip39.model
 
+@Suppress("unused")
 enum class HdKeyAddressDerivationType(val value: Int) {
     Peikert(9),
     Khovratovich(32)

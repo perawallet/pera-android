@@ -282,16 +282,6 @@ class CreateDeepLinkImplTest {
 
     private companion object {
         val DEEP_LINK_PAYLOAD = DeepLinkPayload(
-            walletConnectUrl = null,
-            accountAddress = null,
-            assetId = null,
-            amount = null,
-            note = null,
-            url = null,
-            xnote = null,
-            label = null,
-            webImportQrCode = null,
-            notificationGroupType = null,
             rawDeepLinkUri = "deep link"
         )
     }

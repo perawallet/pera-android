@@ -16,7 +16,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity.Companion.ASSET_DETAIL_TABLE_NAME
 
-internal object PeraDatabaseMigration5to6 : Migration(5, 6){
+internal object PeraDatabaseMigration5to6 : Migration(5, 6) {
 
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE $ASSET_DETAIL_TABLE_NAME ADD COLUMN is_favorite INTEGER")

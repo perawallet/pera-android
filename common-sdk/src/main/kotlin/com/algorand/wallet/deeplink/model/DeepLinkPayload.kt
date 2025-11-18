@@ -52,7 +52,7 @@ enum class NotificationGroupType {
     ASSET_INBOX;
 
     companion object {
-        val DEFAULT = TRANSACTIONS
+        val DEFAULT: NotificationGroupType = TRANSACTIONS
     }
 }
 

@@ -25,7 +25,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class PendingTransactionsUseCase @Inject constructor(
-    @Named(PendingTransactionsRepository.INJECTION_NAME)
+    @param:Named(PendingTransactionsRepository.INJECTION_NAME)
     private val pendingTransactionsRepository: PendingTransactionsRepository,
     private val pendingBaseTransactionMapper: PendingBaseTransactionMapper
 ) : BaseUseCase() {
@@ -48,6 +48,7 @@ class PendingTransactionsUseCase @Inject constructor(
                             receiverAddress = receiverAddress
                         )
                     }
+
                     TransactionTypeDTO.ASSET_TRANSACTION -> {
                         createBaseAssetTransferTransaction(
                             pendingTransaction = pendingTransaction,
@@ -56,6 +57,7 @@ class PendingTransactionsUseCase @Inject constructor(
                             receiverAddress = receiverAddress
                         )
                     }
+
                     TransactionTypeDTO.ASSET_CONFIGURATION -> {
                         pendingBaseTransactionMapper.mapToAssetConfiguration(
                             transaction = pendingTransaction,
@@ -63,6 +65,7 @@ class PendingTransactionsUseCase @Inject constructor(
                             receiverAddress = receiverAddress
                         )
                     }
+
                     TransactionTypeDTO.APP_TRANSACTION -> {
                         pendingBaseTransactionMapper.mapToApplicationCall(
                             transaction = pendingTransaction,
@@ -70,6 +73,7 @@ class PendingTransactionsUseCase @Inject constructor(
                             receiverAddress = receiverAddress
                         )
                     }
+
                     else -> {
                         pendingBaseTransactionMapper.mapToUndefined(
                             transaction = pendingTransaction,

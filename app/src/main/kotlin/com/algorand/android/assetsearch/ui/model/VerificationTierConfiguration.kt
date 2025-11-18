@@ -15,11 +15,11 @@ package com.algorand.android.assetsearch.ui.model
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.algorand.android.R
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.wallet.asset.domain.model.VerificationTier
 
 enum class VerificationTierConfiguration(
-    @DrawableRes val drawableResId: Int?,
-    @ColorRes val textColorResId: Int
+    @param:DrawableRes val drawableResId: Int?,
+    @param:ColorRes val textColorResId: Int
 ) {
     VERIFIED(
         drawableResId = R.drawable.ic_asa_verified,
@@ -49,6 +49,6 @@ enum class VerificationTierConfiguration(
     abstract fun toVerificationTier(): VerificationTier
 
     companion object {
-        val DEFAULT_TEXT_COLOR_RES_ID = R.color.text_main
+        val DEFAULT_TEXT_COLOR_RES_ID: Int = R.color.text_main
     }
 }

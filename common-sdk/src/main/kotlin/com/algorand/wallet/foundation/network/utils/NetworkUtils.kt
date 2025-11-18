@@ -14,11 +14,11 @@ package com.algorand.wallet.foundation.network.utils
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
-import java.io.IOException
 import retrofit2.Response
+import java.io.IOException
 
 /**
- * Wrap a suspending API [call] in try/catch. In case an exception is thrown, a [Result.Error] is
+ * Wrap a suspending API [call] in try/catch. In case an exception is thrown, a [PeraResult.Error] is
  * created based on the [errorMessage].
  */
 suspend fun <T : Any> safeApiCall(call: suspend () -> PeraResult<T>): PeraResult<T> {
@@ -45,7 +45,7 @@ suspend fun <T : Any> request(
     }
 }
 
-suspend fun <T : Any> requestWithHipoErrorHandler(
+suspend fun <T : Any> requestWithPeraApiErrorHandler(
     peraApiErrorHandler: PeraRetrofitErrorHandler,
     doRequest: suspend () -> Response<T>
 ): PeraResult<T> {

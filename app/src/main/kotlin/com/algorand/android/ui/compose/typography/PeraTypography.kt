@@ -83,7 +83,7 @@ data class PeraTypography(
 }
 
 @Composable
-fun peraTypography() = PeraTypography(
+fun peraTypography(): PeraTypography = PeraTypography(
     title = getPeraTypographyTitle(),
     body = getPeraTypographyBody(),
     footnote = getPeraTypographyFootnote(),

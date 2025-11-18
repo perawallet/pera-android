@@ -25,6 +25,7 @@ import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
 import com.algorand.wallet.asset.data.service.AssetStatusApiService
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -60,7 +61,7 @@ class AssetRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT cached asset ids WHEN cache is not empty`() = runTest {
+    fun `EXPECT cached asset ids WHEN cache is not empty`(): TestResult = runTest {
         coEvery { assetDetailDao.getAllIds() } returns listOf(1L, 2L, 3L)
 
         val result = sut.getCachedAssetIds()

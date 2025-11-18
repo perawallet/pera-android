@@ -69,6 +69,6 @@ class RenameAccountBottomSheet : DaggerBaseBottomSheet(
     }
 
     companion object {
-        const val RENAME_ACCOUNT_KEY = "rename_account_key"
+        const val RENAME_ACCOUNT_KEY: String = "rename_account_key"
     }
 }

@@ -12,7 +12,6 @@
 
 package com.algorand.android.nft.ui.nftrequestoptin
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
@@ -24,6 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RequestOptInConfirmationViewModel @Inject constructor(
@@ -34,7 +34,7 @@ class RequestOptInConfirmationViewModel @Inject constructor(
     private val requestOptInConfirmationArgs =
         savedStateHandle.getOrThrow<RequestOptInConfirmationArgs>(REQUEST_OPT_IN_CONFIRMATION_ARGS_KEY)
 
-    private val _requestOptInPreviewFlow = MutableStateFlow<RequestOptInConfirmationPreview>(
+    private val _requestOptInPreviewFlow = MutableStateFlow(
         requestOptInConfirmationPreviewUseCase.getInitialPreviewState(requestOptInConfirmationArgs.receiverPublicKey)
     )
     val requestOptInPreviewFlow: StateFlow<RequestOptInConfirmationPreview>

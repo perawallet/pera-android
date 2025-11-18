@@ -16,6 +16,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.core.graphics.withSave
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
@@ -38,51 +39,51 @@ open class BaseCustomDividerItemDecoration(
     }
 
     private fun drawVertical(canvas: Canvas, parent: RecyclerView) {
-        canvas.save()
-        val left: Int
-        val right: Int
-        if (parent.clipToPadding) {
-            left = parent.paddingLeft
-            right = parent.width - parent.paddingRight
-            canvas.clipRect(left, parent.paddingTop, right, parent.height - parent.paddingBottom)
-        } else {
-            left = 0
-            right = parent.width
+        canvas.withSave {
+            val left: Int
+            val right: Int
+            if (parent.clipToPadding) {
+                left = parent.paddingLeft
+                right = parent.width - parent.paddingRight
+                clipRect(left, parent.paddingTop, right, parent.height - parent.paddingBottom)
+            } else {
+                left = 0
+                right = parent.width
+            }
+            val childCount = if (showLastDivider) parent.childCount else parent.childCount - 1
+            for (i in 0 until childCount) {
+                val child = parent.getChildAt(i)
+                parent.getDecoratedBoundsWithMargins(child, bounds)
+                val bottom = bounds.bottom + child.translationY.roundToInt()
+                val top = bottom - drawable.intrinsicHeight
+                drawable.setBounds(left, top, right, bottom)
+                drawable.draw(this)
+            }
         }
-        val childCount = if (showLastDivider) parent.childCount else parent.childCount - 1
-        for (i in 0 until childCount) {
-            val child = parent.getChildAt(i)
-            parent.getDecoratedBoundsWithMargins(child, bounds)
-            val bottom = bounds.bottom + child.translationY.roundToInt()
-            val top = bottom - drawable.intrinsicHeight
-            drawable.setBounds(left, top, right, bottom)
-            drawable.draw(canvas)
-        }
-        canvas.restore()
     }
 
     private fun drawHorizontal(canvas: Canvas, parent: RecyclerView) {
-        canvas.save()
-        val top: Int
-        val bottom: Int
-        if (parent.clipToPadding) {
-            top = parent.paddingTop
-            bottom = parent.height - parent.paddingBottom
-            canvas.clipRect(parent.paddingLeft, top, parent.width - parent.paddingRight, bottom)
-        } else {
-            top = 0
-            bottom = parent.height
+        canvas.withSave {
+            val top: Int
+            val bottom: Int
+            if (parent.clipToPadding) {
+                top = parent.paddingTop
+                bottom = parent.height - parent.paddingBottom
+                clipRect(parent.paddingLeft, top, parent.width - parent.paddingRight, bottom)
+            } else {
+                top = 0
+                bottom = parent.height
+            }
+            val childCount = if (showLastDivider) parent.childCount else parent.childCount - 1
+            for (i in 0 until childCount) {
+                val child = parent.getChildAt(i)
+                parent.layoutManager?.getDecoratedBoundsWithMargins(child, bounds)
+                val right = bounds.right + child.translationX.roundToInt()
+                val left = right - drawable.intrinsicWidth
+                drawable.setBounds(left, top, right, bottom)
+                drawable.draw(this)
+            }
         }
-        val childCount = if (showLastDivider) parent.childCount else parent.childCount - 1
-        for (i in 0 until childCount) {
-            val child = parent.getChildAt(i)
-            parent.layoutManager?.getDecoratedBoundsWithMargins(child, bounds)
-            val right = bounds.right + child.translationX.roundToInt()
-            val left = right - drawable.intrinsicWidth
-            drawable.setBounds(left, top, right, bottom)
-            drawable.draw(canvas)
-        }
-        canvas.restore()
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {

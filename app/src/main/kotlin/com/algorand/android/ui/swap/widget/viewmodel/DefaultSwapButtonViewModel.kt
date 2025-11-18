@@ -19,11 +19,11 @@ import com.algorand.android.ui.swap.widget.viewmodel.SwapButtonViewModel.ViewSta
 import com.algorand.wallet.swap.domain.model.SwapQuoteDetail.SwapQuoteState.Swappable
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 private typealias WidgetQuoteState = SwapWidgetViewModel.ViewState.Content.ContentState.Quote
 private typealias WidgetErrorState = SwapWidgetViewModel.ViewState.Content.ContentState.Error
@@ -59,6 +59,7 @@ class DefaultSwapButtonViewModel @Inject constructor(
                     }
                 }
             }
+
             is SwapWidgetViewModel.ViewState.Loading -> Visible(isEnabled = false)
         }
         stateDelegate.updateState { viewState }

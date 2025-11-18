@@ -41,17 +41,13 @@ import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
-import com.google.crypto.tink.Aead
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
-
-    @Inject
-    lateinit var aead: Aead
 
     @Inject
     lateinit var gson: Gson
@@ -68,7 +64,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         isBottomBarNeeded = true,
         toolbarConfiguration = toolbarConfiguration
     )
@@ -125,7 +121,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
     }
 
     private fun getVersionText(): String {
-        var versionName = getString(R.string.version_format, BuildConfig.VERSION_NAME)
+        val versionName = getString(R.string.version_format, BuildConfig.VERSION_NAME)
 
         val versionText = if (BuildConfig.DEBUG) {
             versionName + " (${BuildConfig.FLAVOR.uppercase()} - DEBUG)"

@@ -44,6 +44,6 @@ data class WalletConnectSessionAccountEntity(
 ) {
 
     companion object {
-        const val WALLET_CONNECT_SESSION_ACCOUNT_TABLE_SESSION_ID_COLUMN_NAME = "session_id"
+        const val WALLET_CONNECT_SESSION_ACCOUNT_TABLE_SESSION_ID_COLUMN_NAME: String = "session_id"
     }
 }

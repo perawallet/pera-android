@@ -27,7 +27,7 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor() : BuildKey
     ): ByteArray? {
         return try {
             createTransaction(params)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

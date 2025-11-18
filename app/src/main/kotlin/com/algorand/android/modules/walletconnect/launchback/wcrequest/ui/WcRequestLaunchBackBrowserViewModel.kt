@@ -14,19 +14,17 @@ package com.algorand.android.modules.walletconnect.launchback.wcrequest.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.modules.walletconnect.launchback.base.ui.WcLaunchBackBrowserViewModel
 import com.algorand.android.modules.walletconnect.launchback.wcrequest.ui.model.WcRequestLaunchBackBrowserPreview
 import com.algorand.android.modules.walletconnect.launchback.wcrequest.ui.usecase.WcRequestLaunchBackBrowserPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class WcRequestLaunchBackBrowserViewModel @Inject constructor(
-    private val walletConnectManager: WalletConnectManager,
     private val wcRequestLaunchBackBrowserPreviewUseCase: WcRequestLaunchBackBrowserPreviewUseCase,
     savedStateHandle: SavedStateHandle
 ) : WcLaunchBackBrowserViewModel() {

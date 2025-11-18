@@ -20,22 +20,19 @@ import com.algorand.android.utils.analytics.CreationType
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.devoptions.domain.usecase.IsDeveloperOptionsEnabled
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DeveloperSettingsViewModel @Inject constructor(
     private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val algoAccountSdk: AlgoAccountSdk,
     private val aesPlatformManager: AESPlatformManager,
     private val isDeveloperOptionsEnabled: IsDeveloperOptionsEnabled
 ) : BaseViewModel() {
 
-    var firstAccountAddress: String? = null
+    private var firstAccountAddress: String? = null
 
     init {
         updateFirstAccountAddress()
@@ -51,15 +48,7 @@ class DeveloperSettingsViewModel @Inject constructor(
         }
     }
 
-    fun showMigrationViewer(): Boolean {
-        return isFeatureToggleEnabled.invoke(FeatureToggle.ACCOUNT_DB_MIGRATION_VIEWER.key)
-    }
-
     fun showDeveloperOptions(): Boolean = isDeveloperOptionsEnabled()
-
-    fun showCreateLegacyAlgo25Account(): Boolean {
-        return isFeatureToggleEnabled.invoke(FeatureToggle.HD_WALLET.key)
-    }
 
     fun createAlgo25Account(): AccountCreation? {
         val account = algoAccountSdk.createAlgo25Account()

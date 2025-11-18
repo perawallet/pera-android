@@ -45,7 +45,7 @@ class AddAssetActionViewModel @Inject constructor(
 
     private val assetAction: AssetAction = savedStateHandle.getOrThrow(ASSET_ACTION_KEY)
     val accountAddress: String = assetAction.publicKey.orEmpty()
-    val shouldWaitForConfirmation = savedStateHandle.getOrElse(
+    val shouldWaitForConfirmation: Boolean = savedStateHandle.getOrElse(
         SHOULD_WAIT_FOR_CONFIRMATION_KEY,
         DEFAULT_WAIT_FOR_CONFIRMATION_PARAM
     )

@@ -35,7 +35,7 @@ class SharedCollectiblesFragment : BaseFragment(R.layout.fragment_base_collectib
 
     private val toolbarConfiguration = ToolbarConfiguration(backgroundColor = R.color.primary_background)
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         isBottomBarNeeded = true
     )

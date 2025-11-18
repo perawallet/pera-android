@@ -28,7 +28,7 @@ class AlgorandSdkEncryptionUtilsImpl : AlgorandSdkEncryptionUtils {
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -42,7 +42,7 @@ class AlgorandSdkEncryptionUtilsImpl : AlgorandSdkEncryptionUtils {
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

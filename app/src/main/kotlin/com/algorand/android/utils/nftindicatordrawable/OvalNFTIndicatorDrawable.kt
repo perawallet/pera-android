@@ -22,10 +22,10 @@ import com.algorand.android.R
 import com.algorand.android.utils.OvalIconDrawable
 
 class OvalNFTIndicatorDrawable private constructor(
-    @DrawableRes private val drawableResId: Int,
-    @ColorRes private val tintColor: Int,
-    @ColorRes private val borderColor: Int,
-    @ColorRes private val backgroundColor: Int
+    @param:DrawableRes private val drawableResId: Int,
+    @param:ColorRes private val tintColor: Int,
+    @param:ColorRes private val borderColor: Int,
+    @param:ColorRes private val backgroundColor: Int
 ) : BaseNFTIndicatorDrawable() {
 
     override fun toDrawable(

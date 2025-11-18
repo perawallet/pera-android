@@ -33,16 +33,15 @@ import com.algorand.android.discover.home.ui.mapper.DiscoverAssetItemMapper
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
-import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.google.gson.Gson
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class DiscoverHomePreviewUseCase @Inject constructor(
     private val discoverSearchAssetUseCase: DiscoverSearchAssetUseCase,
@@ -53,7 +52,6 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     private val gson: Gson,
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val buySellActionRequestMapper: BuySellActionRequestMapper,
-    private val discoverSwapNavigationDestinationHelper: DiscoverSwapNavigationDestinationHelper,
 ) {
 
     fun getSearchPaginationFlow(
@@ -90,7 +88,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         discoverSearchAssetUseCase.searchAsset(assetSearchQuery)
     }
 
-    fun getInitialStatePreview(url: String?) = DiscoverHomePreview(
+    fun getInitialStatePreview(url: String?): DiscoverHomePreview = DiscoverHomePreview(
         themePreference = sharedPreferences.getSavedThemePreference(),
         isLoading = true,
         tokenDetailScreenRequestEvent = null,
@@ -100,9 +98,10 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         loadCustomUrlEvent = if (!url.isNullOrBlank()) Event(url) else null
     )
 
-    fun getPreviewWithHandleQueryChangeForScrollEvent(previousPreview: DiscoverHomePreview) = previousPreview.copy(
-        handleQueryChangeForScrollEvent = Event(Unit)
-    )
+    fun getPreviewWithHandleQueryChangeForScrollEvent(previousPreview: DiscoverHomePreview): DiscoverHomePreview =
+        previousPreview.copy(
+            handleQueryChangeForScrollEvent = Event(Unit)
+        )
 
     fun updateSearchScreenLoadState(
         isListEmpty: Boolean,
@@ -114,9 +113,9 @@ class DiscoverHomePreviewUseCase @Inject constructor(
             if (isLoading.not()) previousState.handleQueryChangeForScrollEvent?.consume()?.run { Event(Unit) } else null
         return previousState.copy(
             isListEmpty = isListEmpty &&
-                !isCurrentStateError &&
-                !isLoading &&
-                previousState.isSearchActivated,
+                    !isCurrentStateError &&
+                    !isLoading &&
+                    previousState.isSearchActivated,
             scrollToTopEvent = scrollToTopEvent
         )
     }
@@ -124,30 +123,31 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     fun requestSearchVisible(
         isVisible: Boolean,
         previousState: DiscoverHomePreview
-    ) = previousState.copy(
+    ): DiscoverHomePreview = previousState.copy(
         isListEmpty = if (isVisible) previousState.isListEmpty else false,
         isSearchActivated = isVisible
     )
 
-    fun requestLoadHomepage(previousState: DiscoverHomePreview) = previousState.copy(
+    fun requestLoadHomepage(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = true,
         loadHomeEvent = Event(Unit)
     )
 
-    fun onPageRequestedShouldOverrideUrlLoading(previousState: DiscoverHomePreview) = previousState.copy(
-        isLoading = true
-    )
+    fun onPageRequestedShouldOverrideUrlLoading(previousState: DiscoverHomePreview): DiscoverHomePreview =
+        previousState.copy(
+            isLoading = true
+        )
 
-    fun onPageFinished(previousState: DiscoverHomePreview) = previousState.copy(
+    fun onPageFinished(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = false
     )
 
-    fun onError(previousState: DiscoverHomePreview) = previousState.copy(
+    fun onError(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onHttpError(previousState: DiscoverHomePreview) = previousState.copy(
+    fun onHttpError(previousState: DiscoverHomePreview): DiscoverHomePreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )
@@ -172,7 +172,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     fun pushNewScreen(
         data: String,
         previousState: DiscoverHomePreview
-    ) = previousState.copy(
+    ): DiscoverHomePreview = previousState.copy(
         urlElementRequestEvent = Event(
             gson.fromJson(data, UrlElement::class.java)
         )
@@ -181,7 +181,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     fun pushTokenDetailScreen(
         data: String,
         previousState: DiscoverHomePreview
-    ) = previousState.copy(
+    ): DiscoverHomePreview = previousState.copy(
         tokenDetailScreenRequestEvent = Event(
             gson.fromJson(data, TokenDetailInfo::class.java)
         )
@@ -191,7 +191,7 @@ class DiscoverHomePreviewUseCase @Inject constructor(
         return gson.fromJson<OpenSystemBrowserRequest>(json)
     }
 
-    suspend fun handleTokenDetailActionButtonClick(
+    fun handleTokenDetailActionButtonClick(
         data: String,
         previousState: DiscoverHomePreview
     ): DiscoverHomePreview {
@@ -209,27 +209,9 @@ class DiscoverHomePreviewUseCase @Inject constructor(
             }
 
             BuySellActionRequest.Destination.SWAP -> {
-                discoverSwapNavigationDestinationHelper.getSwapNavigationDestination(
-                    onNavToIntroduction = {
-                        swapNavDirection = DiscoverHomeFragmentDirections
-                            .actionDiscoverHomeFragmentToSwapIntroductionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToAccountSelection = {
-                        swapNavDirection = DiscoverHomeFragmentDirections
-                            .actionDiscoverHomeFragmentToSwapAccountSelectionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToSwapV2 = {
-                        swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToSwapV2Navigation(
-                            assetInId = buySellActionRequest.assetInId ?: -1L,
-                            assetOutId = buySellActionRequest.assetOutId ?: -1L
-                        )
-                    }
+                swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToSwapV2Navigation(
+                    assetInId = buySellActionRequest.assetInId ?: -1L,
+                    assetOutId = buySellActionRequest.assetOutId ?: -1L
                 )
             }
 

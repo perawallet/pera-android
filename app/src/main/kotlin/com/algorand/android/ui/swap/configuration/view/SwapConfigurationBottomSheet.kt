@@ -65,11 +65,11 @@ import com.algorand.android.ui.swap.configuration.view.ChipOption.Companion.CUST
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.capitalizeWords
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 private const val MAX_BALANCE = 100
 private const val MIN_BALANCE = 1
@@ -242,7 +242,7 @@ private fun ErrorText(error: String, isVisible: Boolean) {
 private fun isSlippageErrorVisible(textState: MutableState<TextFieldValue>): State<Boolean> {
     return remember(textState.value.text) {
         derivedStateOf {
-            textState.value.text.toFloatOrNull()?.let { it != 0f && (it < MIN_SLIPPAGE || it > MAX_SLIPPAGE) } == true
+            textState.value.text.toFloatOrNull()?.let { it != 0f && (it !in MIN_SLIPPAGE..MAX_SLIPPAGE) } == true
         }
     }
 }
@@ -251,7 +251,7 @@ private fun isSlippageErrorVisible(textState: MutableState<TextFieldValue>): Sta
 private fun isBalanceErrorVisible(textState: MutableState<TextFieldValue>): State<Boolean> {
     return remember(textState.value.text) {
         derivedStateOf {
-            textState.value.text.toFloatOrNull()?.let { it != 0f && (it < MIN_BALANCE || it > MAX_BALANCE) } == true
+            textState.value.text.toFloatOrNull()?.let { it != 0f && (it !in 1.0..100.0) } == true
         }
     }
 }

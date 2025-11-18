@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.register.registerintro
 
-import GroupChoiceWidget
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -73,6 +72,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.theme.PeraTheme.typography
+import com.algorand.android.ui.compose.widget.GroupChoiceWidget
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
@@ -94,7 +94,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     private val toolbarConfiguration =
         ToolbarConfiguration(backgroundColor = R.color.primary_background)
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         statusBarConfiguration = statusBarConfiguration
     )
@@ -137,13 +137,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 Text(
                     style = typography.title.regular.sansMedium,
                     color = PeraTheme.colors.text.main,
-                    text = stringResource(
-                        if (registerIntroViewModel.isHdWalletToggleEnabled()) {
-                            R.string.add_a_wallet_or_account
-                        } else {
-                            R.string.welcome_to_pera
-                        }
-                    )
+                    text = stringResource(R.string.add_a_wallet_or_account)
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 PeraIcon(
@@ -153,7 +147,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            if (registerIntroViewModel.isHdWalletToggleEnabled() && registerIntroPreview?.hasHdWallet == true) {
+            if (registerIntroPreview?.hasHdWallet == true) {
                 CreateNewAccountCard(
                     onClick = {
                         navToHdWalletSelectionFragment()
@@ -162,14 +156,8 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-            if (registerIntroViewModel.isHdWalletToggleEnabled()) {
-                CreateWalletHdWidget()
-                ImportHdWalletWidget()
-            } else {
-                CreateAlgo25AccountWidget()
-                ImportAlgo25AccountWidget()
-            }
-
+            CreateWalletHdWidget()
+            ImportHdWalletWidget()
             WatchAddressWidget()
             Spacer(modifier = Modifier.weight(1f))
 
@@ -270,31 +258,9 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     }
 
     @Composable
-    private fun CreateAlgo25AccountWidget() {
-        GroupChoiceWidget(
-            title = stringResource(id = R.string.create_a_new_account),
-            description = stringResource(id = R.string.create_a_new_algorand_account_with),
-            icon = ImageVector.vectorResource(R.drawable.ic_wallet),
-            iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
-            onClick = ::navToCreateAccountNameRegistrationFragment
-        )
-    }
-
-    @Composable
     private fun ImportHdWalletWidget() {
         GroupChoiceWidget(
             title = stringResource(id = R.string.import_a_wallet),
-            description = stringResource(id = R.string.import_an_existing),
-            iconContentDescription = stringResource(id = R.string.import_an_existing),
-            icon = ImageVector.vectorResource(R.drawable.ic_key),
-            onClick = ::navToAccountRecoveryTypeSelectionFragment
-        )
-    }
-
-    @Composable
-    private fun ImportAlgo25AccountWidget() {
-        GroupChoiceWidget(
-            title = stringResource(id = R.string.import_an_account),
             description = stringResource(id = R.string.import_an_existing),
             iconContentDescription = stringResource(id = R.string.import_an_existing),
             icon = ImageVector.vectorResource(R.drawable.ic_key),
@@ -356,13 +322,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
     @Composable
     private fun createAnnotatedString() = buildAnnotatedString {
-        val fullText = stringResource(
-            id = if (registerIntroViewModel.isHdWalletToggleEnabled()) {
-                R.string.by_adding_a_wallet
-            } else {
-                R.string.by_creating_account
-            }
-        )
+        val fullText = stringResource(R.string.by_adding_a_wallet)
         val termsAndConditionsText = stringResource(id = R.string.terms_and_conditions)
         val privacyPolicyText = stringResource(id = R.string.privacy_policy)
 
@@ -436,15 +396,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         nav(
             RegisterIntroFragmentDirections.actionRegisterIntroFragmentToCreateWalletNameRegistrationNavigation(
                 registerIntroViewModel.createHdKeyAccount()
-            )
-        )
-    }
-
-    private fun navToCreateAccountNameRegistrationFragment() {
-        registerIntroViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_ACCOUNT)
-        nav(
-            RegisterIntroFragmentDirections.actionRegisterIntroFragmentToCreateAccountNameRegistrationNavigation(
-                registerIntroViewModel.createAlgo25Account()
             )
         )
     }

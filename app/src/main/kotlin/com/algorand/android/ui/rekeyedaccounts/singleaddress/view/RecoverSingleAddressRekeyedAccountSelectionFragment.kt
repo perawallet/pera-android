@@ -28,14 +28,17 @@ import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragment_rekeyed_account_selection),
+class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(
+    R.layout.fragment_rekeyed_account_selection
+),
     RekeyedAccountSelectionListener {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
         startIconClick = ::navBack
     )
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val viewModel: RekeyedAccountSelectionViewModel by viewModels()
 
@@ -87,7 +90,9 @@ class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(R.layou
     override fun navToAccountInformationBottomSheet(address: String) {
         nav(
             RecoverSingleAddressRekeyedAccountSelectionFragmentDirections
-                .actionRecoverSingleAddressRekeyedAccountSelectionFragmentToRekeyedAccountInformationNavigation(address)
+                .actionRecoverSingleAddressRekeyedAccountSelectionFragmentToRekeyedAccountInformationNavigation(
+                    address
+                )
         )
     }
 }

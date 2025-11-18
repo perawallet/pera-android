@@ -13,11 +13,13 @@
 package com.algorand.android.usecase
 
 import com.algorand.android.mapper.RegisterIntroPreviewMapper
+import com.algorand.android.models.RegisterIntroPreview
 import com.algorand.android.modules.tracking.onboarding.register.registerintro.RegisterIntroFragmentEventTracker
 import com.algorand.wallet.account.local.domain.usecase.GetHasAnyHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class RegisterIntroPreviewUseCase @Inject constructor(
     private val registerIntroPreviewMapper: RegisterIntroPreviewMapper,
@@ -26,7 +28,7 @@ class RegisterIntroPreviewUseCase @Inject constructor(
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount
 ) {
 
-    fun getRegisterIntroPreview(isShowingCloseButton: Boolean) = flow {
+    fun getRegisterIntroPreview(isShowingCloseButton: Boolean): Flow<RegisterIntroPreview> = flow {
         val hasHdWallet = hasAnyHdSeedId.invoke()
         val isSkipButtonVisible = !isShowingCloseButton
         val registerIntroPreview = registerIntroPreviewMapper.mapTo(

@@ -23,10 +23,10 @@ import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DefaultAddressNamingViewModel @Inject constructor(

@@ -15,8 +15,8 @@ package com.algorand.wallet.foundation.security
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.security.Provider
 import org.junit.Test
+import java.security.Provider
 
 class PeraSecurityManagerImplTest {
 

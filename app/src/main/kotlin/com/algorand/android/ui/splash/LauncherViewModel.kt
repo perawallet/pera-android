@@ -22,10 +22,11 @@ import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.utils.findAllNodes
 import com.algorand.wallet.remoteconfig.domain.usecase.InitializeOperationalToggles
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class LauncherViewModel @Inject constructor(
@@ -39,7 +40,9 @@ class LauncherViewModel @Inject constructor(
 
     private val opsToggleInitializationFlow = MutableStateFlow(false)
     private val nodeInitializationFlow = MutableStateFlow(false)
-    val appInitializationStatusFlow = combine(opsToggleInitializationFlow, nodeInitializationFlow) { opsToggle, node ->
+    val appInitializationStatusFlow: Flow<Boolean> = combine(
+        opsToggleInitializationFlow, nodeInitializationFlow
+    ) { opsToggle, node ->
         opsToggle && node
     }
 

@@ -1,3 +1,15 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
 package com.algorand.android.ui.compose.widget.button
 
 import androidx.compose.runtime.Composable
@@ -14,7 +26,7 @@ import com.algorand.android.ui.compose.widget.icon.PeraIcon
 fun PeraPrimaryButtonPreview() {
     PeraTheme {
         PeraPrimaryButton(
-            onClick = { },
+            onClick = {},
             text = "Primary Button"
         )
     }
@@ -25,7 +37,7 @@ fun PeraPrimaryButtonPreview() {
 fun PeraPrimaryButtonDisabledPreview() {
     PeraTheme {
         PeraPrimaryButton(
-            onClick = { },
+            onClick = {},
             text = "Primary Button Disabled",
             state = PeraButtonState.DISABLED
         )
@@ -37,7 +49,7 @@ fun PeraPrimaryButtonDisabledPreview() {
 fun PeraSecondaryButtonPreview() {
     PeraTheme {
         PeraSecondaryButton(
-            onClick = { },
+            onClick = {},
             text = "Secondary Button"
         )
     }
@@ -49,7 +61,7 @@ fun PeraSecondaryButtonDisabledPreview() {
     PeraTheme {
         PeraSecondaryButton(
             modifier = Modifier,
-            onClick = { },
+            onClick = {},
             text = "Secondary Button Disabled",
             state = PeraButtonState.DISABLED
         )
@@ -61,7 +73,7 @@ fun PeraSecondaryButtonDisabledPreview() {
 fun PeraSecondaryButtonWithIconPreview() {
     PeraTheme {
         PeraSecondaryButton(
-            onClick = { },
+            onClick = {},
             text = "Secondary Button",
             leftIcon = {
                 PeraIcon(
@@ -79,7 +91,7 @@ fun PeraSecondaryButtonWithIconPreview() {
 fun PeraPrimaryButtonProgressPreview() {
     PeraTheme {
         PeraPrimaryButton(
-            onClick = { },
+            onClick = {},
             text = "Primary Button",
             state = PeraButtonState.PROGRESS
         )
@@ -91,7 +103,7 @@ fun PeraPrimaryButtonProgressPreview() {
 fun PeraSecondaryButtonProgressPreview() {
     PeraTheme {
         PeraSecondaryButton(
-            onClick = { },
+            onClick = {},
             text = "Secondary Button",
             state = PeraButtonState.PROGRESS
         )
@@ -103,7 +115,7 @@ fun PeraSecondaryButtonProgressPreview() {
 fun PeraTertiaryButtonPreview() {
     PeraTheme {
         PeraTertiaryButton(
-            onClick = { },
+            onClick = {},
             text = "Tertiary Button"
         )
     }
@@ -114,7 +126,7 @@ fun PeraTertiaryButtonPreview() {
 fun PeraTertiaryButtonDisabledPreview() {
     PeraTheme {
         PeraTertiaryButton(
-            onClick = { },
+            onClick = {},
             text = "Tertiary Button Disabled",
             state = PeraButtonState.DISABLED
         )
@@ -126,7 +138,7 @@ fun PeraTertiaryButtonDisabledPreview() {
 fun PeraTertiaryButtonWithIconPreview() {
     PeraTheme {
         PeraTertiaryButton(
-            onClick = { },
+            onClick = {},
             text = "Tertiary Button",
             rightIcon = {
                 PeraIcon(
@@ -151,7 +163,7 @@ fun PeraTertiaryButtonWithIconPreview() {
 fun PeraTertiaryButtonProgressPreview() {
     PeraTheme {
         PeraTertiaryButton(
-            onClick = { },
+            onClick = {},
             text = "Tertiary Button",
             state = PeraButtonState.PROGRESS
         )

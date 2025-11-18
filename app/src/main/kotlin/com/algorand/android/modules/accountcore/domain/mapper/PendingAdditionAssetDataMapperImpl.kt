@@ -12,14 +12,11 @@
 
 package com.algorand.android.modules.accountcore.domain.mapper
 
-import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapper
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.wallet.asset.domain.model.Asset
 import javax.inject.Inject
 
-internal class PendingAdditionAssetDataMapperImpl @Inject constructor(
-    private val legacyVerificationTierMapper: LegacyVerificationTierMapper
-) : PendingAdditionAssetDataMapper {
+internal class PendingAdditionAssetDataMapperImpl @Inject constructor() : PendingAdditionAssetDataMapper {
 
     override fun invoke(asset: Asset): BaseAccountAssetData.PendingAssetData.AdditionAssetData {
         return BaseAccountAssetData.PendingAssetData.AdditionAssetData(
@@ -30,7 +27,7 @@ internal class PendingAdditionAssetDataMapperImpl @Inject constructor(
             decimals = asset.getDecimalsOrZero(),
             creatorPublicKey = asset.creatorAddress,
             usdValue = asset.usdValue,
-            verificationTier = legacyVerificationTierMapper(asset.verificationTier)
+            verificationTier = asset.verificationTier
         )
     }
 }

@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.asset.data.mapper.entity
 
-import com.algorand.wallet.asset.data.model.VerificationTierResponse
 import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
+import com.algorand.wallet.asset.data.model.VerificationTierResponse
 import javax.inject.Inject
 
 internal class VerificationTierEntityMapperImpl @Inject constructor() : VerificationTierEntityMapper {

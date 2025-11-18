@@ -37,7 +37,6 @@ sealed interface BaseAccountListItem : RecyclerListItem {
     }
 
     data class QuickActionsItem(
-        val isSwapButtonSelected: Boolean,
         val isStakingEnabled: Boolean
     ) : BaseAccountListItem {
 
@@ -45,7 +44,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
             get() = ItemType.QUICK_ACTIONS
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is QuickActionsItem && isSwapButtonSelected == other.isSwapButtonSelected
+            return other is QuickActionsItem && isStakingEnabled == other.isStakingEnabled
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -119,19 +118,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         }
     }
 
-    data class RetailBannerItem(val retailBanners: List<SpotBanner>) : BaseAccountListItem {
-        override val itemType: ItemType = ItemType.RETAIL_BANNER
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is RetailBannerItem
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is RetailBannerItem
-        }
-    }
-
-    data class HeaderItem(@StringRes val titleResId: Int) : BaseAccountListItem {
+    data class HeaderItem(@param:StringRes val titleResId: Int) : BaseAccountListItem {
 
         override val itemType: ItemType
             get() = ItemType.HEADER
@@ -196,7 +183,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
     }
 
     companion object {
-        val bannerItemTypes = listOf(
+        val bannerItemTypes: List<Int> = listOf(
             ItemType.GOVERNANCE_BANNER.ordinal,
             ItemType.STAKING_BANNER.ordinal,
             ItemType.CARD_BANNER.ordinal,

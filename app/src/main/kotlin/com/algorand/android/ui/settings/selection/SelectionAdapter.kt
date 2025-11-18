@@ -56,7 +56,7 @@ class SelectionAdapter<T : SelectionListItem>(
         }
     }
 
-    override fun getItemCount() = list.size
+    override fun getItemCount(): Int = list.size
 
     companion object {
         private const val SELECTION_CHANGED_PAYLOAD = "selection_changed_payload"

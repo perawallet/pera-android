@@ -17,9 +17,9 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentCollectibleFiltersBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.nft.ui.nftfilters.model.CollectibleFiltersPreview
 import com.algorand.android.utils.Event
@@ -42,7 +42,8 @@ class CollectibleFiltersFragment : BaseFragment(R.layout.fragment_collectible_fi
 
     private val collectibleFiltersViewModel by viewModels<CollectibleFiltersViewModel>()
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val collectibleFiltersPreviewCollector: suspend (CollectibleFiltersPreview?) -> Unit = { preview ->
         if (preview != null) initPreview(preview)

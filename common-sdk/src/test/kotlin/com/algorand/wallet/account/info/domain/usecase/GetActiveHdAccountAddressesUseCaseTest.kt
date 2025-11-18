@@ -23,6 +23,7 @@ import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -45,7 +46,7 @@ class GetActiveHdAccountAddressesUseCaseTest {
     )
 
     @Test
-    fun `EXPECT active addresses until whole batch is closed`() = runTest {
+    fun `EXPECT active addresses until whole batch is closed`(): TestResult = runTest {
         coEvery { getAccountFastLookupBatch(SECOND_BATCH_ADDRESSES) } returns SECOND_BATCH_FAST_LOOKUP
         coEvery { getAccountFastLookupBatch(THIRD_BATCH_ADDRESSES) } returns THIRD_BATCH_FAST_LOOKUP
 
@@ -68,25 +69,25 @@ class GetActiveHdAccountAddressesUseCaseTest {
     }
 
     private fun Bip39Wallet.mockBip39Wallet() {
-        val add6Index = HdKeyAddressIndex(0, 0, 5)
+        val add6Index = HdKeyAddressIndex(keyIndex = 5)
         every { generateAddressLite(add6Index) } returns HdKeyAddressLite(ADDR_6, add6Index)
-        val add7Index = HdKeyAddressIndex(0, 0, 6)
+        val add7Index = HdKeyAddressIndex(keyIndex = 6)
         every { generateAddressLite(add7Index) } returns HdKeyAddressLite(ADDR_7, add7Index)
-        val add8Index = HdKeyAddressIndex(0, 0, 7)
+        val add8Index = HdKeyAddressIndex(keyIndex = 7)
         every { generateAddressLite(add8Index) } returns HdKeyAddressLite(ADDR_8, add8Index)
-        val add9Index = HdKeyAddressIndex(0, 0, 8)
+        val add9Index = HdKeyAddressIndex(keyIndex = 8)
         every { generateAddressLite(add9Index) } returns HdKeyAddressLite(ADDR_9, add9Index)
-        val add10Index = HdKeyAddressIndex(0, 0, 9)
+        val add10Index = HdKeyAddressIndex(keyIndex = 9)
         every { generateAddressLite(add10Index) } returns HdKeyAddressLite(ADDR_10, add10Index)
-        val add11Index = HdKeyAddressIndex(0, 0, 10)
+        val add11Index = HdKeyAddressIndex(keyIndex = 10)
         every { generateAddressLite(add11Index) } returns HdKeyAddressLite(ADDR_11, add11Index)
-        val add12Index = HdKeyAddressIndex(0, 0, 11)
+        val add12Index = HdKeyAddressIndex(keyIndex = 11)
         every { generateAddressLite(add12Index) } returns HdKeyAddressLite(ADDR_12, add12Index)
-        val add13Index = HdKeyAddressIndex(0, 0, 12)
+        val add13Index = HdKeyAddressIndex(keyIndex = 12)
         every { generateAddressLite(add13Index) } returns HdKeyAddressLite(ADDR_13, add13Index)
-        val add14Index = HdKeyAddressIndex(0, 0, 13)
+        val add14Index = HdKeyAddressIndex(keyIndex = 13)
         every { generateAddressLite(add14Index) } returns HdKeyAddressLite(ADDR_14, add14Index)
-        val add15Index = HdKeyAddressIndex(0, 0, 14)
+        val add15Index = HdKeyAddressIndex(keyIndex = 14)
         every { generateAddressLite(add15Index) } returns HdKeyAddressLite(ADDR_15, add15Index)
     }
 
@@ -116,11 +117,11 @@ class GetActiveHdAccountAddressesUseCaseTest {
         val ADDR_14_FAST_LOOKUP = peraFixture<AccountFastLookup>().copy(accountExists = false)
         val ADDR_15_FAST_LOOKUP = peraFixture<AccountFastLookup>().copy(accountExists = false)
 
-        val ADDR_6_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_6, HdKeyAddressIndex(0, 0, 5))
-        val ADDR_7_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_7, HdKeyAddressIndex(0, 0, 6))
-        val ADDR_8_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_8, HdKeyAddressIndex(0, 0, 7))
-        val ADDR_9_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_9, HdKeyAddressIndex(0, 0, 8))
-        val ADDR_10_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_10, HdKeyAddressIndex(0, 0, 9))
+        val ADDR_6_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_6, HdKeyAddressIndex(keyIndex = 5))
+        val ADDR_7_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_7, HdKeyAddressIndex(keyIndex = 6))
+        val ADDR_8_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_8, HdKeyAddressIndex(keyIndex = 7))
+        val ADDR_9_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_9, HdKeyAddressIndex(keyIndex = 8))
+        val ADDR_10_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_10, HdKeyAddressIndex(keyIndex = 9))
 
         val SECOND_BATCH_ADDRESSES = listOf(ADDR_6, ADDR_7, ADDR_8, ADDR_9, ADDR_10)
         val SECOND_BATCH_FAST_LOOKUP = mapOf(

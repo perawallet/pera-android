@@ -25,13 +25,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ReceiveAccountSelectionFragment : BaseAccountSelectionFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.select_account,
         startIconResId = R.drawable.ic_close,
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val receiveAccountSelectionViewModel by viewModels<ReceiveAccountSelectionViewModel>()
 

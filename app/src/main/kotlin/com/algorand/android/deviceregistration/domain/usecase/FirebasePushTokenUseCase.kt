@@ -14,21 +14,20 @@ package com.algorand.android.deviceregistration.domain.usecase
 
 import com.algorand.android.deviceregistration.domain.repository.FirebasePushTokenRepository
 import com.algorand.android.utils.CacheResult
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Named
 
 class FirebasePushTokenUseCase @Inject constructor(
-    @Named(FirebasePushTokenRepository.FIREBASE_PUSH_TOKEN_REPOSITORY_INJECTION_NAME)
+    @param:Named(FirebasePushTokenRepository.FIREBASE_PUSH_TOKEN_REPOSITORY_INJECTION_NAME)
     private val firebasePushTokenRepository: FirebasePushTokenRepository
 ) {
 
-    fun getPushTokenCacheFlow() = firebasePushTokenRepository.getPushTokenCacheFlow()
+    fun getPushTokenCacheFlow(): StateFlow<CacheResult<String>?> = firebasePushTokenRepository.getPushTokenCacheFlow()
 
     fun setPushToken(pushToken: String) {
         firebasePushTokenRepository.setPushToken(CacheResult.Success.create(pushToken))
     }
 
-    fun getPushTokenOrNull() = firebasePushTokenRepository.getPushTokenOrNull()
-
-    fun clearPushToken() = firebasePushTokenRepository.clearPushToken()
+    fun getPushTokenOrNull(): CacheResult<String>? = firebasePushTokenRepository.getPushTokenOrNull()
 }

@@ -19,13 +19,13 @@ import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.mo
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.usecase.RegisterLedgerAccountSelectionPreviewUseCase
 import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RegisterBaseLedgerAccountSelectionViewModel @Inject constructor(

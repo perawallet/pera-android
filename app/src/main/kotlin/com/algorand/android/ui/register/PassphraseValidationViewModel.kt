@@ -31,8 +31,8 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -105,6 +105,7 @@ class PassphraseValidationViewModel @Inject constructor(
                     peraBip39Sdk.getMnemonicFromEntropy(entropy)?.split(" ") ?: emptyList()
                 } ?: emptyList()
             }
+
             is LocalAccount.Algo25 -> {
                 getAlgo25SecretKey(address = localAccount.algoAddress)?.let { secretKey ->
                     try {
@@ -115,6 +116,7 @@ class PassphraseValidationViewModel @Inject constructor(
                     }
                 } ?: emptyList()
             }
+
             else -> emptyList()
         }
 
@@ -130,6 +132,7 @@ class PassphraseValidationViewModel @Inject constructor(
                     }
                 }
             }
+
             is AccountCreation.Type.Algo25 -> {
                 (accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey?.let { encryptedAlgo25Key ->
                     aesPlatformManager.decryptByteArray(encryptedAlgo25Key).let { secretKey ->
@@ -142,6 +145,7 @@ class PassphraseValidationViewModel @Inject constructor(
                     }
                 } ?: emptyList()
             }
+
             else -> emptyList()
         }
 

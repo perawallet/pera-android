@@ -20,13 +20,13 @@ import com.algorand.android.modules.onboarding.registerwatchaccount.ui.usecase.W
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingWatchAccountVerifyEventTracker
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RegisterWatchAccountViewModel @Inject constructor(

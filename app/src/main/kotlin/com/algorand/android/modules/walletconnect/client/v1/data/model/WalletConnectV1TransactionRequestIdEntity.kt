@@ -28,8 +28,8 @@ data class WalletConnectV1TransactionRequestIdEntity(
 ) {
 
     companion object {
-        const val WALLET_CONNECT_TRANSACTION_REQUEST_ID_ID_COLUMN_NAME = "id"
-        const val WALLET_CONNECT_TRANSACTION_REQUEST_ID_TIMESTAMP_COLUMN_NAME = "timestamp"
-        const val WALLET_CONNECT_TRANSACTION_REQUEST_ID_TABLE_NAME = "WalletConnectV1TransactionRequestIdEntity"
+        const val WALLET_CONNECT_TRANSACTION_REQUEST_ID_ID_COLUMN_NAME: String = "id"
+        const val WALLET_CONNECT_TRANSACTION_REQUEST_ID_TIMESTAMP_COLUMN_NAME: String = "timestamp"
+        const val WALLET_CONNECT_TRANSACTION_REQUEST_ID_TABLE_NAME: String = "WalletConnectV1TransactionRequestIdEntity"
     }
 }

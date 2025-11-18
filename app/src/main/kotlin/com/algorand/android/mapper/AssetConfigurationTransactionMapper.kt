@@ -36,12 +36,15 @@ class AssetConfigurationTransactionMapper @Inject constructor(
             isAssetCreationTransaction(transactionRequest) -> {
                 baseAssetCreationTransactionMapper.createTransaction(peerMeta, transactionRequest, rawTxn)
             }
+
             isAssetReconfigurationTransaction(transactionRequest) -> {
                 baseAssetReconfigurationTransactionMapper.createTransaction(peerMeta, transactionRequest, rawTxn)
             }
+
             isAssetDeletion(transactionRequest) -> {
                 baseAssetDeletionTransactionMapper.createTransaction(peerMeta, transactionRequest, rawTxn)
             }
+
             else -> null
         }
     }

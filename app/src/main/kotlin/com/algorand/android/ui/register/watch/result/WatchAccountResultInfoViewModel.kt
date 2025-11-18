@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.register.watch.result
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
@@ -22,6 +21,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class WatchAccountResultInfoViewModel @Inject constructor(

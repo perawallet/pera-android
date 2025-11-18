@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GenerateBackupCipherKeyUseCase @Inject constructor(
-    @Named(AlgorandSdkBackupUtils.INJECTION_NAME)
+    @param:Named(AlgorandSdkBackupUtils.INJECTION_NAME)
     private val algorandSdkBackupUtils: AlgorandSdkBackupUtils
 ) {
 

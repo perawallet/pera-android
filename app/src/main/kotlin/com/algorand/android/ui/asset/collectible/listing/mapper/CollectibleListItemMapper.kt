@@ -48,6 +48,7 @@ class CollectibleListItemMapper @Inject constructor(
                     isOwnedByWatchAccount = ownerAccountLite?.cachedInfo?.type == AccountType.NoAuth
                 )
             }
+
             AssetStatus.PENDING_FOR_REMOVAL, AssetStatus.PENDING_FOR_ADDITION -> {
                 mapToPendingCollectibleListItem(
                     assetLite = assetLite,

@@ -26,13 +26,13 @@ import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.math.BigDecimal
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onStart
+import java.math.BigDecimal
+import javax.inject.Inject
 
 @HiltViewModel
 class DefaultSwapAssetSelectionViewModel @Inject constructor(

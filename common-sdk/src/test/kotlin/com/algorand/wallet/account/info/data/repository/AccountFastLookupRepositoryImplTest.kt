@@ -20,8 +20,7 @@ import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
-import java.math.BigDecimal
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -29,6 +28,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.Response
+import java.io.IOException
+import java.math.BigDecimal
 
 class AccountFastLookupRepositoryImplTest {
 
@@ -40,7 +41,7 @@ class AccountFastLookupRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT success result WHEN api returns valid response`() = runTest {
+    fun `EXPECT success result WHEN api returns valid response`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockResponseData = mockk<AccountFastLookupResponse>()
         val account = AccountFastLookup(
@@ -58,7 +59,7 @@ class AccountFastLookupRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT error result WHEN api throws exception`() = runTest {
+    fun `EXPECT error result WHEN api throws exception`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val exception = IOException()
 
@@ -71,7 +72,7 @@ class AccountFastLookupRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT error result with code WHEN api returns error code`() = runTest {
+    fun `EXPECT error result with code WHEN api returns error code`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val errorCode = 404
         val errorBody = "".toResponseBody("application/json".toMediaTypeOrNull())

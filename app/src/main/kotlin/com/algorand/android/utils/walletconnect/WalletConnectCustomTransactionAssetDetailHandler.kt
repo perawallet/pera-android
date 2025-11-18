@@ -17,10 +17,10 @@ import com.algorand.android.models.WalletConnectTransactionAssetDetail
 import com.algorand.wallet.asset.domain.usecase.FetchAssetDetailFromNode
 import com.algorand.wallet.asset.domain.usecase.FetchAssets
 import com.algorand.wallet.asset.domain.usecase.GetAsset
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import javax.inject.Inject
 
 class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
     private val walletConnectTransactionAssetDetailMapper: WalletConnectTransactionAssetDetailMapper,

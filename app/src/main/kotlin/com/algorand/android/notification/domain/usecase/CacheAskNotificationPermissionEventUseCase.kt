@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class CacheAskNotificationPermissionEventUseCase @Inject constructor(
-    @Named(NotificationPermissionRepository.INJECTION_NAME)
+    @param:Named(NotificationPermissionRepository.INJECTION_NAME)
     private val notificationPermissionRepository: NotificationPermissionRepository
 ) {
 

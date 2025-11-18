@@ -50,9 +50,8 @@ class DiscoverDappFragment : BaseDiscoverFragment(R.layout.fragment_discover_dap
 
     override val discoverViewModel: DiscoverDappViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
@@ -214,7 +213,7 @@ class DiscoverDappFragment : BaseDiscoverFragment(R.layout.fragment_discover_dap
     }
 
     companion object {
-        const val ADD_FAVORITE_RESULT_KEY = "add_favorite_result"
+        const val ADD_FAVORITE_RESULT_KEY: String = "add_favorite_result"
         private const val FIREBASE_EVENT_SCREEN_ID = "screen_discover_dapp"
     }
 }

@@ -39,7 +39,6 @@ import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
-import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToSwap
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowAccountAddressCopyTutorial
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowConfetti
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowGiftCardsTutorial
@@ -78,7 +77,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             is AccountsViewModel.ViewEvent.NavToLoginNavigation -> navToLoginNavigation()
             is ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
             is NavigateToBackupPassphraseInfo -> navToBackupPassphraseInfo(event.addresses)
-            is NavigateToSwap -> nav(event.navDirections)
             is ShowAccountAddressCopyTutorial -> showAccountAddressCopyTutorialDialog(event.tutorialId)
             is ShowGiftCardsTutorial -> showGiftCardsTutorialDialog(event.tutorialId)
             is ShowNotificationPermission -> askNotificationPermission()
@@ -88,7 +86,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         isBottomBarNeeded = true,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
@@ -150,7 +148,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onSwapClick() {
             accountsViewModel.logSwapQuickActionClick()
-            accountsViewModel.navigateToSwap()
+            navToGlobalSwapV2Navigation()
         }
 
         override fun onSortClick() {
@@ -315,7 +313,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             binding.root.context.showSwapFeatureTutorialDialog(
                 onTrySwap = {
                     accountsViewModel.logSwapTutorialTrySwapClick()
-                    accountsViewModel.navigateToSwap()
+                    navToGlobalSwapV2Navigation()
                 },
                 onLater = ::logSwapLaterClick
             )
@@ -326,7 +324,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         accountsViewModel.dismissTutorial(tutorialId)
         binding.root.context.showGiftCardsTutorialDialog(
             onBuyGiftCards = ::navToBidali,
-            onLater = { }
+            onLater = {}
         )
     }
 
@@ -491,6 +489,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 OnboardingAccountType.Algo25
             )
         )
+    }
+
+    private fun navToGlobalSwapV2Navigation() {
+        nav(HomeNavigationDirections.actionGlobalSwapV2Navigation())
     }
 
     private fun navToLoginNavigation() {

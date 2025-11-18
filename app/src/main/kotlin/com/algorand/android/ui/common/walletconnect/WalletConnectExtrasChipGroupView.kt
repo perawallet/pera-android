@@ -122,7 +122,6 @@ class WalletConnectExtrasChipGroupView(
         fun onShowAppInPeraExplorerClick(appId: Long) {}
         fun onAssetUrlClick(url: String) {}
         fun onAssetMetadataClick(walletConnectTransactionAssetDetail: WalletConnectTransactionAssetDetail) {}
-
         fun onOpenInPeraExplorerClick(url: String) {}
     }
 }

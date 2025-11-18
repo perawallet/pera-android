@@ -22,6 +22,7 @@ import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -39,7 +40,7 @@ class GetPreselectedSwapAddressUseCaseTest {
     )
 
     @Test
-    fun `EXPECT last used address WHEN exists in cache and can sign transaction`() = runTest {
+    fun `EXPECT last used address WHEN exists in cache and can sign transaction`(): TestResult = runTest {
         coEvery { getLastUsedSwapAddress() } returns ALGO_25_ADDRESS
         coEvery { getAccountLiteCacheData() } returns Data(emptyList(), ACCOUNT_LITES)
 
@@ -49,7 +50,7 @@ class GetPreselectedSwapAddressUseCaseTest {
     }
 
     @Test
-    fun `EXPECT first valid address WHEN last used address is not cached`() = runTest {
+    fun `EXPECT first valid address WHEN last used address is not cached`(): TestResult = runTest {
         val accountLiteCacheData = peraFixture<Data>().copy(
             accountLites = mapOf(WATCH_ADDRESS to WATCH_ACCOUNT_LITE, ALGO_25_ADDRESS to ALGO_25_LITE)
         )
@@ -63,7 +64,7 @@ class GetPreselectedSwapAddressUseCaseTest {
     }
 
     @Test
-    fun `EXPECT first valid address WHEN last used address is not valid`() = runTest {
+    fun `EXPECT first valid address WHEN last used address is not valid`(): TestResult = runTest {
         val algo25Lite = ALGO_25_LITE.copy(cachedInfo = null)
         val ledgerLite = peraFixture<AccountLite>().copy(
             address = "LEDGER_ADDRESS",
@@ -87,7 +88,7 @@ class GetPreselectedSwapAddressUseCaseTest {
     }
 
     @Test
-    fun `EXPECT last used address to be updated WHEN cache is not valid and there is valid address`() = runTest {
+    fun `EXPECT last used address to be updated WHEN cache is not valid and there is valid address`(): TestResult = runTest {
         coEvery { getLastUsedSwapAddress() } returns "INVALID_ADDRESS"
         coEvery { getAccountLiteCacheData() } returns Data(emptyList(), ACCOUNT_LITES)
 
@@ -98,7 +99,7 @@ class GetPreselectedSwapAddressUseCaseTest {
     }
 
     @Test
-    fun `EXPECT null WHEN no valid address exists`() = runTest {
+    fun `EXPECT null WHEN no valid address exists`(): TestResult = runTest {
         val accountLiteCacheData = peraFixture<Data>().copy(
             accountLites = mapOf(WATCH_ADDRESS to WATCH_ACCOUNT_LITE)
         )

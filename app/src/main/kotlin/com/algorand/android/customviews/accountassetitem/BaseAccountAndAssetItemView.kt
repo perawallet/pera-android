@@ -35,7 +35,7 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
 
-    protected val binding = viewBinding(ItemAccountAndAssetListBinding::inflate)
+    protected val binding: ItemAccountAndAssetListBinding = viewBinding(ItemAccountAndAssetListBinding::inflate)
 
     init {
         initRootView()
@@ -99,13 +99,6 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
 
     fun setEndIconClickListener(onClick: (() -> Unit)?) {
         binding.endIconImageView.setOnClickListener { onClick?.invoke() }
-    }
-
-    fun setStartSmallIconDrawable(drawable: Drawable?) {
-        binding.startSmallIconImageView.apply {
-            isVisible = drawable != null
-            setImageDrawable(drawable)
-        }
     }
 
     fun setStartSmallIconDrawableResource(@DrawableRes drawableResId: Int?) {

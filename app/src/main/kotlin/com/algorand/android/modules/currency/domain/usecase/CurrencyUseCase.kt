@@ -23,7 +23,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class CurrencyUseCase @Inject constructor(
-    @Named(CurrencyRepository.INJECTION_NAME)
+    @param:Named(CurrencyRepository.INJECTION_NAME)
     private val currencyRepository: CurrencyRepository,
     private val selectedCurrencyMapper: SelectedCurrencyMapper
 ) : BaseUseCase() {

@@ -32,12 +32,4 @@ class ScreenStateMapper @Inject constructor() {
             buttonText = buttonText
         )
     }
-
-    fun mapToConnectionErrorState(): ScreenState.ConnectionError {
-        return ScreenState.ConnectionError()
-    }
-
-    fun mapToDefaultErrorState(): ScreenState.DefaultError {
-        return ScreenState.DefaultError()
-    }
 }

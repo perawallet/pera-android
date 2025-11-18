@@ -13,11 +13,12 @@
 package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import kotlinx.coroutines.test.runTest
 
 class IsAccountCachedSuccessfullyUseCaseTest {
 
@@ -26,7 +27,7 @@ class IsAccountCachedSuccessfullyUseCaseTest {
     private val sut = IsAccountCachedSuccessfullyUseCase(accountInformationRepository)
 
     @Test
-    fun `EXPECT true WHEN address is not failed addresses list`() = runTest {
+    fun `EXPECT true WHEN address is not failed addresses list`(): TestResult = runTest {
         whenever(accountInformationRepository.getFailedAccountInformation())
             .thenReturn(SUCCESSFULLY_CACHED_ADDRESSES)
 
@@ -36,7 +37,7 @@ class IsAccountCachedSuccessfullyUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN address is in failed addresses list`() = runTest {
+    fun `EXPECT false WHEN address is in failed addresses list`(): TestResult = runTest {
         whenever(accountInformationRepository.getFailedAccountInformation())
             .thenReturn(SUCCESSFULLY_CACHED_ADDRESSES)
 

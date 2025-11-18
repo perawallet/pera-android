@@ -127,7 +127,11 @@ private fun NameInput(nameInput: MutableState<String>) {
 }
 
 @Composable
-private fun ConfirmButton(nameInput: MutableState<String>, @StringRes buttonResId: Int, onConfirmClick: () -> Unit) {
+private fun ConfirmButton(
+    nameInput: MutableState<String>,
+    @StringRes buttonResId: Int,
+    onConfirmClick: () -> Unit
+) {
     PeraPrimaryButton(
         modifier = Modifier.fillMaxWidth(),
         text = stringResource(buttonResId),

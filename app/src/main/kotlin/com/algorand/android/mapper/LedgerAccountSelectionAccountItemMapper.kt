@@ -33,7 +33,6 @@ class LedgerAccountSelectionAccountItemMapper @Inject constructor() {
             selectorDrawableRes = selectorDrawableRes,
             accountDisplayName = accountDisplayName,
             accountIconDrawablePreview = accountIconDrawablePreview,
-            isSelected = false,
             address = address,
             selectedLedgerAccount = selectedLedgerAccount
         )

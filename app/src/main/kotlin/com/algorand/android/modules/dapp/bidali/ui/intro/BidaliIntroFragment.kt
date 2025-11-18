@@ -38,7 +38,9 @@ class BidaliIntroFragment : BaseFragment(R.layout.fragment_bidali_intro) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val bidaliIntroViewModel by viewModels<BidaliIntroViewModel>()
     private val binding by viewBinding(FragmentBidaliIntroBinding::bind)

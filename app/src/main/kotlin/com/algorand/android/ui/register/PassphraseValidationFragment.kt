@@ -57,7 +57,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration
     )
 

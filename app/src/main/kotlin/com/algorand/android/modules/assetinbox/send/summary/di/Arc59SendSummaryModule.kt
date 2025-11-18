@@ -34,9 +34,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)

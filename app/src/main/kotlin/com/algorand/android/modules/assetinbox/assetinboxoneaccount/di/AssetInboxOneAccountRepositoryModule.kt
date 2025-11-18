@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.assetinbox.assetinboxoneaccount.di
 
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.AssetInboxOneAccountMapperImpl
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.AssetInboxOneAccountMapper
+import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.AssetInboxOneAccountMapperImpl
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.repository.AssetInboxOneAccountRepositoryImpl
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.service.AssetInboxOneAccountApiService
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.domain.repository.AssetInboxOneAccountRepository
@@ -26,9 +26,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)

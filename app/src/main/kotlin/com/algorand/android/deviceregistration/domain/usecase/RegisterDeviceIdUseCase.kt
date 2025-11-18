@@ -18,21 +18,21 @@ import com.algorand.android.deviceregistration.domain.repository.UserDeviceIdRep
 import com.algorand.android.models.Result
 import com.algorand.android.utils.DataResource
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+import javax.inject.Named
 
 class RegisterDeviceIdUseCase @Inject constructor(
-    @Named(UserDeviceIdRepository.USER_DEVICE_ID_REPOSITORY_INJECTION_NAME)
+    @param:Named(UserDeviceIdRepository.USER_DEVICE_ID_REPOSITORY_INJECTION_NAME)
     private val userDeviceIdRepository: UserDeviceIdRepository,
     private val deviceRegisterDTOMapper: DeviceRegistrationDTOMapper,
     private val deviceIdUseCase: DeviceIdUseCase,
     getLocalAccounts: GetLocalAccounts
 ) : BaseDeviceIdOperationUseCase(getLocalAccounts) {
 
-    fun registerDevice(token: String): Flow<DataResource<String>> = flow<DataResource<String>> {
+    fun registerDevice(token: String): Flow<DataResource<String>> = flow {
         val deviceRegistrationDTO = getDeviceRegistrationDTO(token)
         userDeviceIdRepository.registerDeviceId(deviceRegistrationDTO).collect {
             when (it) {
@@ -41,6 +41,7 @@ class RegisterDeviceIdUseCase @Inject constructor(
                     deviceIdUseCase.setSelectedNodeDeviceId(deviceId)
                     emit(DataResource.Success(deviceId))
                 }
+
                 is Result.Error -> {
                     delay(REGISTER_DEVICE_FAIL_DELAY)
                     registerDevice(token)

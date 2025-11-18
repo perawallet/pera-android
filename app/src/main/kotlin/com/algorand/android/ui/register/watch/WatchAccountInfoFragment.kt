@@ -27,10 +27,10 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
-import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.text.PeraWarningText
 import com.algorand.android.utils.browser.openWatchAccountSupportUrl
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,7 +45,7 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
 
     private val watchAccountInfoViewModel: WatchAccountInfoViewModel by viewModels()
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +54,7 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
     }
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_eye),
             contentDescription = stringResource(R.string.eye),
@@ -63,21 +63,21 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.watch_account)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier): Unit =
         PeraBodyText(
             text = stringResource(id = R.string.monitor_activity_of),
             modifier = modifier
         )
 
     @Composable
-    override fun Warning(modifier: Modifier) =
+    override fun Warning(modifier: Modifier): Unit =
         PeraWarningText(
             text = stringResource(id = R.string.if_you_do_not),
             modifier = modifier
@@ -85,7 +85,7 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { navigateToRegisterWatchAccountFragment() },
             modifier = modifier,

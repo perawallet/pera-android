@@ -154,7 +154,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideBluetoothManager(@ApplicationContext appContext: Context): BluetoothManager? {
-        return ContextCompat.getSystemService<BluetoothManager>(appContext, BluetoothManager::class.java)
+        return ContextCompat.getSystemService(appContext, BluetoothManager::class.java)
     }
 
     @Singleton

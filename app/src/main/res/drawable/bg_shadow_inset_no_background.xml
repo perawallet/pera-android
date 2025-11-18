@@ -13,7 +13,7 @@
 
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
     android:drawable="@color/transparent"
-    android:insetLeft="@dimen/smallshadow_start_inset"
-    android:insetTop="@dimen/smallshadow_top_inset"
-    android:insetRight="@dimen/smallshadow_end_inset"
-    android:insetBottom="@dimen/smallshadow_bottom_inset" />
+    android:insetLeft="6dp"
+    android:insetTop="2dp"
+    android:insetRight="6dp"
+    android:insetBottom="10dp" />

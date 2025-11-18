@@ -20,9 +20,9 @@ import com.algorand.android.modules.webimport.result.ui.usecase.WebImportResultP
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class WebImportResultViewModel @Inject constructor(

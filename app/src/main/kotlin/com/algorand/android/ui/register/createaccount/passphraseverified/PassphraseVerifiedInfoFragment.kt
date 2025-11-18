@@ -31,12 +31,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val args: PassphraseVerifiedInfoFragmentArgs by navArgs()
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_shield_check_large),
             contentDescription = stringResource(id = R.string.check),
@@ -45,14 +45,14 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.passphrase_verified)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier): Unit =
         PeraBodyText(
             text = stringResource(id = R.string.keep_this_recovery),
             modifier = modifier
@@ -60,7 +60,7 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { handleNextNavigation() },
             modifier = modifier,

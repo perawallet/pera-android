@@ -30,7 +30,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import java.math.BigInteger
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
@@ -38,6 +38,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.Response
+import java.math.BigInteger
 
 class AccountInformationRepositoryImplTest {
 
@@ -69,7 +70,7 @@ class AccountInformationRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT rekeyed account count WHEN getFilteredRekeyedAccountCount is invoked`() = runTest {
+    fun `EXPECT rekeyed account count WHEN getFilteredRekeyedAccountCount is invoked`(): TestResult = runTest {
         val authAddress = "authAddress"
         val algoAddresses = listOf("address1", "address2")
         val expectedCount = 2
@@ -85,7 +86,7 @@ class AccountInformationRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT asset opted-in status WHEN isAssetOptedInByAnyLocalAccount is invoked`() = runTest {
+    fun `EXPECT asset opted-in status WHEN isAssetOptedInByAnyLocalAccount is invoked`(): TestResult = runTest {
         val assetId = 1234L
         val localAccountAddresses = listOf("address1", "address2")
 
@@ -98,7 +99,7 @@ class AccountInformationRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao result WHEN get account algo balance is invoked`() = runTest {
+    fun `EXPECT dao result WHEN get account algo balance is invoked`(): TestResult = runTest {
         coEvery { accountInformationDao.getAccountAlgoBalance("address") } returns BigInteger.TWO
 
         val result = sut.getAccountAlgoBalance("address")
@@ -107,7 +108,7 @@ class AccountInformationRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account asset and app count WHEN exists in cache`() = runTest {
+    fun `EXPECT account asset and app count WHEN exists in cache`(): TestResult = runTest {
         val dto = peraFixture<AccountAssetAndAppsCountDto>()
         val assetAndAppsCount = peraFixture<AccountAssetAndAppsCount>()
         coEvery { accountInformationDao.getAssetsAndAppsCount(ADDRESS) } returns dto
@@ -119,7 +120,7 @@ class AccountInformationRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN asset and app count is not in cache`() = runTest {
+    fun `EXPECT null WHEN asset and app count is not in cache`(): TestResult = runTest {
         coEvery { accountInformationDao.getAssetsAndAppsCount(ADDRESS) } returns null
 
         val result = sut.getAccountAssetsAndAppsCount(ADDRESS)
@@ -128,7 +129,7 @@ class AccountInformationRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN account is opted in to asset and exists in cache`() = runTest {
+    fun `EXPECT true WHEN account is opted in to asset and exists in cache`(): TestResult = runTest {
         val assetId = 1234L
         coEvery { assetHoldingDao.isAssetOptedInByAccount(ADDRESS, assetId) } returns true
 
@@ -138,7 +139,7 @@ class AccountInformationRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN account is opted in to asset and not exist in cache`() = runTest {
+    fun `EXPECT true WHEN account is opted in to asset and not exist in cache`(): TestResult = runTest {
         val assetId = 1234L
         val assetHoldingResponse = Response.success(peraFixture<AssetHoldingNodeResponse>())
         coEvery { assetHoldingDao.isAssetOptedInByAccount(ADDRESS, assetId) } returns false
@@ -150,7 +151,7 @@ class AccountInformationRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN account is not opted in to asset`() = runTest {
+    fun `EXPECT false WHEN account is not opted in to asset`(): TestResult = runTest {
         val assetId = 1234L
         val assetHoldingResponse = Response.error<AssetHoldingNodeResponse>(404, byteArrayOf().toResponseBody(null))
         coEvery { assetHoldingDao.isAssetOptedInByAccount(ADDRESS, assetId) } returns false

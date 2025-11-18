@@ -13,17 +13,22 @@
 package com.algorand.android.utils.preference
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 private const val LOCK_PREFERENCE_COUNT_KEY = "lock_preference_count_key"
-const val DONT_SHOW_AGAIN_COUNT = -1
-const val DEFAULT_LOCK_PREFERENCE_COUNT = 0
+const val DONT_SHOW_AGAIN_COUNT: Int = -1
+const val DEFAULT_LOCK_PREFERENCE_COUNT: Int = 0
 
 fun SharedPreferences.setLockPreferenceCount(lockCount: Int) {
-    edit().putInt(LOCK_PREFERENCE_COUNT_KEY, lockCount).apply()
+    edit {
+        putInt(LOCK_PREFERENCE_COUNT_KEY, lockCount).apply()
+    }
 }
 
 fun SharedPreferences.setLockDontAskAgain() {
-    edit().putInt(LOCK_PREFERENCE_COUNT_KEY, DONT_SHOW_AGAIN_COUNT).apply()
+    edit {
+        putInt(LOCK_PREFERENCE_COUNT_KEY, DONT_SHOW_AGAIN_COUNT).apply()
+    }
 }
 
 fun SharedPreferences.getLockPreferenceCount(): Int {

@@ -13,15 +13,16 @@
 package com.algorand.android.ui.swap.widget.model
 
 import com.algorand.android.ui.swap.widget.model.SwapAmountInput.Input
+import com.algorand.test.TestObserver
 import com.algorand.test.test
+import org.junit.Test
 import java.math.BigDecimal
 import java.util.Locale
-import org.junit.Test
 
 class SwapAmountInputTest {
 
-    val sut = SwapAmountInput(Locale.ENGLISH)
-    val amountObserver = sut.amountInputFlow.test()
+    val sut: SwapAmountInput = SwapAmountInput(Locale.ENGLISH)
+    private val amountObserver: TestObserver<Input> = sut.amountInputFlow.test()
 
     @Test
     fun `EXPECT no update when inputs are invalid`() {

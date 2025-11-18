@@ -20,12 +20,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
-fun <T : ViewBinding> Fragment.viewBinding(viewBindingFactory: (View) -> T) =
+fun <T : ViewBinding> Fragment.viewBinding(viewBindingFactory: (View) -> T): FragmentViewBindingDelegate<T> =
     FragmentViewBindingDelegate(this, viewBindingFactory)
 
 inline fun <T : ViewBinding> AppCompatActivity.viewBinding(
     crossinline bindingInflater: (LayoutInflater) -> T
-) = lazy(LazyThreadSafetyMode.NONE) {
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
     bindingInflater.invoke(layoutInflater)
 }
 

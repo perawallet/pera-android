@@ -13,16 +13,9 @@
 package com.algorand.android.utils
 
 import android.content.res.ColorStateList
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-
-fun ImageView.setDrawableByVerificationTier(verificationTierConfiguration: VerificationTierConfiguration) {
-    isVisible = verificationTierConfiguration.drawableResId != null
-    setImageResource(verificationTierConfiguration.drawableResId ?: return)
-}
 
 fun TextView.setAssetNameTextColorByVerificationTier(verificationTierConfiguration: VerificationTierConfiguration) {
     val textColorResId = verificationTierConfiguration.textColorResId

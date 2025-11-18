@@ -36,14 +36,12 @@ class WalletConnectSignValidator @Inject constructor() {
     }
 
     fun canArbitraryDataBeSigned(arbitraryDataRequest: WalletConnectArbitraryDataRequest): WalletConnectSignResult {
-        return with(arbitraryDataRequest) {
-            when {
-                areThereAnyUnsignableArbitraryData(
-                    arbitraryDataRequest.arbitraryDataList
-                ) -> onUnsignableTransactionFound()
+        return when {
+            areThereAnyUnsignableArbitraryData(
+                arbitraryDataRequest.arbitraryDataList
+            ) -> onUnsignableTransactionFound()
 
-                else -> WalletConnectSignResult.CanBeSigned
-            }
+            else -> WalletConnectSignResult.CanBeSigned
         }
     }
 

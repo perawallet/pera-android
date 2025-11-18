@@ -16,6 +16,7 @@ import com.algorand.wallet.account.custom.domain.repository.CustomAccountInfoRep
 import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -27,7 +28,7 @@ class ClearAllCustomInformationUseCaseTest {
     private val sut = ClearAllCustomInformationUseCase(customAccountInfoRepository, customHdSeedInfoRepository)
 
     @Test
-    fun `EXPECT both account and hd seed information to be cleared`() = runTest {
+    fun `EXPECT both account and hd seed information to be cleared`(): TestResult = runTest {
         sut()
 
         coVerify { customAccountInfoRepository.clearAllInformation() }

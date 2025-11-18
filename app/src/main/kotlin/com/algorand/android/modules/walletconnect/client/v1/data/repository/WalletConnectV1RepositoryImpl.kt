@@ -29,7 +29,7 @@ import com.algorand.android.modules.walletconnect.client.v1.domain.repository.Wa
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class WalletConnectV1RepositoryImpl constructor(
+class WalletConnectV1RepositoryImpl(
     private val walletConnectDao: WalletConnectDao,
     private val sessionAccountDtoMapper: WalletConnectSessionAccountDtoMapper,
     private val sessionAccountEntityMapper: WalletConnectSessionAccountEntityMapper,
@@ -99,9 +99,9 @@ class WalletConnectV1RepositoryImpl constructor(
     }
 
     override fun getAllWalletConnectSessionWithAccountAddresses():
-        Flow<List<WalletConnectSessionWithAccountsAddressesDto>?> {
+            Flow<List<WalletConnectSessionWithAccountsAddressesDto>?> {
         return walletConnectDao.getAllWalletConnectSessionWithAccountAddresses().map { sessionWithAccAddrList ->
-            sessionWithAccAddrList?.map { sessionWithAccAddr ->
+            sessionWithAccAddrList.map { sessionWithAccAddr ->
                 sessionWithAccountsAddressesDtoMapper.mapToSessionWithAccountsAddressesDto(sessionWithAccAddr)
             }
         }

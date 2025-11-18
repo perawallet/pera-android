@@ -29,11 +29,12 @@ import com.algorand.wallet.swap.domain.repository.SwapRepository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.math.BigInteger
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class GetSwapQuotesUseCaseTest {
 
@@ -58,7 +59,7 @@ class GetSwapQuotesUseCaseTest {
     )
 
     @Test
-    fun `EXPECT error WHEN quote list is empty`() = runTest {
+    fun `EXPECT error WHEN quote list is empty`(): TestResult = runTest {
         coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(emptyList())
 
         val result = sut(PAYLOAD)
@@ -67,7 +68,7 @@ class GetSwapQuotesUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN repository call fails`() = runTest {
+    fun `EXPECT error WHEN repository call fails`(): TestResult = runTest {
         coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Error(Exception())
 
         val result = sut(PAYLOAD)
@@ -76,7 +77,7 @@ class GetSwapQuotesUseCaseTest {
     }
 
     @Test
-    fun `EXPECT best offer preselected quotes WHEN there are multiple quotes`() = runTest {
+    fun `EXPECT best offer preselected quotes WHEN there are multiple quotes`(): TestResult = runTest {
         coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(QUOTES)
 
         val result = sut(PAYLOAD)
@@ -88,7 +89,7 @@ class GetSwapQuotesUseCaseTest {
     }
 
     @Test
-    fun `EXPECT empty device id WHEN does not exist`() = runTest {
+    fun `EXPECT empty device id WHEN does not exist`(): TestResult = runTest {
         every { getSelectedNodeDeviceId() } returns null
         val request = REQUEST.copy(deviceId = "")
 
@@ -103,58 +104,70 @@ class GetSwapQuotesUseCaseTest {
     }
 
     @Test
-    fun `EXPECT deflex filtered out WHEN ledger filter is enabled and account type is LedgerBle`() = runTest {
-        val randomQuote = peraFixture<SwapQuoteV2>()
-        val deflexQuote = peraFixture<SwapQuoteV2>().copy(
-            provider = peraFixture<SwapQuoteProvider>().copy(name = "deflex")
-        )
-        val randomQuoteDetail = peraFixture<SwapQuoteDetail>()
-        every { isFeatureToggleEnabled(LEDGER_DEFLEX_FILTER) } returns true
-        coEvery { getAccountType(ADDRESS) } returns LedgerBle
-        coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(listOf(randomQuote, deflexQuote))
-        coEvery { getSwapQuoteDetails.invoke(listOf(randomQuote)) } returns listOf(randomQuoteDetail)
-
-        val result = sut(PAYLOAD)
-
-        val expected = PeraResult.Success(
-            SwapQuotes(
-                selectedQuoteId = randomQuote.quoteId,
-                bestOfferQuoteId = randomQuote.quoteId,
-                quotes = listOf(randomQuoteDetail)
+    fun `EXPECT deflex filtered out WHEN ledger filter is enabled and account type is LedgerBle`(): TestResult =
+        runTest {
+            val randomQuote = peraFixture<SwapQuoteV2>()
+            val deflexQuote = peraFixture<SwapQuoteV2>().copy(
+                provider = peraFixture<SwapQuoteProvider>().copy(name = "deflex")
             )
-        )
-        assertEquals(expected, result)
-    }
+            val randomQuoteDetail = peraFixture<SwapQuoteDetail>()
+            every { isFeatureToggleEnabled(LEDGER_DEFLEX_FILTER) } returns true
+            coEvery { getAccountType(ADDRESS) } returns LedgerBle
+            coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(
+                listOf(
+                    randomQuote,
+                    deflexQuote
+                )
+            )
+            coEvery { getSwapQuoteDetails.invoke(listOf(randomQuote)) } returns listOf(randomQuoteDetail)
+
+            val result = sut(PAYLOAD)
+
+            val expected = PeraResult.Success(
+                SwapQuotes(
+                    selectedQuoteId = randomQuote.quoteId,
+                    bestOfferQuoteId = randomQuote.quoteId,
+                    quotes = listOf(randomQuoteDetail)
+                )
+            )
+            assertEquals(expected, result)
+        }
 
     @Test
-    fun `EXPECT deflex in quotes WHEN ledger filter is enabled and account type is not LedgerBle`() = runTest {
-        val randomQuote = peraFixture<SwapQuoteV2>().copy(
-            assetOutAmount = peraFixture<SwapQuoteV2.AssetAmount>().copy(amount = BigDecimal.TEN)
-        )
-        val deflexQuote = peraFixture<SwapQuoteV2>().copy(
-            assetOutAmount = peraFixture<SwapQuoteV2.AssetAmount>().copy(amount = BigDecimal.ONE),
-            provider = peraFixture<SwapQuoteProvider>().copy(name = "deflex")
-        )
-        val randomQuoteDetail = peraFixture<SwapQuoteDetail>()
-        val deflexQuoteDetail = peraFixture<SwapQuoteDetail>()
-        every { isFeatureToggleEnabled(LEDGER_DEFLEX_FILTER) } returns true
-        coEvery { getAccountType(ADDRESS) } returns AccountType.Algo25
-        coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(listOf(randomQuote, deflexQuote))
-        coEvery {
-            getSwapQuoteDetails.invoke(listOf(randomQuote, deflexQuote))
-        } returns listOf(randomQuoteDetail, deflexQuoteDetail)
-
-        val result = sut(PAYLOAD)
-
-        val expected = PeraResult.Success(
-            SwapQuotes(
-                selectedQuoteId = randomQuote.quoteId,
-                bestOfferQuoteId = randomQuote.quoteId,
-                quotes = listOf(randomQuoteDetail, deflexQuoteDetail)
+    fun `EXPECT deflex in quotes WHEN ledger filter is enabled and account type is not LedgerBle`(): TestResult =
+        runTest {
+            val randomQuote = peraFixture<SwapQuoteV2>().copy(
+                assetOutAmount = peraFixture<SwapQuoteV2.AssetAmount>().copy(amount = BigDecimal.TEN)
             )
-        )
-        assertEquals(expected, result)
-    }
+            val deflexQuote = peraFixture<SwapQuoteV2>().copy(
+                assetOutAmount = peraFixture<SwapQuoteV2.AssetAmount>().copy(amount = BigDecimal.ONE),
+                provider = peraFixture<SwapQuoteProvider>().copy(name = "deflex")
+            )
+            val randomQuoteDetail = peraFixture<SwapQuoteDetail>()
+            val deflexQuoteDetail = peraFixture<SwapQuoteDetail>()
+            every { isFeatureToggleEnabled(LEDGER_DEFLEX_FILTER) } returns true
+            coEvery { getAccountType(ADDRESS) } returns AccountType.Algo25
+            coEvery { swapRepository.getSwapQuotes(REQUEST) } returns PeraResult.Success(
+                listOf(
+                    randomQuote,
+                    deflexQuote
+                )
+            )
+            coEvery {
+                getSwapQuoteDetails.invoke(listOf(randomQuote, deflexQuote))
+            } returns listOf(randomQuoteDetail, deflexQuoteDetail)
+
+            val result = sut(PAYLOAD)
+
+            val expected = PeraResult.Success(
+                SwapQuotes(
+                    selectedQuoteId = randomQuote.quoteId,
+                    bestOfferQuoteId = randomQuote.quoteId,
+                    quotes = listOf(randomQuoteDetail, deflexQuoteDetail)
+                )
+            )
+            assertEquals(expected, result)
+        }
 
     private companion object {
         val DEVICE_ID = peraFixture<String>()

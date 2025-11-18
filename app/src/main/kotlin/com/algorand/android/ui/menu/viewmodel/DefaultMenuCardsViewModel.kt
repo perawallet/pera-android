@@ -24,13 +24,13 @@ import com.algorand.wallet.cards.domain.usecase.GetCardFundAddresses
 import com.algorand.wallet.cards.domain.usecase.IsCountryWaitlistedForCards
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DefaultMenuCardsViewModel @Inject constructor(

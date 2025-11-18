@@ -20,14 +20,14 @@ import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePrev
 
 data class AccountAssetIconNameConfiguration(
     val accountIconDrawablePreview: AccountIconDrawablePreview,
-    @DrawableRes val setStartIconResId: Int? = null,
+    @param:DrawableRes val setStartIconResId: Int? = null,
     val startSmallIconDrawable: Drawable? = null,
-    @DrawableRes val startSmallIconResId: Int? = null,
+    @param:DrawableRes val startSmallIconResId: Int? = null,
     val titleEndIconDrawable: Drawable? = null,
-    @DrawableRes val titleEndIconResId: Int? = null,
+    @param:DrawableRes val titleEndIconResId: Int? = null,
     val title: String? = null,
-    @StringRes val titleResId: Int? = null,
-    @ColorRes val titleTextColorResId: Int? = null,
+    @param:StringRes val titleResId: Int? = null,
+    @param:ColorRes val titleTextColorResId: Int? = null,
     val description: String? = null,
-    @StringRes val descriptionResId: Int? = null
+    @param:StringRes val descriptionResId: Int? = null
 )

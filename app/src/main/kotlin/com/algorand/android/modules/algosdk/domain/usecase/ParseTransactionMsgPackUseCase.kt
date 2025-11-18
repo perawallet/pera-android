@@ -21,7 +21,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ParseTransactionMsgPackUseCase @Inject constructor(
-    @Named(AlgorandSDKUtils.INJECTION_NAME)
+    @param:Named(AlgorandSDKUtils.INJECTION_NAME)
     private val algorandSDKUtils: AlgorandSDKUtils,
     private val rawTransactionMapper: RawTransactionDTOMapper,
     private val algorandAddressMapper: AlgorandAddressMapper

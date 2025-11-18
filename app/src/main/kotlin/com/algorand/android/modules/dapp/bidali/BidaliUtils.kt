@@ -18,26 +18,26 @@ import com.algorand.android.modules.dapp.bidali.domain.model.BidaliAsset
 private const val BIDALI_BALANCES_JAVASCRIPT = "window.bidaliProvider.balances = {%s}"
 private const val COMMA_SEPARATOR = ", "
 
-const val BIDALI_SUCCESSFUL_TRANSACTION_JAVASCRIPT = "window.bidaliProvider.paymentSent();"
-const val BIDALI_FAILED_TRANSACTION_JAVASCRIPT = "window.bidaliProvider.paymentCancelled();"
+const val BIDALI_SUCCESSFUL_TRANSACTION_JAVASCRIPT: String = "window.bidaliProvider.paymentSent();"
+const val BIDALI_FAILED_TRANSACTION_JAVASCRIPT: String = "window.bidaliProvider.paymentCancelled();"
 
 private fun getBidaliJavaScript(isMainnet: Boolean): String {
     val apiKey = getBidaliAPIKey(isMainnet)
     return "window.bidaliProvider = {\n" +
-        "          name: 'Pera Wallet',\n" +
-        "          key: '$apiKey',\n" +
-        "          paymentCurrencies: [%s],\n" +
-        "          balances: {%s},\n" +
-        "          onPaymentRequest: (paymentRequest) => {\n" +
-        "            var payload = { method: 'onPaymentRequest', data: paymentRequest };\n" +
-        "            bidaliWebInterface.onPaymentRequest(JSON.stringify(paymentRequest));\n" +
-        "          },\n" +
-        "          openUrl: function (url) {\n" +
-        "            var payload = { method: 'openUrl', data: { url } };\n" +
-        "            bidaliWebInterface.openUrl(JSON.stringify({ url }));\n" +
-        "          }\n" +
-        "        };\n" +
-        "        true;"
+            "          name: 'Pera Wallet',\n" +
+            "          key: '$apiKey',\n" +
+            "          paymentCurrencies: [%s],\n" +
+            "          balances: {%s},\n" +
+            "          onPaymentRequest: (paymentRequest) => {\n" +
+            "            var payload = { method: 'onPaymentRequest', data: paymentRequest };\n" +
+            "            bidaliWebInterface.onPaymentRequest(JSON.stringify(paymentRequest));\n" +
+            "          },\n" +
+            "          openUrl: function (url) {\n" +
+            "            var payload = { method: 'openUrl', data: { url } };\n" +
+            "            bidaliWebInterface.openUrl(JSON.stringify({ url }));\n" +
+            "          }\n" +
+            "        };\n" +
+            "        true;"
 }
 
 fun getCompiledBidaliJavascript(currencies: List<BidaliAsset>, isMainnet: Boolean): String {

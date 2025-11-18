@@ -39,6 +39,6 @@ interface UserDeviceIdRepository {
     fun getNotificationUserId(): String?
 
     companion object {
-        const val USER_DEVICE_ID_REPOSITORY_INJECTION_NAME = "userDeviceIdInjection"
+        const val USER_DEVICE_ID_REPOSITORY_INJECTION_NAME: String = "userDeviceIdInjection"
     }
 }

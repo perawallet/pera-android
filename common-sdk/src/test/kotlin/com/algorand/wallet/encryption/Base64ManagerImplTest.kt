@@ -10,8 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.data.manager
+package com.algorand.wallet.encryption
 
+import com.algorand.wallet.encryption.data.manager.Base64ManagerImpl
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Before

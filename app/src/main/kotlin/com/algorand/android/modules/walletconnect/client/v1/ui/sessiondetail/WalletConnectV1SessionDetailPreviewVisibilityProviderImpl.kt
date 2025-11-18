@@ -30,6 +30,6 @@ class WalletConnectV1SessionDetailPreviewVisibilityProviderImpl : WalletConnectS
     }
 
     companion object {
-        const val INJECTION_NAME = "walletConnectV1SessionDetailPreviewStateProviderInjectionName"
+        const val INJECTION_NAME: String = "walletConnectV1SessionDetailPreviewStateProviderInjectionName"
     }
 }

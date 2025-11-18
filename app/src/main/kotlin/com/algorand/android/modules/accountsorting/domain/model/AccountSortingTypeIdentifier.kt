@@ -20,6 +20,6 @@ enum class AccountSortingTypeIdentifier {
     NUMERIC_DESCENDING;
 
     companion object {
-        val DEFAULT_SORTING_TYPE = ALPHABETICALLY_ASCENDING
+        val DEFAULT_SORTING_TYPE: AccountSortingTypeIdentifier = ALPHABETICALLY_ASCENDING
     }
 }

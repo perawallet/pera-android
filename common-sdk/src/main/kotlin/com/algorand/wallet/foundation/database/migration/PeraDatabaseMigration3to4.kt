@@ -22,14 +22,14 @@ internal object PeraDatabaseMigration3to4 : Migration(3, 4) {
         migrateAssetHoldingTable(db)
     }
 
-    private fun migrateCollectibleTable(database: SupportSQLiteDatabase) {
-        dropCollectibleTable(database)
-        createNewCollectibleTable(database)
-        createUniqueIndexForCollectibleAssetIds(database)
+    private fun migrateCollectibleTable(db: SupportSQLiteDatabase) {
+        dropCollectibleTable(db)
+        createNewCollectibleTable(db)
+        createUniqueIndexForCollectibleAssetIds(db)
     }
 
-    private fun createNewCollectibleTable(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    private fun createNewCollectibleTable(db: SupportSQLiteDatabase) {
+        db.execSQL(
             """
             CREATE TABLE IF NOT EXISTS collectible (
                 collectible_asset_id INTEGER NOT NULL,
@@ -47,22 +47,22 @@ internal object PeraDatabaseMigration3to4 : Migration(3, 4) {
         )
     }
 
-    private fun dropCollectibleTable(database: SupportSQLiteDatabase) {
-        database.execSQL("DROP TABLE IF EXISTS `collectible`")
+    private fun dropCollectibleTable(db: SupportSQLiteDatabase) {
+        db.execSQL("DROP TABLE IF EXISTS `collectible`")
     }
 
-    private fun migrateAssetHoldingTable(database: SupportSQLiteDatabase) {
-        dropAssetHoldingTable(database)
-        createNewAssetHoldingTable(database)
-        createUniqueIndexForAssetHoldingTable(database)
+    private fun migrateAssetHoldingTable(db: SupportSQLiteDatabase) {
+        dropAssetHoldingTable(db)
+        createNewAssetHoldingTable(db)
+        createUniqueIndexForAssetHoldingTable(db)
     }
 
-    private fun dropAssetHoldingTable(database: SupportSQLiteDatabase) {
-        database.execSQL("DROP TABLE IF EXISTS `asset_holding_table`")
+    private fun dropAssetHoldingTable(db: SupportSQLiteDatabase) {
+        db.execSQL("DROP TABLE IF EXISTS `asset_holding_table`")
     }
 
-    private fun createNewAssetHoldingTable(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    private fun createNewAssetHoldingTable(db: SupportSQLiteDatabase) {
+        db.execSQL(
             """
             CREATE TABLE IF NOT EXISTS asset_holding_table (
                 algo_address TEXT NOT NULL,
@@ -79,8 +79,8 @@ internal object PeraDatabaseMigration3to4 : Migration(3, 4) {
         )
     }
 
-    private fun createUniqueIndexForAssetHoldingTable(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    private fun createUniqueIndexForAssetHoldingTable(db: SupportSQLiteDatabase) {
+        db.execSQL(
             """
                 CREATE UNIQUE INDEX IF NOT EXISTS index_asset_holding_table_algo_address_asset_id 
                 ON `asset_holding_table` (`algo_address`, `asset_id`)
@@ -88,8 +88,8 @@ internal object PeraDatabaseMigration3to4 : Migration(3, 4) {
         )
     }
 
-    private fun createUniqueIndexForCollectibleAssetIds(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    private fun createUniqueIndexForCollectibleAssetIds(db: SupportSQLiteDatabase) {
+        db.execSQL(
             """
             CREATE UNIQUE INDEX IF NOT EXISTS index_collectible_collectible_asset_id
             ON collectible(collectible_asset_id)

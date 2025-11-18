@@ -26,9 +26,9 @@ import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CollectibleDetailViewModel @Inject constructor(
@@ -39,8 +39,8 @@ class CollectibleDetailViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>
 ) : BaseCollectibleDetailViewModel(networkSlugUseCase), StateViewModel<ViewState> by stateDelegate {
 
-    val nftId = savedStateHandle.getOrThrow<Long>(COLLECTIBLE_ASSET_ID_KEY)
-    val accountAddress = savedStateHandle.getOrThrow<String>(PUBLIC_KEY_KEY)
+    val nftId: Long = savedStateHandle.getOrThrow(COLLECTIBLE_ASSET_ID_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY_KEY)
 
     init {
         stateDelegate.setDefaultState(ViewState.Loading)

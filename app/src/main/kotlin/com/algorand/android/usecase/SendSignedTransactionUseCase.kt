@@ -34,9 +34,10 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.SetAccountAssetStatus
 import com.google.firebase.analytics.FirebaseAnalytics
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 class SendSignedTransactionUseCase @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
@@ -50,10 +51,10 @@ class SendSignedTransactionUseCase @Inject constructor(
     private val addAssetHoldingToAccountAsPending: AddAssetHoldingToAccountAsPending
 ) {
 
-    suspend fun sendSignedTransaction(
+    fun sendSignedTransaction(
         signedTransactionDetail: SignedTransactionDetail,
         shouldLogTransaction: Boolean = true
-    ) = channelFlow<DataResource<String>> {
+    ): Flow<DataResource<String>> = channelFlow {
         send(DataResource.Loading())
         if (signedTransactionDetail is AssetAddition && isAccountAlreadyOptedIntoAsset(signedTransactionDetail)) {
             send(DataResource.Error.Local(AccountAlreadyOptedIntoAssetException()))
@@ -145,6 +146,7 @@ class SendSignedTransactionUseCase @Inject constructor(
                     assetId = signedTransactionDetail.assetId
                 )
             }
+
             is SignedTransactionDetail.AssetOperation.AssetRemoval -> {
                 setAccountAssetStatus(
                     address = signedTransactionDetail.senderAccountAddress,
@@ -152,6 +154,7 @@ class SendSignedTransactionUseCase @Inject constructor(
                     status = AssetStatus.PENDING_FOR_REMOVAL
                 )
             }
+
             else -> Unit
         }
     }

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -22,8 +23,8 @@
         style="@style/TextView.TransactionLabelStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingEnd="@dimen/spacing_small"
         android:gravity="start"
+        android:paddingEnd="@dimen/spacing_small"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/noteTextView"

@@ -1,4 +1,4 @@
-/*
+package com.algorand.android.ui.compose.widget/*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 
-@SuppressWarnings("LongMethod")
 @Composable
 fun GroupChoiceWidget(
     modifier: Modifier = Modifier,
@@ -88,6 +87,6 @@ fun GroupChoiceWidgetPreview() {
         description = stringResource(id = R.string.import_an_existing),
         iconContentDescription = stringResource(id = R.string.import_an_existing),
         icon = ImageVector.vectorResource(R.drawable.ic_key),
-        onClick = { },
+        onClick = {},
     )
 }

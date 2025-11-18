@@ -22,6 +22,8 @@ import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.isZero
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -30,7 +32,7 @@ import javax.inject.Named
 
 class ParityUseCase @Inject constructor(
     private val currencyUseCase: CurrencyUseCase,
-    @Named(ParityRepository.INJECTION_NAME)
+    @param:Named(ParityRepository.INJECTION_NAME)
     private val parityRepository: ParityRepository,
     private val selectedCurrencyDetailMapper: SelectedCurrencyDetailMapper
 ) : BaseUseCase() {
@@ -47,9 +49,10 @@ class ParityUseCase @Inject constructor(
         parityRepository.clearSelectedCurrencyDetailCache()
     }
 
-    fun getSelectedCurrencyDetailCacheFlow() = parityRepository.getSelectedCurrencyDetailCacheFlow()
+    fun getSelectedCurrencyDetailCacheFlow(): StateFlow<CacheResult<SelectedCurrencyDetail>?> =
+        parityRepository.getSelectedCurrencyDetailCacheFlow()
 
-    fun getUsdToAlgoConversionRate(): BigDecimal {
+    private fun getUsdToAlgoConversionRate(): BigDecimal {
         return parityRepository.getCachedSelectedCurrencyDetail()?.data?.let {
             if (it.algoToSelectedCurrencyConversionRate == null || it.algoToSelectedCurrencyConversionRate.isZero()) {
                 BigDecimal.ZERO
@@ -64,7 +67,7 @@ class ParityUseCase @Inject constructor(
     }
 
     fun getAlgoToUsdConversionRate(): BigDecimal {
-        return if (getUsdToAlgoConversionRate() != BigDecimal.ZERO) {
+        return if (!getUsdToAlgoConversionRate().isZero()) {
             BigDecimal.ONE.divide(getUsdToAlgoConversionRate(), SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
         } else {
             BigDecimal.ZERO
@@ -89,14 +92,6 @@ class ParityUseCase @Inject constructor(
         }
     }
 
-    fun getAlgoToSecondaryCurrencyConversionRate(): BigDecimal {
-        return if (currencyUseCase.isPrimaryCurrencyAlgo()) {
-            getAlgoToUsdConversionRate()
-        } else {
-            BigDecimal.ONE
-        }
-    }
-
     private fun getPrimaryCurrencySymbol(): String? {
         return parityRepository.getCachedSelectedCurrencyDetail()?.data?.currencySymbol
     }
@@ -111,18 +106,6 @@ class ParityUseCase @Inject constructor(
 
     fun getSecondaryCurrencySymbol(): String {
         return if (currencyUseCase.isPrimaryCurrencyAlgo()) Currency.USD.symbol else Currency.ALGO.symbol
-    }
-
-    /**
-     * When we display currency, if ALGO is primary currency we use secondary currency ratio and symbol
-     * If primary currency is not ALGO, then we use primary currency ratio and symbol
-     */
-    fun getDisplayedCurrencyRatio(): BigDecimal {
-        return if (currencyUseCase.isPrimaryCurrencyAlgo()) {
-            getUsdToSecondaryCurrencyConversionRate()
-        } else {
-            getUsdToPrimaryCurrencyConversionRate()
-        }
     }
 
     /**
@@ -145,7 +128,7 @@ class ParityUseCase @Inject constructor(
         }
     }
 
-    fun fetchSelectedCurrencyDetail() = flow {
+    fun fetchSelectedCurrencyDetail(): Flow<DataResource<SelectedCurrencyDetail>> = flow {
         parityRepository.fetchCurrencyDetailDTO(getPrimaryFiatCurrencyId()).use(
             onSuccess = { currencyDetailDTO ->
                 val isPrimaryCurrencyAlgo = currencyUseCase.isPrimaryCurrencyAlgo()
@@ -163,7 +146,7 @@ class ParityUseCase @Inject constructor(
                 )
             },
             onFailed = { exception, code ->
-                emit(DataResource.Error.Api<SelectedCurrencyDetail>(exception, code))
+                emit(DataResource.Error.Api(exception, code))
             }
         )
     }

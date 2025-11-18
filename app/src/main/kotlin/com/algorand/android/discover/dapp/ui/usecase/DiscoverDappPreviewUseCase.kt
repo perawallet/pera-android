@@ -29,7 +29,7 @@ class DiscoverDappPreviewUseCase @Inject constructor(
         dappTitle: String,
         favorites: List<DappFavoriteElement>,
         showFavorites: Boolean
-    ) = DiscoverDappPreview(
+    ): DiscoverDappPreview = DiscoverDappPreview(
         themePreference = sharedPreferences.getSavedThemePreference(),
         isLoading = true,
         reloadPageEvent = Event(Unit),
@@ -40,16 +40,16 @@ class DiscoverDappPreviewUseCase @Inject constructor(
         isFavorite = favorites.any { it.isSameUrl(dappUrl) }
     )
 
-    fun requestLoadHomepage(previousState: DiscoverDappPreview) = previousState.copy(
+    fun requestLoadHomepage(previousState: DiscoverDappPreview): DiscoverDappPreview = previousState.copy(
         isLoading = true,
         reloadPageEvent = Event(Unit)
     )
 
-    fun onPreviousNavButtonClicked(previousState: DiscoverDappPreview) = previousState.copy(
+    fun onPreviousNavButtonClicked(previousState: DiscoverDappPreview): DiscoverDappPreview = previousState.copy(
         webViewGoBackEvent = Event(Unit)
     )
 
-    fun onNextNavButtonClicked(previousState: DiscoverDappPreview) = previousState.copy(
+    fun onNextNavButtonClicked(previousState: DiscoverDappPreview): DiscoverDappPreview = previousState.copy(
         webViewGoForwardEvent = Event(Unit)
     )
 
@@ -64,7 +64,10 @@ class DiscoverDappPreviewUseCase @Inject constructor(
         )
     }
 
-    fun onPageRequestedShouldOverrideUrlLoading(previousState: DiscoverDappPreview, url: String) = previousState.copy(
+    fun onPageRequestedShouldOverrideUrlLoading(
+        previousState: DiscoverDappPreview,
+        url: String
+    ): DiscoverDappPreview = previousState.copy(
         isLoading = true,
         isFavorite = previousState.favorites.any { it.isSameUrl(url) }
     )
@@ -73,23 +76,23 @@ class DiscoverDappPreviewUseCase @Inject constructor(
         previousState: DiscoverDappPreview,
         title: String?,
         url: String?
-    ) = previousState.copy(
+    ): DiscoverDappPreview = previousState.copy(
         isLoading = false,
         dappTitle = title ?: previousState.dappTitle,
         dappUrl = url ?: previousState.dappUrl,
         isFavorite = previousState.favorites.any { it.isSameUrl(url ?: previousState.dappUrl) }
     )
 
-    fun onError(previousState: DiscoverDappPreview) = previousState.copy(
+    fun onError(previousState: DiscoverDappPreview): DiscoverDappPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onPageUrlChanged(previousState: DiscoverDappPreview) = previousState.copy(
+    fun onPageUrlChanged(previousState: DiscoverDappPreview): DiscoverDappPreview = previousState.copy(
         pageUrlChangedEvent = Event(Unit)
     )
 
-    fun onHttpError(previousState: DiscoverDappPreview) = previousState.copy(
+    fun onHttpError(previousState: DiscoverDappPreview): DiscoverDappPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )

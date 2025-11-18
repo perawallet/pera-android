@@ -34,10 +34,10 @@ internal class DefaultTransactionHistoryPaymentTypeMapper @Inject constructor() 
     }
 
     private fun mapPayment(address: String, sender: String?, receiver: String?, amount: String?): Type.Payment? {
-        val paymentType = when {
-            address == receiver && address == sender -> Type.Payment.PaymentType.Self
-            address == receiver -> Type.Payment.PaymentType.Receive
-            address == sender -> Type.Payment.PaymentType.Send(receiver ?: return null)
+        val paymentType = when (address) {
+            receiver if address == sender -> Type.Payment.PaymentType.Self
+            receiver -> Type.Payment.PaymentType.Receive
+            sender -> Type.Payment.PaymentType.Send(receiver ?: return null)
             else -> null
         } ?: return null
         return Type.Payment(amount = amount?.formatToBigDecimal(ALGO_DECIMALS) ?: return null, paymentType)

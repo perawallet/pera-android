@@ -66,6 +66,7 @@ fun StatefulPeraLineChart(
                     }
                 }
             }
+
             Error -> PeraLineChartErrorState()
         }
     }

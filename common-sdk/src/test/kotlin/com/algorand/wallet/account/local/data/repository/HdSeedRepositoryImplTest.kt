@@ -12,6 +12,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -32,7 +33,7 @@ class HdSeedRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT mapped seed list WHEN getting all seeds as flow`() = runTest {
+    fun `EXPECT mapped seed list WHEN getting all seeds as flow`(): TestResult = runTest {
         val entity1 = mockk<HdSeedEntity>()
         val entity2 = mockk<HdSeedEntity>()
         val entityList = listOf(entity1, entity2)
@@ -51,7 +52,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT correct count WHEN getting seed count as flow`() = runTest {
+    fun `EXPECT correct count WHEN getting seed count as flow`(): TestResult = runTest {
         val count = 5
         every { hdSeedDao.getTableSizeAsFlow() } returns flowOf(count)
 
@@ -61,7 +62,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+    fun `EXPECT account count WHEN getAccountCount is invoked`(): TestResult = runTest {
         val expectedCount = 3
         coEvery { hdSeedDao.getTableSize() } returns expectedCount
 
@@ -71,7 +72,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT highest id value WHEN getting max seed id from populated database`() = runTest {
+    fun `EXPECT highest id value WHEN getting max seed id from populated database`(): TestResult = runTest {
         val maxId = 10
         coEvery { hdSeedDao.getMaxSeedId() } returns maxId
 
@@ -81,7 +82,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getting max seed id from empty database`() = runTest {
+    fun `EXPECT null WHEN getting max seed id from empty database`(): TestResult = runTest {
         coEvery { hdSeedDao.getMaxSeedId() } returns null
 
         val result = sut.getMaxSeedId()
@@ -90,7 +91,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT complete mapped list WHEN getting all seeds`() = runTest {
+    fun `EXPECT complete mapped list WHEN getting all seeds`(): TestResult = runTest {
         val entity1 = mockk<HdSeedEntity>()
         val entity2 = mockk<HdSeedEntity>()
         val entityList = listOf(entity1, entity2)
@@ -109,7 +110,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT correctly mapped seed WHEN getting seed by existing id`() = runTest {
+    fun `EXPECT correctly mapped seed WHEN getting seed by existing id`(): TestResult = runTest {
         val seedId = 123
         val seedEntity = mockk<HdSeedEntity>()
         val mappedSeed = mockk<HdSeed>()
@@ -123,7 +124,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getting seed by non-existent id`() = runTest {
+    fun `EXPECT null WHEN getting seed by non-existent id`(): TestResult = runTest {
         val seedId = 123
         coEvery { hdSeedDao.get(seedId) } returns null
 
@@ -133,7 +134,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT generated id value WHEN adding new seed`() = runTest {
+    fun `EXPECT generated id value WHEN adding new seed`(): TestResult = runTest {
         val seedId = 123
         val entropy = ByteArray(32) { 1 }
         val seed = ByteArray(64) { 2 }
@@ -149,7 +150,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT index cleared WHEN deleting last seed`() = runTest {
+    fun `EXPECT index cleared WHEN deleting last seed`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { hdSeedDao.delete(seedId) } returns Unit
@@ -162,7 +163,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT index not cleared WHEN after deleting seed table is not empty`() = runTest {
+    fun `EXPECT index not cleared WHEN after deleting seed table is not empty`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { hdSeedDao.delete(seedId) } returns Unit
@@ -175,7 +176,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT index cleared WHEN deleting all seeds`() = runTest {
+    fun `EXPECT index cleared WHEN deleting all seeds`(): TestResult = runTest {
         coEvery { hdSeedDao.clearAll() } returns Unit
 
         val result = sut.deleteAllHdSeeds()
@@ -185,7 +186,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT successful completion WHEN clearing primary key index`() = runTest {
+    fun `EXPECT successful completion WHEN clearing primary key index`(): TestResult = runTest {
         coEvery { hdSeedDao.clearPrimaryKeyIndex() } returns Unit
 
         val result = hdSeedDao.clearPrimaryKeyIndex()
@@ -194,7 +195,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT decrypted entropy bytes WHEN getting entropy by existing id`() = runTest {
+    fun `EXPECT decrypted entropy bytes WHEN getting entropy by existing id`(): TestResult = runTest {
         val seedId = 123
         val encryptedEntropy = ByteArray(32) { 1 }
         val decryptedEntropy = ByteArray(32) { 2 }
@@ -210,7 +211,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getting entropy by non-existent id`() = runTest {
+    fun `EXPECT null WHEN getting entropy by non-existent id`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { hdSeedDao.get(seedId) } returns null
@@ -221,7 +222,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT decrypted seed bytes WHEN getting seed by existing id`() = runTest {
+    fun `EXPECT decrypted seed bytes WHEN getting seed by existing id`(): TestResult = runTest {
         val seedId = 123
         val encryptedSeed = ByteArray(64) { 1 }
         val decryptedSeed = ByteArray(64) { 2 }
@@ -237,7 +238,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN checking if any seed exists in table`() = runTest {
+    fun `EXPECT true WHEN checking if any seed exists in table`(): TestResult = runTest {
         coEvery { hdSeedDao.hasAnySeed() } returns true
 
         val result = sut.hasAnySeed()
@@ -246,7 +247,7 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN checking if any seed exists in table and it is empty`() = runTest {
+    fun `EXPECT false WHEN checking if any seed exists in table and it is empty`(): TestResult = runTest {
         coEvery { hdSeedDao.hasAnySeed() } returns false
 
         val result = sut.hasAnySeed()

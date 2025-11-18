@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class IsSwapFeatureIntroductionPageShownUseCase @Inject constructor(
-    @Named(SwapFeatureIntroductionPageRepository.INJECTION_NAME)
+    @param:Named(SwapFeatureIntroductionPageRepository.INJECTION_NAME)
     private val swapFeatureIntroductionPageRepository: SwapFeatureIntroductionPageRepository
 ) {
 
@@ -25,7 +25,7 @@ class IsSwapFeatureIntroductionPageShownUseCase @Inject constructor(
         return isSwapFeatureIntroductionPageShown()
     }
 
-    suspend fun isSwapFeatureIntroductionPageShown(): Boolean {
+    private suspend fun isSwapFeatureIntroductionPageShown(): Boolean {
         return !swapFeatureIntroductionPageRepository.getSwapFeatureIntroductionPageVisibility()
     }
 }

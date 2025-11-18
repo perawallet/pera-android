@@ -16,21 +16,21 @@ import com.algorand.android.cache.FirebasePushTokenSingleLocalCache
 import com.algorand.android.deviceregistration.data.mapper.PushTokenDeleteRequestMapper
 import com.algorand.android.deviceregistration.domain.model.DeleteDeviceDTO
 import com.algorand.android.deviceregistration.domain.repository.FirebasePushTokenRepository
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithPeraApiErrorHandler
 import com.algorand.android.utils.CacheResult
-import com.algorand.android.exceptions.RetrofitErrorHandler
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class FirebasePushTokenRepositoryImpl @Inject constructor(
     private val firebasePushTokenSingleLocalCache: FirebasePushTokenSingleLocalCache,
     private val pushTokenDeleteRequestMapper: PushTokenDeleteRequestMapper,
     private val mobileAlgorandApi: MobileAlgorandApi,
-    private val hipoErrorHandler: RetrofitErrorHandler
+    private val peraApiErrorHandler: RetrofitErrorHandler
 ) : FirebasePushTokenRepository {
 
     override fun setPushToken(token: CacheResult<String>) {
@@ -54,7 +54,7 @@ class FirebasePushTokenRepositoryImpl @Inject constructor(
             deleteDeviceDTO.pushToken,
             deleteDeviceDTO.platform
         )
-        requestWithHipoErrorHandler(hipoErrorHandler) {
+        requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             mobileAlgorandApi.deletePushToken(pushTokenDeleteRequest)
         }.use(
             onSuccess = { emit(Result.Success(it)) },

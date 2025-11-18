@@ -26,6 +26,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -47,7 +48,7 @@ class AssetInboxRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT asset inbox request WHEN response is success`() = runTest {
+    fun `EXPECT asset inbox request WHEN response is success`(): TestResult = runTest {
         coEvery {
             assetInboxApiService.getAssetInboxAllAccountsRequests("address1,address2")
         } returns Response.success(ASSET_INBOX_RESPONSE)
@@ -60,14 +61,14 @@ class AssetInboxRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT cache to be cleared WHEN clear cache invoked`() = runTest {
+    fun `EXPECT cache to be cleared WHEN clear cache invoked`(): TestResult = runTest {
         assetInboxRepositoryImpl.clearCache()
 
         verify(exactly = 1) { inMemoryLocalCache.clear() }
     }
 
     @Test
-    fun `EXPECT request count flow to be returned WHEN getRequestCountFlow invoked`() = runTest {
+    fun `EXPECT request count flow to be returned WHEN getRequestCountFlow invoked`(): TestResult = runTest {
         val cacheMap = MutableStateFlow(hashMapOf(ADDRESS_1 to AssetInboxRequest(ADDRESS_1, 1)))
         every { inMemoryLocalCache.getCacheFlow() } returns cacheMap
 
@@ -81,7 +82,7 @@ class AssetInboxRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT asset inbox requests to be cached WHEN cacheRequests invoked`() = runTest {
+    fun `EXPECT asset inbox requests to be cached WHEN cacheRequests invoked`(): TestResult = runTest {
         val requests = listOf(
             AssetInboxRequest(ADDRESS_1, 1),
             AssetInboxRequest(ADDRESS_2, 4)
@@ -93,7 +94,7 @@ class AssetInboxRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getRequest is invoked but requested address is not in cache`() = runTest {
+    fun `EXPECT null WHEN getRequest is invoked but requested address is not in cache`(): TestResult = runTest {
         every { inMemoryLocalCache[ADDRESS_1] } returns null
 
         val result = assetInboxRepositoryImpl.getRequest(ADDRESS_1)
@@ -102,7 +103,7 @@ class AssetInboxRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT request detail WHEN getRequest is invoked and requested address is in cache`() = runTest {
+    fun `EXPECT request detail WHEN getRequest is invoked and requested address is in cache`(): TestResult = runTest {
         val request = AssetInboxRequest(ADDRESS_1, 1)
         every { inMemoryLocalCache[ADDRESS_1] } returns request
 

@@ -30,7 +30,7 @@ fun Context.showAlertDialog(title: String, message: String?) {
             if (message != null) {
                 setMessage(message)
             } else {
-                setMessage(R.string.an_error_occured)
+                setMessage(R.string.an_error_occurred)
             }
         }.show()
 }

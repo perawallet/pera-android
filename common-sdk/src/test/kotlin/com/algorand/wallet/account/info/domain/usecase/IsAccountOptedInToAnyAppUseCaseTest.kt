@@ -5,6 +5,7 @@ import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -17,7 +18,7 @@ class IsAccountOptedInToAnyAppUseCaseTest {
     private val sut = IsAccountOptedInToAnyAppUseCase(accountInformationRepository)
 
     @Test
-    fun `EXPECT false WHEN account is not cached`() = runTest {
+    fun `EXPECT false WHEN account is not cached`(): TestResult = runTest {
         coEvery { accountInformationRepository.getAccountAssetsAndAppsCount(ADDRESS) } returns null
 
         val result = sut(ADDRESS)
@@ -26,7 +27,7 @@ class IsAccountOptedInToAnyAppUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN account is cached and opted in apps and created app count is zero`() = runTest {
+    fun `EXPECT false WHEN account is cached and opted in apps and created app count is zero`(): TestResult = runTest {
         val assetAndAppsCount = ACCOUNT_ASSET_AND_APPS_COUNT.copy(
             optedInAppsCount = 0,
             totalCreatedAppsCount = 0
@@ -39,7 +40,7 @@ class IsAccountOptedInToAnyAppUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN account is cached and opted in apps is greater than zero`() = runTest {
+    fun `EXPECT true WHEN account is cached and opted in apps is greater than zero`(): TestResult = runTest {
         val assetAndAppsCount = ACCOUNT_ASSET_AND_APPS_COUNT.copy(
             optedInAppsCount = 1,
             totalCreatedAppsCount = 0
@@ -52,7 +53,7 @@ class IsAccountOptedInToAnyAppUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN account is cached and created apps is greater than zero`() = runTest {
+    fun `EXPECT true WHEN account is cached and created apps is greater than zero`(): TestResult = runTest {
         val assetAndAppsCount = ACCOUNT_ASSET_AND_APPS_COUNT.copy(
             optedInAppsCount = 0,
             totalCreatedAppsCount = 1
@@ -65,7 +66,7 @@ class IsAccountOptedInToAnyAppUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN account is cached and opted in apps and created apps are greater than zero`() = runTest {
+    fun `EXPECT true WHEN account is cached and opted in apps and created apps are greater than zero`(): TestResult = runTest {
         val assetAndAppsCount = ACCOUNT_ASSET_AND_APPS_COUNT.copy(
             optedInAppsCount = 1,
             totalCreatedAppsCount = 1

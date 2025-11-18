@@ -25,7 +25,7 @@ import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrency
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgoUseCase
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyUsd
-import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyUsdUseCase
+import com.algorand.android.modules.parity.domain.usecase.IsPrimaryCurrencyUsdUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

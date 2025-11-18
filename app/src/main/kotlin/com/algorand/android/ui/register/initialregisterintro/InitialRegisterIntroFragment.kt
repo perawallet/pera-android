@@ -64,7 +64,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val viewModel: InitialRegisterIntroViewModel by viewModels()
 

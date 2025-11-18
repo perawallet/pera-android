@@ -19,8 +19,8 @@ import com.algorand.wallet.swap.domain.model.SignedSwapTransaction
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.OTHER
 import com.algorand.wallet.transaction.domain.model.TransactionId
 import com.algorand.wallet.transaction.domain.usecase.SendSignedTransaction
-import javax.inject.Inject
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 internal class SendSwapTransactionsUseCase @Inject constructor(
     private val sendSignedTransaction: SendSignedTransaction,

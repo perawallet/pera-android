@@ -15,6 +15,7 @@ package com.algorand.android.nft.ui.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+@Suppress("unused")
 @Parcelize
 enum class CollectibleMediaTypeItem : Parcelable {
     IMAGE,

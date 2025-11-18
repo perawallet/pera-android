@@ -33,9 +33,9 @@ internal class DefaultGetPasskeyIntentValidator @Inject constructor(
 ) : GetPasskeyIntentValidator {
 
     override suspend fun validate(intent: Intent): GetPasskeyIntentValidationResult {
-        val request = PendingIntentHandler.Companion.retrieveProviderGetCredentialRequest(intent)
-        val requestExtras = intent.getBundleExtra(PasskeyProviderService.Companion.EXTRA_INTENT_DATA_KEY)
-        val credentialIdB64 = requestExtras?.getString(PasskeyProviderService.Companion.CRED_ID_KEY)
+        val request = PendingIntentHandler.retrieveProviderGetCredentialRequest(intent)
+        val requestExtras = intent.getBundleExtra(PasskeyProviderService.EXTRA_INTENT_DATA_KEY)
+        val credentialIdB64 = requestExtras?.getString(PasskeyProviderService.CRED_ID_KEY)
 
         if (request == null || credentialIdB64.isNullOrEmpty()) {
             return GetPasskeyIntentValidationResult.UnableToExtractData

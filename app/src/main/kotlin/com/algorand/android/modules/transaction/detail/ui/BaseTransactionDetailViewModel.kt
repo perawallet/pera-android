@@ -45,9 +45,9 @@ abstract class BaseTransactionDetailViewModel : BaseViewModel() {
     }
 
     protected companion object {
-        const val TRANSACTION_ID_KEY = "transactionId"
-        const val ACCOUNT_ADDRESS_KEY = "accountAddress"
-        const val SHOW_CLOSE_BUTTON_KEY = "showCloseButton"
-        const val TRANSACTION_KEY = "transaction"
+        const val TRANSACTION_ID_KEY: String = "transactionId"
+        const val ACCOUNT_ADDRESS_KEY: String = "accountAddress"
+        const val SHOW_CLOSE_BUTTON_KEY: String = "showCloseButton"
+        const val TRANSACTION_KEY: String = "transaction"
     }
 }

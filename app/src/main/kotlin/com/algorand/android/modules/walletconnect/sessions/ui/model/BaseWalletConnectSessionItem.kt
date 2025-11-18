@@ -53,7 +53,7 @@ sealed class BaseWalletConnectSessionItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is WalletConnectSessionItem &&
-                sessionIdentifier.sessionIdentifier == other.sessionIdentifier.sessionIdentifier
+                    sessionIdentifier.sessionIdentifier == other.sessionIdentifier.sessionIdentifier
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -62,6 +62,6 @@ sealed class BaseWalletConnectSessionItem : RecyclerListItem {
     }
 
     companion object {
-        val excludedItemFromDivider = emptyList<Int>()
+        val excludedItemFromDivider: List<Int> = emptyList<Int>()
     }
 }

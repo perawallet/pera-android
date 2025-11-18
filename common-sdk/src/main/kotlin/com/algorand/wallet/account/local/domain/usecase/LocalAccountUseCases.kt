@@ -36,35 +36,6 @@ internal fun interface SaveNoAuthAccount {
     suspend operator fun invoke(account: LocalAccount.NoAuth)
 }
 
-fun interface GetAlgoAddressFromHdPublicKey {
-    suspend operator fun invoke(publicKey: ByteArray): String
-}
-
-fun interface CreateHdKeyAccount {
-    suspend operator fun invoke(
-        algoAddress: String,
-        publicKey: ByteArray,
-        privateKey: ByteArray,
-        seedId: Int,
-        account: Int,
-        change: Int,
-        keyIndex: Int,
-        derivationType: Int
-    )
-}
-
-fun interface CreateAlgo25Account {
-    suspend operator fun invoke(address: String, secretKey: ByteArray)
-}
-
-fun interface CreateLedgerBleAccount {
-    suspend operator fun invoke(address: String, deviceMacAddress: String, indexInLedger: Int)
-}
-
-fun interface CreateNoAuthAccount {
-    suspend operator fun invoke(address: String)
-}
-
 fun interface DeleteLocalAccount {
     suspend operator fun invoke(address: String)
 }
@@ -79,10 +50,6 @@ fun interface GetAllLocalAccountAddressesAsFlow {
 
 fun interface GetLedgerBleAccount {
     suspend operator fun invoke(address: String): LocalAccount.LedgerBle?
-}
-
-fun interface GetHdPublicKeyFromAlgoAddress {
-    suspend operator fun invoke(address: String): ByteArray
 }
 
 fun interface GetLocalAccountsFlow {

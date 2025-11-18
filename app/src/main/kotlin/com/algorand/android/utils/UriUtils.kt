@@ -17,7 +17,7 @@ import java.net.URI
 fun getBaseUrlOrNull(url: String?): String? {
     return try {
         URI.create(url).authority
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

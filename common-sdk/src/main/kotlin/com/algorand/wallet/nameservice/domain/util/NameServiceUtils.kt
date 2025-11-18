@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-
 package com.algorand.wallet.nameservice.domain.util
 
 internal object NameServiceUtils {
 
-    private const val NFT_DOMAIN_REGEX_PATTERN = "^([a-z0-9\\-]+\\.){0,1}([a-z0-9\\-]+)(\\.[a-z0-9]+)\$"
+    private const val NFT_DOMAIN_REGEX_PATTERN = "^([a-z0-9\\-]+\\.)?([a-z0-9\\-]+)(\\.[a-z0-9]+)$"
 
     fun String?.isValidNFTDomain(): Boolean {
         if (isNullOrBlank()) return false

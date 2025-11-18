@@ -24,6 +24,7 @@ import com.algorand.wallet.account.info.domain.model.AssetHolding
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -45,7 +46,7 @@ class AccountInformationCacheHelperImplTest {
     )
 
     @Test
-    fun `EXPECT account information WHEN entity mapping succeeds`() = runTest {
+    fun `EXPECT account information WHEN entity mapping succeeds`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockResponse = mockk<AccountInformationResponse>()
         val mockAssetHoldingList = listOf(mockk<AssetHoldingResponse>())
@@ -68,7 +69,7 @@ class AccountInformationCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN entity mapping fails and address does not exist`() = runTest {
+    fun `EXPECT null WHEN entity mapping fails and address does not exist`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockResponse = mockk<AccountInformationResponse>()
 
@@ -84,7 +85,7 @@ class AccountInformationCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN entity mapping fails and address exists`() = runTest {
+    fun `EXPECT null WHEN entity mapping fails and address exists`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockResponse = mockk<AccountInformationResponse>()
 
@@ -100,7 +101,7 @@ class AccountInformationCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT account information WHEN response has empty asset holdings`() = runTest {
+    fun `EXPECT account information WHEN response has empty asset holdings`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockResponse = mockk<AccountInformationResponse>()
         val mockEntity = mockk<AccountInformationEntity>()

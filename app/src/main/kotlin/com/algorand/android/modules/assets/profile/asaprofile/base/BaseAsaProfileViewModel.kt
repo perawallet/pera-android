@@ -48,7 +48,7 @@ abstract class BaseAsaProfileViewModel(
     }
 
     protected companion object {
-        const val ACCOUNT_ADDRESS_KEY = "accountAddress"
-        const val ASSET_ID_KEY = "assetId"
+        const val ACCOUNT_ADDRESS_KEY: String = "accountAddress"
+        const val ASSET_ID_KEY: String = "assetId"
     }
 }

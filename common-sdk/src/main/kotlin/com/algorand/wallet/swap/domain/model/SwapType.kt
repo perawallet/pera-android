@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.swap.domain.model
 
+@Suppress("unused")
 enum class SwapType {
     FIXED_INPUT,
     FIXED_OUTPUT

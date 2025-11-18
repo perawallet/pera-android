@@ -56,21 +56,5 @@ sealed class BaseItemConfiguration {
             override val actionButtonConfiguration: ButtonConfiguration? = null,
             val isPending: Boolean? = null
         ) : BaseAssetItemConfiguration()
-
-        data class CollectibleItemConfiguration(
-            override val assetId: Long,
-            override val primaryValue: BigDecimal? = null,
-            override val primaryValueText: String? = null,
-            override val secondaryValue: BigDecimal? = null,
-            override val secondaryValueText: String? = null,
-            override val primaryAssetName: AssetName? = null,
-            override val secondaryAssetName: AssetName? = null,
-            override val verificationTierConfiguration: VerificationTierConfiguration? = null,
-            override val assetIconDrawableProvider: BaseAssetDrawableProvider? = null,
-            override val showWithAssetId: Boolean? = null,
-            override val checkButtonConfiguration: ButtonConfiguration? = null,
-            override val dragButtonConfiguration: ButtonConfiguration? = null,
-            override val actionButtonConfiguration: ButtonConfiguration? = null
-        ) : BaseAssetItemConfiguration()
     }
 }

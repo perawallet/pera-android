@@ -44,6 +44,7 @@ internal class DefaultSwapHistoryPagingSource @Inject constructor(
                     val swapHistoryResponseResult = getSwapHistory(params.key)
                     getPageResult(keys, swapHistoryResponseResult)
                 }
+
                 is LoadParams.Append -> append(params)
                 is LoadParams.Prepend -> prepend(params)
             }

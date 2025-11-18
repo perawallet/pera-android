@@ -20,7 +20,7 @@ import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFo
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 
-open class BaseFoundAccountInformationItemUseCase constructor(
+open class BaseFoundAccountInformationItemUseCase(
     private val baseFoundAccountInformationItemMapper: BaseFoundAccountInformationItemMapper
 ) {
 

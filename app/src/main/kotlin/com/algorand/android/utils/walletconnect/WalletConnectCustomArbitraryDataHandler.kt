@@ -69,12 +69,12 @@ class WalletConnectCustomArbitraryDataHandler @Inject constructor(
             )
 
             onResult(Success(result))
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             onResult(Error(sessionIdentifier, requestIdentifier, errorProvider.getUnableToParseArbitraryDataError()))
         }
     }
 
     companion object {
-        const val MAX_ARBITRARY_DATA_COUNT = 1000
+        const val MAX_ARBITRARY_DATA_COUNT: Int = 1000
     }
 }

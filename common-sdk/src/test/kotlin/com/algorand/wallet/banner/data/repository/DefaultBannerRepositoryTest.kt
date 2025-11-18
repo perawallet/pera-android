@@ -29,6 +29,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -54,7 +55,7 @@ class DefaultBannerRepositoryTest {
     )
 
     @Test
-    fun `EXPECT banner cache flow WHEN getBannerFlow is invoked`() = runTest {
+    fun `EXPECT banner cache flow WHEN getBannerFlow is invoked`(): TestResult = runTest {
         bannerCache.put(BannerCache(BANNER_1))
 
         val testObserver = sut.getBannerFlow().test()
@@ -63,7 +64,7 @@ class DefaultBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT banner cache cleared WHEN clearBannerCache is invoked`() = runTest {
+    fun `EXPECT banner cache cleared WHEN clearBannerCache is invoked`(): TestResult = runTest {
         fakeInMemoryCache.put(BannerCache(BANNER_1))
 
         sut.clearBannerCache()
@@ -72,7 +73,7 @@ class DefaultBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT banner list WHEN get device banners call is successful`() = runTest {
+    fun `EXPECT banner list WHEN get device banners call is successful`(): TestResult = runTest {
         coEvery { bannerApiService.getDeviceBanners(DEVICE_ID) } returns BANNER_RESPONSE
         every { bannerMapper.map(BANNER_1_RESPONSE) } returns BANNER_1
         every { bannerMapper.map(BANNER_2_RESPONSE) } returns BANNER_2
@@ -84,7 +85,7 @@ class DefaultBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT empty list WHEN banner detail response is null`() = runTest {
+    fun `EXPECT empty list WHEN banner detail response is null`(): TestResult = runTest {
         coEvery { bannerApiService.getDeviceBanners(DEVICE_ID) } returns BannerListResponse(0, null)
 
         val result = sut.getBanners(DEVICE_ID)
@@ -94,7 +95,7 @@ class DefaultBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT error WHEN get device banners call fails`() = runTest {
+    fun `EXPECT error WHEN get device banners call fails`(): TestResult = runTest {
         coEvery { bannerApiService.getDeviceBanners(DEVICE_ID) } throws Exception("Network error")
 
         val result = sut.getBanners(DEVICE_ID)
@@ -103,24 +104,25 @@ class DefaultBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT banner to be removed from cache and id to be stored WHEN dismissBanner is invoked`() = runTest {
-        fakeInMemoryCache.put(BannerCache(BANNER_1))
+    fun `EXPECT banner to be removed from cache and id to be stored WHEN dismissBanner is invoked`(): TestResult =
+        runTest {
+            fakeInMemoryCache.put(BannerCache(BANNER_1))
 
-        sut.dismissBanner(BANNER_1.bannerId)
+            sut.dismissBanner(BANNER_1.bannerId)
 
-        coVerify { dismissedBannerIdsCache.setDismissed(BANNER_1.bannerId) }
-        assertNull(fakeInMemoryCache.get())
-    }
+            coVerify { dismissedBannerIdsCache.setDismissed(BANNER_1.bannerId) }
+            assertNull(fakeInMemoryCache.get())
+        }
 
     @Test
-    fun `EXPECT dismissed banner ids to be cleared WHEN clearDismissedBannerIds is invoked`() = runTest {
+    fun `EXPECT dismissed banner ids to be cleared WHEN clearDismissedBannerIds is invoked`(): TestResult = runTest {
         sut.clearDismissedBannerIds()
 
         coVerify { dismissedBannerIdsCache.clear() }
     }
 
     @Test
-    fun `EXPECT dismissed banned ids WHEN getDismissedBannerIdList is invoked`() = runTest {
+    fun `EXPECT dismissed banned ids WHEN getDismissedBannerIdList is invoked`(): TestResult = runTest {
         coEvery { dismissedBannerIdsCache.getDismissedBannerIds() } returns listOf(1L, 2L, 3L)
 
         val result = sut.getDismissedBannerIdList()
@@ -130,7 +132,7 @@ class DefaultBannerRepositoryTest {
     }
 
     @Test
-    fun `EXPECT banners to be cached WHEN cacheBanners is invoked`() = runTest {
+    fun `EXPECT banners to be cached WHEN cacheBanners is invoked`(): TestResult = runTest {
         sut.cacheBanner(BANNER_1)
 
         assertEquals(BannerCache(BANNER_1), fakeInMemoryCache.get())

@@ -25,7 +25,7 @@ sealed class BasePortfolioValueItem {
 
     data class SuccessPortfolioValueItem(
         override val titleColorResId: Int,
-        @StringRes override val errorStringResId: Int? = null,
+        @param:StringRes override val errorStringResId: Int? = null,
         val primaryAmountRenderer: AmountRenderer,
         val secondaryAmountRenderer: AmountRenderer
     ) : BasePortfolioValueItem() {
@@ -35,9 +35,9 @@ sealed class BasePortfolioValueItem {
 
     data class ErrorPortfolioValueItem(
         override val titleColorResId: Int,
-        @StringRes override val errorStringResId: Int?,
-        @StringRes val primaryAccountValueErrorResId: Int,
-        @StringRes val secondaryAccountValueErrorResId: Int
+        @param:StringRes override val errorStringResId: Int?,
+        @param:StringRes val primaryAccountValueErrorResId: Int,
+        @param:StringRes val secondaryAccountValueErrorResId: Int
     ) : BasePortfolioValueItem() {
         override fun getPrimaryAccountValue(context: Context): String = context.getString(primaryAccountValueErrorResId)
 
@@ -47,7 +47,7 @@ sealed class BasePortfolioValueItem {
 
     data class PartialErrorPortfolioValueItem(
         override val titleColorResId: Int,
-        @StringRes override val errorStringResId: Int,
+        @param:StringRes override val errorStringResId: Int,
         val primaryAmountRenderer: AmountRenderer,
         val secondaryAmountRenderer: AmountRenderer
     ) : BasePortfolioValueItem() {

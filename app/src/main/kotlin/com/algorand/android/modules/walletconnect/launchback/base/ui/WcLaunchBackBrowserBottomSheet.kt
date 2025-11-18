@@ -23,8 +23,8 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetWalletConnectLaunchBackBrowserSelectionBinding
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.walletconnect.launchback.base.ui.adapter.LaunchBackBrowserSelectionAdapter
 import com.algorand.android.modules.walletconnect.launchback.base.ui.model.LaunchBackBrowserListItem
-import com.algorand.android.modules.walletconnect.launchback.multiplebrowser.base.ui.adapter.LaunchBackBrowserSelectionAdapter
 import com.algorand.android.utils.ExcludedViewTypesDividerItemDecoration
 import com.algorand.android.utils.addCustomDivider
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -44,7 +44,9 @@ abstract class WcLaunchBackBrowserBottomSheet : BaseBottomSheet(
 
     abstract val wcLaunchBackBrowserViewModel: WcLaunchBackBrowserViewModel
 
-    protected val binding by viewBinding(BottomSheetWalletConnectLaunchBackBrowserSelectionBinding::bind)
+    protected val binding: BottomSheetWalletConnectLaunchBackBrowserSelectionBinding by viewBinding(
+        BottomSheetWalletConnectLaunchBackBrowserSelectionBinding::bind
+    )
 
     private val launchBackBrowserSelectionAdapterListener = LaunchBackBrowserSelectionAdapter.Listener { packageName ->
         openActivityWithPackageName(packageName)

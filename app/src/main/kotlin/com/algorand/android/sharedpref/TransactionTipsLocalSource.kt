@@ -36,7 +36,6 @@ class TransactionTipsLocalSource @Inject constructor(
     }
 
     companion object {
-        const val defaultTransactionTipsPreference = true
         private const val TRANSACTION_TIPS_KEY = "transaction_tips_key"
     }
 }

@@ -31,7 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MenuFragment : BaseFragment(0), MenuScreenListener,
     BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
-    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val menuNftViewModel: DefaultMenuNftViewModel by viewModels()
 

@@ -19,11 +19,11 @@ import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.model.As
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.usecase.AssetInboxAllAccountsPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetInboxAllAccountsViewModel @Inject constructor(

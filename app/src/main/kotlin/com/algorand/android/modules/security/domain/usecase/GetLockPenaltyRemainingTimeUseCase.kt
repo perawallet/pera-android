@@ -19,7 +19,7 @@ class GetLockPenaltyRemainingTimeUseCase @Inject constructor(
     private val securityRepository: SecurityRepository
 ) {
 
-    suspend operator fun invoke(): Long {
+    operator fun invoke(): Long {
         return securityRepository.getLockPenaltyRemainingTime()
     }
 }

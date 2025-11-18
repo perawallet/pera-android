@@ -18,6 +18,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -31,7 +32,7 @@ class FetchRekeyedAddressesUseCaseTest {
     private val sut = FetchRekeyedAddressesUseCase(accountInformationRepository, getLocalAccountsAddresses)
 
     @Test
-    fun `EXPECT error WHEN fetch fails`() = runTest {
+    fun `EXPECT error WHEN fetch fails`(): TestResult = runTest {
         coEvery { accountInformationRepository.fetchRekeyedAddresses(ADDRESS) } returns PeraResult.Error(Exception())
 
         val result = sut(ADDRESS)
@@ -40,7 +41,7 @@ class FetchRekeyedAddressesUseCaseTest {
     }
 
     @Test
-    fun `EXPECT rekeyed addresses WHEN fetch succeeds`() = runTest {
+    fun `EXPECT rekeyed addresses WHEN fetch succeeds`(): TestResult = runTest {
         val rekeyedAddresses = listOf("address1", "address2")
         coEvery {
             accountInformationRepository.fetchRekeyedAddresses(ADDRESS)

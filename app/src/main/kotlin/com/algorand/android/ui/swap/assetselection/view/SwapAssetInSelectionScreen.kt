@@ -33,8 +33,7 @@ fun SwapAssetInSelectionScreen(viewModel: SwapAssetInSelectionViewModel, listene
         onBackClick = listener::onBackButtonClick,
         onQueryUpdated = viewModel::updateQuery,
     ) {
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
-        when (viewState) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             is Content -> PeraPagingAssetList(
                 modifier = Modifier.padding(horizontal = 24.dp),

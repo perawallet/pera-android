@@ -14,9 +14,9 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.assetsearch.domain.model.VerificationTier
-import java.math.BigInteger
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class WalletConnectAssetInformation(

@@ -47,7 +47,7 @@ class MeldIntroViewModel @Inject constructor(
         }
     }
 
-    fun isConnectedToTestnet(): Boolean {
+    private fun isConnectedToTestnet(): Boolean {
         return getIsActiveNodeTestnetUseCase.invoke()
     }
 }

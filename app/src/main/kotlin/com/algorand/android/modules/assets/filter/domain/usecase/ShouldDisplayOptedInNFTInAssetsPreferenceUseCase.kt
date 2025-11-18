@@ -17,15 +17,15 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ShouldDisplayOptedInNFTInAssetsPreferenceUseCase @Inject constructor(
-    @Named(AssetFilterRepository.REPOSITORY_INJECTION_NAME)
+    @param:Named(AssetFilterRepository.REPOSITORY_INJECTION_NAME)
     private val assetFilterRepository: AssetFilterRepository
 ) {
 
     suspend operator fun invoke(): Boolean {
-        return assetFilterRepository.getDisplayOptedInNFTInAssetsPreference(defaultPreferenceValue)
+        return assetFilterRepository.getDisplayOptedInNFTInAssetsPreference(DEFAULT_PREFERENCE_VALUE)
     }
 
     companion object {
-        private const val defaultPreferenceValue = false
+        private const val DEFAULT_PREFERENCE_VALUE = false
     }
 }

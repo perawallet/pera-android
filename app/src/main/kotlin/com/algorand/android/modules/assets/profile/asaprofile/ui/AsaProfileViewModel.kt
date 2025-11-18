@@ -26,7 +26,7 @@ class AsaProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : BaseAsaProfileViewModel(asaProfilePreviewUseCase) {
 
-    override val accountAddress: String? get() = savedStateHandle.getOrElse<String?>(ACCOUNT_ADDRESS_KEY, null)
+    override val accountAddress: String? get() = savedStateHandle.getOrElse(ACCOUNT_ADDRESS_KEY, null)
     override val assetId: Long = savedStateHandle.getOrThrow(ASSET_ID_KEY)
 
     init {
@@ -34,6 +34,6 @@ class AsaProfileViewModel @Inject constructor(
     }
 
     fun setSelectedAccountAddress(accountAddress: String) {
-        savedStateHandle.set(ACCOUNT_ADDRESS_KEY, accountAddress)
+        savedStateHandle[ACCOUNT_ADDRESS_KEY] = accountAddress
     }
 }

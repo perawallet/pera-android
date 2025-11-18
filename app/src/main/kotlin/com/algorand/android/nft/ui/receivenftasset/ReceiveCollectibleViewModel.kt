@@ -14,12 +14,14 @@ package com.algorand.android.nft.ui.receivenftasset
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
 import com.algorand.android.modules.assets.addition.base.ui.domain.BaseAddAssetPreviewUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ReceiveCollectibleViewModel @Inject constructor(
@@ -42,12 +45,13 @@ class ReceiveCollectibleViewModel @Inject constructor(
     private val _previewFlow = MutableStateFlow<ReceiveCollectibleFragmentPreview?>(null)
     val previewFlow: StateFlow<ReceiveCollectibleFragmentPreview?> = _previewFlow.asStateFlow()
 
-    override val searchPaginationFlow = receiveCollectiblePreviewUseCase.getSearchPaginationFlow(
-        searchPagerBuilder = assetSearchPagerBuilder,
-        scope = viewModelScope,
-        queryText = queryTextFlow.value,
-        accountAddress = accountAddress
-    ).cachedIn(viewModelScope)
+    override val searchPaginationFlow: Flow<PagingData<BaseAssetSearchListItem>> =
+        receiveCollectiblePreviewUseCase.getSearchPaginationFlow(
+            searchPagerBuilder = assetSearchPagerBuilder,
+            scope = viewModelScope,
+            queryText = queryTextFlow.value,
+            accountAddress = accountAddress
+        ).cachedIn(viewModelScope)
 
     init {
         initQueryTextFlow()

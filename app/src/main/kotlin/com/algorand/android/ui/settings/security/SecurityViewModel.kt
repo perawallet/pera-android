@@ -53,9 +53,7 @@ class SecurityViewModel @Inject constructor(
         _isBiometricEnabledLiveData.postValue(isEnabled)
     }
 
-    fun isPasscodeSet() = _isPasswordChosenLiveData.value ?: false
+    fun isPasscodeSet(): Boolean = _isPasswordChosenLiveData.value ?: false
 
-    fun isBiometricAuthEnabled() = _isBiometricEnabledLiveData.value ?: false
-
-    fun isRekeySupportEnabled() = _isRekeySupportEnabledLiveData.value ?: false
+    fun isBiometricAuthEnabled(): Boolean = _isBiometricEnabledLiveData.value ?: false
 }

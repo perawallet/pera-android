@@ -13,7 +13,6 @@
 package com.algorand.android.modules.walletconnect.mapper
 
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.algorand.android.modules.walletconnect.domain.model.WalletConnectVersionIdentifier
 import javax.inject.Inject
 
 class WalletConnectSessionDeleteMapper @Inject constructor() {
@@ -26,16 +25,6 @@ class WalletConnectSessionDeleteMapper @Inject constructor() {
             sessionIdentifier = sessionIdentifier,
             reason = reason,
             versionIdentifier = sessionIdentifier.versionIdentifier
-        )
-    }
-
-    fun mapToSessionDeleteError(
-        error: Throwable,
-        versionIdentifier: WalletConnectVersionIdentifier
-    ): WalletConnect.Session.Delete.Error {
-        return WalletConnect.Session.Delete.Error(
-            error = error,
-            versionIdentifier = versionIdentifier
         )
     }
 }

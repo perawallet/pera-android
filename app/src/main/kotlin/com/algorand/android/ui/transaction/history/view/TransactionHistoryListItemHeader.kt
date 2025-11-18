@@ -125,6 +125,7 @@ private fun CsvButton(
                     color = PeraTheme.colors.helper.positive
                 )
             }
+
             CsvViewModel.ViewState.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),

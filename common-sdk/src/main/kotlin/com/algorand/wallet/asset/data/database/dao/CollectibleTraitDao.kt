@@ -27,9 +27,6 @@ internal interface CollectibleTraitDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<CollectibleTraitEntity>)
 
-    @Query("DELETE FROM collectible_trait WHERE collectible_asset_id = :collectibleAssetId")
-    suspend fun deleteAllByCollectibleAssetId(collectibleAssetId: Long)
-
     @Query("SELECT * FROM collectible_trait WHERE collectible_asset_id = :collectibleAssetId")
     suspend fun getByCollectibleAssetId(collectibleAssetId: Long): List<CollectibleTraitEntity>
 

@@ -1,14 +1,13 @@
 /*
- *   ~ Copyright 2022-2025 Pera Wallet, LDA
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License.
- *   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *   ~ Unless required by applicable law or agreed to in writing, software
- *   ~ distributed under the License is distributed on an "AS IS" BASIS,
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   ~ See the License for the specific language governing permissions and
- *   ~ limitations under the License
- *   -->
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
  */
 
 package com.algorand.android.modules.assetinbox.detail.receivedetail.ui
@@ -44,8 +43,8 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.filterNotNull
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_detail) {
@@ -147,7 +146,7 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
             context?.let {
                 showGlobalError(
                     error.parseError(it), tag =
-                    baseActivityTag
+                        baseActivityTag
                 )
             }
         }
@@ -227,7 +226,7 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
     private fun showTransactionCancelledError(result: ExternalTransactionSignResult.TransactionCancelled) {
         dismissLedgerDialog()
         val annotatedString = (result.error as? ExternalTransactionSignResult.Error.Defined)?.description
-            ?: AnnotatedString(R.string.an_error_occured)
+            ?: AnnotatedString(R.string.an_error_occurred)
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }
@@ -243,6 +242,6 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
     }
 
     companion object {
-        const val REJECT_CONFIRMATION_ID = 1001L
+        const val REJECT_CONFIRMATION_ID: Long = 1001L
     }
 }

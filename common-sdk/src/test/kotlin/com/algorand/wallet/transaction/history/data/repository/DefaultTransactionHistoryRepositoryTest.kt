@@ -25,12 +25,13 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.math.BigDecimal.ZERO
-import java.time.ZonedDateTime
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.math.BigDecimal.ZERO
+import java.time.ZonedDateTime
 
 class DefaultTransactionHistoryRepositoryTest {
 
@@ -42,7 +43,7 @@ class DefaultTransactionHistoryRepositoryTest {
     private val sut = DefaultTransactionHistoryRepository(pagingSource, apiService, swapGroupDetailMapper, errorLogger)
 
     @Test
-    fun `EXPECT error WHEN swap group transaction api call throws exception`() = runTest {
+    fun `EXPECT error WHEN swap group transaction api call throws exception`(): TestResult = runTest {
         coEvery { apiService.getSwapGroupTransactions(ADDRESS, GROUP_ID) } throws Exception()
 
         val result = sut.getSwapGroupTransactions(ADDRESS, GROUP_ID)
@@ -51,7 +52,7 @@ class DefaultTransactionHistoryRepositoryTest {
     }
 
     @Test
-    fun `EXPECT error and error to be logged WHEN response can not be mapped to domain model`() = runTest {
+    fun `EXPECT error and error to be logged WHEN response can not be mapped to domain model`(): TestResult = runTest {
         coEvery { apiService.getSwapGroupTransactions(ADDRESS, GROUP_ID) } returns SWAP_GROUP_DETAIL_RESPONSE
         every { swapGroupDetailMapper(ADDRESS, SWAP_GROUP_DETAIL_RESPONSE) } returns null
 
@@ -62,7 +63,7 @@ class DefaultTransactionHistoryRepositoryTest {
     }
 
     @Test
-    fun `EXPECT swap group detail WHEN api call and mapping succeeds`() = runTest {
+    fun `EXPECT swap group detail WHEN api call and mapping succeeds`(): TestResult = runTest {
         coEvery { apiService.getSwapGroupTransactions(ADDRESS, GROUP_ID) } returns SWAP_GROUP_DETAIL_RESPONSE
         every { swapGroupDetailMapper(ADDRESS, SWAP_GROUP_DETAIL_RESPONSE) } returns SWAP_GROUP_DETAIL
 

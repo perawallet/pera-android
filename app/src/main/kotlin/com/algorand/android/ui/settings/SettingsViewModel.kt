@@ -28,11 +28,11 @@ import com.algorand.wallet.utils.ClickCounter
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -64,7 +64,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun isPasskeysFeatureEnabled() = isFeatureToggleEnabled(FeatureToggle.LIQUID_AUTH.key)
+    fun isPasskeysFeatureEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.LIQUID_AUTH.key)
 
     fun enableDeveloperOptions() {
         devOptionsClickCounter.click()
@@ -81,6 +81,7 @@ class SettingsViewModel @Inject constructor(
                 }
                 devOptionsClickCounter.reset()
             }
+
             clickCount >= DEV_OPTIONS_INFO_CLICK_THRESHOLD -> {
                 val remainingClicks = DEV_OPTIONS_ENABLE_CLICK_THRESHOLD - clickCount
                 eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowRemainingClicksToDevOptions(remainingClicks))

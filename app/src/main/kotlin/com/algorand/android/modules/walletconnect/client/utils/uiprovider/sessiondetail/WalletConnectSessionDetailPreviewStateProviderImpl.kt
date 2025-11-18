@@ -98,6 +98,6 @@ class WalletConnectSessionDetailPreviewStateProviderImpl @Inject constructor(
     }
 
     companion object {
-        const val INJECTION_NAME = "walletConnectSessionDetailPreviewStateProviderImplInjectionName"
+        const val INJECTION_NAME: String = "walletConnectSessionDetailPreviewStateProviderImplInjectionName"
     }
 }

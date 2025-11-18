@@ -18,6 +18,7 @@ import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepos
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -37,7 +38,7 @@ class GetLocalAccountCountUseCaseTest {
     )
 
     @Test
-    fun `EXPECT zero WHEN all repositories return zero`() = runTest {
+    fun `EXPECT zero WHEN all repositories return zero`(): TestResult = runTest {
         coEvery { hdKeyAccountRepository.getAccountCount() } returns 0
         coEvery { algo25AccountRepository.getAccountCount() } returns 0
         coEvery { ledgerBleAccountRepository.getAccountCount() } returns 0
@@ -49,7 +50,7 @@ class GetLocalAccountCountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT account count WHEN there are local accounts`() = runTest {
+    fun `EXPECT account count WHEN there are local accounts`(): TestResult = runTest {
         coEvery { hdKeyAccountRepository.getAccountCount() } returns 1
         coEvery { algo25AccountRepository.getAccountCount() } returns 2
         coEvery { ledgerBleAccountRepository.getAccountCount() } returns 3

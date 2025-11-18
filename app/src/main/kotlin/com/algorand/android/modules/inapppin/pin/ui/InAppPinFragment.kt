@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.map
 @AndroidEntryPoint
 class InAppPinFragment : BaseFragment(R.layout.fragment_in_app_pin) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val inAppPinViewModel by viewModels<InAppPinViewModel>()
 
@@ -216,6 +216,6 @@ class InAppPinFragment : BaseFragment(R.layout.fragment_in_app_pin) {
     }
 
     companion object {
-        const val IN_APP_PIN_CONFIRMATION_KEY = "inAppPinConfirmationKey"
+        const val IN_APP_PIN_CONFIRMATION_KEY: String = "inAppPinConfirmationKey"
     }
 }

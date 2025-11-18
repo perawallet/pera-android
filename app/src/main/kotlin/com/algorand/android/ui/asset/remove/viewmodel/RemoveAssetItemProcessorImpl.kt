@@ -27,9 +27,9 @@ import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.Ex
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.SearchKeyword
 import com.algorand.wallet.asset.domain.usecase.GetAssetCollectibleLitesFlow
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class RemoveAssetItemProcessorImpl @Inject constructor(
     private val getAssetCollectibleLitesFlow: GetAssetCollectibleLitesFlow,
@@ -58,9 +58,11 @@ internal class RemoveAssetItemProcessorImpl @Inject constructor(
                 searchKeyword.isBlank() && !isThereAnyAssetCanAddressOptOut -> {
                     ScreenStateItem(CustomState(title = R.string.we_couldn_t_find_any_assets))
                 }
+
                 searchKeyword.isNotBlank() && isThereAnyAssetCanAddressOptOut -> {
                     ScreenStateItem(CustomState(title = R.string.no_asset_found))
                 }
+
                 else -> null
             }
         }

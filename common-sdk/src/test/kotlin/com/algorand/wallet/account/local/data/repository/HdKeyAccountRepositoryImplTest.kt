@@ -25,6 +25,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -46,7 +47,7 @@ class HdKeyAccountRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`() = runTest {
+    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`(): TestResult = runTest {
         val entities = listOf(
             HdKeyEntity("address1", byteArrayOf(1), byteArrayOf(2), 1, 0, 0, 0, 1),
             HdKeyEntity("address2", byteArrayOf(3), byteArrayOf(4), 2, 0, 0, 1, 1)
@@ -67,7 +68,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`() = runTest {
+    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`(): TestResult = runTest {
         val expectedCount = 3
         coEvery { hdKeyDao.getTableSizeAsFlow() } returns flowOf(expectedCount)
 
@@ -78,7 +79,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+    fun `EXPECT account count WHEN getAccountCount is invoked`(): TestResult = runTest {
         val expectedCount = 3
         coEvery { hdKeyDao.getTableSize() } returns expectedCount
 
@@ -88,7 +89,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts WHEN getAll is invoked`() = runTest {
+    fun `EXPECT all accounts WHEN getAll is invoked`(): TestResult = runTest {
         val entities = listOf(
             HdKeyEntity("address1", byteArrayOf(1), byteArrayOf(2), 1, 0, 0, 0, 1),
             HdKeyEntity("address2", byteArrayOf(3), byteArrayOf(4), 2, 0, 0, 1, 1)
@@ -109,7 +110,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
+    fun `EXPECT all addresses WHEN getAllAddresses is invoked`(): TestResult = runTest {
         val addresses = listOf("address1", "address2")
         coEvery { hdKeyDao.getAllAddresses() } returns addresses
 
@@ -118,7 +119,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account WHEN getAccount is invoked`() = runTest {
+    fun `EXPECT account WHEN getAccount is invoked`(): TestResult = runTest {
         val entity = HdKeyEntity("address1", byteArrayOf(1), byteArrayOf(2), 1, 0, 0, 0, 1)
         val expectedAccount = LocalAccount.HdKey("address1", byteArrayOf(1), 1, 0, 0, 0, 1)
 
@@ -132,7 +133,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`() = runTest {
+    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`(): TestResult = runTest {
         coEvery { hdKeyDao.get("non_existent_address") } returns null
 
         val result = sut.getAccount("non_existent_address")
@@ -142,7 +143,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be added WHEN addAccount is invoked`() = runTest {
+    fun `EXPECT account to be added WHEN addAccount is invoked`(): TestResult = runTest {
         val privateKey = byteArrayOf(5, 6, 7)
         val account = LocalAccount.HdKey("address", byteArrayOf(8), 1, 0, 0, 0, 1)
         val entity = HdKeyEntity("address", byteArrayOf(8), privateKey, 1, 0, 0, 0, 1)
@@ -157,7 +158,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be deleted WHEN deleteAccount is invoked`() = runTest {
+    fun `EXPECT account to be deleted WHEN deleteAccount is invoked`(): TestResult = runTest {
         coEvery { hdKeyDao.delete("address") } returns Unit
 
         val result = sut.deleteAccount("address")
@@ -167,7 +168,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts to be deleted WHEN deleteAllAccounts is invoked`() = runTest {
+    fun `EXPECT all accounts to be deleted WHEN deleteAllAccounts is invoked`(): TestResult = runTest {
         coEvery { hdKeyDao.clearAll() } returns Unit
 
         val result = sut.deleteAllAccounts()
@@ -177,7 +178,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT secret key WHEN getPrivateKey is invoked`() = runTest {
+    fun `EXPECT secret key WHEN getPrivateKey is invoked`(): TestResult = runTest {
         val encryptedSK = "encryptedSecretKey".toByteArray()
         val decryptedSK = byteArrayOf(1, 2, 3)
         coEvery { hdKeyDao.get("address") } returns HdKeyEntity("address", byteArrayOf(8), encryptedSK, 1, 0, 0, 0, 1)
@@ -188,7 +189,7 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN getPrivateKey is invoked with a non-existent address`() = runTest {
+    fun `EXPECT null WHEN getPrivateKey is invoked with a non-existent address`(): TestResult = runTest {
         coEvery { hdKeyDao.get("non_existent_address") } returns null
 
         val result = sut.getPrivateKey("non_existent_address")
@@ -199,7 +200,7 @@ class HdKeyAccountRepositoryImplTest {
 
 
     @Test
-    fun `EXPECT wallet summaries WHEN getHdWalletSummaries is invoked`() = runTest {
+    fun `EXPECT wallet summaries WHEN getHdWalletSummaries is invoked`(): TestResult = runTest {
         val seedId1 = 100
         val seedId2 = 200
 

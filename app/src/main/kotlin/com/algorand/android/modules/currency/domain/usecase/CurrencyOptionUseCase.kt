@@ -16,16 +16,17 @@ import com.algorand.android.core.BaseUseCase
 import com.algorand.android.modules.currency.domain.model.CurrencyOption
 import com.algorand.android.modules.currency.domain.repository.CurrencyRepository
 import com.algorand.android.utils.DataResource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.flow
 
 class CurrencyOptionUseCase @Inject constructor(
-    @Named(CurrencyRepository.INJECTION_NAME)
+    @param:Named(CurrencyRepository.INJECTION_NAME)
     private val currencyRepository: CurrencyRepository
 ) : BaseUseCase() {
 
-    suspend fun getCurrencyOptionListFlow() = flow {
+    fun getCurrencyOptionListFlow(): Flow<DataResource<List<CurrencyOption>>> = flow {
         emit(DataResource.Loading())
         currencyRepository.getCurrencyOptionList().use(
             onSuccess = { currencyOptionList ->

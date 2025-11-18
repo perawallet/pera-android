@@ -48,10 +48,6 @@ class ShortAssetNameDrawable(val assetName: String) {
         textColor = newTextColor
     }
 
-    fun setBorderColor(@ColorRes newBorderColor: Int) {
-        borderColor = newBorderColor
-    }
-
     fun setBackgroundColor(@ColorRes newBackgroundColor: Int) {
         backgroundColor = newBackgroundColor
     }

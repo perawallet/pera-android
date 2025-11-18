@@ -18,10 +18,10 @@ import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionViewMode
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.model.RekeyToLedgerAccountPreview
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.usecase.RekeyToLedgerAccountPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RekeyToLedgerAccountIntroductionViewModel @Inject constructor(
@@ -30,7 +30,7 @@ class RekeyToLedgerAccountIntroductionViewModel @Inject constructor(
 ) : BaseIntroductionViewModel() {
 
     private val navArgs = RekeyToLedgerAccountIntroductionFragmentArgs.fromSavedStateHandle(savedStateHandle)
-    val accountAddress = navArgs.accountAddress
+    val accountAddress: String = navArgs.accountAddress
 
     private val rekeyToLedgerAccountPreviewFlow = MutableStateFlow<RekeyToLedgerAccountPreview?>(null)
     override val introductionPreviewFlow: StateFlow<RekeyToLedgerAccountPreview?>

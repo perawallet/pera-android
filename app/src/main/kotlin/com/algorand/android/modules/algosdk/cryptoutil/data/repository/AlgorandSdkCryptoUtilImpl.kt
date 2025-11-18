@@ -21,7 +21,7 @@ class AlgorandSdkCryptoUtilImpl : AlgorandSdkCryptoUtil {
         return try {
             if (secretKey.isEmpty()) return null
             Sdk.generateAddressFromSK(secretKey)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

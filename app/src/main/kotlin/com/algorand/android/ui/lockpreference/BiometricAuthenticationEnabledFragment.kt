@@ -22,10 +22,10 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
-import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.lockpreference.BiometricAuthenticationEnabledFragmentDirections.Companion.actionBiometricAuthenticationEnabledFragmentToHomeNavigation
 
 class BiometricAuthenticationEnabledFragment : BaseInfoFragment() {
@@ -35,11 +35,11 @@ class BiometricAuthenticationEnabledFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = stringResource(id = R.string.check),
@@ -48,14 +48,14 @@ class BiometricAuthenticationEnabledFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.biometric_authentication_enabled)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier): Unit =
         PeraBodyText(
             text = stringResource(id = R.string.your_passcode_has_been_verified),
             modifier = modifier
@@ -63,7 +63,7 @@ class BiometricAuthenticationEnabledFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { navigateToHomeNavigation() },
             modifier = modifier,

@@ -87,9 +87,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -111,7 +111,7 @@ internal object SwapModule {
     ): SwapRepository {
         return DefaultSwapRepository(
             swapApiService = swapApiService,
-            lastUsedAddressCache = persistentCacheProvider.getPersistentCache<String>(
+            lastUsedAddressCache = persistentCacheProvider.getPersistentCache(
                 type = String::class.java,
                 key = "swap_last_used_address"
             ),
@@ -123,11 +123,11 @@ internal object SwapModule {
             providersCache = inMemoryCacheProvider.getInMemoryCache(),
             topSwapPairsMapper = topSwapPairsMapper,
             swapUpdateStatusRequestBodyMapper = swapUpdateStatusRequestBodyMapper,
-            useLocalCurrencyCache = persistentCacheProvider.getPersistentCache<Boolean>(
+            useLocalCurrencyCache = persistentCacheProvider.getPersistentCache(
                 type = Boolean::class.java,
                 key = "swap_use_local_currency_preference",
             ),
-            slippageTolerancePersistentCache = persistentCacheProvider.getPersistentCache<Double>(
+            slippageTolerancePersistentCache = persistentCacheProvider.getPersistentCache(
                 type = Double::class.java,
                 key = "swap_slippage_tolerance_preference",
             )

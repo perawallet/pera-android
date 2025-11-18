@@ -29,6 +29,6 @@ class ChangePasswordFragment : BasePasswordFragment() {
     )
 
     companion object {
-        const val CHANGE_PASSWORD_RE_ENTER_RESULT_KEY = "change_password_result"
+        const val CHANGE_PASSWORD_RE_ENTER_RESULT_KEY: String = "change_password_result"
     }
 }

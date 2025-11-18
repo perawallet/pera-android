@@ -25,10 +25,10 @@ import com.algorand.android.modules.collectibles.profile.ui.model.CollectiblePro
 import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingFlow
 import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.math.BigInteger
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class CollectibleProfilePreviewUseCase @Inject constructor(
@@ -88,6 +88,7 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
                     actionButtonTextResId = R.string.opt_dash_in
                 )
             }
+
             !isUserHasCollectibleBalance && creatorWalletAddress != accountAddress -> {
                 asaStatusPreviewMapper.mapToCollectibleRemovalStatusPreview(
                     statusLabelTextResId = R.string.opted_in_to,
@@ -96,6 +97,7 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
                     accountAddress = accountAddressUseCase.getAccountAddress(accountAddress)
                 )
             }
+
             else -> null
         }
     }

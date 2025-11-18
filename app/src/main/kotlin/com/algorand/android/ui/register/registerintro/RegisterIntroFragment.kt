@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.register.registerintro
 
-import GroupChoiceWidget
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -73,6 +72,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.theme.PeraTheme.typography
+import com.algorand.android.ui.compose.widget.GroupChoiceWidget
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
@@ -94,7 +94,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     private val toolbarConfiguration =
         ToolbarConfiguration(backgroundColor = R.color.primary_background)
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         statusBarConfiguration = statusBarConfiguration
     )

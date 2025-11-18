@@ -51,7 +51,7 @@ import javax.inject.Named
 class WalletConnectClientV2Impl(
     private val clientV2Mapper: WalletConnectClientV2Mapper,
     private val errorCodeProvider: WalletConnectV2ErrorCodeProvider,
-    @Named(WalletConnectV2Repository.INJECTION_NAME)
+    @param:Named(WalletConnectV2Repository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectV2Repository,
     private val createSessionNamespaceUseCase: CreateWalletConnectSessionNamespaceUseCase,
     private val caipUseCase: WalletConnectV2CaipUseCase,
@@ -296,6 +296,6 @@ class WalletConnectClientV2Impl(
 
     companion object {
         private val logTag = WalletConnectClientV2Impl::class.simpleName
-        const val INJECTION_NAME = "walletConnectClientV2InjectionName"
+        const val INJECTION_NAME: String = "walletConnectClientV2InjectionName"
     }
 }

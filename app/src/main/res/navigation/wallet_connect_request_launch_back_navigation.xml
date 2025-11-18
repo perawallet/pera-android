@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -26,8 +27,8 @@
             app:argType="com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier" />
         <argument
             android:name="walletConnectRequest"
-            app:nullable="true"
-            app:argType="com.algorand.android.models.WalletConnectRequest" />
+            app:argType="com.algorand.android.models.WalletConnectRequest"
+            app:nullable="true" />
     </dialog>
 
 </navigation>

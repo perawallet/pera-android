@@ -13,9 +13,9 @@
 package com.algorand.android.modules.walletconnect.connectionrequest.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View.generateViewId
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.view.ViewCompat
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemWalletConnectConnectionEventBinding
 import com.algorand.android.models.BaseViewHolder
@@ -41,7 +41,7 @@ class WalletConnectConnectionEventItemViewHolder(
 
     private fun createEventItemTextView(eventName: String) {
         val textView = TextView(binding.root.context).apply {
-            id = ViewCompat.generateViewId()
+            id = generateViewId()
             setTextAppearance(R.style.TextAppearance_Caption_Bold)
             text = eventName
         }

@@ -30,11 +30,11 @@ import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentD
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphrasesNavigation
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.text.PeraBodyText
-import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,7 +45,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration
     )
 
@@ -54,7 +54,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
     private val args: WriteDownInfoFragmentArgs by navArgs()
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_pen),
             contentDescription = stringResource(R.string.pen),
@@ -63,14 +63,14 @@ class WriteDownInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.prepare_to_write)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier): Unit =
         PeraBodyText(
             text = stringResource(
                 id = R.string.the_only_way_to
@@ -79,7 +79,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Warning(modifier: Modifier) =
+    override fun Warning(modifier: Modifier): Unit =
         Text(
             text = stringResource(id = R.string.do_not_share),
             style = PeraTheme.typography.body.regular.sansMedium,
@@ -89,7 +89,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { onFirstButtonClicked() },
             modifier = modifier,
@@ -101,7 +101,8 @@ class WriteDownInfoFragment : BaseInfoFragment() {
         if (args.accountsToBackup.isEmpty()) {
             PeraSecondaryButton(
                 onClick = {
-                    onSecondButtonClicked() },
+                    onSecondButtonClicked()
+                },
                 modifier = modifier,
                 text = stringResource(id = R.string.skip_for_now)
             )

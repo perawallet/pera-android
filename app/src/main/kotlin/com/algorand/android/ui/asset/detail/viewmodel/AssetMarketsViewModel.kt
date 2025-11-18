@@ -42,7 +42,7 @@ class AssetMarketsViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Idle> {
             val marketsDetail = getAssetMarketsDetail(asset)
             val isAvailableOnDiscover = asset.assetInfo?.isAvailableOnDiscoverMobile == true &&
-                asset.verificationTier != SUSPICIOUS && asset.hasUsdValue()
+                    asset.verificationTier != SUSPICIOUS && asset.hasUsdValue()
             val amountRenderer = getPrimaryFiatAmountRenderer(asset.usdValue ?: BigDecimal.ZERO, BigDecimal.ONE, Plain)
             val content = ViewState.Content(amountRenderer, isAvailableOnDiscover, marketsDetail)
             stateDelegate.updateState { content }

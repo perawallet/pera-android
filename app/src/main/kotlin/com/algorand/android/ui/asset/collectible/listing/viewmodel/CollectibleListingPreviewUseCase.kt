@@ -23,8 +23,8 @@ import com.algorand.wallet.asset.collectible.domain.model.FilteredCollectibleCou
 import com.algorand.wallet.asset.collectible.domain.usecase.GetCollectibleLiteCountFlow
 import com.algorand.wallet.asset.collectible.domain.usecase.GetCollectibleLitesFlow
 import com.algorand.wallet.asset.domain.model.AssetLite
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class CollectibleListingPreviewUseCase @Inject constructor(
     private val getCollectibleLitesFlow: GetCollectibleLitesFlow,

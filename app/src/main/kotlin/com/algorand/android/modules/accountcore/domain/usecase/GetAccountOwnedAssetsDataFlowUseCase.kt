@@ -14,9 +14,9 @@ package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import javax.inject.Inject
 
 internal class GetAccountOwnedAssetsDataFlowUseCase @Inject constructor(
     private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow,

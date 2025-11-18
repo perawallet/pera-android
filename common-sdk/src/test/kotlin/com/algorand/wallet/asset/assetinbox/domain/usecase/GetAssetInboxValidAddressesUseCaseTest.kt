@@ -18,6 +18,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -29,7 +30,7 @@ class GetAssetInboxValidAddressesUseCaseTest {
     private val sut = GetAssetInboxValidAddressesUseCase(getAccountsDetails)
 
     @Test
-    fun `EXPECT valid asset inbox addresses`() = runTest {
+    fun `EXPECT valid asset inbox addresses`(): TestResult = runTest {
         coEvery { getAccountsDetails() } returns ACCOUNT_DETAILS
 
         val result = sut()

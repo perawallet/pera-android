@@ -57,8 +57,7 @@ fun SwapGroupDetailScreen(viewModel: SwapGroupDetailViewModel, listener: SwapGro
                 )
             }
         )
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
-        when (viewState) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             is Content -> {
                 when (val contentState = viewState.state) {
@@ -98,7 +97,7 @@ private fun ErrorState(onRetryClick: () -> Unit) {
             modifier = Modifier.padding(24.dp),
             iconResId = null,
             titleResId = null,
-            descriptionResId = R.string.an_error_occured,
+            descriptionResId = R.string.an_error_occurred,
             buttonTextResId = R.string.retry,
             onClick = onRetryClick
         )

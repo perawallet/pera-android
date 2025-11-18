@@ -12,20 +12,20 @@
 
 package com.algorand.android.modules.transaction.csv.data.repository
 
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.DateRange
 import com.algorand.android.models.Result
 import com.algorand.android.modules.transaction.csv.domain.repository.CsvRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network.requestWithPeraApiErrorHandler
 import com.algorand.android.utils.ISO_EXTENDED_DATE_FORMAT
-import com.algorand.android.exceptions.RetrofitErrorHandler
-import javax.inject.Inject
 import java.io.File
 import java.io.InputStream
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 class CsvRepositoryImpl @Inject constructor(
-    private val hipoApiErrorHandler: RetrofitErrorHandler,
+    private val peraApiErrorHandler: RetrofitErrorHandler,
     private val mobileAlgorandApi: MobileAlgorandApi
 ) : CsvRepository {
 
@@ -38,7 +38,7 @@ class CsvRepositoryImpl @Inject constructor(
         val csvFormatter = DateTimeFormatter.ofPattern(ISO_EXTENDED_DATE_FORMAT)
         val fromFormatted = dateRange?.from?.format(csvFormatter)
         val toFormatted = dateRange?.to?.format(csvFormatter)
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             mobileAlgorandApi.getExportHistory(
                 address = publicKey,
                 startDate = fromFormatted,

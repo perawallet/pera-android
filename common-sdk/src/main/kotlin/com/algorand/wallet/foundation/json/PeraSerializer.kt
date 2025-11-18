@@ -24,7 +24,7 @@ internal class JsonSerializerImpl @Inject constructor(val gson: Gson) : JsonSeri
     override fun <T> fromJson(json: String, type: Class<T>): T? {
         return try {
             gson.fromJson(json, type)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

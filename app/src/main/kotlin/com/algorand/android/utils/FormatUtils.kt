@@ -17,32 +17,13 @@ import com.mitsinsar.peracompactdecimalformat.locals.EnglishLocale
 import com.mitsinsar.peracompactdecimalformat.utils.fractionaldigit.FractionalDigit
 import com.mitsinsar.peracompactdecimalformat.utils.toPeraDecimal
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
-const val PERCENT_FORMAT = "##0.00'%'"
-const val PLUS_SIGN = "+"
-const val MINUS_SIGN = "-"
+const val PLUS_SIGN: String = "+"
+const val MINUS_SIGN: String = "-"
 private const val NUMBER_DECIMAL_FORMAT = "#,###.##"
-
-fun getFormatter(
-    format: String,
-    includeMagnitude: Boolean = false,
-    positiveSuffix: String? = null,
-    negativeSuffix: String? = null
-): DecimalFormat {
-    return DecimalFormat(format, DecimalFormatSymbols()).apply {
-        roundingMode = RoundingMode.DOWN
-        if (positiveSuffix != null) this.positiveSuffix = positiveSuffix
-        if (negativeSuffix != null) this.negativeSuffix = negativeSuffix
-        if (includeMagnitude) {
-            this.positivePrefix = PLUS_SIGN
-            this.negativePrefix = MINUS_SIGN
-        }
-    }
-}
 
 fun formatCompactNumber(number: BigDecimal, fractionalDigitCreator: FractionalDigit.FractionalDigitCreator): String {
     return PeraCompactDecimalFormatBuilder.getInstance()

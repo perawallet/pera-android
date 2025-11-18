@@ -33,6 +33,6 @@ interface WalletConnectV2Repository {
     suspend fun deleteCachedPairUri(uri: WalletConnectV2PairUri)
 
     companion object {
-        const val INJECTION_NAME = "walletConnectV2RepositoryInjectionName"
+        const val INJECTION_NAME: String = "walletConnectV2RepositoryInjectionName"
     }
 }

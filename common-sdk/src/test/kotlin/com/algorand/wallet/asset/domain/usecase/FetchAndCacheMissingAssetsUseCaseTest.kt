@@ -20,6 +20,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -35,7 +36,7 @@ class FetchAndCacheMissingAssetsUseCaseTest {
     private val sut = FetchAndCacheMissingAssetsUseCase(assetRepository, getSelectedNodeDeviceId, errorLogger)
 
     @Test
-    fun `EXPECT success WHEN there are no missing assets`() = runTest {
+    fun `EXPECT success WHEN there are no missing assets`(): TestResult = runTest {
         val assetIds = listOf(1L, 2L, 3L)
         coEvery { assetRepository.getCachedAssetIds() } returns assetIds
 
@@ -46,7 +47,7 @@ class FetchAndCacheMissingAssetsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT assets to be cached WHEN they are not in cache`() = runTest {
+    fun `EXPECT assets to be cached WHEN they are not in cache`(): TestResult = runTest {
         val assetIds = listOf(1L, 2L, 3L)
         coEvery { assetRepository.getCachedAssetIds() } returns listOf(1L, 2L)
         coEvery {
@@ -59,7 +60,7 @@ class FetchAndCacheMissingAssetsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT failure WHEN there are missing assets but repository returns false`() = runTest {
+    fun `EXPECT failure WHEN there are missing assets but repository returns false`(): TestResult = runTest {
         val assetIds = listOf(1L, 2L, 3L)
         coEvery { assetRepository.getCachedAssetIds() } returns listOf(1L, 2)
         coEvery {
@@ -72,7 +73,7 @@ class FetchAndCacheMissingAssetsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT device id error to be logged WHEN device id is null or blank`() = runTest {
+    fun `EXPECT device id error to be logged WHEN device id is null or blank`(): TestResult = runTest {
         val assetIds = listOf(1L, 2L, 3L)
         coEvery { assetRepository.getCachedAssetIds() } returns listOf(1L, 2)
         every { getSelectedNodeDeviceId() } returns null

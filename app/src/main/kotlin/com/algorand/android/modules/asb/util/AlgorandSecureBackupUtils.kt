@@ -14,8 +14,8 @@ package com.algorand.android.modules.asb.util
 
 object AlgorandSecureBackupUtils {
 
-    const val BACKUP_FILE_MIME_TYPE = "text/plain"
-    val IMPORT_BACKUP_FILE_MIME_TYPES = arrayOf(BACKUP_FILE_MIME_TYPE, "application/json")
+    private const val BACKUP_FILE_MIME_TYPE: String = "text/plain"
+    val IMPORT_BACKUP_FILE_MIME_TYPES: Array<String> = arrayOf(BACKUP_FILE_MIME_TYPE, "application/json")
 
-    const val BACKUP_PASSPHRASES_WORD_COUNT = 12
+    const val BACKUP_PASSPHRASES_WORD_COUNT: Int = 12
 }

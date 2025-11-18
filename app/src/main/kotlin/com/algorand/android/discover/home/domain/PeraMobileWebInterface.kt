@@ -14,6 +14,7 @@ package com.algorand.android.discover.home.domain
 
 import android.webkit.JavascriptInterface
 
+@Suppress("unused")
 class PeraMobileWebInterface private constructor(val listener: WebInterfaceListener) {
 
     @JavascriptInterface
@@ -80,7 +81,7 @@ class PeraMobileWebInterface private constructor(val listener: WebInterfaceListe
     }
 
     companion object {
-        const val WEB_INTERFACE_NAME = "peraMobileInterface"
+        const val WEB_INTERFACE_NAME: String = "peraMobileInterface"
         fun create(listener: WebInterfaceListener): PeraMobileWebInterface {
             return PeraMobileWebInterface(listener)
         }

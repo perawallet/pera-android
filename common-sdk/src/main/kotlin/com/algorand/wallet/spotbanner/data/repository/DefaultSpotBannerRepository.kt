@@ -19,9 +19,9 @@ import com.algorand.wallet.spotbanner.data.mapper.SpotBannerMapper
 import com.algorand.wallet.spotbanner.data.service.SpotBannerApiService
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import com.algorand.wallet.spotbanner.domain.repository.SpotBannerRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class DefaultSpotBannerRepository @Inject constructor(
     private val spotBannerApiService: SpotBannerApiService,

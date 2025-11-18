@@ -27,7 +27,7 @@ abstract class BaseAccountOptionsBottomSheet : DaggerBaseBottomSheet(
     firebaseEventScreenId = null
 ) {
 
-    protected val binding by viewBinding(BottomSheetAccountsOptionsBinding::bind)
+    protected val binding: BottomSheetAccountsOptionsBinding by viewBinding(BottomSheetAccountsOptionsBinding::bind)
 
     protected val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
 

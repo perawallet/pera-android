@@ -82,7 +82,7 @@ class BasePaymentTransactionDetailUiBuilder @Inject constructor(
         return TransactionRequestExtrasInfo(rawTransaction = txn.rawTransactionPayload)
     }
 
-    override fun buildTransactionRequestExtraFields(txn: BasePaymentTransaction): TransactionRequestExtraFields? {
+    override fun buildTransactionRequestExtraFields(txn: BasePaymentTransaction): TransactionRequestExtraFields {
         return with(txn) {
             TransactionRequestExtraFields(
                 rejectVersion = rejectVersion,

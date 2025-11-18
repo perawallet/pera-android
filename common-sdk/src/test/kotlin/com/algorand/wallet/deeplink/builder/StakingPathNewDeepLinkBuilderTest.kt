@@ -15,19 +15,11 @@ package com.algorand.wallet.deeplink.builder
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class StakingPathNewDeepLinkBuilderTest {
 
     private val sut = StakingPathNewDeepLinkBuilder()
-
-    @Test
-    fun `EXPECT true WHEN deeplink requirements match`() {
-        val result = sut.createDeepLink(VALID_DEEP_LINK) != null
-
-        assertTrue(result)
-    }
 
     @Test
     fun `EXPECT staking deeplink`() {

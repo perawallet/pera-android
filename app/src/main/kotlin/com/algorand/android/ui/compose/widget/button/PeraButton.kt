@@ -48,11 +48,7 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
             when (modifier.state) {
                 PeraButtonState.PROGRESS -> {
                     PeraCircularProgressIndicator(
-                        color = if (modifier.state == PeraButtonState.DISABLED) {
-                            modifier.colors.disabledContentColor
-                        } else {
-                            modifier.colors.contentColor
-                        }
+                        color = modifier.colors.contentColor
                     )
                 }
 

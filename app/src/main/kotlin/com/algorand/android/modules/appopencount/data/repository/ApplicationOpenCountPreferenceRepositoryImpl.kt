@@ -13,7 +13,7 @@
 package com.algorand.android.modules.appopencount.data.repository
 
 import com.algorand.android.modules.appopencount.data.local.ApplicationOpenCountPreferencesLocalSource
-import com.algorand.android.modules.appopencount.data.local.ApplicationOpenCountPreferencesLocalSource.Companion.defaultApplicationOpenCountPreferences
+import com.algorand.android.modules.appopencount.data.local.ApplicationOpenCountPreferencesLocalSource.Companion.DEFAULT_APPLICATION_OPEN_COUNT_PREFERENCES
 import com.algorand.android.modules.appopencount.domain.repository.ApplicationOpenCountPreferenceRepository
 import javax.inject.Inject
 
@@ -26,6 +26,6 @@ class ApplicationOpenCountPreferenceRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getApplicationOpenCount(): Int {
-        return applicationOpenCountPreferencesLocalSource.getData(defaultApplicationOpenCountPreferences)
+        return applicationOpenCountPreferencesLocalSource.getData(DEFAULT_APPLICATION_OPEN_COUNT_PREFERENCES)
     }
 }

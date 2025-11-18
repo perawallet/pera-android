@@ -22,6 +22,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -35,7 +36,7 @@ class DefaultPrivacyModeRepositoryTest {
     private val sut = DefaultPrivacyModeRepository(flowPersistentCache, privacyModeMapper, privacyModeCacheValueMapper)
 
     @Test
-    fun `EXPECT cached privacy mode WHEN get privacy mode is invoked`() = runTest {
+    fun `EXPECT cached privacy mode WHEN get privacy mode is invoked`(): TestResult = runTest {
         every { flowPersistentCache.get() } returns PrivacyModeCacheValue.ENABLED
         every { privacyModeMapper(PrivacyModeCacheValue.ENABLED) } returns PrivacyMode.Enabled
 
@@ -45,7 +46,7 @@ class DefaultPrivacyModeRepositoryTest {
     }
 
     @Test
-    fun `EXPECT privacy mode to be cached WHEN set privacy mode is invoked`() = runTest {
+    fun `EXPECT privacy mode to be cached WHEN set privacy mode is invoked`(): TestResult = runTest {
         every { privacyModeCacheValueMapper(PrivacyMode.Disabled) } returns PrivacyModeCacheValue.DISABLED
 
         sut.setPrivacyMode(PrivacyMode.Disabled)
@@ -55,7 +56,7 @@ class DefaultPrivacyModeRepositoryTest {
 
     @Test
     fun `EXPECT cache flow updates WHEN privacy mode changes`() {
-        val cacheFlow = MutableStateFlow<PrivacyModeCacheValue>(PrivacyModeCacheValue.ENABLED)
+        val cacheFlow = MutableStateFlow(PrivacyModeCacheValue.ENABLED)
         every { flowPersistentCache.observe() } returns cacheFlow
         every { privacyModeMapper(PrivacyModeCacheValue.ENABLED) } returns PrivacyMode.Enabled
         every { privacyModeMapper(PrivacyModeCacheValue.DISABLED) } returns PrivacyMode.Disabled

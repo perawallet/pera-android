@@ -12,8 +12,8 @@
 
 package com.algorand.android.credentials.passkeys.ui.mapper
 
-import com.algorand.android.credentials.passkeys.domain.model.CreatePublicKeyCredentialResponseArgs
 import com.algorand.android.credentials.passkeys.domain.Bip39SignManager
+import com.algorand.android.credentials.passkeys.domain.model.CreatePublicKeyCredentialResponseArgs
 import com.algorand.android.credentials.passkeys.ui.viewmodel.CreatePasskeyViewModel.CreatePasskeyParams
 import javax.inject.Inject
 

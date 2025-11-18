@@ -49,9 +49,8 @@ class BidaliBrowserFragment :
         startIconClick = ::navBack,
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = false,
     )
 
     override lateinit var binding: FragmentBidaliBrowserBinding
@@ -212,6 +211,7 @@ class BidaliBrowserFragment :
                     errorTitleTextView.text = getString(R.string.well_this_is_unexpected)
                     errorDescriptionTextView.text = getString(R.string.we_are_not_able_to_find)
                 }
+
                 WebViewError.NO_CONNECTION -> {
                     errorTitleTextView.text = getString(R.string.no_internet_connection)
                     errorDescriptionTextView.text = getString(R.string.you_dont_seem_to_be_connected)

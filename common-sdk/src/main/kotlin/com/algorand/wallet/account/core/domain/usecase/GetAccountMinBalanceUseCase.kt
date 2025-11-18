@@ -51,12 +51,12 @@ internal class GetAccountMinBalanceUseCase @Inject constructor(
             val byteSchemeValue = appsTotalSchema?.numByteSlice ?: 0
             val extraAppPages = appsTotalExtraPages
             return MIN_BALANCE_TO_KEEP_PER_OPTED_IN_ASSET * optedAssets +
-                MIN_BALANCE_TO_KEEP_PER_CREATED_APPS * createdApps +
-                MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS * optedApps +
-                MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_INT * intSchemeValue +
-                MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_BYTE_SLICE * byteSchemeValue +
-                MIN_BALANCE_TO_KEEP_PER_APP_EXTRA_PAGES * extraAppPages +
-                if (includeMinBalance) MIN_BALANCE else 0
+                    MIN_BALANCE_TO_KEEP_PER_CREATED_APPS * createdApps +
+                    MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS * optedApps +
+                    MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_INT * intSchemeValue +
+                    MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_BYTE_SLICE * byteSchemeValue +
+                    MIN_BALANCE_TO_KEEP_PER_APP_EXTRA_PAGES * extraAppPages +
+                    if (includeMinBalance) MIN_BALANCE else 0
         }
     }
 

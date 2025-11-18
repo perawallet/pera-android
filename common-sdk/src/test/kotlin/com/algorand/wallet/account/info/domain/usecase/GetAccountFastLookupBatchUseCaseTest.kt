@@ -17,6 +17,7 @@ import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -28,7 +29,7 @@ class GetAccountFastLookupBatchUseCaseTest {
     private val sut = GetAccountFastLookupBatchUseCase(getAccountFastLookup)
 
     @Test
-    fun `EXPECT successful account fast lookup map`() = runTest {
+    fun `EXPECT successful account fast lookup map`(): TestResult = runTest {
         coEvery { getAccountFastLookup(ADDRESS_1) } returns PeraResult.Success(ACCOUNT_FAST_LOOKUP_1)
         coEvery { getAccountFastLookup(ADDRESS_2) } returns PeraResult.Success(ACCOUNT_FAST_LOOKUP_2)
         coEvery { getAccountFastLookup(ADDRESS_3) } returns PeraResult.Error(Exception())

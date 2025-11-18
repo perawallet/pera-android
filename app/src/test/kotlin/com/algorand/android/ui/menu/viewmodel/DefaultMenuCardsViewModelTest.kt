@@ -28,6 +28,7 @@ import io.mockk.coJustAwait
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -58,7 +59,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT loading state WHEN making api request`() = runTest {
+    fun `EXPECT loading state WHEN making api request`(): TestResult = runTest {
         coJustAwait { getCardFundAddresses() }
         coJustAwait { isCountryWaitlistedForCards() }
 
@@ -68,7 +69,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT error state WHEN get card fund addresses returns Error`() = runTest {
+    fun `EXPECT error state WHEN get card fund addresses returns Error`(): TestResult = runTest {
         coEvery { getCardFundAddresses() } returns PeraResult.Error(Exception())
         coEvery { isCountryWaitlistedForCards() } returns PeraResult.Success(true)
 
@@ -78,7 +79,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT error state WHEN country waitlist returns Error`() = runTest {
+    fun `EXPECT error state WHEN country waitlist returns Error`(): TestResult = runTest {
         coEvery { getCardFundAddresses() } returns PeraResult.Success(peraFixture<List<FundAddress>>())
         coEvery { isCountryWaitlistedForCards() } returns PeraResult.Error(Exception())
 
@@ -88,7 +89,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT waitlisted state WHEN country is waitlisted and there are no fund address`() = runTest {
+    fun `EXPECT waitlisted state WHEN country is waitlisted and there are no fund address`(): TestResult = runTest {
         coEvery { getCardFundAddresses() } returns PeraResult.Success(listOf(FUND_ADDRESS.copy(fundAddress = null)))
         coEvery { isCountryWaitlistedForCards() } returns PeraResult.Success(true)
 
@@ -98,7 +99,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT card created state WHEN there are fund addresses and nft reward is processed`() = runTest {
+    fun `EXPECT card created state WHEN there are fund addresses and nft reward is processed`(): TestResult = runTest {
         val fundAddresses = listOf(
             FUND_ADDRESS.copy(fundAddress = "address1", nftRewardState = CardNftRewardState.PROCESSED)
         )
@@ -111,7 +112,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT card created state WHEN there are fund addresses and nft reward is is_processing`() = runTest {
+    fun `EXPECT card created state WHEN there are fund addresses and nft reward is is_processing`(): TestResult = runTest {
         val fundAddresses = listOf(
             FUND_ADDRESS.copy(fundAddress = "address1", nftRewardState = CardNftRewardState.IS_PROCESSING)
         )
@@ -124,7 +125,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT new user state WHEN there are fund addresses and no card is created`() = runTest {
+    fun `EXPECT new user state WHEN there are fund addresses and no card is created`(): TestResult = runTest {
         val fundAddresses = listOf(
             FUND_ADDRESS.copy(fundAddress = "address1", nftRewardState = CardNftRewardState.NOT_PROCESSED)
         )
@@ -137,7 +138,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT new user state WHEN there are no fund addresses and no card is created`() = runTest {
+    fun `EXPECT new user state WHEN there are no fund addresses and no card is created`(): TestResult = runTest {
         val fundAddresses = listOf(
             FUND_ADDRESS.copy(fundAddress = null, nftRewardState = CardNftRewardState.NOT_PROCESSED)
         )
@@ -150,7 +151,7 @@ class DefaultMenuCardsViewModelTest {
     }
 
     @Test
-    fun `EXPECT state to be initialized once WHEN init called multiple times`() = runTest {
+    fun `EXPECT state to be initialized once WHEN init called multiple times`(): TestResult = runTest {
         coEvery { getCardFundAddresses() } returns PeraResult.Error(Exception())
         coEvery { isCountryWaitlistedForCards() } returns PeraResult.Success(true)
 

@@ -10,7 +10,6 @@
  * limitations under the License
  */
 
-
 package com.algorand.wallet.nameservice.data.model
 
 import com.google.gson.annotations.SerializedName

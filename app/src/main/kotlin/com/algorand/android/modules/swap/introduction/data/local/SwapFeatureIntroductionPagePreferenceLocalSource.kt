@@ -26,7 +26,7 @@ class SwapFeatureIntroductionPagePreferenceLocalSource @Inject constructor(
         return sharedPref.getBoolean(key, defaultValue)
     }
 
-    override fun getDataOrNull(): Boolean? {
+    override fun getDataOrNull(): Boolean {
         return sharedPref.getBoolean(key, DEFAULT_SWAP_FEATURE_INTRODUCTION_PAGE_PREFERENCE)
     }
 
@@ -36,6 +36,6 @@ class SwapFeatureIntroductionPagePreferenceLocalSource @Inject constructor(
 
     companion object {
         private const val SWAP_FEATURE_INTRODUCTION_PAGE_KEY = "swapFeatureIntroductionPagePreference"
-        const val DEFAULT_SWAP_FEATURE_INTRODUCTION_PAGE_PREFERENCE = true
+        const val DEFAULT_SWAP_FEATURE_INTRODUCTION_PAGE_PREFERENCE: Boolean = true
     }
 }

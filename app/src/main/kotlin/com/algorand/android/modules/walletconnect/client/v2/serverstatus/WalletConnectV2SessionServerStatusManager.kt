@@ -17,6 +17,6 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectSessionSer
 interface WalletConnectV2SessionServerStatusManager : WalletConnectSessionServerStatusManager {
 
     companion object {
-        const val INJECTION_NAME = "walletConnectV2SessionServerStatusManagerInjectionName"
+        const val INJECTION_NAME: String = "walletConnectV2SessionServerStatusManagerInjectionName"
     }
 }

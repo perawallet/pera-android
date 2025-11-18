@@ -40,12 +40,14 @@ class TransactionScreenStateViewTypeDecider @Inject constructor() {
                     ScreenState.DefaultError()
                 }
             }
+
             isEmpty -> {
                 ScreenState.CustomState(
                     title = R.string.no_transactions,
                     description = R.string.there_are_no
                 )
             }
+
             else -> null
         }
     }

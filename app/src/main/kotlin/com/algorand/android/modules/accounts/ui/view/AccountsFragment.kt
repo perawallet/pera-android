@@ -86,7 +86,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         isBottomBarNeeded = true,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
@@ -324,7 +324,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         accountsViewModel.dismissTutorial(tutorialId)
         binding.root.context.showGiftCardsTutorialDialog(
             onBuyGiftCards = ::navToBidali,
-            onLater = { }
+            onLater = {}
         )
     }
 

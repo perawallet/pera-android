@@ -32,7 +32,7 @@ class DeveloperSettingsViewModel @Inject constructor(
     private val isDeveloperOptionsEnabled: IsDeveloperOptionsEnabled
 ) : BaseViewModel() {
 
-    var firstAccountAddress: String? = null
+    private var firstAccountAddress: String? = null
 
     init {
         updateFirstAccountAddress()

@@ -26,7 +26,7 @@ class Arc59ExpressSendViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val transactionData = savedStateHandle.getOrThrow<TransactionSignData.Send>(TRANSACTION_DATA_KEY)
+    val transactionData: TransactionSignData.Send = savedStateHandle.getOrThrow(TRANSACTION_DATA_KEY)
 
     fun disableArc59ExpressSendWarning() {
         arc59ExpressSendUseCase.disableExpressSendWarning()

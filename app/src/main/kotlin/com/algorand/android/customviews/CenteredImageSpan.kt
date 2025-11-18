@@ -19,6 +19,7 @@ import android.graphics.Paint.FontMetricsInt
 import android.graphics.drawable.Drawable
 import android.text.style.ImageSpan
 import androidx.annotation.DrawableRes
+import androidx.core.graphics.withSave
 import java.lang.ref.WeakReference
 
 class CenteredImageSpan(context: Context, @DrawableRes drawableRes: Int) : ImageSpan(context, drawableRes) {
@@ -64,11 +65,11 @@ class CenteredImageSpan(context: Context, @DrawableRes drawableRes: Int) : Image
         bottom: Int,
         paint: Paint
     ) {
-        canvas.save()
-        val fontHeight = paint.fontMetricsInt.descent - paint.fontMetricsInt.ascent
-        cachedDrawable.setBounds(0, 0, fontHeight, fontHeight)
-        canvas.translate(x, 0F)
-        cachedDrawable.draw(canvas)
-        canvas.restore()
+        canvas.withSave {
+            val fontHeight = paint.fontMetricsInt.descent - paint.fontMetricsInt.ascent
+            cachedDrawable.setBounds(0, 0, fontHeight, fontHeight)
+            translate(x, 0F)
+            cachedDrawable.draw(this)
+        }
     }
 }

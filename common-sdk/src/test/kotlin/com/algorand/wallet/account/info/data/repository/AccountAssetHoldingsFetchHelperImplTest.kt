@@ -18,6 +18,8 @@ import com.algorand.wallet.account.info.data.service.AccountInformationApiServic
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
@@ -26,7 +28,6 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 import java.io.IOException
-import kotlinx.coroutines.test.runTest
 
 class AccountAssetHoldingsFetchHelperImplTest {
 
@@ -39,7 +40,7 @@ class AccountAssetHoldingsFetchHelperImplTest {
     }
 
     @Test
-    fun `EXPECT success result with assets WHEN api returns single page`() = runTest {
+    fun `EXPECT success result with assets WHEN api returns single page`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockAssets = listOf(
             mockk<AssetHoldingResponse>(),
@@ -49,7 +50,7 @@ class AccountAssetHoldingsFetchHelperImplTest {
 
         coEvery { mockResponse.assets } returns mockAssets
         coEvery { mockResponse.nextToken } returns null
-        coEvery { mockIndexerApi.getAccountAssets(address, 5000, null) } returns Response.success(mockResponse)
+        coEvery { mockIndexerApi.getAccountAssets(address, 5000) } returns Response.success(mockResponse)
 
         val result = sut.fetchAccountAssetHoldings(address)
 
@@ -58,7 +59,7 @@ class AccountAssetHoldingsFetchHelperImplTest {
     }
 
     @Test
-    fun `EXPECT success result with all assets WHEN api returns multiple pages`() = runTest {
+    fun `EXPECT success result with all assets WHEN api returns multiple pages`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockAssetsPage1 = listOf(
             mockk<AssetHoldingResponse>(),
@@ -77,8 +78,14 @@ class AccountAssetHoldingsFetchHelperImplTest {
         coEvery { mockResponsePage2.assets } returns mockAssetsPage2
         coEvery { mockResponsePage2.nextToken } returns null
 
-        coEvery { mockIndexerApi.getAccountAssets(address, 5000, null) } returns Response.success(mockResponsePage1)
-        coEvery { mockIndexerApi.getAccountAssets(address, 5000, nextToken) } returns Response.success(mockResponsePage2)
+        coEvery { mockIndexerApi.getAccountAssets(address, 5000) } returns Response.success(mockResponsePage1)
+        coEvery {
+            mockIndexerApi.getAccountAssets(
+                address,
+                5000,
+                nextToken
+            )
+        } returns Response.success(mockResponsePage2)
 
         val result = sut.fetchAccountAssetHoldings(address)
 
@@ -87,11 +94,11 @@ class AccountAssetHoldingsFetchHelperImplTest {
     }
 
     @Test
-    fun `EXPECT error result WHEN api throws exception`() = runTest {
+    fun `EXPECT error result WHEN api throws exception`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val exception = IOException("Network error")
 
-        coEvery { mockIndexerApi.getAccountAssets(address, 5000, null) } throws exception
+        coEvery { mockIndexerApi.getAccountAssets(address, 5000) } throws exception
 
         val result = sut.fetchAccountAssetHoldings(address)
 
@@ -100,11 +107,11 @@ class AccountAssetHoldingsFetchHelperImplTest {
     }
 
     @Test
-    fun `EXPECT error result WHEN api returns error response`() = runTest {
+    fun `EXPECT error result WHEN api returns error response`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val errorCode = 404
 
-        coEvery { mockIndexerApi.getAccountAssets(address, 5000, null) } returns
+        coEvery { mockIndexerApi.getAccountAssets(address, 5000) } returns
                 Response.error(errorCode, "".toResponseBody("application/json".toMediaTypeOrNull()))
 
         val result = sut.fetchAccountAssetHoldings(address)
@@ -114,13 +121,13 @@ class AccountAssetHoldingsFetchHelperImplTest {
     }
 
     @Test
-    fun `EXPECT success with empty list WHEN api returns empty assets list`() = runTest {
+    fun `EXPECT success with empty list WHEN api returns empty assets list`(): TestResult = runTest {
         val address = "TEST_ADDRESS"
         val mockResponse = mockk<AccountAssetsResponse>()
 
         coEvery { mockResponse.assets } returns emptyList()
         coEvery { mockResponse.nextToken } returns "NEXT_TOKEN"
-        coEvery { mockIndexerApi.getAccountAssets(address, 5000, null) } returns Response.success(mockResponse)
+        coEvery { mockIndexerApi.getAccountAssets(address, 5000) } returns Response.success(mockResponse)
 
         val result = sut.fetchAccountAssetHoldings(address)
 

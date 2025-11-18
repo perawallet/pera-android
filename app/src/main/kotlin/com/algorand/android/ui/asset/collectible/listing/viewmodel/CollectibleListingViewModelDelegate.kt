@@ -41,7 +41,6 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.can
 import com.algorand.wallet.asset.collectible.domain.model.FilteredCollectibleCount
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.viewmodel.StateDelegate
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,6 +56,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class CollectibleListingViewModelDelegate @Inject constructor(
     private val collectibleListingPreviewUseCase: CollectibleListingPreviewUseCase,
@@ -78,7 +78,7 @@ class CollectibleListingViewModelDelegate @Inject constructor(
     private var coroutineScope: CoroutineScope? = null
     private var collectCollectibleListingPreviewJob: Job? = null
 
-    private val nftListingTypeFlow = MutableStateFlow<NFTListingViewType>(NFTListingViewType.DEFAULT_VIEW_TYPE)
+    private val nftListingTypeFlow = MutableStateFlow(NFTListingViewType.DEFAULT_VIEW_TYPE)
     private val searchKeywordFlow = MutableStateFlow("")
     private lateinit var accountLiteCacheStatusFlow: Flow<AccountLiteCacheStatus>
     private lateinit var headerItemProvider: BaseCollectibleListHeaderItemProvider

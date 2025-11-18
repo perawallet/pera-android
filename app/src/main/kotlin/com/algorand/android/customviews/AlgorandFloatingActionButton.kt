@@ -16,7 +16,6 @@ package com.algorand.android.customviews
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.view.isVisible
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomAlgorandFabBinding
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -37,10 +36,6 @@ class AlgorandFloatingActionButton @JvmOverloads constructor(
 
     init {
         initUi()
-    }
-
-    fun setBuyAlgoActionButtonVisibility(isVisible: Boolean) {
-        binding.buyAlgoActionButton.isVisible = isVisible
     }
 
     private fun initUi() {

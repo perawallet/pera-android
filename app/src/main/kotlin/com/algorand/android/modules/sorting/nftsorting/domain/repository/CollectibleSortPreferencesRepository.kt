@@ -21,6 +21,6 @@ interface CollectibleSortPreferencesRepository {
     suspend fun getCollectibleSortPreference(defaultValue: CollectibleSortPreference): CollectibleSortPreference
 
     companion object {
-        const val INJECTION_NAME = "collectibleSortPreferencesRepository"
+        const val INJECTION_NAME: String = "collectibleSortPreferencesRepository"
     }
 }

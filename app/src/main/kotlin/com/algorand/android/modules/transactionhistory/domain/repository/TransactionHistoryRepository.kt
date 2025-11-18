@@ -29,6 +29,6 @@ interface TransactionHistoryRepository {
     ): Result<PaginatedTransactionsDTO>
 
     companion object {
-        const val INJECTION_NAME = "transactionHistoryRepositoryInjectionName"
+        const val INJECTION_NAME: String = "transactionHistoryRepositoryInjectionName"
     }
 }

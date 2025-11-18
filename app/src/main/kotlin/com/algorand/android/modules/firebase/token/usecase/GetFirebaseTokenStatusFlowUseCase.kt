@@ -16,9 +16,9 @@ import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.wallet.analytics.domain.model.FirebaseTokenStatus
 import com.algorand.wallet.analytics.domain.usecase.GetFirebaseTokenStatusFlow
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class GetFirebaseTokenStatusFlowUseCase @Inject constructor(
     private val firebaseTokenManager: FirebaseTokenManager

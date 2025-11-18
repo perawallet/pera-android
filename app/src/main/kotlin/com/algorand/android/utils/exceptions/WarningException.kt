@@ -19,7 +19,7 @@ import com.algorand.android.models.ExceptionErrorParser
 import com.algorand.android.utils.Resource
 
 data class WarningException(
-    @StringRes val titleRes: Int,
+    @param:StringRes val titleRes: Int,
     val annotatedString: AnnotatedString
 ) : Exception(), ExceptionErrorParser {
     override fun getAsResourceError(): Resource.Error {

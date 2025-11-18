@@ -33,7 +33,7 @@ class EditContactQrScannerFragment : BaseQrScannerFragment(R.id.editContactQrSca
     }
 
     companion object {
-        const val ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY = "account_address_qr_scan_result"
-        const val ACCOUNT_LABEL_QR_SCAN_RESULT_KEY = "account_label_qr_scan_result"
+        const val ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY: String = "account_address_qr_scan_result"
+        const val ACCOUNT_LABEL_QR_SCAN_RESULT_KEY: String = "account_label_qr_scan_result"
     }
 }

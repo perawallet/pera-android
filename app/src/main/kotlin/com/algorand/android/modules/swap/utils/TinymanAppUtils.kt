@@ -12,5 +12,5 @@
 
 package com.algorand.android.modules.swap.utils
 
-const val TESTNET_TINYMAN_ID = 62368684L
-const val MAINNET_TINYMAN_ID = 552635992L
+const val TESTNET_TINYMAN_ID: Long = 62368684L
+const val MAINNET_TINYMAN_ID: Long = 552635992L

@@ -42,8 +42,8 @@ class ApplicationCallTransactionAssetInformationViewHolder(
         if (item !is TransactionDetailItem.ApplicationCallItem.AppCallAssetInformationItem) return
         binding.assetLabelTextView.text = binding.root.resources.getQuantityString(
             item.labelTextRes,
-            item.assetInformationList.count(),
-            item.assetInformationList.count()
+            item.assetInformationList.size,
+            item.assetInformationList.size
         )
         initAssetsInformationGroup(item.assetInformationList, item.showMoreButton, item.showMoreAssetCount)
     }

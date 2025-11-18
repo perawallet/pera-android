@@ -35,23 +35,24 @@ sealed class TransactionManagerResult {
                     is MinBalanceError -> {
                         Pair(title, context.getString(R.string.you_need_at_least, neededBalance.formatAsAlgoString()))
                     }
+
                     is Api -> Pair(title, errorMessage)
                 }
             }
 
             data class Defined(
                 val description: AnnotatedString,
-                @StringRes override val titleResId: Int = R.string.error_default_title
+                @param:StringRes override val titleResId: Int = R.string.error_default_title
             ) : GlobalWarningError()
 
             data class Api(
                 val errorMessage: String,
-                @StringRes override val titleResId: Int = R.string.error_default_title
+                @param:StringRes override val titleResId: Int = R.string.error_default_title
             ) : GlobalWarningError()
 
             data class MinBalanceError(
                 val neededBalance: BigInteger,
-                @StringRes override val titleResId: Int = R.string.min_transaction_error
+                @param:StringRes override val titleResId: Int = R.string.min_transaction_error
             ) : GlobalWarningError()
         }
 

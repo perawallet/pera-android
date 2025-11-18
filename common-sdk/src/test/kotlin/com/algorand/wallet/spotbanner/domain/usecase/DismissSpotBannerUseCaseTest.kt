@@ -17,6 +17,7 @@ import com.algorand.wallet.spotbanner.domain.repository.SpotBannerRepository
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -28,7 +29,7 @@ class DismissSpotBannerUseCaseTest {
     private val sut = DismissSpotBannerUseCase(getSelectedNodeDeviceId, spotBannerRepository)
 
     @Test
-    fun `EXPECT no action WHEN device id is null`() = runTest {
+    fun `EXPECT no action WHEN device id is null`(): TestResult = runTest {
         every { getSelectedNodeDeviceId() } returns null
 
         sut(BANNER_ID)
@@ -37,7 +38,7 @@ class DismissSpotBannerUseCaseTest {
     }
 
     @Test
-    fun `EXPECT banner to be dismissed WHEN device id exists`() = runTest {
+    fun `EXPECT banner to be dismissed WHEN device id exists`(): TestResult = runTest {
         val deviceId = "device-id"
         every { getSelectedNodeDeviceId() } returns deviceId
 

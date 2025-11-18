@@ -54,7 +54,9 @@ class ReceiverAccountSelectionFragment : TransactionSignBaseFragment(R.layout.fr
         titleResId = R.string.select_the_receiver_account
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentReceiverAccountSelectionBinding::bind)
 
@@ -237,7 +239,7 @@ class ReceiverAccountSelectionFragment : TransactionSignBaseFragment(R.layout.fr
     }
 
     private fun updateLatestCopiedMessage() {
-        receiverAccountSelectionViewModel.updateCopiedMessage(context?.getTextFromClipboard()?.toString())
+        receiverAccountSelectionViewModel.updateCopiedMessage(context?.getTextFromClipboard())
     }
 
     override fun onPause() {

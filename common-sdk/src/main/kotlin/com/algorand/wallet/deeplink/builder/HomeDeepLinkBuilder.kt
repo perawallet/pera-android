@@ -34,8 +34,6 @@ internal class HomeDeepLinkBuilder : DeepLinkBuilder {
     }
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
-        return with(payload) {
-            DeepLink.Home
-        }
+        return DeepLink.Home
     }
 }

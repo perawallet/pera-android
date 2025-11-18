@@ -27,7 +27,7 @@ abstract class WalletConnectV2ClientDatabase : RoomDatabase() {
     abstract fun getWalletConnectDao(): WalletConnectV2Dao
 
     companion object {
-        const val LATEST_DB_VERSION = 1
-        const val DATABASE_NAME = "pera-wc-v2-db"
+        const val LATEST_DB_VERSION: Int = 1
+        const val DATABASE_NAME: String = "pera-wc-v2-db"
     }
 }

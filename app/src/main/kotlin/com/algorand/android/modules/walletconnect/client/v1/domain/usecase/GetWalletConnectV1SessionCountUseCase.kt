@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetWalletConnectV1SessionCountUseCase @Inject constructor(
-    @Named(WalletConnectRepository.INJECTION_NAME)
+    @param:Named(WalletConnectRepository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectRepository
 ) {
 

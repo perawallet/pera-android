@@ -15,6 +15,7 @@ package com.algorand.android.repository
 
 import com.algorand.android.database.NodeDao
 import com.algorand.android.models.Node
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class NodeRepository @Inject constructor(
@@ -25,11 +26,11 @@ class NodeRepository @Inject constructor(
         nodeDao.updateNodes(nodes)
     }
 
-    fun getAllNodesAsFlow() = nodeDao.getAllNodeAsFlow()
+    fun getAllNodesAsFlow(): Flow<List<Node>> = nodeDao.getAllNodeAsFlow()
 
-    suspend fun getAllNodes() = nodeDao.getAllNode()
+    suspend fun getAllNodes(): List<Node> = nodeDao.getAllNode()
 
-    suspend fun getActiveNode() = nodeDao.getActiveNode()
+    suspend fun getActiveNode(): Node? = nodeDao.getActiveNode()
 
-    fun getActiveNodeAsFlow() = nodeDao.getActiveNodeAsFlow()
+    fun getActiveNodeAsFlow(): Flow<Node?> = nodeDao.getActiveNodeAsFlow()
 }

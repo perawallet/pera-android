@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -35,9 +36,9 @@
         android:id="@+id/accountHistoryRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_large"
         android:clipToPadding="false"
         android:paddingHorizontal="@dimen/spacing_xlarge"
-        android:layout_marginTop="@dimen/spacing_large"
         android:paddingBottom="@dimen/bottom_padding_for_screen_with_floating_button"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"

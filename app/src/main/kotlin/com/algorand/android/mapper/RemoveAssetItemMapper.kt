@@ -64,6 +64,7 @@ class RemoveAssetItemMapper @Inject constructor(
                     verificationTierConfigurationDecider.decideVerificationTierConfiguration(assetLite.verificationTier)
                 )
             }
+
             is AssetLite.Type.Collectible -> RemoveAssetItem.RemoveAssetItemType.Collectible
         }
     }

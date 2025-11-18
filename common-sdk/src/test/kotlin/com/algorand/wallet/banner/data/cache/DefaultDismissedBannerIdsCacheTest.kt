@@ -17,6 +17,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -29,7 +30,7 @@ class DefaultDismissedBannerIdsCacheTest {
     private val sut = DefaultDismissedBannerIdsCache(persistentCache)
 
     @Test
-    fun `EXPECT banner id to be cached WHEN set dismissed invoked and cache is null`() = runTest {
+    fun `EXPECT banner id to be cached WHEN set dismissed invoked and cache is null`(): TestResult = runTest {
         every { persistentCache.get() } returns null
 
         sut.setDismissed(99L)
@@ -38,16 +39,17 @@ class DefaultDismissedBannerIdsCacheTest {
     }
 
     @Test
-    fun `EXPECT banner id to be added existing cache WHEN set dismissed invoked and cache is not empty`() = runTest {
-        every { persistentCache.get() } returns arrayOf(1L, 2L, 3L)
+    fun `EXPECT banner id to be added existing cache WHEN set dismissed invoked and cache is not empty`(): TestResult =
+        runTest {
+            every { persistentCache.get() } returns arrayOf(1L, 2L, 3L)
 
-        sut.setDismissed(99L)
+            sut.setDismissed(99L)
 
-        verify { persistentCache.put(arrayOf(1L, 2L, 3L, 99L)) }
-    }
+            verify { persistentCache.put(arrayOf(1L, 2L, 3L, 99L)) }
+        }
 
     @Test
-    fun `EXPECT cached banner ids WHEN cache is not empty`() = runTest {
+    fun `EXPECT cached banner ids WHEN cache is not empty`(): TestResult = runTest {
         every { persistentCache.get() } returns arrayOf(1L, 2L, 3L)
 
         val result = sut.getDismissedBannerIds()
@@ -57,7 +59,7 @@ class DefaultDismissedBannerIdsCacheTest {
     }
 
     @Test
-    fun `EXPECT empty list WHEN cache is null`() = runTest {
+    fun `EXPECT empty list WHEN cache is null`(): TestResult = runTest {
         every { persistentCache.get() } returns null
 
         val result = sut.getDismissedBannerIds()
@@ -66,7 +68,7 @@ class DefaultDismissedBannerIdsCacheTest {
     }
 
     @Test
-    fun `EXPECT cache to be cleared`() = runTest {
+    fun `EXPECT cache to be cleared`(): TestResult = runTest {
         sut.clear()
 
         coVerify { persistentCache.clear() }

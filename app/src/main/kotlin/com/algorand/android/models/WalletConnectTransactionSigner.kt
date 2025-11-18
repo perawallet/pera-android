@@ -46,6 +46,7 @@ sealed class WalletConnectTransactionSigner : Parcelable {
                             Unsignable(errorProvider.getUnableToSignError())
                         }
                     }
+
                     firstSignerAddress != null -> {
                         return if (senderAddress.decodedAddress == firstSignerAddress) {
                             returnInvalidInputIfAddressIsInvalid(
@@ -56,12 +57,14 @@ sealed class WalletConnectTransactionSigner : Parcelable {
                             Unsignable(errorProvider.getUnableToSignError())
                         }
                     }
+
                     authAccountAddress != null -> {
                         returnInvalidInputIfAddressIsInvalid(
                             Rekeyed(WalletConnectAddress(authAccountAddress, authAccountAddress)),
                             errorProvider.getInvalidPublicKeyError()
                         )
                     }
+
                     else -> returnInvalidInputIfAddressIsInvalid(
                         Sender(senderAddress),
                         errorProvider.getInvalidPublicKeyError()
@@ -76,13 +79,6 @@ sealed class WalletConnectTransactionSigner : Parcelable {
         ): WalletConnectTransactionSigner {
             return signer.takeIf { it.address?.decodedAddress?.isValidAddress() == true } ?: Unsignable(error)
         }
-    }
-
-    private fun returnInvalidInputIfAddressIsInvalid(
-        signer: WalletConnectTransactionSigner,
-        error: WalletConnectError
-    ): WalletConnectTransactionSigner {
-        return signer.takeIf { it.address?.decodedAddress?.isValidAddress() == true } ?: Unsignable(error)
     }
 
     @Parcelize

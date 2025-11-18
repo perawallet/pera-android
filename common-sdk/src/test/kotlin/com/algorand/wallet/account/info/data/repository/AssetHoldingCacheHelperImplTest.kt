@@ -28,11 +28,12 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigInteger
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.math.BigInteger
 
 class AssetHoldingCacheHelperImplTest {
 
@@ -45,7 +46,7 @@ class AssetHoldingCacheHelperImplTest {
     private val sut = AssetHoldingCacheHelperImpl(assetHoldingDao, assetHoldingEntityMapper, assetHoldingMapper)
 
     @Test
-    fun `EXPECT algo only and pending for removals to be removed WHEN asset holding response is empty`() = runTest {
+    fun `EXPECT algo only and pending for removals to be removed WHEN asset holding response is empty`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(allAssetHoldingList = emptyList())
         coEvery { assetHoldingDao.getAssetsByAddress(ADDRESS) } returns listOf(PENDING_FOR_REMOVAL_ENTITY)
         every { assetHoldingMapper(listOf(ALGO_ASSET_HOLDING_ENTITY)) } returns listOf(ALGO_ASSET_HOLDING)
@@ -57,7 +58,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT empty list WHEN response is null`() = runTest {
+    fun `EXPECT empty list WHEN response is null`(): TestResult = runTest {
         val result = sut.cacheAssetHolding(null)
 
         coVerify(exactly = 0) { assetHoldingDao.insertAll(any(), any()) }
@@ -65,7 +66,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT empty list WHEN address is null`() = runTest {
+    fun `EXPECT empty list WHEN address is null`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(address = null)
 
         val result = sut.cacheAssetHolding(response)
@@ -75,7 +76,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT new asset to be cached WHEN response contains new asset`() = runTest {
+    fun `EXPECT new asset to be cached WHEN response contains new asset`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(allAssetHoldingList = listOf(OWNED_RESPONSE))
         coEvery { assetHoldingDao.getAssetsByAddress(ADDRESS) } returns emptyList()
         every { assetHoldingEntityMapper(ADDRESS, OWNED_RESPONSE, AssetStatus.OWNED_BY_ACCOUNT) } returns OWNED_ENTITY
@@ -91,7 +92,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT pending for removal to be removed WHEN response does not contain them`() = runTest {
+    fun `EXPECT pending for removal to be removed WHEN response does not contain them`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(allAssetHoldingList = listOf(OWNED_RESPONSE))
         val assetHoldings = listOf(OWNED_ENTITY, PENDING_FOR_REMOVAL_ENTITY, ALGO_ASSET_HOLDING_ENTITY)
         coEvery { assetHoldingDao.getAssetsByAddress(ADDRESS) } returns assetHoldings
@@ -108,7 +109,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT pending for removal to be kept WHEN response still contains it`() = runTest {
+    fun `EXPECT pending for removal to be kept WHEN response still contains it`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(
             allAssetHoldingList = listOf(OWNED_RESPONSE, PENDING_FOR_REMOVAL_RESPONSE)
         )
@@ -133,7 +134,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT pending for addition to be cached as owned WHEN asset holding contains it`() = runTest {
+    fun `EXPECT pending for addition to be cached as owned WHEN asset holding contains it`(): TestResult = runTest {
         val ownedResponse = peraFixture<AssetHoldingResponse>().copy(
             assetId = PENDING_FOR_ADDITION_ENTITY.assetId,
             amount = "0"
@@ -163,7 +164,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT pending for addition to be cached as is WHEN asset holdings does not contain it`() = runTest {
+    fun `EXPECT pending for addition to be cached as is WHEN asset holdings does not contain it`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(allAssetHoldingList = listOf(OWNED_RESPONSE))
         val assetHoldings = listOf(OWNED_ENTITY, PENDING_FOR_ADDITION_ENTITY, ALGO_ASSET_HOLDING_ENTITY)
         coEvery { assetHoldingDao.getAssetsByAddress(ADDRESS) } returns assetHoldings
@@ -185,7 +186,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT new asset not to be cached WHEN mapping fails`() = runTest {
+    fun `EXPECT new asset not to be cached WHEN mapping fails`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(allAssetHoldingList = listOf(OWNED_RESPONSE))
         coEvery { assetHoldingDao.getAssetsByAddress(ADDRESS) } returns listOf(ALGO_ASSET_HOLDING_ENTITY)
         every { assetHoldingEntityMapper(ADDRESS, OWNED_RESPONSE, AssetStatus.OWNED_BY_ACCOUNT) } returns null
@@ -198,7 +199,7 @@ class AssetHoldingCacheHelperImplTest {
     }
 
     @Test
-    fun `EXPECT cached asset not to be updated WHEN mapping fails`() = runTest {
+    fun `EXPECT cached asset not to be updated WHEN mapping fails`(): TestResult = runTest {
         val response = ACCOUNT_INFO_RESPONSE.copy(allAssetHoldingList = listOf(OWNED_RESPONSE))
         coEvery { assetHoldingDao.getAssetsByAddress(ADDRESS) } returns listOf(OWNED_ENTITY, ALGO_ASSET_HOLDING_ENTITY)
         every { assetHoldingEntityMapper(ADDRESS, OWNED_RESPONSE, AssetStatus.OWNED_BY_ACCOUNT) } returns null

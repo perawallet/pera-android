@@ -18,12 +18,12 @@ import com.algorand.android.modules.assets.filter.ui.model.AssetFilterPreview
 import com.algorand.android.modules.assets.filter.ui.usecase.AssetFilterPreviewUseCase
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetFilterViewModel @Inject constructor(

@@ -31,6 +31,7 @@ class WalletConnectMethodDecider @Inject constructor(
             WalletConnectVersionIdentifier.VERSION_1 -> {
                 walletConnectV1MethodDecider.decideMethod(method)
             }
+
             WalletConnectVersionIdentifier.VERSION_2 -> {
                 walletConnectV2MethodDecider.decideMethod(method)
             }

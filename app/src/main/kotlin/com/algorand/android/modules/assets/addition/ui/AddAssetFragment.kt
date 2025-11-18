@@ -18,10 +18,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.customviews.ScreenStateView
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentAddAssetBinding
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
@@ -60,7 +60,9 @@ class AddAssetFragment : BaseAddAssetFragment(R.layout.fragment_add_asset) {
         startIconClick = ::onBackPressed
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentAddAssetBinding::bind)
 

@@ -16,8 +16,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 
 data class ButtonConfiguration(
-    @DrawableRes val iconDrawableResId: Int? = null,
-    @ColorRes val iconTintResId: Int? = null,
-    @ColorRes val iconBackgroundColorResId: Int? = null,
-    @ColorRes val iconRippleColorResId: Int? = null
+    @param:DrawableRes val iconDrawableResId: Int? = null,
+    @param:ColorRes val iconTintResId: Int? = null,
+    @param:ColorRes val iconBackgroundColorResId: Int? = null,
+    @param:ColorRes val iconRippleColorResId: Int? = null
 )

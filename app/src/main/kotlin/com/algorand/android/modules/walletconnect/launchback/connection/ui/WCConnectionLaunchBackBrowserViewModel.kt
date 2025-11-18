@@ -19,9 +19,9 @@ import com.algorand.android.modules.walletconnect.launchback.connection.ui.model
 import com.algorand.android.modules.walletconnect.launchback.connection.ui.usecase.WCConnectionLaunchBackBrowserPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class WCConnectionLaunchBackBrowserViewModel @Inject constructor(

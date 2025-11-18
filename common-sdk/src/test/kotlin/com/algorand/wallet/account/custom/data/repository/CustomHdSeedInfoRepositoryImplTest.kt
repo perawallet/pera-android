@@ -21,14 +21,15 @@ import com.algorand.wallet.account.custom.domain.model.HdSeedOrderIndex
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 
 @ExperimentalCoroutinesApi
 class CustomHdSeedInfoRepositoryImplTest {
@@ -51,7 +52,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT custom info WHEN dao returns valid entity`() = runTest {
+    fun `EXPECT custom info WHEN dao returns valid entity`(): TestResult = runTest {
         val seedId = 123
         val entity = mockk<CustomHdSeedInfoEntity>()
         val expectedInfo = mockk<CustomHdSeedInfo>()
@@ -65,7 +66,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN dao returns null for getCustomInfo`() = runTest {
+    fun `EXPECT null WHEN dao returns null for getCustomInfo`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { customHdSeedInfoDao.getOrNull(seedId) } returns null
@@ -76,7 +77,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT custom info WHEN dao returns valid entity for getCustomInfoOrNull`() = runTest {
+    fun `EXPECT custom info WHEN dao returns valid entity for getCustomInfoOrNull`(): TestResult = runTest {
         val seedId = 123
         val entity = mockk<CustomHdSeedInfoEntity>()
         val expectedInfo = mockk<CustomHdSeedInfo>()
@@ -90,7 +91,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN dao returns null for getCustomInfoOrNull`() = runTest {
+    fun `EXPECT null WHEN dao returns null for getCustomInfoOrNull`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { customHdSeedInfoDao.getOrNull(seedId) } returns null
@@ -101,7 +102,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN setCustomInfo is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN setCustomInfo is invoked`(): TestResult = runTest {
         val info = mockk<CustomHdSeedInfo>()
         val entity = mockk<CustomHdSeedInfoEntity>()
 
@@ -114,20 +115,19 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN setCustomName is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN setCustomName is invoked`(): TestResult = runTest {
         val seedId = 123
         val name = "Test Seed"
-        var result: Unit? = null
 
         coEvery { customHdSeedInfoDao.updateCustomName(seedId, name) } returns Unit
 
-        result = sut.setCustomName(seedId, name)
+        val result = sut.setCustomName(seedId, name)
 
         assertEquals(Unit, result)
     }
 
     @Test
-    fun `EXPECT correct custom name WHEN getCustomName is invoked`() = runTest {
+    fun `EXPECT correct custom name WHEN getCustomName is invoked`(): TestResult = runTest {
         val seedId = 123
         val expectedName = "Test Seed"
 
@@ -139,7 +139,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN deleteCustomInfo is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN deleteCustomInfo is invoked`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { customHdSeedInfoDao.delete(seedId) } returns Unit
@@ -150,7 +150,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT set of not backed up seeds WHEN getNotBackedUpHdSeeds is invoked`() = runTest {
+    fun `EXPECT set of not backed up seeds WHEN getNotBackedUpHdSeeds is invoked`(): TestResult = runTest {
         val notBackedUpSeedIds = listOf(123, 456, 789)
 
         coEvery { customHdSeedInfoDao.getNotBackedUpSeedIds() } returns notBackedUpSeedIds
@@ -161,7 +161,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT set of backed up seeds WHEN getBackedUpHdSeeds is invoked`() = runTest {
+    fun `EXPECT set of backed up seeds WHEN getBackedUpHdSeeds is invoked`(): TestResult = runTest {
         val backedUpSeedIds = listOf(123, 456, 789)
 
         coEvery { customHdSeedInfoDao.getBackedUpSeedIds() } returns backedUpSeedIds
@@ -172,7 +172,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN isHdSeedBackedUp is invoked with backed up seed`() = runTest {
+    fun `EXPECT true WHEN isHdSeedBackedUp is invoked with backed up seed`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { customHdSeedInfoDao.isAccountBackedUp(seedId) } returns true
@@ -183,7 +183,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN isHdSeedBackedUp is invoked with not backed up seed`() = runTest {
+    fun `EXPECT false WHEN isHdSeedBackedUp is invoked with not backed up seed`(): TestResult = runTest {
         val seedId = 123
 
         coEvery { customHdSeedInfoDao.isAccountBackedUp(seedId) } returns false
@@ -194,7 +194,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT list of order indexes WHEN getAllHdSeedOrderIndexes is invoked`() = runTest {
+    fun `EXPECT list of order indexes WHEN getAllHdSeedOrderIndexes is invoked`(): TestResult = runTest {
         val entity1 = mockk<CustomHdSeedInfoEntity>()
         val entity2 = mockk<CustomHdSeedInfoEntity>()
         val entities = listOf(entity1, entity2)
@@ -214,7 +214,7 @@ class CustomHdSeedInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN setOrderIndex is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN setOrderIndex is invoked`(): TestResult = runTest {
         val seedId = 123
         val orderIndex = 5
 

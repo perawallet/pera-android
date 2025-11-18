@@ -23,14 +23,6 @@ sealed class SelectionListItem {
     abstract fun getVisibleName(context: Context): String
 }
 
-data class LanguageListItem(
-    val languageId: String,
-    val languageName: String,
-    override var isSelected: Boolean
-) : SelectionListItem() {
-    override fun getVisibleName(context: Context): String = languageName
-}
-
 data class CurrencyListItem(
     val currencyId: String,
     val currencyName: String,
@@ -40,8 +32,8 @@ data class CurrencyListItem(
 }
 
 data class ThemeListItem(
-    val themeId: String,
-    @StringRes val themeResId: Int,
+    private val themeId: String,
+    @param:StringRes val themeResId: Int,
     override var isSelected: Boolean
 ) : SelectionListItem() {
     override fun getVisibleName(context: Context): String {
@@ -49,7 +41,7 @@ data class ThemeListItem(
     }
 
     fun convertToThemePreference(): ThemePreference? {
-        val themePreference = ThemePreference.values().firstOrNull { it.name == themeId }
+        val themePreference = ThemePreference.entries.firstOrNull { it.name == themeId }
         if (themePreference == null) {
             val exception = Exception("theme preference not found for theme id: $themeId")
             recordException(exception)

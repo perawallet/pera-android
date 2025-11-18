@@ -17,6 +17,6 @@ interface AlgorandSdkCryptoUtil {
     suspend fun generateAccountAddressFromSecretKey(secretKey: ByteArray): String?
 
     companion object {
-        const val INJECTION_NAME = "algorandSdkCryptoUtilInjectionName"
+        const val INJECTION_NAME: String = "algorandSdkCryptoUtilInjectionName"
     }
 }

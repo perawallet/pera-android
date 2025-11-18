@@ -17,3 +17,7 @@ import java.math.BigDecimal
 internal fun String?.formatToBigDecimal(decimals: Int?): BigDecimal? {
     return this?.toBigDecimalOrNull()?.movePointLeft(decimals ?: 0)?.stripTrailingZeros()
 }
+
+fun BigDecimal.isZero(): Boolean {
+    return signum() == 0
+}

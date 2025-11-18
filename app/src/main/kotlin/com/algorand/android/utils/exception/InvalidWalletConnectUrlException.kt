@@ -12,4 +12,4 @@
 
 package com.algorand.android.utils.exception
 
-object InvalidWalletConnectUrlException : Exception()
+class InvalidWalletConnectUrlException : Exception()

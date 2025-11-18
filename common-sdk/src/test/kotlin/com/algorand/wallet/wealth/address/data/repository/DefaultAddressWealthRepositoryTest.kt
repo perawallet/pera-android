@@ -23,6 +23,7 @@ import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -39,7 +40,7 @@ class DefaultAddressWealthRepositoryTest {
     private val sut = DefaultAddressWealthRepository(addressWealthApiService, periodRequestMapper, addressWealthMapper)
 
     @Test
-    fun `EXPECT Error WHEN fetching wealth fails`() = runTest {
+    fun `EXPECT Error WHEN fetching wealth fails`(): TestResult = runTest {
         coEvery {
             addressWealthApiService.getAddressWealth(
                 ADDRESS_QUERY,
@@ -54,7 +55,7 @@ class DefaultAddressWealthRepositoryTest {
     }
 
     @Test
-    fun `EXPECT mapped result WHEN fetching succeeds`() = runTest {
+    fun `EXPECT mapped result WHEN fetching succeeds`(): TestResult = runTest {
         coEvery {
             addressWealthApiService.getAddressWealth(
                 ADDRESS_QUERY,

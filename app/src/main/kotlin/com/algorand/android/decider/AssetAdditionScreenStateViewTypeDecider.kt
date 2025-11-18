@@ -42,6 +42,7 @@ class AssetAdditionScreenStateViewTypeDecider @Inject constructor() {
                     ScreenState.DefaultError()
                 }
             }
+
             isEmpty -> ScreenState.CustomState(title = decideEmptyStateTitle(assetAdditionType))
             else -> null
         }

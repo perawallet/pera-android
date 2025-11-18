@@ -25,8 +25,8 @@ sealed class ErrorResource {
     sealed class LocalErrorResource : ErrorResource() {
 
         data class Local(
-            @StringRes val errorResId: Int,
-            @StringRes val titleResId: Int? = null
+            @param:StringRes val errorResId: Int,
+            @param:StringRes val titleResId: Int? = null
         ) : LocalErrorResource() {
 
             override fun parseError(context: Context): String {

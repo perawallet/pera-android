@@ -20,6 +20,7 @@ import com.algorand.wallet.nameservice.data.service.NameServiceApiService
 import com.algorand.wallet.nameservice.domain.model.NameService
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -40,7 +41,7 @@ class NameServiceRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT local cache to be cleared WHEN clear cache is invoked`() = runTest {
+    fun `EXPECT local cache to be cleared WHEN clear cache is invoked`(): TestResult = runTest {
         sut.clearCache()
 
         verify { inMemoryLocalCache.clear() }

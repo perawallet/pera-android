@@ -16,8 +16,8 @@ import com.algorand.android.modules.appopencount.domain.usecase.ApplicationOpenC
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class TutorialUseCase @Inject constructor(
     private val cacheTutorialUseCase: CacheTutorialUseCase,

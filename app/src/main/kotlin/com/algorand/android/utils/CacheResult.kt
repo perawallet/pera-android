@@ -53,6 +53,6 @@ sealed class CacheResult<T> {
     }
 
     companion object {
-        fun createCreationTimestamp() = getCurrentSystemTimeAsMillis()
+        fun createCreationTimestamp(): Long = getCurrentSystemTimeAsMillis()
     }
 }

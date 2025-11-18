@@ -18,6 +18,7 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.Shape
+import androidx.core.graphics.withSave
 
 abstract class TextDrawable(
     private val text: String,
@@ -37,11 +38,11 @@ abstract class TextDrawable(
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        val count: Int = canvas.save()
-        drawBackground(canvas)
-        drawBorder(canvas)
-        drawText(canvas)
-        canvas.restoreToCount(count)
+        canvas.withSave {
+            drawBackground(canvas)
+            drawBorder(canvas)
+            drawText(canvas)
+        }
     }
 
     private fun drawText(canvas: Canvas) {

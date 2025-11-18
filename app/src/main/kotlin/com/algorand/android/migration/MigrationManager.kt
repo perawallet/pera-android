@@ -18,8 +18,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.algorand.android.migration.domain.manager.Account6xMigrationManager
 import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.foundation.PeraResult
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,6 +26,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class MigrationManager @Inject constructor(

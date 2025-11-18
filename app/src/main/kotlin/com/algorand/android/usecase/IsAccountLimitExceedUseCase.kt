@@ -24,6 +24,6 @@ class IsAccountLimitExceedUseCase @Inject constructor(
     }
 
     companion object {
-        const val MAX_NUMBER_OF_ACCOUNTS = 50
+        const val MAX_NUMBER_OF_ACCOUNTS: Int = 50
     }
 }

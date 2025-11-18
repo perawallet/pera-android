@@ -80,7 +80,6 @@ import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
-import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -147,16 +146,13 @@ class MainActivity :
 
     val mainViewModel: MainViewModel by viewModels()
 
-    val assetOperationViewModel: AssetOperationViewModel by viewModels()
+    private val assetOperationViewModel: AssetOperationViewModel by viewModels()
     private val walletConnectViewModel: WalletConnectViewModel by viewModels()
     private val accountsQrScannerViewModel: AccountsQrScannerViewModel by viewModels()
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
 
     @Inject
     lateinit var transactionManager: TransactionSignManager
-
-    @Inject
-    lateinit var firebaseAnalytics: FirebaseAnalytics
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
@@ -568,7 +564,7 @@ class MainActivity :
         }
     }
 
-    fun navToHome() {
+    private fun navToHome() {
         if (navController.currentDestination?.id != R.id.accountsFragment) {
             nav(MainNavigationDirections.actionGlobalMainNavigation())
         }
@@ -587,7 +583,7 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))
     }
 
-    fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
+    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
         nav(
             HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
                 AssetInboxOneAccountNavArgs(
@@ -597,7 +593,7 @@ class MainActivity :
         )
     }
 
-    fun navToAccountDetailFragment(address: String) {
+    private fun navToAccountDetailFragment(address: String) {
         nav(
             HomeNavigationDirections.actionGlobalAccountDetailFragment(address)
         )
@@ -646,11 +642,11 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
     }
 
-    fun navToRecoverWithPassphraseNavigation(mnemonic: String) {
+    private fun navToRecoverWithPassphraseNavigation(mnemonic: String) {
         nav(HomeNavigationDirections.actionGlobalRecoverWithPassphraseNavigation(mnemonic))
     }
 
-    fun navToKeyRegTransactionFragment(transactionDetail: KeyRegTransactionDetail) {
+    private fun navToKeyRegTransactionFragment(transactionDetail: KeyRegTransactionDetail) {
         nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(transactionDetail))
     }
 
@@ -959,9 +955,9 @@ class MainActivity :
             }
         }
 
-        const val DEEPLINK_KEY = "deeplinkKey"
-        const val DEEPLINK_AND_NAVIGATION_INTENT = "deeplinkNavIntent"
-        const val WC_TRANSACTION_ID_INTENT_KEY = "wcTransactionId"
-        const val WC_ARBITRARY_DATA_ID_INTENT_KEY = "wcArbitraryDataId"
+        const val DEEPLINK_KEY: String = "deeplinkKey"
+        const val DEEPLINK_AND_NAVIGATION_INTENT: String = "deeplinkNavIntent"
+        const val WC_TRANSACTION_ID_INTENT_KEY: String = "wcTransactionId"
+        const val WC_ARBITRARY_DATA_ID_INTENT_KEY: String = "wcArbitraryDataId"
     }
 }

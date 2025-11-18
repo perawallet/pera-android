@@ -157,40 +157,52 @@ private fun TransactionHistoryListItem(item: TransactionHistoryItem, listener: T
             is ApplicationCall -> GenericItemContainer(R.string.application_call, item.formattedFee) {
                 onApplicationCallClick(item.id)
             }
+
             is AssetConfiguration -> GenericItemContainer(R.string.asset_configuration, item.formattedFee) {
                 onTransactionClick(item.id)
             }
+
             is Date -> DateItem(item.date)
             is Heartbeat -> GenericItemContainer(R.string.heartbeat, item.formattedFee) {
                 onTransactionClick(item.id)
             }
+
             is KeyRegistration -> GenericItemContainer(R.string.key_reg, item.formattedFee) {
                 onTransactionClick(item.id)
             }
+
             is OptIn -> GenericItemContainer(R.string.opt_in, item.formattedFee) {
                 onTransactionClick(item.id)
             }
+
             is OptOut -> GenericItemContainer(R.string.opt_out, item.formattedFee) {
                 onTransactionClick(item.id)
             }
+
             is Receive -> ReceiveItem(item) {
                 onTransactionClick(item.id)
             }
+
             is ReceiveOptOut -> GenericItemContainer(R.string.receive_opt_out, item.formattedAmount) {
                 onTransactionClick(item.id)
             }
+
             is Self -> GenericItemContainer(R.string.self_transfer, item.formattedAmount) {
                 onTransactionClick(item.id)
             }
+
             is Send -> SendItem(item) {
                 onTransactionClick(item.id)
             }
+
             is SendOptOut -> GenericItemContainer(R.string.opt_out, item.formattedAmount) {
                 onTransactionClick(item.id)
             }
+
             is Swap -> SwapItem(item) {
                 onSwapClick(item.groupId)
             }
+
             is Separator -> SeparatorItem()
         }
     }

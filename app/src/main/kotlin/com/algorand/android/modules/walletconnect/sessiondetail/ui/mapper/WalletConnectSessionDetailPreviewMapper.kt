@@ -141,14 +141,4 @@ class WalletConnectSessionDetailPreviewMapper @Inject constructor(
             textColorResId = connectedAccountNodeTextColorDecider.decideTextColor(chainIdentifier)
         )
     }
-
-    fun mapToExpirationDate(
-        formattedMaxExtendableExpirationDate: String,
-        formattedExtendedExpirationDate: String
-    ): WalletConnectSessionDetailPreview.ExpirationDate {
-        return WalletConnectSessionDetailPreview.ExpirationDate(
-            formattedMaxExtendableExpirationDate = formattedMaxExtendableExpirationDate,
-            formattedExtendedExpirationDate = formattedExtendedExpirationDate
-        )
-    }
 }

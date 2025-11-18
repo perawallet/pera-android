@@ -12,10 +12,10 @@
 
 package com.algorand.android.ui.common.transactiontips
 
-import javax.inject.Inject
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.usecase.TransactionTipsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class TransactionTipsViewModel @Inject constructor(

@@ -19,6 +19,6 @@ enum class SwapTransactionPurpose(val value: String) {
     UNKNOWN("unknown");
 
     companion object {
-        val fallbackTransactionPurpose = UNKNOWN
+        val fallbackTransactionPurpose: SwapTransactionPurpose = UNKNOWN
     }
 }

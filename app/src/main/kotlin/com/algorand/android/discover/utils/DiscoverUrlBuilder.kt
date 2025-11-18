@@ -65,7 +65,7 @@ class DiscoverUrlBuilder private constructor(
     }
 
     companion object {
-        const val PLATFORM_NAME = "android"
+        const val PLATFORM_NAME: String = "android"
         fun create(customBaseUrl: String): DiscoverUrlBuilder {
             return DiscoverUrlBuilder(customBaseUrl)
         }

@@ -33,8 +33,9 @@ import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
@@ -79,24 +80,27 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
         )
     }
 
-    fun updatePreviewWithTransactionFee(preview: RekeyToLedgerAccountConfirmationPreview) = flow {
-        transactionsRepository.getTransactionParams().use(
-            onSuccess = { params ->
-                val calculatedFee = calculateRekeyFee(params.fee, params.minFee)
-                val formattedFee = calculatedFee.formatAsAlgoString().formatAsAlgoAmount()
-                emit(preview.copy(formattedTransactionFee = formattedFee))
-            },
-            onFailed = { _, _ ->
-                val formattedFee = MIN_FEE.formatAsAlgoString().formatAsAlgoAmount()
-                emit(preview.copy(formattedTransactionFee = formattedFee))
-            }
-        )
-    }
+    fun updatePreviewWithTransactionFee(
+        preview: RekeyToLedgerAccountConfirmationPreview
+    ): Flow<RekeyToLedgerAccountConfirmationPreview> =
+        flow {
+            transactionsRepository.getTransactionParams().use(
+                onSuccess = { params ->
+                    val calculatedFee = calculateRekeyFee(params.fee, params.minFee)
+                    val formattedFee = calculatedFee.formatAsAlgoString().formatAsAlgoAmount()
+                    emit(preview.copy(formattedTransactionFee = formattedFee))
+                },
+                onFailed = { _, _ ->
+                    val formattedFee = MIN_FEE.formatAsAlgoString().formatAsAlgoAmount()
+                    emit(preview.copy(formattedTransactionFee = formattedFee))
+                }
+            )
+        }
 
     fun sendRekeyToLedgerAccountTransaction(
         preview: RekeyToLedgerAccountConfirmationPreview,
         transactionDetail: SignedTransactionDetail.RekeyOperation
-    ) = flow {
+    ): Flow<RekeyToLedgerAccountConfirmationPreview> = flow {
         emit(preview.copy(isLoading = true))
         sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
             onSuccess = {

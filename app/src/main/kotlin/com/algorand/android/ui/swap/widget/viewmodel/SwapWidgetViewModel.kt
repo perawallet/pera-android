@@ -59,7 +59,7 @@ interface SwapWidgetViewModel : StateViewModel<ViewState> {
                     val quotes: List<SwapQuoteDetail>
                 ) : ContentState {
 
-                    val selectedQuoteDetail
+                    val selectedQuoteDetail: SwapQuoteDetail
                         get() = quotes.first { it.quote.quoteId == quoteSelection.quoteId }
 
                     data class QuoteSelection(

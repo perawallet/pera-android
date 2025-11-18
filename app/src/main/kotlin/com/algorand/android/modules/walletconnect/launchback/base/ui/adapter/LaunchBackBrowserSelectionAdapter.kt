@@ -10,14 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.walletconnect.launchback.multiplebrowser.base.ui.adapter
+package com.algorand.android.modules.walletconnect.launchback.base.ui.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.walletconnect.launchback.base.ui.adapter.viewholder.LaunchBackBrowserItemViewHolder
 import com.algorand.android.modules.walletconnect.launchback.base.ui.model.LaunchBackBrowserListItem
-import com.algorand.android.modules.walletconnect.launchback.multiplebrowser.base.ui.adapter.viewholder.LaunchBackBrowserItemViewHolder
 
 class LaunchBackBrowserSelectionAdapter(
     private val listener: Listener

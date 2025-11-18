@@ -13,10 +13,10 @@
 package com.algorand.android.modules.walletconnect.connectionrequest.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View.generateViewId
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemWalletConnectConnectionNetworkBinding
 import com.algorand.android.models.BaseViewHolder
@@ -43,7 +43,7 @@ class WalletConnectConnectionNetworkItemViewHolder(
 
     private fun createNetworkItemTextView(walletConnectConnectionNetworkItem: WalletConnectConnectionNetworkItem) {
         val textView = TextView(binding.root.context).apply {
-            id = ViewCompat.generateViewId()
+            id = generateViewId()
             setTextAppearance(R.style.TextAppearance_Caption_Bold)
             text = resources.getString(R.string.interpunct_and_text, walletConnectConnectionNetworkItem.networkName)
             setTextColor(ContextCompat.getColor(context, walletConnectConnectionNetworkItem.tintResId))

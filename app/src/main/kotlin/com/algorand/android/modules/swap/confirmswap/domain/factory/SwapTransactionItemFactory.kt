@@ -47,6 +47,7 @@ class SwapTransactionItemFactory @Inject constructor(
                     transactionNodeNetworkSlug = transactionNetworkSlug
                 )
             }
+
             SWAP -> {
                 swapSwapTransactionMapper.mapToSwapTxn(
                     transactionGroupId = transactionGroupId,
@@ -55,6 +56,7 @@ class SwapTransactionItemFactory @Inject constructor(
                     transactionNodeNetworkSlug = transactionNetworkSlug
                 )
             }
+
             PERA_FEE -> {
                 swapPeraFeeTransactionMapper.mapToFeeTxn(
                     transactionGroupId = transactionGroupId,
@@ -63,6 +65,7 @@ class SwapTransactionItemFactory @Inject constructor(
                     transactionNodeNetworkSlug = transactionNetworkSlug
                 )
             }
+
             UNKNOWN -> SwapQuoteTransaction.InvalidTransaction
         }
     }

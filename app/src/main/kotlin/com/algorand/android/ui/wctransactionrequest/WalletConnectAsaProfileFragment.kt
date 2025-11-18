@@ -25,6 +25,7 @@ import com.algorand.android.models.TransactionRequestAction
 import com.algorand.android.modules.assets.action.transferbalance.TransferBalanceActionBottomSheet.Companion.TRANSFER_ASSET_ACTION_RESULT
 import com.algorand.android.modules.assets.profile.asaprofile.base.BaseAsaProfileFragment
 import com.algorand.android.modules.assets.profile.asaprofile.ui.AsaProfileFragmentDirections
+import com.algorand.android.ui.wctransactionrequest.WalletConnectAsaProfileFragmentDirections.Companion.actionWalletConnectAsaProfileFragmentToDiscoverDetailNavigation
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.getCustomLongClickableSpan
@@ -37,7 +38,8 @@ class WalletConnectAsaProfileFragment : BaseAsaProfileFragment() {
 
     private var transactionRequestListener: TransactionRequestAction? = null
 
-    override val asaProfileViewModel by viewModels<WalletConnectBaseAsaProfileViewModel>()
+    override val asaProfileViewModel: WalletConnectBaseAsaProfileViewModel
+            by viewModels<WalletConnectBaseAsaProfileViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -109,7 +111,7 @@ class WalletConnectAsaProfileFragment : BaseAsaProfileFragment() {
 
     override fun navToDiscoverTokenDetailPage() {
         transactionRequestListener?.onNavigate(
-            WalletConnectAsaProfileFragmentDirections.actionWalletConnectAsaProfileFragmentToDiscoverDetailNavigation(
+            actionWalletConnectAsaProfileFragmentToDiscoverDetailNavigation(
                 TokenDetailInfo(
                     tokenId = asaProfileViewModel.assetId.toString(),
                     poolId = null

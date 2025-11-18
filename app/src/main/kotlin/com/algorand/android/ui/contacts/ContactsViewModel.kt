@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.contacts
 
-import javax.inject.Inject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
@@ -22,12 +21,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
     private val contractsDao: ContactDao
 ) : BaseViewModel() {
-    val contactsListLiveData = MutableLiveData<List<User>>()
+    val contactsListLiveData: MutableLiveData<List<User>> = MutableLiveData<List<User>>()
 
     init {
         updateContactsListLiveDataWithSearchQuery("")

@@ -39,7 +39,7 @@ object WalletConnectV2RepositoryModule {
     fun provideDatabase(@ApplicationContext appContext: Context): WalletConnectV2ClientDatabase {
         return Room
             .databaseBuilder(appContext, WalletConnectV2ClientDatabase::class.java, DATABASE_NAME)
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 

@@ -25,16 +25,17 @@ import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import io.mockk.coEvery
 import io.mockk.mockk
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
 class ViewPassphraseViewModelTest {
 
@@ -58,7 +59,7 @@ class ViewPassphraseViewModelTest {
     }
 
     @Test
-    fun `EXPECT loading WHEN preparing the ui`() = runTest {
+    fun `EXPECT loading WHEN preparing the ui`(): TestResult = runTest {
         coEvery { getAccountMnemonic(ADDRESS) } coAnswers { awaitCancellation() }
 
         sut.initViewState(ADDRESS)
@@ -70,7 +71,7 @@ class ViewPassphraseViewModelTest {
     }
 
     @Test
-    fun `EXPECT content state with mnemonics WHEN get mnemonic is successful`() = runTest {
+    fun `EXPECT content state with mnemonics WHEN get mnemonic is successful`(): TestResult = runTest {
         coEvery { getAccountMnemonic(ADDRESS) } returns PeraResult.Success(ACCOUNT_MNEMONIC)
 
         sut.initViewState(ADDRESS)
@@ -83,7 +84,7 @@ class ViewPassphraseViewModelTest {
     }
 
     @Test
-    fun `EXPECT generic error and navigate back WHEN get mnemonic fails`() = runTest {
+    fun `EXPECT generic error and navigate back WHEN get mnemonic fails`(): TestResult = runTest {
         coEvery { getAccountMnemonic(ADDRESS) } returns PeraResult.Error(Exception())
 
         sut.initViewState(ADDRESS)

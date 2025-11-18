@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class SetSwapFeatureIntroductionPageVisibilityUseCase @Inject constructor(
-    @Named(SwapFeatureIntroductionPageRepository.INJECTION_NAME)
+    @param:Named(SwapFeatureIntroductionPageRepository.INJECTION_NAME)
     private val swapFeatureIntroductionPageRepository: SwapFeatureIntroductionPageRepository
 ) {
 
@@ -25,7 +25,7 @@ class SetSwapFeatureIntroductionPageVisibilityUseCase @Inject constructor(
         setSwapFeatureIntroductionPageVisibility(isVisible)
     }
 
-    suspend fun setSwapFeatureIntroductionPageVisibility(isVisible: Boolean) {
+    private suspend fun setSwapFeatureIntroductionPageVisibility(isVisible: Boolean) {
         swapFeatureIntroductionPageRepository.setSwapFeatureIntroductionPageVisibility(isVisible)
     }
 }

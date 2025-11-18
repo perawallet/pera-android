@@ -19,6 +19,6 @@ interface WCDomainScammerStateRepository {
     suspend fun getDomainScammerState(domain: String): Result<GetWCDomainScammerStateResponse>
 
     companion object {
-        const val INJECTION_NAME = "wcDomainScammerStateRepositoryInjectionName"
+        const val INJECTION_NAME: String = "wcDomainScammerStateRepositoryInjectionName"
     }
 }

@@ -20,6 +20,7 @@ import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -42,7 +43,7 @@ class GetAccountMnemonicUseCaseTest {
     )
 
     @Test
-    fun `EXPECT error WHEN account type is neither Algo25 nor HdKey`() = runTest {
+    fun `EXPECT error WHEN account type is neither Algo25 nor HdKey`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns NO_AUTH
 
         val result = sut(ADDRESS)
@@ -51,7 +52,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN account type is Algo25 and secret key is null`() = runTest {
+    fun `EXPECT error WHEN account type is Algo25 and secret key is null`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns ALGO_25
         coEvery { getAlgo25SecretKey(ADDRESS) } returns null
 
@@ -61,7 +62,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN account type is Algo25 and mnemonic is blank`() = runTest {
+    fun `EXPECT error WHEN account type is Algo25 and mnemonic is blank`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns ALGO_25
         coEvery { getAlgo25SecretKey(ADDRESS) } returns SECRET_KEY
         coEvery { algoAccountSdk.getMnemonicFromAlgo25SecretKey(SECRET_KEY) } returns ""
@@ -72,7 +73,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN account type is Algo25 and mnemonic is null`() = runTest {
+    fun `EXPECT error WHEN account type is Algo25 and mnemonic is null`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns ALGO_25
         coEvery { getAlgo25SecretKey(ADDRESS) } returns SECRET_KEY
         coEvery { algoAccountSdk.getMnemonicFromAlgo25SecretKey(SECRET_KEY) } returns null
@@ -83,7 +84,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT mnemonic WHEN account type is Algo25 and mnemonic is valid`() = runTest {
+    fun `EXPECT mnemonic WHEN account type is Algo25 and mnemonic is valid`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns ALGO_25
         coEvery { getAlgo25SecretKey(ADDRESS) } returns SECRET_KEY
         coEvery { algoAccountSdk.getMnemonicFromAlgo25SecretKey(SECRET_KEY) } returns MNEMONIC
@@ -95,7 +96,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN account type is HdKey and private key is null`() = runTest {
+    fun `EXPECT error WHEN account type is HdKey and private key is null`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
         coEvery { getHdEntropy(HD_KEY.seedId) } returns null
 
@@ -105,7 +106,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN account type is HdKey and mnemonic is blank`() = runTest {
+    fun `EXPECT error WHEN account type is HdKey and mnemonic is blank`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
         coEvery { getHdEntropy(HD_KEY.seedId) } returns HD_ENTROPY
         coEvery { bip39Sdk.getMnemonicFromEntropy(HD_ENTROPY) } returns ""
@@ -116,7 +117,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT error WHEN account type is HdKey and mnemonic is null`() = runTest {
+    fun `EXPECT error WHEN account type is HdKey and mnemonic is null`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
         coEvery { getHdEntropy(HD_KEY.seedId) } returns HD_ENTROPY
         coEvery { bip39Sdk.getMnemonicFromEntropy(HD_ENTROPY) } returns null
@@ -127,7 +128,7 @@ class GetAccountMnemonicUseCaseTest {
     }
 
     @Test
-    fun `EXPECT mnemonic WHEN account type is HdKey and mnemonic is valid`() = runTest {
+    fun `EXPECT mnemonic WHEN account type is HdKey and mnemonic is valid`(): TestResult = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
         coEvery { getHdEntropy(HD_KEY.seedId) } returns HD_ENTROPY
         coEvery { bip39Sdk.getMnemonicFromEntropy(HD_ENTROPY) } returns MNEMONIC

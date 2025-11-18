@@ -24,7 +24,7 @@ import com.algorand.android.utils.viewbinding.viewBinding
 
 class AssetVerificationInfoFragment : BaseFragment(R.layout.fragment_asset_verification_info) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentAssetVerificationInfoBinding::bind)
 

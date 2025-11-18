@@ -24,11 +24,7 @@ internal class AccountInformationResponseMapperImpl @Inject constructor() :
             accountInformation = AccountInformationResponsePayloadResponse(
                 address = address,
                 amount = "0",
-                participation = null,
-                rekeyAdminAddress = null,
                 allAssetHoldingList = emptyList(),
-                createdAtRound = null,
-                appStateSchemaResponse = null,
                 appsTotalExtraPages = 0,
                 totalAppsOptedIn = 0,
                 totalAssetsOptedIn = 0,

@@ -76,7 +76,7 @@ import kotlinx.coroutines.flow.map
 class WalletConnectTransactionRequestFragment :
     DaggerBaseFragment(R.layout.fragment_wallet_connect_transaction_request), TransactionRequestAction {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentWalletConnectTransactionRequestBinding::bind)
     private val transactionRequestViewModel: WalletConnectTransactionRequestViewModel by viewModels()
@@ -458,8 +458,8 @@ class WalletConnectTransactionRequestFragment :
     }
 
     companion object {
-        const val FUTURE_TRANSACTION_CONFIRMATION_ID = 1001L
-        const val REKEY_TRANSACTION_CONFIRMATION_ID = 1002L
-        const val NAV_TO_SETTINGS_ID = 1003L
+        const val FUTURE_TRANSACTION_CONFIRMATION_ID: Long = 1001L
+        const val REKEY_TRANSACTION_CONFIRMATION_ID: Long = 1002L
+        const val NAV_TO_SETTINGS_ID: Long = 1003L
     }
 }

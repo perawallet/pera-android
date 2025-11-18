@@ -35,8 +35,6 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
-import java.math.BigDecimal
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -47,6 +45,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import javax.inject.Inject
 
 internal class AssetRepositoryImpl @Inject constructor(
     private val assetDetailApi: AssetDetailApiService,
@@ -107,7 +107,7 @@ internal class AssetRepositoryImpl @Inject constructor(
     ): PeraResult<Unit> {
         return try {
             withContext(coroutineDispatcher) {
-                val chunkedAssetIds = mutableListOf<Long>(ALGO_ID).apply {
+                val chunkedAssetIds = mutableListOf(ALGO_ID).apply {
                     addAll(assetIds)
                 }.toSet().chunked(MAX_ASSET_FETCH_COUNT)
                 chunkedAssetIds.map {

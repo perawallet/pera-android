@@ -23,12 +23,12 @@ import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.assets.addition.domain.usecase.AddAssetItemActionButtonStateDecider
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class AddAssetPreviewUseCase @Inject constructor(
     private val searchAssetUseCase: SearchAssetUseCase,
@@ -92,12 +92,14 @@ class AddAssetPreviewUseCase @Inject constructor(
                         accountAssetItemButtonState = assetActionButtonState
                     )
                 }
+
                 is BaseSearchedAsset.SearchedCollectible -> {
                     mapToCollectibleSearchItem(
                         searchedCollectible = baseSearchedAsset,
                         accountAssetItemButtonState = assetActionButtonState
                     )
                 }
+
                 else -> throw Exception("Unable to handle this kind of searched item.")
             }
         }

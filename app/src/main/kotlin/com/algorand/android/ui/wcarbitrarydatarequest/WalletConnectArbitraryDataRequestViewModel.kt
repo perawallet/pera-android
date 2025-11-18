@@ -37,10 +37,10 @@ import com.algorand.android.utils.preference.getFirstWalletConnectRequestBottomS
 import com.algorand.android.utils.preference.setFirstWalletConnectRequestBottomSheetShown
 import com.algorand.android.utils.walletconnect.WalletConnectArbitraryDataSignManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectArbitraryDataRequestViewModel @Inject constructor(
@@ -115,7 +115,7 @@ class WalletConnectArbitraryDataRequestViewModel @Inject constructor(
 
     fun handleStartDestinationAndArgs(arbitraryDataList: List<WalletConnectArbitraryDataListItem>): Pair<Int, Bundle?> {
         val startDestination = if (
-            arbitraryDataList.count() == 1 &&
+            arbitraryDataList.size == 1 &&
             arbitraryDataList.first() is WalletConnectArbitraryDataListItem.ArbitraryDataItem
         ) {
             R.id.walletConnectSingleArbitraryDataFragment

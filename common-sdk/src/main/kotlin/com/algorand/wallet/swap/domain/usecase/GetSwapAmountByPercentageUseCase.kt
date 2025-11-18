@@ -120,6 +120,6 @@ internal class GetSwapAmountByPercentageUseCase @Inject constructor(
     }
 
     private companion object {
-        val percentageDivider = BigDecimal.valueOf(100L)
+        val percentageDivider: BigDecimal? = BigDecimal.valueOf(100L)
     }
 }

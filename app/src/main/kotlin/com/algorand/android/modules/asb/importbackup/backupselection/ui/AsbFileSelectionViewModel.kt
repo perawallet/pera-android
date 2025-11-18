@@ -19,12 +19,12 @@ import com.algorand.android.modules.asb.importbackup.backupselection.ui.model.As
 import com.algorand.android.modules.asb.importbackup.backupselection.ui.usecase.AsbFileSelectionPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 @HiltViewModel
 class AsbFileSelectionViewModel @Inject constructor(

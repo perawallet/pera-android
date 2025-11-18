@@ -16,9 +16,10 @@ import com.algorand.android.models.DateRange
 import com.algorand.android.ui.transaction.csv.model.CreateCsvArgs
 import com.algorand.android.ui.transaction.csv.usecase.CreateCsvFile
 import com.algorand.android.utils.DataResource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.io.File
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 class CreateCsvUseCase @Inject constructor(private val createCsvFile: CreateCsvFile) {
 
@@ -27,7 +28,7 @@ class CreateCsvUseCase @Inject constructor(private val createCsvFile: CreateCsvF
         publicKey: String,
         dateRange: DateRange?,
         assetId: Long?
-    ) = flow<DataResource<File>> {
+    ): Flow<DataResource<File>> = flow {
         emit(DataResource.Loading())
         val args = CreateCsvArgs(cacheDirectory, publicKey, dateRange, assetId)
         createCsvFile(args).use(

@@ -49,7 +49,7 @@ class RekeyedAccountRekeyConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
         textView.setText(R.string.your_previous_rekey_will)
     }
 
-    override fun setDescriptionText(textView: TextView) = Unit
+    override fun setDescriptionText(textView: TextView): Unit = Unit
 
     override fun setAcceptButton(materialButton: MaterialButton) {
         materialButton.apply {
@@ -97,6 +97,6 @@ class RekeyedAccountRekeyConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
     }
 
     companion object {
-        const val PREVIOUSLY_REKEYED_ACCOUNT_CONFIRMATION_KEY = "previously_rekeyed_account_confirmation"
+        const val PREVIOUSLY_REKEYED_ACCOUNT_CONFIRMATION_KEY: String = "previously_rekeyed_account_confirmation"
     }
 }

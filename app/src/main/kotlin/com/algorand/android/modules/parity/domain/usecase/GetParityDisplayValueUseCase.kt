@@ -17,8 +17,8 @@ import com.algorand.android.modules.parity.domain.model.ParityDisplayValue
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.isGreaterThan
-import com.algorand.android.utils.orZero
 import com.algorand.wallet.asset.domain.model.AssetLite
+import com.algorand.wallet.utils.orZero
 import java.math.BigInteger
 import javax.inject.Inject
 

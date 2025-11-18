@@ -77,7 +77,7 @@ android {
         if (browserPropsFile.exists()) {
             FileInputStream(browserPropsFile).use { browserPackageProps.load(it) }
         }
-        browserPackageProps.forEach { (key, value) ->
+        for ((key, value) in browserPackageProps) {
             val k = key.toString()
             val v = value.toString()
             buildConfigField("String", k, "\"$v\"")

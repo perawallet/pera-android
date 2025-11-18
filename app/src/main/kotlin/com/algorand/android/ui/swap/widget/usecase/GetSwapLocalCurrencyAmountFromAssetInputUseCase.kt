@@ -13,8 +13,8 @@
 package com.algorand.android.ui.swap.widget.usecase
 
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryFiatConversionRate
-import com.algorand.android.utils.isZero
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetLiteInformation
+import com.algorand.wallet.utils.isZero
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject

@@ -17,10 +17,6 @@
     android:id="@+id/assetAdditionNavigation"
     app:startDestination="@id/addAssetFragment">
 
-    <include app:graph="@navigation/asset_addition_action_navigation" />
-
-    <include app:graph="@navigation/asa_profile_navigation" />
-
     <include app:graph="@navigation/collectible_profile_navigation" />
 
     <fragment

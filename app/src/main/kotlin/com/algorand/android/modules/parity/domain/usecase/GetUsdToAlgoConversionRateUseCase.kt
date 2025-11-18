@@ -15,7 +15,8 @@ package com.algorand.android.modules.parity.domain.usecase
 import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.modules.parity.utils.ParityConstants.SAFE_PARITY_DIVISION_DECIMALS
 import com.algorand.android.utils.CacheResult
-import com.algorand.android.utils.isZero
+import com.algorand.wallet.utils.divideOrZero
+import com.algorand.wallet.utils.isZero
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
@@ -29,7 +30,7 @@ internal class GetUsdToAlgoConversionRateUseCase @Inject constructor(
             if (algoToSelectedCurrencyConversionRate == null || algoToSelectedCurrencyConversionRate.isZero()) {
                 BigDecimal.ZERO
             } else {
-                usdToSelectedCurrencyConversionRate?.divide(
+                usdToSelectedCurrencyConversionRate?.divideOrZero(
                     algoToSelectedCurrencyConversionRate,
                     SAFE_PARITY_DIVISION_DECIMALS,
                     RoundingMode.UP

@@ -13,6 +13,7 @@
 package com.algorand.android.utils
 
 import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.wallet.utils.isLesserThan
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode

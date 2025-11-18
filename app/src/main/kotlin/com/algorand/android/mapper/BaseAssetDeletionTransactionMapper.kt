@@ -28,8 +28,8 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
 import com.algorand.android.utils.extensions.mapNotBlank
-import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.utils.multiplyOrZero
 import java.math.BigInteger
 import javax.inject.Inject
 

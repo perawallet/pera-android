@@ -21,7 +21,9 @@ import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
-import com.algorand.android.utils.isZero
+import com.algorand.wallet.utils.divideOrNull
+import com.algorand.wallet.utils.divideOrZero
+import com.algorand.wallet.utils.isZero
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
@@ -57,7 +59,7 @@ class ParityUseCase @Inject constructor(
             if (it.algoToSelectedCurrencyConversionRate == null || it.algoToSelectedCurrencyConversionRate.isZero()) {
                 BigDecimal.ZERO
             } else {
-                it.usdToSelectedCurrencyConversionRate?.divide(
+                it.usdToSelectedCurrencyConversionRate?.divideOrZero(
                     it.algoToSelectedCurrencyConversionRate,
                     SAFE_PARITY_DIVISION_DECIMALS,
                     RoundingMode.UP
@@ -67,11 +69,12 @@ class ParityUseCase @Inject constructor(
     }
 
     fun getAlgoToUsdConversionRate(): BigDecimal {
-        return if (!getUsdToAlgoConversionRate().isZero()) {
-            BigDecimal.ONE.divide(getUsdToAlgoConversionRate(), SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
-        } else {
-            BigDecimal.ZERO
-        }
+        val usdToAlgoRate = getUsdToAlgoConversionRate()
+        return BigDecimal.ONE.divideOrZero(
+            divisor = usdToAlgoRate,
+            scale = SAFE_PARITY_DIVISION_DECIMALS,
+            roundingMode = RoundingMode.UP
+        )
     }
 
     fun getUsdToPrimaryCurrencyConversionRate(): BigDecimal {
@@ -190,11 +193,11 @@ class ParityUseCase @Inject constructor(
         with(currencyDetailDTO) {
             return if (isSelectedCurrencyAlgo) {
                 val algoToCurrencyConversionRate = exchangePrice?.toBigDecimalOrNull()
-                if (algoToCurrencyConversionRate == null || algoToCurrencyConversionRate.isZero()) {
-                    BigDecimal.ZERO
-                } else {
-                    usdValue?.divide(algoToCurrencyConversionRate, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
-                }
+                usdValue?.divideOrZero(
+                    divisor = algoToCurrencyConversionRate,
+                    scale = SAFE_PARITY_DIVISION_DECIMALS,
+                    roundingMode = RoundingMode.UP
+                )
             } else {
                 currencyDetailDTO.usdValue
             }
@@ -209,11 +212,17 @@ class ParityUseCase @Inject constructor(
         return if (isSelectedCurrencyAlgo) {
             exchangePrice
         } else {
-            if (exchangePrice?.isZero() == true) return null
             val selectedCurrencyUsdValue = currencyDetailDTO.usdValue
-            val ratio = selectedCurrencyUsdValue?.divide(exchangePrice, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
-            if (ratio?.isZero() == true) return null
-            BigDecimal.ONE.divide(ratio, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
+            val ratio = selectedCurrencyUsdValue.divideOrNull(
+                divisor = exchangePrice,
+                scale = SAFE_PARITY_DIVISION_DECIMALS,
+                roundingMode = RoundingMode.UP
+            )
+            BigDecimal.ONE.divideOrNull(
+                divisor = ratio,
+                scale = SAFE_PARITY_DIVISION_DECIMALS,
+                roundingMode = RoundingMode.UP
+            )
         }
     }
 

@@ -13,9 +13,9 @@
 package com.algorand.android.modules.assets.profile.detail.ui.mapper
 
 import com.algorand.android.R
-import com.algorand.android.utils.isNegative
-import com.algorand.android.utils.isPositive
-import com.algorand.android.utils.isZero
+import com.algorand.wallet.utils.isNegative
+import com.algorand.wallet.utils.isPositive
+import com.algorand.wallet.utils.isZero
 import java.math.BigDecimal
 import javax.inject.Inject
 

@@ -22,8 +22,6 @@
 
     <include app:graph="@navigation/arc_59_request_opt_in_navigation" />
 
-    <include app:graph="@navigation/transaction_confirmation_navigation" />
-
     <include app:graph="@navigation/add_note_navigation" />
 
     <action

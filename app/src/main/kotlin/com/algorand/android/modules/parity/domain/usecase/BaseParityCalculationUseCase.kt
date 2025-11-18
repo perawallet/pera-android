@@ -16,7 +16,7 @@ import com.algorand.android.core.BaseUseCase
 import com.algorand.android.modules.parity.domain.mapper.ParityValueMapper
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
-import com.algorand.android.utils.multiplyOrZero
+import com.algorand.wallet.utils.multiplyOrZero
 import java.math.BigDecimal
 import java.math.BigInteger
 

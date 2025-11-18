@@ -19,8 +19,6 @@
 
     <include app:graph="@navigation/meld_navigation" />
 
-    <include app:graph="@navigation/rekeyed_account_info_navigation" />
-
     <include app:graph="@navigation/recover_registered_accounts_navigation" />
 
     <fragment

@@ -28,11 +28,11 @@ import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.getDecimalSeparator
-import com.algorand.android.utils.multiplyOrNull
 import com.algorand.android.utils.validator.AmountTransactionValidationUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.utils.multiplyOrNull
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

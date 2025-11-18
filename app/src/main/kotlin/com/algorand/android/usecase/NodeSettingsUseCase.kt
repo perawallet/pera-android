@@ -47,10 +47,6 @@ class NodeSettingsUseCase @Inject constructor(
         nodeRepository.setNodeListToDatabase(nodeList)
     }
 
-    fun getAllNodeAsFlow(): Flow<List<Node>> {
-        return nodeRepository.getAllNodesAsFlow()
-    }
-
     suspend fun isSelectedNodeTestnet(): Boolean {
         return getActiveNodeOrDefault().networkSlug == TESTNET_NETWORK_SLUG
     }

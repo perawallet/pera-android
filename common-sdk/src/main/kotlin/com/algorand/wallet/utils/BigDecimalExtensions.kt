@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.utils
+package com.algorand.wallet.utils
 
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
+import java.math.RoundingMode
 
 infix fun BigDecimal.isGreaterThan(other: BigDecimal): Boolean {
     return this.compareTo(other) == 1
@@ -41,6 +42,30 @@ fun BigDecimal.isNegative(): Boolean {
 
 fun BigDecimal.isZero(): Boolean {
     return signum() == 0
+}
+
+fun BigDecimal?.divideOrZero(divisor: BigDecimal?, scale: Int, roundingMode: RoundingMode): BigDecimal {
+    return if (this == null || divisor == null || divisor.isZero()) {
+        ZERO
+    } else {
+        divide(divisor, scale, roundingMode)
+    }
+}
+
+fun BigDecimal?.divideOrNull(divisor: BigDecimal?, scale: Int, roundingMode: RoundingMode): BigDecimal? {
+    return if (this == null || divisor == null || divisor.isZero()) {
+        null
+    } else {
+        divide(divisor, scale, roundingMode)
+    }
+}
+
+fun BigDecimal.divideOrZero(divisor: BigDecimal, roundingMode: RoundingMode): BigDecimal {
+    return if (divisor.isZero()) {
+        ZERO
+    } else {
+        divide(divisor, roundingMode)
+    }
 }
 
 fun BigDecimal.multiplyOrZero(multiplier: BigDecimal?): BigDecimal {

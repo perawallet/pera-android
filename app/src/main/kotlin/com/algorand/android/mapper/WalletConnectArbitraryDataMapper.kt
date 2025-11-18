@@ -22,11 +22,11 @@ import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
-import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.asset.domain.util.AssetConstants
+import com.algorand.wallet.utils.multiplyOrZero
 import java.math.BigInteger
 import javax.inject.Inject
 

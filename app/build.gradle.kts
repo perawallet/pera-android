@@ -113,11 +113,14 @@ android {
             val props = Properties().apply {
                 load(FileInputStream(propsFile))
             }
-
-            storeFile = file(props["RELEASE_STORE_FILE"] ?: error("Missing RELEASE_STORE_FILE"))
-            storePassword = props["RELEASE_STORE_PASSWORD"]?.toString()
-            keyAlias = props["RELEASE_KEY_ALIAS"]?.toString()
-            keyPassword = props["RELEASE_KEY_PASSWORD"]?.toString()
+            try {
+                storeFile = file(props["RELEASE_STORE_FILE"] ?: error("Missing RELEASE_STORE_FILE"))
+                storePassword = props["RELEASE_STORE_PASSWORD"]?.toString()
+                keyAlias = props["RELEASE_KEY_ALIAS"]?.toString()
+                keyPassword = props["RELEASE_KEY_PASSWORD"]?.toString()
+            } catch (e: Exception) {
+                println(e.message)
+            }
         }
     }
 
@@ -126,7 +129,7 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             multiDexEnabled = true
-            signingConfig = signingConfigs.getByName("releaseLocal")
+            // signingConfig = signingConfigs.getByName("releaseLocal") //enable this to sign the release
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

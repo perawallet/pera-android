@@ -66,60 +66,82 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </Constraint>
 
-        <Constraint
+        <!-- FIXED: alpha -> CustomAttribute, visibility stays on ConstraintOverride -->
+
+        <ConstraintOverride
             android:id="@id/portfolioValueTitleTextView"
+            android:visibility="visible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="1"
-                android:visibility="visible" />
-            <Transform
-                android:scaleX="1"
-                android:scaleY="1" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="1" />
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/primaryPortfolioValue"
+            android:visibility="visible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="1"
-                android:visibility="visible" />
-            <Transform
-                android:scaleX="1"
-                android:scaleY="1" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="1" />
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/secondaryPortfolioValue"
+            android:visibility="visible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="1"
-                android:visibility="visible" />
-            <Transform
-                android:scaleX="1"
-                android:scaleY="1" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="1" />
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/toolbarPrimaryPortfolioValue"
+            android:visibility="invisible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="0"
-                android:visibility="invisible" />
-            <Transform
-                android:scaleX="0"
-                android:scaleY="0" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="0" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="0" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="0" />
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/toolbarSecondaryPortfolioValue"
+            android:visibility="invisible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="0"
-                android:visibility="invisible" />
-            <Transform
-                android:scaleX="0"
-                android:scaleY="0" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="0" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="0" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="0" />
+        </ConstraintOverride>
 
         <Constraint
             android:id="@id/loadingProgressBar"
@@ -219,59 +241,80 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </Constraint>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/portfolioValueTitleTextView"
+            android:visibility="invisible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="0"
-                android:visibility="invisible" />
-            <Transform
-                android:scaleX="0.8"
-                android:scaleY="0.8" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="0" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="0.8" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="0.8" />
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/primaryPortfolioValue"
+            android:visibility="invisible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="0"
-                android:visibility="invisible" />
-            <Transform
-                android:scaleX="0.8"
-                android:scaleY="0.8" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="0" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="0.8" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="0.8" />
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/secondaryPortfolioValue"
+            android:visibility="invisible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="0"
-                android:visibility="invisible" />
-            <Transform
-                android:scaleX="0.8"
-                android:scaleY="0.8" />
-        </Constraint>
-        <Constraint
-            android:id="@id/toolbarPrimaryPortfolioValue"
-            app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="1"
-                android:visibility="visible" />
-            <Transform
-                android:scaleX="1"
-                android:scaleY="1" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="0" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="0.8" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="0.8" />
+        </ConstraintOverride>
 
-        <Constraint
-            android:id="@id/toolbarSecondaryPortfolioValue"
+        <ConstraintOverride
+            android:id="@id/toolbarPrimaryPortfolioValue"
+            android:visibility="visible"
             app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="1"
-                android:visibility="visible" />
-            <Transform
-                android:scaleX="1"
-                android:scaleY="1" />
-        </Constraint>
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="1" />
+        </ConstraintOverride>
+
+        <ConstraintOverride
+            android:id="@id/toolbarSecondaryPortfolioValue"
+            android:visibility="visible"
+            app:visibilityMode="ignore">
+            <CustomAttribute
+                app:attributeName="alpha"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleX"
+                app:customFloatValue="1" />
+            <CustomAttribute
+                app:attributeName="scaleY"
+                app:customFloatValue="1" />
+        </ConstraintOverride>
 
         <Constraint
             android:id="@id/loadingProgressBar"

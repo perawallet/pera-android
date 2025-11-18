@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,6 +16,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/discoverDetailNavigation"
     app:startDestination="@id/discoverDetailFragment">
+
+    <include app:graph="@navigation/discover_dapp_navigation" />
 
     <fragment
         android:id="@+id/discoverDetailFragment"
@@ -58,28 +61,39 @@
             android:id="@+id/action_discoverDetailFragment_to_meldNavigation"
             app:destination="@id/meldNavigation" />
         <action
-            android:id="@+id/action_discoverDetailFragment_to_swapAccountSelectionNavigation"
-            app:destination="@id/swapAccountSelectionNavigation">
+            android:id="@+id/action_discoverDetailFragment_to_swapV2Navigation"
+            app:destination="@id/swapV2Navigation">
             <argument
-                android:name="fromAssetId"
+                android:name="accountAddress"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="assetInId"
                 android:defaultValue="-1L"
                 app:argType="long" />
             <argument
-                android:name="toAssetId"
+                android:name="assetOutId"
                 android:defaultValue="-1L"
                 app:argType="long" />
         </action>
         <action
-            android:id="@+id/action_discoverDetailFragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation">
+            android:id="@+id/action_discoverDetailFragment_to_discoverDappNavigation"
+            app:destination="@id/discoverDappNavigation">
             <argument
-                android:name="fromAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
+                android:name="dappUrl"
+                app:argType="string" />
             <argument
-                android:name="toAssetId"
-                android:defaultValue="-1L"
-                app:argType="long" />
+                android:name="dappTitle"
+                app:argType="string" />
+            <argument
+                android:name="favorites"
+                app:argType="com.algorand.android.discover.common.ui.model.DappFavoriteElement[]"
+                app:nullable="true" />
+            <argument
+                android:name="showFavorites"
+                android:defaultValue="true"
+                app:argType="boolean" />
         </action>
     </fragment>
 

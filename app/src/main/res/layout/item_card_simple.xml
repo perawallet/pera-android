@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -27,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="@dimen/spacing_small"
-        android:layout_marginVertical="@dimen/spacing_xsmall" >
+        android:layout_marginVertical="@dimen/spacing_xsmall">
 
         <ImageView
             android:id="@+id/alertIconImageView"
@@ -44,7 +45,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_begin="@dimen/account_icon_size_normal" />
-
 
         <TextView
             android:id="@+id/titleTextView"
@@ -70,7 +70,6 @@
             app:layout_constraintStart_toEndOf="@id/verticalGuideline"
             app:layout_constraintTop_toBottomOf="@id/titleTextView"
             tools:text="notification description" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

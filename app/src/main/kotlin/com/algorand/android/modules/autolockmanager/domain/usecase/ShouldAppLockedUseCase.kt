@@ -1,0 +1,58 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.modules.autolockmanager.domain.usecase
+
+import com.algorand.android.repository.SecurityRepository
+import com.algorand.android.usecase.EncryptedPinUseCase
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
+import javax.inject.Inject
+
+class ShouldAppLockedUseCase @Inject constructor(
+    private val getAppAtBackgroundTimeUseCase: GetAppAtBackgroundTimeUseCase,
+    private val encryptedPinUseCase: EncryptedPinUseCase,
+    private val securityRepository: SecurityRepository,
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount
+) {
+
+    suspend operator fun invoke(): Boolean {
+        val appAtBackgroundTime = getAppAtBackgroundTimeUseCase.invoke()
+        return when {
+            !encryptedPinUseCase.isEncryptedPinSet() -> false
+            !isThereAnyLocalAccount() -> false
+            isAppFreshOpened(appAtBackgroundTime) -> true
+            isThresholdExpired(appAtBackgroundTime) -> true
+            isPenaltyTimeActive() -> true
+            else -> false
+        }
+    }
+
+    private fun isAppFreshOpened(appAtBackgroundTime: Long?): Boolean {
+        return with(appAtBackgroundTime) { this == null || this == APP_AT_BACKGROUND_DEFAULT_PREFERENCE }
+    }
+
+    private fun isThresholdExpired(appAtBackgroundTime: Long?): Boolean {
+        if (appAtBackgroundTime == null) return false
+        val timeInBackground = System.currentTimeMillis() - appAtBackgroundTime
+        return timeInBackground > AUTO_LOCK_THRESHOLD
+    }
+
+    private fun isPenaltyTimeActive(): Boolean {
+        return securityRepository.getLockPenaltyRemainingTime() != DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE
+    }
+
+    companion object {
+        private const val AUTO_LOCK_THRESHOLD = 60_000
+        const val APP_AT_BACKGROUND_DEFAULT_PREFERENCE: Long = 0L
+        const val DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE: Long = 0L
+    }
+}

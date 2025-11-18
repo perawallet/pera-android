@@ -1,0 +1,145 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.ui.common
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
+import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.ui.compose.theme.PeraTheme
+
+abstract class BaseInfoFragment : DaggerBaseFragment(0) {
+
+    @Composable
+    abstract fun Icon(modifier: Modifier)
+
+    @Composable
+    abstract fun Title(modifier: Modifier)
+
+    @Composable
+    abstract fun Description(modifier: Modifier)
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    abstract fun PrimaryButton(modifier: Modifier, sheetState: SheetState)
+
+    @Composable
+    open fun Warning(modifier: Modifier): Unit = Unit
+
+    @Composable
+    open fun SecondaryButton(modifier: Modifier): Unit = Unit
+
+    @Suppress("LongMethod")
+    @OptIn(ExperimentalMaterial3Api::class)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        return ComposeView(requireContext()).apply {
+            setContent {
+                PeraTheme {
+                    val sheetState = rememberModalBottomSheetState(
+                        skipPartiallyExpanded = true
+                    )
+                    val showBottomSheet = rememberSaveable { mutableStateOf(false) }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 12.dp, top = 28.dp)
+                                .align(alignment = Alignment.Start)
+                                .fillMaxWidth(HALF_SIZE)
+                                .aspectRatio(ratio = 1F),
+                        )
+                        Title(
+                            modifier = Modifier
+                                .padding(start = 24.dp, end = 24.dp, top = 40.dp)
+                        )
+                        Description(
+                            modifier = Modifier
+                                .padding(
+                                    start = 24.dp,
+                                    end = 24.dp,
+                                    top = 24.dp,
+                                    bottom = 20.dp
+                                )
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Warning(
+                            modifier = Modifier
+                                .padding(start = 24.dp, end = 24.dp, bottom = 20.dp)
+                        )
+                        PrimaryButton(
+                            modifier = Modifier
+                                .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
+                                .fillMaxWidth(),
+                            sheetState = sheetState
+                        )
+                        SecondaryButton(
+                            modifier = Modifier
+                                .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)
+                                .fillMaxWidth()
+                        )
+                    }
+
+                    if (showBottomSheet.value) {
+                        ModalBottomSheet(
+                            onDismissRequest = { showBottomSheet.value = false },
+                            sheetState = sheetState,
+                            containerColor = PeraTheme.colors.background.primary,
+                            contentColor = PeraTheme.colors.text.main
+                        ) {
+                            BottomSheetContent(
+                                sheetState
+                            ) { showBottomSheet.value = false }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    open fun BottomSheetContent(sheetState: SheetState, onDismiss: () -> Unit): Unit = Unit
+
+    companion object {
+        const val HALF_SIZE: Float = 0.5F
+    }
+}

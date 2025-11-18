@@ -1,0 +1,89 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.wealth.asset.data.mapper
+
+import com.algorand.test.peraFixture
+import com.algorand.wallet.utils.date.parser.DateTimeParser
+import com.algorand.wallet.wealth.asset.data.model.AssetBalanceHistoryResponseResult
+import com.algorand.wallet.wealth.asset.data.model.AssetBalanceHistoryResponseResults
+import com.algorand.wallet.wealth.asset.domain.model.AssetBalanceHistory
+import com.algorand.wallet.wealth.asset.domain.model.AssetBalanceHistoryChartData
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import java.math.BigDecimal
+import java.time.OffsetDateTime
+
+class DefaultAddressWealthMapperTest {
+
+    private val dateTimeParser: DateTimeParser = mockk()
+
+    private val sut = DefaultAssetBalanceHistoryMapper(dateTimeParser)
+
+    @Test
+    fun `EXPECT empty chart data WHEN result is null`() {
+        val result = sut.map(AssetBalanceHistoryResponseResults(null))
+
+        val expected = AssetBalanceHistory(emptyList())
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT invalid data to be filtered WHEN result has invalid data`() {
+        every { dateTimeParser.parseOffsetDateTime(DATE_TIME_RESPONSE) } returns OFFSET_DATETIME
+        every { dateTimeParser.parseOffsetDateTime("invalid-datetime") } returns null
+        every { dateTimeParser.parseOffsetDateTime("") } returns null
+        val results = listOf(
+            VALID_CHART_DATA_RESPONSE,
+            INVALID_DATETIME_RESPONSE,
+            NULL_DATETIME_RESPONSE,
+            INVALID_USD_VALUE_RESPONSE,
+            NULL_USD_VALUE_RESPONSE,
+            INVALID_AMOUNT_VALUE_RESPONSE,
+            NULL_AMOUNT_VALUE_RESPONSE
+        )
+
+        val result = sut.map(AssetBalanceHistoryResponseResults(results))
+
+        val expected = AssetBalanceHistory(listOf(VALID_CHART_DATA))
+        assertEquals(expected, result)
+    }
+
+    private companion object {
+        const val DATE_TIME_RESPONSE = "2023-10-01T00:00:00Z"
+        val VALID_CHART_DATA_RESPONSE = AssetBalanceHistoryResponseResult(
+            round = 40471200,
+            datetime = DATE_TIME_RESPONSE,
+            amount = "100.23",
+            usdValue = "1000.12",
+            valueInCurrency = "1000000.23"
+        )
+
+        val INVALID_DATETIME_RESPONSE = VALID_CHART_DATA_RESPONSE.copy(datetime = "invalid-datetime")
+        val NULL_DATETIME_RESPONSE = VALID_CHART_DATA_RESPONSE.copy(datetime = null)
+        val INVALID_USD_VALUE_RESPONSE = VALID_CHART_DATA_RESPONSE.copy(usdValue = "invalid-value")
+        val NULL_USD_VALUE_RESPONSE = VALID_CHART_DATA_RESPONSE.copy(usdValue = null)
+        val INVALID_AMOUNT_VALUE_RESPONSE = VALID_CHART_DATA_RESPONSE.copy(amount = "invalid-value")
+        val NULL_AMOUNT_VALUE_RESPONSE = VALID_CHART_DATA_RESPONSE.copy(amount = null)
+
+        val OFFSET_DATETIME: OffsetDateTime = peraFixture()
+        val VALID_CHART_DATA = AssetBalanceHistoryChartData(
+            round = 40471200,
+            datetime = OFFSET_DATETIME,
+            amount = BigDecimal.valueOf(100.23),
+            usdValue = BigDecimal.valueOf(1000.12),
+            valueInCurrency = BigDecimal.valueOf(1000000.23)
+        )
+    }
+}

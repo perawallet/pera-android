@@ -59,7 +59,7 @@ complexity:
     active: false
     threshold: 10
     includeStaticDeclarations: false
-  ComplexMethod:
+  CyclomaticComplexMethod:
     active: true
     threshold: 50
     ignoreSingleWhenExpression: false
@@ -134,7 +134,11 @@ exceptions:
   active: true
   ExceptionRaisedInUnexpectedLocation:
     active: false
-    methodNames: 'toString,hashCode,equals,finalize'
+    methodNames:
+      - 'toString'
+      - 'hashCode'
+      - 'equals'
+      - 'finalize'
   InstanceOfCheckForException:
     active: false
   NotImplementedDeclaration:
@@ -153,7 +157,10 @@ exceptions:
     active: false
   ThrowingExceptionsWithoutMessageOrCause:
     active: false
-    exceptions: 'IllegalArgumentException,IllegalStateException,IOException'
+    exceptions:
+      - 'IllegalArgumentException'
+      - 'IllegalStateException'
+      - 'IOException'
   ThrowingNewInstanceOfSameException:
     active: false
   TooGenericExceptionCaught:
@@ -188,7 +195,7 @@ naming:
     enumEntryPattern: '^[A-Z][_a-zA-Z0-9]*'
   ForbiddenClassName:
     active: false
-    forbiddenName: ''
+    forbiddenName: []
   FunctionMaxLength:
     active: false
     maximumFunctionNameLength: 30
@@ -197,6 +204,7 @@ naming:
     minimumFunctionNameLength: 3
   FunctionNaming:
     active: true
+    ignoreAnnotated: [ 'Composable' ]
     functionPattern: '^([a-z$][a-zA-Z$0-9]*)|(`.*`)$'
     excludeClassPattern: '$^'
   MatchingDeclarationName:
@@ -239,8 +247,6 @@ performance:
 
 potential-bugs:
   active: true
-  DuplicateCaseInWhenExpression:
-    active: true
   EqualsAlwaysReturnsTrueOrFalse:
     active: false
   EqualsWithHashCodeExist:
@@ -256,7 +262,7 @@ potential-bugs:
   LateinitUsage:
     active: false
     excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/generated/**"
-    excludeAnnotatedProperties: ""
+    ignoreAnnotated: ""
     ignoreOnClassesPattern: ""
   UnconditionalJumpStatementInLoop:
     active: false
@@ -277,28 +283,36 @@ style:
     active: false
   DataClassContainsFunctions:
     active: false
-    conversionFunctionPrefix: 'to'
+    conversionFunctionPrefix:
+      - to
   EqualsNullCall:
     active: false
   ExpressionBodySyntax:
     active: false
   ForbiddenComment:
-    active: true
-    values: 'FIXME:,STOPSHIP:'
+    active: false
+    comments:
+      - "FIXME:"
+      - "STOPSHIP:"
   ForbiddenImport:
     active: false
-    imports: ''
+    imports: [ ]
   FunctionOnlyReturningConstant:
     active: false
     ignoreOverridableFunction: true
-    excludedFunctions: 'describeContents'
+    excludedFunctions:
+      - describeContents
   LoopWithTooManyJumpStatements:
     active: false
     maxJumpCount: 1
   MagicNumber:
     active: true
     excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/generated/**"
-    ignoreNumbers: '-1,0,1,2'
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
     ignoreHashCodeFunction: false
     ignorePropertyDeclaration: false
     ignoreConstantDeclaration: true
@@ -326,8 +340,6 @@ style:
     active: true
   OptionalUnit:
     active: false
-  OptionalWhenBraces:
-    active: false
   ProtectedMemberInFinalClass:
     active: false
   RedundantVisibilityModifierRule:
@@ -335,7 +347,9 @@ style:
   ReturnCount:
     active: true
     max: 5
-    excludedFunctions: "equals,getItemViewType"
+    excludedFunctions:
+      - equals
+      - getItemViewType
   SafeCast:
     active: true
   SerialVersionUIDInSerializableClass:
@@ -361,10 +375,12 @@ style:
     active: false
   UseDataClass:
     active: false
-    excludeAnnotatedClasses: ""
+    ignoreAnnotated: ""
   UtilityClassWithPublicConstructor:
     active: false
   WildcardImport:
     active: true
-    excludeImports: 'java.util.*,kotlinx.android.synthetic.*'
+    excludeImports:
+      - java.util.*
+      - kotlinx.android.synthetic.*
     excludes: "**/*Test.kt, **/*Spec.kt, **/test/**, **/generated/**"

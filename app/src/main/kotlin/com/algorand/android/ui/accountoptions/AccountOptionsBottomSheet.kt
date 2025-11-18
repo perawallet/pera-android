@@ -1,0 +1,288 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.ui.accountoptions
+
+import android.os.Bundle
+import android.view.View
+import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import com.algorand.android.R
+import com.algorand.android.core.DaggerBaseBottomSheet
+import com.algorand.android.databinding.BottomSheetAccountDetailAccountsOptionsBinding
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.HideFetchingRekeyedAccountsDialog
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.NavToNoRekeyedAccounts
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.NavToRekeyedAccountSelection
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.ShowFetchingRekeyedAccountsDialog
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.ShowGenericError
+import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
+import com.algorand.android.ui.rekeyedaccounts.view.FetchingRekeyedAccountsDialogDelegate
+import com.algorand.android.utils.Resource
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.extensions.collectOnLifecycle
+import com.algorand.android.utils.extensions.show
+import com.algorand.android.utils.setFragmentNavigationResult
+import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
+    layoutResId = R.layout.bottom_sheet_account_detail_accounts_options,
+    fullPageNeeded = false,
+    firebaseEventScreenId = null
+) {
+
+    private val binding by viewBinding(BottomSheetAccountDetailAccountsOptionsBinding::bind)
+
+    private val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
+
+    private val fetchingRekeyedAccountsDialogDelegate by lazy {
+        FetchingRekeyedAccountsDialogDelegate(accountOptionsViewModel::stopFetchingRekeyedAccounts)
+    }
+
+    private val viewEventObserver: suspend (ViewEvent) -> Unit = { viewEvent ->
+        when (viewEvent) {
+            NavToNoRekeyedAccounts -> navToNoRekeyedAccounts()
+            is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(viewEvent)
+            HideFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.dismiss()
+            ShowFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.show(requireContext())
+            ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred))
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        fetchingRekeyedAccountsDialogDelegate.dismiss()
+    }
+
+    private val accountOptionsPreviewCollector: suspend (AccountOptionsPreview?) -> Unit = { preview ->
+        preview?.run {
+            setupAuthAddressButton(isAuthAddressButtonVisible, authAddress)
+            setupViewPassphraseButton(isPassphraseButtonVisible)
+            setupCopyButton(accountAddress)
+            setupShowQrButton(accountAddress)
+            setupUndoRekeyOptionButton(isUndoRekeyButtonVisible, authAccountDisplayName)
+            setupRekeyToOptions(canSignTransaction)
+            setupRescanRekeyedAccountsButton(registrationType)
+        }
+    }
+
+    private val notificationObserverCollector: suspend (Resource<Unit>?) -> Unit = {
+        it?.use(onLoadingFinished = ::navBack)
+    }
+
+    private val notificationFilterCheckCollector: suspend (Boolean?) -> Unit = { isMuted ->
+        isMuted?.let { setupNotificationOptionButton(it) }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupRenameAccountButton()
+        setupRemoveAccountButton()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountOptionsViewModel.notificationFilterOperationFlow,
+            notificationObserverCollector
+        )
+        viewLifecycleOwner.collectOnLifecycle(
+            accountOptionsViewModel.notificationFilterCheckFlow,
+            notificationFilterCheckCollector
+        )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountOptionsViewModel.accountOptionsPreviewFlow,
+            accountOptionsPreviewCollector
+        )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountOptionsViewModel.viewEvent,
+            viewEventObserver
+        )
+    }
+
+    private fun setupUndoRekeyOptionButton(isUndoRekeyButtonVisible: Boolean, authAccDisplayName: AccountDisplayName?) {
+        binding.undoRekeyConstraintLayout.apply {
+            setOnClickListener { navToUndoRekeyNavigation() }
+            isVisible = isUndoRekeyButtonVisible
+        }
+        binding.rekeyedAccountTextView.text = context?.getString(
+            R.string.rekeyed_to_account_name,
+            authAccDisplayName?.primaryDisplayName.orEmpty()
+        )
+    }
+
+    private fun setupRescanRekeyedAccountsButton(registrationType: AccountRegistrationType) {
+        binding.rescanRekeyedAccountsButton.apply {
+            this.isVisible = registrationType.hasSignerDetails
+            setOnClickListener { accountOptionsViewModel.scanRekeyedAccounts() }
+        }
+    }
+
+    private fun setupRekeyToOptions(canSignTransaction: Boolean) {
+        binding.rekeyToLedgerAccountButton.apply {
+            isVisible = canSignTransaction
+            setOnClickListener { navToRekeyToLedgerAccountFragment() }
+        }
+        binding.rekeyToStandardAccountButton.apply {
+            isVisible = canSignTransaction
+            setOnClickListener { navToRekeyToStandardAccountFragment() }
+        }
+        binding.rekeyDivider.isVisible = canSignTransaction
+    }
+
+    private fun setupNotificationOptionButton(isMuted: Boolean) {
+        binding.notificationButton.apply {
+            val textRes = if (isMuted) R.string.unmute_notifications else R.string.mute_notifications
+            val iconRes = if (isMuted) R.drawable.ic_notification_unmute else R.drawable.ic_empty_notification
+            setText(textRes)
+            setIconResource(iconRes)
+            setOnClickListener { accountOptionsViewModel.startFilterOperation(isMuted.not()) }
+            show()
+        }
+    }
+
+    private fun setupAuthAddressButton(authAddressButtonVisible: Boolean, authAddress: String?) {
+        if (authAddressButtonVisible) {
+            binding.authAddressButton.apply {
+                show()
+                setOnClickListener {
+                    navToShowQrBottomSheet(getString(R.string.auth_account_address), authAddress.orEmpty())
+                }
+            }
+        }
+    }
+
+    private fun setupRemoveAccountButton() {
+        binding.disconnectAccountButton.apply {
+            setOnClickListener { navToDisconnectAccountConfirmationBottomSheet() }
+            show()
+        }
+    }
+
+    private fun setupRenameAccountButton() {
+        binding.renameAccountButton.apply {
+            setOnClickListener { navToRenameAccountBottomSheet() }
+            show()
+        }
+    }
+
+    private fun navToRekeyToLedgerAccountFragment() {
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToRekeyLedgerNavigation(accountOptionsViewModel.accountAddress)
+        )
+    }
+
+    private fun navToRekeyToStandardAccountFragment() {
+        nav(
+            AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyToStandardAccountNavigation(
+                accountOptionsViewModel.accountAddress
+            )
+        )
+    }
+
+    private fun navToDisconnectAccountConfirmationBottomSheet() {
+        navBack()
+        setFragmentNavigationResult(ACCOUNT_REMOVE_ACTION_KEY, true)
+    }
+
+    private fun navToRenameAccountBottomSheet() {
+        nav(
+            AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRenameAccountNavigation(
+                name = accountOptionsViewModel.getAccountName(),
+                accountAddress = accountOptionsViewModel.accountAddress
+            )
+        )
+    }
+
+    private fun navToShowQrBottomSheet(title: String, accountAddress: String) {
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToShowQrNavigation(title, accountAddress)
+        )
+    }
+
+    private fun onViewPassphraseClicked() {
+        if (accountOptionsViewModel.isPinCodeEnabled()) {
+            navToInAppPinNavigation()
+        } else {
+            navToViewPassphraseNavigation()
+        }
+    }
+
+    private fun setupViewPassphraseButton(isPassphraseButtonVisible: Boolean) {
+        if (isPassphraseButtonVisible) {
+            binding.viewPassphraseButton.apply {
+                setOnClickListener { onViewPassphraseClicked() }
+                show()
+            }
+        }
+    }
+
+    private fun setupCopyButton(accountAddress: String) {
+        with(binding) {
+            copyAddressLayout.setOnClickListener {
+                onAccountAddressCopied(accountAddress)
+                navBack()
+            }
+            addressTextView.text = accountAddress
+        }
+    }
+
+    private fun setupShowQrButton(accountAddress: String) {
+        binding.showQrButton.setOnClickListener { navToShowQrBottomSheet(getString(R.string.qr_code), accountAddress) }
+    }
+
+    private fun navToUndoRekeyNavigation() {
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToRekeyUndoNavigation(accountOptionsViewModel.accountAddress)
+        )
+    }
+
+    private fun navToInAppPinNavigation() {
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToInAppPinNavigation()
+        )
+    }
+
+    private fun navToViewPassphraseNavigation() {
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToViewPassphraseNavigation(accountOptionsViewModel.accountAddress)
+        )
+    }
+
+    private fun navToNoRekeyedAccounts() {
+        nav(AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToNoRekeyedAccountsNavigation())
+    }
+
+    private fun navToRekeyedAccountSelection(viewEvent: NavToRekeyedAccountSelection) {
+        val navArg = with(viewEvent) {
+            RekeyedAccountSelectionNavArg(authAddress, authDrawable, rekeyedAddresses)
+        }
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToRescanRekeyedAccountSelectionNavigation(navArg)
+        )
+    }
+
+    companion object {
+        const val ACCOUNT_REMOVE_ACTION_KEY: String = "remove_account_action"
+    }
+}

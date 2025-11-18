@@ -1,0 +1,70 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.ui.common.amount.di
+
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryFiatAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryFiatAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetPrimaryCurrencyAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetPrimaryCurrencyAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetPrimaryFiatAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetPrimaryFiatAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetSecondaryCurrencyAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetSecondaryCurrencyAmountRendererUseCase
+import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
+import com.algorand.android.ui.common.amount.mapper.DefaultAmountRendererTypeMapper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal object AmountUiModule {
+
+    @Provides
+    fun provideAmountRendererTypeMapper(mapper: DefaultAmountRendererTypeMapper): AmountRendererTypeMapper = mapper
+
+    @Provides
+    fun provideGetCompactPrimaryAmountRenderer(
+        useCase: GetCompactPrimaryAmountRendererUseCase
+    ): GetCompactPrimaryAmountRenderer = useCase
+
+    @Provides
+    fun provideGetCompactSecondaryAmountRenderer(
+        useCase: GetCompactSecondaryAmountRendererUseCase
+    ): GetCompactSecondaryAmountRenderer = useCase
+
+    @Provides
+    fun provideGetCompactPrimaryFiatAmountRenderer(
+        useCase: GetCompactPrimaryFiatAmountRendererUseCase
+    ): GetCompactPrimaryFiatAmountRenderer = useCase
+
+    @Provides
+    fun provideGetPrimaryFiatAmountRenderer(
+        useCase: GetPrimaryFiatAmountRendererUseCase
+    ): GetPrimaryFiatAmountRenderer = useCase
+
+    @Provides
+    fun provideGetPrimaryCurrencyAmountRenderer(
+        useCase: GetPrimaryCurrencyAmountRendererUseCase
+    ): GetPrimaryCurrencyAmountRenderer = useCase
+
+    @Provides
+    fun provideGetSecondaryCurrencyAmountRenderer(
+        useCase: GetSecondaryCurrencyAmountRendererUseCase
+    ): GetSecondaryCurrencyAmountRenderer = useCase
+}

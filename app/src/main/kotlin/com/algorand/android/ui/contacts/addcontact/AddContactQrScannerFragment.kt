@@ -1,0 +1,39 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.ui.contacts.addcontact
+
+import com.algorand.android.R
+import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
+import com.algorand.android.utils.setNavigationResult
+
+class AddContactQrScannerFragment : BaseQrScannerFragment(R.id.addContactQrScannerFragment) {
+
+    override fun onAccountAddressDeeplink(address: String, label: String?): Boolean {
+        return navBackWithResult(address, label)
+    }
+
+    override fun onAddContactDeepLink(address: String, label: String?): Boolean {
+        return navBackWithResult(address, label)
+    }
+
+    private fun navBackWithResult(address: String, label: String?): Boolean {
+        setNavigationResult(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY, address)
+        setNavigationResult(ACCOUNT_LABEL_QR_SCAN_RESULT_KEY, label)
+        return true.also { navBack() }
+    }
+
+    companion object {
+        const val ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY: String = "account_address_qr_scan_result"
+        const val ACCOUNT_LABEL_QR_SCAN_RESULT_KEY: String = "account_label_qr_scan_result"
+    }
+}

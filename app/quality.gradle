@@ -1,0 +1,44 @@
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint libs.ktlint
+    detektPlugins libs.detekt.formatting
+}
+
+tasks.register('ktlint', JavaExec) {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "src/**/*.kt"
+    args "--reporter=html,output=${buildDir}/reports/ktlint/ktlint.html"
+}
+
+detekt {
+    toolVersion = "${libs.versions.detekt.get()}"
+    def configFile = new File(rootDir, 'detekt-config.yml')
+    if (!configFile.exists()) {
+        new File("$projectDir/detekt-config.yml")
+                .withInputStream { i -> configFile.withOutputStream { it << i } }
+    }
+    input = files("$projectDir")
+    config = files("$configFile")
+    reports {
+        xml {
+            required = true
+            destination = file("$projectDir/build/reports/detekt/detek-report.xml")
+        }
+        html {
+            required = true
+            destination = file("$projectDir/build/reports/detekt/detek-report.html")
+        }
+    }
+}
+
+//preBuild.dependsOn('checkstyle')
+//preBuild.dependsOn ktlint
+//preBuild.dependsOn('detekt')
+//preBuild.dependsOn('pmd')

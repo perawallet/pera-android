@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -28,7 +29,7 @@
         android:id="@+id/walletConnectSingleArbitraryDataFragment"
         android:name="com.algorand.android.ui.wcarbitrarydatarequest.singlearbitrarydata.WalletConnectSingleArbitraryDataFragment"
         android:label="fragment_wallet_connect_single_arbitraryData"
-        tools:layout="@layout/fragment_wallet_connect_single_arbitraryData">
+        tools:layout="@layout/fragment_wallet_connect_single_arbitrary_data">
 
         <argument
             android:name="arbitraryData"
@@ -43,7 +44,7 @@
         android:id="@+id/walletConnectMultipleArbitraryDataFragment"
         android:name="com.algorand.android.ui.wcarbitrarydatarequest.multiplearbitrarydata.WalletConnectMultipleArbitraryDataFragment"
         android:label="fragment_wallet_connect_multiple_arbitraryData"
-        tools:layout="@layout/fragment_wallet_connect_multiple_arbitraryData">
+        tools:layout="@layout/fragment_wallet_connect_multiple_arbitrary_data">
         <argument
             android:name="arbitraryDatas"
             app:argType="com.algorand.android.ui.wcarbitrarydatarequest.WalletConnectArbitraryDataListItem[]" />
@@ -57,7 +58,7 @@
         android:id="@+id/arbitraryDataRequestDetailFragment"
         android:name="com.algorand.android.ui.wcarbitrarydatadetail.ArbitraryDataRequestDetailFragment"
         android:label="ArbitraryDataRequestDetailFragment"
-        tools:layout="@layout/fragment_arbitraryData_request_detail">
+        tools:layout="@layout/fragment_arbitrary_data_request_detail">
         <argument
             android:name="arbitraryData"
             app:argType="com.algorand.android.models.WalletConnectArbitraryData" />

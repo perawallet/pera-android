@@ -1,0 +1,60 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.modules.assets.manager
+
+import androidx.lifecycle.Lifecycle
+import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
+import com.algorand.android.utils.CacheResult
+import com.algorand.wallet.asset.domain.usecase.CacheAlgoAssetDetail
+import com.algorand.wallet.asset.manager.AlgoAssetDetailCacheManager
+import com.algorand.wallet.cache.LifecycleAwareCacheManager
+import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
+
+class AlgoAssetDetailCacheManagerImpl @Inject constructor(
+    private val cacheManager: LifecycleAwareCacheManager,
+    private val cacheAlgoAssetDetail: CacheAlgoAssetDetail,
+    private val parityUseCase: ParityUseCase
+) : AlgoAssetDetailCacheManager {
+
+    private val cacheManagerListener = object : LifecycleAwareCacheManager.CacheManagerListener {
+        override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {
+            initialize()
+        }
+
+        override suspend fun onStartJob(coroutineScope: CoroutineScope) {
+            runManagerJob()
+        }
+    }
+
+    private val currencyDetailCollector: suspend (CacheResult<SelectedCurrencyDetail>?) -> Unit = {
+        if (it is CacheResult.Success) {
+            cacheAlgoAssetDetail(usdValue = it.data.algoUsdExchangePrice)
+        }
+    }
+
+    override fun initialize(lifecycle: Lifecycle) {
+        cacheManager.setListener(cacheManagerListener)
+        lifecycle.addObserver(cacheManager)
+    }
+
+    private suspend fun initialize() {
+        cacheAlgoAssetDetail(usdValue = null)
+        cacheManager.startJob()
+    }
+
+    private suspend fun runManagerJob() {
+        parityUseCase.getSelectedCurrencyDetailCacheFlow().collect(currencyDetailCollector)
+    }
+}

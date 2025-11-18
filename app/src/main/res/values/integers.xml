@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,16 +12,13 @@
   ~
   -->
 
-<!-- TODO Update this value after talking with Design Team -->
 <resources>
     <integer name="navigation_duration">350</integer>
 
-    <item name="swap_summary_label_percentage" type="integer" format="float">0.37</item>
-    <item name="rekey_summary_label_percentage" type="integer" format="float">0.4</item>
+    <item name="rekey_summary_label_percentage" format="float" type="integer">0.4</item>
     <item name="label_percentage" format="float" type="integer">0.3</item>
     <item name="half_label_percentage" format="float" type="integer">0.5</item>
 
-    <!-- Transition Times -->
     <integer name="shared_fragment_transition_delay_ms">500</integer>
 
     <integer name="governor_icon_angle">135</integer>

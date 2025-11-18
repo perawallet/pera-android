@@ -1,0 +1,99 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.room.module)
+    alias(libs.plugins.hilt)
+}
+
+apply(from = "./test-coverage/kover.gradle")
+
+android {
+    namespace = "com.algorand.wallet"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
+    }
+
+    packaging {
+        resources {
+            excludes.apply {
+                add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+                add("META-INF/DEPENDENCIES.md")
+                add("META-INF/NOTICE.md")
+                add("META-INF/LICENSE.md")
+                add("META-INF/LICENSE.txt")
+                add("META-INF/LICENSE-notice.md")
+                add("META-INF/NOTICE.txt")
+                add("META-INF/ASL2.0.md")
+            }
+        }
+    }
+}
+
+dependencies {
+    api(libs.algosdk)
+    api(libs.p256)
+
+    implementation(libs.algorand.go.mobile)
+    implementation(libs.xhdwalletapi)
+    implementation(libs.kotlin.bip39)
+    implementation(libs.dagger.hilt.android)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.room.paging)
+    implementation(libs.paging.runtime.ktx)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(project.dependencies.platform(libs.firebase.bom))
+
+    ksp(libs.dagger.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
+    ksp(libs.room.compiler)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.lifecycle.runtime.testing)
+    testImplementation(libs.mockito)
+    testImplementation(libs.mockk)
+    testImplementation(project(":test-utils"))
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+ksp {
+    arg("room.verifySchema", "false")
+}

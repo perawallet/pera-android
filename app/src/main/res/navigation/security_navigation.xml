@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~  limitations under the License
+  ~
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/securityNavigation"
+    app:startDestination="@id/securityFragment">
+
+    <fragment
+        android:id="@+id/securityFragment"
+        android:name="com.algorand.android.ui.settings.security.SecurityFragment"
+        android:label="SecurityFragment"
+        tools:layout="@layout/fragment_security">
+        <action
+            android:id="@+id/action_securityFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_securityFragment_to_disablePasswordVerificationFragment"
+            app:destination="@id/disablePasswordVerificationFragment" />
+        <action
+            android:id="@+id/action_securityFragment_to_changePasswordVerificationFragment"
+            app:destination="@id/changePasswordVerificationFragment" />
+        <action
+            android:id="@+id/action_securityFragment_to_disableBiometricAuthPasswordVerificationFragment"
+            app:destination="@id/disableBiometricAuthPasswordVerificationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.algorand.android.ui.settings.ChangePasswordFragment"
+        android:label="fragment_settings_change_password"
+        tools:layout="@layout/fragment_base_password" />
+
+    <fragment
+        android:id="@+id/disablePasswordVerificationFragment"
+        android:name="com.algorand.android.ui.lock.DisablePasswordVerificationFragment"
+        android:label="DisablePasswordVerificationFragment" />
+
+    <fragment
+        android:id="@+id/changePasswordVerificationFragment"
+        android:name="com.algorand.android.ui.lock.ChangePasswordVerificationFragment"
+        android:label="ChangePasswordVerificationFragment" />
+
+    <fragment
+        android:id="@+id/disableBiometricAuthPasswordVerificationFragment"
+        android:name="com.algorand.android.ui.lock.DisableBiometricAuthPasswordVerificationFragment"
+        android:label="DisableBiometricAuthPasswordVerificationFragment"
+        tools:layout="@layout/fragment_base_password" />
+
+</navigation>

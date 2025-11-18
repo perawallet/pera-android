@@ -7,7 +7,7 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <ImageView
-        android:id="@+id/typeImageView"
+        android:id="@+id/iconImageView"
         android:layout_width="@dimen/register_type_selection_item_icon_size"
         android:layout_height="@dimen/register_type_selection_item_icon_size"
         android:layout_marginStart="@dimen/spacing_xlarge"
@@ -31,7 +31,7 @@
         app:layout_constraintBottom_toTopOf="@id/descriptionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/typeImageView"
+        app:layout_constraintStart_toEndOf="@id/iconImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:drawableEndCompat="@drawable/ic_algo"
@@ -45,9 +45,10 @@
         android:layout_marginTop="@dimen/spacing_xxxsmall"
         android:layout_marginBottom="@dimen/spacing_large"
         android:textAppearance="@style/TextAppearance.Footnote.Description"
+        android:textColor="@color/text_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/typeImageView"
+        app:layout_constraintStart_toEndOf="@id/iconImageView"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
         tools:text="@tools:sample/lorem[10]" />
 

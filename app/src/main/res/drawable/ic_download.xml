@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -24,7 +24,7 @@
             android:strokeColor="@color/text_main" />
         <path
             android:fillColor="#00000000"
-            android:pathData="M18,9L12,15M12,15L6,9M12,15V3"
+            android:pathData="M18,9L12,15L6,9M12,15V3"
             android:strokeWidth="2"
             android:strokeColor="@color/text_main" />
     </group>

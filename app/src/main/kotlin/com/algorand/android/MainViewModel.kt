@@ -1,0 +1,423 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android
+
+import android.content.Intent
+import android.content.SharedPreferences
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.BuildConfig.DISCOVER_URL
+import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
+import com.algorand.android.MainActivity.Companion.WC_ARBITRARY_DATA_ID_INTENT_KEY
+import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
+import com.algorand.android.core.BaseViewModel
+import com.algorand.android.database.NodeDao
+import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
+import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
+import com.algorand.android.models.Node
+import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManager
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
+import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
+import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
+import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
+import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
+import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
+import com.algorand.android.network.AlgodInterceptor
+import com.algorand.android.network.IndexerInterceptor
+import com.algorand.android.network.MobileHeaderInterceptor
+import com.algorand.android.notification.domain.model.NotificationMetadata
+import com.algorand.android.repository.NodeRepository
+import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
+import com.algorand.android.ui.main.tracker.BottomNavigationEventTracker
+import com.algorand.android.usecase.IsAccountLimitExceedUseCase
+import com.algorand.android.utils.findAllNodes
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
+import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
+import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
+import com.algorand.wallet.deeplink.model.DeepLink
+import com.algorand.wallet.deeplink.model.NotificationGroupType
+import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
+import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
+import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.properties.Delegates
+
+@Suppress("LongParameterList")
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val sharedPref: SharedPreferences,
+    private val nodeDao: NodeDao,
+    private val indexerInterceptor: IndexerInterceptor,
+    private val mobileHeaderInterceptor: MobileHeaderInterceptor,
+    private val algodInterceptor: AlgodInterceptor,
+    private val deviceIdMigrationUseCase: DeviceIdMigrationUseCase,
+    private val deepLinkHandler: DeeplinkHandler,
+    private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
+    private val tutorialUseCase: TutorialUseCase,
+    private val nodeRepository: NodeRepository,
+    private val peraReferrerManager: PeraReferrerManager,
+    private val autoLockManagerUseCase: AutoLockManagerUseCase,
+    private val initializeAppCache: InitializeAppCache,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val getAccountType: GetAccountType,
+    private var pendingIntentKeeper: PendingIntentKeeper,
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
+    private val autoLockManager: AutoLockManager,
+    private val autoLockSuggestionManager: AutoLockSuggestionManager,
+    private val androidEncryptionManager: AndroidEncryptionManager,
+    private val accountLiteManager: AccountLiteManager,
+    private val bottomNavigationEventTracker: BottomNavigationEventTracker,
+    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
+) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
+    BottomNavigationEventTracker by bottomNavigationEventTracker {
+
+    val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
+
+    private var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue && newValue && isAppUnlocked()) {
+            handlePendingIntent(true)
+        }
+    }
+
+    private val _activeNodeFlow = MutableStateFlow<Node?>(null)
+
+    private var refreshBalanceJob: Job? = null
+
+    init {
+        initActiveNodeFlow()
+        initializeNodeInterceptor()
+        initializeTutorial()
+        initializeAppCacheStatus()
+    }
+
+    fun initializeApp(lifecycle: Lifecycle) {
+        viewModelScope.launch {
+            androidEncryptionManager.initializeEncryptionManager()
+            initializeAppCache(lifecycle)
+            accountLiteManager.initialize(viewModelScope)
+        }
+    }
+
+    fun onNewNodeActivated(lifecycle: Lifecycle) {
+        refreshBalanceJob?.cancel()
+        viewModelScope.launch { initializeAppCache(lifecycle) }
+    }
+
+    fun handleDeepLink(uri: String) {
+        viewModelScope.launchIO {
+            deepLinkHandler.handleDeepLink(uri)
+        }
+    }
+
+    fun setDeepLinkHandlerListener(listener: DeeplinkHandler.Listener) {
+        deepLinkHandler.setListener(listener)
+    }
+
+    fun increaseAppOpeningCount() {
+        viewModelScope.launch {
+            increaseAppOpeningCountUseCase.increaseAppOpeningCount()
+        }
+    }
+
+    fun fetchInstallReferrer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            peraReferrerManager.fetchInstallReferrer()
+        }
+    }
+
+    fun handleNewNotification(newNotificationData: NotificationMetadata) {
+        when (val baseDeepLink = deepLinkHandler.parseDeeplink(newNotificationData.url.orEmpty())) {
+            is DeepLink.Notification -> handleNotificationWithDeepLink(newNotificationData, baseDeepLink)
+            else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
+        }
+    }
+
+    fun handleNotificationDeepLink(
+        accountAddress: String,
+        assetId: Long,
+        notificationGroupType: NotificationGroupType
+    ) {
+        viewModelScope.launch {
+            if (!isThereAnyAccountWithAddress(accountAddress)) {
+                eventDelegate.sendEvent(ViewEvent.ShowDeeplinkAccountNotFoundError)
+                return@launch
+            }
+
+            val viewEvent = when (notificationGroupType) {
+                TRANSACTIONS -> ViewEvent.HandleAssetTransactionDeepLink(accountAddress, assetId)
+                OPT_IN -> ViewEvent.HandleAssetOptInRequestDeepLink(accountAddress, assetId)
+                ASSET_INBOX -> getAssetInboxDeepLinkEvent(accountAddress)
+            }
+
+            eventDelegate.sendEvent(viewEvent)
+        }
+    }
+
+    fun handleAssetInboxDeepLink(accountAddress: String) {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(getAssetInboxDeepLinkEvent(accountAddress))
+        }
+    }
+
+    fun handleAssetDetailDeeplink(accountAddress: String, assetId: Long) {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(
+                if (isThereAnyAccountWithAddress(accountAddress) && isAssetOptedInByAccount(accountAddress, assetId)) {
+                    ViewEvent.NavToAssetDetailFragment(accountAddress, assetId)
+                } else {
+                    ViewEvent.ShowDeeplinkAccountNotFoundError
+                }
+            )
+        }
+    }
+
+    fun handleAccountDetailDeeplink(accountAddress: String) {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(
+                if (isThereAnyAccountWithAddress(accountAddress)) {
+                    ViewEvent.NavToAccountDetailFragment(accountAddress)
+                } else {
+                    ViewEvent.ShowDeeplinkAccountNotFoundError
+                }
+            )
+        }
+    }
+
+    fun isAppUnlocked(): Boolean {
+        return autoLockManager.isAppUnlocked
+    }
+
+    fun handlePendingIntent(isAppStart: Boolean = false) {
+        viewModelScope.launchIO {
+            val isPendingIntentHandled = pendingIntentKeeper.pendingIntent?.let { intent ->
+                if (isAssetSetupCompleted && (isAppUnlocked() || !shouldAppLocked())) {
+                    val handled = intent.dataString?.let { data ->
+                        handleDeepLink(data)
+                        true
+                    } ?: handlePendingIntentWithExtras(intent)
+                    pendingIntentKeeper.clearPendingIntent()
+                    handled
+                } else {
+                    false
+                }
+            } ?: false
+
+            if (isAppStart && !isPendingIntentHandled) {
+                startInAppReview()
+            }
+        }
+    }
+
+    fun startAutoLockSuggestion() {
+        viewModelScope.launch {
+            if (autoLockSuggestionManager.shouldSuggestAutoLock()) {
+                eventDelegate.sendEvent(ViewEvent.ShowLockSuggestion)
+            }
+        }
+    }
+
+    fun setPendingIntent(intent: Intent?) {
+        pendingIntentKeeper.setPendingIntent(intent)
+    }
+
+    fun getDiscoverUrlWithPath(path: String): String {
+        val normalizedPath = if (path.startsWith("/")) path else "/$path"
+        return DISCOVER_URL + normalizedPath
+    }
+
+    fun onRecoverAccountDeepLink(mnemonic: String) {
+        viewModelScope.launchIO {
+            eventDelegate.sendEvent(
+                if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
+                    ViewEvent.ShowMaxAccountLimitExceededError
+                } else {
+                    ViewEvent.NavToRecoverWithPassphraseNavigation(mnemonic)
+                }
+            )
+        }
+    }
+
+    fun handleKeyRegDeepLink(deepLink: DeepLink.KeyReg) {
+        val txnDetail = KeyRegTransactionDetail(
+            address = deepLink.senderAddress,
+            type = deepLink.type,
+            voteKey = deepLink.votekey,
+            selectionPublicKey = deepLink.selkey,
+            sprfkey = deepLink.sprfkey,
+            voteFirstRound = deepLink.votefst,
+            voteLastRound = deepLink.votelst,
+            voteKeyDilution = deepLink.votekd,
+            fee = deepLink.fee?.toBigIntegerOrNull(),
+            note = deepLink.note,
+            xnote = deepLink.xnote
+        )
+
+        viewModelScope.launchIO {
+            val canSignTransaction = getAccountType(txnDetail.address)?.canSignTransaction() == true
+
+            val viewEvent = if (canSignTransaction) {
+                ViewEvent.NavToKeyRegTransactionFragment(txnDetail)
+            } else {
+                ViewEvent.ShowKeyRegDeeplinkError(txnDetail.address)
+            }
+
+            eventDelegate.sendEvent(viewEvent)
+        }
+    }
+
+    private suspend fun shouldAppLocked(): Boolean {
+        return autoLockManagerUseCase.shouldAppLocked()
+    }
+
+    private suspend fun handlePendingIntentWithExtras(pendingIntent: Intent): Boolean {
+        val transactionId = pendingIntent.getLongExtra(WC_TRANSACTION_ID_INTENT_KEY, -1L)
+        val arbitraryDataId = pendingIntent.getLongExtra(WC_ARBITRARY_DATA_ID_INTENT_KEY, -1L)
+
+        return when {
+            transactionId != -1L -> {
+                eventDelegate.sendEvent(ViewEvent.NavToWalletConnectTransactionRequestNavigation(transactionId))
+                true
+            }
+
+            arbitraryDataId != -1L -> {
+                eventDelegate.sendEvent(ViewEvent.NavToWalletConnectArbitraryDataRequestNavigation(arbitraryDataId))
+                true
+            }
+
+            else -> pendingIntent.getStringExtra(DEEPLINK_KEY)?.let {
+                handleDeepLink(it)
+                true
+            } ?: false
+        }
+    }
+
+    private suspend fun migrateDeviceIdIfNeed() {
+        deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
+    }
+
+    private fun initializeAppCacheStatus() {
+        getAccountLiteCacheFlow().onEach { accountLiteCache ->
+            isAssetSetupCompleted =
+                accountLiteCache != AccountLiteCacheStatus.Idle && accountLiteCache != AccountLiteCacheStatus.Loading
+        }.launchIn(viewModelScope)
+    }
+
+    private fun startInAppReview() {
+        viewModelScope.launchIO {
+            if (isThereAnyLocalAccount()) {
+                eventDelegate.sendEvent(ViewEvent.StartInAppReview)
+            }
+        }
+    }
+
+    private fun initializeNodeInterceptor() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (indexerInterceptor.currentActiveNode == null) {
+                val lastActivatedNode = findAllNodes(sharedPref, nodeDao).find { it.isActive }
+                lastActivatedNode?.activate(indexerInterceptor, mobileHeaderInterceptor, algodInterceptor)
+            }
+            migrateDeviceIdIfNeed()
+        }
+    }
+
+    private fun initializeTutorial() {
+        viewModelScope.launch {
+            tutorialUseCase.initializeTutorial()
+        }
+    }
+
+    private fun initActiveNodeFlow() {
+        viewModelScope.launch(Dispatchers.IO) {
+            nodeRepository.getActiveNodeAsFlow().collectLatest {
+                if (_activeNodeFlow.value != null && _activeNodeFlow.value != it) {
+                    eventDelegate.sendEvent(ViewEvent.ProcessNodeChange)
+                }
+                _activeNodeFlow.value = it
+            }
+        }
+    }
+
+    private fun handleNotificationWithDeepLink(
+        newNotificationData: NotificationMetadata,
+        deeplink: DeepLink.Notification
+    ) {
+        viewModelScope.launch {
+            if (!isThereAnyAccountWithAddress(deeplink.address)) {
+                eventDelegate.sendEvent(ViewEvent.ShowDeeplinkAccountNotFoundError)
+                return@launch
+            }
+
+            val viewEvent = when (deeplink.notificationGroupType) {
+                OPT_IN -> ViewEvent.HandleAssetOptInRequestDeepLink(deeplink.address, deeplink.assetId)
+                ASSET_INBOX -> getAssetInboxDeepLinkEvent(deeplink.address)
+                else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
+            }
+
+            eventDelegate.sendEvent(viewEvent)
+        }
+    }
+
+    private suspend fun getAssetInboxDeepLinkEvent(accountAddress: String): ViewEvent {
+        val accountType = getAccountType(accountAddress)
+        val canSignTransaction = accountType?.canSignTransaction() == true
+        return if (canSignTransaction) {
+            ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
+        } else if (accountType != null) {
+            ViewEvent.NavToAccountDetailFragment(accountAddress)
+        } else {
+            ViewEvent.ShowDeeplinkAccountNotFoundError
+        }
+    }
+
+    sealed interface ViewEvent {
+        data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
+        data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
+        data class NavToAssetInboxOneAccountNavigation(val address: String) : ViewEvent
+        data class NavToAccountDetailFragment(val address: String) : ViewEvent
+        data class NavToAssetDetailFragment(val address: String, val assetId: Long) : ViewEvent
+        data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
+        data class NavToWalletConnectTransactionRequestNavigation(val wcRequestId: Long) : ViewEvent
+        data class NavToWalletConnectArbitraryDataRequestNavigation(val wcRequestId: Long) : ViewEvent
+        data class NavToRecoverWithPassphraseNavigation(val mnemonic: String) : ViewEvent
+        data class NavToKeyRegTransactionFragment(val transactionDetail: KeyRegTransactionDetail) : ViewEvent
+        data class ShowKeyRegDeeplinkError(val address: String) : ViewEvent
+
+        data object ShowMaxAccountLimitExceededError : ViewEvent
+        data object ShowDeeplinkAccountNotFoundError : ViewEvent
+        data object StartInAppReview : ViewEvent
+        data object ShowLockSuggestion : ViewEvent
+        data object ProcessNodeChange : ViewEvent
+    }
+}

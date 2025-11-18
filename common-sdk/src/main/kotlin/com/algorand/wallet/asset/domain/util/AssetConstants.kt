@@ -1,0 +1,32 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.asset.domain.util
+
+import java.math.BigDecimal
+
+object AssetConstants {
+    const val ALGO_ID: Long = 0L
+    const val DEFAULT_ASSET_DECIMAL: Int = 0
+    const val ALGO_FULL_NAME: String = "Algo"
+    const val ALGO_SHORT_NAME: String = "ALGO"
+    const val ALGO_DECIMALS: Int = 6
+    const val ALGORAND_DISCORD_URL: String = "https://discord.com/invite/84AActu3at"
+    const val ALGORAND_TELEGRAM_URL: String = "https://t.me/algorand"
+    const val ALGORAND_TWITTER_USERNAME: String = "Algorand"
+    const val ALGORAND_WEBSITE_URL: String = "https://algorand.com"
+    val ALGO_TOTAL_SUPPLY: BigDecimal = "10000000000".toBigDecimal()
+
+    const val USDC_MAINNET_ID: Long = 31566704L
+    const val USDC_TESTNET_ID: Long = 10458941L
+    const val USDT_MAINNET_ID: Long = 312769L
+}

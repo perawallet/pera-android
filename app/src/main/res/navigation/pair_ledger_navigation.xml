@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2022-2025 Pera Wallet, LDA
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -24,8 +25,15 @@
         android:label="VerifyLedgerAddressFragment"
         tools:layout="@layout/fragment_verify_ledger_address">
         <action
-            android:id="@+id/action_verifyLedgerAddressFragment_to_verifyLedgerInfoFragment"
-            app:destination="@id/verifyLedgerInfoFragment" />
+            android:id="@+id/action_verifyLedgerAddressFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/loginNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
     </fragment>
 
     <fragment
@@ -47,15 +55,8 @@
         android:label="RegisterLedgerAccountSelectionFragment"
         tools:layout="@layout/fragment_ledger_account_selection">
         <argument
-            android:name="bluetoothName"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="bluetoothAddress"
-            app:argType="string" />
-        <argument
-            android:name="ledgerAccountsInformation"
-            app:argType="com.algorand.android.models.AccountInformation[]" />
+            android:name="registerLedgerAccountSelectionNavArgs"
+            app:argType="com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionNavArgs" />
         <action
             android:id="@+id/action_registerLedgerAccountSelectionFragment_to_verifyLedgerAddressFragment"
             app:destination="@id/verifyLedgerAddressFragment" />
@@ -69,21 +70,6 @@
         <action
             android:id="@+id/action_ledgerInstructionFragment_to_registerLedgerSearchFragment"
             app:destination="@id/registerLedgerSearchFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/verifyLedgerInfoFragment"
-        android:name="com.algorand.android.modules.onboarding.pairledger.resultinfo.VerifyLedgerInfoFragment"
-        android:label="VerifyLedgerInfoFragment"
-        tools:layout="@layout/fragment_base_info">
-        <argument
-            android:name="numberOfAccounts"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_verifyLedgerInfoFragment_to_meldNavigation"
-            app:destination="@id/meldNavigation"
-            app:popUpTo="@id/loginNavigation"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <dialog

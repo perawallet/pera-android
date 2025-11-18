@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,6 +12,7 @@
   -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -27,10 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/spacing_xlarge"
             android:layout_marginTop="@dimen/spacing_xxxsmall"
-            android:text="@string/import_an_account"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/import_an_account" />
 
         <com.algorand.android.customviews.RegisterTypeSelectionItem
             android:id="@+id/recoverAnAccountSelectionItem"
@@ -70,7 +72,7 @@
             app:layout_constraintVertical_chainStyle="packed"
             app:typeSelectionDescriptionText="@string/i_want_to_recover_an"
             app:typeSelectionIcon="@drawable/ic_ledger"
-            app:typeSelectionTitleText="@string/pair_Ledger_device" />
+            app:typeSelectionTitleText="@string/pair_ledger_device" />
 
         <com.algorand.android.customviews.RegisterTypeSelectionItem
             android:id="@+id/importFromWebSelectionItem"

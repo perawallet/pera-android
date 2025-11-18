@@ -1,0 +1,43 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.account.info.domain.model
+
+import java.math.BigInteger
+
+data class AccountInformation(
+    val address: String,
+    val amount: BigInteger,
+    val lastFetchedRound: Long,
+    val rekeyAdminAddress: String?,
+    val totalAppsOptedIn: Int,
+    val totalAssetsOptedIn: Int,
+    val totalCreatedApps: Int,
+    val totalCreatedAssets: Int,
+    val appsTotalExtraPages: Int,
+    val appsTotalSchema: AppStateScheme?,
+    val assetHoldings: List<AssetHolding>,
+    val createdAtRound: Long?
+) {
+
+    fun isRekeyed(): Boolean {
+        return !rekeyAdminAddress.isNullOrEmpty() && rekeyAdminAddress != address
+    }
+
+    fun getAssetHoldingIds(): List<Long> = assetHoldings.map { it.assetId }
+
+    fun isCreated(): Boolean = createdAtRound != null
+
+    fun isThereAnOptedInApp(): Boolean = totalAppsOptedIn > 0 || totalCreatedApps > 0
+
+    fun isThereAnOptedInAsset(): Boolean = totalAssetsOptedIn > 0 || totalCreatedAssets > 0
+}

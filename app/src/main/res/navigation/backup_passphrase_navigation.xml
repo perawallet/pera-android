@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,7 +19,7 @@
 
     <include app:graph="@navigation/meld_navigation" />
 
-    <include app:graph="@navigation/backup_passphrase_account_name_navigation" />
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
 
     <fragment
         android:id="@+id/backupPassphraseFragment"
@@ -26,8 +27,9 @@
         android:label="fragment_backup_passphrase"
         tools:layout="@layout/fragment_backup_passphrase">
         <argument
-            android:name="publicKeyOfAccountToBackup"
-            app:argType="string" />
+            android:name="accountToBackup"
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation"
@@ -37,7 +39,7 @@
             app:destination="@id/passphraseValidationFragment" />
         <action
             android:id="@+id/action_backupPassphraseFragment_to_backupPassphraseAccountNameNavigation"
-            app:destination="@id/backupPassphraseAccountNameNavigation">
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation" />
@@ -50,8 +52,9 @@
         android:label="fragment_passphrase_validation"
         tools:layout="@layout/fragment_passphrase_validation">
         <argument
-            android:name="publicKeyOfAccountToBackup"
-            app:argType="string" />
+            android:name="accountToBackup"
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation"
@@ -64,15 +67,14 @@
     <fragment
         android:id="@+id/passphraseVerifiedInfoFragment"
         android:name="com.algorand.android.ui.register.createaccount.passphraseverified.PassphraseVerifiedInfoFragment"
-        android:label="PassphraseVerifiedInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="PassphraseVerifiedInfoFragment">
         <argument
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation"
             app:nullable="true" />
         <action
             android:id="@+id/action_passphraseVerifiedInfoFragment_to_backupPassphraseAccountNameNavigation"
-            app:destination="@id/backupPassphraseAccountNameNavigation">
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation" />

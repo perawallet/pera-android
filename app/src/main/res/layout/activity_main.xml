@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,8 +14,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/statusBarBackgroundView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.algorand.android.customviews.toolbar.CustomToolbar
         android:id="@+id/toolbar"
@@ -23,7 +33,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/statusBarBackgroundView"
         tools:visibility="visible" />
 
     <androidx.fragment.app.FragmentContainerView
@@ -40,7 +50,8 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"
-        android:layout_height="@dimen/main_bottom_navigation_height"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/spacing_xsmall"
         android:visibility="gone"
         app:backgroundTint="@color/tab_bar_background"
         app:elevation="@dimen/main_bottom_navigation_elevation"
@@ -50,27 +61,10 @@
         app:itemTextAppearanceActive="@style/TextAppearance.Caption.Bold"
         app:itemTextAppearanceInactive="@style/TextAppearance.Caption.Medium"
         app:itemTextColor="@color/navigation_item_color"
-        android:paddingVertical="@dimen/spacing_small"
-        app:itemPaddingBottom="1dp"
-        app:itemPaddingTop="1dp"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_menu"
-        tools:visibility="visible" />
-
-    <com.algorand.android.customviews.CoreActionsTabBarView
-        android:id="@+id/coreActionsTabBarView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:elevation="8dp"
-        android:visibility="gone"
-        app:layoutDescription="@xml/scene_core_actions_tab_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
     <include

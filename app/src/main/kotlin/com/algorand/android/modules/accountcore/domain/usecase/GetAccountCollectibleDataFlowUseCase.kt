@@ -1,0 +1,39 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.modules.accountcore.domain.usecase
+
+import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
+import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+
+internal class GetAccountCollectibleDataFlowUseCase @Inject constructor(
+    private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory,
+    private val getCollectiblesDetail: GetCollectiblesDetail,
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
+) : GetAccountCollectibleDataFlow {
+
+    override fun invoke(address: String): Flow<List<BaseOwnedCollectibleData>> {
+        return getAccountAssetHoldingsFlow(address).map { assetHoldings ->
+            val assetHoldingsMap = assetHoldings.associateBy { it.assetId }
+            val collectibleDetails = getCollectiblesDetail(assetHoldingsMap.keys.toList())
+            collectibleDetails.mapNotNull { collectibleDetail ->
+                val assetHolding = assetHoldingsMap[collectibleDetail.id] ?: return@mapNotNull null
+                baseOwnedCollectibleDataFactory(assetHolding, collectibleDetail)
+            }
+        }
+    }
+}

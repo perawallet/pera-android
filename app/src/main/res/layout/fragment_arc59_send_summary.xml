@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~   ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~   ~ you may not use this file except in compliance with the License.
   ~   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -104,7 +105,6 @@
         app:layout_constraintEnd_toStartOf="@id/endGuideLine"
         app:layout_constraintStart_toEndOf="@id/startGuideLine" />
 
-
     <TextView
         android:id="@+id/minBalanceFeeTextView"
         android:layout_width="wrap_content"
@@ -146,7 +146,6 @@
         app:layout_constraintBottom_toTopOf="@id/cancelButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/cancelButton"

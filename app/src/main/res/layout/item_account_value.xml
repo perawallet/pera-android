@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,49 +12,69 @@
   ~
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/hero_bg"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/spacing_xlarge"
-    android:paddingTop="@dimen/spacing_xxxlarge"
+    android:paddingTop="@dimen/spacing_xxlarge"
     android:paddingBottom="@dimen/spacing_small">
-
-    <TextView
-        style="@style/TextAppearance.Description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/account_value" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/primaryValueTextView"
         style="@style/TextAppearance.Title.Large.Sans.Medium"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/spacing_xsmall"
-        android:gravity="center"
+        android:layout_marginStart="@dimen/spacing_xlarge"
         android:maxLines="1"
         app:autoSizeMaxTextSize="@dimen/text_size_36"
         app:autoSizeMinTextSize="@dimen/text_size_13"
         app:autoSizeTextType="uniform"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="$15,23232,232.42" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/secondaryValueTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_xlarge"
+        android:layout_marginTop="@dimen/spacing_xxsmall"
         android:layout_marginBottom="@dimen/spacing_xsmall"
-        android:gravity="center"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/text_gray"
         app:autoSizeMaxTextSize="@dimen/text_size_36"
         app:autoSizeMinTextSize="@dimen/text_size_13"
         app:autoSizeTextType="uniform"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/primaryValueTextView"
         tools:text="$15,594.15" />
 
-</LinearLayout>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/helperTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/spacing_xlarge"
+        android:drawablePadding="@dimen/spacing_xxsmall"
+        android:drawableTint="@color/text_gray"
+        android:gravity="right|center_vertical"
+        android:textAppearance="@style/TextAppearance.Footnote.Sans"
+        android:textColor="@color/text_gray"
+        app:drawableEndCompat="@drawable/ic_info_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/secondaryValueTextView"
+        tools:text="@tools:sample/lorem[3]" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/chartComposeView"
+        android:layout_width="match_parent"
+        android:layout_height="172dp"
+        android:layout_marginTop="@dimen/spacing_normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/secondaryValueTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

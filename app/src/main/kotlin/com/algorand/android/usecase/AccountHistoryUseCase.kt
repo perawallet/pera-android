@@ -1,0 +1,81 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *  limitations under the License
+ *
+ */
+
+package com.algorand.android.usecase
+
+import androidx.paging.CombinedLoadStates
+import androidx.paging.PagingData
+import com.algorand.android.core.BaseUseCase
+import com.algorand.android.decider.DateFilterUseCase
+import com.algorand.android.models.DateFilter
+import com.algorand.android.models.ui.DateFilterPreview
+import com.algorand.android.models.ui.TransactionLoadStatePreview
+import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.modules.transactionhistory.ui.usecase.PendingTransactionsPreviewUseCase
+import com.algorand.android.modules.transactionhistory.ui.usecase.TransactionHistoryPreviewUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class AccountHistoryUseCase @Inject constructor(
+    private val transactionHistoryPreviewUseCase: TransactionHistoryPreviewUseCase,
+    private val pendingTransactionsPreviewUseCase: PendingTransactionsPreviewUseCase,
+    private val dateFilterUseCase: DateFilterUseCase,
+    private val transactionLoadStateUseCase: TransactionLoadStateUseCase
+) : BaseUseCase() {
+
+    val pendingTransactionDistinctUntilChangedListener: (
+        List<BaseTransactionItem>?,
+        List<BaseTransactionItem>?
+    ) -> Boolean
+        get() = pendingTransactionsPreviewUseCase.pendingFlowDistinctUntilChangedListener
+
+    fun getTransactionPaginationFlow(
+        publicKey: String,
+        coroutineScope: CoroutineScope
+    ): Flow<PagingData<BaseTransactionItem>>? {
+        return transactionHistoryPreviewUseCase.getTransactionHistoryPaginationFlow(publicKey, coroutineScope)
+    }
+
+    fun refreshAccountHistoryData() {
+        transactionHistoryPreviewUseCase.refreshTransactionHistory()
+    }
+
+    suspend fun fetchPendingTransactions(publicKey: String): List<BaseTransactionItem> {
+        return pendingTransactionsPreviewUseCase.getPendingTransactionItems(publicKey)
+    }
+
+    fun createDateFilterPreview(dateFilter: DateFilter): DateFilterPreview {
+        return dateFilterUseCase.createDateFilterPreview(dateFilter)
+    }
+
+    suspend fun setDateFilter(dateFilter: DateFilter) {
+        transactionHistoryPreviewUseCase.filterHistoryByDate(dateFilter)
+    }
+
+    fun createTransactionLoadStatePreview(
+        combinedLoadStates: CombinedLoadStates,
+        itemCount: Int,
+        isLastStateError: Boolean
+    ): TransactionLoadStatePreview {
+        return transactionLoadStateUseCase.createTransactionLoadStatePreview(
+            combinedLoadStates = combinedLoadStates,
+            itemCount = itemCount,
+            isLastStateError = isLastStateError
+        )
+    }
+
+    fun refreshTransactionHistory() {
+        transactionHistoryPreviewUseCase.refreshTransactionHistory()
+    }
+}

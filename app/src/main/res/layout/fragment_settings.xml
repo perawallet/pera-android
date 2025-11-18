@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -25,29 +26,13 @@
         android:paddingHorizontal="@dimen/spacing_xlarge">
 
         <TextView
-            android:id="@+id/settingsTitleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="46dp"
-            android:text="@string/settings"
-            android:textAppearance="@style/TextAppearance.Title.Sans.Medium" />
-
-        <TextView
             android:id="@+id/accountSettingsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="46dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="@dimen/spacing_xsmall"
             android:text="@string/account"
             android:textAppearance="@style/TextAppearance.Footnote.Description" />
-
-        <com.algorand.android.customviews.SettingsListItem
-            android:id="@+id/algorandSecureBackupListItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:endViewLayoutResource="@layout/layout_right_arrow"
-            app:settingIcon="@drawable/ic_backup"
-            app:settingTitle="@string/algorand_secure_backup" />
 
         <com.algorand.android.customviews.SettingsListItem
             android:id="@+id/securityListItem"
@@ -80,6 +65,14 @@
             app:endViewLayoutResource="@layout/layout_right_arrow"
             app:settingIcon="@drawable/ic_wallet_connect"
             app:settingTitle="@string/wallet_connect_sessions" />
+
+        <com.algorand.android.customviews.SettingsListItem
+            android:id="@+id/passkeysListItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:endViewLayoutResource="@layout/layout_right_arrow"
+            app:settingIcon="@drawable/ic_passkey"
+            app:settingTitle="@string/passkeys" />
 
         <TextView
             android:id="@+id/appPreferencesTitleTextView"
@@ -170,9 +163,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="@dimen/spacing_large"
             android:gravity="center"
+            tools:text="@string/version_format" />
+
+        <TextView
+            android:id="@+id/firebaseIdTextView"
+            style="@style/TextAppearance.Footnote.Description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="@dimen/spacing_large"
             android:layout_marginBottom="52dp"
+            android:gravity="center"
             tools:text="@string/version_format" />
 
     </LinearLayout>

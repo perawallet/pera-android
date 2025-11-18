@@ -1,0 +1,149 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.deeplink.parser
+
+import com.algorand.wallet.deeplink.model.PeraUri
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Test
+
+class PeraUriParserImplTest {
+
+    private val sut = PeraUriParserImpl()
+
+    @Test
+    fun `EXPECT PeraUri with empty raw uri when uri is empty string`() {
+        val result = sut.parseUri("")
+
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            rawUri = "",
+            lastPathSegment = null
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT scheme host path queryParams WHEN uri has all components`() {
+        val uri = "pera://host/path?query1=value1&query2=value2"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("pera", result.scheme)
+        assertEquals("host", result.host)
+        assertEquals("path", result.path)
+        assertEquals(mapOf("query1" to "value1", "query2" to "value2"), result.queryParams)
+    }
+
+    @Test
+    fun `EXPECT PeraUri with raw uri only WHEN uri has no host path queryParams`() {
+        val uri = "pera:"
+
+        val result = sut.parseUri(uri)
+
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            rawUri = uri,
+            lastPathSegment = null
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT scheme and host only WHEN uri has no path queryParams`() {
+        val uri = "pera://host"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("pera", result.scheme)
+        assertEquals("host", result.host)
+        assertNull(result.path)
+        assertEquals(result.queryParams, emptyMap<String, String?>())
+    }
+
+    @Test
+    fun `EXPECT scheme host path only WHEN uri has no queryParams`() {
+        val uri = "pera://host/path"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("pera", result.scheme)
+        assertEquals("host", result.host)
+        assertEquals("path", result.path)
+        assertEquals(result.queryParams, emptyMap<String, String?>())
+    }
+
+    @Test
+    fun `EXPECT scheme host path queryParams only WHEN uri has query params`() {
+        val uri = "pera://host/path?query1=value1&query2=value2"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("pera", result.scheme)
+        assertEquals("host", result.host)
+        assertEquals("path", result.path)
+        assertEquals(mapOf("query1" to "value1", "query2" to "value2"), result.queryParams)
+    }
+
+    @Test
+    fun `EXPECT scheme host only WHEN uri has no path queryParams`() {
+        val uri = "pera://host"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("pera", result.scheme)
+        assertEquals("host", result.host)
+        assertNull(result.path)
+        assertEquals(result.queryParams, emptyMap<String, String?>())
+    }
+
+    @Test
+    fun `EXPECT PeraUri with raw uri only WHEN uri has no scheme`() {
+        val uri = "host/path?query1=value1&query2=value2"
+
+        val result = sut.parseUri(uri)
+
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            rawUri = uri,
+            lastPathSegment = null
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT PeraUri with raw uri only WHEN uri has no host`() {
+        val uri = "pera:/path?query1=value1&query2=value2"
+
+        val result = sut.parseUri(uri)
+
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            rawUri = uri,
+            lastPathSegment = null
+        )
+        assertEquals(expected, result)
+    }
+}

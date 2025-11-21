@@ -48,6 +48,64 @@
 
     <include app:graph="@navigation/asset_inbox_all_accounts_navigation" />
 
+    <include app:graph="@navigation/swap_v2_navigation" />
+
+    <include app:graph="@navigation/single_button_bottom_sheet_navigation" />
+
+    <include app:graph="@navigation/send_algo_navigation" />
+
+    <include app:graph="@navigation/meld_navigation" />
+
+    <include app:graph="@navigation/contact_addition_navigation" />
+
+    <include app:graph="@navigation/transaction_detail_navigation" />
+
+    <include app:graph="@navigation/account_status_detail_navigation" />
+
+    <include app:graph="@navigation/show_qr_navigation" />
+
+    <include app:graph="@navigation/view_passphrase_navigation" />
+
+    <include app:graph="@navigation/date_filter_navigation" />
+
+    <include app:graph="@navigation/asset_addition_action_navigation" />
+
+    <include app:graph="@navigation/asset_removal_action_navigation" />
+
+    <include app:graph="@navigation/asset_transfer_balance_action_navigation" />
+
+    <include app:graph="@navigation/asa_profile_navigation" />
+
+    <include app:graph="@navigation/collectible_profile_navigation" />
+
+    <include app:graph="@navigation/collectible_image_preview_navigation" />
+
+    <include app:graph="@navigation/video_player_navigation" />
+
+    <include app:graph="@navigation/audio_player_navigation" />
+
+    <include app:graph="@navigation/discover_dapp_navigation" />
+
+    <include app:graph="@navigation/discover_detail_navigation" />
+
+    <include app:graph="@navigation/nft_opt_out_confirmation_navigation" />
+
+    <include app:graph="@navigation/nft_card_viewer_navigation" />
+
+    <include app:graph="@navigation/in_app_pin_navigation" />
+
+    <include app:graph="@navigation/asset_inbox_one_account_navigation" />
+
+    <include app:graph="@navigation/transaction_confirmation_navigation" />
+
+    <include app:graph="@navigation/add_note_navigation" />
+
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
+
+    <include app:graph="@navigation/security_navigation" />
+
+    <include app:graph="@navigation/discover_url_viewer_navigation" />
+
     <action
         android:id="@+id/action_global_registerWatchAccountNavigation"
         app:destination="@id/registerWatchAccountNavigation"
@@ -964,13 +1022,6 @@
         <action
             android:id="@+id/action_accountDetailFragment_to_watchAccountQuickActionsBottomSheet"
             app:destination="@id/watchAccountQuickActionsBottomSheet" />
-        <action
-            android:id="@+id/action_accountDetailFragment_to_swapV2Navigation"
-            app:destination="@id/swapV2Navigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_requiredMinimumBalanceInformationBottomSheet"
             app:destination="@id/requiredMinimumBalanceInformationBottomSheet" />

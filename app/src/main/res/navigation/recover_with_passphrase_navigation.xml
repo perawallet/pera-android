@@ -21,6 +21,8 @@
 
     <include app:graph="@navigation/recover_registered_accounts_navigation" />
 
+    <include app:graph="@navigation/rekeyed_account_info_navigation" />
+
     <fragment
         android:id="@+id/recoverWithPassphraseFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.RecoverWithPassphraseFragment"

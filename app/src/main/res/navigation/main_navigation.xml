@@ -23,6 +23,16 @@
 
     <include app:graph="@navigation/initial_register_navigation" />
 
+    <include app:graph="@navigation/lock_preference_navigation" />
+
+    <include app:graph="@navigation/single_button_bottom_sheet_navigation" />
+
+    <include app:graph="@navigation/warning_confirmation_navigation" />
+
+    <include app:graph="@navigation/wallet_connect_transaction_request_navigation" />
+
+    <include app:graph="@navigation/wallet_connect_arbitrary_data_request_navigation" />
+
     <action
         android:id="@+id/action_global_walletConnectTransactionRequestNavigation"
         app:destination="@id/walletConnectTransactionRequestNavigation"

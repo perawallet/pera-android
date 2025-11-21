@@ -24,6 +24,8 @@
 
     <include app:graph="@navigation/add_note_navigation" />
 
+    <include app:graph="@navigation/transaction_confirmation_navigation" />
+
     <action
         android:id="@+id/action_sendAlgoNavigation_pop"
         app:popUpTo="@id/sendAlgoNavigation"

@@ -19,6 +19,8 @@
 
     <include app:graph="@navigation/backup_passphrase_navigation" />
 
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
+
     <action
         android:id="@+id/action_to_lockPreferenceNavigation"
         app:destination="@id/lockPreferenceNavigation"

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -79,63 +78,47 @@
             app:visibilityMode="ignore" />
 
         <ConstraintOverride android:id="@id/assetPrimaryValueTextView">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/quickActionButtons"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/buyAlgoButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/swapButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/sendButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/receiveButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <Constraint android:id="@id/algorandTabLayout">
@@ -155,9 +138,7 @@
         <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
     </ConstraintSet>
@@ -206,23 +187,17 @@
         <ConstraintOverride
             android:id="@id/assetPrimaryValueTextView"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride
@@ -232,41 +207,31 @@
         <ConstraintOverride
             android:id="@id/quickActionButtons"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/buyAlgoButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/swapButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/sendButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/receiveButton"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <Constraint android:id="@id/algorandTabLayout">
@@ -286,9 +251,7 @@
         <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
     </ConstraintSet>

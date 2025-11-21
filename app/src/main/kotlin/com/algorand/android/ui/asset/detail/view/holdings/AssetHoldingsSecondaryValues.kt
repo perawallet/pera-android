@@ -33,6 +33,7 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel.View
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraPercentageText
+import com.algorand.android.ui.compose.widget.text.AutosizeText
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatDateToChartDateString
 
@@ -55,6 +56,7 @@ fun AssetHoldingBalanceStats(
     }
 
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+        Spacer(modifier = Modifier.height(8.dp))
         PrimaryBalanceText(primaryAmountRenderer)
         Spacer(modifier = Modifier.height(4.dp))
         Row(
@@ -79,7 +81,7 @@ fun AssetHoldingBalanceStats(
 
 @Composable
 private fun PrimaryBalanceText(renderer: AmountRenderer) {
-    Text(
+    AutosizeText(
         text = renderer.getDisplayValue(),
         style = PeraTheme.typography.title.large.sansMedium,
         color = PeraTheme.colors.text.main

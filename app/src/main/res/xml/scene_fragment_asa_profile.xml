@@ -67,13 +67,11 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
-        </ConstraintOverride>
+            <PropertySet android:alpha="1" />
+        </Constraint>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
             <Layout
@@ -106,13 +104,11 @@
             android:id="@id/loadingLayout"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
-        </ConstraintOverride>
+            <PropertySet android:alpha="1" />
+        </Constraint>
 
     </ConstraintSet>
 
@@ -158,13 +154,11 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
-        </ConstraintOverride>
+            <PropertySet android:alpha="0" />
+        </Constraint>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
             <Layout
@@ -197,13 +191,11 @@
             android:id="@id/loadingLayout"
             app:visibilityMode="ignore" />
 
-        <ConstraintOverride
+        <Constraint
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
-        </ConstraintOverride>
+            <PropertySet android:alpha="0" />
+        </Constraint>
 
     </ConstraintSet>
 

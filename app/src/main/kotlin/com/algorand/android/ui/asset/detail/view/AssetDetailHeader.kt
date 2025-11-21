@@ -49,7 +49,7 @@ fun AssetDetailHeader(viewModel: AssetDetailHeaderViewModel) {
                 AssetIcon(modifier = Modifier.size(32.dp), drawable = viewState.assetIconDrawable)
                 Spacer(Modifier.width(12.dp))
                 Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                    AssetNameText(viewState)
+                    AssetNameText(modifier = Modifier.weight(1f), viewState)
                     Spacer(Modifier.width(4.dp))
                     VerificationTierIcon(Modifier.size(16.dp), viewState.verificationTierConfiguration)
                 }
@@ -92,8 +92,9 @@ private fun NotificationButton(isPriceAlertEnabled: Boolean?, onClick: () -> Uni
 }
 
 @Composable
-private fun AssetNameText(contentState: Content) {
+private fun AssetNameText(modifier: Modifier, contentState: Content) {
     AutosizeText(
+        modifier = modifier,
         text = contentState.assetName,
         style = PeraTheme.typography.body.large.sans
     )

@@ -19,6 +19,8 @@
 
     <include app:graph="@navigation/discover_url_viewer_navigation" />
 
+    <include app:graph="@navigation/discover_dapp_navigation" />
+
     <fragment
         android:id="@+id/discoverHomeFragment"
         android:name="com.algorand.android.discover.home.ui.DiscoverHomeFragment"

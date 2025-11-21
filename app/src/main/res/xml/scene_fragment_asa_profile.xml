@@ -70,9 +70,7 @@
         <ConstraintOverride
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
@@ -109,9 +107,7 @@
         <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="1" />
+            <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
     </ConstraintSet>
@@ -161,9 +157,7 @@
         <ConstraintOverride
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
@@ -200,9 +194,7 @@
         <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
-            <CustomAttribute
-                app:attributeName="alpha"
-                app:customFloatValue="0" />
+            <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
     </ConstraintSet>

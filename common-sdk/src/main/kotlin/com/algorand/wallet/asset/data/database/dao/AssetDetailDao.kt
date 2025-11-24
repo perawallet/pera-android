@@ -81,5 +81,5 @@ internal interface AssetDetailDao {
     @Query("SELECT asset_id, is_favorite FROM asset_detail WHERE asset_id IN (:assetIds)")
     suspend fun getFavoriteStatuses(
         assetIds: List<Long>
-    ): Map<@MapColumn("asset_id") Long, @MapColumn("is_favorite") Boolean>
+    ): Map<@MapColumn("asset_id") Long, @MapColumn("is_favorite") Boolean?>
 }

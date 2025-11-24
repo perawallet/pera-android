@@ -49,7 +49,7 @@ fun AssetDetailHeader(viewModel: AssetDetailHeaderViewModel) {
                 AssetIcon(modifier = Modifier.size(32.dp), drawable = viewState.assetIconDrawable)
                 Spacer(Modifier.width(12.dp))
                 Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                    AssetNameText(modifier = Modifier.weight(1f), viewState)
+                    AssetNameText(modifier = Modifier.weight(1f, fill = false), viewState)
                     Spacer(Modifier.width(4.dp))
                     VerificationTierIcon(Modifier.size(16.dp), viewState.verificationTierConfiguration)
                 }

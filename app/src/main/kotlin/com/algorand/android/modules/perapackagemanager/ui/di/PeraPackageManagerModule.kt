@@ -14,6 +14,8 @@ package com.algorand.android.modules.perapackagemanager.ui.di
 
 import android.content.Context
 import android.content.pm.PackageManager
+import com.algorand.android.modules.perapackagemanager.ui.DefaultPeraPackageManager
+import com.algorand.android.modules.perapackagemanager.ui.PeraPackageManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,12 +24,13 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PeraPackageManagerModule {
+internal object PeraPackageManagerModule {
 
     @Provides
-    fun providePackageManager(
-        @ApplicationContext context: Context
-    ): PackageManager? {
+    fun providePackageManager(@ApplicationContext context: Context): PackageManager {
         return context.packageManager
     }
+
+    @Provides
+    fun providePeraPackageManager(manager: DefaultPeraPackageManager): PeraPackageManager = manager
 }

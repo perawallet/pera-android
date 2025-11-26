@@ -12,18 +12,7 @@
 
 package com.algorand.android.modules.perapackagemanager.ui
 
-import android.content.pm.PackageManager
-import javax.inject.Inject
-
-class PeraPackageManager @Inject constructor(
-    private val packageManager: PackageManager?
-) {
-
-    fun getInstalledAppsPackageNameList(): List<String> {
-        return packageManager?.let { safePackageManager ->
-            safePackageManager.getInstalledApplications(PackageManager.GET_META_DATA).mapNotNull { applicationInfo ->
-                applicationInfo?.packageName
-            }
-        }.orEmpty()
-    }
+interface PeraPackageManager {
+    fun getInstalledAppsPackageNameList(): List<String>
+    fun canOpenUri(uri: String): Boolean
 }

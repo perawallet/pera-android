@@ -13,6 +13,7 @@
 package com.algorand.android.ui.webview.bridge
 
 import android.webkit.JavascriptInterface
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.GET_PUBLIC_SETTINGS
 import com.algorand.android.ui.webview.bridge.model.event.PeraPublicWebInterfaceEvent
 
 @Suppress("unused")
@@ -23,7 +24,7 @@ internal class PeraWebViewPublicJsBridge(
     @JavascriptInterface
     fun getPublicSettings(params: Any) {
         val event = PeraPublicWebInterfaceEvent(
-            name = "getPublicSettings",
+            name = GET_PUBLIC_SETTINGS,
             eventType = PeraPublicWebInterfaceEvent.EventType.GetPublicSettings
         )
         onEvent?.invoke(event)

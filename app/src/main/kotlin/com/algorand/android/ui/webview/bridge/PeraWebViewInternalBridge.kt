@@ -13,6 +13,15 @@
 package com.algorand.android.ui.webview.bridge
 
 import android.webkit.JavascriptInterface
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.CAN_OPEN_URI
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.CLOSE_WEB_VIEW
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.GET_ADDRESSES
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.GET_SETTINGS
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.LOG_ANALYTICS_EVENT
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.NOTIFY_USER
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.OPEN_NATIVE_URI
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.OPEN_SYSTEM_BROWSER
+import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.PUSH_WEB_VIEW
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
 import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent
 import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType
@@ -25,47 +34,47 @@ internal class PeraWebViewInternalBridge(
 
     @JavascriptInterface
     fun pushWebView(params: String) {
-        processWebEvent("pushWebView") { mapper.mapPushWebViewEvent(params) }
+        processWebEvent(PUSH_WEB_VIEW) { mapper.mapPushWebViewEvent(params) }
     }
 
     @JavascriptInterface
     fun openSystemBrowser(params: String) {
-        processWebEvent("openSystemBrowser") { mapper.mapOpenSystemBrowserEvent(params) }
+        processWebEvent(OPEN_SYSTEM_BROWSER) { mapper.mapOpenSystemBrowserEvent(params) }
     }
 
     @JavascriptInterface
     fun canOpenURI(params: String) {
-        processWebEvent("canOpenURI") { mapper.mapCanOpenUriEvent(params) }
+        processWebEvent(CAN_OPEN_URI) { mapper.mapCanOpenUriEvent(params) }
     }
 
     @JavascriptInterface
     fun openNativeURI(params: String) {
-        processWebEvent("openNativeURI") { mapper.mapOpenNativeUriEvent(params) }
+        processWebEvent(OPEN_NATIVE_URI) { mapper.mapOpenNativeUriEvent(params) }
     }
 
     @JavascriptInterface
     fun notifyUser(params: String) {
-        processWebEvent("notifyUser") { mapper.mapNotifyUserEvent(params) }
+        processWebEvent(NOTIFY_USER) { mapper.mapNotifyUserEvent(params) }
     }
 
     @JavascriptInterface
     fun getAddresses() {
-        processWebEvent("getAddresses") { EventType.GetAddresses }
+        processWebEvent(GET_ADDRESSES) { EventType.GetAddresses }
     }
 
     @JavascriptInterface
     fun getSettings() {
-        processWebEvent("getSettings") { EventType.GetSettings }
+        processWebEvent(GET_SETTINGS) { EventType.GetSettings }
     }
 
     @JavascriptInterface
     fun logAnalyticsEvent(params: String) {
-        processWebEvent("logAnalyticsEvent") { mapper.mapLogAnalyticsEvent(params) }
+        processWebEvent(LOG_ANALYTICS_EVENT) { mapper.mapLogAnalyticsEvent(params) }
     }
 
     @JavascriptInterface
     fun closeWebView() {
-        processWebEvent("closeWebView") { EventType.CloseWebView }
+        processWebEvent(CLOSE_WEB_VIEW) { EventType.CloseWebView }
     }
 
     private fun processWebEvent(name: String, onEventType: () -> EventType?) {

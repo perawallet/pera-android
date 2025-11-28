@@ -291,16 +291,6 @@
                 android:defaultValue="true"
                 app:argType="boolean" />
         </action>
-        <action
-            android:id="@+id/action_assetTransferPreviewFragment_to_transactionConfirmationNavigation"
-            app:destination="@id/transactionConfirmationNavigation">
-            <argument
-                android:name="transactionId"
-                app:argType="string" />
-            <argument
-                android:name="titleResId"
-                app:argType="integer" />
-        </action>
     </fragment>
 
     <dialog

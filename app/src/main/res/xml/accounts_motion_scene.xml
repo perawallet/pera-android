@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -66,7 +65,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </Constraint>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/portfolioValueTitleTextView"
             app:visibilityMode="ignore">
             <PropertySet
@@ -75,9 +74,9 @@
             <Transform
                 android:scaleX="1"
                 android:scaleY="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/primaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -86,9 +85,9 @@
             <Transform
                 android:scaleX="1"
                 android:scaleY="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/secondaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -97,9 +96,9 @@
             <Transform
                 android:scaleX="1"
                 android:scaleY="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/toolbarPrimaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -108,9 +107,9 @@
             <Transform
                 android:scaleX="0"
                 android:scaleY="0" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/toolbarSecondaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -119,12 +118,13 @@
             <Transform
                 android:scaleX="0"
                 android:scaleY="0" />
-        </Constraint>
+        </ConstraintOverride>
 
         <Constraint
             android:id="@id/loadingProgressBar"
             app:visibilityMode="ignore">
             <Layout
+                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -219,7 +219,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </Constraint>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/portfolioValueTitleTextView"
             app:visibilityMode="ignore">
             <PropertySet
@@ -228,9 +228,9 @@
             <Transform
                 android:scaleX="0.8"
                 android:scaleY="0.8" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/primaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -239,9 +239,9 @@
             <Transform
                 android:scaleX="0.8"
                 android:scaleY="0.8" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/secondaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -250,8 +250,8 @@
             <Transform
                 android:scaleX="0.8"
                 android:scaleY="0.8" />
-        </Constraint>
-        <Constraint
+        </ConstraintOverride>
+        <ConstraintOverride
             android:id="@id/toolbarPrimaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -260,9 +260,9 @@
             <Transform
                 android:scaleX="1"
                 android:scaleY="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/toolbarSecondaryPortfolioValue"
             app:visibilityMode="ignore">
             <PropertySet
@@ -271,12 +271,13 @@
             <Transform
                 android:scaleX="1"
                 android:scaleY="1" />
-        </Constraint>
+        </ConstraintOverride>
 
         <Constraint
             android:id="@id/loadingProgressBar"
             app:visibilityMode="ignore">
             <Layout
+                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

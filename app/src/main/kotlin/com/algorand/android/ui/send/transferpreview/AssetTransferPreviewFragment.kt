@@ -22,6 +22,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.SendAlgoNavigationDirections
 import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.databinding.FragmentTransferAssetPreviewBinding
 import com.algorand.android.models.AnnotatedString
@@ -391,11 +392,10 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
 
     private fun navToTransactionConfirmationNavigation(transactionId: String) {
         nav(
-            AssetTransferPreviewFragmentDirections
-                .actionAssetTransferPreviewFragmentToTransactionConfirmationNavigation(
-                    transactionId = transactionId,
-                    titleResId = R.string.asset_transfer_completed
-                )
+            SendAlgoNavigationDirections.actionGlobalTransactionConfirmationNavigation(
+                transactionId = transactionId,
+                titleResId = R.string.asset_transfer_completed
+            )
         )
     }
 

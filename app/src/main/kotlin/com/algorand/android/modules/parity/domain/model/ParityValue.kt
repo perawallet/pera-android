@@ -15,7 +15,7 @@ package com.algorand.android.modules.parity.domain.model
 import android.os.Parcelable
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.formatAsLowerThanMinCurrency
-import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.utils.isGreaterThan
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 

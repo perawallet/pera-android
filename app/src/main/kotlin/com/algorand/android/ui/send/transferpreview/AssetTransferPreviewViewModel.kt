@@ -138,6 +138,7 @@ class AssetTransferPreviewViewModel @Inject constructor(
     }
 
     fun onNoteUpdate(newNote: String) {
+        if (sendAlgoJob?.isActive == true) return
         viewModelScope.launch {
             if (_assetTransferPreviewFlow.value?.isNoteEditable == true) {
                 val newPreview = _assetTransferPreviewFlow.value?.copy(note = newNote)

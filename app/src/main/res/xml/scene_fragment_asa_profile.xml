@@ -67,11 +67,11 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
             <Layout
@@ -104,11 +104,11 @@
             android:id="@id/loadingLayout"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
     </ConstraintSet>
 
@@ -154,11 +154,11 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/assetPriceTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
         <Constraint android:id="@id/assetAboutFragmentContainerView">
             <Layout
@@ -191,11 +191,11 @@
             android:id="@id/loadingLayout"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
     </ConstraintSet>
 

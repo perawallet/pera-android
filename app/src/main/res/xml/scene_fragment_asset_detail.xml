@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -78,49 +77,49 @@
             android:id="@id/assetLineChart"
             app:visibilityMode="ignore" />
 
-        <Constraint android:id="@id/assetPrimaryValueTextView">
+        <ConstraintOverride android:id="@id/assetPrimaryValueTextView">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint android:id="@id/assetSecondaryValueTextView">
+        <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/quickActionButtons"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/buyAlgoButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/swapButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/sendButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/receiveButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
         <Constraint android:id="@id/algorandTabLayout">
             <Layout
@@ -136,11 +135,11 @@
             android:id="@id/assetDetailViewPager"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
-        </Constraint>
+        </ConstraintOverride>
 
     </ConstraintSet>
 
@@ -185,55 +184,55 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/assetPrimaryValueTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint android:id="@id/assetSecondaryValueTextView">
+        <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/assetLineChart"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/quickActionButtons"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/buyAlgoButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/swapButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/sendButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/receiveButton"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
         <Constraint android:id="@id/algorandTabLayout">
             <Layout
@@ -249,11 +248,11 @@
             android:id="@id/assetDetailViewPager"
             app:visibilityMode="ignore" />
 
-        <Constraint
+        <ConstraintOverride
             android:id="@id/marketInformationLayout"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
-        </Constraint>
+        </ConstraintOverride>
 
     </ConstraintSet>
 

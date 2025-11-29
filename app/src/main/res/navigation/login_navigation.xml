@@ -16,17 +16,19 @@
     android:id="@+id/loginNavigation"
     app:startDestination="@id/registerIntroFragment">
 
-    <include app:graph="@navigation/recover_with_passphrase_navigation" />
-
     <include app:graph="@navigation/register_watch_account_navigation" />
-
-    <include app:graph="@navigation/create_account_name_registration_navigation" />
 
     <include app:graph="@navigation/create_wallet_name_registration_navigation" />
 
     <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
     <include app:graph="@navigation/recovery_type_selection_navigation" />
+
+    <include app:graph="@navigation/asb_import_navigation" />
+
+    <include app:graph="@navigation/recover_with_passphrase_navigation" />
+
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
 
     <action
         android:id="@+id/action_global_to_homeNavigation"
@@ -72,6 +74,14 @@
         <action
             android:id="@+id/action_registerIntroFragment_to_createWalletNameRegistrationNavigation"
             app:destination="@id/createWalletNameRegistrationNavigation">
+            <argument
+                android:name="accountCreation"
+                app:argType="com.algorand.android.models.AccountCreation"
+                app:nullable="true" />
+        </action>
+        <action
+            android:id="@+id/action_registerIntroFragment_to_createAccountNameRegistrationNavigation"
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation"

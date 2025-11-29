@@ -17,9 +17,9 @@
     android:id="@+id/assetInboxAllAccountsNavigation"
     app:startDestination="@id/assetInboxAllAccountsFragment">
 
-    <include app:graph="@navigation/asset_inbox_info_navigation" />
-
     <include app:graph="@navigation/asset_inbox_one_account_navigation" />
+
+    <include app:graph="@navigation/asset_inbox_info_navigation" />
 
     <fragment
         android:id="@+id/assetInboxAllAccountsFragment"

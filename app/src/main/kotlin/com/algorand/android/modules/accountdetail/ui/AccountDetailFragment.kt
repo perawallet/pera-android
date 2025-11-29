@@ -481,7 +481,7 @@ class AccountDetailFragment :
     private fun handleSwapNavigationDestination() {
         with(accountDetailViewModel) {
             if (canAccountSignTransaction) {
-                nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToSwapV2Navigation(accountAddress))
+                nav(AccountDetailFragmentDirections.actionGlobalSwapV2Navigation(accountAddress))
             } else {
                 showActionNotAvailableError()
             }

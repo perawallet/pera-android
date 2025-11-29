@@ -22,14 +22,25 @@
 
     <include app:graph="@navigation/arc_59_request_opt_in_navigation" />
 
-    <include app:graph="@navigation/transaction_confirmation_navigation" />
-
     <include app:graph="@navigation/add_note_navigation" />
+
+    <include app:graph="@navigation/transaction_confirmation_navigation" />
 
     <action
         android:id="@+id/action_sendAlgoNavigation_pop"
         app:popUpTo="@id/sendAlgoNavigation"
         app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_transactionConfirmationNavigation"
+        app:destination="@id/transactionConfirmationNavigation">
+        <argument
+            android:name="transactionId"
+            app:argType="string" />
+        <argument
+            android:name="titleResId"
+            app:argType="integer" />
+    </action>
 
     <action
         android:id="@+id/action_global_singleButtonBottomSheet"
@@ -279,16 +290,6 @@
                 android:name="isInputFieldEnabled"
                 android:defaultValue="true"
                 app:argType="boolean" />
-        </action>
-        <action
-            android:id="@+id/action_assetTransferPreviewFragment_to_transactionConfirmationNavigation"
-            app:destination="@id/transactionConfirmationNavigation">
-            <argument
-                android:name="transactionId"
-                app:argType="string" />
-            <argument
-                android:name="titleResId"
-                app:argType="integer" />
         </action>
     </fragment>
 

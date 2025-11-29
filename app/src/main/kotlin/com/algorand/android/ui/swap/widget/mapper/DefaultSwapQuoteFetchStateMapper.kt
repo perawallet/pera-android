@@ -17,9 +17,9 @@ import com.algorand.android.ui.swap.widget.model.SwapAmountInput
 import com.algorand.android.ui.swap.widget.usecase.GetSwapAmountFromLocalCurrencyInput
 import com.algorand.android.ui.swap.widget.viewmodel.DefaultSwapWidgetViewModel.SwapQuoteFetchState
 import com.algorand.android.ui.swap.widget.viewmodel.SwapAssetSelectionViewModel
-import com.algorand.android.utils.isGreaterThan
 import com.algorand.wallet.swap.domain.model.SwapQuotePayload
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import com.algorand.wallet.utils.isGreaterThan
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

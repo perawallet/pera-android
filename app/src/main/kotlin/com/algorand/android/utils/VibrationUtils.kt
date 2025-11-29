@@ -13,13 +13,31 @@
 package com.algorand.android.utils
 
 import android.content.Context
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibratorManager
 
 private const val DEFAULT_VIBRATE_DURATION = 500L
 
 fun Context.singleVibrate(duration: Long = DEFAULT_VIBRATE_DURATION) {
-    (getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator)?.run {
-        vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+        val vibrator = vibratorManager?.defaultVibrator
+        vibrator?.vibrate(
+            VibrationEffect.createOneShot(
+                duration,
+                VibrationEffect.DEFAULT_AMPLITUDE
+            )
+        )
+    } else {
+        @Suppress("DEPRECATION")
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        vibrator?.vibrate(
+            VibrationEffect.createOneShot(
+                duration,
+                VibrationEffect.DEFAULT_AMPLITUDE
+            )
+        )
     }
 }

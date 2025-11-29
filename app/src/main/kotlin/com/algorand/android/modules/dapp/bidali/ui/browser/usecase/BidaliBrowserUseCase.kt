@@ -24,10 +24,10 @@ import com.algorand.android.modules.dapp.bidali.domain.model.TestnetBidaliSuppor
 import com.algorand.android.modules.dapp.bidali.getCompiledBidaliJavascript
 import com.algorand.android.usecase.IsOnMainnetUseCase
 import com.algorand.android.utils.formatAmountAsBigInteger
-import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.utils.toBigDecimalOrZero
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

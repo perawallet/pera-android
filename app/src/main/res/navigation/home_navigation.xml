@@ -1657,5 +1657,20 @@
         android:id="@+id/overrideFeatureFlagsFragment"
         android:name="com.algorand.android.ui.settings.developeroptions.featureflags.view.OverrideFeatureFlagsFragment"
         android:label="OverrideFeatureFlagsFragment" />
-
+    <fragment
+        android:id="@+id/xoSwapFragment"
+        android:name="com.algorand.android.ui.xoswap.view.XoSwapFragment"
+        android:label="XoSwapFragment" >
+        <action
+            android:id="@+id/action_xoSwapFragment_to_publicWebViewFragment"
+            app:destination="@id/publicWebViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/publicWebViewFragment"
+        android:name="com.algorand.android.ui.webview.publicfragment.view.PublicWebViewFragment"
+        android:label="PublicWebViewFragment" >
+        <argument
+            android:name="navArgs"
+            app:argType="com.algorand.android.ui.webview.publicfragment.model.PublicWebViewFragmentNavArgs" />
+    </fragment>
 </navigation>

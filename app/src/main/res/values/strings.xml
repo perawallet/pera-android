@@ -157,6 +157,7 @@
     <string name="search">Search</string>
     <string name="there_are_no">There are no transactions to be displayed for the selected period</string>
     <string name="home">Home</string>
+    <string name="fund">Fund</string>
     <string name="alphabetically_a_to_z">Alphabetically A to Z</string>
     <string name="alphabetically_z_to_a">Alphabetically Z to A</string>
     <string name="highest_value_to_lowest">Highest Value to Lowest</string>

@@ -99,14 +99,14 @@ class PeraWebViewClient(val listener: PeraWebViewClientListener?) : WebViewClien
     }
 
     interface PeraWebViewClientListener {
-        fun onWalletConnectUrlDetected(url: String)
-        fun onEmailRequested(url: String)
-        fun onPageRequestedShouldOverrideUrlLoading(url: String): Boolean
-        fun onPageStarted()
-        fun onPageFinished(title: String? = null, url: String? = null)
-        fun onError()
-        fun onHttpError()
-        fun onPageUrlChanged()
-        fun onRenderProcessGone()
+        fun onWalletConnectUrlDetected(url: String) {}
+        fun onEmailRequested(url: String) {}
+        fun onPageRequestedShouldOverrideUrlLoading(url: String): Boolean = false
+        fun onPageStarted() {}
+        fun onPageFinished(title: String? = null, url: String? = null) {}
+        fun onError() {}
+        fun onHttpError() {}
+        fun onPageUrlChanged() {}
+        fun onRenderProcessGone() {}
     }
 }

@@ -13,7 +13,9 @@
 package com.algorand.android.ui.webview.publicfragment.view
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
@@ -22,17 +24,12 @@ import com.algorand.android.databinding.FragmentPublicWebviewBinding
 import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.ui.webview.bridge.PeraWebViewPublicJsBridge
 import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel
 import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewEvent
-import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewState.Content
-import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewState.Content.FavoriteState.Favorite
-import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewState.Content.FavoriteState.Hidden
-import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewState.Content.FavoriteState.Unfavorite
-import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewState.Idle
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,7 +37,9 @@ class PublicWebViewFragment : BaseFragment(R.layout.fragment_public_webview) {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    private val binding: FragmentPublicWebviewBinding by viewBinding(FragmentPublicWebviewBinding::bind)
+    private var _binding: FragmentPublicWebviewBinding? = null
+    private val binding: FragmentPublicWebviewBinding
+        get() = _binding!!
 
     private val viewModel: PublicWebViewViewModel by viewModels()
 
@@ -62,64 +61,59 @@ class PublicWebViewFragment : BaseFragment(R.layout.fragment_public_webview) {
         }
     }
 
-    private val viewStateCollector: suspend (PublicWebViewViewModel.ViewState) -> Unit = { state ->
-        when (state) {
-            Idle -> Unit
-            is Content -> initContentState(state)
-        }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentPublicWebviewBinding.inflate(inflater, container, false)
+        return _binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initIdleState()
-        collectLatestOnLifecycle(viewModel.state, viewStateCollector)
         collectLatestOnLifecycle(viewModel.viewEvent, viewEventCollector)
-        viewModel.initViewState(args.navArgs)
+        initWebView()
+        initBottomNavigation()
     }
 
-    private fun initIdleState() {
-        binding.bottomDappNavigation.apply {
-            previousNavButton.isEnabled = false
-            nextNavButton.isEnabled = false
-            homeNavButton.isEnabled = false
-            favoritesNavButton.hide()
-        }
-    }
-
-    private fun initContentState(state: Content) {
+    private fun initWebView() {
         binding.publicWebView.apply {
             webViewClient = PeraWebViewClient(webViewClientListener)
             webChromeClient = PeraWebChromeClient(webViewClientListener)
-            addJsInterface(state.jsInterface)
-            loadUrl(state.url)
+            addJsInterface(PeraWebViewPublicJsBridge(viewModel::processWebEvent))
+            loadUrl(args.navArgs.url)
         }
-        binding.bottomDappNavigation.apply {
-            homeNavButton.apply {
-                setOnClickListener { binding.publicWebView.loadUrl(state.url) }
-                isEnabled = true
+    }
+
+    private fun initBottomNavigation() {
+        binding.webViewBottomNavigation.apply {
+            homeNavButton.setOnClickListener { binding.publicWebView.loadUrl(args.navArgs.url) }
+            previousNavButton.apply {
+                isEnabled = false
+                setOnClickListener { binding.publicWebView.goBack() }
             }
-            nextNavButton.setOnClickListener { binding.publicWebView.goForward() }
-            previousNavButton.setOnClickListener { binding.publicWebView.goBack() }
+            nextNavButton.apply {
+                isEnabled = false
+                setOnClickListener { binding.publicWebView.goForward() }
+            }
+            val isFavorite = args.navArgs.isFavorite
             favoritesNavButton.apply {
-                when (state.favoriteState) {
-                    Hidden -> hide()
-                    Favorite -> {
-                        setImageResource(R.drawable.ic_star_full)
-                        show()
-                    }
-                    Unfavorite -> {
-                        setImageResource(R.drawable.ic_star_empty)
-                        show()
-                    }
+                if (isFavorite != null) {
+                    val icon = if (isFavorite) R.drawable.ic_star_full else R.drawable.ic_star_empty
+                    setImageResource(icon)
+                    show()
+                } else {
+                    hide()
                 }
             }
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.publicWebView.destroyWebView()
+        _binding = null
+    }
+
     private fun checkWebViewControls() {
-        with(binding) {
-            bottomDappNavigation.previousNavButton.isEnabled = publicWebView.canGoBack()
-            bottomDappNavigation.nextNavButton.isEnabled = publicWebView.canGoForward()
-        }
+        _binding?.webViewBottomNavigation?.previousNavButton?.isEnabled = _binding?.publicWebView?.canGoBack() == true
+        _binding?.webViewBottomNavigation?.nextNavButton?.isEnabled = _binding?.publicWebView?.canGoForward() == true
     }
 }

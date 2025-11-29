@@ -19,13 +19,13 @@
         android:id="@+id/publicWebView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomDappNavigation"
+        app:layout_constraintBottom_toTopOf="@id/webViewBottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
-        android:id="@+id/bottomDappNavigation"
+        android:id="@+id/webViewBottomNavigation"
         layout="@layout/custom_dapp_bottom_navigation_bar"
         android:layout_width="0dp"
         android:layout_height="@dimen/default_toolbar_height"

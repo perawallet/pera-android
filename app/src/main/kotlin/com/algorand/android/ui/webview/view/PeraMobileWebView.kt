@@ -14,11 +14,12 @@ package com.algorand.android.ui.webview.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.Uri
 import android.util.AttributeSet
 import android.webkit.CookieManager
 import android.webkit.WebMessage
 import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import com.algorand.android.BuildConfig
 import com.algorand.android.R
 
@@ -31,7 +32,6 @@ class PeraMobileWebView : WebView {
         initView(context)
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     private fun initView(context: Context) {
         clearCookies()
         initSettings()
@@ -44,6 +44,7 @@ class PeraMobileWebView : WebView {
         CookieManager.getInstance().flush()
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun initSettings() {
         this.settings.javaScriptEnabled = true
         this.settings.domStorageEnabled = true
@@ -52,6 +53,7 @@ class PeraMobileWebView : WebView {
         this.settings.userAgentString = "${USER_AGENT_PREFIX}${BuildConfig.VERSION_NAME} ${settings.userAgentString}"
     }
 
+    @SuppressLint("JavascriptInterface")
     fun addJsInterface(jsInterface: Any) {
         post {
             addJavascriptInterface(jsInterface, WEB_INTERFACE_NAME)
@@ -65,10 +67,17 @@ class PeraMobileWebView : WebView {
     }
 
     fun sendJsMessage(message: String) {
-
         post {
-            postWebMessage(WebMessage(message), Uri.parse("*"))
+            postWebMessage(WebMessage(message), "*".toUri())
         }
+    }
+
+    fun destroyWebView() {
+        webViewClient = WebViewClient()
+        webChromeClient = null
+        stopLoading()
+        removeJsInterface()
+        destroy()
     }
 
     private companion object {

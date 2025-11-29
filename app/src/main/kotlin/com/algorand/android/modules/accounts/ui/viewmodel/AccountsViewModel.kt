@@ -29,10 +29,13 @@ import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.banner.domain.usecase.DismissBanner
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.spotbanner.domain.usecase.DismissSpotBanner
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +44,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 @HiltViewModel
@@ -57,6 +59,7 @@ class AccountsViewModel @Inject constructor(
     private val togglePrivacyMode: TogglePrivacyMode,
     private val dismissBannerById: DismissBanner,
     private val dismissSpotBannerById: DismissSpotBanner,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate,
     AccountsEventTracker by accountsEventTracker {
@@ -178,6 +181,8 @@ class AccountsViewModel @Inject constructor(
             togglePrivacyMode()
         }
     }
+
+    fun isXoSwapEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
 
     sealed interface ViewEvent {
         data object NavToLoginNavigation : ViewEvent

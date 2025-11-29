@@ -166,6 +166,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             navToStakingFragment()
         }
 
+        override fun onFundClick() {
+            navigateToXoSwap()
+        }
+
         override fun onBackupPassphraseBannerClick() {
             accountsViewModel.navigateToBackUpPassphraseInfo()
         }
@@ -504,7 +508,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     }
 
     private fun navToStakingFragment() {
-        (activity as? MainActivity)?.navToStakingFragment()
+        if (accountsViewModel.isXoSwapEnabled()) {
+            nav(HomeNavigationDirections.actionGlobalNestedStakingFragment())
+        } else {
+            (activity as? MainActivity)?.navToStakingFragment()
+        }
     }
 
     companion object {

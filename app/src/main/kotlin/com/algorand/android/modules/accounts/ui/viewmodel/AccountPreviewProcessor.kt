@@ -181,7 +181,8 @@ class AccountPreviewProcessor @Inject constructor(
     private fun insertQuickActionsItem(accountsList: MutableList<BaseAccountListItem>) {
         accountsList.add(
             BaseAccountListItem.QuickActionsItem(
-                isStakingEnabled = isFeatureToggleEnabled(FeatureToggle.STAKING.key)
+                isStakingEnabled = isFeatureToggleEnabled(FeatureToggle.STAKING.key),
+                isXoSwapEnabled = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
             )
         )
     }

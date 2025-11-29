@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.core.BaseFragment
@@ -57,8 +58,8 @@ import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 import java.math.BigDecimal
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetAboutFragment.AssetAboutTabListener,
@@ -157,6 +158,10 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
         override fun onReceiveClick() {
             navToShowQRBottomSheet()
+        }
+
+        override fun onStakeClick() {
+            nav(HomeNavigationDirections.actionGlobalNestedStakingFragment())
         }
     }
 

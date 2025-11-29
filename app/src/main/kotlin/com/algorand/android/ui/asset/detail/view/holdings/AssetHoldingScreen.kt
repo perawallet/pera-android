@@ -29,6 +29,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SendButton
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.StakeButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.ui.asset.detail.view.AssetDetailHeader
@@ -45,6 +46,7 @@ import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButt
 import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonContainer
 import com.algorand.android.ui.compose.widget.quickaction.ReceiveQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.StakeQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SwapQuickActionButton
 import com.algorand.android.ui.transaction.csv.viewmodel.CsvViewModel
 import com.algorand.android.ui.transaction.history.view.TransactionHistoryListItemHeader
@@ -144,6 +146,7 @@ private fun QuickActionButtons(viewState: Content, viewModel: AssetDetailV2ViewM
                     BuyAlgoButton -> BuySellQuickActionButton(viewModel::navigateToOfframp)
                     ReceiveButton -> ReceiveQuickActionButton(viewModel::navigateToReceive)
                     SendButton -> SendQuickActionButton(viewModel::navigateToSend)
+                    StakeButton -> StakeQuickActionButton(viewModel::navigateToStake)
                 }
             }
         }

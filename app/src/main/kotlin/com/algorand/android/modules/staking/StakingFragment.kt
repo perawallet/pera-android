@@ -44,10 +44,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.mapNotNull
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
@@ -55,7 +55,6 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
     BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
-        isBottomBarNeeded = true,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
@@ -101,7 +100,12 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        registerBottomNavBarFragmentDelegation(this)
+        if (stakingViewModel.isXoSwapEnabled()) {
+            handleBottomBarVisibility(isBottomBarVisible = false)
+        } else {
+            handleBottomBarVisibility(isBottomBarVisible = true)
+            registerBottomNavBarFragmentDelegation(this)
+        }
         initUi()
         initObservers()
         loadStakingUrl()

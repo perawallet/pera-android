@@ -16,16 +16,20 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SendButton
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.StakeButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Inject
 
 internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
     private val getAccountType: GetAccountType,
-    private val isAssetOptedInByAccount: IsAssetOptedInByAccount
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : GetAssetDetailQuickActionItems {
 
     override suspend fun invoke(address: String, assetId: Long): List<AssetDetailQuickActionItem> {
@@ -37,7 +41,13 @@ internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
                 add(SwapButton)
             }
 
-            if (isAlgo) add(BuyAlgoButton)
+            if (isAlgo) {
+                if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
+                    add(StakeButton)
+                } else {
+                    add(BuyAlgoButton)
+                }
+            }
             add(SendButton)
             add(ReceiveButton)
         }

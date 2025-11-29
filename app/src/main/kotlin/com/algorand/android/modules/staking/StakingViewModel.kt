@@ -22,14 +22,16 @@ import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import com.algorand.android.modules.staking.model.StakingPreview
 import com.algorand.android.utils.Event
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class StakingViewModel @Inject constructor(
@@ -37,7 +39,8 @@ class StakingViewModel @Inject constructor(
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
     private val currencyUseCase: CurrencyUseCase,
-    private val gson: Gson
+    private val gson: Gson,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : BasePeraWebViewViewModel() {
 
     private val _stakingPreviewFlow = MutableStateFlow(StakingPreview())
@@ -82,6 +85,8 @@ class StakingViewModel @Inject constructor(
             }
         }
     }
+
+    fun isXoSwapEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
 
     fun getOpenDappWebview(jsonPayload: String): DappInfo? {
         return gson.fromJson(jsonPayload, DappInfo::class.java)

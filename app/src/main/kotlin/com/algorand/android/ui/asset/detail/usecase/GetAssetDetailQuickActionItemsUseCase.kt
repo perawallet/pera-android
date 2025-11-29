@@ -42,7 +42,7 @@ internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
             }
 
             if (isAlgo) {
-                if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
+                if (isXoSwapEnabled() && isStakingEnabled()) {
                     add(StakeButton)
                 } else {
                     add(BuyAlgoButton)
@@ -52,4 +52,8 @@ internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
             add(ReceiveButton)
         }
     }
+
+    private fun isStakingEnabled() = isFeatureToggleEnabled(FeatureToggle.STAKING.key)
+
+    private fun isXoSwapEnabled() = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
 }

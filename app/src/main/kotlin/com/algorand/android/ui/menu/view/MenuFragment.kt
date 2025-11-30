@@ -102,4 +102,8 @@ class MenuFragment : BaseFragment(0), MenuScreenListener,
     override fun onBuyGiftCardClick() {
         nav(HomeNavigationDirections.actionGlobalBidaliNavigation())
     }
+
+    override fun onStakeClick() {
+        nav(HomeNavigationDirections.actionGlobalNestedStakingFragment())
+    }
 }

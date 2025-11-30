@@ -56,6 +56,8 @@ fun MenuScreen(
         MenuItemSpacer()
         if (isXoSwapEnabled) {
             MenuListBuyGiftCardItem(listener::onBuyGiftCardClick)
+            MenuItemSpacer()
+            MenuListStakeItem(listener::onStakeClick)
         } else {
             MenuListBuyAlgoItem(listener::onBuyAlgoClick)
         }
@@ -97,4 +99,5 @@ interface MenuScreenListener : MenuListCardItemListener {
     fun onReceiveClick()
     fun onNftClick()
     fun onBuyGiftCardClick()
+    fun onStakeClick()
 }

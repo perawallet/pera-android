@@ -35,6 +35,7 @@ fun MenuScreenPreview() {
         override fun onBuyGiftCardClick() {}
         override fun onGoToCardsClick() {}
         override fun onCreateCardClick() {}
+        override fun onStakeClick() {}
     }
     MenuScreen(isXoSwapEnabled = true, getNftViewModel(), getCardViewModel(), listener)
 }

@@ -101,6 +101,7 @@ class MenuFragment : BaseFragment(0), MenuScreenListener,
     }
 
     override fun onBuyGiftCardClick() {
+        menuNftViewModel.logBuyGiftCardClick()
         nav(HomeNavigationDirections.actionGlobalBidaliNavigation())
     }
 

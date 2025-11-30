@@ -832,6 +832,7 @@
     <string name="buy_gift_cards_with_bidali">Buy gift cards with Bidali</string>
     <string name="buy_gift_cards_with_crypto">Buy gift cards with Crypto</string>
     <string name="buy_gift_cards">Buy gift cards</string>
+    <string name="buy_gift_card">Buy Gift Card</string>
     <string name="you_can_not_purchase_bidali">You cannot purchase while on TestNet. Please switch back to MainNet from Settings to use Bidali.</string>
     <string name="buy_algo_with_meld">Buy ALGO with Meld</string>
     <string name="meld_offers">Meld offers the fastest way to buy ALGO with your local currency. Buy crypto with

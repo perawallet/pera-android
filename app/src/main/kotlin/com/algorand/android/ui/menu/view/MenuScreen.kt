@@ -36,6 +36,7 @@ import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel
 
 @Composable
 fun MenuScreen(
+    isXoSwapEnabled: Boolean,
     menuNftViewModel: MenuNftViewModel,
     menuCardViewModel: MenuCardsViewModel,
     listener: MenuScreenListener
@@ -53,7 +54,11 @@ fun MenuScreen(
         MenuItemSpacer()
         MenuListNftItem(menuNftViewModel, listener::onNftClick)
         MenuItemSpacer()
-        MenuListBuyAlgoItem(listener::onBuyAlgoClick)
+        if (isXoSwapEnabled) {
+            MenuListBuyGiftCardItem(listener::onBuyGiftCardClick)
+        } else {
+            MenuListBuyAlgoItem(listener::onBuyAlgoClick)
+        }
         MenuItemSpacer()
         MenuListReceiveItem(listener::onReceiveClick)
         MenuItemSpacer()
@@ -91,4 +96,5 @@ interface MenuScreenListener : MenuListCardItemListener {
     fun onInviteFriendsClick()
     fun onReceiveClick()
     fun onNftClick()
+    fun onBuyGiftCardClick()
 }

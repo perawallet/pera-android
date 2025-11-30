@@ -47,6 +47,7 @@ class MenuFragment : BaseFragment(0), MenuScreenListener,
         return createComposeView {
             MenuScreen(
                 isXoSwapEnabled = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key),
+                isStakeEnabled = isFeatureToggleEnabled(FeatureToggle.STAKING.key),
                 menuNftViewModel = menuNftViewModel,
                 menuCardViewModel = cardsViewModel,
                 listener = this

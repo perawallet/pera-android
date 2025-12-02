@@ -26,6 +26,9 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
+import com.algorand.android.utils.extensions.hide
+import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatDateToChartDateString
 
 class AccountValueViewHolder(
@@ -50,23 +53,42 @@ class AccountValueViewHolder(
                 val accountAssetsData = item as? AddressLineChartData ?: return
                 setPrimaryText(accountAssetsData.primaryAmountRenderer.getDisplayValue())
                 setSecondaryText(accountAssetsData.secondaryAmountRenderer.getDisplayValue())
-                binding.helperTextView.text = formatDateToChartDateString(accountAssetsData.datetime)
+                binding.dateTextView.apply {
+                    text = formatDateToChartDateString(accountAssetsData.datetime)
+                    show()
+                }
+                binding.balanceDeltaText.hide()
+                binding.balancePercentageText.hide()
             }
 
             override fun onItemDeselected() {
                 setPrimaryText(item.accountPrimaryFormattedParityValue)
                 setSecondaryText(item.accountSecondaryFormattedParityValue)
                 setMinRequiredBalanceText(item.requiredMinBalance)
+                binding.dateTextView.hide()
+                binding.balanceDeltaText.showView()
+                binding.balancePercentageText.showView()
             }
 
             override fun onChartTap() {
                 listener.onChartTap()
             }
+
+            override fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {
+                tendencyValues?.run {
+                    if (delta != null && deltaRenderer != null) {
+                        binding.balanceDeltaText.setDelta(delta, deltaRenderer)
+                    }
+                    binding.balancePercentageText.setPercentage(percentage)
+                }
+                binding.balanceDeltaText.showView()
+                binding.balancePercentageText.showView()
+            }
         }
     }
 
     private fun setMinRequiredBalanceText(requiredMinBalance: String) {
-        binding.helperTextView.apply {
+        binding.minRequiredBalanceTextView.apply {
             text = binding.root.resources.getString(R.string.min_balance, requiredMinBalance)
             setOnClickListener { listener.onInfoButtonClick() }
         }

@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.AbstractComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraPercentageText
+import com.algorand.android.utils.extensions.show
 
 class PeraPercentageTextView(context: Context, attrs: AttributeSet) : AbstractComposeView(context, attrs) {
 
@@ -33,6 +34,10 @@ class PeraPercentageTextView(context: Context, attrs: AttributeSet) : AbstractCo
                 PeraPercentageText(percentage = this)
             }
         }
+    }
+
+    fun showView() {
+        if (percentageState != null) show()
     }
 
     fun setPercentage(percentage: Float?) {

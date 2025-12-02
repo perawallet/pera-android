@@ -14,7 +14,7 @@ package com.algorand.android.modules.accounts.ui.model
 
 import com.algorand.android.models.BottomGlobalError
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
-import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 
 data class AccountPreview(
     val isEmptyStateVisible: Boolean,
@@ -27,12 +27,5 @@ data class AccountPreview(
     val isSuccessStateVisible: Boolean,
     val hasNewNotification: Boolean,
     val assetInboxCount: Int = 0,
-    val chartDeltaValues: ChartDeltaValues? = null
-) {
-
-    data class ChartDeltaValues(
-        val balanceDelta: Float,
-        val balanceDeltaRenderer: AmountRenderer,
-        val balanceChangePercentage: Float?
-    )
-}
+    val chartTendencyValues: ChartTendencyValues? = null
+)

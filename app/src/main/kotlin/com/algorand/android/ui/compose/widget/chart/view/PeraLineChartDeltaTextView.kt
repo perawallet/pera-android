@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.AbstractComposeView
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.utils.extensions.show
 
 class PeraLineChartDeltaTextView(context: Context, attrs: AttributeSet?) : AbstractComposeView(context, attrs) {
 
@@ -37,6 +38,10 @@ class PeraLineChartDeltaTextView(context: Context, attrs: AttributeSet?) : Abstr
 
     fun setDelta(delta: Float, deltaRenderer: AmountRenderer) {
         content = Content(delta, deltaRenderer)
+    }
+
+    fun showView() {
+        if (content != null) show()
     }
 
     private data class Content(val delta: Float, val deltaRenderer: AmountRenderer)

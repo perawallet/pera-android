@@ -12,9 +12,13 @@
 
 package com.algorand.android.ui.compose.widget.chart.mapper
 
+import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.SimpleFormattedAmount
+import com.algorand.android.ui.compose.widget.chart.extensions.getChangePercentage
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.utils.MINUS_SIGN
 import com.algorand.android.utils.PLUS_SIGN
 import com.algorand.android.utils.emptyString
@@ -22,15 +26,30 @@ import java.text.DecimalFormat
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
-internal class DefaultAmountDeltaAmountRendererMapper @Inject constructor() : AmountDeltaAmountRendererMapper {
+internal class DefaultChartTendencyValuesMapper @Inject constructor(
+    private val parityUseCase: ParityUseCase
+) : ChartTendencyValuesMapper {
 
-    override fun invoke(delta: Float, prefix: String?): AmountRenderer {
+    override fun invoke(items: List<PeraLineChartData>): ChartTendencyValues? {
+        return if (items.size > 2) {
+            val balanceDelta = items.last().value - items.first().value
+            ChartTendencyValues(
+                delta = balanceDelta,
+                deltaRenderer = getDeltaRenderer(balanceDelta, parityUseCase.getDisplayedCurrencySymbol()),
+                percentage = items.getChangePercentage()
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun getDeltaRenderer(delta: Float, deltaCurrency: String): AmountRenderer {
         val sign = PLUS_SIGN.takeIf { delta > 0f } ?: MINUS_SIGN.takeIf { delta < 0f } ?: emptyString()
         val formattedChange = DecimalFormat().apply { maximumFractionDigits = 2 }.format(delta.absoluteValue)
         return AmountRenderer(
             formattedAmount = SimpleFormattedAmount(formattedChange),
             type = Plain,
-            prefix = "$sign$prefix"
+            prefix = "$sign$deltaCurrency"
         )
     }
 }

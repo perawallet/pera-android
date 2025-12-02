@@ -21,6 +21,7 @@ import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
+import com.algorand.android.ui.compose.widget.chart.mapper.ChartTendencyValuesMapper
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
@@ -36,10 +37,10 @@ import com.algorand.wallet.viewmodel.StateViewModel
 import com.algorand.wallet.wealth.address.domain.model.AddressWealth
 import com.algorand.wallet.wealth.address.domain.usecase.GetAddressWealth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @HiltViewModel
 class AccountAssetsLineChartViewModel @Inject constructor(
@@ -49,8 +50,8 @@ class AccountAssetsLineChartViewModel @Inject constructor(
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
     private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
-    private val parityUseCase: ParityUseCase
-
+    private val parityUseCase: ParityUseCase,
+    private val tendencyValuesMapper: ChartTendencyValuesMapper
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, StatefulPeraLineChartViewModel {
 
     init {
@@ -71,7 +72,9 @@ class AccountAssetsLineChartViewModel @Inject constructor(
                     currency = parityUseCase.getPrimaryFiatCurrencyId()
                 ).use(
                     onSuccess = { addressWealth ->
-                        ViewState.Content(ContentState.Data(getAddressChartData(addressWealth)), period, PERIODS)
+                        val chartData = getAddressChartData(addressWealth)
+                        val tendencyValues = tendencyValuesMapper(chartData)
+                        ViewState.Content(ContentState.Data(chartData, tendencyValues), period, PERIODS)
                     },
                     onFailed = { _, _ ->
                         ViewState.Error

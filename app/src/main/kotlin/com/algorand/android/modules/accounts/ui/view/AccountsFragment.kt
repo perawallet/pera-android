@@ -36,7 +36,6 @@ import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.TooltipConfig
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
-import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
@@ -53,11 +52,13 @@ import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDia
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.setDrawableTintColor
 import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.useFragmentResultListenerValue
@@ -190,8 +191,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = chartData.primaryAmountRenderer.getDisplayValue()
                 secondaryPortfolioValue.text = chartData.secondaryAmountRenderer.getDisplayValue()
                 chartSelectedItemDateTextView.text = formatDateToChartDateString(chartData.datetime)
-                portfolioDeltaText.isVisible = false
-                portfolioPercentageText.isVisible = false
+                portfolioDeltaText.hide()
+                portfolioPercentageText.hide()
             }
         }
 
@@ -201,8 +202,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
                 secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
                 chartSelectedItemDateTextView.text = " "
-                portfolioDeltaText.isVisible = true
-                portfolioPercentageText.isVisible = true
+                portfolioDeltaText.showView()
+                portfolioPercentageText.showView()
             }
         }
 
@@ -211,8 +212,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.dismissSpotBanner(spotBanner.id)
         }
 
-        override fun onChartDataUpdated(items: List<AccountsLineChartData>) {
-            accountsViewModel.updatePreviewWithChartData(items)
+        override fun onChartDataUpdated(tendencyValues: ChartTendencyValues?) {
+            accountsViewModel.updatePreviewWithChartData(tendencyValues)
         }
     }
 
@@ -311,13 +312,13 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    private val chartDeltaValuesCollector: suspend (AccountPreview.ChartDeltaValues?) -> Unit = { values ->
+    private val chartTendencyValuesCollector: suspend (ChartTendencyValues?) -> Unit = { values ->
         values?.run {
-            binding.portfolioDeltaText.setDelta(balanceDelta, balanceDeltaRenderer)
-            binding.portfolioPercentageText.setPercentage(balanceChangePercentage)
+            if (delta != null && deltaRenderer != null) binding.portfolioDeltaText.setDelta(delta, deltaRenderer)
         }
-        binding.portfolioDeltaText.isVisible = values != null
-        binding.portfolioPercentageText.isVisible = values != null
+        binding.portfolioPercentageText.setPercentage(values?.percentage)
+        binding.portfolioDeltaText.showView()
+        binding.portfolioPercentageText.showView()
     }
 
     private fun showAccountAddressCopyTutorialDialog(tutorialId: Int) {
@@ -456,8 +457,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 viewEventCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.chartDeltaValues }.distinctUntilChanged(),
-                chartDeltaValuesCollector
+                accountPreviewFlow.map { it?.chartTendencyValues }.distinctUntilChanged(),
+                chartTendencyValuesCollector
             )
         }
     }

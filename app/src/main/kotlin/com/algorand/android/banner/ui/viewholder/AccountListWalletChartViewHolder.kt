@@ -24,6 +24,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 
 class AccountListWalletChartViewHolder(
     private val viewModel: AccountsLineChartViewModel,
@@ -70,9 +71,8 @@ class AccountListWalletChartViewHolder(
                     listener.onChartTap()
                 }
 
-                @Suppress("unchecked_cast")
-                override fun onChartDataUpdated(items: List<PeraLineChartData>) {
-                    listener.onChartDataUpdated(items as List<AccountsLineChartData>)
+                override fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {
+                    listener.onChartDataUpdated(tendencyValues)
                 }
             }
         }
@@ -82,6 +82,6 @@ class AccountListWalletChartViewHolder(
         fun onItemSelected(chartData: AccountsLineChartData)
         fun onItemDeselected()
         fun onChartTap()
-        fun onChartDataUpdated(items: List<AccountsLineChartData>)
+        fun onChartDataUpdated(tendencyValues: ChartTendencyValues?)
     }
 }

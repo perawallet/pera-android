@@ -12,8 +12,9 @@
 
 package com.algorand.android.ui.compose.widget.chart.mapper
 
-import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 
-fun interface AmountDeltaAmountRendererMapper {
-    operator fun invoke(delta: Float, prefix: String?): AmountRenderer
+fun interface ChartTendencyValuesMapper {
+    operator fun invoke(items: List<PeraLineChartData>): ChartTendencyValues?
 }

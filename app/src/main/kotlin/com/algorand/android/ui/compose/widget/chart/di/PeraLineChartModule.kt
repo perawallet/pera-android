@@ -12,8 +12,8 @@
 
 package com.algorand.android.ui.compose.widget.chart.di
 
-import com.algorand.android.ui.compose.widget.chart.mapper.AmountDeltaAmountRendererMapper
-import com.algorand.android.ui.compose.widget.chart.mapper.DefaultAmountDeltaAmountRendererMapper
+import com.algorand.android.ui.compose.widget.chart.mapper.ChartTendencyValuesMapper
+import com.algorand.android.ui.compose.widget.chart.mapper.DefaultChartTendencyValuesMapper
 import com.algorand.android.ui.compose.widget.chart.mapper.DefaultWalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import dagger.Module
@@ -29,7 +29,5 @@ internal object PeraLineChartModule {
     fun provideWalletWealthPeriodMapper(mapper: DefaultWalletWealthPeriodMapper): WalletWealthPeriodMapper = mapper
 
     @Provides
-    fun provideAmountDeltaAmountRendererMapper(
-        mapper: DefaultAmountDeltaAmountRendererMapper
-    ): AmountDeltaAmountRendererMapper = mapper
+    fun provideChartTendencyValuesMapper(mapper: DefaultChartTendencyValuesMapper): ChartTendencyValuesMapper = mapper
 }

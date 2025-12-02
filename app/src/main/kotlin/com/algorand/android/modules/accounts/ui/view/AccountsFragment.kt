@@ -36,6 +36,7 @@ import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.TooltipConfig
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
+import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
@@ -189,6 +190,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = chartData.primaryAmountRenderer.getDisplayValue()
                 secondaryPortfolioValue.text = chartData.secondaryAmountRenderer.getDisplayValue()
                 chartSelectedItemDateTextView.text = formatDateToChartDateString(chartData.datetime)
+                portfolioDeltaText.isVisible = false
+                portfolioPercentageText.isVisible = false
             }
         }
 
@@ -198,12 +201,18 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
                 secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
                 chartSelectedItemDateTextView.text = " "
+                portfolioDeltaText.isVisible = true
+                portfolioPercentageText.isVisible = true
             }
         }
 
         override fun onDismissSpotBannerClick(spotBanner: SpotBanner.Generic) {
             accountsViewModel.logSpotBannerDismissClick(spotBanner.text)
             accountsViewModel.dismissSpotBanner(spotBanner.id)
+        }
+
+        override fun onChartDataUpdated(items: List<AccountsLineChartData>) {
+            accountsViewModel.updatePreviewWithChartData(items)
         }
     }
 
@@ -299,6 +308,13 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         binding.assetInboxAllAccountsButton.apply {
             text = resources.getQuantityString(R.plurals.asset_requests, assetInboxCount, assetInboxCount)
             isVisible = assetInboxCount > 0
+        }
+    }
+
+    private val chartDeltaValuesCollector: suspend (AccountPreview.ChartDeltaValues?) -> Unit = { values ->
+        values?.run {
+            binding.portfolioDeltaText.setDelta(balanceDelta, balanceDeltaRenderer)
+            binding.portfolioPercentageText.setPercentage(balanceChangePercentage)
         }
     }
 
@@ -436,6 +452,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountsViewModel.viewEvent,
                 viewEventCollector
+            )
+            viewLifecycleOwner.collectLatestOnLifecycle(
+                accountPreviewFlow.map { it?.chartDeltaValues }.distinctUntilChanged(),
+                chartDeltaValuesCollector
             )
         }
     }

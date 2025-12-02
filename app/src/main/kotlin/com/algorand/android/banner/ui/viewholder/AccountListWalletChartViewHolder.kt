@@ -69,6 +69,11 @@ class AccountListWalletChartViewHolder(
                 override fun onChartTap() {
                     listener.onChartTap()
                 }
+
+                @Suppress("unchecked_cast")
+                override fun onChartDataUpdated(items: List<PeraLineChartData>) {
+                    listener.onChartDataUpdated(items as List<AccountsLineChartData>)
+                }
             }
         }
     }
@@ -77,5 +82,6 @@ class AccountListWalletChartViewHolder(
         fun onItemSelected(chartData: AccountsLineChartData)
         fun onItemDeselected()
         fun onChartTap()
+        fun onChartDataUpdated(items: List<AccountsLineChartData>)
     }
 }

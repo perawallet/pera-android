@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -153,7 +152,7 @@
         android:id="@+id/secondaryPortfolioValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/spacing_xlarge"
+        android:layout_marginStart="@dimen/spacing_xlarge"
         android:layout_marginTop="@dimen/spacing_xxsmall"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body.Sans"
@@ -165,6 +164,24 @@
         app:layout_constraintTop_toBottomOf="@id/primaryPortfolioValue"
         tools:text="$105,413.95" />
 
+    <com.algorand.android.ui.compose.widget.chart.view.PeraLineChartDeltaTextView
+        android:id="@+id/portfolioDeltaText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/secondaryPortfolioValue"
+        app:layout_constraintStart_toEndOf="@id/secondaryPortfolioValue"
+        app:layout_constraintTop_toTopOf="@id/secondaryPortfolioValue" />
+
+    <com.algorand.android.ui.compose.widget.chart.view.PeraPercentageTextView
+        android:id="@+id/portfolioPercentageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/secondaryPortfolioValue"
+        app:layout_constraintStart_toEndOf="@id/portfolioDeltaText"
+        app:layout_constraintTop_toTopOf="@id/secondaryPortfolioValue" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/chartSelectedItemDateTextView"
         android:layout_width="0dp"
@@ -172,7 +189,7 @@
         android:gravity="end"
         android:maxLines="1"
         android:paddingEnd="@dimen/spacing_normal"
-        android:textAppearance="@style/TextAppearance.Footnote.Sans"
+        android:textAppearance="@style/TextAppearance.Body.Sans"
         android:textColor="@color/secondary_text_color"
         app:layout_constraintBottom_toTopOf="@id/accountsRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"

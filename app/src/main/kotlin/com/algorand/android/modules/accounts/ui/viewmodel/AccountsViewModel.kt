@@ -19,10 +19,16 @@ import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.view.AccountsFragmentArgs
+import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
+import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.tracker.AccountsEventTracker
+import com.algorand.android.ui.compose.widget.chart.extensions.getChangePercentage
+import com.algorand.android.ui.compose.widget.chart.mapper.AmountDeltaAmountRendererMapper
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
@@ -33,6 +39,7 @@ import com.algorand.wallet.spotbanner.domain.usecase.DismissSpotBanner
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,8 +47,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 @HiltViewModel
@@ -55,8 +62,11 @@ class AccountsViewModel @Inject constructor(
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val togglePrivacyMode: TogglePrivacyMode,
+    private val deltaAmountRendererMapper: AmountDeltaAmountRendererMapper,
     private val dismissBannerById: DismissBanner,
     private val dismissSpotBannerById: DismissSpotBanner,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate,
     AccountsEventTracker by accountsEventTracker {
@@ -176,6 +186,30 @@ class AccountsViewModel @Inject constructor(
     fun togglePrivacy() {
         viewModelScope.launch {
             togglePrivacyMode()
+        }
+    }
+
+    fun updatePreviewWithChartData(items: List<AccountsLineChartData>) {
+        val deltaValues = if (items.size > 2) {
+            val balanceDelta = items.last().value - items.first().value
+            AccountPreview.ChartDeltaValues(
+                balanceDelta = balanceDelta,
+                balanceDeltaRenderer = deltaAmountRendererMapper(balanceDelta, getDisplayedCurrencySymbol()),
+                balanceChangePercentage = items.getChangePercentage()
+            )
+        } else {
+            null
+        }
+        _accountPreviewFlow.update {
+            it?.copy(chartDeltaValues = deltaValues)
+        }
+    }
+
+    private fun getDisplayedCurrencySymbol(): String {
+        return if (isPrimaryCurrencyAlgo()) {
+            Currency.USD.symbol
+        } else {
+            getPrimaryCurrencySymbolOrName()
         }
     }
 

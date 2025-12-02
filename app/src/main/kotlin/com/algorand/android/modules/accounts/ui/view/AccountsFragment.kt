@@ -316,6 +316,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             binding.portfolioDeltaText.setDelta(balanceDelta, balanceDeltaRenderer)
             binding.portfolioPercentageText.setPercentage(balanceChangePercentage)
         }
+        binding.portfolioDeltaText.isVisible = values != null
+        binding.portfolioPercentageText.isVisible = values != null
     }
 
     private fun showAccountAddressCopyTutorialDialog(tutorialId: Int) {

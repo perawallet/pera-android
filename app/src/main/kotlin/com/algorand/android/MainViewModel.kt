@@ -38,7 +38,9 @@ import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCas
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
+import com.algorand.android.notification.PeraFirebaseMessagingService.Companion.EXTRA_NOTIFICATION_CLICK
 import com.algorand.android.notification.domain.model.NotificationMetadata
+import com.algorand.android.notification.tracking.NotificationClickEventTracker
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.ui.main.tracker.BottomNavigationEventTracker
@@ -60,6 +62,8 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,8 +72,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlin.properties.Delegates
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -100,6 +102,7 @@ class MainViewModel @Inject constructor(
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
+    private val notificationClickEventTracker: NotificationClickEventTracker
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
     BottomNavigationEventTracker by bottomNavigationEventTracker {
 
@@ -316,8 +319,12 @@ class MainViewModel @Inject constructor(
                 true
             }
 
-            else -> pendingIntent.getStringExtra(DEEPLINK_KEY)?.let {
-                handleDeepLink(it)
+            else -> pendingIntent.getStringExtra(DEEPLINK_KEY)?.let { deeplink ->
+                if (pendingIntent.getBooleanExtra(EXTRA_NOTIFICATION_CLICK, false)) {
+                    notificationClickEventTracker.log(deeplink)
+                    pendingIntent.removeExtra(EXTRA_NOTIFICATION_CLICK)
+                }
+                handleDeepLink(deeplink)
                 true
             } ?: false
         }

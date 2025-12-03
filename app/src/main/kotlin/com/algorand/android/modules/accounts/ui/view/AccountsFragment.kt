@@ -213,7 +213,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onChartDataUpdated(tendencyValues: ChartTendencyValues?) {
-            accountsViewModel.updatePreviewWithChartData(tendencyValues)
+            tendencyValues?.run {
+                if (delta != null && deltaRenderer != null) binding.portfolioDeltaText.setDelta(delta, deltaRenderer)
+                binding.portfolioPercentageText.setPercentage(percentage)
+            }
+            binding.portfolioDeltaText.showView()
+            binding.portfolioPercentageText.showView()
         }
     }
 
@@ -310,15 +315,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             text = resources.getQuantityString(R.plurals.asset_requests, assetInboxCount, assetInboxCount)
             isVisible = assetInboxCount > 0
         }
-    }
-
-    private val chartTendencyValuesCollector: suspend (ChartTendencyValues?) -> Unit = { values ->
-        values?.run {
-            if (delta != null && deltaRenderer != null) binding.portfolioDeltaText.setDelta(delta, deltaRenderer)
-        }
-        binding.portfolioPercentageText.setPercentage(values?.percentage)
-        binding.portfolioDeltaText.showView()
-        binding.portfolioPercentageText.showView()
     }
 
     private fun showAccountAddressCopyTutorialDialog(tutorialId: Int) {
@@ -455,10 +451,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountsViewModel.viewEvent,
                 viewEventCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.chartTendencyValues }.distinctUntilChanged(),
-                chartTendencyValuesCollector
             )
         }
     }

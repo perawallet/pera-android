@@ -23,7 +23,6 @@ import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
 import com.algorand.android.ui.accounts.tracker.AccountsEventTracker
-import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
@@ -42,7 +41,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @SuppressWarnings("LongParameterList")
@@ -178,12 +176,6 @@ class AccountsViewModel @Inject constructor(
     fun togglePrivacy() {
         viewModelScope.launch {
             togglePrivacyMode()
-        }
-    }
-
-    fun updatePreviewWithChartData(tendencyValues: ChartTendencyValues?) {
-        _accountPreviewFlow.update {
-            it?.copy(chartTendencyValues = tendencyValues)
         }
     }
 

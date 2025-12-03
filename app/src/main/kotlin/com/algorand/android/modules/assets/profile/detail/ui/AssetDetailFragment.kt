@@ -45,6 +45,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
@@ -52,13 +53,14 @@ import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.getCustomLongClickableSpan
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 import java.math.BigDecimal
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetAboutFragment.AssetAboutTabListener,
@@ -163,10 +165,23 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
     private val chartListener = object : StatefulPeraLineChartListener {
         override fun onItemSelected(item: PeraLineChartData) {
             assetDetailViewModel.displayAssetLineChart(item as AssetLineChartData)
+            binding.balanceDeltaText.hide()
+            binding.deltaPercentageText.hide()
         }
 
         override fun onItemDeselected() {
             assetDetailViewModel.displayAssetHoldings()
+            binding.balanceDeltaText.showView()
+            binding.deltaPercentageText.showView()
+        }
+
+        override fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {
+            tendencyValues?.run {
+                if (delta != null && deltaRenderer != null) binding.balanceDeltaText.setDelta(delta, deltaRenderer)
+                binding.deltaPercentageText.setPercentage(percentage)
+            }
+            binding.balanceDeltaText.showView()
+            binding.deltaPercentageText.showView()
         }
     }
 

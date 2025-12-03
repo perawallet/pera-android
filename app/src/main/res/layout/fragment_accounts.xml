@@ -168,7 +168,7 @@
         android:id="@+id/portfolioDeltaText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/spacing_xsmall"
         app:layout_constraintBottom_toBottomOf="@id/secondaryPortfolioValue"
         app:layout_constraintStart_toEndOf="@id/secondaryPortfolioValue"
         app:layout_constraintTop_toTopOf="@id/secondaryPortfolioValue" />
@@ -177,7 +177,7 @@
         android:id="@+id/portfolioPercentageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/spacing_xsmall"
         app:layout_constraintBottom_toBottomOf="@id/secondaryPortfolioValue"
         app:layout_constraintStart_toEndOf="@id/portfolioDeltaText"
         app:layout_constraintTop_toTopOf="@id/secondaryPortfolioValue" />
@@ -189,7 +189,7 @@
         android:gravity="end"
         android:maxLines="1"
         android:paddingEnd="@dimen/spacing_normal"
-        android:textAppearance="@style/TextAppearance.Body.Sans"
+        android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/secondary_text_color"
         app:layout_constraintBottom_toTopOf="@id/accountsRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"

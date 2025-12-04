@@ -60,6 +60,7 @@ import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragm
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.setDrawableTintColor
+import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -202,8 +203,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
                 secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
                 chartSelectedItemDateTextView.text = " "
-                portfolioDeltaText.showView()
-                portfolioPercentageText.showView()
+                portfolioDeltaText.show()
+                portfolioPercentageText.show()
             }
         }
 
@@ -213,12 +214,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onChartDataUpdated(tendencyValues: ChartTendencyValues?) {
-            tendencyValues?.run {
-                if (delta != null && deltaRenderer != null) binding.portfolioDeltaText.setDelta(delta, deltaRenderer)
-                binding.portfolioPercentageText.setPercentage(percentage)
-            }
-            binding.portfolioDeltaText.showView()
-            binding.portfolioPercentageText.showView()
+            binding.portfolioDeltaText.setDelta(tendencyValues?.delta, tendencyValues?.deltaRenderer)
+            binding.portfolioPercentageText.setPercentage(tendencyValues?.percentage)
         }
     }
 

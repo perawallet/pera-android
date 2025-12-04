@@ -24,7 +24,6 @@ import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
 import com.algorand.android.ui.accounts.usecase.GetFilteredPortfolioAccountLites
 import com.algorand.android.ui.compose.widget.chart.mapper.ChartTendencyValuesMapper
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
-import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneMonth
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneWeek
@@ -33,9 +32,6 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Idle
-import com.algorand.wallet.privacy.domain.model.PrivacyMode
-import com.algorand.wallet.privacy.domain.model.PrivacyMode.Enabled
-import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -53,8 +49,7 @@ class AccountsLineChartViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val getAccountsLineChartData: GetAccountsLineChartData,
     private val getFilteredPortfolioAccountLites: GetFilteredPortfolioAccountLites,
-    private val tendencyValuesMapper: ChartTendencyValuesMapper,
-    private val getPrivacyModeFlow: GetPrivacyModeFlow
+    private val tendencyValuesMapper: ChartTendencyValuesMapper
 ) : ViewModel(), StatefulPeraLineChartViewModel {
 
     override val state: StateFlow<ViewState>
@@ -71,9 +66,7 @@ class AccountsLineChartViewModel @Inject constructor(
             getAccountLiteCacheFlow()
                 .mapLatest(::mapAccountLiteCacheMediatorState)
                 .distinctUntilChanged()
-                .combine(selectedPeriodFlow, ::mapChartStateMediatorState)
-                .distinctUntilChanged()
-                .combine(getPrivacyModeFlow(), ::updateViewState)
+                .combine(selectedPeriodFlow, ::updateViewState)
                 .launchIn(viewModelScope)
         }
     }
@@ -100,33 +93,24 @@ class AccountsLineChartViewModel @Inject constructor(
         }
     }
 
-    private suspend fun mapChartStateMediatorState(
+    private suspend fun updateViewState(
         cacheMediator: AccountCacheMediatorState,
         selectedPeriod: PeraLineChartPeriodChip
-    ): ChartMediatorState {
-        return when (cacheMediator) {
-            AccountCacheMediatorState.Loading -> ChartMediatorState.Loading
-            AccountCacheMediatorState.Error -> ChartMediatorState.Error
+    ) {
+        when (cacheMediator) {
+            AccountCacheMediatorState.Loading -> stateDelegate.updateState { ViewState.Loading }
+            AccountCacheMediatorState.Error -> stateDelegate.updateState { ViewState.Error }
             is AccountCacheMediatorState.Data -> {
                 stateDelegate.updateState { ViewState.Content(ContentState.Loading, selectedPeriod, PERIODS) }
                 getAccountsLineChartData(cacheMediator.authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
-                    onSuccess = { ChartMediatorState.Data(it, selectedPeriod, PERIODS) },
-                    onFailed = { _, _ -> ChartMediatorState.Error }
+                    onSuccess = {
+                        val contentState = ContentState.Data(it, tendencyValuesMapper(it))
+                        stateDelegate.updateState { ViewState.Content(contentState, selectedPeriod, PERIODS) }
+                    },
+                    onFailed = { _, _ ->
+                        stateDelegate.updateState { ViewState.Error }
+                    }
                 )
-            }
-        }
-    }
-
-    private fun updateViewState(chartMediator: ChartMediatorState, privacyMode: PrivacyMode) {
-        when (chartMediator) {
-            ChartMediatorState.Loading -> stateDelegate.updateState { ViewState.Loading }
-            ChartMediatorState.Error -> stateDelegate.updateState { ViewState.Error }
-            is ChartMediatorState.Data -> {
-                val tendencyValues = if (privacyMode is Enabled) null else tendencyValuesMapper(chartMediator.chartData)
-                val contentState = ContentState.Data(chartMediator.chartData, tendencyValues)
-                stateDelegate.updateState {
-                    ViewState.Content(contentState, chartMediator.selectedPeriod, chartMediator.periods)
-                }
             }
         }
     }
@@ -135,16 +119,6 @@ class AccountsLineChartViewModel @Inject constructor(
         data object Loading : AccountCacheMediatorState
         data object Error : AccountCacheMediatorState
         data class Data(val authAddresses: List<String>) : AccountCacheMediatorState
-    }
-
-    private sealed interface ChartMediatorState {
-        data object Loading : ChartMediatorState
-        data object Error : ChartMediatorState
-        data class Data(
-            val chartData: List<PeraLineChartData>,
-            val selectedPeriod: PeraLineChartPeriodChip,
-            val periods: List<PeraLineChartPeriodChip>
-        ) : ChartMediatorState
     }
 
     private companion object {

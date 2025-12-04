@@ -54,6 +54,7 @@ import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
+import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getCustomLongClickableSpan
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -171,17 +172,13 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
         override fun onItemDeselected() {
             assetDetailViewModel.displayAssetHoldings()
-            binding.balanceDeltaText.showView()
-            binding.deltaPercentageText.showView()
+            binding.balanceDeltaText.show()
+            binding.deltaPercentageText.show()
         }
 
         override fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {
-            tendencyValues?.run {
-                if (delta != null && deltaRenderer != null) binding.balanceDeltaText.setDelta(delta, deltaRenderer)
-                binding.deltaPercentageText.setPercentage(percentage)
-            }
-            binding.balanceDeltaText.showView()
-            binding.deltaPercentageText.showView()
+            binding.balanceDeltaText.setDelta(tendencyValues?.delta, tendencyValues?.deltaRenderer)
+            binding.deltaPercentageText.setPercentage(tendencyValues?.percentage)
         }
     }
 

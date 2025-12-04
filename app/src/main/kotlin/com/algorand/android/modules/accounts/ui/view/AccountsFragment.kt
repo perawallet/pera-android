@@ -60,11 +60,11 @@ import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragm
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.setDrawableTintColor
-import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.wallet.banner.domain.model.Banner.BannerType
+import com.algorand.wallet.privacy.domain.model.PrivacyMode.Disabled
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -203,8 +203,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
                 secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
                 chartSelectedItemDateTextView.text = " "
-                portfolioDeltaText.show()
-                portfolioPercentageText.show()
+                portfolioDeltaText.isVisible = portfolioValueItem?.privacyMode is Disabled
+                portfolioPercentageText.isVisible = portfolioValueItem?.privacyMode is Disabled
             }
         }
 
@@ -358,6 +358,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             }
             toolbarPrimaryPortfolioValue.text = portfolioValues.getPrimaryAccountValue(root.context)
             toolbarSecondaryPortfolioValue.text = portfolioValues.getSecondaryAccountValue(root.context)
+            binding.portfolioDeltaText.isVisible = portfolioValues.privacyMode is Disabled
+            binding.portfolioPercentageText.isVisible = portfolioValues.privacyMode is Disabled
             portfolioValueTitleTextView.apply {
                 setTextColor(ContextCompat.getColor(root.context, portfolioValues.titleColorResId))
                 setDrawableTintColor(portfolioValues.titleColorResId)

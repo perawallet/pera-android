@@ -126,7 +126,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_xsmall"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/assetSecondaryValueTextView"
         app:layout_constraintStart_toEndOf="@id/assetSecondaryValueTextView"
         app:layout_constraintTop_toTopOf="@id/assetSecondaryValueTextView" />
@@ -136,7 +135,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_xsmall"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/assetSecondaryValueTextView"
         app:layout_constraintStart_toEndOf="@id/balanceDeltaText"
         app:layout_constraintTop_toTopOf="@id/assetSecondaryValueTextView" />

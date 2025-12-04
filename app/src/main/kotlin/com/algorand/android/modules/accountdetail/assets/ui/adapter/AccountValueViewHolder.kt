@@ -15,6 +15,7 @@ package com.algorand.android.modules.accountdetail.assets.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemAccountValueBinding
 import com.algorand.android.models.BaseViewHolder
@@ -30,6 +31,7 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatDateToChartDateString
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
 class AccountValueViewHolder(
     private val binding: ItemAccountValueBinding,
@@ -66,8 +68,10 @@ class AccountValueViewHolder(
                 setSecondaryText(item.accountSecondaryFormattedParityValue)
                 setMinRequiredBalanceText(item.requiredMinBalance)
                 binding.dateTextView.hide()
-                binding.balanceDeltaText.showView()
-                binding.balancePercentageText.showView()
+                if (item.privacyMode is PrivacyMode.Disabled) {
+                    binding.balanceDeltaText.show()
+                    binding.balancePercentageText.show()
+                }
             }
 
             override fun onChartTap() {
@@ -75,14 +79,10 @@ class AccountValueViewHolder(
             }
 
             override fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {
-                tendencyValues?.run {
-                    if (delta != null && deltaRenderer != null) {
-                        binding.balanceDeltaText.setDelta(delta, deltaRenderer)
-                    }
-                    binding.balancePercentageText.setPercentage(percentage)
-                }
-                binding.balanceDeltaText.showView()
-                binding.balancePercentageText.showView()
+                binding.balanceDeltaText.setDelta(tendencyValues?.delta, tendencyValues?.deltaRenderer)
+                binding.balancePercentageText.setPercentage(tendencyValues?.percentage)
+                binding.balanceDeltaText.isVisible = item.privacyMode is PrivacyMode.Disabled
+                binding.balancePercentageText.isVisible = item.privacyMode is PrivacyMode.Disabled
             }
         }
     }

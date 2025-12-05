@@ -56,19 +56,19 @@ android {
     defaultConfig {
         // Offramp API keys
         val offrampApiKeyProps = Properties()
-        val offrampPropsFile = rootProject.file("offramp-api-key.properties")
+        val offrampPropsFile = rootProject.file("app/offramp-api-key.properties")
         if (offrampPropsFile.exists()) {
             FileInputStream(offrampPropsFile).use { offrampApiKeyProps.load(it) }
         }
         buildConfigField(
             "String",
             "PROD_BIDALI_API_KEY",
-            "\"${offrampApiKeyProps.getProperty("PROD_BIDALI_API_KEY", "")}\""
+            "${offrampApiKeyProps.getProperty("PROD_BIDALI_API_KEY", "")}"
         )
         buildConfigField(
             "String",
             "STAGING_BIDALI_API_KEY",
-            "\"${offrampApiKeyProps.getProperty("STAGING_BIDALI_API_KEY", "")}\""
+            "${offrampApiKeyProps.getProperty("STAGING_BIDALI_API_KEY", "")}"
         )
 
         // Browser packages

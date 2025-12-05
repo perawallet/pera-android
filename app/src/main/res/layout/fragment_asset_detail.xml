@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -112,16 +111,33 @@
         android:id="@+id/assetSecondaryValueTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/spacing_xlarge"
+        android:layout_marginStart="@dimen/spacing_xlarge"
         android:layout_marginTop="@dimen/spacing_xsmall"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/text_gray"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/assetPrimaryValueTextView"
         tools:text="@tools:sample/lorem[2]" />
+
+    <com.algorand.android.ui.compose.widget.chart.view.PeraLineChartDeltaTextView
+        android:id="@+id/balanceDeltaText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_xsmall"
+        app:layout_constraintBottom_toBottomOf="@id/assetSecondaryValueTextView"
+        app:layout_constraintStart_toEndOf="@id/assetSecondaryValueTextView"
+        app:layout_constraintTop_toTopOf="@id/assetSecondaryValueTextView" />
+
+    <com.algorand.android.ui.compose.widget.chart.view.PeraPercentageTextView
+        android:id="@+id/deltaPercentageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_xsmall"
+        app:layout_constraintBottom_toBottomOf="@id/assetSecondaryValueTextView"
+        app:layout_constraintStart_toEndOf="@id/balanceDeltaText"
+        app:layout_constraintTop_toTopOf="@id/assetSecondaryValueTextView" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/chartSelectedItemDateTextView"
@@ -130,7 +146,7 @@
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
         android:gravity="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Footnote.Sans"
+        android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/text_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/assetSecondaryValueTextView"

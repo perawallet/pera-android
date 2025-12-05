@@ -91,7 +91,8 @@ class AccountPreviewProcessor @Inject constructor(
             accountList.addAll(accountItems)
         }
 
-        val portfolio = portfolioItemProcessor.getPortfolioItem(accountLites, amountRenderType, localAccounts)
+        val portfolio = portfolioItemProcessor
+            .getPortfolioItem(accountLites, amountRenderType, localAccounts, privacyMode)
         return accountPreviewMapper.getSuccessAccountPreview(
             accountListItems = accountList,
             portfolioValueItem = portfolio,

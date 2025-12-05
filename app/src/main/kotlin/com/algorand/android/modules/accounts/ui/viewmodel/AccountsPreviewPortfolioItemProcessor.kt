@@ -25,6 +25,7 @@ import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRen
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -40,10 +41,11 @@ class AccountsPreviewPortfolioItemProcessor @Inject constructor(
     suspend fun getPortfolioItem(
         accountLites: Map<String, AccountLite>,
         amountRendererType: AmountRenderer.RenderType,
-        localAccounts: List<LocalAccount>
+        localAccounts: List<LocalAccount>,
+        privacyMode: PrivacyMode
     ): BasePortfolioValueItem {
         return if (!isThereAnyCachedErrorAccount(localAccounts, excludeNoAuthAccounts = true)) {
-            getPortfolioValueSuccessItem(accountLites, amountRendererType)
+            getPortfolioValueSuccessItem(accountLites, amountRendererType, privacyMode)
         } else if (isThereAnyCachedSuccessAccount(excludeNoAuthAccounts = true)) {
             getPortfolioValuePartialErrorItem(accountLites, amountRendererType)
         } else {
@@ -53,12 +55,14 @@ class AccountsPreviewPortfolioItemProcessor @Inject constructor(
 
     private fun getPortfolioValueSuccessItem(
         accountLites: Map<String, AccountLite>,
-        amountRendererType: AmountRenderer.RenderType
+        amountRendererType: AmountRenderer.RenderType,
+        privacyMode: PrivacyMode
     ): SuccessPortfolioValueItem {
         val (totalPrimaryValue, totalSecondaryValue) = getTotalPrimaryAndSecondaryValues(accountLites)
         return portfolioValueItemMapper.mapToPortfolioValuesSuccessItem(
             primaryAmountRenderer = getCompactPrimaryAmountRenderer(totalPrimaryValue, amountRendererType),
-            secondaryAmountRenderer = getCompactSecondaryAmountRenderer(totalSecondaryValue, amountRendererType)
+            secondaryAmountRenderer = getCompactSecondaryAmountRenderer(totalSecondaryValue, amountRendererType),
+            privacyMode = privacyMode
         )
     }
 

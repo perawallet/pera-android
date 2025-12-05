@@ -15,6 +15,7 @@ package com.algorand.android.ui.asset.detail.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartDataUseCase
+import com.algorand.android.ui.compose.widget.chart.mapper.ChartTendencyValuesMapper
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
@@ -29,16 +30,17 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @HiltViewModel
 class AssetLineChartViewModel @Inject constructor(
     private val walletWealthPeriodMapper: WalletWealthPeriodMapper,
     private val stateDelegate: StateDelegate<ViewState>,
     private val getAssetLineChartDataUseCase: GetAssetLineChartDataUseCase,
+    private val tendencyValuesMapper: ChartTendencyValuesMapper
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, StatefulPeraLineChartViewModel {
 
     init {
@@ -53,11 +55,7 @@ class AssetLineChartViewModel @Inject constructor(
             selectedPeriodFlow.onEach { period ->
                 val viewState = getAssetLineChartDataUseCase(address, assetId, walletWealthPeriodMapper(period)).use(
                     onSuccess = { history ->
-                        Content(
-                            Data(history),
-                            period,
-                            PERIODS
-                        )
+                        Content(Data(history, tendencyValuesMapper(history)), period, PERIODS)
                     },
                     onFailed = { _, _ -> ViewState.Error }
                 )

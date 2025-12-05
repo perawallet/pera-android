@@ -33,11 +33,11 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.can
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
+import java.math.BigDecimal
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import java.math.BigDecimal
-import javax.inject.Inject
 
 internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
@@ -92,6 +92,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
             getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType).getDisplayValue(),
             getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType).getDisplayValue(),
             requiredMinBalance = formattedRequiredMinimumBalance,
+            privacyMode
         )
     }
 

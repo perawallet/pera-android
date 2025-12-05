@@ -15,6 +15,7 @@ package com.algorand.android.modules.accounts.domain.model
 import android.content.Context
 import androidx.annotation.StringRes
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
 sealed class BasePortfolioValueItem {
 
@@ -22,12 +23,14 @@ sealed class BasePortfolioValueItem {
     abstract val errorStringResId: Int?
     abstract fun getPrimaryAccountValue(context: Context): String
     abstract fun getSecondaryAccountValue(context: Context): String
+    abstract val privacyMode: PrivacyMode
 
     data class SuccessPortfolioValueItem(
         override val titleColorResId: Int,
         @param:StringRes override val errorStringResId: Int? = null,
         val primaryAmountRenderer: AmountRenderer,
-        val secondaryAmountRenderer: AmountRenderer
+        val secondaryAmountRenderer: AmountRenderer,
+        override val privacyMode: PrivacyMode
     ) : BasePortfolioValueItem() {
         override fun getPrimaryAccountValue(context: Context): String = primaryAmountRenderer.getDisplayValue()
         override fun getSecondaryAccountValue(context: Context): String = secondaryAmountRenderer.getDisplayValue()
@@ -43,6 +46,9 @@ sealed class BasePortfolioValueItem {
 
         override fun getSecondaryAccountValue(context: Context): String =
             context.getString(secondaryAccountValueErrorResId)
+
+        override val privacyMode: PrivacyMode
+            get() = PrivacyMode.Disabled
     }
 
     data class PartialErrorPortfolioValueItem(
@@ -53,5 +59,7 @@ sealed class BasePortfolioValueItem {
     ) : BasePortfolioValueItem() {
         override fun getPrimaryAccountValue(context: Context): String = primaryAmountRenderer.getDisplayValue()
         override fun getSecondaryAccountValue(context: Context): String = secondaryAmountRenderer.getDisplayValue()
+        override val privacyMode: PrivacyMode
+            get() = PrivacyMode.Disabled
     }
 }

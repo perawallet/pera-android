@@ -84,7 +84,16 @@
         <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
             <PropertySet android:alpha="1" />
         </ConstraintOverride>
-
+        <ConstraintOverride
+            android:id="@id/balanceDeltaText"
+            app:visibilityMode="ignore">
+            <PropertySet android:alpha="1" />
+        </ConstraintOverride>
+        <ConstraintOverride
+            android:id="@id/deltaPercentageText"
+            app:visibilityMode="ignore">
+            <PropertySet android:alpha="1" />
+        </ConstraintOverride>
         <ConstraintOverride
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
@@ -193,7 +202,16 @@
         <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
             <PropertySet android:alpha="0" />
         </ConstraintOverride>
-
+        <ConstraintOverride
+            android:id="@id/balanceDeltaText"
+            app:visibilityMode="ignore">
+            <PropertySet android:alpha="0" />
+        </ConstraintOverride>
+        <ConstraintOverride
+            android:id="@id/deltaPercentageText"
+            app:visibilityMode="ignore">
+            <PropertySet android:alpha="0" />
+        </ConstraintOverride>
         <ConstraintOverride
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">

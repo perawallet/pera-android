@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.compose.widget.chart.viewmodel
 
+import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState
@@ -35,7 +36,17 @@ interface StatefulPeraLineChartViewModel : StateViewModel<ViewState> {
 
             sealed interface ContentState {
                 data object Loading : ContentState
-                data class Data(val chartData: List<PeraLineChartData>) : ContentState
+                data class Data(
+                    val chartData: List<PeraLineChartData>,
+                    val tendencyValues: ChartTendencyValues?
+                ) : ContentState {
+
+                    data class ChartTendencyValues(
+                        val delta: Float?,
+                        val deltaRenderer: AmountRenderer?,
+                        val percentage: Float?
+                    )
+                }
             }
         }
     }

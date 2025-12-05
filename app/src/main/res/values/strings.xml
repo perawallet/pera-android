@@ -676,6 +676,7 @@
     <string name="search_assets_id">Search Assets ID or Name</string>
     <string name="no_asset_found">No Asset Found</string>
     <string name="adding_asset">Adding Asset</string>
+    <string name="add_asset">Add Asset</string>
     <string name="removing_asset">Removing Asset</string>
     <string name="to_opt_out_from_an_asset">To opt-out from an asset, you must first transfer any remaining balance to another account.</string>
     <string name="show_asset_url">Show Asset URL</string>

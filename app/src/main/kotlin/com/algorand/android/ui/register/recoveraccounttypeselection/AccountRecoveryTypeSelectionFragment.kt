@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.algorand.android.LoginNavigationDirections
@@ -61,9 +63,10 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.theme.PeraTheme.typography
 import com.algorand.android.ui.compose.widget.GroupChoiceWidget
 import com.algorand.android.ui.compose.widget.PeraCard
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
+import com.algorand.android.ui.compose.widget.text.AutosizeText
 import com.algorand.android.ui.compose.widget.text.PeraHighlightedGrayText
 import com.algorand.android.ui.compose.widget.text.PeraHighlightedGreenText
-import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -214,6 +217,7 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
                 sheetState = sheetState,
                 containerColor = PeraTheme.colors.background.primary,
                 contentColor = PeraTheme.colors.text.grayLighter,
+                dragHandle = { PeraBottomSheetDragIndicator(modifier = Modifier.padding(vertical = 12.dp)) }
             ) {
                 BottomSheetContent(
                     sheetState = sheetState,
@@ -279,7 +283,6 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .background(PeraTheme.colors.background.primary)
-                .padding(16.dp)
         ) {
             BottomSheetHeader(sheetState, onDismiss)
 
@@ -336,7 +339,6 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
                 .fillMaxWidth()
                 .padding(
                     start = 10.dp,
-                    end = 40.dp,
                     bottom = 24.dp
                 ),
             verticalAlignment = Alignment.CenterVertically,
@@ -355,12 +357,15 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
                     contentDescription = stringResource(id = R.string.close)
                 )
             }
-            Spacer(Modifier.weight(0.1f))
 
-            PeraTitleText(
-                text = stringResource(id = R.string.bottom_sheet_mnemonic_type_title)
+            AutosizeText(
+                modifier = Modifier.weight(1f),
+                text = stringResource(id = R.string.bottom_sheet_mnemonic_type_title),
+                style = typography.body.regular.sansMedium,
+                textAlign = TextAlign.Center
             )
-            Spacer(Modifier.weight(1f))
+
+            Spacer(Modifier.width(58.dp))
         }
     }
 

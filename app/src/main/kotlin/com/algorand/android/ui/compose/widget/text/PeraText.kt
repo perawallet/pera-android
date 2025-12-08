@@ -189,7 +189,8 @@ fun AutosizeText(
     style: TextStyle = PeraTheme.typography.body.regular.sans,
     color: Color = PeraTheme.colors.text.main,
     maxLines: Int = 1,
-    autoSize: TextAutoSize = TextAutoSize.StepBased(maxFontSize = style.fontSize)
+    autoSize: TextAutoSize = TextAutoSize.StepBased(maxFontSize = style.fontSize),
+    textAlign: TextAlign? = null
 ) {
     Text(
         modifier = modifier,
@@ -198,6 +199,7 @@ fun AutosizeText(
         color = color,
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
-        autoSize = autoSize
+        autoSize = autoSize,
+        textAlign = textAlign
     )
 }

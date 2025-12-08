@@ -547,7 +547,9 @@
     <string name="welcome_to_pera">Welcome to\nPera Wallet</string>
     <string name="increase_your_security">Increase your security with a PIN</string>
     <string name="name_your_account">Name your account</string>
+    <string name="name_your_wallet">Name your wallet</string>
     <string name="name_your_account_to">Name your account to easily identify it while using the Pera Wallet. These names are stored locally, and can only be seen by you.</string>
+    <string name="name_your_wallet_to">Name your wallet to easily identify it while using the Pera Wallet. These names are stored locally, and can only be seen by you.</string>
     <string name="create_a_watch_account">Create a watch\naccount</string>
     <string name="step_one">Step 1</string>
     <string name="step_two">Step 2</string>

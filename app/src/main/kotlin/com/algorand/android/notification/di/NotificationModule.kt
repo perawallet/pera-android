@@ -10,12 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.chart.di
+package com.algorand.android.notification.di
 
-import com.algorand.android.ui.compose.widget.chart.mapper.ChartTendencyValuesMapper
-import com.algorand.android.ui.compose.widget.chart.mapper.DefaultChartTendencyValuesMapper
-import com.algorand.android.ui.compose.widget.chart.mapper.DefaultWalletWealthPeriodMapper
-import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
+import com.algorand.android.notification.tracking.NotificationClickEventTracker
+import com.algorand.android.notification.tracking.DefaultNotificationClickEventTracker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,11 +21,10 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object PeraLineChartModule {
+internal object NotificationModule {
 
     @Provides
-    fun provideWalletWealthPeriodMapper(mapper: DefaultWalletWealthPeriodMapper): WalletWealthPeriodMapper = mapper
-
-    @Provides
-    fun provideChartTendencyValuesMapper(mapper: DefaultChartTendencyValuesMapper): ChartTendencyValuesMapper = mapper
+    fun provideNotificationClickEventTracker(
+        tracker: DefaultNotificationClickEventTracker
+    ): NotificationClickEventTracker = tracker
 }

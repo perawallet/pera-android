@@ -97,6 +97,26 @@
                 android:scaleX="1"
                 android:scaleY="1" />
         </ConstraintOverride>
+        <ConstraintOverride
+            android:id="@id/portfolioDeltaText"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="1"
+                android:visibility="invisible" />
+            <Transform
+                android:scaleX="1"
+                android:scaleY="1" />
+        </ConstraintOverride>
+        <ConstraintOverride
+            android:id="@id/portfolioPercentageText"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="1"
+                android:visibility="invisible" />
+            <Transform
+                android:scaleX="1"
+                android:scaleY="1" />
+        </ConstraintOverride>
 
         <ConstraintOverride
             android:id="@id/toolbarPrimaryPortfolioValue"
@@ -243,6 +263,26 @@
 
         <ConstraintOverride
             android:id="@id/secondaryPortfolioValue"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="0"
+                android:visibility="invisible" />
+            <Transform
+                android:scaleX="0.8"
+                android:scaleY="0.8" />
+        </ConstraintOverride>
+        <ConstraintOverride
+            android:id="@id/portfolioDeltaText"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="0"
+                android:visibility="invisible" />
+            <Transform
+                android:scaleX="0.8"
+                android:scaleY="0.8" />
+        </ConstraintOverride>
+        <ConstraintOverride
+            android:id="@id/portfolioPercentageText"
             app:visibilityMode="ignore">
             <PropertySet
                 android:alpha="0"

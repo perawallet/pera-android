@@ -108,7 +108,9 @@ class PeraFirebaseMessagingService : PushMessagingService() {
     @SuppressWarnings("LongMethod")
     private fun showNotification(notificationData: NotificationMetadata) {
         val intent = if (notificationData.url != null) {
-            LauncherActivity.newIntentWithDeeplink(context = this, deeplink = notificationData.url)
+            LauncherActivity
+                .newIntentWithDeeplink(context = this, deeplink = notificationData.url)
+                .putExtra(EXTRA_NOTIFICATION_CLICK, true)
         } else {
             LauncherActivity.newIntent(context = this)
         }.apply { action = System.currentTimeMillis().toString() }
@@ -182,5 +184,6 @@ class PeraFirebaseMessagingService : PushMessagingService() {
         private const val ALERT = "alert"
         private const val CUSTOM = "custom"
         private const val BLOB = "blob"
+        const val EXTRA_NOTIFICATION_CLICK = "extraNotificationClick"
     }
 }

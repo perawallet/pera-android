@@ -15,18 +15,21 @@ package com.algorand.android.modules.accounts.domain.mapper
 import com.algorand.android.R
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import javax.inject.Inject
 
 class PortfolioValueItemMapper @Inject constructor() {
 
     fun mapToPortfolioValuesSuccessItem(
         primaryAmountRenderer: AmountRenderer,
-        secondaryAmountRenderer: AmountRenderer
+        secondaryAmountRenderer: AmountRenderer,
+        privacyMode: PrivacyMode
     ): BasePortfolioValueItem.SuccessPortfolioValueItem {
         return BasePortfolioValueItem.SuccessPortfolioValueItem(
             primaryAmountRenderer = primaryAmountRenderer,
             secondaryAmountRenderer = secondaryAmountRenderer,
-            titleColorResId = R.color.secondary_text_color
+            titleColorResId = R.color.secondary_text_color,
+            privacyMode = privacyMode
         )
     }
 

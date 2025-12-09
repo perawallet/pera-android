@@ -14,6 +14,7 @@ package com.algorand.android.ui.webview.bridge
 
 import android.webkit.JavascriptInterface
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
+import com.algorand.android.ui.webview.bridge.model.event.PeraPublicWebInterfaceEvent
 import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
 
 @Suppress("unused")
@@ -24,6 +25,18 @@ internal class PeraWebViewPublicJsBridge(
 
     @JavascriptInterface
     fun handleRequest(params: String) {
-        onEvent(mapper.mapRequests(params))
+        val requests = mapper.mapRequests(params)
+        val filteredRequests = getFilteredRequests(requests)
+        onEvent(filteredRequests)
+    }
+
+    private fun getFilteredRequests(requests: List<PeraWebInterfaceEventResult>): List<PeraWebInterfaceEventResult> {
+        return requests.filter {
+            if (it.result is PeraWebInterfaceEventResult.Result.Success) {
+                it.result.event is PeraPublicWebInterfaceEvent
+            } else {
+                true
+            }
+        }
     }
 }

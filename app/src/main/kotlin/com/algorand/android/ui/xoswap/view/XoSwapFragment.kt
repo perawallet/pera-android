@@ -26,7 +26,7 @@ import com.algorand.android.databinding.FragmentXoSwapBinding
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.webview.bridge.PeraWebViewInternalBridge
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
+import com.algorand.android.ui.webview.bridge.mapper.PeraInternalWebInterfaceEventMapper
 import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.PushPublicWebView
 import com.algorand.android.ui.webview.publicfragment.model.PublicWebViewFragmentNavArgs
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewFragmentDelegate
@@ -49,7 +49,7 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     @Inject
-    lateinit var webInterfaceEventMapper: PeraWebInterfaceEventMapper
+    lateinit var webInterfaceEventMapper: PeraInternalWebInterfaceEventMapper
 
     @Inject
     lateinit var isFeatureToggleEnabled: IsFeatureToggleEnabled

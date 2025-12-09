@@ -22,7 +22,7 @@ interface PeraWebInterfaceEventMapper {
     fun mapRequests(params: String): List<PeraWebInterfaceEventResult>
 }
 
-internal interface PeraWebInterfaceNotifyUserEventMapper {
+interface PeraWebInterfaceNotifyUserEventMapper {
     operator fun invoke(params: NotifyUserParams): NotifyUser?
 }
 

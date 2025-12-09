@@ -52,7 +52,7 @@ import com.algorand.wallet.foundation.json.rpc.JsonRpcRequestList
 import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
 
-internal class DefaultPeraWebInterfaceEventMapper @Inject constructor(
+class PeraInternalWebInterfaceEventMapper @Inject constructor(
     private val jsonSerializer: JsonSerializer,
     private val notifyUserEventMapper: PeraWebInterfaceNotifyUserEventMapper,
     private val errorLogger: PeraErrorLogger
@@ -143,6 +143,6 @@ internal class DefaultPeraWebInterfaceEventMapper @Inject constructor(
     }
 
     private companion object {
-        val LOG_TAG: String = DefaultPeraWebInterfaceEventMapper::class.java.simpleName
+        val LOG_TAG: String = PeraInternalWebInterfaceEventMapper::class.java.simpleName
     }
 }

@@ -25,7 +25,7 @@ import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.webview.bridge.PeraWebViewPublicJsBridge
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
+import com.algorand.android.ui.webview.bridge.mapper.PeraPublicWebInterfaceEventMapper
 import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel
 import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewEvent
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -40,7 +40,7 @@ class PublicWebViewFragment : BaseFragment(R.layout.fragment_public_webview) {
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     @Inject
-    lateinit var webInterfaceEventMapper: PeraWebInterfaceEventMapper
+    lateinit var webInterfaceEventMapper: PeraPublicWebInterfaceEventMapper
 
     private var _binding: FragmentPublicWebviewBinding? = null
     private val binding: FragmentPublicWebviewBinding

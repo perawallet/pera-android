@@ -12,11 +12,9 @@
 
 package com.algorand.android.ui.webview.di
 
-import com.algorand.android.ui.webview.bridge.mapper.DefaultPeraWebInterfaceEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.DefaultPeraWebInterfaceEventResponseMapper
 import com.algorand.android.ui.webview.bridge.mapper.DefaultPeraWebInterfaceNotifyUserEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.DefaultSettingsWebResponseMapper
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventResponseMapper
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceNotifyUserEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.SettingsWebResponseMapper
@@ -48,9 +46,4 @@ internal object WebViewModule {
     fun providePeraWebInterfaceNotifyUserEventMapper(
         mapper: DefaultPeraWebInterfaceNotifyUserEventMapper
     ): PeraWebInterfaceNotifyUserEventMapper = mapper
-
-    @Provides
-    fun providePeraWebInterfaceEventMapper(
-        mapper: DefaultPeraWebInterfaceEventMapper
-    ): PeraWebInterfaceEventMapper = mapper
 }

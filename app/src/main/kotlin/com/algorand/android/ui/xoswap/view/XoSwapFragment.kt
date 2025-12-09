@@ -26,8 +26,8 @@ import com.algorand.android.databinding.FragmentXoSwapBinding
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.webview.bridge.PeraWebViewInternalBridge
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent
+import com.algorand.android.ui.webview.bridge.mapper.PeraInternalWebInterfaceEventMapper
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.PushPublicWebView
 import com.algorand.android.ui.webview.publicfragment.model.PublicWebViewFragmentNavArgs
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewFragmentDelegate
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewViewModel
@@ -36,6 +36,8 @@ import com.algorand.android.utils.delegation.bottomnavbarvisibility.BottomNavBar
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -47,7 +49,10 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     @Inject
-    lateinit var webInterfaceEventMapper: PeraWebInterfaceEventMapper
+    lateinit var webInterfaceEventMapper: PeraInternalWebInterfaceEventMapper
+
+    @Inject
+    lateinit var isFeatureToggleEnabled: IsFeatureToggleEnabled
 
     private val peraWebViewViewModel: PeraWebViewViewModel by viewModels()
 
@@ -100,8 +105,8 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
             listener = this,
             webViewClientListener = webViewClientListener
         )
-        val bridge = PeraWebViewInternalBridge(webInterfaceEventMapper, peraWebViewViewModel::processWebEvent)
-        webViewFragmentDelegate?.initWebView(BuildConfig.ONRAMP_URL, bridge)
+        val bridge = PeraWebViewInternalBridge(webInterfaceEventMapper, peraWebViewViewModel::processWebEvents)
+        webViewFragmentDelegate?.initWebView(getInitialUrl(), bridge)
     }
 
     override fun onDestroyView() {
@@ -111,13 +116,19 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
         _binding = null
     }
 
-    override fun onNavPublicWebView(params: PeraInternalWebInterfaceEvent.EventType.PushPublicWebView) {
+    override fun onNavPublicWebView(params: PushPublicWebView) {
         val navArgs = with(params) { PublicWebViewFragmentNavArgs(url, title, isFavorite) }
         nav(XoSwapFragmentDirections.actionXoSwapFragmentToPublicWebViewFragment(navArgs))
     }
 
     override fun onNavigateBack() {
         (activity as? CoreMainActivity)?.setBottomNavigationBarSelectedItem(ACCOUNTS_FRAGMENT_NAVIGATION_ID)
+    }
+
+    private fun getInitialUrl(): String {
+        val isTestPageEnabled = isFeatureToggleEnabled.invoke(FeatureToggle.XO_SWAP_TEST_PAGE.key)
+        val testPageSuffix = if (isTestPageEnabled) "/test" else ""
+        return "${BuildConfig.ONRAMP_URL}$testPageSuffix"
     }
 
     private companion object {

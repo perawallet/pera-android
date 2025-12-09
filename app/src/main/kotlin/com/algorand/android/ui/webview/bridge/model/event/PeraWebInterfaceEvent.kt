@@ -12,6 +12,4 @@
 
 package com.algorand.android.ui.webview.bridge.model.event
 
-interface PeraWebInterfaceEvent {
-    val name: String
-}
+interface PeraWebInterfaceEvent

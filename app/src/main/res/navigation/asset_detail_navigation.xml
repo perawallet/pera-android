@@ -149,7 +149,7 @@
             android:id="@+id/action_assetDetailFragment_to_swapV2Navigation"
             app:destination="@id/swapV2Navigation">
             <argument
-                android:name="accountAddress"
+                android:name="address"
                 app:argType="string"
                 app:nullable="true" />
             <argument

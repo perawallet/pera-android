@@ -27,16 +27,17 @@ import com.algorand.android.modules.notification.ui.model.NotificationCenterPrev
 import com.algorand.android.modules.notification.ui.model.NotificationListItem
 import com.algorand.android.modules.notification.ui.usecase.NotificationCenterPreviewUseCase
 import com.algorand.android.notification.PeraNotificationManager
+import com.algorand.android.notification.tracking.NotificationClickEventTracker
 import com.algorand.android.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.ZonedDateTime
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
-import java.time.ZonedDateTime
-import javax.inject.Inject
 
 @HiltViewModel
 class NotificationCenterViewModel @Inject constructor(
@@ -44,7 +45,8 @@ class NotificationCenterViewModel @Inject constructor(
     private val deviceIdUseCase: DeviceIdUseCase,
     private val notificationRepository: NotificationRepository,
     private val notificationCenterPreviewUseCase: NotificationCenterPreviewUseCase,
-    private val notificationStatusUseCase: NotificationStatusUseCase
+    private val notificationStatusUseCase: NotificationStatusUseCase,
+    private val notificationClickEventTracker: NotificationClickEventTracker
 ) : BaseViewModel() {
 
     private var notificationDataSource: NotificationDataSource? = null
@@ -84,6 +86,7 @@ class NotificationCenterViewModel @Inject constructor(
     fun onNotificationClickEvent(notificationListItem: NotificationListItem) {
         viewModelScope.launch {
             notificationCenterPreviewUseCase.onNotificationClickEvent(notificationListItem).collect {
+                notificationClickEventTracker.log(notificationListItem.id)
                 _notificationCenterPreviewFlow.emit(it)
             }
         }

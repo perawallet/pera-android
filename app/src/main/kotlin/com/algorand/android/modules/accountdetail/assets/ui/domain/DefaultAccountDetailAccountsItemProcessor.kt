@@ -95,6 +95,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
             getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType).getDisplayValue(),
             getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType).getDisplayValue(),
             requiredMinBalance = formattedRequiredMinimumBalance,
+            privacyMode
         )
     }
 

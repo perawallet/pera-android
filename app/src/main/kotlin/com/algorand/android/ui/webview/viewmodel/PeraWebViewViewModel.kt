@@ -20,18 +20,24 @@ import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.ON_BACK_PRESSED
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventResponseMapper
 import com.algorand.android.ui.webview.bridge.mapper.SettingsWebResponseMapper
 import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.CanOpenUri
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.CloseWebView
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.GetAddresses
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.GetSettings
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.LogAnalyticsEvent
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.OpenNativeUri
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.OpenSystemBrowser
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.PushPublicWebView
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.CloseWebView
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.LogAnalyticsEvent
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.OpenNativeUri
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.OpenSystemBrowser
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.PushPublicWebView
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Query
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Query.QueryType.CanOpenUri
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Query.QueryType.GetAddresses
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Query.QueryType.GetPublicSettings
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Query.QueryType.GetSettings
+import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
+import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult.Result
 import com.algorand.android.ui.webview.bridge.usecase.GetGetAddressesWebResponse
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewViewModel.ViewEvent
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.foundation.json.rpc.JsonRpcResponse
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,37 +56,75 @@ class PeraWebViewViewModel @Inject constructor(
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     fun processBackPress() {
-        val message = responseMapper.invoke(ON_BACK_PRESSED, "")
+        val request = responseMapper.mapRequest(ON_BACK_PRESSED, null)
+        val message = responseMapper.mapResponseMessage(listOf(request))
         eventDelegate.sendEvent(viewModelScope, ViewEvent.SendWebMessage(message))
     }
 
-    fun processWebEvent(event: PeraInternalWebInterfaceEvent) {
+    fun processWebEvents(eventResult: List<PeraWebInterfaceEventResult>) {
         viewModelScope.launch {
-            when (event.type) {
-                is LogAnalyticsEvent -> logAnalyticsEvent(event.name, event.type.payload)
-                is NotifyUser -> eventDelegate.sendEvent(ViewEvent.NotifyUser(event.type))
-                is OpenNativeUri -> eventDelegate.sendEvent(ViewEvent.OpenNativeUri(event.type.uri))
-                is OpenSystemBrowser -> eventDelegate.sendEvent(ViewEvent.OpenSystemBrowser(event.type.url))
-                is PushPublicWebView -> eventDelegate.sendEvent(ViewEvent.NavigateToPublicWebView(event.type))
-                is CanOpenUri -> sendWebMessage(event.name, packageManager.canOpenUri(event.type.uri))
-                CloseWebView -> eventDelegate.sendEvent(ViewEvent.NavigateBack)
-                GetAddresses -> sendWebMessage(event.name, getGetAddressesWebResponse())
-                GetSettings -> sendWebMessage(event.name, settingsResponseMapper.mapInternalResponse(getDeviceConfig()))
+            val eventResponses = mutableListOf<JsonRpcResponse>()
+            eventResult.forEach { event ->
+                when (event.result) {
+                    is Result.Error -> {
+                        if (event.id != null) {
+                            val response = responseMapper.mapErrorResponse(event.id, event.result.code)
+                            eventResponses.add(response)
+                        }
+                    }
+                    is Result.Success -> {
+                        when (event.result.event) {
+                            is Command -> processCommandEvent(event.result.event)
+                            is Query -> {
+                                if (event.id != null) {
+                                    val response = getQueryEventResponse(event.result.event)
+                                    eventResponses.add(responseMapper.mapSuccessResponse(event.id, response))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (eventResponses.isNotEmpty()) {
+                sendWebMessage(eventResponses)
             }
         }
     }
 
-    private suspend fun logAnalyticsEvent(eventName: String, payload: Map<String, String>?) {
-        if (payload == null) {
-            peraEventTracker.logEvent(eventName)
-        } else {
-            peraEventTracker.logEvent(eventName, payload)
+    private suspend fun processCommandEvent(event: PeraInternalWebInterfaceEvent) {
+        when (event) {
+            CloseWebView -> eventDelegate.sendEvent(ViewEvent.NavigateBack)
+            is LogAnalyticsEvent -> logAnalyticsEvent(event)
+            is NotifyUser -> eventDelegate.sendEvent(ViewEvent.NotifyUser(event))
+            is OpenNativeUri -> eventDelegate.sendEvent(ViewEvent.OpenNativeUri(event.uri))
+            is OpenSystemBrowser -> eventDelegate.sendEvent(ViewEvent.OpenSystemBrowser(event.url))
+            is PushPublicWebView -> eventDelegate.sendEvent(ViewEvent.NavigateToPublicWebView(event))
+            else -> Unit
         }
     }
 
-    private suspend fun sendWebMessage(eventName: String, response: Any) {
-        val responseMessage = responseMapper(eventName, response)
-        eventDelegate.sendEvent(ViewEvent.SendWebMessage(responseMessage))
+    private suspend fun getQueryEventResponse(event: Query): Any {
+        return when (event.type) {
+            is CanOpenUri -> packageManager.canOpenUri(event.type.uri)
+            GetAddresses -> getGetAddressesWebResponse()
+            GetSettings -> settingsResponseMapper.mapInternalResponse(getDeviceConfig())
+            GetPublicSettings -> settingsResponseMapper.mapPublicResponse(getDeviceConfig())
+        }
+    }
+
+    private suspend fun logAnalyticsEvent(command: LogAnalyticsEvent) {
+        with(command) {
+            if (payload == null) {
+                peraEventTracker.logEvent(name)
+            } else {
+                peraEventTracker.logEvent(name, payload)
+            }
+        }
+    }
+
+    private suspend fun sendWebMessage(response: List<Any>) {
+        val message = responseMapper.mapResponseMessage(response)
+        eventDelegate.sendEvent(ViewEvent.SendWebMessage(message))
     }
 
     sealed interface ViewEvent {
@@ -88,7 +132,7 @@ class PeraWebViewViewModel @Inject constructor(
         data class NavigateToPublicWebView(val params: PushPublicWebView) : ViewEvent
         data class OpenSystemBrowser(val url: String) : ViewEvent
         data class OpenNativeUri(val uri: String) : ViewEvent
-        data class NotifyUser(val params: PeraInternalWebInterfaceEvent.EventType.NotifyUser) : ViewEvent
+        data class NotifyUser(val params: Command.NotifyUser) : ViewEvent
         data object NavigateBack : ViewEvent
     }
 }

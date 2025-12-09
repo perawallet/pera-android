@@ -10,9 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.webview.bridge.serializer
+package com.algorand.android.notification.di
 
-import com.algorand.android.modules.peraserializer.JsonSerializer
-import com.algorand.android.modules.peraserializer.PeraSerializer
+import com.algorand.android.notification.tracking.NotificationClickEventTracker
+import com.algorand.android.notification.tracking.DefaultNotificationClickEventTracker
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-internal class WebViewJsonSerializer(jsonSerializerImpl: PeraSerializer) : JsonSerializer by jsonSerializerImpl
+@Module
+@InstallIn(SingletonComponent::class)
+internal object NotificationModule {
+
+    @Provides
+    fun provideNotificationClickEventTracker(
+        tracker: DefaultNotificationClickEventTracker
+    ): NotificationClickEventTracker = tracker
+}

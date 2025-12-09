@@ -52,16 +52,19 @@ import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDia
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.setDrawableTintColor
 import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.wallet.banner.domain.model.Banner.BannerType
+import com.algorand.wallet.privacy.domain.model.PrivacyMode.Disabled
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -193,6 +196,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = chartData.primaryAmountRenderer.getDisplayValue()
                 secondaryPortfolioValue.text = chartData.secondaryAmountRenderer.getDisplayValue()
                 chartSelectedItemDateTextView.text = formatDateToChartDateString(chartData.datetime)
+                portfolioDeltaText.hide()
+                portfolioPercentageText.hide()
             }
         }
 
@@ -202,12 +207,19 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
                 secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
                 chartSelectedItemDateTextView.text = " "
+                portfolioDeltaText.isVisible = portfolioValueItem?.privacyMode is Disabled
+                portfolioPercentageText.isVisible = portfolioValueItem?.privacyMode is Disabled
             }
         }
 
         override fun onDismissSpotBannerClick(spotBanner: SpotBanner.Generic) {
             accountsViewModel.logSpotBannerDismissClick(spotBanner.text)
             accountsViewModel.dismissSpotBanner(spotBanner.id)
+        }
+
+        override fun onChartDataUpdated(tendencyValues: ChartTendencyValues?) {
+            binding.portfolioDeltaText.setDelta(tendencyValues?.delta, tendencyValues?.deltaRenderer)
+            binding.portfolioPercentageText.setPercentage(tendencyValues?.percentage)
         }
     }
 
@@ -350,6 +362,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             }
             toolbarPrimaryPortfolioValue.text = portfolioValues.getPrimaryAccountValue(root.context)
             toolbarSecondaryPortfolioValue.text = portfolioValues.getSecondaryAccountValue(root.context)
+            binding.portfolioDeltaText.isVisible = portfolioValues.privacyMode is Disabled
+            binding.portfolioPercentageText.isVisible = portfolioValues.privacyMode is Disabled
             portfolioValueTitleTextView.apply {
                 setTextColor(ContextCompat.getColor(root.context, portfolioValues.titleColorResId))
                 setDrawableTintColor(portfolioValues.titleColorResId)

@@ -12,26 +12,18 @@
 
 package com.algorand.android.ui.webview.di
 
-import com.algorand.android.modules.peraserializer.PeraSerializer
-import com.algorand.android.ui.webview.bridge.mapper.DefaultPeraWebInterfaceEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.DefaultPeraWebInterfaceEventResponseMapper
 import com.algorand.android.ui.webview.bridge.mapper.DefaultPeraWebInterfaceNotifyUserEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.DefaultSettingsWebResponseMapper
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventResponseMapper
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceNotifyUserEventMapper
 import com.algorand.android.ui.webview.bridge.mapper.SettingsWebResponseMapper
-import com.algorand.android.ui.webview.bridge.serializer.WebViewJsonSerializer
 import com.algorand.android.ui.webview.bridge.usecase.GetGetAddressesWebResponse
 import com.algorand.android.ui.webview.bridge.usecase.GetGetAddressesWebResponseUseCase
-import com.algorand.wallet.logger.PeraErrorLogger
-import com.google.gson.FormattingStyle
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -39,10 +31,8 @@ internal object WebViewModule {
 
     @Provides
     fun providePeraWebInterfaceEventResponseMapper(
-        jsonSerializer: WebViewJsonSerializer,
-    ): PeraWebInterfaceEventResponseMapper {
-        return DefaultPeraWebInterfaceEventResponseMapper(jsonSerializer)
-    }
+        mapper: DefaultPeraWebInterfaceEventResponseMapper
+    ): PeraWebInterfaceEventResponseMapper = mapper
 
     @Provides
     fun provideSettingsWebResponseMapper(mapper: DefaultSettingsWebResponseMapper): SettingsWebResponseMapper = mapper
@@ -56,23 +46,4 @@ internal object WebViewModule {
     fun providePeraWebInterfaceNotifyUserEventMapper(
         mapper: DefaultPeraWebInterfaceNotifyUserEventMapper
     ): PeraWebInterfaceNotifyUserEventMapper = mapper
-
-    @Provides
-    fun providePeraWebInterfaceEventMapper(
-        notifyUserEventMapper: PeraWebInterfaceNotifyUserEventMapper,
-        errorLogger: PeraErrorLogger,
-        webViewJsonSerializer: WebViewJsonSerializer
-    ): PeraWebInterfaceEventMapper {
-        return DefaultPeraWebInterfaceEventMapper(webViewJsonSerializer, notifyUserEventMapper, errorLogger)
-    }
-
-    @Singleton
-    @Provides
-    fun provideWebViewJsonSerializer(): WebViewJsonSerializer {
-        val gson = GsonBuilder()
-            .serializeNulls()
-            .setFormattingStyle(FormattingStyle.COMPACT)
-            .create()
-        return WebViewJsonSerializer(PeraSerializer(gson))
-    }
 }

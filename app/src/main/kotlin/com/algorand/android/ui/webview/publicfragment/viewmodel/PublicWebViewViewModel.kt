@@ -19,7 +19,9 @@ import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventRespon
 import com.algorand.android.ui.webview.bridge.mapper.SettingsWebResponseMapper
 import com.algorand.android.ui.webview.bridge.model.event.PeraPublicWebInterfaceEvent
 import com.algorand.android.ui.webview.bridge.model.event.PeraPublicWebInterfaceEvent.EventType.GetPublicSettings
+import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
 import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewEvent
+import com.algorand.wallet.foundation.json.rpc.JsonRpcResponse
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,14 +36,34 @@ class PublicWebViewViewModel @Inject constructor(
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
-    fun processWebEvent(event: PeraPublicWebInterfaceEvent) {
+    fun processWebEvent(eventResult: List<PeraWebInterfaceEventResult>) {
         viewModelScope.launch {
-            when (event.eventType) {
-                GetPublicSettings -> {
-                    val publicSettings = settingsResponseMapper.mapPublicResponse(getDeviceConfig())
-                    val response = responseMapper(event.name, publicSettings)
-                    eventDelegate.sendEvent(ViewEvent.SendWebMessage(response))
+            val eventResponses = mutableListOf<JsonRpcResponse>()
+            eventResult.forEach { event ->
+                when (event.result) {
+                    is PeraWebInterfaceEventResult.Result.Error -> {
+                        if (event.id != null) {
+                            val response = responseMapper.mapErrorResponse(event.id, event.result.code)
+                            eventResponses.add(response)
+                        }
+                    }
+                    is PeraWebInterfaceEventResult.Result.Success -> {
+                        if (event.result.event !is PeraPublicWebInterfaceEvent) return@forEach
+                        when (event.result.event.eventType) {
+                            is GetPublicSettings -> {
+                                if (event.id != null) {
+                                    val publicSettings = settingsResponseMapper.mapPublicResponse(getDeviceConfig())
+                                    val response = responseMapper.mapSuccessResponse(event.id, publicSettings)
+                                    eventResponses.add(response)
+                                }
+                            }
+                        }
+                    }
                 }
+            }
+            if (eventResponses.isNotEmpty()) {
+                val message = responseMapper.mapResponseMessage(eventResponses)
+                eventDelegate.sendEvent(ViewEvent.SendWebMessage(message))
             }
         }
     }

@@ -10,20 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.webview.bridge
+package com.algorand.wallet.foundation.json.rpc
 
-import android.webkit.JavascriptInterface
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
-import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
+import com.google.gson.annotations.SerializedName
 
-@Suppress("unused")
-internal class PeraWebViewInternalBridge(
-    private val mapper: PeraWebInterfaceEventMapper,
-    val onEvent: (List<PeraWebInterfaceEventResult>) -> Unit
-) : PeraWebViewJsBridge {
-
-    @JavascriptInterface
-    fun handleRequest(params: String) {
-        onEvent(mapper.mapRequests(params))
-    }
-}
+data class JsonRpcError(
+    @SerializedName("code")
+    val code: Int,
+    @SerializedName("message")
+    val message: String?
+)

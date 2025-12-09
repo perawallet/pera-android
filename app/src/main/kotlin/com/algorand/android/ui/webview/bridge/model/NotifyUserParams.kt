@@ -14,7 +14,7 @@ package com.algorand.android.ui.webview.bridge.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class NotifyUserParams(
+data class NotifyUserParams(
     @SerializedName("type")
     val type: String?,
     @SerializedName("variant")

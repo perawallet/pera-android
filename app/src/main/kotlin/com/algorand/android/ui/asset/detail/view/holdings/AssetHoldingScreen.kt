@@ -42,6 +42,7 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetLineChartViewModel
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonContainer
 import com.algorand.android.ui.compose.widget.quickaction.ReceiveQuickActionButton
@@ -84,7 +85,7 @@ fun AssetHoldingScreen(
                         chartViewModel,
                         onItemSelected = { selectedChartItem = it },
                         onItemDeselected = { selectedChartItem = null },
-                        onChartDataUpdated = { assetHoldingViewModel.setChartData(it) }
+                        onChartDataUpdated = { assetHoldingViewModel.setChartTendencyValues(it) }
                     )
                 }
                 item {
@@ -113,7 +114,7 @@ private fun BalanceHistoryChart(
     chartViewModel: AssetLineChartViewModel,
     onItemSelected: (AssetLineChartData) -> Unit,
     onItemDeselected: () -> Unit,
-    onChartDataUpdated: (List<AssetLineChartData>) -> Unit
+    onChartDataUpdated: (ChartTendencyValues?) -> Unit
 ) {
     Spacer(modifier = Modifier.height(20.dp))
     val chartListener = remember {
@@ -126,9 +127,8 @@ private fun BalanceHistoryChart(
                 onItemDeselected()
             }
 
-            override fun onChartDataUpdated(items: List<PeraLineChartData>) {
-                @Suppress("UNCHECKED_CAST")
-                onChartDataUpdated(items as List<AssetLineChartData>)
+            override fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {
+                onChartDataUpdated(tendencyValues)
             }
         }
     }

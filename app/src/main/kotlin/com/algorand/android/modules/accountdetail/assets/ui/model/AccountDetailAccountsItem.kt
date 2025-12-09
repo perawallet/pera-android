@@ -14,6 +14,7 @@ package com.algorand.android.modules.accountdetail.assets.ui.model
 
 import androidx.annotation.StringRes
 import com.algorand.android.models.RecyclerListItem
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
 sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
@@ -32,6 +33,7 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
         val accountPrimaryFormattedParityValue: String?,
         val accountSecondaryFormattedParityValue: String?,
         val requiredMinBalance: String,
+        val privacyMode: PrivacyMode
     ) : AccountDetailAccountsItem {
 
         override val itemType: ItemType

@@ -10,20 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.webview.bridge
+package com.algorand.android.notification.tracking
 
-import android.webkit.JavascriptInterface
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
-import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
-
-@Suppress("unused")
-internal class PeraWebViewInternalBridge(
-    private val mapper: PeraWebInterfaceEventMapper,
-    val onEvent: (List<PeraWebInterfaceEventResult>) -> Unit
-) : PeraWebViewJsBridge {
-
-    @JavascriptInterface
-    fun handleRequest(params: String) {
-        onEvent(mapper.mapRequests(params))
-    }
+interface NotificationClickEventTracker {
+    suspend fun log(url: String)
+    suspend fun log(notificationId: Long)
 }

@@ -10,20 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.webview.bridge
+package com.algorand.android.ui.compose.widget.chart.mapper
 
-import android.webkit.JavascriptInterface
-import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
-import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 
-@Suppress("unused")
-internal class PeraWebViewInternalBridge(
-    private val mapper: PeraWebInterfaceEventMapper,
-    val onEvent: (List<PeraWebInterfaceEventResult>) -> Unit
-) : PeraWebViewJsBridge {
-
-    @JavascriptInterface
-    fun handleRequest(params: String) {
-        onEvent(mapper.mapRequests(params))
-    }
+fun interface ChartTendencyValuesMapper {
+    operator fun invoke(items: List<PeraLineChartData>): ChartTendencyValues?
 }

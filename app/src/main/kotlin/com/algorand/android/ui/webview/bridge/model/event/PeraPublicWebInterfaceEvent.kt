@@ -13,11 +13,10 @@
 package com.algorand.android.ui.webview.bridge.model.event
 
 data class PeraPublicWebInterfaceEvent(
-    override val name: String,
     val eventType: EventType
 ) : PeraWebInterfaceEvent {
 
     sealed interface EventType {
-        data object GetPublicSettings : EventType
+        data class GetPublicSettings(val id: Long) : EventType
     }
 }

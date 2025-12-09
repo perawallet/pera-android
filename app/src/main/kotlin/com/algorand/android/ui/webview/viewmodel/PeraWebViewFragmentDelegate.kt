@@ -20,11 +20,11 @@ import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.ui.vibration.PeraVibration
 import com.algorand.android.ui.webview.bridge.PeraWebViewJsBridge
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser.Haptic
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser.Haptic.HapticType
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser.Message
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser.Sound
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.PushPublicWebView
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser.Haptic
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser.Haptic.HapticType
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser.Message
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser.Sound
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.PushPublicWebView
 import com.algorand.android.ui.webview.view.PeraMobileWebView
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewViewModel.ViewEvent.NavigateBack
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewViewModel.ViewEvent.NavigateToPublicWebView

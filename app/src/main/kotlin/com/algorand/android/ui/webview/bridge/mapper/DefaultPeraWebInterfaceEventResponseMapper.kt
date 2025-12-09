@@ -14,19 +14,44 @@ package com.algorand.android.ui.webview.bridge.mapper
 
 import android.util.Base64
 import com.algorand.android.modules.peraserializer.JsonSerializer
-import com.algorand.android.ui.webview.bridge.model.PeraWebInterfaceEventResponse
+import com.algorand.wallet.foundation.json.rpc.JsonRpcError
+import com.algorand.wallet.foundation.json.rpc.JsonRpcRequest
+import com.algorand.wallet.foundation.json.rpc.JsonRpcResponse
 
 internal class DefaultPeraWebInterfaceEventResponseMapper(
     private val jsonSerializer: JsonSerializer
 ) : PeraWebInterfaceEventResponseMapper {
 
-    override fun invoke(eventName: String, response: Any): String {
-        val payload = getPayloadMessage(response)
-        val response = PeraWebInterfaceEventResponse(
-            action = eventName,
-            payload = payload
+    override fun mapSuccessResponse(id: Long, response: Any): JsonRpcResponse {
+        return JsonRpcResponse(
+            id = id,
+            result = getPayloadMessage(response),
+            error = null
         )
-        return jsonSerializer.toJson(response)
+    }
+
+    override fun mapErrorResponse(id: Long, code: Int): JsonRpcResponse {
+        return JsonRpcResponse(
+            id = id,
+            result = null,
+            error = JsonRpcError(code = code, message = null)
+        )
+    }
+
+    override fun mapRequest(methodName: String, params: Any?): JsonRpcRequest {
+        return JsonRpcRequest(
+            id = null,
+            method = methodName,
+            params = null
+        )
+    }
+
+    override fun mapResponseMessage(responses: List<Any>): String {
+        return if (responses.size == 1) {
+            jsonSerializer.toJson(responses.first())
+        } else {
+            jsonSerializer.toJson(responses)
+        }
     }
 
     private fun getPayloadMessage(response: Any): String {

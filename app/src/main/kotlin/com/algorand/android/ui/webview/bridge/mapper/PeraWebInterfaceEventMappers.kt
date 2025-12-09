@@ -15,19 +15,15 @@ package com.algorand.android.ui.webview.bridge.mapper
 import com.algorand.android.ui.device.model.DeviceConfig
 import com.algorand.android.ui.webview.bridge.model.NotifyUserParams
 import com.algorand.android.ui.webview.bridge.model.SettingsWebResponse
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser
+import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
 
 interface PeraWebInterfaceEventMapper {
-    fun mapPushWebViewEvent(params: String): EventType.PushPublicWebView?
-    fun mapOpenSystemBrowserEvent(params: String): EventType.OpenSystemBrowser?
-    fun mapCanOpenUriEvent(params: String): EventType.CanOpenUri?
-    fun mapOpenNativeUriEvent(params: String): EventType.OpenNativeUri?
-    fun mapNotifyUserEvent(params: String): EventType.NotifyUser?
-    fun mapLogAnalyticsEvent(params: String): EventType.LogAnalyticsEvent?
+    fun mapRequests(params: String): List<PeraWebInterfaceEventResult>
 }
 
 internal interface PeraWebInterfaceNotifyUserEventMapper {
-    operator fun invoke(params: NotifyUserParams): EventType.NotifyUser?
+    operator fun invoke(params: NotifyUserParams): NotifyUser?
 }
 
 interface SettingsWebResponseMapper {

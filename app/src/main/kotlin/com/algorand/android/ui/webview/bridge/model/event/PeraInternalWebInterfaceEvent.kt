@@ -12,26 +12,22 @@
 
 package com.algorand.android.ui.webview.bridge.model.event
 
-data class PeraInternalWebInterfaceEvent(
-    override val name: String,
-    val type: EventType
-) : PeraWebInterfaceEvent {
+sealed interface PeraInternalWebInterfaceEvent : PeraWebInterfaceEvent {
 
-    sealed interface EventType {
+    sealed interface Command : PeraInternalWebInterfaceEvent {
+
         data class PushPublicWebView(
             val url: String,
             val title: String?,
             val projectId: String?,
             val isFavorite: Boolean?
-        ) : EventType
+        ) : Command
 
-        data class OpenSystemBrowser(val url: String) : EventType
+        data class OpenSystemBrowser(val url: String) : Command
 
-        data class CanOpenUri(val uri: String) : EventType
+        data class OpenNativeUri(val uri: String) : Command
 
-        data class OpenNativeUri(val uri: String) : EventType
-
-        sealed interface NotifyUser : EventType {
+        sealed interface NotifyUser : Command {
 
             data class Haptic(val type: HapticType) : NotifyUser {
                 enum class HapticType {
@@ -52,12 +48,18 @@ data class PeraInternalWebInterfaceEvent(
             }
         }
 
-        data object GetAddresses : EventType
+        data class LogAnalyticsEvent(val name: String, val payload: Map<String, String>?) : Command
 
-        data object GetSettings : EventType
+        data object CloseWebView : Command
+    }
 
-        data class LogAnalyticsEvent(val name: String, val payload: Map<String, String>?) : EventType
+    data class Query(val id: Long, val type: QueryType) : PeraInternalWebInterfaceEvent {
 
-        data object CloseWebView : EventType
+        sealed interface QueryType {
+            data object GetAddresses : QueryType
+            data object GetSettings : QueryType
+            data object GetPublicSettings : QueryType
+            data class CanOpenUri(val uri: String) : QueryType
+        }
     }
 }

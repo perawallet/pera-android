@@ -25,17 +25,22 @@ import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.webview.bridge.PeraWebViewPublicJsBridge
+import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
 import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel
 import com.algorand.android.ui.webview.publicfragment.viewmodel.PublicWebViewViewModel.ViewEvent
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PublicWebViewFragment : BaseFragment(R.layout.fragment_public_webview) {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
+
+    @Inject
+    lateinit var webInterfaceEventMapper: PeraWebInterfaceEventMapper
 
     private var _binding: FragmentPublicWebviewBinding? = null
     private val binding: FragmentPublicWebviewBinding
@@ -77,7 +82,7 @@ class PublicWebViewFragment : BaseFragment(R.layout.fragment_public_webview) {
         binding.publicWebView.apply {
             webViewClient = PeraWebViewClient(webViewClientListener)
             webChromeClient = PeraWebChromeClient(webViewClientListener)
-            addJsInterface(PeraWebViewPublicJsBridge(viewModel::processWebEvent))
+            addJsInterface(PeraWebViewPublicJsBridge(webInterfaceEventMapper, viewModel::processWebEvent))
             loadUrl(args.navArgs.url)
         }
     }

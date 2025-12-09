@@ -70,7 +70,6 @@ internal object WebViewModule {
     @Provides
     fun provideWebViewJsonSerializer(): WebViewJsonSerializer {
         val gson = GsonBuilder()
-            .serializeNulls()
             .setFormattingStyle(FormattingStyle.COMPACT)
             .create()
         return WebViewJsonSerializer(PeraSerializer(gson))

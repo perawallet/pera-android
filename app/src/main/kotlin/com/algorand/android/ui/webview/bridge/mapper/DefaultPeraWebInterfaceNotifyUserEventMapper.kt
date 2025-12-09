@@ -13,16 +13,16 @@
 package com.algorand.android.ui.webview.bridge.mapper
 
 import com.algorand.android.ui.webview.bridge.model.NotifyUserParams
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser.Haptic
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser.Message
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.EventType.NotifyUser.Sound
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser.Haptic
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser.Message
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.NotifyUser.Sound
 import javax.inject.Inject
 
 internal class DefaultPeraWebInterfaceNotifyUserEventMapper @Inject constructor() :
     PeraWebInterfaceNotifyUserEventMapper {
 
-    override fun invoke(params: NotifyUserParams): EventType.NotifyUser? {
+    override fun invoke(params: NotifyUserParams): NotifyUser? {
         return when (params.type) {
             "haptic" -> mapHapticEvent(params)
             "sound" -> mapSoundEvent(params)

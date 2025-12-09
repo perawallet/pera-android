@@ -27,7 +27,7 @@ import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.webview.bridge.PeraWebViewInternalBridge
 import com.algorand.android.ui.webview.bridge.mapper.PeraWebInterfaceEventMapper
-import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent
+import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.PushPublicWebView
 import com.algorand.android.ui.webview.publicfragment.model.PublicWebViewFragmentNavArgs
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewFragmentDelegate
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewViewModel
@@ -100,7 +100,7 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
             listener = this,
             webViewClientListener = webViewClientListener
         )
-        val bridge = PeraWebViewInternalBridge(webInterfaceEventMapper, peraWebViewViewModel::processWebEvent)
+        val bridge = PeraWebViewInternalBridge(webInterfaceEventMapper, peraWebViewViewModel::processWebEvents)
         webViewFragmentDelegate?.initWebView(BuildConfig.ONRAMP_URL, bridge)
     }
 
@@ -111,7 +111,7 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
         _binding = null
     }
 
-    override fun onNavPublicWebView(params: PeraInternalWebInterfaceEvent.EventType.PushPublicWebView) {
+    override fun onNavPublicWebView(params: PushPublicWebView) {
         val navArgs = with(params) { PublicWebViewFragmentNavArgs(url, title, isFavorite) }
         nav(XoSwapFragmentDirections.actionXoSwapFragmentToPublicWebViewFragment(navArgs))
     }

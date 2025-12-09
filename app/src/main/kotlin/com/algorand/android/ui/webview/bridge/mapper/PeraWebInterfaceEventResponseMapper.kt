@@ -12,6 +12,12 @@
 
 package com.algorand.android.ui.webview.bridge.mapper
 
-fun interface PeraWebInterfaceEventResponseMapper {
-    operator fun invoke(eventName: String, response: Any): String
+import com.algorand.wallet.foundation.json.rpc.JsonRpcRequest
+import com.algorand.wallet.foundation.json.rpc.JsonRpcResponse
+
+interface PeraWebInterfaceEventResponseMapper {
+    fun mapSuccessResponse(id: Long, response: Any): JsonRpcResponse
+    fun mapErrorResponse(id: Long, code: Int): JsonRpcResponse
+    fun mapRequest(methodName: String, params: Any?): JsonRpcRequest
+    fun mapResponseMessage(responses: List<Any>): String
 }

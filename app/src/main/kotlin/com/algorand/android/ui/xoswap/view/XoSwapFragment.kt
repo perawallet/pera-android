@@ -36,6 +36,8 @@ import com.algorand.android.utils.delegation.bottomnavbarvisibility.BottomNavBar
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -48,6 +50,9 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
 
     @Inject
     lateinit var webInterfaceEventMapper: PeraWebInterfaceEventMapper
+
+    @Inject
+    lateinit var isFeatureToggleEnabled: IsFeatureToggleEnabled
 
     private val peraWebViewViewModel: PeraWebViewViewModel by viewModels()
 
@@ -101,7 +106,7 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
             webViewClientListener = webViewClientListener
         )
         val bridge = PeraWebViewInternalBridge(webInterfaceEventMapper, peraWebViewViewModel::processWebEvents)
-        webViewFragmentDelegate?.initWebView(BuildConfig.ONRAMP_URL, bridge)
+        webViewFragmentDelegate?.initWebView(getInitialUrl(), bridge)
     }
 
     override fun onDestroyView() {
@@ -118,6 +123,12 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
 
     override fun onNavigateBack() {
         (activity as? CoreMainActivity)?.setBottomNavigationBarSelectedItem(ACCOUNTS_FRAGMENT_NAVIGATION_ID)
+    }
+
+    private fun getInitialUrl(): String {
+        val isTestPageEnabled = isFeatureToggleEnabled.invoke(FeatureToggle.XO_SWAP_TEST_PAGE.key)
+        val testPageSuffix = if (isTestPageEnabled) "/test" else ""
+        return "${BuildConfig.ONRAMP_URL}$testPageSuffix"
     }
 
     private companion object {

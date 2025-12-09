@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.webview.bridge.mapper
 
-import com.algorand.android.modules.peraserializer.JsonSerializer
 import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.CAN_OPEN_URI
 import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.CLOSE_WEB_VIEW
 import com.algorand.android.ui.webview.bridge.BridgeJsEventNames.GET_ADDRESSES
@@ -45,6 +44,7 @@ import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventR
 import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult.Result
 import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult.Result.Error
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.json.JsonSerializer
 import com.algorand.wallet.foundation.json.rpc.JsonRpcConstants
 import com.algorand.wallet.foundation.json.rpc.JsonRpcConstants.ErrorCodes.INTERNAL_ERROR
 import com.algorand.wallet.foundation.json.rpc.JsonRpcRequest

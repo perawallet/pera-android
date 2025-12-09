@@ -15,5 +15,4 @@ package com.algorand.android.modules.peraserializer
 interface JsonSerializer {
     fun toJson(payload: Any?): String
     fun <T> fromJson(json: String, type: Class<T>): T?
-    fun <T> fromJson(json: Any, type: Class<T>): T?
 }

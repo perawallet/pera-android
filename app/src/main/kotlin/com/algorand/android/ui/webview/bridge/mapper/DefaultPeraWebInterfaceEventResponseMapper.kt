@@ -13,12 +13,13 @@
 package com.algorand.android.ui.webview.bridge.mapper
 
 import android.util.Base64
-import com.algorand.android.modules.peraserializer.JsonSerializer
+import com.algorand.wallet.foundation.json.JsonSerializer
 import com.algorand.wallet.foundation.json.rpc.JsonRpcError
 import com.algorand.wallet.foundation.json.rpc.JsonRpcRequest
 import com.algorand.wallet.foundation.json.rpc.JsonRpcResponse
+import javax.inject.Inject
 
-internal class DefaultPeraWebInterfaceEventResponseMapper(
+internal class DefaultPeraWebInterfaceEventResponseMapper @Inject constructor(
     private val jsonSerializer: JsonSerializer
 ) : PeraWebInterfaceEventResponseMapper {
 

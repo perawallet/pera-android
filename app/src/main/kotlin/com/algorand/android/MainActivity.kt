@@ -332,7 +332,7 @@ class MainActivity :
         }
 
         override fun onBuyDeepLink(address: String): Boolean {
-            navToMeldNavigation(address)
+            navToOnramp(address)
             return true
         }
 
@@ -612,10 +612,12 @@ class MainActivity :
         )
     }
 
-    fun navToMeldNavigation(address: String) {
-        nav(
-            HomeNavigationDirections.actionGlobalMeldNavigation(address)
-        )
+    fun navToOnramp(address: String) {
+        if (mainViewModel.isXoSwapFeatureEnabled()) {
+            navToXoSwapFragment()
+        } else {
+            nav(HomeNavigationDirections.actionGlobalMeldNavigation(address))
+        }
     }
 
     fun navToBidaliNavigation(address: String) {
@@ -943,6 +945,10 @@ class MainActivity :
 
     private fun showInvalidDeeplinkError() {
         showGlobalError(errorMessage = getString(R.string.invalid_link_found), tag = activityTag)
+    }
+
+    fun navToXoSwapFragment() {
+        setBottomNavigationBarSelectedItem(R.id.xoSwapFragment)
     }
 
     companion object {

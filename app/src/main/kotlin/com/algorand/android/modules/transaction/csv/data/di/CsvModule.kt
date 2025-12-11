@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.transaction.csv.data.di
 
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.transaction.csv.data.repository.CsvRepositoryImpl
 import com.algorand.android.modules.transaction.csv.domain.repository.CsvRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,9 +29,9 @@ object CsvModule {
     @Provides
     @Named(CsvRepository.INJECTION_NAME)
     fun provideCsvRepository(
-        hipoApiErrorHandler: RetrofitErrorHandler,
+        peraApiErrorHandler: RetrofitErrorHandler,
         mobileAlgorandApi: MobileAlgorandApi
     ): CsvRepository {
-        return CsvRepositoryImpl(hipoApiErrorHandler, mobileAlgorandApi)
+        return CsvRepositoryImpl(peraApiErrorHandler, mobileAlgorandApi)
     }
 }

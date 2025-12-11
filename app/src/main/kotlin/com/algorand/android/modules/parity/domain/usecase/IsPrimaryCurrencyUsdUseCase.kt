@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.currency.domain.usecase
+package com.algorand.android.modules.parity.domain.usecase
 
 import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencyId
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyUsd
 import javax.inject.Inject
 
 internal class IsPrimaryCurrencyUsdUseCase @Inject constructor(

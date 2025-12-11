@@ -64,7 +64,7 @@ internal class DefaultPasskeyCreateCredentialEntryBuilder @Inject constructor(
         return try {
             val requestJson = request.candidateQueryData.getString(BUNDLE_KEY)
             PublicKeyCredentialCreationOptions(requestJson.orEmpty())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

@@ -12,6 +12,11 @@
 
 package com.algorand.android.modules.walletconnect.client.v1.session
 
+import app.perawallet.walletconnectv1.Session.Config
+import app.perawallet.walletconnectv1.impls.FileWCSessionStore
+import app.perawallet.walletconnectv1.impls.GsonPayloadAdapter
+import app.perawallet.walletconnectv1.impls.OkHttpTransport
+import app.perawallet.walletconnectv1.impls.WCSession
 import com.algorand.android.modules.walletconnect.client.v1.domain.model.WalletConnectSessionMetaDto
 import com.algorand.android.modules.walletconnect.client.v1.session.mapper.WalletConnectSessionConfigMapper
 import com.algorand.android.utils.browser.HTTPS_PROTOCOL
@@ -24,11 +29,6 @@ import com.algorand.android.utils.walletconnect.peermeta.WalletConnectSessionPee
 import com.google.gson.Gson
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
-import org.walletconnect.Session.Config
-import org.walletconnect.impls.FileWCSessionStore
-import org.walletconnect.impls.GsonPayloadAdapter
-import org.walletconnect.impls.OkHttpTransport
-import org.walletconnect.impls.WCSession
 import javax.inject.Inject
 
 class WalletConnectSessionBuilder @Inject constructor(

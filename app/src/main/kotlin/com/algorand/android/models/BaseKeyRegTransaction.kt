@@ -42,7 +42,9 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val voteFirstValidRound: Long,
             override val voteLastValidRound: Long,
             override val voteKeyDilution: Long,
-            override val transactionSigner: TransactionSigner?
+            override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?
         ) : BaseOnlineKeyRegTransaction() {
 
             override fun getAllAddressPublicKeysTxnIncludes(): List<WalletConnectAddress> {
@@ -70,6 +72,8 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val voteLastValidRound: Long,
             override val voteKeyDilution: Long,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val rekeyToAddress: WalletConnectAddress
         ) : BaseOnlineKeyRegTransaction() {
 
@@ -102,7 +106,9 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val signer: WalletConnectTransactionSigner,
             override val groupId: String?,
             override val nonParticipation: Boolean,
-            override val transactionSigner: TransactionSigner?
+            override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?
         ) : BaseOfflineKeyRegTransaction() {
 
             override fun getAllAddressPublicKeysTxnIncludes(): List<WalletConnectAddress> {
@@ -125,6 +131,8 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val groupId: String?,
             override val nonParticipation: Boolean,
             override val transactionSigner: TransactionSigner?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val rekeyToAddress: WalletConnectAddress
         ) : BaseOfflineKeyRegTransaction() {
 

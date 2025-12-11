@@ -17,17 +17,15 @@ import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.U
 import com.algorand.android.models.BaseAssetConfigurationTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.decodeBase64IfUTF8
 import javax.inject.Inject
 
-class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
-) :
+class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor() :
     WalletConnectTransactionDetailBuilder<BaseAssetConfigurationTransaction> {
 
     override fun buildTransactionRequestNoteInfo(txn: BaseAssetConfigurationTransaction): TransactionRequestNoteInfo? {
@@ -45,7 +43,19 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
             is BaseAssetConfigurationTransaction.BaseAssetReconfigurationTransaction -> {
                 buildAssetReconfigurationExtrasInfo(txn)
             }
+
             is BaseAssetConfigurationTransaction.BaseAssetDeletionTransaction -> buildAssetDeletionExtrasInfo(txn)
+        }
+    }
+
+    override fun buildTransactionRequestExtraFields(
+        txn: BaseAssetConfigurationTransaction
+    ): TransactionRequestExtraFields {
+        return with(txn) {
+            TransactionRequestExtraFields(
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
+            )
         }
     }
 
@@ -57,6 +67,7 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
             is BaseAssetConfigurationTransaction.BaseAssetReconfigurationTransaction -> {
                 buildAssetReconfigurationAmountInfo(txn)
             }
+
             is BaseAssetConfigurationTransaction.BaseAssetDeletionTransaction -> buildAssetDeletionAmountInfo(txn)
         }
     }
@@ -69,6 +80,7 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
             is BaseAssetConfigurationTransaction.BaseAssetReconfigurationTransaction -> {
                 buildAssetReconfigurationTransactionInfo(txn)
             }
+
             is BaseAssetConfigurationTransaction.BaseAssetDeletionTransaction -> buildAssetDeletionTransactionInfo(txn)
         }
     }
@@ -226,6 +238,10 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
     private fun buildAssetCreationExtrasInfo(
         txn: BaseAssetConfigurationTransaction.BaseAssetCreationTransaction
     ): TransactionRequestExtrasInfo {
-        return with(txn) { TransactionRequestExtrasInfo(rawTransaction = rawTransactionPayload, assetUrl = url) }
+        return with(txn) {
+            TransactionRequestExtrasInfo(
+                rawTransaction = rawTransactionPayload, assetUrl = url
+            )
+        }
     }
 }

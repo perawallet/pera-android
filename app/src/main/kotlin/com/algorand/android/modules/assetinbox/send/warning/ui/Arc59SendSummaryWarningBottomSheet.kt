@@ -58,6 +58,6 @@ class Arc59SendSummaryWarningBottomSheet : BaseDoubleButtonBottomSheet() {
     }
 
     companion object {
-        const val ARC59_SEND_CONFIRMATION = "arc59SendConfirmation"
+        const val ARC59_SEND_CONFIRMATION: String = "arc59SendConfirmation"
     }
 }

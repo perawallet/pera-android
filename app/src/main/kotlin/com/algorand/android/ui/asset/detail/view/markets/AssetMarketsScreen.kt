@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,10 +49,10 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetPriceLineChartViewMod
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraPercentageText
-import com.algorand.android.ui.compose.widget.chart.extensions.getChangePercentage
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.utils.formatDateToChartDateString
 
 @Composable
@@ -67,19 +68,23 @@ fun AssetMarketsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 24.dp)
     ) {
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
-        when (viewState) {
+        when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             AssetMarketsViewModel.ViewState.Idle -> Unit
             is AssetMarketsViewModel.ViewState.Content -> {
                 var priceRenderer by remember { mutableStateOf(viewState.assetPriceRenderer) }
                 var selectedDateText by remember { mutableStateOf("") }
                 var changePercentage by remember { mutableStateOf<Float?>(null) }
                 var isChangePercentageVisible by remember { mutableStateOf(false) }
+                Spacer(modifier = Modifier.height(32.dp))
                 AssetDetailHeader(assetDetailHeaderViewModel)
                 Spacer(modifier = Modifier.height(8.dp))
                 PriceText(priceRenderer)
                 Spacer(modifier = Modifier.height(4.dp))
-                Box(modifier = Modifier.fillMaxWidth()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 20.dp)
+                ) {
                     if (isChangePercentageVisible) {
                         changePercentage?.let { percentage ->
                             PeraPercentageText(modifier = Modifier.padding(start = 24.dp), percentage)
@@ -100,7 +105,7 @@ fun AssetMarketsScreen(
                         selectedDateText = ""
                         isChangePercentageVisible = true
                     },
-                    onChartDataUpdated = { changePercentage = it.getChangePercentage() }
+                    onChartDataUpdated = { changePercentage = it?.percentage }
                 )
                 if (viewState.isAvailableOnDiscover) {
                     Spacer(modifier = Modifier.height(32.dp))
@@ -129,7 +134,7 @@ private fun AssetPriceHistoryChart(
     chartViewModel: AssetPriceLineChartViewModel,
     onItemSelected: (AssetPriceHistoryChartData) -> Unit,
     onItemDeselected: () -> Unit,
-    onChartDataUpdated: (List<PeraLineChartData>) -> Unit
+    onChartDataUpdated: (ChartTendencyValues?) -> Unit
 ) {
     val chartListener = remember {
         object : StatefulPeraLineChartListener {
@@ -143,8 +148,8 @@ private fun AssetPriceHistoryChart(
                 onItemDeselected()
             }
 
-            override fun onChartDataUpdated(items: List<PeraLineChartData>) {
-                onChartDataUpdated(items)
+            override fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {
+                onChartDataUpdated(tendencyValues)
             }
         }
     }

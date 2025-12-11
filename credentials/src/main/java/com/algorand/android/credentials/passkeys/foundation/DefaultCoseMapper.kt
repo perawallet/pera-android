@@ -53,7 +53,7 @@ internal class DefaultCoseMapper @Inject constructor() : CoseMapper {
             val x = coseKey[-2] as ByteArray
             val y = coseKey[-3] as ByteArray
             return spkiPrefix + x + y
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // Log exceptions
         }
         return null

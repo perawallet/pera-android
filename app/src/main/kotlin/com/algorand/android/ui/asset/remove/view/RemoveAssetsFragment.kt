@@ -49,7 +49,9 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val removeAssetsViewModel: RemoveAssetsViewModel by viewModels()
 

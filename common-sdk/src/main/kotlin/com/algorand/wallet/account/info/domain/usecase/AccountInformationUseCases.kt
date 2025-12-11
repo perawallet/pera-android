@@ -22,8 +22,8 @@ import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import com.algorand.wallet.account.info.domain.model.RekeyedAddresses
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.foundation.PeraResult
-import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
+import java.math.BigInteger
 
 fun interface ClearAccountInformationCache {
     suspend operator fun invoke()

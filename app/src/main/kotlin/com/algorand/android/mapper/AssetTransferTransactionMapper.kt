@@ -25,8 +25,8 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
 import com.algorand.android.utils.extensions.mapNotBlank
-import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.utils.multiplyOrZero
 import java.math.BigInteger
 import java.math.BigInteger.ZERO
 import javax.inject.Inject
@@ -52,15 +52,19 @@ class AssetTransferTransactionMapper @Inject constructor(
                 !rekeyAddress.isNullOrBlank() && !assetCloseToAddress.isNullOrBlank() -> {
                     createAssetTransferTransactionWithRekeyAndClose(peerMeta, transactionRequest, rawTxn)
                 }
+
                 assetCloseToAddress != null -> {
                     createAssetTransferTransactionWithClose(peerMeta, transactionRequest, rawTxn)
                 }
+
                 (assetAmount == null || assetAmount == ZERO) && senderAddress == assetReceiverAddress -> {
                     createAssetOptInTransaction(peerMeta, transactionRequest, rawTxn)
                 }
+
                 rekeyAddress != null -> {
                     createAssetTransferTransactionWithRekey(peerMeta, transactionRequest, rawTxn)
                 }
+
                 else -> {
                     createAssetTransferTransaction(peerMeta, transactionRequest, rawTxn)
                 }
@@ -99,7 +103,9 @@ class AssetTransferTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 assetInformation = assetInformation,
                 groupId = groupId,
-                warningCount = 1.takeIf { isLocalAccountSigner }
+                warningCount = 1.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -135,7 +141,10 @@ class AssetTransferTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 assetInformation = assetInformation,
                 groupId = groupId,
-                warningCount = 1.takeIf { isLocalAccountSigner }
+                warningCount = 1.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
+
             )
         }
     }
@@ -172,7 +181,9 @@ class AssetTransferTransactionMapper @Inject constructor(
                 assetInformation = assetInformation,
                 closeAddress = createWalletConnectAddress(assetCloseToAddress) ?: return null,
                 groupId = groupId,
-                warningCount = 2.takeIf { isLocalAccountSigner }
+                warningCount = 2.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -205,7 +216,9 @@ class AssetTransferTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 toAccount = createWalletConnectAccount(receiverWCAddress),
                 assetInformation = assetInformation,
-                groupId = groupId
+                groupId = groupId,
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -237,7 +250,9 @@ class AssetTransferTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 toAccount = createWalletConnectAccount(receiverWCAddress),
                 assetInformation = assetInformation,
-                groupId = groupId
+                groupId = groupId,
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }

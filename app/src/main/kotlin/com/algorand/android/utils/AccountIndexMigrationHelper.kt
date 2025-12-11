@@ -24,17 +24,17 @@ class AccountIndexMigrationHelper @Inject constructor() : BaseMigrationHelper<Li
     }
 
     override fun getMigratedValues(values: List<Account>): List<Account> {
-        return getMigratedAccountList(values, LOCAL_ACCOUNT_START_INDEX)
+        return getMigratedAccountList(values)
     }
 
-    private fun getMigratedAccountList(accountList: List<Account>, startIndex: Int): List<Account> {
+    private fun getMigratedAccountList(accountList: List<Account>): List<Account> {
         val (notIndexedAccounts, indexedAccounts) = accountList.partition { it.index == NOT_INITIALIZED_ACCOUNT_INDEX }
         val orderedAccountList = indexedAccounts.mapIndexed { index, account ->
-            account.copy(index = index + startIndex)
+            account.copy(index = index + LOCAL_ACCOUNT_START_INDEX)
         }
         val orderedAccountListSize = orderedAccountList.size
         val newlyIndexedAccounts = notIndexedAccounts.mapIndexed { index, account ->
-            account.copy(index = orderedAccountListSize + index + startIndex)
+            account.copy(index = orderedAccountListSize + index + LOCAL_ACCOUNT_START_INDEX)
         }
         return mutableListOf<Account>().apply {
             addAll(orderedAccountList)

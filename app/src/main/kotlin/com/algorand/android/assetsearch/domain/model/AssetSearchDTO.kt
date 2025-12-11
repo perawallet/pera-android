@@ -19,5 +19,6 @@ data class AssetSearchDTO(
     val logo: String?,
     val verificationTier: VerificationTierDTO?,
     val collectible: CollectibleSearchDTO?,
-    val usdValue: String?
+    val usdValue: String?,
+    val isFavorite: Boolean
 )

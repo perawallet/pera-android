@@ -27,7 +27,6 @@ import com.algorand.android.models.AssetAction
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment
-import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment.BaseAddAssetFragmentListener
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
 import com.algorand.android.modules.assets.addition.ui.model.AssetAdditionType
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -65,7 +64,7 @@ class ReceiveCollectibleFragment : BaseAddAssetFragment(R.layout.fragment_receiv
     override val assetAdditionType: AssetAdditionType
         get() = AssetAdditionType.COLLECTIBLE
 
-    override val baseAddAssetFragmentListener = BaseAddAssetFragmentListener {
+    override val baseAddAssetFragmentListener: BaseAddAssetFragmentListener = BaseAddAssetFragmentListener {
         receiveCollectibleViewModel.updateQuery(it)
         receiveCollectibleViewModel.updateBaseAddAssetPreviewWithHandleQueryChangeForScrollEvent()
     }
@@ -83,7 +82,9 @@ class ReceiveCollectibleFragment : BaseAddAssetFragment(R.layout.fragment_receiv
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val accountCopyQrViewListener = object : AccountCopyQrView.Listener {
         override fun onCopyClick() {

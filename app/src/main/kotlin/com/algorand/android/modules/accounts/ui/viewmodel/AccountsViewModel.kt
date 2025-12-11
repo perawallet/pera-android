@@ -15,7 +15,6 @@ package com.algorand.android.modules.accounts.ui.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavDirections
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
@@ -124,12 +123,6 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun navigateToSwap() {
-        viewModelScope.launch {
-            updatePreviewForSwapNavigation()
-        }
-    }
-
     fun navigateToBackUpPassphraseInfo() {
         viewModelScope.launch {
             val notBackedUpAccounts = getNotBackedUpAccounts()
@@ -186,16 +179,9 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updatePreviewForSwapNavigation() {
-        accountsPreviewUseCase.getSwapNavigationDirection()?.let { navDirections ->
-            eventDelegate.sendEvent(ViewEvent.NavigateToSwap(navDirections))
-        }
-    }
-
     sealed interface ViewEvent {
         data object NavToLoginNavigation : ViewEvent
         data object ShowMaxAccountLimitExceededError : ViewEvent
-        data class NavigateToSwap(val navDirections: NavDirections) : ViewEvent
         data class NavigateToBackupPassphraseInfo(val addresses: Set<String>) : ViewEvent
         data class ShowGiftCardsTutorial(val tutorialId: Int) : ViewEvent
         data class ShowAccountAddressCopyTutorial(val tutorialId: Int) : ViewEvent

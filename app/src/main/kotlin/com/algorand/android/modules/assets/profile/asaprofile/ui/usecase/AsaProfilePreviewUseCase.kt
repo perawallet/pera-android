@@ -35,14 +35,14 @@ import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetSingleAssetDetailFlow
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import java.math.BigDecimal
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
+import java.math.BigInteger
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AsaProfilePreviewUseCase @Inject constructor(
@@ -139,8 +139,8 @@ class AsaProfilePreviewUseCase @Inject constructor(
             val assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetDetail)
             val isAvailableOnDiscoverMobile = assetInfo?.isAvailableOnDiscoverMobile ?: false
             val isMarketInformationVisible = isAvailableOnDiscoverMobile &&
-                verificationTier != VerificationTier.SUSPICIOUS &&
-                hasUsdValue()
+                    verificationTier != VerificationTier.SUSPICIOUS &&
+                    hasUsdValue()
             asaProfilePreviewMapper.mapToAsaProfilePreview(
                 isAlgo = assetDetail.id == ALGO_ID,
                 assetFullName = getAssetName(fullName),
@@ -174,6 +174,7 @@ class AsaProfilePreviewUseCase @Inject constructor(
                     actionButtonTextResId = R.string.opt_dash_in
                 )
             }
+
             !isUserOptedInAsset -> {
                 asaStatusPreviewMapper.mapToAsaAdditionStatusPreview(
                     accountAddress = accountAddressUseCase.getAccountAddress(accountAddress),
@@ -182,6 +183,7 @@ class AsaProfilePreviewUseCase @Inject constructor(
                     actionButtonTextResId = R.string.opt_dash_in
                 )
             }
+
             isUserOptedInAsset && hasUserAmount -> {
                 asaStatusPreviewMapper.mapToAsaTransferStatusPreview(
                     statusLabelTextResId = R.string.balance,
@@ -191,6 +193,7 @@ class AsaProfilePreviewUseCase @Inject constructor(
                     assetShortName = assetShortName
                 )
             }
+
             isUserOptedInAsset -> {
                 asaStatusPreviewMapper.mapToAsaRemovalStatusPreview(
                     statusLabelTextResId = R.string.balance,
@@ -200,11 +203,12 @@ class AsaProfilePreviewUseCase @Inject constructor(
                     assetShortName = assetShortName
                 )
             }
+
             else -> null
         }
     }
 
     companion object {
-        const val MINIMUM_CURRENCY_VALUE_TO_DISPLAY_EXACT_AMOUNT = 0.000001
+        const val MINIMUM_CURRENCY_VALUE_TO_DISPLAY_EXACT_AMOUNT: Double = 0.000001
     }
 }

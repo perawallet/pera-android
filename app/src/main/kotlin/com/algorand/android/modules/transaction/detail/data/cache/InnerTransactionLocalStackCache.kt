@@ -15,12 +15,12 @@ package com.algorand.android.modules.transaction.detail.data.cache
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.utils.extensions.peekOrNull
 import com.algorand.android.utils.extensions.popOrNull
-import java.util.Stack
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
+import java.util.Stack
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class InnerTransactionLocalStackCache @Inject constructor() {

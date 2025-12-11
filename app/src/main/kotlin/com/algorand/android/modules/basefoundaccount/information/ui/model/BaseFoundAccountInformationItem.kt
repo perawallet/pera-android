@@ -57,7 +57,7 @@ sealed class BaseFoundAccountInformationItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&
-                accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
+                    accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

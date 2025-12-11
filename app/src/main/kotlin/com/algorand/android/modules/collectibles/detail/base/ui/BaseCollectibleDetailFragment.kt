@@ -51,7 +51,9 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
         startIconResId = R.drawable.ic_left_arrow
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     abstract val baseCollectibleDetailViewModel: BaseCollectibleDetailViewModel
 
@@ -82,7 +84,7 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
         }
     }
 
-    protected val binding by viewBinding(FragmentCollectibleDetailBinding::bind)
+    protected val binding: FragmentCollectibleDetailBinding by viewBinding(FragmentCollectibleDetailBinding::bind)
 
     private var isNFTDescriptionExpanded by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {

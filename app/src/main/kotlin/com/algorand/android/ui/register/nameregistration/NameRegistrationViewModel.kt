@@ -20,7 +20,6 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.modules.tracking.onboarding.register.initialregisterintro.NewOnboardingNameAccountEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
-import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.NameRegistrationPreviewUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
@@ -41,7 +40,6 @@ class NameRegistrationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val nameRegistrationPreviewUseCase: NameRegistrationPreviewUseCase,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
-    private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
     private val getMaxHdSeedId: GetMaxHdSeedId,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val newOnboardingNameAccountEventTracker: NewOnboardingNameAccountEventTracker,
@@ -113,10 +111,6 @@ class NameRegistrationViewModel @Inject constructor(
                 it.copy(handleNextNavigationEvent = Event(Unit))
             }
         }
-    }
-
-    fun isOnHdWallet(): Boolean {
-        return isOnHdWalletUseCase.invoke()
     }
 
     fun isHdKey(): Boolean {

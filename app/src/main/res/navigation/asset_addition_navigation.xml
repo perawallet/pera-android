@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,11 +17,11 @@
     android:id="@+id/assetAdditionNavigation"
     app:startDestination="@id/addAssetFragment">
 
+    <include app:graph="@navigation/collectible_profile_navigation" />
+
     <include app:graph="@navigation/asset_addition_action_navigation" />
 
     <include app:graph="@navigation/asa_profile_navigation" />
-
-    <include app:graph="@navigation/collectible_profile_navigation" />
 
     <fragment
         android:id="@+id/addAssetFragment"

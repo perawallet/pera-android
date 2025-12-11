@@ -161,9 +161,11 @@ private fun AccountActionsContainer(
                 RekeyToLedger -> {
                     AccountActionItem(stringResource(R.string.rekey_to_ledger_account), onRekeyToLedgerClick)
                 }
+
                 RekeyToStandard -> {
                     AccountActionItem(stringResource(R.string.rekey_to_standard_account), onRekeyToStandardClick)
                 }
+
                 RescanRekeyedAddresses -> {
                     AccountActionItem(stringResource(R.string.rescan_rekeyed_accounts), onRescanRekeyedAddressesClick)
                 }

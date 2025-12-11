@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.ui.di
 
+import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.arbitrarydata.WCArbitraryDataLaunchBackDescriptionAnnotatedStringProviderV2Impl
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.connection.WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.connection.WCConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.connection.WCConnectionLaunchBackTitleAnnotatedStringProviderV2Impl
-import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.transaction.WCArbitraryDataLaunchBackDescriptionAnnotatedStringProviderV2Impl
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.transaction.WCRequestLaunchBackDescriptionAnnotatedStringProviderV2Impl
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionMaxExpirationDateUseCase
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
@@ -43,14 +43,14 @@ object WalletConnectV2UiModule {
     @Provides
     @Named(WCConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl.INJECTION_NAME)
     fun provideWcConnectionLaunchBackSessionInformationAnnotatedStringProvider():
-        WCConnectionLaunchBackSessionInformationAnnotatedStringProvider {
+            WCConnectionLaunchBackSessionInformationAnnotatedStringProvider {
         return WCConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl()
     }
 
     @Provides
     @Named(WCConnectionLaunchBackTitleAnnotatedStringProviderV2Impl.INJECTION_NAME)
     fun provideWcConnectionLaunchBackTitleAnnotatedStringProvider():
-        WcConnectionLaunchBackTitleAnnotatedStringProvider {
+            WcConnectionLaunchBackTitleAnnotatedStringProvider {
         return WCConnectionLaunchBackTitleAnnotatedStringProviderV2Impl()
     }
 

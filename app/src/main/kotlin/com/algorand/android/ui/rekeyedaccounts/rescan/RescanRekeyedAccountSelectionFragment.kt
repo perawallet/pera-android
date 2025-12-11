@@ -36,7 +36,9 @@ class RescanRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragment_rek
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val viewModel: RekeyedAccountSelectionViewModel by viewModels()
 

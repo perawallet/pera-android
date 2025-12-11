@@ -22,9 +22,9 @@ internal class AssetTransferDeepLinkBuilder : DeepLinkBuilder {
         return with(payload) {
             val hasValidAssetQueries = amount != null || assetId != null
             val hasValidTransferQueries = accountAddress != null &&
-                walletConnectUrl == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null
+                    walletConnectUrl == null &&
+                    webImportQrCode == null &&
+                    notificationGroupType == null
 
             hasValidAssetQueries && hasValidTransferQueries
         }

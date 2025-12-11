@@ -32,8 +32,9 @@ import com.algorand.android.usecase.GetActiveNodeUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
@@ -57,7 +58,10 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
         putInnerTransactionToStackCacheUseCase.putInnerTransactionToStackCache(transactions)
     }
 
-    suspend fun getTransactionDetailPreview(transactionId: String, isInnerTransaction: Boolean) = flow {
+    fun getTransactionDetailPreview(
+        transactionId: String,
+        isInnerTransaction: Boolean
+    ): Flow<TransactionDetailPreview> = flow {
         emit(transactionDetailPreviewMapper.mapTo(isLoading = true, transactionDetailItemList = emptyList()))
         getTransactionDetailUseCase.getTransactionDetail(transactionId).collect { transactionDetailResource ->
             transactionDetailResource.useSuspended(
@@ -117,7 +121,7 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
                 }.orEmpty()
 
                 if (applicationCallAssetInformationList.isNotEmpty()) {
-                    val assetInformationCount = applicationCallAssetInformationList.count()
+                    val assetInformationCount = applicationCallAssetInformationList.size
                     add(
                         transactionDetailItemMapper.mapToApplicationCallAssetInformationItem(
                             labelTextRes = R.plurals.assets,
@@ -146,6 +150,8 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
                         transactionId = transactionId
                     )
                 )
+                addRejectVersionIfExist(this@apply, rejectVersion)
+                addAccessListIfExist(this@apply, accessListSize)
                 add(TransactionDetailItem.DividerItem)
                 addNoteIfExist(this@apply, noteInBase64)
                 add(createTransactionChipGroupItem(id.orEmpty()))
@@ -171,6 +177,6 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
     }
 
     companion object {
-        const val MAX_ASSET_COUNT_TO_SHOW = 2
+        const val MAX_ASSET_COUNT_TO_SHOW: Int = 2
     }
 }

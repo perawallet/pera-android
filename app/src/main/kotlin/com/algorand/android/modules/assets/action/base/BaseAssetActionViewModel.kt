@@ -68,7 +68,7 @@ abstract class BaseAssetActionViewModel(
                         val errorResourceId = if (exception is AssetNotFoundException) {
                             R.string.asset_not_found_please_make
                         } else {
-                            R.string.an_error_occured
+                            R.string.an_error_occurred
                         }
                         Resource.Error.Annotated(AnnotatedString(errorResourceId))
                     }
@@ -91,9 +91,9 @@ abstract class BaseAssetActionViewModel(
     }
 
     protected companion object {
-        const val ASSET_ACTION_KEY = "assetAction"
-        const val SHOULD_WAIT_FOR_CONFIRMATION_KEY = "shouldWaitForConfirmation"
-        const val DEFAULT_WAIT_FOR_CONFIRMATION_PARAM = false
+        const val ASSET_ACTION_KEY: String = "assetAction"
+        const val SHOULD_WAIT_FOR_CONFIRMATION_KEY: String = "shouldWaitForConfirmation"
+        const val DEFAULT_WAIT_FOR_CONFIRMATION_PARAM: Boolean = false
     }
 
     sealed interface ViewState {

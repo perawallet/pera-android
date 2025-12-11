@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.impl
 
+import app.perawallet.walletconnectv2.Core
 import com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper.WalletConnectPeerMetaMapper
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.walletconnect.android.Core
 
 class WalletConnectPeerMetaMapperImpl : WalletConnectPeerMetaMapper {
 

@@ -15,9 +15,9 @@ package com.algorand.android.modules.accountcore.domain.usecase
 import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import javax.inject.Inject
 
 internal class GetAccountTotalValueFlowUseCase @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,

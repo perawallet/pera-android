@@ -29,7 +29,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class AccountCollectiblesFragment : BaseFragment(R.layout.fragment_base_collectibles_listing),
     CollectibleListingFragmentDelegate.Listener {
 
-    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        isBottomBarNeeded = true
+    )
 
     private var collectiblesListingFragmentDelegate: CollectibleListingFragmentDelegate? = null
 
@@ -89,8 +91,6 @@ class AccountCollectiblesFragment : BaseFragment(R.layout.fragment_base_collecti
         fun onImageItemClick(nftAssetId: Long)
         fun onVideoItemClick(nftAssetId: Long)
         fun onSoundItemClick(nftAssetId: Long)
-        fun onGifItemClick(nftAssetId: Long)
-        fun onNotSupportedItemClick(nftAssetId: Long)
         fun onMixedItemClick(nftAssetId: Long)
         fun onReceiveCollectibleClick()
         fun onManageCollectiblesClick()

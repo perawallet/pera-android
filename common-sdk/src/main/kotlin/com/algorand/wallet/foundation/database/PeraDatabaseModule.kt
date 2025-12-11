@@ -18,6 +18,7 @@ import com.algorand.wallet.foundation.database.migration.PeraDatabaseMigration1t
 import com.algorand.wallet.foundation.database.migration.PeraDatabaseMigration2to3
 import com.algorand.wallet.foundation.database.migration.PeraDatabaseMigration3to4
 import com.algorand.wallet.foundation.database.migration.PeraDatabaseMigration4to5
+import com.algorand.wallet.foundation.database.migration.PeraDatabaseMigration5to6
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,6 +44,7 @@ internal object PeraDatabaseModule {
             .addMigrations(PeraDatabaseMigration2to3)
             .addMigrations(PeraDatabaseMigration3to4)
             .addMigrations(PeraDatabaseMigration4to5)
+            .addMigrations(PeraDatabaseMigration5to6)
             .build()
     }
 }

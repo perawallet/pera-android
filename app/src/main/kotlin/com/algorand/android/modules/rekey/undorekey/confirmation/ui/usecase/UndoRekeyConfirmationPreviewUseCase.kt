@@ -17,6 +17,8 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.mapper.UndoRekeyConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
@@ -32,11 +34,10 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.Rekeyed
 import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
@@ -83,7 +84,9 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
         )
     }
 
-    fun updatePreviewWithTransactionFee(preview: UndoRekeyConfirmationPreview) = flow {
+    fun updatePreviewWithTransactionFee(
+        preview: UndoRekeyConfirmationPreview
+    ): Flow<UndoRekeyConfirmationPreview> = flow {
         transactionsRepository.getTransactionParams().use(
             onSuccess = { params ->
                 val calculatedFee = calculateRekeyFee(params.fee, params.minFee)
@@ -100,7 +103,7 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
     fun sendUndoRekeyTransaction(
         preview: UndoRekeyConfirmationPreview,
         transactionDetail: SignedTransactionDetail
-    ) = flow {
+    ): Flow<UndoRekeyConfirmationPreview> = flow {
         emit(preview.copy(isLoading = true))
         sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
             onSuccess = {

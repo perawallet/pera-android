@@ -19,6 +19,7 @@ import com.algorand.wallet.swap.data.model.SwapSelectedAssetDto
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -32,7 +33,7 @@ class DefaultSwapSelectedAssetRepositoryTest {
     private val sut = DefaultSwapSelectedAssetRepository(swapSelectedAssetDao, selectedAssetDetailMapper)
 
     @Test
-    fun `EXPECT null WHEN asset is not found`() = runTest {
+    fun `EXPECT null WHEN asset is not found`(): TestResult = runTest {
         coEvery { swapSelectedAssetDao.getAssetWithHolding(ADDRESS, ASSET_ID) } returns null
 
         val result = sut.getSelectedAssetDetails(ADDRESS, ASSET_ID)
@@ -41,7 +42,7 @@ class DefaultSwapSelectedAssetRepositoryTest {
     }
 
     @Test
-    fun `EPXECT mapped asset detail WHEN asset is found`() = runTest {
+    fun `EPXECT mapped asset detail WHEN asset is found`(): TestResult = runTest {
         coEvery { swapSelectedAssetDao.getAssetWithHolding(ADDRESS, ASSET_ID) } returns ASSET_DTO
         coEvery { selectedAssetDetailMapper(ASSET_DTO) } returns ASSET_DETAIL
 

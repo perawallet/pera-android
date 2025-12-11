@@ -18,11 +18,11 @@ import com.algorand.android.modules.accountdetail.nftfilter.ui.model.AccountNFTF
 import com.algorand.android.modules.accountdetail.nftfilter.ui.usecase.AccountNFTFilterPreviewUseCase
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountNFTFilterViewModel @Inject constructor(
@@ -30,7 +30,7 @@ class AccountNFTFilterViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _accountNFTFilterPreviewFlow = MutableStateFlow<AccountNFTFilterPreview?>(null)
-    val accountNFTFilterPreviewFlow get() = _accountNFTFilterPreviewFlow
+    val accountNFTFilterPreviewFlow: MutableStateFlow<AccountNFTFilterPreview?> get() = _accountNFTFilterPreviewFlow
 
     init {
         initAccountNFTFilterPreviewFlow()

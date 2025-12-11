@@ -28,9 +28,6 @@ abstract class BaseCacheManager : DefaultLifecycleObserver {
     private var currentJob: Job? = null
     private var initializationJob: Job? = null
 
-    protected val isCurrentJobActive: Boolean
-        get() = currentJob?.isActive == true
-
     abstract suspend fun doJob(coroutineScope: CoroutineScope)
 
     protected open suspend fun initialize(coroutineScope: CoroutineScope) {

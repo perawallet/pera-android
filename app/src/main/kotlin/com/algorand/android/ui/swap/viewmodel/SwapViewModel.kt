@@ -45,8 +45,6 @@ import com.algorand.wallet.swap.domain.usecase.SetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.math.BigInteger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,6 +53,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigInteger
+import javax.inject.Inject
 
 @HiltViewModel
 class SwapViewModel @Inject constructor(
@@ -249,7 +249,7 @@ class SwapViewModel @Inject constructor(
         val address: String? = null,
         val assetInId: Long = ALGO_ID,
         val assetOutId: Long = USDC_MAINNET_ID,
-        val slippage: Float? = null,
+        val slippage: Double? = null,
         val useLocalCurrency: Boolean = false,
         val primaryCurrencySymbol: String = ""
     )

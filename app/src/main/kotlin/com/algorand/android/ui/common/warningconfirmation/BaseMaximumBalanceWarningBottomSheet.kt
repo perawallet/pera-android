@@ -56,6 +56,6 @@ abstract class BaseMaximumBalanceWarningBottomSheet : DaggerBaseBottomSheet(
     }
 
     companion object {
-        const val MAX_BALANCE_WARNING_RESULT = "max_balance_warning_result"
+        const val MAX_BALANCE_WARNING_RESULT: String = "max_balance_warning_result"
     }
 }

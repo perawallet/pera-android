@@ -55,9 +55,13 @@ internal class GetActiveHdAccountAddressesUseCase @Inject constructor(
         return accountFastLookupBatch.values.any { it?.accountExists == true }
     }
 
-    private fun createHdKeyDetailBatch(bip39Wallet: Bip39Wallet, accountIndex: Int, range: IntRange): List<HdKeyAddressLite> {
+    private fun createHdKeyDetailBatch(
+        bip39Wallet: Bip39Wallet,
+        accountIndex: Int,
+        range: IntRange
+    ): List<HdKeyAddressLite> {
         return range.map { keyIndex ->
-            val index = HdKeyAddressIndex(accountIndex, 0, keyIndex)
+            val index = HdKeyAddressIndex(accountIndex, keyIndex = keyIndex)
             bip39Wallet.generateAddressLite(index)
         }
     }

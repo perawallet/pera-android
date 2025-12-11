@@ -13,6 +13,7 @@
 package com.algorand.wallet.asset.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -50,9 +51,6 @@ internal interface AssetDetailDao {
         )
     }
 
-    @Query("DELETE FROM asset_detail WHERE asset_id = :assetId")
-    suspend fun deleteAllByAssetId(assetId: Long)
-
     @Query("SELECT * FROM asset_detail WHERE asset_id = :assetId")
     suspend fun getByAssetId(assetId: Long): AssetDetailEntity?
 
@@ -73,4 +71,15 @@ internal interface AssetDetailDao {
 
     @Query("SELECT asset_creator_address FROM asset_detail WHERE asset_id = :assetId")
     suspend fun getAssetCreatorAddress(assetId: Long): String?
+
+    @Query("UPDATE asset_detail SET is_favorite = :isFavorite WHERE asset_id = :assetId")
+    suspend fun updateFavoriteStatus(assetId: Long, isFavorite: Boolean)
+
+    @Query("UPDATE asset_detail SET is_price_alert_enabled = :isPriceAlertEnabled WHERE asset_id = :assetId")
+    suspend fun updatePriceAlertStatus(assetId: Long, isPriceAlertEnabled: Boolean)
+
+    @Query("SELECT asset_id, is_favorite FROM asset_detail WHERE asset_id IN (:assetIds)")
+    suspend fun getFavoriteStatuses(
+        assetIds: List<Long>
+    ): Map<@MapColumn("asset_id") Long, @MapColumn("is_favorite") Boolean?>
 }

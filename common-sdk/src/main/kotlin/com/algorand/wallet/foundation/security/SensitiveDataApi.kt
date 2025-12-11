@@ -29,6 +29,7 @@ package com.algorand.wallet.foundation.security
 @Retention(AnnotationRetention.BINARY)
 annotation class SensitiveDataApi
 
+@Suppress("unused")
 private fun sensitiveDataApiSample() {
     @OptIn(SensitiveDataApi::class)
     fun sensitiveFunction() {

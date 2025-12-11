@@ -20,16 +20,19 @@ import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilde
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagination
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.android.discover.home.domain.mapper.DiscoverSearchedAssetMapper
-import javax.inject.Inject
-import javax.inject.Named
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Named
 
 class DiscoverSearchAssetUseCase @Inject constructor(
-    @Named(AssetSearchRepository.REPOSITORY_INJECTION_NAME) private val assetSearchRepository: AssetSearchRepository,
+    @param:Named(AssetSearchRepository.REPOSITORY_INJECTION_NAME)
+    private val assetSearchRepository: AssetSearchRepository,
     private val assetSearchPagination: AssetSearchPagination,
-    private val discoverSearchedAssetMapper: DiscoverSearchedAssetMapper
+    private val discoverSearchedAssetMapper: DiscoverSearchedAssetMapper,
+    private val getAssetFavoriteStatuses: GetAssetFavoriteStatuses
 ) {
 
     fun createPaginationFlow(
@@ -38,8 +41,18 @@ class DiscoverSearchAssetUseCase @Inject constructor(
         defaultQuery: AssetSearchQuery
     ): Flow<PagingData<DiscoverSearchedAsset>> {
         return assetSearchPagination
-            .initPagination(builder, scope, assetSearchRepository, defaultQuery)
-            .map { pagingData -> pagingData.map { discoverSearchedAssetMapper.mapToDiscoverSearchedAsset(it) } }
+            .initPagination(
+                assetSearchPagerBuilder = builder,
+                scope = scope,
+                repository = assetSearchRepository,
+                defaultQuery = defaultQuery,
+                getAssetFavoriteStatuses = getAssetFavoriteStatuses
+            )
+            .map { pagingData ->
+                pagingData.map {
+                    discoverSearchedAssetMapper.mapToDiscoverSearchedAsset(it)
+                }
+            }
     }
 
     suspend fun searchAsset(query: AssetSearchQuery) {

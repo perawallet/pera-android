@@ -56,8 +56,7 @@ class NameRegistrationPreviewMapper @Inject constructor() {
             accountAlreadyExistsEvent = Event(Unit),
             updateWatchAccountEvent = null,
             createAccountEvent = null,
-            handleNextNavigationEvent = null,
-            walletId = null
+            handleNextNavigationEvent = null
         )
     }
 
@@ -66,8 +65,7 @@ class NameRegistrationPreviewMapper @Inject constructor() {
             accountAlreadyExistsEvent = null,
             updateWatchAccountEvent = null,
             createAccountEvent = null,
-            handleNextNavigationEvent = Event(Unit),
-            walletId = null
+            handleNextNavigationEvent = Event(Unit)
         )
     }
 }

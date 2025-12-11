@@ -42,5 +42,7 @@ data class RawTransaction(
     val assetIdBeingConfigured: Long?,
     val assetConfigParameters: AssetConfigParameters?,
     val groupId: String?,
+    val rejectVersion: Long?,
+    val accessListSize: Int?,
     val innerTransactions: List<RawTransaction>?
 )

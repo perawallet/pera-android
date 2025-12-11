@@ -43,7 +43,7 @@ abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.lay
 
     private val binding by viewBinding(FragmentBaseRekeyConfirmationBinding::bind)
 
-    override val transactionFragmentListener = object : TransactionFragmentListener {
+    override val transactionFragmentListener: TransactionFragmentListener = object : TransactionFragmentListener {
         override fun onSignTransactionLoadingFinished() {
             loadingDialogFragment?.dismissAllowingStateLoss()
         }

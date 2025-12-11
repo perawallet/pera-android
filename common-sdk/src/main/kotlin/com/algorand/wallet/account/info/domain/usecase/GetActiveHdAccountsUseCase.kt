@@ -18,10 +18,10 @@ import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
-import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import javax.inject.Inject
 
 internal class GetActiveHdAccountsUseCase @Inject constructor(
     private val bip39WalletProvider: Bip39WalletProvider,
@@ -80,7 +80,7 @@ internal class GetActiveHdAccountsUseCase @Inject constructor(
     private fun getFirstHdKeyDetailsBatch(accountIndex: Int, bip39Wallet: Bip39Wallet): List<HdKeyAddressLite> {
         val range = 0 until SEARCH_BATCH_COUNT
         return range.map { keyIndex ->
-            val index = HdKeyAddressIndex(accountIndex, 0, keyIndex)
+            val index = HdKeyAddressIndex(accountIndex, keyIndex = keyIndex)
             bip39Wallet.generateAddressLite(index)
         }
     }

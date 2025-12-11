@@ -13,7 +13,7 @@
 package com.algorand.android
 
 import android.util.Base64
-import com.algorand.algosdk.sdk.SuggestedParams
+import app.perawallet.gomobilesdk.sdk.SuggestedParams
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.utils.makeAddAssetTx
 import com.algorand.android.utils.makeRekeyTx
@@ -40,8 +40,7 @@ class AlgorandTransactionTest {
             receiverAddress = "5KYQMJHCDW6CJNLZPZCB6IBWO7FTEDYAH3U7DH3JWWPJP7NXH3BSGAGUUM",
             amount = BigInteger.valueOf(1000000),
             assetId = AssetConstants.ALGO_ID,
-            isMax = false,
-            note = null
+            isMax = false
         )
 
         val expectedAlgoTransactionResult = byteArrayOf(-119, -93, 97, 109, 116, -50, 0, 15, 66, 64, -93, 102, 101, 101, -51, 3, -24, -94, 102, 118, -50, 0, -28, 46, -69, -93, 103, 101, 110, -84, 116, 101, 115, 116, 110, 101, 116, 45, 118, 49, 46, 48, -94, 103, 104, -60, 32, 72, 99, -75, 24, -92, -77, -56, 78, -56, 16, -14, 45, 79, 16, -127, -53, 15, 113, -16, 89, -89, -84, 32, -34, -58, 47, 127, 112, -27, 9, 58, 34, -94, 108, 118, -50, 0, -28, 50, -93, -93, 114, 99, 118, -60, 32, -22, -79, 6, 36, -30, 29, -68, 36, -75, 121, 126, 68, 31, 32, 54, 119, -53, 50, 15, 0, 62, -23, -15, -97, 105, -75, -98, -105, -3, -73, 62, -61, -93, 115, 110, 100, -60, 32, -18, -58, 52, -38, -17, -105, -115, 95, 66, -77, 101, 81, 2, 102, 18, -60, -123, -87, 87, 119, -96, 14, 89, -107, -26, 20, -38, -97, -2, 71, -57, -41, -92, 116, 121, 112, 101, -93, 112, 97, 121)
@@ -64,8 +63,7 @@ class AlgorandTransactionTest {
             receiverAddress = "5KYQMJHCDW6CJNLZPZCB6IBWO7FTEDYAH3U7DH3JWWPJP7NXH3BSGAGUUM",
             amount = BigInteger.ONE,
             assetId = 11711, // HipoCoin Asset ID
-            isMax = false,
-            note = null
+            isMax = false
         )
 
         val expectedHipoCoinTransactionResult = byteArrayOf(-119, -92, 97, 97, 109, 116, 1, -92, 97, 114, 99, 118, -60, 32, -22, -79, 6, 36, -30, 29, -68, 36, -75, 121, 126, 68, 31, 32, 54, 119, -53, 50, 15, 0, 62, -23, -15, -97, 105, -75, -98, -105, -3, -73, 62, -61, -93, 102, 101, 101, -51, 3, -24, -94, 102, 118, -50, 0, -28, 46, -27, -94, 103, 104, -60, 32, 72, 99, -75, 24, -92, -77, -56, 78, -56, 16, -14, 45, 79, 16, -127, -53, 15, 113, -16, 89, -89, -84, 32, -34, -58, 47, 127, 112, -27, 9, 58, 34, -94, 108, 118, -50, 0, -28, 50, -51, -93, 115, 110, 100, -60, 32, -18, -58, 52, -38, -17, -105, -115, 95, 66, -77, 101, 81, 2, 102, 18, -60, -123, -87, 87, 119, -96, 14, 89, -107, -26, 20, -38, -97, -2, 71, -57, -41, -92, 116, 121, 112, 101, -91, 97, 120, 102, 101, 114, -92, 120, 97, 105, 100, -51, 45, -65)
@@ -157,10 +155,10 @@ class AlgorandTransactionTest {
 
         assert(
             suggestedParams.fee == expectedSuggestedParams.fee &&
-                suggestedParams.genesisID == expectedSuggestedParams.genesisID &&
-                suggestedParams.genesisHash.contentEquals(expectedSuggestedParams.genesisHash) &&
-                suggestedParams.firstRoundValid == expectedSuggestedParams.firstRoundValid &&
-                suggestedParams.lastRoundValid == expectedSuggestedParams.lastRoundValid
+                    suggestedParams.genesisID == expectedSuggestedParams.genesisID &&
+                    suggestedParams.genesisHash.contentEquals(expectedSuggestedParams.genesisHash) &&
+                    suggestedParams.firstRoundValid == expectedSuggestedParams.firstRoundValid &&
+                    suggestedParams.lastRoundValid == expectedSuggestedParams.lastRoundValid
         )
     }
 
@@ -187,10 +185,10 @@ class AlgorandTransactionTest {
 
         assert(
             suggestedParams.fee == expectedSuggestedParams.fee &&
-                suggestedParams.genesisID == expectedSuggestedParams.genesisID &&
-                suggestedParams.genesisHash.contentEquals(expectedSuggestedParams.genesisHash) &&
-                suggestedParams.firstRoundValid == expectedSuggestedParams.firstRoundValid &&
-                suggestedParams.lastRoundValid == expectedSuggestedParams.lastRoundValid
+                    suggestedParams.genesisID == expectedSuggestedParams.genesisID &&
+                    suggestedParams.genesisHash.contentEquals(expectedSuggestedParams.genesisHash) &&
+                    suggestedParams.firstRoundValid == expectedSuggestedParams.firstRoundValid &&
+                    suggestedParams.lastRoundValid == expectedSuggestedParams.lastRoundValid
         )
     }
 }

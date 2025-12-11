@@ -27,6 +27,6 @@ interface AssetFilterRepository {
     suspend fun saveDisplayOptedInNFTInAssetsPreference(displayOptedInNFTInAssets: Boolean)
 
     companion object {
-        const val REPOSITORY_INJECTION_NAME = "AssetFilterRepositoryInjection"
+        const val REPOSITORY_INJECTION_NAME: String = "AssetFilterRepositoryInjection"
     }
 }

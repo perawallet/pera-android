@@ -13,6 +13,7 @@
 package com.algorand.android.modules.parity.domain.usecase
 
 import com.algorand.android.modules.parity.utils.ParityConstants.SAFE_PARITY_DIVISION_DECIMALS
+import com.algorand.wallet.utils.divideOrZero
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
@@ -23,10 +24,10 @@ internal class GetAlgoToUsdConversionRateUseCase @Inject constructor(
 
     override fun invoke(): BigDecimal {
         val usdToAlgoConversionRate = getUsdToAlgoConversionRate()
-        return if (usdToAlgoConversionRate != BigDecimal.ZERO) {
-            BigDecimal.ONE.divide(usdToAlgoConversionRate, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
-        } else {
-            BigDecimal.ZERO
-        }
+        return BigDecimal.ONE.divideOrZero(
+            divisor = usdToAlgoConversionRate,
+            scale = SAFE_PARITY_DIVISION_DECIMALS,
+            roundingMode = RoundingMode.UP
+        )
     }
 }

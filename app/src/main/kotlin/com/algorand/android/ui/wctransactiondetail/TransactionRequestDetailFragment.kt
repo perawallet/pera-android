@@ -40,7 +40,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class TransactionRequestDetailFragment : DaggerBaseFragment(
     R.layout.fragment_transaction_request_detail
 ) {
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -137,6 +137,7 @@ class TransactionRequestDetailFragment : DaggerBaseFragment(
         initExtrasInfoViews()
         initOnlineKeyRefInfoViews()
         initOfflineKeyRefInfoViews()
+        initExtraFieldsViews()
     }
 
     private fun initTransactionInfoViews() {
@@ -192,6 +193,17 @@ class TransactionRequestDetailFragment : DaggerBaseFragment(
             offlineKeyRegInfoDivider.isVisible = keyRegInfo != null
             if (keyRegInfo != null) {
                 offlineKeyRegInfoCardView.initKeyRegInfo(keyRegInfo)
+            }
+        }
+    }
+
+    private fun initExtraFieldsViews() {
+        val extraFields = transactionDetailViewModel.buildTransactionRequestExtraFields(args.transaction)
+        with(binding) {
+            extraFieldsCardView.isVisible = extraFields != null
+            extraFieldsDivider.isVisible = extraFields != null
+            if (extraFields != null) {
+                extraFieldsCardView.initExtraFieldsInfo(extraFields)
             }
         }
     }

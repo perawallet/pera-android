@@ -18,9 +18,9 @@ import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.formatAmount
-import com.algorand.android.utils.orZero
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.utils.orZero
 import javax.inject.Inject
 
 internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(

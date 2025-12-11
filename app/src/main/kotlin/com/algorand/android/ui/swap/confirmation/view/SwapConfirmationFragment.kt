@@ -29,6 +29,7 @@ import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayError
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayLedgerNotFoundDialog
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.HideLedgerWaitingForApprovalDialog
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToLedgerWaitingForApprovalDialog
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToSwapScreen
 import com.algorand.android.utils.browser.openTinymanFaqPriceImpactUrl
@@ -54,6 +55,7 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
             is DisplayError -> displayError(viewEvent.errorType)
             is NavigateToLedgerWaitingForApprovalDialog -> showLedgerWaitingForApprovalBottomSheet(viewEvent.payload)
             DisplayLedgerNotFoundDialog -> nav(HomeNavigationDirections.actionGlobalLedgerConnectionIssueBottomSheet())
+            HideLedgerWaitingForApprovalDialog -> hideLedgerDialog()
             is NavigateToSwapScreen -> {
                 displaySuccessAlert(viewEvent)
                 navigateToSwapScreen()
@@ -66,7 +68,7 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
         swapConfirmationViewModel.stopResources()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
             SwapConfirmationScreen(swapConfirmationViewModel, listener = this)
         }
@@ -123,11 +125,16 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
 
     private fun displayError(errorType: DisplayError.ErrorType) {
         val message = when (errorType) {
-            DisplayError.ErrorType.Generic -> getString(R.string.an_error_occured)
+            DisplayError.ErrorType.Generic -> getString(R.string.an_error_occurred)
             is DisplayError.ErrorType.Api -> errorType.message
             is DisplayError.ErrorType.Local -> context?.getXmlStyledString(errorType.description)?.toString().orEmpty()
         }
         showGlobalError(message)
+    }
+
+    private fun hideLedgerDialog() {
+        ledgerLoadingDialog?.dismissAllowingStateLoss()
+        ledgerLoadingDialog = null
     }
 
     private fun displaySuccessAlert(event: NavigateToSwapScreen) {

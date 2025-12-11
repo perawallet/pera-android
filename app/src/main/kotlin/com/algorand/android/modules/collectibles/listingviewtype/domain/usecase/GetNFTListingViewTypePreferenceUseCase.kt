@@ -19,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetNFTListingViewTypePreferenceUseCase @Inject constructor(
-    @Named(NFTListingViewTypeRepository.INJECTION_NAME)
+    @param:Named(NFTListingViewTypeRepository.INJECTION_NAME)
     private val nftListingViewTypeRepository: NFTListingViewTypeRepository,
     private val nftListingViewTypeDecider: NFTListingViewTypeDecider
 ) {

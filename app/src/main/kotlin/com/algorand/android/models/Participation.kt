@@ -22,6 +22,6 @@ data class Participation(
     val voteParticipationKey: String? = DEFAULT_PARTICIPATION_KEY
 ) : Parcelable {
     companion object {
-        const val DEFAULT_PARTICIPATION_KEY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+        const val DEFAULT_PARTICIPATION_KEY: String = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
     }
 }

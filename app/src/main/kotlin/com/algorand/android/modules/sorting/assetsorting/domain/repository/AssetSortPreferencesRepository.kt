@@ -21,6 +21,6 @@ interface AssetSortPreferencesRepository {
     suspend fun getAssetSortPreference(defaultValue: AssetSortPreference): AssetSortPreference
 
     companion object {
-        const val INJECTION_NAME = "assetSortPreferencesRepository"
+        const val INJECTION_NAME: String = "assetSortPreferencesRepository"
     }
 }

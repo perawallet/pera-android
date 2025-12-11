@@ -17,14 +17,17 @@ import com.algorand.wallet.asset.data.repository.AssetDetailCacheHelperImpl
 import com.algorand.wallet.asset.data.repository.AssetRepositoryImpl
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
+import com.algorand.wallet.asset.data.service.AssetDetailRetrofitApiService
+import com.algorand.wallet.asset.data.service.AssetStatusApiService
+import com.algorand.wallet.asset.data.service.DefaultAssetDetailApiService
 import com.algorand.wallet.asset.domain.repository.AssetRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -32,10 +35,18 @@ internal object AssetDetailModule {
 
     @Provides
     @Singleton
-    fun provideAssetDetailApiServiceImpl(
+    fun provideAssetDetailRetrofitApiService(
         @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
-    ): AssetDetailApiService {
-        return retrofit.create(AssetDetailApiService::class.java)
+    ): AssetDetailRetrofitApiService {
+        return retrofit.create(AssetDetailRetrofitApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAssetStatusApiService(
+        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
+    ): AssetStatusApiService {
+        return retrofit.create(AssetStatusApiService::class.java)
     }
 
     @Provides
@@ -45,6 +56,9 @@ internal object AssetDetailModule {
     ): AssetDetailNodeApiService {
         return retrofit.create(AssetDetailNodeApiService::class.java)
     }
+
+    @Provides
+    fun provideAssetDetailApiService(impl: DefaultAssetDetailApiService): AssetDetailApiService = impl
 
     @Provides
     fun provideAssetDetailCacheHelper(impl: AssetDetailCacheHelperImpl): AssetDetailCacheHelper = impl

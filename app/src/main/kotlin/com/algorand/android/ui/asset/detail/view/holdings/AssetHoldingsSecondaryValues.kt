@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
@@ -32,6 +33,8 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel.View
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraPercentageText
+import com.algorand.android.ui.compose.widget.chart.view.PeraLineChartDeltaText
+import com.algorand.android.ui.compose.widget.text.AutosizeText
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatDateToChartDateString
 
@@ -54,20 +57,27 @@ fun AssetHoldingBalanceStats(
     }
 
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+        Spacer(modifier = Modifier.height(8.dp))
         PrimaryBalanceText(primaryAmountRenderer)
         Spacer(modifier = Modifier.height(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = 20.dp)
+                .defaultMinSize(minHeight = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier.weight(1f)) {
+            Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                 SecondaryBalanceText(secondaryAmountRenderer)
-                if (viewState.chartData != null && selectedChartItem == null) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                    BalanceChangeText(viewState.chartData)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    ChangePercentageText(viewState.chartData)
+                if (selectedChartItem == null) {
+                    val tendencyValues = viewState.tendencyValues
+                    if (tendencyValues?.delta != null && tendencyValues.deltaRenderer != null) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        PeraLineChartDeltaText(tendencyValues.delta, tendencyValues.deltaRenderer)
+                    }
+                    if (tendencyValues?.percentage != null) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        PeraPercentageText(percentage = tendencyValues.percentage)
+                    }
                 }
             }
             SelectedDateText(selectedDateText)
@@ -77,7 +87,7 @@ fun AssetHoldingBalanceStats(
 
 @Composable
 private fun PrimaryBalanceText(renderer: AmountRenderer) {
-    Text(
+    AutosizeText(
         text = renderer.getDisplayValue(),
         style = PeraTheme.typography.title.large.sansMedium,
         color = PeraTheme.colors.text.main
@@ -100,25 +110,4 @@ private fun SelectedDateText(formattedDate: String) {
         style = PeraTheme.typography.body.regular.sans,
         color = PeraTheme.colors.text.gray
     )
-}
-
-@Composable
-private fun BalanceChangeText(data: Content.ChartData) {
-    val textColor = when {
-        data.balanceChange > 0f -> PeraTheme.colors.helper.positive
-        data.balanceChange < 0f -> PeraTheme.colors.helper.negative
-        else -> PeraTheme.colors.text.gray
-    }
-    Text(
-        text = data.balanceChangeRenderer.getDisplayValue(),
-        style = PeraTheme.typography.body.regular.sansMedium,
-        color = textColor
-    )
-}
-
-@Composable
-private fun ChangePercentageText(data: Content.ChartData) {
-    data.changePercentage?.let { percentage ->
-        PeraPercentageText(percentage = percentage)
-    }
 }

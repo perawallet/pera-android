@@ -35,7 +35,7 @@ import com.algorand.android.models.AlertMetadata
 import com.algorand.android.utils.getDisplaySize
 import com.algorand.android.utils.viewbinding.viewBinding
 
-class CustomAlertDialog constructor(context: Context) : Dialog(context) {
+class CustomAlertDialog(context: Context) : Dialog(context) {
 
     private val binding = viewBinding(CustomAlertViewBinding::inflate)
 

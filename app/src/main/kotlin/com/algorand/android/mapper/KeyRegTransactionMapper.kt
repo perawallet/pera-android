@@ -61,7 +61,7 @@ class KeyRegTransactionMapper @Inject constructor(
     private fun isOnlineKeyRegistrationTransaction(request: WalletConnectTransactionRequest): Boolean {
         return with(request) {
             !votePublicKey.isNullOrBlank() && !selectionPublicKey.isNullOrBlank() && voteKeyDilution != null &&
-                voteFirstValidRound != null && voteLastValidRound != null
+                    voteFirstValidRound != null && voteLastValidRound != null
         }
     }
 
@@ -88,7 +88,9 @@ class KeyRegTransactionMapper @Inject constructor(
                 voteFirstValidRound = voteFirstValidRound ?: return null,
                 voteLastValidRound = voteLastValidRound ?: return null,
                 voteKeyDilution = voteKeyDilution ?: return null,
-                fromAccount = createWalletConnectAccount(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -117,7 +119,9 @@ class KeyRegTransactionMapper @Inject constructor(
                 voteLastValidRound = voteLastValidRound ?: return null,
                 voteKeyDilution = voteKeyDilution ?: return null,
                 rekeyToAddress = createWalletConnectAddress(transactionRequest.rekeyAddress) ?: return null,
-                fromAccount = createWalletConnectAccount(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -140,7 +144,9 @@ class KeyRegTransactionMapper @Inject constructor(
                 transactionSigner = getWalletConnectTransactionSigner(signer),
                 groupId = groupId,
                 nonParticipation = nonParticipation ?: DEFAULT_NON_PARTICIPATION,
-                fromAccount = createWalletConnectAccount(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -164,7 +170,9 @@ class KeyRegTransactionMapper @Inject constructor(
                 groupId = groupId,
                 nonParticipation = nonParticipation ?: DEFAULT_NON_PARTICIPATION,
                 rekeyToAddress = createWalletConnectAddress(rekeyAddress) ?: return null,
-                fromAccount = createWalletConnectAccount(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }

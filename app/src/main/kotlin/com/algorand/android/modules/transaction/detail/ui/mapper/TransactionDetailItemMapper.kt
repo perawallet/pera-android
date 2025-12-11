@@ -57,38 +57,6 @@ class TransactionDetailItemMapper @Inject constructor() {
         return TransactionDetailItem.StandardTransactionItem.RoundItem(labelTextRes = labelTextRes, round = round)
     }
 
-    fun mapToPendingStatusItem(
-        @StringRes transactionStatusTextRes: Int,
-        @DrawableRes transactionStatusBackgroundColor: Int,
-        @StringRes labelTextRes: Int,
-        @StyleRes transactionStatusTextStyleRes: Int,
-        @ColorRes transactionStatusTextColorRes: Int
-    ): TransactionDetailItem.StandardTransactionItem.StatusItem.PendingItem {
-        return TransactionDetailItem.StandardTransactionItem.StatusItem.PendingItem(
-            transactionStatusTextRes = transactionStatusTextRes,
-            transactionStatusBackgroundRes = transactionStatusBackgroundColor,
-            labelTextRes = labelTextRes,
-            transactionStatusTextStyleRes = transactionStatusTextStyleRes,
-            transactionStatusTextColorRes = transactionStatusTextColorRes
-        )
-    }
-
-    fun mapToFailedStatusItem(
-        @StringRes transactionStatusTextRes: Int,
-        @DrawableRes transactionStatusBackgroundColor: Int,
-        @StringRes labelTextRes: Int,
-        @StyleRes transactionStatusTextStyleRes: Int,
-        @ColorRes transactionStatusTextColorRes: Int
-    ): TransactionDetailItem.StandardTransactionItem.StatusItem.FailedItem {
-        return TransactionDetailItem.StandardTransactionItem.StatusItem.FailedItem(
-            transactionStatusTextRes = transactionStatusTextRes,
-            transactionStatusBackgroundRes = transactionStatusBackgroundColor,
-            labelTextRes = labelTextRes,
-            transactionStatusTextStyleRes = transactionStatusTextStyleRes,
-            transactionStatusTextColorRes = transactionStatusTextColorRes
-        )
-    }
-
     fun mapToSuccessStatusItem(
         @StringRes transactionStatusTextRes: Int,
         @DrawableRes transactionStatusBackgroundColor: Int,
@@ -248,6 +216,26 @@ class TransactionDetailItemMapper @Inject constructor() {
         return TransactionDetailItem.ApplicationCallItem.OnCompletionItem(
             labelTextRes = labelTextRes,
             onCompletionTextRes = onCompletionTextRes
+        )
+    }
+
+    fun mapToRejectVersionItem(
+        @StringRes labelTextRes: Int,
+        rejectVersionText: String?
+    ): TransactionDetailItem.ApplicationCallItem.RejectVersionItem {
+        return TransactionDetailItem.ApplicationCallItem.RejectVersionItem(
+            labelTextRes = labelTextRes,
+            rejectVersionText = rejectVersionText
+        )
+    }
+
+    fun mapToAccessListItem(
+        @StringRes labelTextRes: Int,
+        accessListText: String?
+    ): TransactionDetailItem.ApplicationCallItem.AccessListItem {
+        return TransactionDetailItem.ApplicationCallItem.AccessListItem(
+            labelTextRes = labelTextRes,
+            accessListText = accessListText
         )
     }
 

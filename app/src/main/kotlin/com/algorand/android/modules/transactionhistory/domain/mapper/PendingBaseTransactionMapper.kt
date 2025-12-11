@@ -145,7 +145,6 @@ class PendingBaseTransactionMapper @Inject constructor() {
     ): BaseTransaction.Transaction.Undefined {
         return with(transaction) {
             BaseTransaction.Transaction.Undefined(
-                id = null,
                 signature = signatureKey,
                 senderAddress = senderAddress,
                 receiverAddress = receiverAddress,
@@ -153,9 +152,5 @@ class PendingBaseTransactionMapper @Inject constructor() {
                 isPending = true
             )
         }
-    }
-
-    fun mapToTransactionDateTitle(date: String): BaseTransaction.TransactionDateTitle {
-        return BaseTransaction.TransactionDateTitle(date)
     }
 }

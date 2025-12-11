@@ -43,6 +43,8 @@ import com.algorand.android.ui.asset.detail.view.holdings.AssetHoldingScreenList
 import com.algorand.android.ui.asset.detail.view.markets.AssetMarketsScreen
 import com.algorand.android.ui.asset.detail.view.markets.AssetMarketsScreenListener
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewEvent.DisplayFailedToToggleFavoriteError
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailHeaderViewModel.ViewEvent.DisplayFailedToTogglePriceAlertError
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState.Content
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState.Idle
@@ -55,6 +57,8 @@ import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.PeraSingleButtonState
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
+import com.algorand.android.ui.transaction.csv.viewmodel.CsvViewModel
+import com.algorand.android.ui.transaction.history.viewmodel.TransactionHistoryViewModel
 import kotlinx.coroutines.launch
 
 private const val HOLDINGS_PAGE = 0
@@ -62,9 +66,11 @@ private const val MARKETS_PAGE = 1
 
 @Composable
 fun AssetDetailScreen(
-    viewModel: AssetDetailV2ViewModel,
+    assetDetailV2ViewModel: AssetDetailV2ViewModel,
     chartViewModel: AssetLineChartViewModel,
     priceChartViewModel: AssetPriceLineChartViewModel,
+    csvViewModel: CsvViewModel,
+    transactionHistoryViewModel: TransactionHistoryViewModel,
     listener: AssetDetailScreenListener,
     marketsViewModel: AssetMarketsViewModel = hiltViewModel(),
     holdingViewModel: AssetHoldingViewModel = hiltViewModel(),
@@ -72,14 +78,15 @@ fun AssetDetailScreen(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         val pagerState = rememberPagerState(pageCount = { 2 })
-        val viewState = viewModel.state.collectAsStateWithLifecycle().value
+        val viewState = assetDetailV2ViewModel.state.collectAsStateWithLifecycle().value
         val scope = rememberCoroutineScope()
         when (viewState) {
             Idle -> Unit
-            is AssetDetailV2ViewModel.ViewState.Error -> ErrorState(viewModel::reloadViewState)
+            is AssetDetailV2ViewModel.ViewState.Error -> ErrorState(assetDetailV2ViewModel::reloadViewState)
             AssetDetailV2ViewModel.ViewState.Loading -> LoadingState()
             is Content -> {
                 LaunchedEffect(Unit) {
+                    transactionHistoryViewModel.initViewState(viewState.address, viewState.asset.id)
                     headerViewModel.init(viewState.asset)
                     holdingViewModel.init(viewState.address, viewState.asset)
                     marketsViewModel.initViewState(viewState.asset)
@@ -88,12 +95,30 @@ fun AssetDetailScreen(
                 AssetDetailPagerIndicator(pagerState) { selectedPage ->
                     scope.launch { pagerState.animateScrollToPage(selectedPage) }
                 }
-                Spacer(modifier = Modifier.height(32.dp))
                 HorizontalPager(modifier = Modifier.fillMaxSize(), state = pagerState) { page ->
                     when (page) {
-                        HOLDINGS_PAGE -> AssetHoldingScreen(headerViewModel, chartViewModel, holdingViewModel, listener)
+                        HOLDINGS_PAGE -> {
+                            AssetHoldingScreen(
+                                headerViewModel,
+                                chartViewModel,
+                                holdingViewModel,
+                                assetDetailV2ViewModel,
+                                transactionHistoryViewModel,
+                                csvViewModel,
+                                listener
+                            )
+                        }
+
                         MARKETS_PAGE -> {
                             AssetMarketsScreen(headerViewModel, marketsViewModel, priceChartViewModel, listener)
+                        }
+                    }
+                }
+                LaunchedEffect(headerViewModel.viewEvent) {
+                    headerViewModel.viewEvent.collect { event ->
+                        when (event) {
+                            is DisplayFailedToToggleFavoriteError -> listener.onFailedToUpdateFavoriteStatus()
+                            is DisplayFailedToTogglePriceAlertError -> listener.onFailedToUpdatePriceAlertStatus()
                         }
                     }
                 }
@@ -157,7 +182,7 @@ private fun ErrorState(onRetryClick: () -> Unit) {
             modifier = Modifier.padding(24.dp),
             iconResId = null,
             titleResId = null,
-            descriptionResId = R.string.an_error_occured,
+            descriptionResId = R.string.an_error_occurred,
             buttonTextResId = R.string.retry,
             onClick = onRetryClick
         )
@@ -171,6 +196,8 @@ private fun LoadingState() {
     }
 }
 
-interface AssetDetailScreenListener : AssetHoldingScreenListener, AssetMarketsScreenListener {
+interface AssetDetailScreenListener : AssetMarketsScreenListener, AssetHoldingScreenListener {
     fun onNavBackClick()
+    fun onFailedToUpdateFavoriteStatus()
+    fun onFailedToUpdatePriceAlertStatus()
 }

@@ -20,7 +20,11 @@ fun List<PeraLineChartData>.getChangePercentage(): Float? {
     return if (size > 2) {
         val newValue = last().value
         val oldValue = first().value
-        (newValue - oldValue) / oldValue * PERCENTAGE_MULTIPLIER
+        if (oldValue == 0f || newValue == 0f) {
+            null
+        } else {
+            (newValue - oldValue) / oldValue * PERCENTAGE_MULTIPLIER
+        }
     } else {
         null
     }

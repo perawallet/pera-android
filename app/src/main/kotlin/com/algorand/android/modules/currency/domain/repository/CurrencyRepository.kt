@@ -27,6 +27,6 @@ interface CurrencyRepository {
     suspend fun getCurrencyOptionList(): Result<List<CurrencyOption>>
 
     companion object {
-        const val INJECTION_NAME = "currencyRepositoryInjectionName"
+        const val INJECTION_NAME: String = "currencyRepositoryInjectionName"
     }
 }

@@ -25,7 +25,7 @@ sealed class ExternalTransactionSignResult {
         val signedTransactionsByteArray: List<ByteArray?>? = null
     ) : ExternalTransactionSignResult()
 
-    sealed class Error(@StringRes val titleResId: Int) : ExternalTransactionSignResult() {
+    sealed class Error(@param:StringRes val titleResId: Int) : ExternalTransactionSignResult() {
         fun getMessage(context: Context): Pair<String, CharSequence> {
             val title = context.getString(titleResId)
             return when (this) {

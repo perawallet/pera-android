@@ -16,7 +16,7 @@ import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
-import com.algorand.algosdk.sdk.BytesArray
+import app.perawallet.gomobilesdk.sdk.BytesArray
 import com.algorand.android.R
 import com.algorand.android.ledger.CustomScanCallback
 import com.algorand.android.ledger.LedgerBleOperationManager
@@ -64,12 +64,12 @@ import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.net.ConnectException
 import java.net.SocketException
 import javax.inject.Inject
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
 
 @Suppress("LongParameterList")
 class TransactionSignManager @Inject constructor(
@@ -86,7 +86,7 @@ class TransactionSignManager @Inject constructor(
     private val signHdKeyTransaction: SignHdKeyTransaction
 ) : LifecycleScopedCoroutineOwner() {
 
-    val transactionManagerResultLiveData = MutableLiveData<Event<TransactionManagerResult>?>()
+    val transactionManagerResultLiveData: MutableLiveData<Event<TransactionManagerResult>?> = MutableLiveData()
 
     private var transactionParams: TransactionParams? = null
     var transactionDataList: List<TransactionSignData>? = null
@@ -120,17 +120,21 @@ class TransactionSignManager @Inject constructor(
                 is LedgerBleResult.LedgerWaitingForApproval -> {
                     postResult(TransactionManagerResult.LedgerWaitingForApproval(bluetoothName))
                 }
+
                 is LedgerBleResult.SignedTransactionResult -> checkAndCacheSignedTransaction(transactionByteArray)
                 is LedgerBleResult.LedgerErrorResult -> {
                     setSignFailed(TransactionManagerResult.Error.GlobalWarningError.Api(errorMessage))
                 }
+
                 is LedgerBleResult.AppErrorResult -> setSignFailed(Defined(AnnotatedString(errorMessageId), titleResId))
                 is LedgerBleResult.OperationCancelledResult -> setSignFailed(
                     Defined(AnnotatedString(R.string.error_cancelled_message), R.string.error_cancelled_title)
                 )
+
                 is LedgerBleResult.OnMissingBytes -> setSignFailed(
                     Defined(AnnotatedString(R.string.error_sending_message), R.string.error_bluetooth_title)
                 )
+
                 else -> sendErrorLog("Unhandled else case in operationManagerCollectorAction")
             }
         }
@@ -139,7 +143,7 @@ class TransactionSignManager @Inject constructor(
     private val signHelperListener = object : ListQueuingHelper.Listener<TransactionSignData, ByteArray> {
         override fun onAllItemsDequeued(signedTransactions: List<ByteArray?>) {
             if (signedTransactions.isEmpty() || signedTransactions.any { it == null }) {
-                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
                 return
             }
             if (signedTransactions.size == 1) {
@@ -147,7 +151,7 @@ class TransactionSignManager @Inject constructor(
             } else {
                 val safeSignedTransactions = signedTransactions.mapToNotNullableListOrNull { it }
                 if (safeSignedTransactions == null) {
-                    postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+                    postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
                     return
                 }
                 transactionDataList?.let { postGroupTxnSignResult(safeSignedTransactions, it) }
@@ -217,7 +221,7 @@ class TransactionSignManager @Inject constructor(
         currentScope.launch {
             postResult(TransactionManagerResult.Loading)
             transactionData.toList().ifEmpty {
-                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
                 return@launch
             }.let { transactionList ->
                 processTransactionDataList(transactionList, isGroupTransaction)?.let {
@@ -250,11 +254,12 @@ class TransactionSignManager @Inject constructor(
         when (signer) {
             is TransactionSigner.Algo25 -> {
                 val secretKey = getAlgo25SecretKey(signer.address) ?: run {
-                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
                     return
                 }
                 checkAndCacheSignedTransaction(transactionByteArray?.signTx(secretKey))
             }
+
             is TransactionSigner.HdKey -> {
                 val transactionBytes = transactionByteArray ?: return handleSignError()
                 val hdKey = getLocalAccount(signer.address) as? LocalAccount.HdKey ?: return handleSignError()
@@ -266,6 +271,7 @@ class TransactionSignManager @Inject constructor(
 
                 checkAndCacheSignedTransaction(transactionSignedByteArray)
             }
+
             is TransactionSigner.LedgerBle -> sendTransactionWithLedger(signer as TransactionSigner.LedgerBle)
             is TransactionSigner.SignerNotFound -> {
                 postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
@@ -274,7 +280,7 @@ class TransactionSignManager @Inject constructor(
     }
 
     private fun handleSignError() {
-        setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+        setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
     }
 
     private suspend fun TransactionSignData.createArc59SendTransactions(): List<Arc59TransactionData>? {
@@ -343,9 +349,11 @@ class TransactionSignManager @Inject constructor(
                     note = if (xnote.isNullOrBlank()) note else xnote
                 )
             }
+
             is TransactionSignData.AddAsset -> {
                 transactionParams.makeAddAssetTx(senderAccountAddress, assetId)
             }
+
             is TransactionSignData.RemoveAsset -> {
                 if (shouldCreateAssetRemoveTransaction(senderAccountAddress, assetId)) {
                     transactionParams.makeRemoveAssetTx(
@@ -357,6 +365,7 @@ class TransactionSignManager @Inject constructor(
                     null
                 }
             }
+
             is TransactionSignData.SendAndRemoveAsset -> {
                 transactionParams.makeSendAndRemoveAssetTx(
                     senderAddress = senderAccountAddress,
@@ -365,6 +374,7 @@ class TransactionSignManager @Inject constructor(
                     amount = amount
                 )
             }
+
             is TransactionSignData.Rekey -> {
                 transactionParams.makeRekeyTx(senderAccountAddress, rekeyAdminAddress)
             }
@@ -380,12 +390,14 @@ class TransactionSignManager @Inject constructor(
             is Result.Success -> {
                 transactionParams = result.data
             }
+
             is Result.Error -> {
                 transactionParams = null
                 when (result.exception.cause) {
                     is ConnectException, is SocketException -> {
                         postResult(Defined(AnnotatedString(R.string.the_internet_connection)))
                     }
+
                     else -> {
                         when (transactionData) {
                             is TransactionSignData.AddAsset -> {
@@ -397,6 +409,7 @@ class TransactionSignManager @Inject constructor(
                                     )
                                 )
                             }
+
                             is TransactionSignData.Rekey,
                             is TransactionSignData.Send,
                             is TransactionSignData.SendAndRemoveAsset,
@@ -486,9 +499,11 @@ class TransactionSignManager @Inject constructor(
         when (this) {
             is TransactionSignData.AddAsset ->
                 minBalance += minBalancePerAssetAsBigInteger
+
             is TransactionSignData.RemoveAsset -> {
                 minBalance -= minBalancePerAssetAsBigInteger
             }
+
             else -> {
                 sendErrorLog("Unhandled else case in isMinimumLimitViolated")
             }
@@ -586,7 +601,7 @@ class TransactionSignManager @Inject constructor(
         transactionData: TransactionSignData?
     ) {
         if (bytesArray == null || transactionData == null) {
-            postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+            postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
         } else {
             postResult(TransactionManagerResult.Success(transactionData.getSignedTransactionDetail(bytesArray)))
         }
@@ -607,7 +622,7 @@ class TransactionSignManager @Inject constructor(
                 )
             )
         } else {
-            postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+            postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
         }
     }
 

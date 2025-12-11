@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GenerateAccountAddressFromSecretKeyUseCase @Inject constructor(
-    @Named(AlgorandSdkCryptoUtil.INJECTION_NAME)
+    @param:Named(AlgorandSdkCryptoUtil.INJECTION_NAME)
     private val algorandSdkCryptoUtil: AlgorandSdkCryptoUtil
 ) {
 

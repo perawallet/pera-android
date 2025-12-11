@@ -38,6 +38,7 @@ class AssetSearchItemViewHolder(
             setAssetDescriptionText(shortName.assetName, assetId)
             setAssetVerificationTier(verificationTierConfiguration)
             setAssetItemViewClickListeners(this)
+            binding.statefulAssetItemView.setIsFavorite(item.isFavorite)
         }
     }
 

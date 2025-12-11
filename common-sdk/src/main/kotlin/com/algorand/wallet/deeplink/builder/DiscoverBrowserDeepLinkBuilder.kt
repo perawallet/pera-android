@@ -20,16 +20,16 @@ internal class DiscoverBrowserDeepLinkBuilder : DeepLinkBuilder {
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {
             url != null &&
-                accountAddress == null &&
-                assetId == null &&
-                amount == null &&
-                walletConnectUrl == null &&
-                note == null &&
-                xnote == null &&
-                label == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null &&
-                mnemonic == null
+                    accountAddress == null &&
+                    assetId == null &&
+                    amount == null &&
+                    walletConnectUrl == null &&
+                    note == null &&
+                    xnote == null &&
+                    label == null &&
+                    webImportQrCode == null &&
+                    notificationGroupType == null &&
+                    mnemonic == null
         }
     }
 

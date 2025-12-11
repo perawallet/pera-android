@@ -22,17 +22,19 @@ import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilde
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagination
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository.Companion.REPOSITORY_INJECTION_NAME
-import javax.inject.Inject
-import javax.inject.Named
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Named
 
 class SearchAssetUseCase @Inject constructor(
-    @Named(REPOSITORY_INJECTION_NAME) private val assetSearchRepository: AssetSearchRepository,
+    @param:Named(REPOSITORY_INJECTION_NAME) private val assetSearchRepository: AssetSearchRepository,
     private val assetSearchPagination: AssetSearchPagination,
-    private val searchedAssetMapper: SearchedAssetMapper
+    private val searchedAssetMapper: SearchedAssetMapper,
+    private val getAssetFavoriteStatuses: GetAssetFavoriteStatuses
 ) {
 
     fun createPaginationFlow(
@@ -41,7 +43,7 @@ class SearchAssetUseCase @Inject constructor(
         defaultQuery: AssetSearchQuery
     ): Flow<PagingData<BaseSearchedAsset>> {
         return assetSearchPagination
-            .initPagination(builder, scope, assetSearchRepository, defaultQuery)
+            .initPagination(builder, scope, assetSearchRepository, defaultQuery, getAssetFavoriteStatuses)
             .map { pagingData -> pagingData.map { createBaseSearchedAsset(it) } }
             .distinctUntilChanged()
     }

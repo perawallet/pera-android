@@ -12,11 +12,11 @@
 
 package com.algorand.android.credentials.passkeys.domain
 
+import app.perawallet.deterministicP256.DeterministicP256
 import cash.z.ecc.android.bip39.Mnemonics
 import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeedFirstAddresses
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import foundation.algorand.deterministicP256.DeterministicP256
 import java.security.KeyPair
 import javax.inject.Inject
 
@@ -38,7 +38,7 @@ internal class DeterministicBip39SignManager @Inject constructor(
         return try {
             val key = deterministicSigner.genDerivedMainKeyWithBIP39(Mnemonics.MnemonicCode(entropy).joinToString(" "))
             deterministicSigner.genDomainSpecificKeypair(key, origin, userHandle)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         } finally {
             entropy.clearFromMemory()

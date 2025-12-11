@@ -23,7 +23,7 @@ class WalletConnectUrlQueryParserTest {
 
     @Test
     fun `EXPECT null WHEN raw uri is empty`() {
-        val uri = PeraUriBuilder.create(rawUri = "")
+        val uri = PeraUriBuilder.create()
 
         val result = sut.parseQuery(uri)
 

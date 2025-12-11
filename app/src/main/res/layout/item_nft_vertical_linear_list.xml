@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -26,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearance="@style/AccountAssetItemStartImageShapeAppearance"
-        tools:srcCompat="@drawable/ic_algo_green_round" />
+        tools:srcCompat="@drawable/ic_algo" />
 
     <ProgressBar
         android:id="@+id/nftStartIconProgressBar"
@@ -49,9 +50,9 @@
         app:layout_constraintCircleAngle="@integer/governor_icon_angle"
         app:layout_constraintCircleRadius="20dp"
         tools:backgroundTint="@color/background"
+        tools:ignore="MissingConstraints"
         tools:srcCompat="@drawable/ic_crown_filled"
-        tools:visibility="visible"
-        tools:ignore="MissingConstraints" />
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/nftNameTextView"
@@ -115,4 +116,3 @@
         app:layout_goneMarginStart="@dimen/spacing_normal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

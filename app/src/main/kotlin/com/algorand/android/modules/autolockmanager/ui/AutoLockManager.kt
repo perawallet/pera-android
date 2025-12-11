@@ -18,20 +18,21 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.algorand.android.MainActivity
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
+import com.algorand.android.ui.splash.LauncherActivity
 import com.algorand.android.utils.ActivityLifecycleObserver
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
- * Since we have two activity in app lifecycle ([LauncerActivity] and [MainActivity]) I've added a kind of filter,
- * because no need to observer [LauncerActivity].
+ * Since we have two activity in app lifecycle ([LauncherActivity] and [MainActivity]) I've added a kind of filter,
+ * because no need to observer [LauncherActivity].
  */
 @Singleton
 class AutoLockManager @Inject constructor(

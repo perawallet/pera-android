@@ -19,19 +19,19 @@ import androidx.annotation.StringRes
 import com.algorand.android.utils.Event
 
 data class TransactionStatusPreview(
-    @RawRes
+    @param:RawRes
     val transactionStatusAnimationResId: Int?,
-    @DrawableRes
+    @param:DrawableRes
     val transactionStatusAnimationBackgroundResId: Int,
-    @ColorRes
+    @param:ColorRes
     val transactionStatusAnimationBackgroundTintResId: Int,
-    @DrawableRes
+    @param:DrawableRes
     val transactionStatusAnimationDrawableResId: Int?,
-    @ColorRes
+    @param:ColorRes
     val transactionStatusAnimationDrawableTintResId: Int?,
-    @StringRes
+    @param:StringRes
     val transactionStatusTitleResId: Int,
-    @StringRes
+    @param:StringRes
     val transactionStatusDescriptionResId: Int,
     val onExitSendAlgoNavigationEvent: Event<Unit>?,
     val isDoneButtonVisible: Boolean,

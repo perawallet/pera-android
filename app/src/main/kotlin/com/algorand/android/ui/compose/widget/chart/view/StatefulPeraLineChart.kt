@@ -30,6 +30,7 @@ import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Error
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Idle
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Loading
@@ -66,6 +67,7 @@ fun StatefulPeraLineChart(
                     }
                 }
             }
+
             Error -> PeraLineChartErrorState()
         }
     }
@@ -77,7 +79,7 @@ private fun ColumnScope.Chart(
     viewModel: StatefulPeraLineChartViewModel,
     listener: StatefulPeraLineChartListener
 ) {
-    listener.onChartDataUpdated(state.chartData)
+    listener.onChartDataUpdated(state.chartData, state.tendencyValues)
     PeraLineChart(
         modifier = Modifier
             .weight(1f)
@@ -98,5 +100,5 @@ interface StatefulPeraLineChartListener {
     fun onItemSelected(item: PeraLineChartData)
     fun onItemDeselected()
     fun onChartTap() {}
-    fun onChartDataUpdated(items: List<PeraLineChartData>) {}
+    fun onChartDataUpdated(items: List<PeraLineChartData>, tendencyValues: ChartTendencyValues?) {}
 }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -118,16 +120,6 @@ fun PeraScrimText(modifier: Modifier = Modifier, text: String) {
 }
 
 @Composable
-fun PeraFootnoteText(modifier: Modifier = Modifier, text: String) {
-    Text(
-        modifier = modifier,
-        text = text,
-        style = PeraTheme.typography.body.regular.sansMedium,
-        color = PeraTheme.colors.link.primary,
-    )
-}
-
-@Composable
 fun PeraWarningText(modifier: Modifier = Modifier, text: String) {
     Row(modifier = modifier) {
         Image(
@@ -187,5 +179,25 @@ fun PeraHighlightedGrayText(modifier: Modifier = Modifier, text: String) {
         text = text,
         textColor = PeraTheme.colors.text.gray,
         backgroundColor = PeraTheme.colors.layer.grayLighter
+    )
+}
+
+@Composable
+fun AutosizeText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = PeraTheme.typography.body.regular.sans,
+    color: Color = PeraTheme.colors.text.main,
+    maxLines: Int = 1,
+    autoSize: TextAutoSize = TextAutoSize.StepBased(maxFontSize = style.fontSize)
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = style,
+        color = color,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
+        autoSize = autoSize
     )
 }

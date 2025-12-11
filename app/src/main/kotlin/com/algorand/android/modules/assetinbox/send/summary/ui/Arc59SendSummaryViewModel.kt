@@ -23,11 +23,11 @@ import com.algorand.android.utils.browser.ASSET_INBOX_SUPPORT_URL
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class Arc59SendSummaryViewModel @Inject constructor(
@@ -87,6 +87,6 @@ class Arc59SendSummaryViewModel @Inject constructor(
     }
 
     companion object {
-        const val ARC_59_SEND_SUMMARY_NAV_ARGS_KEY = "arc59SendSummaryNavArgs"
+        const val ARC_59_SEND_SUMMARY_NAV_ARGS_KEY: String = "arc59SendSummaryNavArgs"
     }
 }

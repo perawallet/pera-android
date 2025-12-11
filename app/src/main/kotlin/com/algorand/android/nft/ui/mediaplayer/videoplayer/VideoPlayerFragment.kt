@@ -13,8 +13,10 @@
 package com.algorand.android.nft.ui.mediaplayer.videoplayer
 
 import androidx.fragment.app.viewModels
+import androidx.media3.common.util.UnstableApi
 import com.algorand.android.nft.ui.mediaplayer.MediaPlayerFragment
 
+@UnstableApi
 class VideoPlayerFragment : MediaPlayerFragment() {
-    override val mediaPlayerViewModel by viewModels<VideoPlayerViewModel>()
+    override val mediaPlayerViewModel: VideoPlayerViewModel by viewModels<VideoPlayerViewModel>()
 }

@@ -22,8 +22,10 @@ import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetailMapper
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
+import com.algorand.wallet.asset.data.service.AssetStatusApiService
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -32,6 +34,7 @@ class AssetRepositoryImplTest {
 
     private val assetDetailApi: AssetDetailApiService = mockk(relaxed = true)
     private val assetDetailNodeApi: AssetDetailNodeApiService = mockk(relaxed = true)
+    private val assetStatusApiService: AssetStatusApiService = mockk(relaxed = true)
     private val assetDetailCacheHelper: AssetDetailCacheHelper = mockk(relaxed = true)
     private val assetDetailDao: AssetDetailDao = mockk(relaxed = true)
     private val collectibleDao: CollectibleDao = mockk(relaxed = true)
@@ -42,10 +45,10 @@ class AssetRepositoryImplTest {
     private val collectibleTraitDao: CollectibleTraitDao = mockk(relaxed = true)
     private val algoAssetDetailEntityMapper: AlgoAssetDetailEntityMapper = mockk(relaxed = true)
 
-
     private val sut = AssetRepositoryImpl(
         assetDetailApi,
         assetDetailNodeApi,
+        assetStatusApiService,
         assetDetailCacheHelper,
         assetDetailDao,
         collectibleDao,
@@ -58,7 +61,7 @@ class AssetRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT cached asset ids WHEN cache is not empty`() = runTest {
+    fun `EXPECT cached asset ids WHEN cache is not empty`(): TestResult = runTest {
         coEvery { assetDetailDao.getAllIds() } returns listOf(1L, 2L, 3L)
 
         val result = sut.getCachedAssetIds()

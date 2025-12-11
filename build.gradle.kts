@@ -1,4 +1,14 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
 
 buildscript {
     repositories {
@@ -16,9 +26,6 @@ buildscript {
         classpath(libs.navigation.safe.args.gradle.plugin)
         classpath(libs.firebase.perf.plugin)
         classpath(libs.kover.plugin)
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
@@ -29,9 +36,9 @@ plugins {
     alias(libs.plugins.compose).apply(false)
     alias(libs.plugins.kotlinx.serialization).apply(false)
     alias(libs.plugins.ksp).apply(false)
-    alias(libs.plugins.multiplatform).apply(false)
-    alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.android.library).apply(false)
+    alias(libs.plugins.kotlin.android).apply(false)
+    alias(libs.plugins.room).apply(false)
 }
 
 allprojects {
@@ -50,4 +57,20 @@ tasks.register("kover") {
     dependsOn(":common-sdk:koverHtmlReport")
     group = "verification"
     description = "Runs koverHtmlReport for the common-sdk module"
+}
+
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("org.bouncycastle:bcprov-jdk18on:1.82")
+            force("org.bouncycastle:bcpkix-jdk18on:1.82")
+            force("org.bouncycastle:bctls-jdk18on:1.82")
+
+            eachDependency {
+                if (requested.group == "org.bouncycastle" && requested.name == "bcprov-jdk15to18") {
+                    useTarget("org.bouncycastle:bcprov-jdk18on:1.82")
+                }
+            }
+        }
+    }
 }

@@ -12,10 +12,16 @@
 
 package com.algorand.android.nft.ui.mediaplayer
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
@@ -24,21 +30,13 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.utils.setScreenOrientationFullSensor
 import com.algorand.android.utils.setScreenOrientationPortrait
 import com.algorand.android.utils.viewbinding.viewBinding
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 
+@UnstableApi
 abstract class MediaPlayerFragment : BaseFragment(R.layout.fragment_media_player) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    protected val binding by viewBinding(FragmentMediaPlayerBinding::bind)
+    protected val binding: FragmentMediaPlayerBinding by viewBinding(FragmentMediaPlayerBinding::bind)
 
     abstract val mediaPlayerViewModel: MediaPlayerViewModel
 
@@ -55,8 +53,8 @@ abstract class MediaPlayerFragment : BaseFragment(R.layout.fragment_media_player
     }
 
     private fun loadMedia() {
-        val videoUrl = mediaPlayerViewModel.collectibleMediaUrl
-        val mediaSource = createMediaSource(videoUrl)
+        val url = mediaPlayerViewModel.collectibleMediaUrl
+        val mediaSource = createMediaSource(url)
         setupPlayer(mediaSource)
     }
 
@@ -72,9 +70,25 @@ abstract class MediaPlayerFragment : BaseFragment(R.layout.fragment_media_player
         pausePlayer()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        destroyExoPlayer()
+    override fun onStop() {
+        super.onStop()
+        destroyPlayer()
+    }
+
+    private fun setupPlayer(mediaSource: ProgressiveMediaSource) {
+        exoPlayer = ExoPlayer.Builder(requireContext()).build().apply {
+            setMediaSource(mediaSource)
+            prepare()
+            playWhenReady = true
+            repeatMode = Player.REPEAT_MODE_ONE
+        }
+        binding.playerView.player = exoPlayer
+    }
+
+    private fun createMediaSource(url: String): ProgressiveMediaSource {
+        val dataSourceFactory = DefaultDataSource.Factory(requireContext())
+        return ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(url.toUri()))
     }
 
     private fun resumePlayer() {
@@ -87,36 +101,8 @@ abstract class MediaPlayerFragment : BaseFragment(R.layout.fragment_media_player
         exoPlayer?.playWhenReady = false
     }
 
-    private fun destroyExoPlayer() {
+    private fun destroyPlayer() {
         exoPlayer?.release()
-    }
-
-    private fun setupPlayer(mediaSource: MediaSource?) {
-        if (mediaSource != null) {
-            exoPlayer = ExoPlayer.Builder(binding.root.context).build().apply {
-                binding.playerView.player = this
-                setMediaSource(mediaSource)
-                playWhenReady = true
-                repeatMode = Player.REPEAT_MODE_ONE
-                prepare()
-            }
-        }
-    }
-
-    private fun createMediaSource(url: String): MediaSource {
-        val uri = Uri.parse(url)
-        val progressiveMediaSource = ProgressiveMediaSource.Factory(buildDataSourceFactory())
-        return progressiveMediaSource.createMediaSource(MediaItem.fromUri(uri))
-    }
-
-    private fun buildDefaultBandwidthMeter(): DefaultBandwidthMeter {
-        return DefaultBandwidthMeter.Builder(binding.root.context).build()
-    }
-
-    private fun buildDataSourceFactory(): DataSource.Factory {
-        val httpDataSource = DefaultHttpDataSource.Factory()
-        return DefaultDataSource.Factory(binding.root.context, httpDataSource).apply {
-            setTransferListener(buildDefaultBandwidthMeter())
-        }
+        exoPlayer = null
     }
 }

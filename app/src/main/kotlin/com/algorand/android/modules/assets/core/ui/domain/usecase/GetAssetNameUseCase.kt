@@ -32,7 +32,7 @@ internal class GetAssetNameUseCase(
         return if (splitItem.size == 1) {
             splitItem.firstOrNull()
         } else {
-            splitItem.joinToString("") { s -> s.substring(0, 1) }
+            splitItem.joinToString("") { s -> s.take(1) }
         }?.take(ASSET_AVATAR_MAX_LETTER_COUNT)?.uppercase(Locale.ENGLISH).orEmpty()
     }
 

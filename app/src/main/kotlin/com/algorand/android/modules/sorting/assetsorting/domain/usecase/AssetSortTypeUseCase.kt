@@ -18,7 +18,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class AssetSortTypeUseCase @Inject constructor(
-    @Named(AssetSortPreferencesRepository.INJECTION_NAME)
+    @param:Named(AssetSortPreferencesRepository.INJECTION_NAME)
     private val assetSortPreferencesRepository: AssetSortPreferencesRepository
 ) {
 

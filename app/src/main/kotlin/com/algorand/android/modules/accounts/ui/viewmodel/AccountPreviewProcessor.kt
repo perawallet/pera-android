@@ -23,7 +23,6 @@ import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.SortAccountsBySortingPreference
 import com.algorand.android.modules.notification.domain.usecase.NotificationStatusUseCase
-import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
@@ -37,16 +36,14 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
-import com.algorand.wallet.remoteconfig.domain.usecase.ACCOUNTS_CHART_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import java.math.BigDecimal
 import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class AccountPreviewProcessor @Inject constructor(
-    private val getSwapFeatureRedDotVisibility: GetSwapFeatureRedDotVisibilityUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val portfolioItemProcessor: AccountsPreviewPortfolioItemProcessor,
     private val notificationStatusUseCase: NotificationStatusUseCase,
@@ -75,9 +72,7 @@ class AccountPreviewProcessor @Inject constructor(
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
-        if (isFeatureToggleEnabled(ACCOUNTS_CHART_TOGGLE)) {
-            accountList.add(BaseAccountListItem.WalletChartItem)
-        }
+        accountList.add(BaseAccountListItem.WalletChartItem)
 
         insertQuickActionsItem(accountList)
 
@@ -96,7 +91,8 @@ class AccountPreviewProcessor @Inject constructor(
             accountList.addAll(accountItems)
         }
 
-        val portfolio = portfolioItemProcessor.getPortfolioItem(accountLites, amountRenderType, localAccounts)
+        val portfolio = portfolioItemProcessor
+            .getPortfolioItem(accountLites, amountRenderType, localAccounts, privacyMode)
         return accountPreviewMapper.getSuccessAccountPreview(
             accountListItems = accountList,
             portfolioValueItem = portfolio,
@@ -183,11 +179,10 @@ class AccountPreviewProcessor @Inject constructor(
         )
     }
 
-    private suspend fun insertQuickActionsItem(accountsList: MutableList<BaseAccountListItem>) {
+    private fun insertQuickActionsItem(accountsList: MutableList<BaseAccountListItem>) {
         accountsList.add(
             BaseAccountListItem.QuickActionsItem(
-                isSwapButtonSelected = getSwapFeatureRedDotVisibility.getSwapFeatureRedDotVisibility(),
-                isStakingEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
+                isStakingEnabled = isFeatureToggleEnabled(FeatureToggle.STAKING.key)
             )
         )
     }

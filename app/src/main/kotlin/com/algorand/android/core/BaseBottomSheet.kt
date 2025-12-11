@@ -25,7 +25,6 @@ import androidx.navigation.NavDirections
 import com.algorand.android.CoreMainActivity
 import com.algorand.android.MainActivity
 import com.algorand.android.R
-import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.utils.analytics.logScreen
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.toShortenedAddress
@@ -37,7 +36,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 // TODO: 5.08.2022 A work around is to provide all fields again in child classes which makes having default parameter
 // TODO: 5.08.2022 completely non-sense. It would be good to investigate
 
-abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : BottomSheetDialogFragment() {
+abstract class BaseBottomSheet(
+    @param:LayoutRes private val layoutResId: Int
+) : BottomSheetDialogFragment() {
 
     open val fullPageNeeded: Boolean = false
 
@@ -54,7 +55,7 @@ abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : Bottom
         return inflater.cloneInContext(contextThemeWrapper).inflate(layoutResId, container, false)
     }
 
-    override fun getTheme() = R.style.BottomSheetDialogTheme_Primary
+    override fun getTheme(): Int = R.style.BottomSheetDialogTheme_Primary
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -95,7 +96,7 @@ abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : Bottom
         BottomSheetBehavior.from(bottomSheet).isDraggable = isEnabled
     }
 
-    protected fun showTopToast(title: String? = null, description: String? = null) {
+    private fun showTopToast(title: String? = null, description: String? = null) {
         (activity as? BaseActivity)?.showTopToast(title, description)
     }
 
@@ -127,21 +128,6 @@ abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : Bottom
         tag: String = bottomSheetTag
     ) {
         (activity as? MainActivity)?.showGlobalError(errorMessage, title, tag)
-    }
-
-    fun showAlertSuccess(
-        title: String,
-        successMessage: String? = null,
-        tag: String = bottomSheetTag
-    ) {
-        (activity as? MainActivity)?.showAlertSuccess(title, successMessage, tag)
-    }
-
-    fun showForegroundNotification(
-        notificationMetadata: NotificationMetadata,
-        tag: String = bottomSheetTag
-    ) {
-        (activity as? MainActivity)?.showForegroundNotification(notificationMetadata, tag)
     }
 
     fun showMaxAccountLimitExceededError() {

@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.swap.data.repository
 
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.InMemoryCachedObject
 import com.algorand.wallet.foundation.cache.PersistentCache
@@ -51,7 +50,7 @@ internal class DefaultSwapRepository @Inject constructor(
     private val topSwapPairsMapper: TopSwapPairsMapper,
     private val swapUpdateStatusRequestBodyMapper: SwapUpdateStatusRequestBodyMapper,
     private val useLocalCurrencyCache: PersistentCache<Boolean>,
-    private val slippageTolerancePersistentCache: PersistentCache<Float>
+    private val slippageTolerancePersistentCache: PersistentCache<Double>
 ) : SwapRepository {
 
     override suspend fun getSwapQuotes(payload: SwapQuoteRequestPayload): PeraResult<List<SwapQuoteV2>> {
@@ -67,8 +66,7 @@ internal class DefaultSwapRepository @Inject constructor(
 
     override suspend fun getPeraFee(assetInId: Long, amount: BigInteger): PeraResult<SwapPeraFee> {
         return try {
-            val requestAssetId = getSafeAssetIdForRequest(assetInId)
-            val response = swapApiService.getPeraFee(SwapPeraFeeRequestBody(requestAssetId, amount))
+            val response = swapApiService.getPeraFee(SwapPeraFeeRequestBody(assetInId, amount))
             PeraResult.Success(SwapPeraFee(response.peraFeeAmount))
         } catch (exception: Exception) {
             PeraResult.Error(exception)
@@ -110,8 +108,7 @@ internal class DefaultSwapRepository @Inject constructor(
         return try {
             val providers = getSwapQuoteProviders().getDataOrNull() ?: return PeraResult.Error(Exception())
             val providersCsv = providers.joinToString(separator = ",") { it.name }
-            val safeAssetIdForRequest = getSafeAssetIdForRequest(assetInId)
-            val response = swapApiService.getAvailableSwapAssetList(safeAssetIdForRequest, providersCsv, query)
+            val response = swapApiService.getAvailableSwapAssetList(assetInId, providersCsv, query)
             val availableAssets = response.results?.mapNotNull { availableSwapAssetMapper(it) }.orEmpty()
             if (availableAssets.isEmpty()) PeraResult.Error(Exception()) else PeraResult.Success(availableAssets)
         } catch (exception: Exception) {
@@ -156,11 +153,11 @@ internal class DefaultSwapRepository @Inject constructor(
         useLocalCurrencyCache.put(useLocalCurrency)
     }
 
-    override suspend fun getSlippageTolerancePercentage(): Float? {
+    override suspend fun getSlippageTolerancePercentage(): Double? {
         return slippageTolerancePersistentCache.get()
     }
 
-    override suspend fun setSlippageTolerancePercentage(percentage: Float?) {
+    override suspend fun setSlippageTolerancePercentage(percentage: Double?) {
         if (percentage == null) {
             slippageTolerancePersistentCache.clear()
         } else {

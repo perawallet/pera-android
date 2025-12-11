@@ -22,7 +22,6 @@ import com.algorand.android.modules.transaction.refactor.usecase.CreateRekeyTran
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +30,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
@@ -40,8 +40,8 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
 ) : BaseRekeyConfirmationViewModel() {
 
     private val navArgs = RekeyToLedgerAccountConfirmationFragmentArgs.fromSavedStateHandle(savedStateHandle)
-    val accountAddress = navArgs.accountAddress
-    val authAccountAddress = navArgs.authAccountAddress
+    val accountAddress: String = navArgs.accountAddress
+    val authAccountAddress: String = navArgs.authAccountAddress
 
     private var sendTransactionJob: Job? = null
 

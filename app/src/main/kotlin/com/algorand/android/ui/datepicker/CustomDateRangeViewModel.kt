@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.datepicker
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
@@ -21,11 +20,12 @@ import com.algorand.android.models.ui.CustomDateRangePreview
 import com.algorand.android.usecase.CustomDateRangeUseCase
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.ZonedDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import javax.inject.Inject
 
 @HiltViewModel
 class CustomDateRangeViewModel @Inject constructor(

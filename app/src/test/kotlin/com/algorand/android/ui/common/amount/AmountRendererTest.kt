@@ -52,7 +52,7 @@ class AmountRendererTest {
 
     @Test
     fun `EXPECT hidden pattern WHEN render type is hidden`() {
-        val sut = AmountRenderer(formattedAmount, AmountRenderer.RenderType.Hidden("****"), prefix = null)
+        val sut = AmountRenderer(formattedAmount, AmountRenderer.RenderType.Hidden(), prefix = null)
 
         val result = sut.getDisplayValue()
 

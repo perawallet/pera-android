@@ -19,10 +19,10 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentContactInfoBinding
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.extensions.setContactIconDrawable
 import com.algorand.android.utils.hideKeyboard
@@ -43,7 +43,7 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )

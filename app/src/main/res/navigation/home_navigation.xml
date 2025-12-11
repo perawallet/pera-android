@@ -20,21 +20,45 @@
 
     <include app:graph="@navigation/wallet_connect_arbitrary_data_request_navigation" />
 
+    <include app:graph="@navigation/warning_confirmation_navigation" />
+
+    <include app:graph="@navigation/asset_detail_navigation" />
+
+    <include app:graph="@navigation/account_options_navigation" />
+
+    <include app:graph="@navigation/asset_addition_navigation" />
+
+    <include app:graph="@navigation/wallet_connect_connection_navigation" />
+
+    <include app:graph="@navigation/discover_home_navigation" />
+
+    <include app:graph="@navigation/asset_filter_navigation" />
+
+    <include app:graph="@navigation/recover_with_passphrase_navigation" />
+
+    <include app:graph="@navigation/register_watch_account_navigation" />
+
+    <include app:graph="@navigation/bidali_navigation" />
+
+    <include app:graph="@navigation/web_import_navigation" />
+
+    <include app:graph="@navigation/remove_account_confirmation_navigation" />
+
+    <include app:graph="@navigation/backup_passphrase_info_navigation" />
+
+    <include app:graph="@navigation/asset_inbox_all_accounts_navigation" />
+
+    <include app:graph="@navigation/swap_v2_navigation" />
+
     <include app:graph="@navigation/single_button_bottom_sheet_navigation" />
 
     <include app:graph="@navigation/send_algo_navigation" />
-
-    <include app:graph="@navigation/warning_confirmation_navigation" />
 
     <include app:graph="@navigation/meld_navigation" />
 
     <include app:graph="@navigation/contact_addition_navigation" />
 
     <include app:graph="@navigation/transaction_detail_navigation" />
-
-    <include app:graph="@navigation/asset_detail_navigation" />
-
-    <include app:graph="@navigation/account_options_navigation" />
 
     <include app:graph="@navigation/account_status_detail_navigation" />
 
@@ -43,8 +67,6 @@
     <include app:graph="@navigation/view_passphrase_navigation" />
 
     <include app:graph="@navigation/date_filter_navigation" />
-
-    <include app:graph="@navigation/asset_addition_navigation" />
 
     <include app:graph="@navigation/asset_addition_action_navigation" />
 
@@ -62,43 +84,15 @@
 
     <include app:graph="@navigation/audio_player_navigation" />
 
-    <!-- Swap -->
-    <include app:graph="@navigation/swap_account_selection_navigation" />
-
-    <include app:graph="@navigation/swap_introduction_navigation" />
-
-    <include app:graph="@navigation/swap_navigation" />
-    <!-- Swap End -->
-
-    <include app:graph="@navigation/wallet_connect_connection_navigation" />
-
-    <include app:graph="@navigation/discover_home_navigation" />
-
     <include app:graph="@navigation/discover_dapp_navigation" />
 
     <include app:graph="@navigation/discover_detail_navigation" />
-
-    <include app:graph="@navigation/asset_filter_navigation" />
-
-    <include app:graph="@navigation/recover_with_passphrase_navigation" />
-
-    <include app:graph="@navigation/register_watch_account_navigation" />
 
     <include app:graph="@navigation/nft_opt_out_confirmation_navigation" />
 
     <include app:graph="@navigation/nft_card_viewer_navigation" />
 
-    <include app:graph="@navigation/bidali_navigation" />
-
-    <include app:graph="@navigation/web_import_navigation" />
-
-    <include app:graph="@navigation/remove_account_confirmation_navigation" />
-
     <include app:graph="@navigation/in_app_pin_navigation" />
-
-    <include app:graph="@navigation/backup_passphrase_info_navigation" />
-
-    <include app:graph="@navigation/asset_inbox_all_accounts_navigation" />
 
     <include app:graph="@navigation/asset_inbox_one_account_navigation" />
 
@@ -111,8 +105,6 @@
     <include app:graph="@navigation/security_navigation" />
 
     <include app:graph="@navigation/discover_url_viewer_navigation" />
-
-    <include app:graph="@navigation/swap_v2_navigation" />
 
     <action
         android:id="@+id/action_global_registerWatchAccountNavigation"
@@ -227,22 +219,6 @@
         <argument
             android:name="sessionIdentifier"
             app:argType="com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier" />
-    </action>
-
-    <action
-        android:id="@+id/action_global_swap_introduction_navigation"
-        app:destination="@id/swapIntroductionNavigation" />
-
-    <action
-        android:id="@+id/action_global_swapAccountSelectionNavigation"
-        app:destination="@id/swapAccountSelectionNavigation" />
-
-    <action
-        android:id="@+id/action_global_swapNavigation"
-        app:destination="@id/swapNavigation">
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
     </action>
 
     <action
@@ -573,19 +549,6 @@
             android:id="@+id/action_accountsFragment_to_removeAssetsFragment"
             app:destination="@id/removeAssetsFragment" />
         <action
-            android:id="@+id/action_accountsFragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation" />
-        <action
-            android:id="@+id/action_accountsFragment_to_swapNavigation"
-            app:destination="@id/swapNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_accountsFragment_to_swapAccountSelectionNavigation"
-            app:destination="@id/swapAccountSelectionNavigation" />
-        <action
             android:id="@+id/action_accountsFragment_to_accountErrorOptionsBottomSheet"
             app:destination="@id/accountErrorOptionsBottomSheet" />
         <action
@@ -761,7 +724,6 @@
             app:destination="@id/assetTransferAmountFragment" />
     </fragment>
 
-
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.algorand.android.ui.settings.SettingsFragment"
@@ -849,8 +811,8 @@
             android:id="@+id/action_developerSettingsFragment_to_nodeSettingsFragment"
             app:destination="@id/nodeSettingsFragment" />
         <action
-            android:id="@+id/action_developerSettingsFragment_to_migrationViewerFragment"
-            app:destination="@id/migrationViewerFragment" />
+            android:id="@+id/action_developerSettingsFragment_to_developerOptionsFragment"
+            app:destination="@id/developerOptionsFragment" />
         <action
             android:id="@+id/action_developerSettingsFragment_to_createAccountNameRegistrationNavigation"
             app:destination="@id/createAccountNameRegistrationNavigation">
@@ -879,11 +841,6 @@
         </action>
 
     </fragment>
-
-    <fragment
-        android:id="@+id/migrationViewerFragment"
-        android:name="com.algorand.android.ui.settings.migrationviewer.MigrationViewerFragment"
-        android:label="MigrationViewerFragment" />
 
     <fragment
         android:id="@+id/nodeSettingsFragment"
@@ -1036,6 +993,16 @@
                 app:argType="string" />
         </action>
         <action
+            android:id="@+id/action_accountDetailFragment_to_assetDetailV2Fragment"
+            app:destination="@id/assetDetailV2Fragment">
+            <argument
+                android:name="assetId"
+                app:argType="long" />
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
+        <action
             android:id="@+id/action_accountDetailFragment_to_viewPassphraseNavigation"
             app:destination="@id/viewPassphraseNavigation">
             <argument
@@ -1055,27 +1022,6 @@
         <action
             android:id="@+id/action_accountDetailFragment_to_watchAccountQuickActionsBottomSheet"
             app:destination="@id/watchAccountQuickActionsBottomSheet" />
-        <action
-            android:id="@+id/action_accountDetailFragment_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_accountDetailFragment_to_swapNavigation"
-            app:destination="@id/swapNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_accountDetailFragment_to_swapV2Navigation"
-            app:destination="@id/swapV2Navigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_requiredMinimumBalanceInformationBottomSheet"
             app:destination="@id/requiredMinimumBalanceInformationBottomSheet" />
@@ -1430,17 +1376,8 @@
         <argument
             android:name="accountAddress"
             app:argType="string" />
-        <action
-            android:id="@+id/action_accountQuickActionsBottomSheet_to_swapIntroductionNavigation"
-            app:destination="@id/swapIntroductionNavigation" />
-        <action
-            android:id="@+id/action_accountQuickActionsBottomSheet_to_swapNavigation"
-            app:destination="@id/swapNavigation">
-            <argument
-                android:name="accountAddress"
-                app:argType="string" />
-        </action>
     </dialog>
+
     <dialog
         android:id="@+id/watchAccountQuickActionsBottomSheet"
         android:name="com.algorand.android.modules.accountdetail.quickaction.watchaccount.WatchAccountQuickActionsBottomSheet"
@@ -1502,6 +1439,7 @@
             android:id="@+id/action_manageAccountNFTsBottomSheet_to_accountNFTFilterFragment"
             app:destination="@id/accountNFTFilterFragment" />
     </dialog>
+
     <dialog
         android:id="@+id/WCSessionValidityExtensionBottomSheet"
         android:name="com.algorand.android.modules.walletconnect.validityextend.ui.WCSessionValidityExtensionBottomSheet"
@@ -1514,6 +1452,7 @@
             android:name="formattedExtendedSessionValidityDate"
             app:argType="string" />
     </dialog>
+
     <dialog
         android:id="@+id/walletConnectAdvancedPermissionsInfoBottomSheet"
         android:name="com.algorand.android.modules.walletconnect.advancedpermissionsinfo.WalletConnectAdvancedPermissionsInfoBottomSheet"
@@ -1575,6 +1514,32 @@
         android:label="InviteFriendsBottomSheet" />
 
     <fragment
+        android:id="@+id/swapGroupDetailFragment"
+        android:name="com.algorand.android.ui.transaction.swapgroup.view.SwapGroupDetailFragment"
+        android:label="SwapGroupDetailFragment">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_swapGroupDetailFragment_to_transactionDetailNavigation"
+            app:destination="@id/transactionDetailNavigation">
+            <argument
+                android:name="transactionId"
+                app:argType="string" />
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+            <argument
+                android:name="entryPoint"
+                app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
+        </action>
+    </fragment>
+
+    <fragment
         android:id="@+id/assetDetailV2Fragment"
         android:name="com.algorand.android.ui.asset.detail.view.AssetDetailV2Fragment"
         android:label="AssetDetailV2Fragment">
@@ -1588,10 +1553,102 @@
             android:name="isQuickActionButtonsVisible"
             android:defaultValue="false"
             app:argType="boolean" />
+
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_meldNavigation"
+            app:destination="@id/meldNavigation">
+            <argument
+                android:name="walletAddress"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_sendAlgoNavigation"
+            app:destination="@id/sendAlgoNavigation">
+            <argument
+                android:name="assetTransaction"
+                app:argType="com.algorand.android.models.AssetTransaction"
+                app:nullable="true" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_showQrNavigation"
+            app:destination="@id/showQrNavigation">
+            <argument
+                android:name="title"
+                app:argType="string" />
+            <argument
+                android:name="qrText"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_singleButtonBottomSheetNavigation"
+            app:destination="@id/singleButtonBottomSheetNavigation">
+            <argument
+                android:name="titleAnnotatedString"
+                app:argType="com.algorand.android.models.AnnotatedString" />
+            <argument
+                android:name="descriptionAnnotatedString"
+                android:defaultValue="@null"
+                app:argType="com.algorand.android.models.AnnotatedString"
+                app:nullable="true" />
+            <argument
+                android:name="buttonStringResId"
+                android:defaultValue="@string/close"
+                app:argType="reference" />
+            <argument
+                android:name="drawableResId"
+                android:defaultValue="0"
+                app:argType="reference" />
+            <argument
+                android:name="drawableTintResId"
+                android:defaultValue="0"
+                app:argType="reference" />
+            <argument
+                android:name="shouldDescriptionHasLinkMovementMethod"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_dateFilterNavigation"
+            app:destination="@id/dateFilterNavigation">
+            <argument
+                android:name="selectedDateFilter"
+                app:argType="com.algorand.android.models.DateFilter" />
+        </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_swapGroupDetailFragment"
+            app:destination="@id/swapGroupDetailFragment" />
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_transactionDetailNavigation"
+            app:destination="@id/transactionDetailNavigation">
+            <argument
+                android:name="transactionId"
+                app:argType="string" />
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+            <argument
+                android:name="entryPoint"
+                app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
+        </action>
     </fragment>
+
     <fragment
         android:id="@+id/passkeysFragment"
         android:name="com.algorand.android.ui.passkey.view.PasskeysFragment"
         android:label="PasskeysFragment" />
+
+    <fragment
+        android:id="@+id/developerOptionsFragment"
+        android:name="com.algorand.android.ui.settings.developeroptions.view.DeveloperOptionsFragment"
+        android:label="DeveloperOptionsFragment">
+        <action
+            android:id="@+id/action_developerOptionsFragment_to_overrideFeatureFlagsFragment"
+            app:destination="@id/overrideFeatureFlagsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/overrideFeatureFlagsFragment"
+        android:name="com.algorand.android.ui.settings.developeroptions.featureflags.view.OverrideFeatureFlagsFragment"
+        android:label="OverrideFeatureFlagsFragment" />
 
 </navigation>

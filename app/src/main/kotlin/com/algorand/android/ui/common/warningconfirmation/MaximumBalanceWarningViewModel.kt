@@ -17,10 +17,11 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.math.BigInteger
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class MaximumBalanceWarningViewModel @Inject constructor(
@@ -28,7 +29,7 @@ class MaximumBalanceWarningViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _minRequiredBalanceFlow = MutableStateFlow<BigInteger?>(null)
-    val minRequiredBalanceFlow
+    val minRequiredBalanceFlow: StateFlow<BigInteger?>
         get() = _minRequiredBalanceFlow.asStateFlow()
 
     fun getMinimumBalance(address: String) {

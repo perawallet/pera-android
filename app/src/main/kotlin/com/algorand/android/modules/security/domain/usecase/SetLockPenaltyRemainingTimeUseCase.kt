@@ -19,7 +19,7 @@ class SetLockPenaltyRemainingTimeUseCase @Inject constructor(
     private val securityRepository: SecurityRepository
 ) {
 
-    suspend operator fun invoke(penaltyRemainingTime: Long) {
+    operator fun invoke(penaltyRemainingTime: Long) {
         securityRepository.setLockPenaltyRemainingTime(penaltyRemainingTime)
     }
 }

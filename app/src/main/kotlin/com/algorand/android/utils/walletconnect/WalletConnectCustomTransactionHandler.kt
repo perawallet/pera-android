@@ -25,8 +25,8 @@ import com.algorand.android.utils.groupWalletConnectTransactions
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Error
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Success
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 
 class WalletConnectCustomTransactionHandler @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
@@ -51,10 +51,8 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
     * -> Check if all the signers are valid
     * -> hasAllAtomicAtLeastOneTxnNeedsToBeSigned
     * -> doAppHaveAtLeastOneSignerAccountInTxn
-    *
-    *
-    *
-    * */
+    */
+
     @SuppressWarnings("ReturnCount", "LongMethod")
     suspend fun handleCustomTransaction(
         sessionIdentifier: WalletConnect.SessionIdentifier,
@@ -139,7 +137,7 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
                 versionIdentifier = version
             )
             onResult(Success(result))
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             onResult(Error(sessionIdentifier, requestIdentifier, errorProvider.getUnableToParseTransactionError()))
         } finally {
             walletConnectCustomTransactionAssetDetailHandler.clearAssetCacheMap()
@@ -232,6 +230,6 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
     }
 
     companion object {
-        const val MAX_TRANSACTION_COUNT = 1000
+        const val MAX_TRANSACTION_COUNT: Int = 1000
     }
 }

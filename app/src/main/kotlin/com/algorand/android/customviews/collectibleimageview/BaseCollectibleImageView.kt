@@ -26,7 +26,7 @@ import com.google.android.material.imageview.ShapeableImageView
 
 abstract class BaseCollectibleImageView(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
 
-    protected val binding = viewBinding(CustomCollectibleImageBinding::inflate)
+    protected val binding: CustomCollectibleImageBinding = viewBinding(CustomCollectibleImageBinding::inflate)
 
     abstract val shapeableImageView: ShapeableImageView?
 
@@ -53,6 +53,6 @@ abstract class BaseCollectibleImageView(context: Context, attrs: AttributeSet? =
     }
 
     companion object {
-        const val DECREASED_OPACITY = 0.4f
+        const val DECREASED_OPACITY: Float = 0.4f
     }
 }

@@ -14,8 +14,8 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
+import java.math.BigInteger
 
 @Parcelize
 data class CreatedAppValue(

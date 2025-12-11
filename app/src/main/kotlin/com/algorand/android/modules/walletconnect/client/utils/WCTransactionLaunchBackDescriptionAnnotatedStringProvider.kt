@@ -20,10 +20,10 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class WCTransactionLaunchBackDescriptionAnnotatedStringProvider @Inject constructor(
-    @Named(WcRequestLaunchBackDescriptionAnnotatedStringProviderV1Impl.INJECTION_NAME)
+    @param:Named(WcRequestLaunchBackDescriptionAnnotatedStringProviderV1Impl.INJECTION_NAME)
     private val wcRequestLaunchBackDescriptionAnnotatedStringProviderV1:
     WcRequestLaunchBackDescriptionAnnotatedStringProvider,
-    @Named(WCRequestLaunchBackDescriptionAnnotatedStringProviderV2Impl.INJECTION_NAME)
+    @param:Named(WCRequestLaunchBackDescriptionAnnotatedStringProviderV2Impl.INJECTION_NAME)
     private val wcRequestLaunchBackDescriptionAnnotatedStringProviderV2:
     WcRequestLaunchBackDescriptionAnnotatedStringProvider
 ) {

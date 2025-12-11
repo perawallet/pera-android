@@ -17,9 +17,9 @@ import com.algorand.wallet.account.info.domain.model.AccountCacheManagerStatus
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
 internal class GetAppCacheStatusFlowUseCase @Inject constructor(
     private val getAccountDetailCacheStatusFlow: GetAccountDetailCacheStatusFlow,

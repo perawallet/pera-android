@@ -18,10 +18,9 @@ import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.repository.SingleAssetRepository
 import com.algorand.wallet.foundation.cache.CacheResult
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
-import com.algorand.wallet.foundation.network.utils.request
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import javax.inject.Inject
 
 internal class SingleAssetRepositoryImpl @Inject constructor(
     private val assetDetailApi: AssetDetailApiService,
@@ -29,16 +28,14 @@ internal class SingleAssetRepositoryImpl @Inject constructor(
     private val assetMapper: AssetMapper
 ) : SingleAssetRepository {
 
-    override suspend fun cacheAssetDetail(assetId: Long) {
-        request { assetDetailApi.getAssetDetail(assetId) }.use(
-            onSuccess = {
-                val asset = assetMapper(it)
-                asset?.let { assetCache.put(CacheResult.Success.create(asset)) }
-            },
-            onFailed = { exception, code ->
-                assetCache.put(CacheResult.Error.create(exception, code = code))
-            }
-        )
+    override suspend fun cacheAssetDetail(assetId: Long, deviceId: String?) {
+        try {
+            val response = assetDetailApi.getAssetDetail(assetId, deviceId)
+            val asset = assetMapper(response)
+            asset?.let { assetCache.put(CacheResult.Success.create(asset)) }
+        } catch (e: Exception) {
+            assetCache.put(CacheResult.Error.create(e))
+        }
     }
 
     override fun getAssetDetailFlow(): Flow<Asset> {

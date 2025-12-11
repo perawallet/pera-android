@@ -14,10 +14,12 @@ package com.algorand.android.discover.home.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilder
 import com.algorand.android.discover.common.ui.BaseDiscoverViewModel
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
+import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomePreviewUseCase
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
@@ -25,10 +27,12 @@ import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMes
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.ThemePreference
-import com.algorand.wallet.remoteconfig.domain.usecase.DISCOVER_V5_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
@@ -59,11 +63,11 @@ class DiscoverHomeViewModel @Inject constructor(
         queryText = queryTextFlow.value,
     ).cachedIn(viewModelScope)
 
-    val assetSearchPaginationFlow
+    val assetSearchPaginationFlow: Flow<PagingData<DiscoverAssetItem>>
         get() = searchPaginationFlow
 
     private val _discoverHomePreviewFlow = MutableStateFlow(
-        discoverHomePreviewUseCase.getInitialStatePreview(savedStateHandle.get<String?>(URL_KEY)),
+        discoverHomePreviewUseCase.getInitialStatePreview(savedStateHandle[URL_KEY]),
     )
     val discoverHomePreviewFlow: StateFlow<DiscoverHomePreview>
         get() = _discoverHomePreviewFlow
@@ -72,6 +76,7 @@ class DiscoverHomeViewModel @Inject constructor(
         initQueryTextFlow()
     }
 
+    @OptIn(FlowPreview::class)
     private fun initQueryTextFlow() {
         queryTextFlow
             .debounce(QUERY_DEBOUNCE)
@@ -232,7 +237,7 @@ class DiscoverHomeViewModel @Inject constructor(
     }
 
     fun isV5Enabled(): Boolean {
-        return isFeatureToggleEnabled(DISCOVER_V5_TOGGLE)
+        return isFeatureToggleEnabled(FeatureToggle.DISCOVER_V5.key)
     }
 
     fun getAuthorizedAddresses() {

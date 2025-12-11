@@ -51,7 +51,9 @@ class TransactionDTOMapper @Inject constructor(
                 createdAssetIndex = createdAssetIndex,
                 keyRegTransactionDTO = keyRegTransaction?.let {
                     keyRegTransactionDTOMapper.mapToKeyRegTransactionDTO(it)
-                }
+                },
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }

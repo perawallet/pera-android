@@ -18,11 +18,13 @@ import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.android.models.Pagination
 import com.algorand.android.models.Result
 import com.algorand.android.utils.PeraPagingSource
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AssetSearchDataSource(
     private val assetSearchRepository: AssetSearchRepository,
+    private val getAssetFavoriteStatuses: GetAssetFavoriteStatuses,
     private val currentQuery: AssetSearchQuery?
 ) : PeraPagingSource<String, AssetSearchDTO>() {
 
@@ -57,16 +59,22 @@ class AssetSearchDataSource(
         }
     }
 
-    private fun parseResult(result: Result<Pagination<AssetSearchDTO>>): LoadResult<String, AssetSearchDTO> {
+    private suspend fun parseResult(result: Result<Pagination<AssetSearchDTO>>): LoadResult<String, AssetSearchDTO> {
         return when (result) {
             is Result.Success -> {
-                LoadResult.Page(data = result.data.results, prevKey = null, nextKey = result.data.next)
+                val searchResults = result.data.results
+                val assetFavoriteStatuses = getAssetFavoriteStatuses(searchResults.map { it.assetId })
+                val assetSearchDtos = searchResults.map { dto ->
+                    dto.copy(isFavorite = assetFavoriteStatuses[dto.assetId] == true)
+                }
+                LoadResult.Page(data = assetSearchDtos, prevKey = null, nextKey = result.data.next)
             }
+
             is Result.Error -> LoadResult.Error<String, AssetSearchDTO>(result.exception)
         }
     }
 
     companion object {
-        val DEFAULT_ASSET_QUERY = AssetSearchQuery.createDefaultQuery()
+        val DEFAULT_ASSET_QUERY: AssetSearchQuery = AssetSearchQuery.createDefaultQuery()
     }
 }

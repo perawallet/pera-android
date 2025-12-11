@@ -28,7 +28,8 @@ class SearchedAssetMapper @Inject constructor(
                 fullName = fullName,
                 shortName = shortName,
                 logo = logo,
-                verificationTier = verificationTierDecider.decideVerificationTier(verificationTier)
+                verificationTier = verificationTierDecider.decideVerificationTier(verificationTier),
+                isFavorite = isFavorite
             )
         }
     }
@@ -41,7 +42,8 @@ class SearchedAssetMapper @Inject constructor(
                 shortName = shortName,
                 logo = logo,
                 verificationTier = verificationTierDecider.decideVerificationTier(verificationTier),
-                collectible = collectibleSearchMapper.mapToCollectibleSearch(collectible)
+                collectible = collectibleSearchMapper.mapToCollectibleSearch(collectible),
+                isFavorite = assetDetailDTO.isFavorite
             )
         }
     }

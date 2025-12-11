@@ -28,7 +28,7 @@ class TransactionDetailCopyAddressTooltipLocalSource @Inject constructor(
     }
 
     override fun getDataOrNull(): Boolean? {
-        return sharedPref.getBoolean(key, defaultTransactionDetailTooltipPreference).takeIf {
+        return sharedPref.getBoolean(key, DEFAULT_TRANSACTION_DETAIL_TOOLTIP_PREFERENCE).takeIf {
             sharedPref.contains(key)
         }
     }
@@ -39,6 +39,6 @@ class TransactionDetailCopyAddressTooltipLocalSource @Inject constructor(
 
     companion object {
         private const val TRANSACTION_DETAIL_COPY_TUTORIAL_SHOWN_KEY = "transaction_detail_copy_shown_key"
-        const val defaultTransactionDetailTooltipPreference = true
+        const val DEFAULT_TRANSACTION_DETAIL_TOOLTIP_PREFERENCE: Boolean = true
     }
 }

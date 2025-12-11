@@ -39,7 +39,7 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
         assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
     }
 
-    override val assetActionViewModel by viewModels<RemoveAssetActionViewModel>()
+    override val assetActionViewModel: RemoveAssetActionViewModel by viewModels<RemoveAssetActionViewModel>()
 
     override fun setDescriptionTextView(textView: TextView) {
         textView.text = context?.getXmlStyledString(
@@ -84,6 +84,6 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
     }
 
     companion object {
-        const val REMOVE_ASSET_ACTION_RESULT_KEY = "remove_asset_action_result_key"
+        const val REMOVE_ASSET_ACTION_RESULT_KEY: String = "remove_asset_action_result_key"
     }
 }

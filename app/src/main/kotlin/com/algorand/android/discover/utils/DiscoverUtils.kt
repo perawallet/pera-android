@@ -23,7 +23,8 @@ private const val WEBVIEW_AUTH_PASSWORD = BuildConfig.DISCOVER_WEBVIEW_PASSWORD
 private const val WEBVIEW_AUTH_HEADER_NAME = "Authorization"
 private const val WEBVIEW_AUTH_HEADER_PREFIX = "Basic "
 
-val regexPatternPeraURL = """^https://([\da-z-]+\.)*(?<!web\.)perawallet\.app((?:/.*)?|(?:\?.*)?|(?:#.*)?)""".toRegex()
+val regexPatternPeraURL: Regex =
+    """^https://([\da-z-]+\.)*(?<!web\.)perawallet\.app((?:/.*)?|(?:\?.*)?|(?:#.*)?)""".toRegex()
 
 fun getDiscoverHomeUrl(
     themePreference: WebViewTheme,

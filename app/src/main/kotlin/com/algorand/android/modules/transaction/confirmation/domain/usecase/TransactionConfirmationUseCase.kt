@@ -16,20 +16,21 @@ import com.algorand.android.modules.transaction.confirmation.domain.mapper.Trans
 import com.algorand.android.modules.transaction.confirmation.domain.model.TransactionConfirmation
 import com.algorand.android.modules.transaction.confirmation.domain.repository.TransactionConfirmationRepository
 import com.algorand.android.utils.DataResource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.flow
 
 class TransactionConfirmationUseCase @Inject constructor(
-    @Named(TransactionConfirmationRepository.INJECTION_NAME)
+    @param:Named(TransactionConfirmationRepository.INJECTION_NAME)
     private val transactionConfirmationRepository: TransactionConfirmationRepository,
     private val transactionConfirmationMapper: TransactionConfirmationMapper
 ) {
 
-    suspend fun waitForConfirmation(
+    fun waitForConfirmation(
         txnId: String,
         maxRoundToWait: Int = DEFAULT_MAX_ROUND_TO_WAIT
-    ) = flow<DataResource<TransactionConfirmation>> {
+    ): Flow<DataResource<TransactionConfirmation>> = flow {
         transactionConfirmationRepository.waitForConfirmation(txnId, maxRoundToWait).use(
             onSuccess = { dto ->
                 val transactionConfirmation = transactionConfirmationMapper.mapToTransactionConfirmation(dto)

@@ -25,9 +25,9 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
 import com.algorand.android.utils.extensions.mapNotBlank
-import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.utils.multiplyOrZero
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -52,12 +52,15 @@ class PaymentTransactionMapper @Inject constructor(
                 !rekeyAddress.isNullOrBlank() && !closeToAddress.isNullOrBlank() -> {
                     createPaymentTransactionWithCloseToAndRekey(peerMeta, transactionRequest, rawTxn)
                 }
+
                 !rekeyAddress.isNullOrBlank() -> {
                     createPaymentTransactionWithRekey(peerMeta, transactionRequest, rawTxn)
                 }
+
                 !closeToAddress.isNullOrBlank() -> {
                     createPaymentTransactionWithClose(peerMeta, transactionRequest, rawTxn)
                 }
+
                 else -> createPaymentTransaction(peerMeta, transactionRequest, rawTxn)
             }
         }
@@ -93,7 +96,9 @@ class PaymentTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 assetInformation = walletConnectAssetInformation,
                 groupId = groupId,
-                warningCount = 2.takeIf { isLocalAccountSigner }
+                warningCount = 2.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -127,7 +132,9 @@ class PaymentTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 assetInformation = walletConnectAssetInformation,
                 groupId = groupId,
-                warningCount = 1.takeIf { isLocalAccountSigner }
+                warningCount = 1.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -161,7 +168,9 @@ class PaymentTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 assetInformation = walletConnectAssetInformation,
                 groupId = groupId,
-                warningCount = 1.takeIf { isLocalAccountSigner }
+                warningCount = 1.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -192,7 +201,9 @@ class PaymentTransactionMapper @Inject constructor(
                 fromAccount = createWalletConnectAccount(senderWCAddress),
                 toAccount = createWalletConnectAccount(receiverWCAddress),
                 assetInformation = walletConnectAssetInformation,
-                groupId = groupId
+                groupId = groupId,
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }

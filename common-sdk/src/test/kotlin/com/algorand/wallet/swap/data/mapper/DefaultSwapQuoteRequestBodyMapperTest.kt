@@ -15,9 +15,9 @@ package com.algorand.wallet.swap.data.mapper
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapTypeResponse
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 class DefaultSwapQuoteRequestBodyMapperTest {
 
@@ -30,26 +30,6 @@ class DefaultSwapQuoteRequestBodyMapperTest {
         assertEquals(REQUEST_BODY, result)
     }
 
-    @Test
-    fun `EXPECT asset in id to be zero WHEN asset in is ALGO`() {
-        val payload = PAYLOAD.copy(assetInId = -7)
-
-        val result = sut(payload)
-
-        val expected = REQUEST_BODY.copy(assetInId = 0L)
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun `EXPECT asset out id to be zero WHEN asset out is ALGO`() {
-        val payload = PAYLOAD.copy(assetOutId = -7)
-
-        val result = sut(payload)
-
-        val expected = REQUEST_BODY.copy(assetOutId = 0L)
-        assertEquals(expected, result)
-    }
-
     private companion object {
         val PAYLOAD = SwapQuoteRequestPayload(
             address = "address",
@@ -57,7 +37,7 @@ class DefaultSwapQuoteRequestBodyMapperTest {
             assetInId = 1L,
             assetOutId = 2L,
             amount = BigInteger.valueOf(10_000),
-            slippage = 0.01f
+            slippage = 0.01
         )
 
         val REQUEST_BODY = SwapQuoteRequestBody(
@@ -66,7 +46,7 @@ class DefaultSwapQuoteRequestBodyMapperTest {
             assetInId = 1L,
             assetOutId = 2L,
             amount = BigInteger.valueOf(10_000),
-            slippage = 0.01f,
+            slippage = 0.01,
             swapType = SwapTypeResponse.FIXED_INPUT
         )
     }

@@ -38,12 +38,17 @@ internal class DefaultAssetListItemMapper @Inject constructor(
                 unitName = this.shortName,
                 balance = assetListItemBalanceMapper(balancePayload),
                 verificationTier = verificationTierMapper.decideVerificationTierConfiguration(verificationTier),
-                assetIcon = assetIconDrawableMapper.map(this)
+                assetIcon = assetIconDrawableMapper.map(this),
+                isFavorite = assetLite.isFavorite
             )
         }
     }
 
-    override fun invoke(assetHoldings: AssetHoldingLite, asset: AvailableSwapAsset): AssetListItem {
+    override fun invoke(
+        assetHoldings: AssetHoldingLite,
+        asset: AvailableSwapAsset,
+        isFavorite: Boolean?
+    ): AssetListItem {
         val userBalance = assetHoldings.assetHoldingAmounts[asset.assetId]
         val balancePayload = if (userBalance == null) {
             null
@@ -59,6 +64,7 @@ internal class DefaultAssetListItemMapper @Inject constructor(
             balance = balancePayload?.let { assetListItemBalanceMapper(it) },
             verificationTier = verificationTierMapper.decideVerificationTierConfiguration(asset.verificationTier),
             assetIcon = AssetIconDrawable.AssetDrawable(asset.logoUrl.orEmpty(), asset.unitName),
+            isFavorite = isFavorite ?: false
         )
     }
 }

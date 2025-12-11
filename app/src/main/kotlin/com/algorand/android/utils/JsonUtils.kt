@@ -31,7 +31,7 @@ fun getFormattedJsonArrayString(json: String): String {
 inline fun <reified T> Gson.fromJson(json: String): T? {
     return try {
         fromJson<T>(json, object : TypeToken<T>() {}.type)
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -39,7 +39,7 @@ inline fun <reified T> Gson.fromJson(json: String): T? {
 inline fun <reified T> Moshi.fromJson(json: String): T? {
     return try {
         with(adapter(T::class.java)) { fromJson(json) }
-    } catch (exception: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

@@ -19,7 +19,6 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -27,8 +26,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemAccountAndAssetListBinding
+import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 
 abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
@@ -36,7 +35,7 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
 
-    protected val binding = viewBinding(ItemAccountAndAssetListBinding::inflate)
+    protected val binding: ItemAccountAndAssetListBinding = viewBinding(ItemAccountAndAssetListBinding::inflate)
 
     init {
         initRootView()
@@ -102,13 +101,6 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
         binding.endIconImageView.setOnClickListener { onClick?.invoke() }
     }
 
-    fun setStartSmallIconDrawable(drawable: Drawable?) {
-        binding.startSmallIconImageView.apply {
-            isVisible = drawable != null
-            setImageDrawable(drawable)
-        }
-    }
-
     fun setStartSmallIconDrawableResource(@DrawableRes drawableResId: Int?) {
         binding.startSmallIconImageView.apply {
             isVisible = drawableResId != null
@@ -145,12 +137,23 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
     }
 
     fun setTrailingIconOfTitleText(@DrawableRes iconResId: Int?) {
-        val endIconDrawable = if (iconResId != null) AppCompatResources.getDrawable(context, iconResId) else null
-        binding.titleTextView.setDrawable(end = endIconDrawable)
+        if (iconResId == null) {
+            binding.titleEndIconImageView.hide()
+        } else {
+            binding.titleEndIconImageView.setImageResource(iconResId)
+        }
     }
 
     fun setTrailingIconOfTitleText(iconDrawable: Drawable?) {
-        binding.titleTextView.setDrawable(end = iconDrawable)
+        if (iconDrawable == null) {
+            binding.titleEndIconImageView.hide()
+        } else {
+            binding.titleEndIconImageView.setImageDrawable(iconDrawable)
+        }
+    }
+
+    fun setIsFavorite(isFavorite: Boolean) {
+        binding.favoriteIconImageView.isVisible = isFavorite
     }
 
     fun setStartIconProgressBarVisibility(isVisible: Boolean) {

@@ -21,23 +21,25 @@ import com.algorand.android.ui.compose.widget.asset.AssetListItem
 import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetOutSelectionViewModel.ViewEvent
 import com.algorand.android.ui.swap.assetselection.viewmodel.SwapAssetOutSelectionViewModel.ViewState
 import com.algorand.wallet.account.lite.domain.usecase.GetAssetHoldingsLite
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 import com.algorand.wallet.swap.domain.usecase.GetAvailableSwapAssets
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @HiltViewModel
 class SwapAssetOutSelectionViewModel @Inject constructor(
     private val getAvailableSwapAssets: GetAvailableSwapAssets,
     private val getAssetHoldingsLite: GetAssetHoldingsLite,
+    private val getAssetFavoriteStatuses: GetAssetFavoriteStatuses,
     private val assetListItemMapper: AssetListItemMapper,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
@@ -57,8 +59,10 @@ class SwapAssetOutSelectionViewModel @Inject constructor(
                 getAvailableSwapAssets(assetInId, query).use(
                     onSuccess = { availableAssets ->
                         val assetHoldings = getAssetHoldingsLite(address, availableAssets.map { it.assetId })
+                        val assetFavoriteStatuses = getAssetFavoriteStatuses(availableAssets.map { it.assetId })
                         val assetListItems = availableAssets.map { availableAsset ->
-                            assetListItemMapper(assetHoldings, availableAsset)
+                            val isFavorite = assetFavoriteStatuses[availableAsset.assetId]
+                            assetListItemMapper(assetHoldings, availableAsset, isFavorite)
                         }
                         stateDelegate.updateState { ViewState.Content(assetListItems) }
                     },

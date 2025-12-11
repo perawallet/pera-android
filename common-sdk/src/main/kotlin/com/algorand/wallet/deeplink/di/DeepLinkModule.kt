@@ -33,6 +33,7 @@ import com.algorand.wallet.deeplink.builder.DiscoverBrowserNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.DiscoverDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.DiscoverPathNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.EditContactNewDeepLinkBuilder
+import com.algorand.wallet.deeplink.builder.FidoDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.HomeDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.HomeNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.InternalBrowserNewDeepLinkBuilder
@@ -133,7 +134,8 @@ internal object DeepLinkModule {
             keyRegTransactionDeepLinkBuilder = KeyRegTransactionDeepLinkBuilder(),
             cardsDeepLinkBuilder = CardsDeepLinkBuilder(),
             stakingDeepLinkBuilder = StakingDeepLinkBuilder(),
-            homeDeepLinkBuilder = HomeDeepLinkBuilder()
+            homeDeepLinkBuilder = HomeDeepLinkBuilder(),
+            fidoDeepLinkBuilder = FidoDeepLinkBuilder()
         )
     }
 

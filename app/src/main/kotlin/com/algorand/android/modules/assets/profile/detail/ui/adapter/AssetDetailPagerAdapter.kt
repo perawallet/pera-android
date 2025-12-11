@@ -36,7 +36,7 @@ class AssetDetailPagerAdapter(
         )
     )
 
-    override fun getItemCount() = pagerItemList.size
+    override fun getItemCount(): Int = pagerItemList.size
 
     override fun createFragment(position: Int): Fragment {
         return pagerItemList.getOrNull(position)?.fragmentInstance ?: throw Exception("$logTag unknown tab")

@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.room)
     alias(libs.plugins.ksp)
-    id("kotlin-parcelize")
-    id("dagger.hilt.android.plugin")
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.room.module)
+    alias(libs.plugins.hilt)
 }
 
 apply(from = "./test-coverage/kover.gradle")
@@ -32,8 +32,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_21.toString()
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
     }
 
     packaging {
@@ -53,11 +55,10 @@ android {
 }
 
 dependencies {
-
     api(libs.algosdk)
-    api(libs.algorand.go.mobile)
-    implementation(files("../libs/dP256.jar"))
-    implementation("net.java.dev.jna:jna:5.17.0@aar")
+    api(libs.p256)
+
+    implementation(libs.algorand.go.mobile)
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)
@@ -91,4 +92,8 @@ dependencies {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+ksp {
+    arg("room.verifySchema", "false")
 }

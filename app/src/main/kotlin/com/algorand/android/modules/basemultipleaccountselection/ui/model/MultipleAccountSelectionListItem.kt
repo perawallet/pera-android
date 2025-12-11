@@ -33,10 +33,10 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class TitleItem(
-        @StringRes val textResId: Int
+        @param:StringRes val textResId: Int
     ) : MultipleAccountSelectionListItem() {
 
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.TITLE_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
@@ -52,7 +52,7 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
         val annotatedString: AnnotatedString
     ) : MultipleAccountSelectionListItem() {
 
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.DESCRIPTION_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
@@ -65,12 +65,12 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
     }
 
     data class AccountHeaderItem(
-        @PluralsRes val titleRes: Int,
+        @param:PluralsRes val titleRes: Int,
         val accountCount: Int,
         val checkboxState: TriStatesCheckBox.CheckBoxState,
     ) : MultipleAccountSelectionListItem() {
 
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.ACCOUNT_HEADER_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
@@ -88,7 +88,7 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
         val accountViewButtonState: AccountAssetItemButtonState
     ) : MultipleAccountSelectionListItem() {
 
-        override val itemType
+        override val itemType: ItemType
             get() = ItemType.ACCOUNT_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {

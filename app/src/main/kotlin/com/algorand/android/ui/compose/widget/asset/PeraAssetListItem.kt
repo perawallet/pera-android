@@ -30,6 +30,7 @@ import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.VerificationTierIcon
 import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
+import com.algorand.android.ui.compose.widget.icon.FavoriteIcon
 
 @Composable
 fun PeraAssetListItem(modifier: Modifier = Modifier, item: AssetListItem) {
@@ -47,6 +48,10 @@ fun PeraAssetListItem(modifier: Modifier = Modifier, item: AssetListItem) {
                     modifier = Modifier.weight(1f)
                 ) {
                     AssetName(modifier = Modifier.weight(1f, false), item.name)
+                    if (item.isFavorite) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        FavoriteIcon(modifier = Modifier.size(16.dp), isFavorite = true)
+                    }
                     Spacer(modifier = Modifier.width(6.dp))
                     VerificationTierIcon(Modifier.size(16.dp), item.verificationTier)
                 }

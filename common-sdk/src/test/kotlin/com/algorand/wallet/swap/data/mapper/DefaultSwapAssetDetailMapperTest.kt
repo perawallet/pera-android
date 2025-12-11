@@ -19,11 +19,11 @@ import com.algorand.wallet.swap.data.model.SwapQuoteAssetDetailResponse
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.math.BigDecimal
+import java.math.BigInteger
 
 class DefaultSwapAssetDetailMapperTest {
 
@@ -80,7 +80,7 @@ class DefaultSwapAssetDetailMapperTest {
 
         val result = sut(response)
 
-        assertEquals(-7L, result?.assetId)
+        assertEquals(0L, result?.assetId)
     }
 
     private companion object {

@@ -32,6 +32,10 @@ abstract class BaseWalletConnectTransaction : Parcelable {
     abstract val groupId: String?
     abstract val fee: Long
     abstract val transactionSigner: TransactionSigner?
+
+    abstract val rejectVersion: Long?
+
+    abstract val accessListSize: Int?
     var isRekeyTransaction: Boolean = false
 
     var requestedBlockCurrentRound: Long = -1
@@ -58,14 +62,8 @@ abstract class BaseWalletConnectTransaction : Parcelable {
 
     open val transactionAmount: BigInteger? = null
 
-    val transactionMessage: String?
-        get() = rawTransactionPayload.message
-
     val formattedRekeyToAccountAddress: String
         get() = getRekeyToAccountAddress()?.decodedAddress.orEmpty()
-
-    val formattedCloseToAccountAddress: String
-        get() = getCloseToAccountAddress()?.decodedAddress.orEmpty()
 
     val decodedTransaction: ByteArray?
         get() = rawTransactionPayload.transactionMsgPack.decodeBase64()

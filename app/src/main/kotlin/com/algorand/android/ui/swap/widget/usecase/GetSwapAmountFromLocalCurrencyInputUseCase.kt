@@ -13,8 +13,10 @@
 package com.algorand.android.ui.swap.widget.usecase
 
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryFiatConversionRate
-import com.algorand.android.utils.orZero
 import com.algorand.wallet.swap.domain.model.SwapSelectedAssetDetail
+import com.algorand.wallet.utils.divideOrZero
+import com.algorand.wallet.utils.isZero
+import com.algorand.wallet.utils.orZero
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -27,10 +29,14 @@ class GetSwapAmountFromLocalCurrencyInputUseCase @Inject constructor(
     override fun invoke(amountInput: BigDecimal, assetInDetail: SwapSelectedAssetDetail): BigInteger {
         val assetUsdValue = assetInDetail.usdValue.orZero()
         val usdToLocalCurrencyRate = getUsdToPrimaryFiatConversionRate()
-        if (assetUsdValue == BigDecimal.ZERO || usdToLocalCurrencyRate == BigDecimal.ZERO) return BigInteger.ZERO
+        if (assetUsdValue.isZero() || usdToLocalCurrencyRate.isZero()) return BigInteger.ZERO
         val localCurrencyValue = assetUsdValue.multiply(usdToLocalCurrencyRate)
         return amountInput
-            .divide(localCurrencyValue, assetInDetail.decimal, RoundingMode.DOWN)
+            .divideOrZero(
+                divisor = localCurrencyValue,
+                scale = assetInDetail.decimal,
+                roundingMode = RoundingMode.DOWN
+            )
             .movePointRight(assetInDetail.decimal)
             .toBigInteger()
     }

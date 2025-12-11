@@ -50,8 +50,26 @@
         app:layout_constraintTop_toBottomOf="@id/primaryValueTextView"
         tools:text="$15,594.15" />
 
+    <com.algorand.android.ui.compose.widget.chart.view.PeraLineChartDeltaTextView
+        android:id="@+id/balanceDeltaText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/secondaryValueTextView"
+        app:layout_constraintStart_toEndOf="@id/secondaryValueTextView"
+        app:layout_constraintTop_toTopOf="@id/secondaryValueTextView" />
+
+    <com.algorand.android.ui.compose.widget.chart.view.PeraPercentageTextView
+        android:id="@+id/balancePercentageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/secondaryValueTextView"
+        app:layout_constraintStart_toEndOf="@id/balanceDeltaText"
+        app:layout_constraintTop_toTopOf="@id/secondaryValueTextView" />
+
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/helperTextView"
+        android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -59,11 +77,27 @@
         android:drawablePadding="@dimen/spacing_xxsmall"
         android:drawableTint="@color/text_gray"
         android:gravity="right|center_vertical"
+        android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
+        android:textColor="@color/text_gray"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/secondaryValueTextView"
+        tools:text="@tools:sample/lorem[3]" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/minRequiredBalanceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:drawablePadding="@dimen/spacing_xxsmall"
+        android:drawableTint="@color/text_gray"
+        android:gravity="right|center_vertical"
         android:textAppearance="@style/TextAppearance.Footnote.Sans"
         android:textColor="@color/text_gray"
         app:drawableEndCompat="@drawable/ic_info_small"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/secondaryValueTextView"
+        app:layout_constraintStart_toStartOf="@id/secondaryValueTextView"
+        app:layout_constraintTop_toBottomOf="@id/secondaryValueTextView"
         tools:text="@tools:sample/lorem[3]" />
 
     <androidx.compose.ui.platform.ComposeView
@@ -71,9 +105,8 @@
         android:layout_width="match_parent"
         android:layout_height="172dp"
         android:layout_marginTop="@dimen/spacing_normal"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/secondaryValueTextView" />
+        app:layout_constraintTop_toBottomOf="@id/minRequiredBalanceTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

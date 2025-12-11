@@ -35,8 +35,8 @@ sealed class ResultListItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class IconItem(
-        @ColorRes val iconTintColorResId: Int,
-        @DrawableRes val iconResId: Int
+        @param:ColorRes val iconTintColorResId: Int,
+        @param:DrawableRes val iconResId: Int
     ) : ResultListItem() {
         override val itemType: ItemType
             get() = ItemType.RESULT_ICON_ITEM
@@ -57,9 +57,9 @@ sealed class ResultListItem : RecyclerListItem {
 
         abstract val titleTextResId: Int
 
-        data class Plural(@PluralsRes override val titleTextResId: Int, val quantity: Int) : TitleItem()
+        data class Plural(@param:PluralsRes override val titleTextResId: Int, val quantity: Int) : TitleItem()
 
-        data class Singular(@StringRes override val titleTextResId: Int) : TitleItem()
+        data class Singular(@param:StringRes override val titleTextResId: Int) : TitleItem()
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is TitleItem && titleTextResId == other.titleTextResId
@@ -116,16 +116,16 @@ sealed class ResultListItem : RecyclerListItem {
 
         data class Plural(
             val infoDescriptionPluralAnnotatedString: PluralAnnotatedString,
-            @DrawableRes override val infoIconResId: Int,
-            @ColorRes override val infoIconTintResId: Int,
-            @StringRes override val infoTitleTextResId: Int,
-            @ColorRes override val infoTitleTintResId: Int,
-            @ColorRes override val infoDescriptionTintResId: Int,
-            @ColorRes override val infoBoxTintColorResId: Int
+            @param:DrawableRes override val infoIconResId: Int,
+            @param:ColorRes override val infoIconTintResId: Int,
+            @param:StringRes override val infoTitleTextResId: Int,
+            @param:ColorRes override val infoTitleTintResId: Int,
+            @param:ColorRes override val infoDescriptionTintResId: Int,
+            @param:ColorRes override val infoBoxTintColorResId: Int
         ) : InfoBoxItem() {
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is Plural &&
-                    infoDescriptionPluralAnnotatedString == other.infoDescriptionPluralAnnotatedString
+                        infoDescriptionPluralAnnotatedString == other.infoDescriptionPluralAnnotatedString
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -135,12 +135,12 @@ sealed class ResultListItem : RecyclerListItem {
 
         data class Singular(
             val infoDescriptionAnnotatedString: AnnotatedString,
-            @DrawableRes override val infoIconResId: Int,
-            @ColorRes override val infoIconTintResId: Int,
-            @StringRes override val infoTitleTextResId: Int,
-            @ColorRes override val infoTitleTintResId: Int,
-            @ColorRes override val infoDescriptionTintResId: Int,
-            @ColorRes override val infoBoxTintColorResId: Int
+            @param:DrawableRes override val infoIconResId: Int,
+            @param:ColorRes override val infoIconTintResId: Int,
+            @param:StringRes override val infoTitleTextResId: Int,
+            @param:ColorRes override val infoTitleTintResId: Int,
+            @param:ColorRes override val infoDescriptionTintResId: Int,
+            @param:ColorRes override val infoBoxTintColorResId: Int
         ) : InfoBoxItem() {
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is Singular && infoDescriptionAnnotatedString == other.infoDescriptionAnnotatedString
@@ -161,7 +161,7 @@ sealed class ResultListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&
-                accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
+                    accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

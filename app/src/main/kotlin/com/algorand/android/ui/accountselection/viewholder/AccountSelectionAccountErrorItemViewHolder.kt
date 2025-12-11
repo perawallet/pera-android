@@ -28,13 +28,11 @@ class AccountSelectionAccountErrorItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem) {
-        with(binding) {
-            with(item.accountListItem.itemConfiguration) {
-                setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.primaryDisplayName)
-                setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
-                setAccountEndIconDrawable()
-            }
+        with(item.accountListItem.itemConfiguration) {
+            setAccountStartIconDrawable(accountIconDrawablePreview)
+            setAccountTitleText(accountDisplayName?.primaryDisplayName)
+            setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
+            setAccountEndIconDrawable()
         }
     }
 

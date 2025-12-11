@@ -12,16 +12,13 @@
 
 package com.algorand.android.modules.accountcore.domain.mapper
 
-import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapper
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import java.math.BigInteger
 import javax.inject.Inject
 
-internal class OwnedAssetDataMapperImpl @Inject constructor(
-    private val legacyVerificationTierMapper: LegacyVerificationTierMapper
-) : OwnedAssetDataMapper {
+internal class OwnedAssetDataMapperImpl @Inject constructor() : OwnedAssetDataMapper {
 
     override fun invoke(
         assetDetail: AssetDetail,
@@ -47,8 +44,9 @@ internal class OwnedAssetDataMapperImpl @Inject constructor(
             parityValueInSelectedCurrency = parityValueInSelectedCurrency,
             parityValueInSecondaryCurrency = parityValueInSecondaryCurrency,
             prismUrl = assetDetail.logoUri,
-            verificationTier = legacyVerificationTierMapper(assetDetail.verificationTier),
-            optedInAtRound = optedInAtRound
+            verificationTier = assetDetail.verificationTier,
+            optedInAtRound = optedInAtRound,
+            isFavorite = assetDetail.assetInfo?.isFavorite == true
         )
     }
 }

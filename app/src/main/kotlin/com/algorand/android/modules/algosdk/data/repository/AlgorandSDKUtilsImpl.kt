@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.algosdk.data.repository
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.algosdk.v2.client.Utils
 import com.algorand.algosdk.v2.client.common.AlgodClient
 import com.algorand.android.modules.algosdk.data.mapper.AlgorandAddressDTOMapper

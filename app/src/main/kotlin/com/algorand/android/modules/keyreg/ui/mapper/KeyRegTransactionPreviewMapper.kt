@@ -40,6 +40,6 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
     }
 
     companion object {
-        const val MINIMUM_TXN_FEE = 1000
+        const val MINIMUM_TXN_FEE: Int = 1000
     }
 }

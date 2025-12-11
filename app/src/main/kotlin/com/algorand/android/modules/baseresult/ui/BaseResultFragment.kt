@@ -30,11 +30,12 @@ abstract class BaseResultFragment : BaseFragment(R.layout.fragment_base_result) 
     abstract val baseResultViewModel: BaseResultViewModel
     abstract val baseResultAdapter: BaseResultAdapter
 
-    protected val binding by viewBinding(FragmentBaseResultBinding::bind)
+    protected val binding: FragmentBaseResultBinding by viewBinding(FragmentBaseResultBinding::bind)
 
-    protected val accountItemListener = BaseResultAdapter.AccountItemListener { accountAddress ->
-        onAccountAddressCopied(accountAddress)
-    }
+    protected val accountItemListener: BaseResultAdapter.AccountItemListener =
+        BaseResultAdapter.AccountItemListener { accountAddress ->
+            onAccountAddressCopied(accountAddress)
+        }
 
     private val resultListItemsCollector: suspend (List<ResultListItem>) -> Unit = { itemList ->
         baseResultAdapter.submitList(itemList)

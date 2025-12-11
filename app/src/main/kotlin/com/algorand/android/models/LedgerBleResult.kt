@@ -32,12 +32,6 @@ sealed class LedgerBleResult {
         val bluetoothDevice: BluetoothDevice
     ) : LedgerBleResult()
 
-    data class PublicKeyResult(
-        val publicKey: String,
-        val bluetoothAddress: String,
-        val bluetoothName: String?
-    ) : LedgerBleResult()
-
     data class VerifyPublicKeyResult(
         val isVerified: Boolean,
         val ledgerPublicKey: String,
@@ -47,8 +41,8 @@ sealed class LedgerBleResult {
     data class LedgerErrorResult(val errorMessage: String) : LedgerBleResult()
 
     data class AppErrorResult(
-        @StringRes val errorMessageId: Int,
-        @StringRes val titleResId: Int
+        @param:StringRes val errorMessageId: Int,
+        @param:StringRes val titleResId: Int
     ) : LedgerBleResult()
 
     object OnLedgerDisconnected : LedgerBleResult()

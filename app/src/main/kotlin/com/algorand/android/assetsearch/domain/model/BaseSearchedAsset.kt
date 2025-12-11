@@ -12,19 +12,23 @@
 
 package com.algorand.android.assetsearch.domain.model
 
+import com.algorand.wallet.asset.domain.model.VerificationTier
+
 sealed class BaseSearchedAsset {
     abstract val assetId: Long
     abstract val fullName: String?
     abstract val shortName: String?
     abstract val logo: String?
     abstract val verificationTier: VerificationTier
+    abstract val isFavorite: Boolean
 
     data class SearchedAsset(
         override val assetId: Long,
         override val fullName: String?,
         override val shortName: String?,
         override val logo: String?,
-        override val verificationTier: VerificationTier
+        override val verificationTier: VerificationTier,
+        override val isFavorite: Boolean
     ) : BaseSearchedAsset()
 
     data class SearchedCollectible(
@@ -33,6 +37,7 @@ sealed class BaseSearchedAsset {
         override val shortName: String?,
         override val logo: String?,
         override val verificationTier: VerificationTier,
+        override val isFavorite: Boolean,
         val collectible: CollectibleSearch?
     ) : BaseSearchedAsset()
 
@@ -42,16 +47,7 @@ sealed class BaseSearchedAsset {
         override val shortName: String?,
         override val logo: String?,
         override val verificationTier: VerificationTier,
+        override val isFavorite: Boolean,
         val formattedUsdValue: String?
-    ) : BaseSearchedAsset()
-
-    data class DiscoverSearchedCollectible(
-        override val assetId: Long,
-        override val fullName: String?,
-        override val shortName: String?,
-        override val logo: String?,
-        override val verificationTier: VerificationTier,
-        val usdValue: String?,
-        val collectible: CollectibleSearch?
     ) : BaseSearchedAsset()
 }

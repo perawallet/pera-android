@@ -17,12 +17,12 @@ import com.algorand.wallet.account.local.data.mapper.entity.NoAuthEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.NoAuthMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount.NoAuth
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class NoAuthAccountRepositoryImpl @Inject constructor(
     private val noAuthDao: NoAuthDao,

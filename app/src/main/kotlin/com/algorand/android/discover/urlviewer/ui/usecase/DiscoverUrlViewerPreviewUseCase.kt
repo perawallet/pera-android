@@ -33,31 +33,33 @@ class DiscoverUrlViewerPreviewUseCase @Inject constructor(
 
     fun getInitialStatePreview(
         url: String
-    ) = DiscoverUrlViewerPreview(
+    ): DiscoverUrlViewerPreview = DiscoverUrlViewerPreview(
         themePreference = sharedPreferences.getSavedThemePreference(),
         isLoading = true,
         reloadPageEvent = Event(Unit),
         url = url
     )
 
-    fun onPageRequestedShouldOverrideUrlLoading(previousState: DiscoverUrlViewerPreview) = previousState.copy(
+    fun onPageRequestedShouldOverrideUrlLoading(
+        previousState: DiscoverUrlViewerPreview
+    ): DiscoverUrlViewerPreview = previousState.copy(
         isLoading = true
     )
 
     fun onPageFinished(
         previousState: DiscoverUrlViewerPreview,
         url: String?
-    ) = previousState.copy(
+    ): DiscoverUrlViewerPreview = previousState.copy(
         isLoading = false,
         url = url ?: previousState.url,
     )
 
-    fun onError(previousState: DiscoverUrlViewerPreview) = previousState.copy(
+    fun onError(previousState: DiscoverUrlViewerPreview): DiscoverUrlViewerPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.NO_CONNECTION)
     )
 
-    fun onHttpError(previousState: DiscoverUrlViewerPreview) = previousState.copy(
+    fun onHttpError(previousState: DiscoverUrlViewerPreview): DiscoverUrlViewerPreview = previousState.copy(
         isLoading = false,
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )

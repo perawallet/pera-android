@@ -46,6 +46,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
         sealed class BaseOwnedItem : BaseAssetItem() {
 
             abstract val formattedAmount: String
+            abstract val isFavorite: Boolean
 
             data class AssetItem(
                 override val id: Long,
@@ -53,6 +54,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                 override val shortName: AssetName,
                 override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
                 override val formattedAmount: String,
+                override val isFavorite: Boolean,
                 val verificationTierConfiguration: VerificationTierConfiguration,
                 val amountInSelectedCurrency: BigDecimal?,
                 val isAmountInDisplayedCurrencyVisible: Boolean,
@@ -86,6 +88,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                 override val shortName: AssetName,
                 override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
                 override val formattedAmount: String,
+                override val isFavorite: Boolean,
                 val collectionName: String?,
                 val nftIndicatorDrawable: BaseNFTIndicatorDrawable?,
                 val shouldDecreaseOpacity: Boolean,
@@ -128,7 +131,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val id: Long,
                     override val name: AssetName,
                     override val shortName: AssetName,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val verificationTierConfiguration: VerificationTierConfiguration,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider
                 ) : AssetItem() {
@@ -146,7 +149,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val id: Long,
                     override val name: AssetName,
                     override val shortName: AssetName,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val verificationTierConfiguration: VerificationTierConfiguration,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider
                 ) : AssetItem() {
@@ -173,7 +176,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val name: AssetName,
                     override val shortName: AssetName,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val collectionName: String?
                 ) : NFTItem() {
 
@@ -191,7 +194,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
                     override val name: AssetName,
                     override val shortName: AssetName,
                     override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
-                    @StringRes override val actionDescriptionResId: Int,
+                    @param:StringRes override val actionDescriptionResId: Int,
                     override val collectionName: String?
                 ) : NFTItem() {
 
@@ -222,7 +225,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
     }
 
     companion object {
-        val excludedItemFromDivider = AccountDetailAccountsItem.ItemType.entries
+        val excludedItemFromDivider: List<Int> = AccountDetailAccountsItem.ItemType.entries
             .map { it.viewType } + ItemType.NO_ASSET_FOUND.viewType
     }
 }

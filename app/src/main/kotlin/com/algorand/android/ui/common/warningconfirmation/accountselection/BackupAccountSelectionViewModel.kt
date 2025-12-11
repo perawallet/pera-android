@@ -17,17 +17,17 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.ui.common.warningconfirmation.accountselection.model.BackupAccountSelectionPreview
 import com.algorand.android.ui.common.warningconfirmation.accountselection.usecase.BackupAccountSelectionPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class BackupAccountSelectionViewModel @Inject constructor(
     private val backupAccountSelectionPreviewUseCase: BackupAccountSelectionPreviewUseCase
 ) : BaseViewModel() {
 
-    private val _backupAccountSelectionPreviewFlow = MutableStateFlow<BackupAccountSelectionPreview>(
+    private val _backupAccountSelectionPreviewFlow = MutableStateFlow(
         backupAccountSelectionPreviewUseCase.getInitialStatePreview()
     )
     val backupAccountSelectionPreviewFlow: StateFlow<BackupAccountSelectionPreview>

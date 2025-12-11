@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.mapper
 
+import app.perawallet.walletconnectv2.Core
+import app.perawallet.walletconnectv2.sign.client.Sign
 import com.algorand.android.modules.walletconnect.client.v2.domain.model.WalletConnectSessionDto
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBlockchain
@@ -20,8 +22,6 @@ import com.algorand.android.modules.walletconnect.mapper.WalletConnectExpiryMapp
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectPeerMetaMapper
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectSessionDeleteMapper
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectSessionDetailMapper
-import com.walletconnect.android.Core
-import com.walletconnect.sign.client.Sign
 import javax.inject.Inject
 
 @Suppress("LongParameterList")
@@ -35,7 +35,7 @@ class WalletConnectClientV2Mapper @Inject constructor(
     private val connectionStateMapper: WalletConnectConnectionStateMapper
 ) {
 
-    fun mapToPair(url: String) = Core.Params.Pair(url)
+    fun mapToPair(url: String): Core.Params.Pair = Core.Params.Pair(url)
 
     fun mapToSessionApprove(
         proposerPublicKey: String,

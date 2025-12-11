@@ -23,17 +23,17 @@ import com.algorand.android.utils.isPermissionGranted
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class NotificationPermissionManager @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val cacheAskNotificationPermissionEventUseCase: CacheAskNotificationPermissionEventUseCase,
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
     private val getLocalAccountCountFlow: GetLocalAccountCountFlow

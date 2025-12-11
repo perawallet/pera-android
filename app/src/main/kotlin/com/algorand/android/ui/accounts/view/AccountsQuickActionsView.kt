@@ -39,7 +39,7 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
                 when (val state = viewState) {
                     is ViewState.Idle -> Unit
                     is ViewState.Content -> {
-                        SwapQuickActionButton(state.isSwapButtonSelected) { listener?.onSwapClick() }
+                        SwapQuickActionButton { listener?.onSwapClick() }
                         BuySellQuickActionButton { listener?.onBuySellClick() }
                         if (state.isStakingEnabled) {
                             StakeQuickActionButton { listener?.onStakingClick() }
@@ -55,14 +55,8 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
         this.listener = listener
     }
 
-    fun init(
-        isStakingEnabled: Boolean,
-        isSwapButtonSelected: Boolean
-    ) {
-        viewState = ViewState.Content(
-            isStakingEnabled = isStakingEnabled,
-            isSwapButtonSelected = isSwapButtonSelected
-        )
+    fun init(isStakingEnabled: Boolean) {
+        viewState = ViewState.Content(isStakingEnabled)
     }
 
     interface AccountsQuickActionsListener {
@@ -74,6 +68,6 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
 
     private sealed interface ViewState {
         data object Idle : ViewState
-        data class Content(val isStakingEnabled: Boolean, val isSwapButtonSelected: Boolean) : ViewState
+        data class Content(val isStakingEnabled: Boolean) : ViewState
     }
 }

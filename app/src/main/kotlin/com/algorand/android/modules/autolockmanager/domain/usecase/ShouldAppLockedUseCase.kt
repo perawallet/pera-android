@@ -37,7 +37,7 @@ class ShouldAppLockedUseCase @Inject constructor(
     }
 
     private fun isAppFreshOpened(appAtBackgroundTime: Long?): Boolean {
-        return with(appAtBackgroundTime) { this == null || this == appAtBackgroundDefaultPreference }
+        return with(appAtBackgroundTime) { this == null || this == APP_AT_BACKGROUND_DEFAULT_PREFERENCE }
     }
 
     private fun isThresholdExpired(appAtBackgroundTime: Long?): Boolean {
@@ -47,12 +47,12 @@ class ShouldAppLockedUseCase @Inject constructor(
     }
 
     private fun isPenaltyTimeActive(): Boolean {
-        return securityRepository.getLockPenaltyRemainingTime() != defaultLockPenaltyRemainingTimePreference
+        return securityRepository.getLockPenaltyRemainingTime() != DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE
     }
 
     companion object {
         private const val AUTO_LOCK_THRESHOLD = 60_000
-        const val appAtBackgroundDefaultPreference = 0L
-        const val defaultLockPenaltyRemainingTimePreference = 0L
+        const val APP_AT_BACKGROUND_DEFAULT_PREFERENCE: Long = 0L
+        const val DEFAULT_LOCK_PENALTY_REMAINING_TIME_PREFERENCE: Long = 0L
     }
 }

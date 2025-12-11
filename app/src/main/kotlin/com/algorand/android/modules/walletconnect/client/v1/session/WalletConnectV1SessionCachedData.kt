@@ -13,10 +13,10 @@
 package com.algorand.android.modules.walletconnect.client.v1.session
 
 import android.util.Log
+import app.perawallet.walletconnectv1.Session
+import app.perawallet.walletconnectv1.Session.Config
+import app.perawallet.walletconnectv1.impls.WCSession
 import com.algorand.android.utils.sendErrorLog
-import org.walletconnect.Session
-import org.walletconnect.Session.Config
-import org.walletconnect.impls.WCSession
 
 class WalletConnectV1SessionCachedData(
     var sessionId: Long,
@@ -65,9 +65,6 @@ class WalletConnectV1SessionCachedData(
             is Session.Status.Approved -> callback?.onSessionApproved(this, status.clientId)
             is Session.Status.Closed -> callback?.onSessionKilled(this)
             is Session.Status.Error -> callback?.onSessionError(this, status)
-            else -> {
-                sendErrorLog("Unhandled else case in WalletConnectSessionCachedData")
-            }
         }
     }
 
@@ -75,7 +72,7 @@ class WalletConnectV1SessionCachedData(
 
         private val logTag = WalletConnectV1SessionCachedData::class.java.simpleName
 
-        const val INITIAL_RETRY_COUNT = 1
+        const val INITIAL_RETRY_COUNT: Int = 1
         private const val MAX_SESSION_RETRY_COUNT = 10
 
         fun create(

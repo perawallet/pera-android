@@ -42,11 +42,11 @@ import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
@@ -119,24 +119,28 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                         currentTransactionIndex = ledgerBleResult.currentTransactionIndex,
                         totalTransactionCount = ledgerBleResult.totalTransactionCount,
                         isTransactionIndicatorVisible = ledgerBleResult.totalTransactionCount != null &&
-                            ledgerBleResult.currentTransactionIndex != null &&
-                            ledgerBleResult.totalTransactionCount > 1
+                                ledgerBleResult.currentTransactionIndex != null &&
+                                ledgerBleResult.totalTransactionCount > 1
                     ).apply(::postResult)
                 }
+
                 is SignedTransactionResult -> {
                     externalTransactionQueuingHelper.currentItem?.run {
                         onTransactionSigned(this, ledgerBleResult.transactionByteArray)
                     }
                 }
+
                 is LedgerErrorResult -> {
                     postResult(ExternalTransactionSignResult.Error.Api(ledgerBleResult.errorMessage))
                 }
+
                 is AppErrorResult -> postResult(
                     ExternalTransactionSignResult.Error.Defined(
                         AnnotatedString(ledgerBleResult.errorMessageId),
                         ledgerBleResult.titleResId
                     )
                 )
+
                 is OperationCancelledResult -> postResult(ExternalTransactionSignResult.TransactionCancelled())
                 else -> {
                     sendErrorLog("Unhandled else case in WalletConnectSignManager.operationManagerCollectorAction")
@@ -166,12 +170,18 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                 is TransactionSigner.SignerNotFound -> {
                     externalTransactionQueuingHelper.cacheDequeuedItem(null)
                 }
+
                 is TransactionSigner.Algo25 -> {
-                    signTransactionWithSecretKey(this@signTransaction, getAlgo25SecretKey(transactionSigner.address)!!)
+                    signTransactionWithSecretKey(
+                        this@signTransaction,
+                        getAlgo25SecretKey(transactionSigner.address) ?: return@launch
+                    )
                 }
+
                 is TransactionSigner.HdKey -> {
                     signHdTransaction(this@signTransaction, transactionSigner.address)
                 }
+
                 is TransactionSigner.LedgerBle -> {
                     sendTransactionWithLedger(transactionSigner, currentTransactionIndex, totalTransactionCount)
                 }

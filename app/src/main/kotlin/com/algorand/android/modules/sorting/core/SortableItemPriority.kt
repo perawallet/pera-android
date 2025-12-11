@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.sorting.core
 
+@Suppress("unused")
 enum class SortableItemPriority(val value: Int) {
     PLACE_FIRST(0),
     DEFAULT(1),

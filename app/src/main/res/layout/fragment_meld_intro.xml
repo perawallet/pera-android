@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,8 +20,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/meld"
-        app:layout_constraintDimensionRatio="25:16"
         android:scaleType="fitXY"
+        app:layout_constraintDimensionRatio="25:16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

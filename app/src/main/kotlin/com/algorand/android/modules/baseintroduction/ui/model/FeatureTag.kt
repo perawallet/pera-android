@@ -17,8 +17,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class FeatureTag(
-    @StringRes val textResId: Int,
-    @ColorRes val textColorResId: Int,
-    @DrawableRes val backgroundResId: Int,
-    @ColorRes val backgroundTintResId: Int
+    @param:StringRes val textResId: Int,
+    @param:ColorRes val textColorResId: Int,
+    @param:DrawableRes val backgroundResId: Int,
+    @param:ColorRes val backgroundTintResId: Int
 )

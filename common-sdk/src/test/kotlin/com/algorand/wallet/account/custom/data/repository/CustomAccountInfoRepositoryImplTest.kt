@@ -16,7 +16,6 @@ import com.algorand.wallet.account.custom.data.database.dao.CustomAccountInfoDao
 import com.algorand.wallet.account.custom.data.database.model.CustomAccountInfoEntity
 import com.algorand.wallet.account.custom.data.mapper.entity.CustomAccountInfoEntityMapper
 import com.algorand.wallet.account.custom.data.mapper.model.CustomAccountInfoMapper
-import com.algorand.wallet.account.custom.data.repository.CustomAccountInfoRepositoryImpl
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import io.mockk.coEvery
@@ -24,6 +23,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -53,7 +53,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT custom info WHEN dao returns valid entity`() = runTest {
+    fun `EXPECT custom info WHEN dao returns valid entity`(): TestResult = runTest {
         val address = "ABCDEF123456"
         val entity = mockk<CustomAccountInfoEntity>()
         val expectedInfo = mockk<CustomAccountInfo>()
@@ -67,7 +67,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT mapped info WHEN dao returns null for getCustomInfo`() = runTest {
+    fun `EXPECT mapped info WHEN dao returns null for getCustomInfo`(): TestResult = runTest {
         val address = "ABCDEF123456"
         val expectedInfo = mockk<CustomAccountInfo>()
 
@@ -80,7 +80,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT custom info WHEN dao returns valid entity for getCustomInfoOrNull`() = runTest {
+    fun `EXPECT custom info WHEN dao returns valid entity for getCustomInfoOrNull`(): TestResult = runTest {
         val address = "ABCDEF123456"
         val entity = mockk<CustomAccountInfoEntity>()
         val expectedInfo = mockk<CustomAccountInfo>()
@@ -94,7 +94,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN dao returns null for getCustomInfoOrNull`() = runTest {
+    fun `EXPECT null WHEN dao returns null for getCustomInfoOrNull`(): TestResult = runTest {
         val address = "ABCDEF123456"
 
         coEvery { customAccountInfoDao.getOrNull(address) } returns null
@@ -105,21 +105,20 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN setCustomInfo is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN setCustomInfo is invoked`(): TestResult = runTest {
         val info = mockk<CustomAccountInfo>()
         val entity = mockk<CustomAccountInfoEntity>()
-        var result: Unit? = null
 
         every { customAccountInfoEntityMapper.invoke(info) } returns entity
         coEvery { customAccountInfoDao.insert(entity) } returns Unit
 
-        result = sut.setCustomInfo(info)
+        val result = sut.setCustomInfo(info)
 
         assertEquals(Unit, result)
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN setCustomName is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN setCustomName is invoked`(): TestResult = runTest {
         val address = "ABCDEF123456"
         val name = "Test Account"
 
@@ -131,7 +130,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT correct custom name WHEN getCustomName is invoked`() = runTest {
+    fun `EXPECT correct custom name WHEN getCustomName is invoked`(): TestResult = runTest {
         val address = "ABCDEF123456"
         val expectedName = "Test Account"
 
@@ -143,7 +142,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN deleteCustomInfo is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN deleteCustomInfo is invoked`(): TestResult = runTest {
         val address = "ABCDEF123456"
 
         coEvery { customAccountInfoDao.delete(address) } returns Unit
@@ -154,7 +153,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT set of not backed up accounts WHEN getNotBackedUpAccounts is invoked`() = runTest {
+    fun `EXPECT set of not backed up accounts WHEN getNotBackedUpAccounts is invoked`(): TestResult = runTest {
         val notBackedUpAddresses = listOf("ABCDEF123456", "GHIJKL789012", "MNOPQR345678")
 
         coEvery { customAccountInfoDao.getNotBackedUpAddresses() } returns notBackedUpAddresses
@@ -165,7 +164,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT set of backed up accounts WHEN getBackedUpAccounts is invoked`() = runTest {
+    fun `EXPECT set of backed up accounts WHEN getBackedUpAccounts is invoked`(): TestResult = runTest {
         val backedUpAddresses = listOf("ABCDEF123456", "GHIJKL789012", "MNOPQR345678")
 
         coEvery { customAccountInfoDao.getBackedUpAddresses() } returns backedUpAddresses
@@ -176,7 +175,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN isAccountBackedUp is invoked with backed up account`() = runTest {
+    fun `EXPECT true WHEN isAccountBackedUp is invoked with backed up account`(): TestResult = runTest {
         val address = "ABCDEF123456"
 
         coEvery { customAccountInfoDao.isAccountBackedUp(address) } returns true
@@ -187,7 +186,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT false WHEN isAccountBackedUp is invoked with not backed up account`() = runTest {
+    fun `EXPECT false WHEN isAccountBackedUp is invoked with not backed up account`(): TestResult = runTest {
         val address = "ABCDEF123456"
 
         coEvery { customAccountInfoDao.isAccountBackedUp(address) } returns false
@@ -198,7 +197,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT list of order indexes WHEN getAllAccountOrderIndexes is invoked`() = runTest {
+    fun `EXPECT list of order indexes WHEN getAllAccountOrderIndexes is invoked`(): TestResult = runTest {
         val entity1 = mockk<CustomAccountInfoEntity>()
         val entity2 = mockk<CustomAccountInfoEntity>()
         val entities = listOf(entity1, entity2)
@@ -218,7 +217,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT dao to be called WHEN setOrderIndex is invoked`() = runTest {
+    fun `EXPECT dao to be called WHEN setOrderIndex is invoked`(): TestResult = runTest {
         val address = "ABCDEF123456"
         val orderIndex = 5
 
@@ -230,7 +229,7 @@ class CustomAccountInfoRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT addreses asb status to be set WHEN setAddressesBackedUp is invoked`() = runTest {
+    fun `EXPECT addreses asb status to be set WHEN setAddressesBackedUp is invoked`(): TestResult = runTest {
         val addresses = setOf("ABCDEF123456", "GHIJKL789012", "MNOPQR345678")
 
         sut.setAddressesBackedUp(addresses)

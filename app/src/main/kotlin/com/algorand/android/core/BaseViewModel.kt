@@ -16,8 +16,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor() : ViewModel() {
     companion object {

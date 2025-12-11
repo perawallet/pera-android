@@ -72,7 +72,7 @@ import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 private const val MAX_BALANCE = 100
-private const val MIN_BALANCE = 0
+private const val MIN_BALANCE = 1
 private const val MAX_SLIPPAGE = 10f
 private const val MIN_SLIPPAGE = 0.01f
 
@@ -110,8 +110,8 @@ fun SwapConfigurationBottomSheet(
                 endContainer = {
                     PeraToolbarTextButton(text = stringResource(R.string.apply), enabled = isApplyButtonEnabled) {
                         val result = SwapConfigurationResult(
-                            balancePercentage = balanceTextState.value.text.toFloatOrNull(),
-                            slippageTolerance = slippageTextState.value.text.toFloatOrNull(),
+                            balancePercentage = balanceTextState.value.text.toIntOrNull(),
+                            slippageTolerance = slippageTextState.value.text.toDoubleOrNull(),
                             useLocalCurrency = localCurrencyState.value
                         )
                         scope.launch { swapViewModel.logSettingsApplyClick() }
@@ -242,7 +242,7 @@ private fun ErrorText(error: String, isVisible: Boolean) {
 private fun isSlippageErrorVisible(textState: MutableState<TextFieldValue>): State<Boolean> {
     return remember(textState.value.text) {
         derivedStateOf {
-            textState.value.text.toFloatOrNull()?.let { it != 0f && (it < MIN_SLIPPAGE || it > MAX_SLIPPAGE) } == true
+            textState.value.text.toFloatOrNull()?.let { it != 0f && (it !in MIN_SLIPPAGE..MAX_SLIPPAGE) } == true
         }
     }
 }
@@ -251,7 +251,7 @@ private fun isSlippageErrorVisible(textState: MutableState<TextFieldValue>): Sta
 private fun isBalanceErrorVisible(textState: MutableState<TextFieldValue>): State<Boolean> {
     return remember(textState.value.text) {
         derivedStateOf {
-            textState.value.text.toFloatOrNull()?.let { it != 0f && (it < MIN_BALANCE || it > MAX_BALANCE) } == true
+            textState.value.text.toFloatOrNull()?.let { it != 0f && (it !in 1.0..100.0) } == true
         }
     }
 }

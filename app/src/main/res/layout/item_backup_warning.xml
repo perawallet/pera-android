@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -12,7 +13,6 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/spacing_xlarge"
@@ -31,18 +31,17 @@
 
     <TextView
         android:id="@+id/bannerDescriptionTextView"
-        android:textAppearance="@style/TextAppearance.Footnote.Sans.Medium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_xsmall"
         android:layout_marginEnd="@dimen/spacing_small"
         android:text="@string/you_need_to_backup"
+        android:textAppearance="@style/TextAppearance.Footnote.Sans.Medium"
         android:textColor="@color/backup_banner_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/backupNowButton"
         app:layout_constraintStart_toEndOf="@id/bannerIconImageView"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/backupNowButton"

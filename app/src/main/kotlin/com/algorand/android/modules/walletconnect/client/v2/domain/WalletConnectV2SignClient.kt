@@ -13,21 +13,21 @@
 package com.algorand.android.modules.walletconnect.client.v2.domain
 
 import android.util.Log
+import app.perawallet.walletconnectv2.internal.common.exception.CannotFindSequenceForTopic
+import app.perawallet.walletconnectv2.sign.client.Sign
+import app.perawallet.walletconnectv2.sign.client.SignClient
 import com.algorand.android.modules.walletconnect.client.v2.domain.repository.WalletConnectV2Repository
 import com.algorand.android.utils.launchIO
-import com.walletconnect.android.internal.common.exception.CannotFindSequenceForTopic
-import com.walletconnect.sign.client.Sign
-import com.walletconnect.sign.client.SignClient
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Singleton
 class WalletConnectV2SignClient @Inject constructor(
-    @Named(WalletConnectV2Repository.INJECTION_NAME)
+    @param:Named(WalletConnectV2Repository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectV2Repository
 ) {
 

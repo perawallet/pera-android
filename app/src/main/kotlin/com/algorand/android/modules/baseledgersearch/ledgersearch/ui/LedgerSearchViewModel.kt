@@ -27,7 +27,7 @@ class LedgerSearchViewModel @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager
 ) : BaseViewModel() {
 
-    val ledgerDevicesLiveData = MutableLiveData<List<LedgerBaseItem>>()
+    val ledgerDevicesLiveData: MutableLiveData<List<LedgerBaseItem>> = MutableLiveData<List<LedgerBaseItem>>()
 
     private val addressLedgerDeviceMap = HashMap<String, BluetoothDevice>()
 

@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.assetinbox.send.summary.domain.usecase
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.BuildConfig
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendTransaction

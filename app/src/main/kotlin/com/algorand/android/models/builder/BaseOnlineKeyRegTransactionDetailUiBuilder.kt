@@ -14,6 +14,7 @@ package com.algorand.android.models.builder
 
 import com.algorand.android.models.BaseKeyRegTransaction
 import com.algorand.android.models.BaseKeyRegTransaction.BaseOnlineKeyRegTransaction
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestOnlineKeyRegInfo
 import com.algorand.android.utils.formatNumberWithDecimalSeparators
 import javax.inject.Inject
@@ -32,6 +33,15 @@ class BaseOnlineKeyRegTransactionDetailUiBuilder @Inject constructor() : BaseKey
                 formattedValidFirstRound = getSafeFormattedNumber(voteFirstValidRound),
                 formattedValidLastRound = getSafeFormattedNumber(voteLastValidRound),
                 formattedVoteKeyDilution = getSafeFormattedNumber(voteKeyDilution)
+            )
+        }
+    }
+
+    override fun buildTransactionRequestExtraFields(txn: BaseKeyRegTransaction): TransactionRequestExtraFields {
+        return with(txn) {
+            TransactionRequestExtraFields(
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }

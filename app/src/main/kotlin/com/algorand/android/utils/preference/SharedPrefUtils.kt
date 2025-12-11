@@ -14,6 +14,7 @@
 package com.algorand.android.utils.preference
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.algorand.android.models.Account
 import com.algorand.android.sharedpref.EncryptedPinLocalSource.Companion.ENCRYPTED_PIN_KEY
 import com.algorand.android.utils.encryptString
@@ -32,41 +33,45 @@ private const val APP_REVIEW_START_COUNT_KEY = "app_review_start_count_key"
 private const val REGISTER_SKIP_KEY = "register_skip_key"
 private const val FIRST_REQUEST_WALLET_CONNECT_REQUEST_KEY = "first_request_wallet_connect_request"
 private const val ARC59_EXPRESS_SEND_WARNING_ENABLED_KEY = "arc59_express_send_warning_enabled"
-const val SETTINGS = "algorand_settings"
+const val SETTINGS: String = "algorand_settings"
 
 // </editor-fold>
 
 fun SharedPreferences.removeAll() {
-    edit()
-        .clear()
-        .putBoolean(QR_TUTORIAL_SHOWN_KEY, isQrTutorialShown())
-        .putBoolean(TD_COPY_TUTORIAL_SHOWN_KEY, isTransactionDetailCopyTutorialShown())
-        .putBoolean(FILTER_TUTORIAL_SHOWN_KEY, isFilterTutorialShown())
-        .apply()
+    edit {
+        clear()
+        putBoolean(QR_TUTORIAL_SHOWN_KEY, isQrTutorialShown())
+        putBoolean(TD_COPY_TUTORIAL_SHOWN_KEY, isTransactionDetailCopyTutorialShown())
+        putBoolean(FILTER_TUTORIAL_SHOWN_KEY, isFilterTutorialShown())
+    }
 }
 
 // <editor-fold defaultstate="collapsed" desc="Accounts">
 
 fun SharedPreferences.saveAlgorandAccounts(gson: Gson, accountsList: List<Account>, aead: Aead) {
-    edit().putString(ALGORAND_ACCOUNTS_KEY, aead.encryptString(gson.toJson(accountsList))).apply()
+    edit {
+        putString(ALGORAND_ACCOUNTS_KEY, aead.encryptString(gson.toJson(accountsList))).apply()
+    }
 }
 
-fun SharedPreferences.getEncryptedAlgorandAccounts() = getString(ALGORAND_ACCOUNTS_KEY, null)
+fun SharedPreferences.getEncryptedAlgorandAccounts(): String? = getString(ALGORAND_ACCOUNTS_KEY, null)
 
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Password">
 
 // Use EncryptedPinUseCase instead and remove this extension function
-fun SharedPreferences.isPasswordChosen() = getString(ENCRYPTED_PIN_KEY, null) != null
+fun SharedPreferences.isPasswordChosen(): Boolean = getString(ENCRYPTED_PIN_KEY, null) != null
 
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Notification">
-fun SharedPreferences.isNotificationActivated() = getBoolean(NOTIFICATION_ACTIVATED_KEY, true)
+fun SharedPreferences.isNotificationActivated(): Boolean = getBoolean(NOTIFICATION_ACTIVATED_KEY, true)
 
 fun SharedPreferences.setNotificationPreference(enableNotifications: Boolean) {
-    edit().putBoolean(NOTIFICATION_ACTIVATED_KEY, enableNotifications).apply()
+    edit {
+        putBoolean(NOTIFICATION_ACTIVATED_KEY, enableNotifications).apply()
+    }
 }
 
 // </editor-fold>
@@ -74,44 +79,40 @@ fun SharedPreferences.setNotificationPreference(enableNotifications: Boolean) {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="NodeList">
-fun SharedPreferences.getDefaultNodeListVersion() = getInt(DEFAULT_NODE_LIST_VERSION, 0)
+fun SharedPreferences.getDefaultNodeListVersion(): Int = getInt(DEFAULT_NODE_LIST_VERSION, 0)
 
 fun SharedPreferences.setNodeListVersion(newVersion: Int) {
-    edit().putInt(DEFAULT_NODE_LIST_VERSION, newVersion).apply()
+    edit {
+        putInt(DEFAULT_NODE_LIST_VERSION, newVersion).apply()
+    }
 }
 
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="QRTutorialShown">
 
-fun SharedPreferences.setQrTutorialShown() {
-    edit().putBoolean(QR_TUTORIAL_SHOWN_KEY, true).apply()
-}
-
-fun SharedPreferences.isQrTutorialShown() = getBoolean(QR_TUTORIAL_SHOWN_KEY, false)
+fun SharedPreferences.isQrTutorialShown(): Boolean = getBoolean(QR_TUTORIAL_SHOWN_KEY, false)
 
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="TDCopyShown">
 
-fun SharedPreferences.isTransactionDetailCopyTutorialShown() = getBoolean(TD_COPY_TUTORIAL_SHOWN_KEY, false)
+fun SharedPreferences.isTransactionDetailCopyTutorialShown(): Boolean = getBoolean(TD_COPY_TUTORIAL_SHOWN_KEY, false)
 
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="TDCopyShown">
 
-fun SharedPreferences.setFilterTutorialShown() {
-    edit().putBoolean(FILTER_TUTORIAL_SHOWN_KEY, true).apply()
-}
-
-fun SharedPreferences.isFilterTutorialShown() = getBoolean(FILTER_TUTORIAL_SHOWN_KEY, false)
+fun SharedPreferences.isFilterTutorialShown(): Boolean = getBoolean(FILTER_TUTORIAL_SHOWN_KEY, false)
 
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="NotificationRefreshDate">
 
 fun SharedPreferences.setAppReviewStartCount(appReviewStartCount: Int) {
-    edit().putInt(APP_REVIEW_START_COUNT_KEY, appReviewStartCount).apply()
+    edit {
+        putInt(APP_REVIEW_START_COUNT_KEY, appReviewStartCount).apply()
+    }
 }
 
 fun SharedPreferences.getAppReviewStartCount(): Int {
@@ -123,7 +124,9 @@ fun SharedPreferences.getAppReviewStartCount(): Int {
 // <editor-fold defaultstate="collapsed" desc="NotificationRefreshDate">
 
 fun SharedPreferences.setRegisterSkip() {
-    edit().putBoolean(REGISTER_SKIP_KEY, true).apply()
+    edit {
+        putBoolean(REGISTER_SKIP_KEY, true).apply()
+    }
 }
 
 fun SharedPreferences.getRegisterSkip(): Boolean {
@@ -135,7 +138,9 @@ fun SharedPreferences.getRegisterSkip(): Boolean {
 // <editor-fold defaultstate="collapsed" desc="Wallet Connect">
 
 fun SharedPreferences.setFirstWalletConnectRequestBottomSheetShown() {
-    edit().putBoolean(FIRST_REQUEST_WALLET_CONNECT_REQUEST_KEY, true).apply()
+    edit {
+        putBoolean(FIRST_REQUEST_WALLET_CONNECT_REQUEST_KEY, true).apply()
+    }
 }
 
 fun SharedPreferences.getFirstWalletConnectRequestBottomSheetShown(): Boolean {
@@ -147,7 +152,9 @@ fun SharedPreferences.getFirstWalletConnectRequestBottomSheetShown(): Boolean {
 // <editor-fold defaultstate="collapsed" desc="Arc-59">
 
 fun SharedPreferences.disableIsArc59ExpressSendWarning() {
-    edit().putBoolean(ARC59_EXPRESS_SEND_WARNING_ENABLED_KEY, false).apply()
+    edit {
+        putBoolean(ARC59_EXPRESS_SEND_WARNING_ENABLED_KEY, false).apply()
+    }
 }
 
 fun SharedPreferences.getIsArc59ExpressSendWarningEnabled(): Boolean {

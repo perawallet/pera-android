@@ -43,7 +43,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
 
     private val viewModel by viewModels<AccountStatusDetailViewModel>()
 
-    val args by navArgs<AccountStatusDetailBottomSheetArgs>()
+    val args: AccountStatusDetailBottomSheetArgs by navArgs<AccountStatusDetailBottomSheetArgs>()
 
     private val fetchingRekeyedAccountsDialogDelegate by lazy {
         FetchingRekeyedAccountsDialogDelegate(viewModel::stopFetchingRekeyedAccounts)
@@ -78,9 +78,10 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
                         )
                 )
             }
+
             NavToNoRekeyedAccounts -> navToNoRekeyedAccounts()
             is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(event)
-            ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
+            ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred))
         }
     }
 

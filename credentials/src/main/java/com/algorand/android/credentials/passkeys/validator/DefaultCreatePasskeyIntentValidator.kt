@@ -29,7 +29,7 @@ import com.algorand.android.credentials.passkeys.validator.AppInfoValidationResu
 import com.algorand.android.credentials.passkeys.validator.AppInfoValidationResult.Success
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 internal class DefaultCreatePasskeyIntentValidator @Inject constructor(
     private val appInfoValidator: CallingAppInfoValidator,
     private val createPasskeyParamsMapper: CreatePasskeyParamsMapper,
@@ -37,9 +37,9 @@ internal class DefaultCreatePasskeyIntentValidator @Inject constructor(
 ) : CreatePasskeyIntentValidator {
 
     override suspend fun validate(intent: Intent): CreatePasskeyIntentValidationResult {
-        val createPasskeyRequest = PendingIntentHandler.Companion.retrieveProviderCreateCredentialRequest(intent)
-        val requestExtras = intent.getBundleExtra(PasskeyProviderService.Companion.EXTRA_INTENT_DATA_KEY)
-        val bip44Address = requestExtras?.getString(PasskeyProviderService.Companion.BIP44ADDRESS)
+        val createPasskeyRequest = PendingIntentHandler.retrieveProviderCreateCredentialRequest(intent)
+        val requestExtras = intent.getBundleExtra(PasskeyProviderService.EXTRA_INTENT_DATA_KEY)
+        val bip44Address = requestExtras?.getString(PasskeyProviderService.BIP44ADDRESS)
         if (createPasskeyRequest == null || bip44Address == null) {
             return CreatePasskeyIntentValidationResult.UnableToExtractData
         }

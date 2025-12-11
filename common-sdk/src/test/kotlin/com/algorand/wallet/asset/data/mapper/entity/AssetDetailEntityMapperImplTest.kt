@@ -20,11 +20,11 @@ import com.algorand.wallet.asset.data.model.AssetCreatorResponse
 import com.algorand.wallet.asset.data.model.AssetResponse
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.math.BigDecimal
 
 internal class AssetDetailEntityMapperImplTest {
 
@@ -95,14 +95,14 @@ internal class AssetDetailEntityMapperImplTest {
             discordUrl = "discordUrl",
             isAvailableOnDiscoverMobile = true,
             last24HoursAlgoPriceChangePercentage = BigDecimal.TEN,
-            verificationTier = null,
             assetCreator = AssetCreatorResponse(
                 publicKey = "publicKey",
                 id = 1L,
                 isVerifiedAssetCreator = true
             ),
-            collectible = null,
-            category = 1
+            category = 1,
+            isFavorite = true,
+            isPriceAlertEnabled = false
         )
 
         private val ASSET_DETAIL_ENTITY = AssetDetailEntity(
@@ -129,7 +129,9 @@ internal class AssetDetailEntityMapperImplTest {
             assetCreatorAddress = "publicKey",
             assetCreatorId = 1L,
             isVerifiedAssetCreator = true,
-            category = AssetCategoryEntity.RUG_NINJA
+            category = AssetCategoryEntity.RUG_NINJA,
+            isFavorite = true,
+            isPriceAlertEnabled = false
         )
     }
 }

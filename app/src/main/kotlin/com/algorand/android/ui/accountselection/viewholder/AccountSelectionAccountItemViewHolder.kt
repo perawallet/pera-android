@@ -26,14 +26,12 @@ class AccountSelectionAccountItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: BaseAccountSelectionListItem.BaseAccountItem.AccountItem) {
-        with(binding) {
-            with(item.accountListItem.itemConfiguration) {
-                setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.primaryDisplayName)
-                setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
-                setAccountPrimaryValueText(primaryValueText)
-                setAccountSecondaryValueText(secondaryValueText)
-            }
+        with(item.accountListItem.itemConfiguration) {
+            setAccountStartIconDrawable(accountIconDrawablePreview)
+            setAccountTitleText(accountDisplayName?.primaryDisplayName)
+            setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
+            setAccountPrimaryValueText(primaryValueText)
+            setAccountSecondaryValueText(secondaryValueText)
         }
     }
 

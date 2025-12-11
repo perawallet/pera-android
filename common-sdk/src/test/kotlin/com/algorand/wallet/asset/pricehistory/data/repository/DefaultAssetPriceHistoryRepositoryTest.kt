@@ -23,6 +23,7 @@ import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -41,7 +42,7 @@ class DefaultAssetPriceHistoryRepositoryTest {
     )
 
     @Test
-    fun `EXPECT error WHEN api request fails`() = runTest {
+    fun `EXPECT error WHEN api request fails`(): TestResult = runTest {
         coEvery { historyApiService.getAssetPriceHistory(ASSET_ID, PERIOD_REQUEST) } throws Exception()
 
         val result = sut.getAssetPriceHistory(ASSET_ID, PERIOD)
@@ -50,24 +51,12 @@ class DefaultAssetPriceHistoryRepositoryTest {
     }
 
     @Test
-    fun `EXPECT mapped asset price history`() = runTest {
+    fun `EXPECT mapped asset price history`(): TestResult = runTest {
         coEvery { historyApiService.getAssetPriceHistory(ASSET_ID, PERIOD_REQUEST) } returns PRICE_HISTORY_RESPONSE
         every { assetPriceHistoryMapper(PRICE_HISTORY_ITEM_RESPONSE) } returns PRICE_HISTORY
         every { periodRequestMapper(PERIOD) } returns PERIOD_REQUEST
 
         val result = sut.getAssetPriceHistory(ASSET_ID, PERIOD)
-
-        val expected = PeraResult.Success(PRICE_HISTORY_RESULT)
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun `EXPECT asset id to be 0 WHEN asset is algo`() = runTest {
-        coEvery { historyApiService.getAssetPriceHistory(0, PERIOD_REQUEST) } returns PRICE_HISTORY_RESPONSE
-        every { assetPriceHistoryMapper(PRICE_HISTORY_ITEM_RESPONSE) } returns PRICE_HISTORY
-        every { periodRequestMapper(PERIOD) } returns PERIOD_REQUEST
-
-        val result = sut.getAssetPriceHistory(-7, PERIOD)
 
         val expected = PeraResult.Success(PRICE_HISTORY_RESULT)
         assertEquals(expected, result)

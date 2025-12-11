@@ -16,10 +16,11 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import app.perawallet.walletconnectv2.Core
+import app.perawallet.walletconnectv2.push.notifications.PushMessagingService
 import com.algorand.android.R
 import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
 import com.algorand.android.notification.domain.model.NotificationMetadata
@@ -31,8 +32,6 @@ import com.algorand.android.utils.preference.isNotificationActivated
 import com.algorand.android.utils.recordException
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
-import com.walletconnect.android.Core
-import com.walletconnect.android.push.notifications.PushMessagingService
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Integer.parseInt
 import java.text.SimpleDateFormat
@@ -109,7 +108,9 @@ class PeraFirebaseMessagingService : PushMessagingService() {
     @SuppressWarnings("LongMethod")
     private fun showNotification(notificationData: NotificationMetadata) {
         val intent = if (notificationData.url != null) {
-            LauncherActivity.newIntentWithDeeplink(context = this, deeplink = notificationData.url)
+            LauncherActivity
+                .newIntentWithDeeplink(context = this, deeplink = notificationData.url)
+                .putExtra(EXTRA_NOTIFICATION_CLICK, true)
         } else {
             LauncherActivity.newIntent(context = this)
         }.apply { action = System.currentTimeMillis().toString() }
@@ -132,7 +133,7 @@ class PeraFirebaseMessagingService : PushMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setDefaults(Notification.DEFAULT_ALL)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         val channelId = getString(R.string.app_name)
         val channel = NotificationChannel(
@@ -183,5 +184,6 @@ class PeraFirebaseMessagingService : PushMessagingService() {
         private const val ALERT = "alert"
         private const val CUSTOM = "custom"
         private const val BLOB = "blob"
+        const val EXTRA_NOTIFICATION_CLICK = "extraNotificationClick"
     }
 }

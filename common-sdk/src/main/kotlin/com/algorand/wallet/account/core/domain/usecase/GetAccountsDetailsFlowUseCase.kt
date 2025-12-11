@@ -17,9 +17,9 @@ import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class GetAccountsDetailsFlowUseCase @Inject constructor(
     private val getAllLocalAccountAddressesAsFlow: GetAllLocalAccountAddressesAsFlow,

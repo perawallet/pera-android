@@ -17,7 +17,13 @@ import com.algorand.android.utils.BaseUrlBuilder
 
 class BidaliUrlBuilder private constructor(
     isMainnet: Boolean
-) : BaseUrlBuilder(if (isMainnet) { PROD_BIDALI_API_URL } else { STAGING_BIDALI_API_URL }) {
+) : BaseUrlBuilder(
+    if (isMainnet) {
+        PROD_BIDALI_API_URL
+    } else {
+        STAGING_BIDALI_API_URL
+    }
+) {
 
     enum class BidaliQuery(override val key: String) : UrlQueryParam {
         KEY("key"),

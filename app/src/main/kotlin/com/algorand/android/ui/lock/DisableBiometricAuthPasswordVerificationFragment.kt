@@ -28,6 +28,6 @@ class DisableBiometricAuthPasswordVerificationFragment : BasePasswordFragment() 
     )
 
     companion object {
-        const val DISABLE_BIOMETRIC_AUTH_VERIFICATION_RESULT_KEY = "disable_biometric_auth_verification_result"
+        const val DISABLE_BIOMETRIC_AUTH_VERIFICATION_RESULT_KEY: String = "disable_biometric_auth_verification_result"
     }
 }

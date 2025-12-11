@@ -15,24 +15,24 @@ package com.algorand.android.assetsearch.domain.pagination
 import androidx.paging.PagingConfig
 import com.algorand.android.assetsearch.domain.model.AssetSearchQuery
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
+import com.algorand.wallet.asset.domain.usecase.GetAssetFavoriteStatuses
 
 class AssetSearchPagerBuilder private constructor() {
 
     private var searchResultLimit = DEFAULT_SEARCH_RESULT_LIMIT
     private var prefetchDistance = DEFAULT_PREFETCH_DISTANCE
 
-    fun build(assetSearchRepository: AssetSearchRepository, defaultQuery: AssetSearchQuery?): AssetSearchPager {
-        return AssetSearchPager.create(createPagingConfig(), assetSearchRepository, defaultQuery)
-    }
-
-    fun setResultLimit(resultLimit: Int): AssetSearchPagerBuilder {
-        searchResultLimit = resultLimit
-        return this
-    }
-
-    fun setPrefetchDistance(distance: Int): AssetSearchPagerBuilder {
-        prefetchDistance = distance
-        return this
+    fun build(
+        assetSearchRepository: AssetSearchRepository,
+        getAssetFavoriteStatuses: GetAssetFavoriteStatuses,
+        defaultQuery: AssetSearchQuery?
+    ): AssetSearchPager {
+        return AssetSearchPager.create(
+            createPagingConfig(),
+            assetSearchRepository,
+            getAssetFavoriteStatuses,
+            defaultQuery
+        )
     }
 
     private fun createPagingConfig(): PagingConfig {
@@ -47,6 +47,6 @@ class AssetSearchPagerBuilder private constructor() {
         private const val DEFAULT_SEARCH_RESULT_LIMIT = 50
         private const val DEFAULT_PREFETCH_DISTANCE = 25
 
-        fun create() = AssetSearchPagerBuilder()
+        fun create(): AssetSearchPagerBuilder = AssetSearchPagerBuilder()
     }
 }

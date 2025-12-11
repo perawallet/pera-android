@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.webimport.loading.data.di
 
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.webimport.loading.data.mapper.ImportBackupResponseDTOMapper
 import com.algorand.android.modules.webimport.loading.data.repository.WebImportAccountRepositoryImpl
 import com.algorand.android.modules.webimport.loading.domain.repository.WebImportAccountRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,12 +30,12 @@ object WebImportNetworkModule {
     @Named(WebImportAccountRepository.REPOSITORY_INJECTION_NAME)
     internal fun provideWebImportAccountRepository(
         mobileAlgorandApi: MobileAlgorandApi,
-        hipoApiErrorHandler: RetrofitErrorHandler,
+        peraApiErrorHandler: RetrofitErrorHandler,
         importBackupResponseDTOMapper: ImportBackupResponseDTOMapper
     ): WebImportAccountRepository {
         return WebImportAccountRepositoryImpl(
             mobileAlgorandApi,
-            hipoApiErrorHandler,
+            peraApiErrorHandler,
             importBackupResponseDTOMapper
         )
     }

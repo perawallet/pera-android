@@ -67,8 +67,12 @@ class CreateDeepLinkImplTest {
     private val stakingDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
-    
+
     private val homeDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
+
+    private val fidoDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
 
@@ -87,7 +91,8 @@ class CreateDeepLinkImplTest {
         keyRegTransactionDeepLinkBuilder,
         cardsDeepLinkBuilder,
         stakingDeepLinkBuilder,
-        homeDeepLinkBuilder
+        homeDeepLinkBuilder,
+        fidoDeepLinkBuilder
     )
 
     @Test
@@ -263,18 +268,20 @@ class CreateDeepLinkImplTest {
         assertEquals(expected, result)
     }
 
+    @Test
+    fun `EXPECT fido deep link WHEN uri starts with fido scheme`() {
+        every { parseDeepLinkPayload("fido:/testUri") } returns DEEP_LINK_PAYLOAD
+        every { fidoDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
+        every { fidoDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns DeepLink.Fido("fido:/testUri")
+
+        val result = sut("fido:/testUri")
+
+        val expected = DeepLink.Fido("fido:/testUri")
+        assertEquals(expected, result)
+    }
+
     private companion object {
         val DEEP_LINK_PAYLOAD = DeepLinkPayload(
-            walletConnectUrl = null,
-            accountAddress = null,
-            assetId = null,
-            amount = null,
-            note = null,
-            url = null,
-            xnote = null,
-            label = null,
-            webImportQrCode = null,
-            notificationGroupType = null,
             rawDeepLinkUri = "deep link"
         )
     }

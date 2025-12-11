@@ -86,6 +86,7 @@ class PrismUrlBuilderTest {
     }
 
     companion object {
-        private const val RAW_PRISM_URL = "https://perawallet-staging-testnet.tryprism.com/media/collectible_primary_images/2022/02/22/c26d701574f2449da962fc0bbe5528e2.jpeg"
+        private const val RAW_PRISM_URL =
+            "https://perawallet-staging-testnet.tryprism.com/media/collectible_primary_images/2022/02/22/c26d701574f2449da962fc0bbe5528e2.jpeg"
     }
 }

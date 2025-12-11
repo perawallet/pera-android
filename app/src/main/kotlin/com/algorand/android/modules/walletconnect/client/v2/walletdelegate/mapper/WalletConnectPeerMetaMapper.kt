@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.walletdelegate.mapper
 
+import app.perawallet.walletconnectv2.Core
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.walletconnect.android.Core
 
 interface WalletConnectPeerMetaMapper {
     fun mapToPeerMeta(appMetaData: Core.Model.AppMetaData): WalletConnect.PeerMeta

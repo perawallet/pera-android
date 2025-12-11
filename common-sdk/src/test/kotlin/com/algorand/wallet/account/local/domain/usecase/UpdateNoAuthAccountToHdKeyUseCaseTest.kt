@@ -12,12 +12,13 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
+import app.perawallet.xhdwalletapi.Bip32DerivationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.junit.Test
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
+import org.junit.Test
 
 class UpdateNoAuthAccountToHdKeyUseCaseTest {
 
@@ -30,7 +31,7 @@ class UpdateNoAuthAccountToHdKeyUseCaseTest {
     )
 
     @Test
-    fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`() = runTest {
+    fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`(): TestResult = runTest {
         sut(
             ADDRESS,
             PUBLIC_KEY,

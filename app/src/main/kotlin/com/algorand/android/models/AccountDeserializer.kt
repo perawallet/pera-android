@@ -27,7 +27,7 @@ class AccountDeserializer : JsonDeserializer<Account> {
 
         val type: Account.Type? = try {
             Account.Type.valueOf(jsonObject.get("type").asString)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
 
@@ -94,7 +94,7 @@ class AccountDeserializer : JsonDeserializer<Account> {
         if (authDetailJsonObject != null) {
             rekeyedAuthType = try {
                 Account.Type.valueOf(jsonObject.get("authDetailType").asString)
-            } catch (exception: Exception) {
+            } catch (_: Exception) {
                 null
             }
             if (rekeyedAuthType != null) {

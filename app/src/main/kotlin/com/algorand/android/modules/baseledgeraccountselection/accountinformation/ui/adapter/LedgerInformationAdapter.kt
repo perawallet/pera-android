@@ -52,12 +52,15 @@ class LedgerInformationAdapter : ListAdapter<LedgerInformationListItem, Recycler
             is TitleItemViewHolder -> {
                 holder.bind(getItem(position) as LedgerInformationListItem.TitleItem)
             }
+
             is AccountItemViewHolder -> {
                 holder.bind(getItem(position) as LedgerInformationListItem.AccountItem)
             }
+
             is AssetInformationItemViewHolder -> {
                 holder.bind(getItem(position) as LedgerInformationListItem.AssetInformationItem)
             }
+
             is CanSignedByItemViewHolder -> {
                 holder.bind(getItem(position) as LedgerInformationListItem.CanSignedByItem)
             }

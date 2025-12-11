@@ -18,6 +18,7 @@ import com.algorand.wallet.foundation.cache.PersistentCache
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -39,26 +40,27 @@ class ReferrerRepositoryImplTest {
     )
 
     @Test
-    fun `EXPECT data saved to SharedPreferences WHEN saveReferrerData is called with valid data`() = runTest {
-        val referrerData = ReferrerData(
-            utmSource = "source",
-            utmMedium = "medium",
-            utmCampaign = "campaign",
-            utmTerm = "term",
-            utmContent = "content"
-        )
+    fun `EXPECT data saved to SharedPreferences WHEN saveReferrerData is called with valid data`(): TestResult =
+        runTest {
+            val referrerData = ReferrerData(
+                utmSource = "source",
+                utmMedium = "medium",
+                utmCampaign = "campaign",
+                utmTerm = "term",
+                utmContent = "content"
+            )
 
-        sut.saveReferrerData(referrerData)
+            sut.saveReferrerData(referrerData)
 
-        verify { sourceCache.put("source") }
-        verify { mediumCache.put("medium") }
-        verify { campaignCache.put("campaign") }
-        verify { termCache.put("term") }
-        verify { contentCache.put("content") }
-    }
+            verify { sourceCache.put("source") }
+            verify { mediumCache.put("medium") }
+            verify { campaignCache.put("campaign") }
+            verify { termCache.put("term") }
+            verify { contentCache.put("content") }
+        }
 
     @Test
-    fun `EXPECT no values saved WHEN saveReferrerData is called with all null values`() = runTest {
+    fun `EXPECT no values saved WHEN saveReferrerData is called with all null values`(): TestResult = runTest {
         val referrerData = ReferrerData(
             utmSource = null,
             utmMedium = null,
@@ -77,27 +79,28 @@ class ReferrerRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT complete ReferrerData WHEN getReferrerData is called and SharedPreferences has all values`() = runTest {
-        every { sourceCache.get() } returns "source"
-        every { mediumCache.get() } returns "medium"
-        every { campaignCache.get() } returns "campaign"
-        every { termCache.get() } returns "term"
-        every { contentCache.get() } returns "content"
+    fun `EXPECT complete ReferrerData WHEN getReferrerData is called and SharedPreferences has all values`(): TestResult =
+        runTest {
+            every { sourceCache.get() } returns "source"
+            every { mediumCache.get() } returns "medium"
+            every { campaignCache.get() } returns "campaign"
+            every { termCache.get() } returns "term"
+            every { contentCache.get() } returns "content"
 
-        val result = sut.getReferrerData()
+            val result = sut.getReferrerData()
 
-        val expected = ReferrerData(
-            utmSource = "source",
-            utmMedium = "medium",
-            utmCampaign = "campaign",
-            utmTerm = "term",
-            utmContent = "content"
-        )
-        assertEquals(expected, result)
-    }
+            val expected = ReferrerData(
+                utmSource = "source",
+                utmMedium = "medium",
+                utmCampaign = "campaign",
+                utmTerm = "term",
+                utmContent = "content"
+            )
+            assertEquals(expected, result)
+        }
 
     @Test
-    fun `EXPECT ReferrerData with null values WHEN getReferrerData is called and SharedPreferences has no values`() =
+    fun `EXPECT ReferrerData with null values WHEN getReferrerData is called and SharedPreferences has no values`(): TestResult =
         runTest {
             every { sourceCache.get() } returns null
             every { mediumCache.get() } returns null

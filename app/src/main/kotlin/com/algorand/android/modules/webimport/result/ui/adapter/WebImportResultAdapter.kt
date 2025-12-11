@@ -25,7 +25,7 @@ import com.algorand.android.modules.webimport.result.ui.viewholder.WebImportResu
 
 class WebImportResultAdapter :
     ListAdapter<BaseAccountResultListItem,
-        BaseViewHolder<BaseAccountResultListItem>>(BaseDiffUtil<BaseAccountResultListItem>()) {
+            BaseViewHolder<BaseAccountResultListItem>>(BaseDiffUtil<BaseAccountResultListItem>()) {
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {

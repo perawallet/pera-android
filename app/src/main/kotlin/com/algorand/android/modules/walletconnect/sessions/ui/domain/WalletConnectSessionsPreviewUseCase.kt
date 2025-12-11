@@ -13,38 +13,25 @@
 package com.algorand.android.modules.walletconnect.sessions.ui.domain
 
 import androidx.core.net.toUri
-import com.algorand.android.modules.walletconnect.domain.ConnectToExistingSessionUseCase
 import com.algorand.android.modules.walletconnect.domain.KillAllWalletConnectSessionsUseCase
-import com.algorand.android.modules.walletconnect.domain.KillWalletConnectSessionUseCase
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.sessions.ui.mapper.BaseWalletConnectSessionItemMapper
 import com.algorand.android.modules.walletconnect.sessions.ui.mapper.WalletConnectSessionsPreviewMapper
 import com.algorand.android.modules.walletconnect.sessions.ui.model.BaseWalletConnectSessionItem
 import com.algorand.android.modules.walletconnect.sessions.ui.model.WalletConnectSessionsPreview
-import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.utils.formatAsDateAndTime
 import com.algorand.android.utils.getZonedDateTimeFromSec
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class WalletConnectSessionsPreviewUseCase @Inject constructor(
-    private val killWalletConnectSessionUseCase: KillWalletConnectSessionUseCase,
-    private val connectToExistingSessionUseCase: ConnectToExistingSessionUseCase,
     private val killAllWalletConnectSessionsUseCase: KillAllWalletConnectSessionsUseCase,
     private val walletConnectSessionsPreviewMapper: WalletConnectSessionsPreviewMapper,
     private val walletConnectManager: WalletConnectManager,
     private val baseWalletConnectSessionItemMapper: BaseWalletConnectSessionItemMapper
 ) {
-
-    suspend fun killWalletConnectSession(sessionIdentifier: WalletConnectSessionIdentifier) {
-        killWalletConnectSessionUseCase(sessionIdentifier)
-    }
-
-    suspend fun connectToExistingSession(sessionIdentifier: WalletConnectSessionIdentifier) {
-        connectToExistingSessionUseCase(sessionIdentifier)
-    }
 
     fun killAllWalletConnectSessions() {
         killAllWalletConnectSessionsUseCase()

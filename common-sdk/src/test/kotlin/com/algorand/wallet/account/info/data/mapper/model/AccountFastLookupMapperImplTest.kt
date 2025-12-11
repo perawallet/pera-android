@@ -14,9 +14,9 @@ package com.algorand.wallet.account.info.data.mapper.model
 
 import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
-import java.math.BigDecimal
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigDecimal
 
 class AccountFastLookupMapperImplTest {
 

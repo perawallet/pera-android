@@ -16,7 +16,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.ledger.operations.AccountFetchAllOperation
 import com.algorand.android.ledger.operations.BaseOperation
@@ -32,13 +32,13 @@ import com.algorand.android.utils.getPublicKey
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.ble.observer.ConnectionObserver
+import javax.inject.Inject
 
 class LedgerBleOperationManager @Inject constructor(
     private val ledgerBleConnectionManager: LedgerBleConnectionManager,
@@ -48,7 +48,7 @@ class LedgerBleOperationManager @Inject constructor(
     val connectedBluetoothDevice: BluetoothDevice?
         get() = ledgerBleConnectionManager.bluetoothDevice
 
-    val ledgerBleResultFlow = MutableStateFlow<Event<LedgerBleResult>?>(null)
+    val ledgerBleResultFlow: MutableStateFlow<Event<LedgerBleResult>?> = MutableStateFlow(null)
     private var currentOperation: BaseOperation? = null
 
     private var currentTransactionIndex: Int? = null
@@ -88,6 +88,7 @@ class LedgerBleOperationManager @Inject constructor(
                     }
                     sendPublicKeyRequest()
                 }
+
                 is VerifyAddressOperation -> {
                     verifyPublicKeyRequest(newOperation)
                 }
@@ -135,14 +136,15 @@ class LedgerBleOperationManager @Inject constructor(
         }
     }
 
-    override fun onDataReceived(device: BluetoothDevice, byteArray: ByteArray) {
+    override fun onDataReceived(device: BluetoothDevice, data: ByteArray) {
         currentOperation?.run {
             when {
                 this is BaseTransactionOperation && isAddressVerified -> {
-                    onTransactionSignatureReceived(byteArray)
+                    onTransactionSignatureReceived(data)
                 }
+
                 else -> {
-                    val accountPublicKey = getPublicKey(byteArray)
+                    val accountPublicKey = getPublicKey(data)
                     if (!accountPublicKey.isNullOrBlank()) {
                         onPublicKeyReceived(device, accountPublicKey)
                     }
@@ -192,11 +194,13 @@ class LedgerBleOperationManager @Inject constructor(
                                         is AccountFetchAllOperation -> {
                                             LedgerBleResult.AccountResult(accounts, device)
                                         }
+
                                         is TransactionSignOperation,
                                         is WalletConnectTransactionOperation,
                                         is ExternalTransactionOperation -> {
                                             LedgerBleResult.AppErrorResult(R.string.it_appears_this, R.string.error)
                                         }
+
                                         is VerifyAddressOperation -> {
                                             throw Exception("Verify operation should not posted here.")
                                         }
@@ -250,6 +254,7 @@ class LedgerBleOperationManager @Inject constructor(
                     )
                 )
             }
+
             else -> {
                 sendErrorLog("Unhandled else case in LedgerBleOperationManager.onDeviceFailedToConnect")
             }

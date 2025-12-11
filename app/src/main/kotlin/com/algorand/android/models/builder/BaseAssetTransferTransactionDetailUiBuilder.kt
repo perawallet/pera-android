@@ -17,17 +17,16 @@ import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.U
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestSenderInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.MIN_FEE
 import javax.inject.Inject
 
-class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
-) : WalletConnectTransactionDetailBuilder<BaseAssetTransferTransaction> {
+class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor() :
+    WalletConnectTransactionDetailBuilder<BaseAssetTransferTransaction> {
 
     override fun buildTransactionRequestSenderInfo(txn: BaseAssetTransferTransaction): TransactionRequestSenderInfo? {
         return when (txn) {
@@ -63,6 +62,17 @@ class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
         return when (txn) {
             is BaseAssetTransferTransaction.AssetOptInTransaction -> buildAssetOptInExtrasInfo(txn)
             else -> buildGeneralExtrasInfo(txn)
+        }
+    }
+
+    override fun buildTransactionRequestExtraFields(
+        txn: BaseAssetTransferTransaction
+    ): TransactionRequestExtraFields {
+        return with(txn) {
+            TransactionRequestExtraFields(
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
+            )
         }
     }
 

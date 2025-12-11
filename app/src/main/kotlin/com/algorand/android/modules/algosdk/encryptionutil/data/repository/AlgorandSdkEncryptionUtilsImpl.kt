@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.algosdk.encryptionutil.data.repository
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.modules.algosdk.encryptionutil.domain.repository.AlgorandSdkEncryptionUtils
 import com.algorand.android.utils.SDK_RESULT_SUCCESS
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
@@ -28,7 +28,7 @@ class AlgorandSdkEncryptionUtilsImpl : AlgorandSdkEncryptionUtils {
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -42,7 +42,7 @@ class AlgorandSdkEncryptionUtilsImpl : AlgorandSdkEncryptionUtils {
             } else {
                 null
             }
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

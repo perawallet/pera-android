@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetAppAtBackgroundTimeUseCase @Inject constructor(
-    @Named(AutoLockRepository.INJECTION_NAME)
+    @param:Named(AutoLockRepository.INJECTION_NAME)
     private val autoLockRepository: AutoLockRepository
 ) {
 

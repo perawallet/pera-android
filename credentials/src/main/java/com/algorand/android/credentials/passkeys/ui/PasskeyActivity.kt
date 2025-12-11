@@ -21,6 +21,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.algorand.android.credentials.R
+import com.algorand.android.credentials.passkeys.ui.PasskeyProviderService.Companion.CREATE_PASSKEY_INTENT
+import com.algorand.android.credentials.passkeys.ui.PasskeyProviderService.Companion.GET_PASSKEY_INTENT
+import com.algorand.android.credentials.passkeys.ui.biometric.PasskeyBiometricAuthenticator
 import com.algorand.android.credentials.passkeys.ui.viewmodel.CreatePasskeyViewModel
 import com.algorand.android.credentials.passkeys.ui.viewmodel.CreatePasskeyViewModel.CreatePasskeyParams
 import com.algorand.android.credentials.passkeys.ui.viewmodel.CreatePasskeyViewModel.ViewEvent.AuthenticateCreatePasskeyWithBiometrics
@@ -32,14 +35,11 @@ import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewMode
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewModel.ViewEvent.AuthenticateGetPasskeyWithBiometrics
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewModel.ViewEvent.FinishActivityWithGetError
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewModel.ViewEvent.SetGetResponseAndFinishActivity
-import com.algorand.android.credentials.passkeys.ui.PasskeyProviderService.Companion.CREATE_PASSKEY_INTENT
-import com.algorand.android.credentials.passkeys.ui.PasskeyProviderService.Companion.GET_PASSKEY_INTENT
-import com.algorand.android.credentials.passkeys.ui.biometric.PasskeyBiometricAuthenticator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @AndroidEntryPoint
 class PasskeyActivity : FragmentActivity(),
     ActivityCredentialRequestResolver by DefaultActivityCredentialRequestResolver() {

@@ -65,7 +65,7 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration =
+    override val fragmentConfiguration: FragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val args by navArgs<RecoverWithPassphraseFragmentArgs>()
@@ -341,7 +341,6 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
                 drawableResId = R.drawable.ic_error,
                 drawableTintResId = R.color.error_tint_color,
                 descriptionAnnotatedString = descriptionString,
-                isResultNeeded = false,
             )
         )
     }

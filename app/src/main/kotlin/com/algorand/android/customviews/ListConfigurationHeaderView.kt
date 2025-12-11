@@ -15,7 +15,6 @@ package com.algorand.android.customviews
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -34,16 +33,8 @@ class ListConfigurationHeaderView(context: Context, attrs: AttributeSet? = null)
         initAttributes(attrs)
     }
 
-    fun setPrimaryButtonVisibility(isVisible: Boolean) {
-        binding.primaryButton.isVisible = isVisible
-    }
-
     fun setPrimaryButtonClickListener(onClick: () -> Unit) {
         binding.primaryButton.setOnClickListener { onClick() }
-    }
-
-    fun setPrimaryButtonState(isActive: Boolean) {
-        binding.primaryButton.isActivated = isActive
     }
 
     fun setSecondaryButtonVisibility(isVisible: Boolean) {
@@ -112,7 +103,7 @@ class ListConfigurationHeaderView(context: Context, attrs: AttributeSet? = null)
             if (!secondaryButtonText.isNullOrBlank()) {
                 text = secondaryButtonText
                 updateLayoutParams {
-                    width = ViewGroup.LayoutParams.WRAP_CONTENT
+                    width = LayoutParams.WRAP_CONTENT
                 }
             }
             if (secondaryButtonIcon != null) icon = secondaryButtonIcon

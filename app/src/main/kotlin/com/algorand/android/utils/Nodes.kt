@@ -15,12 +15,12 @@ package com.algorand.android.utils
 import com.algorand.android.BuildConfig
 import com.algorand.android.models.Node
 
-const val CURRENT_DEFAULT_NODE_LIST_VERSION = 28
+const val CURRENT_DEFAULT_NODE_LIST_VERSION: Int = 28
 
-const val MAINNET_NODE_NAME = "Algorand MainNet Node"
-const val TESTNET_NODE_NAME = "TestNet"
+const val MAINNET_NODE_NAME: String = "Algorand MainNet Node"
+const val TESTNET_NODE_NAME: String = "TestNet"
 
-val mainNetNode = Node(
+val mainNetNode: Node = Node(
     name = MAINNET_NODE_NAME,
     algodAddress = BuildConfig.NODE_MAINNET_URL,
     algodApiKey = BuildConfig.ALGORAND_API_KEY,
@@ -32,7 +32,7 @@ val mainNetNode = Node(
     mobileAlgorandAddress = BuildConfig.MOBILE_ALGORAND_MAINNET_BASE_URL
 )
 
-val testNetNode = Node(
+val testNetNode: Node = Node(
     name = TESTNET_NODE_NAME,
     algodAddress = BuildConfig.NODE_TESTNET_URL,
     algodApiKey = BuildConfig.ALGORAND_API_KEY,

@@ -17,11 +17,10 @@ import androidx.compose.ui.res.stringResource
 import com.algorand.android.R
 
 @Composable
-fun SwapQuickActionButton(isSelected: Boolean, onClick: () -> Unit) {
+fun SwapQuickActionButton(onClick: () -> Unit) {
     PrimaryQuickActionButton(
         iconResId = R.drawable.ic_swap,
         text = stringResource(R.string.swap),
-        showIndicator = isSelected,
         onClick = onClick
     )
 }

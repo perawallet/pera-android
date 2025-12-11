@@ -18,8 +18,8 @@ import com.algorand.android.models.Node
 import com.algorand.android.utils.preference.getDefaultNodeListVersion
 import com.algorand.android.utils.preference.setNodeListVersion
 
-const val TESTNET_NETWORK_SLUG = "testnet"
-const val MAINNET_NETWORK_SLUG = "mainnet"
+const val TESTNET_NETWORK_SLUG: String = "testnet"
+const val MAINNET_NETWORK_SLUG: String = "mainnet"
 
 suspend fun findAllNodes(
     sharedPref: SharedPreferences,

@@ -34,12 +34,13 @@ import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUs
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
+import com.algorand.android.notification.PeraFirebaseMessagingService.Companion.EXTRA_NOTIFICATION_CLICK
 import com.algorand.android.notification.domain.model.NotificationMetadata
+import com.algorand.android.notification.tracking.NotificationClickEventTracker
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.ui.main.tracker.BottomNavigationEventTracker
@@ -58,8 +59,6 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.SWAP_V2_TOGGLE
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +85,6 @@ class MainViewModel @Inject constructor(
     private val deepLinkHandler: DeeplinkHandler,
     private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
     private val tutorialUseCase: TutorialUseCase,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val nodeRepository: NodeRepository,
     private val peraReferrerManager: PeraReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
@@ -104,13 +102,13 @@ class MainViewModel @Inject constructor(
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
+    private val notificationClickEventTracker: NotificationClickEventTracker
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
     BottomNavigationEventTracker by bottomNavigationEventTracker {
 
     val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
 
-    var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+    private var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue && newValue && isAppUnlocked()) {
             handlePendingIntent(true)
         }
@@ -168,8 +166,6 @@ class MainViewModel @Inject constructor(
             else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
         }
     }
-
-    fun isSwapV2Enabled(): Boolean = isFeatureToggleEnabled(SWAP_V2_TOGGLE)
 
     fun handleNotificationDeepLink(
         accountAddress: String,
@@ -323,8 +319,12 @@ class MainViewModel @Inject constructor(
                 true
             }
 
-            else -> pendingIntent.getStringExtra(DEEPLINK_KEY)?.let {
-                handleDeepLink(it)
+            else -> pendingIntent.getStringExtra(DEEPLINK_KEY)?.let { deeplink ->
+                if (pendingIntent.getBooleanExtra(EXTRA_NOTIFICATION_CLICK, false)) {
+                    notificationClickEventTracker.log(deeplink)
+                    pendingIntent.removeExtra(EXTRA_NOTIFICATION_CLICK)
+                }
+                handleDeepLink(deeplink)
                 true
             } ?: false
         }

@@ -40,7 +40,9 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 transactionAmount = payment?.amount ?: assetTransfer?.amount ?: BigInteger.ZERO,
                 transactionCloseAmount = closeAmount,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
-                noteInBase64 = noteInBase64
+                noteInBase64 = noteInBase64,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }
@@ -62,7 +64,9 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 assetId = assetTransfer?.assetId ?: assetFreezeTransaction?.assetId ?: assetConfiguration?.assetId
                 ?: applicationCall?.foreignAssets?.firstNotNullOfOrNull { it } ?: ALGO_ID,
                 transactionCloseAmount = closeAmount,
-                closeToAccountAddress = payment?.closeToAddress ?: assetTransfer?.closeTo
+                closeToAccountAddress = payment?.closeToAddress ?: assetTransfer?.closeTo,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }
@@ -81,11 +85,11 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
                 noteInBase64 = noteInBase64,
                 assetId = createdAssetIndex ?: assetConfiguration?.assetId,
-                closeToAccountAddress = null, // Asset Configuration Transaction does not contain close to address
-                transactionAmount = null, // Asset Configuration Transaction does not contain amount
                 transactionCloseAmount = closeAmount,
                 name = assetConfiguration?.name,
-                unitName = assetConfiguration?.unitName
+                unitName = assetConfiguration?.unitName,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }
@@ -108,7 +112,9 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 applicationId = applicationCall?.applicationId,
                 innerTransactions = innerTransactions,
                 innerTransactionCount = getAllNestedTransactions(this).count(),
-                foreignAssetIds = applicationCall?.foreignAssets
+                foreignAssetIds = applicationCall?.foreignAssets,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }
@@ -117,7 +123,7 @@ class BaseTransactionDetailMapper @Inject constructor() {
         return with(transactionDto) {
             val isOnlineKeyReg: Boolean = keyRegTransactionDTO?.run {
                 voteKey != null && selectionKey != null && stateProofKey != null && validFirstRound != null &&
-                    validLastRound != null && voteKeyDilution != null
+                        validLastRound != null && voteKeyDilution != null
             } ?: false
             if (isOnlineKeyReg) {
                 mapToOnlineKeyRegTransactionDetail(transactionDto)
@@ -133,11 +139,12 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = null,
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
-                noteInBase64 = noteInBase64
+                noteInBase64 = noteInBase64,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }
@@ -152,7 +159,9 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
-                noteInBase64 = noteInBase64
+                noteInBase64 = noteInBase64,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }
@@ -176,7 +185,9 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 stateProofKey = keyRegTransactionDTO?.stateProofKey.orEmpty(),
                 validFirstRound = keyRegTransactionDTO?.validFirstRound ?: 0,
                 validLastRound = keyRegTransactionDTO?.validLastRound ?: 0,
-                voteKeyDilution = keyRegTransactionDTO?.voteKeyDilution ?: 0
+                voteKeyDilution = keyRegTransactionDTO?.voteKeyDilution ?: 0,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }
@@ -195,7 +206,9 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 transactionCloseAmount = null,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
                 noteInBase64 = noteInBase64,
-                isParticipating = keyRegTransactionDTO?.nonParticipation == false
+                isParticipating = keyRegTransactionDTO?.nonParticipation == false,
+                rejectVersion = rejectVersion,
+                accessListSize = accessListSize
             )
         }
     }

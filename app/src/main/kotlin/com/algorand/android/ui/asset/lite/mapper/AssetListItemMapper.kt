@@ -19,5 +19,5 @@ import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 
 interface AssetListItemMapper {
     operator fun invoke(assetLite: AssetLite): AssetListItem
-    operator fun invoke(assetHoldings: AssetHoldingLite, asset: AvailableSwapAsset): AssetListItem
+    operator fun invoke(assetHoldings: AssetHoldingLite, asset: AvailableSwapAsset, isFavorite: Boolean?): AssetListItem
 }

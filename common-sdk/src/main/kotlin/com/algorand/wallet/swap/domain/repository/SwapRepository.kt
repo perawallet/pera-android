@@ -35,6 +35,6 @@ internal interface SwapRepository {
     suspend fun setUseLocalCurrencyPreference(useLocalCurrency: Boolean)
     suspend fun setSwapStatusFailed(quoteId: Long, reason: SwapStatusFailureReason)
     suspend fun setSwapStatusInProgress(swapId: Long, txnIds: List<TransactionId>)
-    suspend fun setSlippageTolerancePercentage(percentage: Float?)
-    suspend fun getSlippageTolerancePercentage(): Float?
+    suspend fun setSlippageTolerancePercentage(percentage: Double?)
+    suspend fun getSlippageTolerancePercentage(): Double?
 }

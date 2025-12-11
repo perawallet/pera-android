@@ -12,16 +12,16 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.utils
 
-import com.walletconnect.android.internal.common.model.RelayProtocolOptions
-import com.walletconnect.android.internal.common.model.SymmetricKey
-import com.walletconnect.android.internal.common.model.WalletConnectUri
-import com.walletconnect.foundation.common.model.Topic
+import app.perawallet.walletconnectv2.foundation.common.model.Topic
+import app.perawallet.walletconnectv2.internal.common.model.RelayProtocolOptions
+import app.perawallet.walletconnectv2.internal.common.model.SymmetricKey
+import app.perawallet.walletconnectv2.internal.common.model.WalletConnectUri
 import java.net.URI
 import java.net.URISyntaxException
 
 /**
  * This class was created based on WC v2 SDK
- * For original content, please check; com.walletconnect.android.internal -> Validator.validateWCUri
+ * For original content, please check; app.perawallet.walletconnectv2.internal -> Validator.validateWCUri
  */
 @Suppress("ReturnCount")
 object WalletConnectV2UriValidator {
@@ -46,7 +46,7 @@ object WalletConnectV2UriValidator {
 
         val pairUri: URI = try {
             URI(properUriString)
-        } catch (e: URISyntaxException) {
+        } catch (_: URISyntaxException) {
             return null
         }
 

@@ -46,6 +46,7 @@ abstract class BaseCollectibleSearchItemViewHolder(
                 setAssetDescriptionText(shortName.assetName, assetId)
                 setButtonState(accountAssetItemButtonState)
                 setAssetItemViewClickListeners(this)
+                binding.collectibleItemView.setIsFavorite(item.isFavorite)
             }
         }
     }

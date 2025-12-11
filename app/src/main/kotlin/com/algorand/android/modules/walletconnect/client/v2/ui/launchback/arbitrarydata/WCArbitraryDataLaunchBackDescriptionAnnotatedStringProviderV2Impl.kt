@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.walletconnect.client.v2.ui.launchback.transaction
+package com.algorand.android.modules.walletconnect.client.v2.ui.launchback.arbitrarydata
 
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
@@ -47,6 +47,6 @@ class WCArbitraryDataLaunchBackDescriptionAnnotatedStringProviderV2Impl(
     }
 
     companion object {
-        const val INJECTION_NAME = "wcArbitraryDataLaunchBackDescriptionAnnotatedStringV2InjectionName"
+        const val INJECTION_NAME: String = "wcArbitraryDataLaunchBackDescriptionAnnotatedStringV2InjectionName"
     }
 }

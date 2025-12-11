@@ -17,9 +17,9 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentAccountNftFilterBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountdetail.nftfilter.ui.model.AccountNFTFilterPreview
 import com.algorand.android.utils.Event
@@ -38,7 +38,9 @@ class AccountNFTFilterFragment : BaseFragment(R.layout.fragment_account_nft_filt
         startIconResId = R.drawable.ic_close
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val binding by viewBinding(FragmentAccountNftFilterBinding::bind)
 

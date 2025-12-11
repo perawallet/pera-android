@@ -41,11 +41,11 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -63,7 +63,7 @@ class AssetSelectionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
-    val assetTransaction = savedStateHandle.getOrThrow<AssetTransaction>(ASSET_TRANSACTION_KEY)
+    val assetTransaction: AssetTransaction = savedStateHandle.getOrThrow(ASSET_TRANSACTION_KEY)
 
     private var assetSelectionListObservationJob: Job? = null
 

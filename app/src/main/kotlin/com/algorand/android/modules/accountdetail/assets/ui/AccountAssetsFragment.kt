@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.map
 @AndroidEntryPoint
 class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
-    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val binding by viewBinding(FragmentAccountAssetsBinding::bind)
 
@@ -232,7 +232,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
     }
 
     companion object {
-        const val ADDRESS_KEY = "address_key"
+        const val ADDRESS_KEY: String = "address_key"
         fun newInstance(address: String): AccountAssetsFragment {
             return AccountAssetsFragment().apply { arguments = Bundle().apply { putString(ADDRESS_KEY, address) } }
         }

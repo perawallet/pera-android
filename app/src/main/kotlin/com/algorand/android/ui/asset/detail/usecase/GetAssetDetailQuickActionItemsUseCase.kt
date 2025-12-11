@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.asset.detail.usecase
 
-import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
@@ -26,7 +25,6 @@ import javax.inject.Inject
 
 internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
     private val getAccountType: GetAccountType,
-    private val getSwapFeatureRedDotVisibilityUseCase: GetSwapFeatureRedDotVisibilityUseCase,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount
 ) : GetAssetDetailQuickActionItems {
 
@@ -36,16 +34,12 @@ internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
         val isAlgo = assetId == ALGO_ID
         return buildList {
             if (isAssetOptedInByAccount(address, assetId)) {
-                add(SwapButton(getRedDotVisibility(isAlgo)))
+                add(SwapButton)
             }
 
             if (isAlgo) add(BuyAlgoButton)
             add(SendButton)
             add(ReceiveButton)
         }
-    }
-
-    private suspend fun getRedDotVisibility(isAlgo: Boolean): Boolean {
-        return getSwapFeatureRedDotVisibilityUseCase.getSwapFeatureRedDotVisibility() && isAlgo
     }
 }

@@ -38,6 +38,7 @@ class DiscoverAssetItemViewHolder(
             setAssetDescriptionText(shortName.getName(binding.root.resources), assetId)
             setAssetVerificationTier(verificationTierConfiguration)
             setAssetItemViewClickListeners(this)
+            binding.statefulAssetItemView.setIsFavorite(item.isFavorite)
             formattedUsdValue?.let {
                 setAssetPriceText(it)
             }

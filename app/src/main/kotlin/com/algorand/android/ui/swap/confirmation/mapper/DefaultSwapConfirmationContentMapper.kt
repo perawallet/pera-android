@@ -30,6 +30,7 @@ import com.algorand.android.utils.formatAsPercentage
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2.AssetDetail
+import com.algorand.wallet.utils.divideOrZero
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.math.RoundingMode.FLOOR
@@ -85,7 +86,10 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
     }
 
     private fun getApproximateAmount(assetDetail: AssetDetail, assetAmount: SwapQuoteV2.AssetAmount): AmountRenderer {
-        val usdValuePerAsset = assetAmount.amountInUsdValue.divide(assetAmount.amount, RoundingMode.HALF_EVEN)
+        val usdValuePerAsset = assetAmount.amountInUsdValue.divideOrZero(
+            divisor = assetAmount.amount,
+            roundingMode = RoundingMode.HALF_EVEN
+        )
         val formattedAmount = swapAppxValueParityHelper.getDisplayedParityCurrencyValue(
             assetAmount = assetAmount.amount.movePointRight(assetDetail.fractionDecimals).toBigInteger(),
             assetUsdValue = usdValuePerAsset,
@@ -97,7 +101,11 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
 
     private fun getAssetInToOutPriceRatio(quote: SwapQuoteV2): Content.PriceRatio {
         return with(quote) {
-            val ratio = assetInAmount.amount.divide(assetOutAmount.amount, assetInDetail.fractionDecimals, FLOOR)
+            val ratio = assetInAmount.amount.divideOrZero(
+                divisor = assetOutAmount.amount,
+                scale = assetInDetail.fractionDecimals,
+                roundingMode = FLOOR
+            )
             val formattedRatio = SimplePlainFormattedAmount(
                 PeraAmount(ratio),
                 DecimalConfig(assetInDetail.fractionDecimals)
@@ -112,7 +120,11 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
 
     private fun getAssetOutToInPriceRatio(quote: SwapQuoteV2): Content.PriceRatio {
         return with(quote) {
-            val ratio = assetOutAmount.amount.divide(assetInAmount.amount, assetOutDetail.fractionDecimals, FLOOR)
+            val ratio = assetOutAmount.amount.divideOrZero(
+                divisor = assetInAmount.amount,
+                scale = assetOutDetail.fractionDecimals,
+                roundingMode = FLOOR
+            )
             val formattedRatio = SimplePlainFormattedAmount(
                 PeraAmount(ratio),
                 DecimalConfig(assetOutDetail.fractionDecimals)

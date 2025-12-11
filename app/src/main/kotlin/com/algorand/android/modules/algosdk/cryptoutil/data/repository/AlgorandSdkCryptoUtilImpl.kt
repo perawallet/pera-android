@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.algosdk.cryptoutil.data.repository
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.modules.algosdk.cryptoutil.domain.repository.AlgorandSdkCryptoUtil
 
 class AlgorandSdkCryptoUtilImpl : AlgorandSdkCryptoUtil {
@@ -21,7 +21,7 @@ class AlgorandSdkCryptoUtilImpl : AlgorandSdkCryptoUtil {
         return try {
             if (secretKey.isEmpty()) return null
             Sdk.generateAddressFromSK(secretKey)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

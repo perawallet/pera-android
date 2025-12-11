@@ -33,7 +33,7 @@ internal class GetCallingAppOriginCheckingGpmAllowlistUseCase @Inject constructo
 
     private fun getOrigin(callingAppInfo: CallingAppInfo, allowlist: JsonElement): PeraResult<String> {
         return try {
-            PeraResult.Success(callingAppInfo.getOrigin(allowlist.toString()).orEmpty())
+            PeraResult.Success(callingAppInfo.getOrigin(allowlist.toString()).orEmpty().removeSuffix("/"))
         } catch (e: Exception) {
             PeraResult.Error(e)
         }

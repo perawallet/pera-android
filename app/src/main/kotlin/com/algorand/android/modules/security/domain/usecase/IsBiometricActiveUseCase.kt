@@ -19,7 +19,7 @@ class IsBiometricActiveUseCase @Inject constructor(
     private val securityRepository: SecurityRepository
 ) {
 
-    suspend operator fun invoke(): Boolean {
+    operator fun invoke(): Boolean {
         return securityRepository.isBiometricActive()
     }
 }

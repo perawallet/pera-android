@@ -20,9 +20,9 @@ import com.algorand.android.credentials.passkeys.data.model.SiteEntity
 import com.algorand.android.credentials.passkeys.domain.model.AddPasskeyArgs
 import com.algorand.android.credentials.passkeys.domain.model.Passkey
 import com.algorand.android.credentials.passkeys.domain.repository.PasskeyRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class DefaultPasskeyRepository @Inject constructor(
     private val passkeyDao: PasskeyDao,

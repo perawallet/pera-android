@@ -16,6 +16,7 @@ package com.algorand.android.ui.wctransactiondetail
 import androidx.lifecycle.ViewModel
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestOfflineKeyRegInfo
@@ -51,6 +52,10 @@ class TransactionRequestDetailViewModel @Inject constructor(
 
     fun buildTransactionRequestExtrasInfo(txn: BaseWalletConnectTransaction): TransactionRequestExtrasInfo {
         return walletConnectTransactionDetailUiDecider.buildTransactionRequestExtrasInfo(txn)
+    }
+
+    fun buildTransactionRequestExtraFields(txn: BaseWalletConnectTransaction): TransactionRequestExtraFields? {
+        return walletConnectTransactionDetailUiDecider.buildTransactionRequestExtraFields(txn)
     }
 
     fun buildTransactionRequestAmountInfo(txn: BaseWalletConnectTransaction): TransactionRequestAmountInfo {

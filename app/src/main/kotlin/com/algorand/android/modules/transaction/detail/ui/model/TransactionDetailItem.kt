@@ -47,13 +47,15 @@ sealed class TransactionDetailItem : RecyclerListItem {
         INNER_APPLICATION_CALL_TRANSACTION_DETAIL_ITEM,
         ASSET_INFORMATION_ITEM,
         ONLINE_KEY_REG_ITEM,
-        OFFLINE_KEY_REG_ITEM
+        OFFLINE_KEY_REG_ITEM,
+        REJECTION_VERSION_ITEM,
+        ACCESS_LIST_ITEM,
     }
 
     abstract val itemType: ItemType
 
     data class FeeItem(
-        @StringRes
+        @param:StringRes
         val labelTextRes: Int,
         val transactionSign: TransactionSign,
         val transactionAmount: BigInteger,
@@ -73,7 +75,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
     }
 
     data class NoteItem(
-        @StringRes
+        @param:StringRes
         val labelTextRes: Int,
         val note: String
     ) : TransactionDetailItem() {
@@ -110,11 +112,11 @@ sealed class TransactionDetailItem : RecyclerListItem {
         override val itemType: ItemType = ItemType.DIVIDER_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is DividerItem && this == other
+            return this == other
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is DividerItem && this == other
+            return this == other
         }
     }
 
@@ -145,8 +147,8 @@ sealed class TransactionDetailItem : RecyclerListItem {
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is StandardInnerTransactionItem &&
-                    transactionAmount == other.transactionAmount &&
-                    accountAddress == other.accountAddress
+                        transactionAmount == other.transactionAmount &&
+                        accountAddress == other.accountAddress
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -180,7 +182,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
     sealed class ApplicationCallItem : TransactionDetailItem() {
 
         data class SenderItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val senderAccountAddress: String
         ) : ApplicationCallItem() {
@@ -197,7 +199,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class ApplicationIdItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val applicationId: Long
         ) : ApplicationCallItem() {
@@ -214,9 +216,9 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class OnCompletionItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
-            @StringRes
+            @param:StringRes
             val onCompletionTextRes: Int?
         ) : ApplicationCallItem() {
 
@@ -231,8 +233,42 @@ sealed class TransactionDetailItem : RecyclerListItem {
             }
         }
 
+        data class RejectVersionItem(
+            @param:StringRes
+            val labelTextRes: Int,
+            val rejectVersionText: String?
+        ) : TransactionDetailItem() {
+
+            override val itemType: ItemType = ItemType.REJECTION_VERSION_ITEM
+
+            override fun areItemsTheSame(other: RecyclerListItem): Boolean {
+                return other is RejectVersionItem && rejectVersionText == other.rejectVersionText
+            }
+
+            override fun areContentsTheSame(other: RecyclerListItem): Boolean {
+                return other is RejectVersionItem && this == other
+            }
+        }
+
+        data class AccessListItem(
+            @param:StringRes
+            val labelTextRes: Int,
+            val accessListText: String?
+        ) : TransactionDetailItem() {
+
+            override val itemType: ItemType = ItemType.ACCESS_LIST_ITEM
+
+            override fun areItemsTheSame(other: RecyclerListItem): Boolean {
+                return other is AccessListItem && accessListText == other.accessListText
+            }
+
+            override fun areContentsTheSame(other: RecyclerListItem): Boolean {
+                return other is AccessListItem && this == other
+            }
+        }
+
         data class AppCallAssetInformationItem(
-            @PluralsRes
+            @param:PluralsRes
             val labelTextRes: Int,
             val assetInformationList: List<ApplicationCallAssetInformation>,
             val showMoreButton: Boolean,
@@ -251,7 +287,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class InnerTransactionCountItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val innerTransactionCount: Int,
             val innerTransactions: List<BaseTransactionDetail>?
@@ -272,7 +308,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
     sealed class StandardTransactionItem : TransactionDetailItem() {
 
         data class TransactionAmountItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val transactionSign: TransactionSign,
             val transactionAmount: BigInteger,
@@ -312,7 +348,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class CloseAmountItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val transactionSign: TransactionSign,
             val transactionAmount: BigInteger,
@@ -343,7 +379,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
             override val itemType: ItemType = ItemType.ACCOUNT_ITEM
 
             data class WalletItem(
-                @StringRes
+                @param:StringRes
                 override val labelTextRes: Int,
                 override val displayAddress: String,
                 override val publicKey: String,
@@ -362,7 +398,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
             }
 
             data class ContactItem(
-                @StringRes
+                @param:StringRes
                 override val labelTextRes: Int,
                 override val displayAddress: String,
                 override val publicKey: String,
@@ -381,7 +417,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
             }
 
             data class NormalItem(
-                @StringRes
+                @param:StringRes
                 override val labelTextRes: Int,
                 override val displayAddress: String,
                 override val publicKey: String,
@@ -400,7 +436,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class DateItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val date: String
         ) : StandardTransactionItem() {
@@ -417,7 +453,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class RoundItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val round: String
         ) : StandardTransactionItem() {
@@ -434,7 +470,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class TransactionIdItem(
-            @StringRes
+            @param:StringRes
             val labelTextRes: Int,
             val transactionId: String
         ) : StandardTransactionItem() {
@@ -459,39 +495,6 @@ sealed class TransactionDetailItem : RecyclerListItem {
             abstract val labelTextRes: Int
 
             override val itemType: ItemType = ItemType.STATUS_ITEM
-
-            data class PendingItem(
-                override val transactionStatusTextRes: Int,
-                override val transactionStatusBackgroundRes: Int,
-                override val labelTextRes: Int,
-                override val transactionStatusTextStyleRes: Int,
-                override val transactionStatusTextColorRes: Int
-            ) : StatusItem() {
-                override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-                    return other is PendingItem && transactionStatusTextRes == other.transactionStatusTextRes
-                }
-
-                override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-                    return other is PendingItem && this == other
-                }
-            }
-
-            data class FailedItem(
-                override val transactionStatusTextRes: Int,
-                override val transactionStatusBackgroundRes: Int,
-                override val labelTextRes: Int,
-                override val transactionStatusTextStyleRes: Int,
-                override val transactionStatusTextColorRes: Int
-            ) : StatusItem() {
-
-                override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-                    return other is FailedItem && transactionStatusTextRes == other.transactionStatusTextRes
-                }
-
-                override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-                    return other is FailedItem && this == other
-                }
-            }
 
             data class SuccessItem(
                 override val transactionStatusTextRes: Int,
@@ -535,7 +538,7 @@ sealed class TransactionDetailItem : RecyclerListItem {
         }
 
         data class OfflineKeyRegItem(
-            @StringRes val participationStatusResId: Int
+            @param:StringRes val participationStatusResId: Int
         ) : BaseKeyRegItem() {
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {

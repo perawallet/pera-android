@@ -15,6 +15,7 @@ package com.algorand.android.models.builder
 
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
+import com.algorand.android.models.TransactionRequestExtraFields
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestOfflineKeyRegInfo
@@ -43,6 +44,8 @@ interface WalletConnectTransactionDetailBuilder<T : BaseWalletConnectTransaction
     fun buildTransactionRequestNoteInfo(txn: T): TransactionRequestNoteInfo?
 
     fun buildTransactionRequestExtrasInfo(txn: T): TransactionRequestExtrasInfo
+
+    fun buildTransactionRequestExtraFields(txn: T): TransactionRequestExtraFields?
 
     fun buildTransactionRequestAmountInfo(txn: T): TransactionRequestAmountInfo
 }

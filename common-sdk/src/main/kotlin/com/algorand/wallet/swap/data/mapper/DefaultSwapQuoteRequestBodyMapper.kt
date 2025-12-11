@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.swap.data.mapper
 
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForRequest
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapTypeResponse
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
@@ -25,8 +24,8 @@ internal class DefaultSwapQuoteRequestBodyMapper @Inject constructor() : SwapQuo
             SwapQuoteRequestBody(
                 swapperAddress = address,
                 deviceId = deviceId,
-                assetInId = getSafeAssetIdForRequest(assetInId),
-                assetOutId = getSafeAssetIdForRequest(assetOutId),
+                assetInId = assetInId,
+                assetOutId = assetOutId,
                 amount = amount,
                 slippage = slippage,
                 swapType = SwapTypeResponse.FIXED_INPUT

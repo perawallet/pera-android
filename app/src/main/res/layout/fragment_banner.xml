@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -42,9 +43,9 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
 
@@ -58,13 +59,13 @@
 
         <TextView
             android:id="@+id/errorTitleTextView"
-            android:textAppearance="@style/TextAppearance.Body.Large.Sans.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/spacing_xlarge"
             android:layout_marginTop="@dimen/spacing_large"
             android:gravity="center"
-            android:text="@string/well_this_is_unexpected" />
+            android:text="@string/well_this_is_unexpected"
+            android:textAppearance="@style/TextAppearance.Body.Large.Sans.Medium" />
 
         <TextView
             android:id="@+id/errorDescriptionTextView"

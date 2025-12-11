@@ -39,6 +39,7 @@ class RemoveAssetItemViewHolder(
             setAssetSecondaryValue(formattedSelectedCurrencyCompactValue)
             setAssetVerificationTier(item.type.verificationTierConfiguration)
             setClickListeners(this)
+            binding.assetItemView.setIsFavorite(item.isFavorite)
         }
     }
 

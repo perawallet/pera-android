@@ -1,7 +1,20 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
 package com.algorand.android.modules.accountdetail.assets.ui.model
 
 import androidx.annotation.StringRes
 import com.algorand.android.models.RecyclerListItem
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
 sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
@@ -20,7 +33,7 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
         val accountPrimaryFormattedParityValue: String?,
         val accountSecondaryFormattedParityValue: String?,
         val requiredMinBalance: String,
-        val displayChart: Boolean
+        val privacyMode: PrivacyMode
     ) : AccountDetailAccountsItem {
 
         override val itemType: ItemType
@@ -28,7 +41,7 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountPortfolioItem &&
-                accountPrimaryFormattedParityValue == other.accountPrimaryFormattedParityValue
+                    accountPrimaryFormattedParityValue == other.accountPrimaryFormattedParityValue
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -51,7 +64,7 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
     }
 
     data class TitleItem(
-        @StringRes val titleRes: Int,
+        @param:StringRes val titleRes: Int,
         val isAddAssetButtonVisible: Boolean
     ) : AccountDetailAccountsItem {
 

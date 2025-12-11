@@ -15,6 +15,7 @@ package com.algorand.android.modules.accounts.domain.model
 import android.content.Context
 import androidx.annotation.StringRes
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
 sealed class BasePortfolioValueItem {
 
@@ -22,12 +23,14 @@ sealed class BasePortfolioValueItem {
     abstract val errorStringResId: Int?
     abstract fun getPrimaryAccountValue(context: Context): String
     abstract fun getSecondaryAccountValue(context: Context): String
+    abstract val privacyMode: PrivacyMode
 
     data class SuccessPortfolioValueItem(
         override val titleColorResId: Int,
-        @StringRes override val errorStringResId: Int? = null,
+        @param:StringRes override val errorStringResId: Int? = null,
         val primaryAmountRenderer: AmountRenderer,
-        val secondaryAmountRenderer: AmountRenderer
+        val secondaryAmountRenderer: AmountRenderer,
+        override val privacyMode: PrivacyMode
     ) : BasePortfolioValueItem() {
         override fun getPrimaryAccountValue(context: Context): String = primaryAmountRenderer.getDisplayValue()
         override fun getSecondaryAccountValue(context: Context): String = secondaryAmountRenderer.getDisplayValue()
@@ -35,23 +38,28 @@ sealed class BasePortfolioValueItem {
 
     data class ErrorPortfolioValueItem(
         override val titleColorResId: Int,
-        @StringRes override val errorStringResId: Int?,
-        @StringRes val primaryAccountValueErrorResId: Int,
-        @StringRes val secondaryAccountValueErrorResId: Int
+        @param:StringRes override val errorStringResId: Int?,
+        @param:StringRes val primaryAccountValueErrorResId: Int,
+        @param:StringRes val secondaryAccountValueErrorResId: Int
     ) : BasePortfolioValueItem() {
         override fun getPrimaryAccountValue(context: Context): String = context.getString(primaryAccountValueErrorResId)
 
         override fun getSecondaryAccountValue(context: Context): String =
             context.getString(secondaryAccountValueErrorResId)
+
+        override val privacyMode: PrivacyMode
+            get() = PrivacyMode.Disabled
     }
 
     data class PartialErrorPortfolioValueItem(
         override val titleColorResId: Int,
-        @StringRes override val errorStringResId: Int,
+        @param:StringRes override val errorStringResId: Int,
         val primaryAmountRenderer: AmountRenderer,
         val secondaryAmountRenderer: AmountRenderer
     ) : BasePortfolioValueItem() {
         override fun getPrimaryAccountValue(context: Context): String = primaryAmountRenderer.getDisplayValue()
         override fun getSecondaryAccountValue(context: Context): String = secondaryAmountRenderer.getDisplayValue()
+        override val privacyMode: PrivacyMode
+            get() = PrivacyMode.Disabled
     }
 }

@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.walletconnect.client.v1.mapper
 
+import app.perawallet.walletconnectv1.Session
 import com.algorand.android.modules.walletconnect.client.v1.domain.model.WalletConnectSessionDto
 import com.algorand.android.modules.walletconnect.client.v1.domain.model.WalletConnectSessionMetaDto
 import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectV1SessionCachedData
@@ -29,7 +30,6 @@ import com.algorand.android.modules.walletconnect.mapper.WalletConnectSessionReq
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectSessionSettleMapper
 import com.algorand.android.modules.walletconnect.mapper.WalletConnectSessionUpdateMapper
 import javax.inject.Inject
-import org.walletconnect.Session
 
 @SuppressWarnings("LongParameterList")
 class WalletConnectClientV1Mapper @Inject constructor(

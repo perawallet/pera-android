@@ -14,10 +14,10 @@ package com.algorand.wallet.banner.common.domain.usecase
 
 import com.algorand.wallet.banner.domain.usecase.InitializeBanners
 import com.algorand.wallet.spotbanner.domain.usecase.InitializeSpotBanners
-import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import javax.inject.Inject
 
 internal class InitializeAllBannersUseCase @Inject constructor(
     private val initializeBanners: InitializeBanners,

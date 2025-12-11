@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -10,28 +11,22 @@
   ~ limitations under the License
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Pera Algo Wallet</string>
 
     <!--This value is required to fix this issue https://stackoverflow.com/questions/63325427/firebase-crashlytics-java-lang-illegalstateexception-the-crashlytics-build-id-->
-    <string name="com.crashlytics.android.build_id">1</string>
+    <string name="com.crashlytics.android.build_id" tools:keep="@string/com_crashlytics_android_build_id">1</string>
 
     <string name="version_format">Pera Algo Wallet v%1$s</string>
     <string name="firebase_id_format">Firebase ID: %1$s</string>
     <string name="min_seconds_template">%1$02d:%2$02d</string>
-    <string name="hidden_passphrase">*************</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
-    <string name="ticker_asset_format">(%1$s)</string>
     <string name="pair_value_format_packed">%1$s%2$s</string>
-    <string name="pair_value_format_packed_annotated"><annotation replacement="first">first</annotation><annotation replacement="second">second</annotation></string>
     <string name="pair_value_format">%1$s %2$s</string>
-    <string name="pair_value_format_annotated"><annotation replacement="first">first</annotation> <annotation replacement="second">second</annotation></string>
     <string name="pair_value_format_with_coma">%1$s, %2$d</string>
     <string name="pair_value_format_with_interpunct">%1$s · %2$d</string>
-    <string name="algo">Algo</string>
     <string name="pera_explorer">Pera Explorer</string>
-    <string name="testnet">TESTNET</string>
 
     <!--Accessibility-->
     <string name="accessibility_user_image">User Image</string>
@@ -91,24 +86,9 @@
 
     <string name="asset_amount_with_x">x%1$s</string>
 
-    <string name="swap_amount_hint">0.00</string>
     <string name="formatted_percentage">%1$s%%</string>
 
-    <string name="zero_point_five_percent">0.5%</string>
-    <string name="one_percent">1%</string>
-    <string name="two_percent">2%</string>
-    <string name="five_percent">5%</string>
-    <string name="twenty_five_percent">25%</string>
-    <string name="fifty_percent">50%</string>
-    <string name="seventy_five_percent">75%</string>
-
     <string name="bidali">Bidali</string>
-    <string name="bidali_url">https://www.bidali.com/</string>
-
-    <string name="one">1</string>
-    <string name="two">2</string>
-    <string name="three">3</string>
-    <string name="four">4</string>
 
     <string name="first">1.</string>
     <string name="second">2.</string>

@@ -15,9 +15,9 @@ package com.algorand.android.modules.parity.domain.model
 import android.os.Parcelable
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.formatAsLowerThanMinCurrency
-import com.algorand.android.utils.isGreaterThan
-import java.math.BigDecimal
+import com.algorand.wallet.utils.isGreaterThan
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 
 @Parcelize
 data class ParityValue(val amountAsCurrency: BigDecimal, val selectedCurrencySymbol: String) : Parcelable {

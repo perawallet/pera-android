@@ -16,7 +16,6 @@ import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.formatting.FormatAmountByCollectibleFractionalDigit
-import com.algorand.android.utils.orZero
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.asset.domain.model.AudioCollectibleDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
@@ -24,6 +23,7 @@ import com.algorand.wallet.asset.domain.model.ImageCollectibleDetail
 import com.algorand.wallet.asset.domain.model.MixedCollectibleDetail
 import com.algorand.wallet.asset.domain.model.UnsupportedCollectibleDetail
 import com.algorand.wallet.asset.domain.model.VideoCollectibleDetail
+import com.algorand.wallet.utils.orZero
 import javax.inject.Inject
 
 internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
@@ -67,6 +67,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is VideoCollectibleDetail -> {
                 ownedCollectibleVideoDataMapper(
                     collectibleDetail = collectibleDetail,
@@ -78,6 +79,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is MixedCollectibleDetail -> {
                 ownedCollectibleMixedDataMapper(
                     collectibleDetail = collectibleDetail,
@@ -89,6 +91,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is AudioCollectibleDetail -> {
                 ownedCollectibleAudioDataMapper(
                     collectibleDetail = collectibleDetail,
@@ -100,6 +103,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
                     optedInAtRound = assetHolding.optedInAtRound
                 )
             }
+
             is UnsupportedCollectibleDetail -> {
                 ownedCollectibleNotSupportedDataMapper(
                     collectibleDetail = collectibleDetail,

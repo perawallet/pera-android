@@ -13,7 +13,6 @@
 package com.algorand.wallet.asset.data.mapper.model
 
 import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
-import com.algorand.wallet.asset.data.model.VerificationTierResponse
 import com.algorand.wallet.asset.data.model.VerificationTierResponse.SUSPICIOUS
 import com.algorand.wallet.asset.data.model.VerificationTierResponse.TRUSTED
 import com.algorand.wallet.asset.data.model.VerificationTierResponse.UNKNOWN
@@ -29,7 +28,7 @@ internal class VerificationTierMapperImplTest {
 
     @Test
     fun `EXPECT response to be mapped successfully`() {
-        val responseList = listOf<VerificationTierResponse>(
+        val responseList = listOf(
             VERIFIED,
             UNVERIFIED,
             TRUSTED,
@@ -51,7 +50,7 @@ internal class VerificationTierMapperImplTest {
 
     @Test
     fun `EXPECT entity to be mapped successfully`() {
-        val entityList = listOf<VerificationTierEntity>(
+        val entityList = listOf(
             VerificationTierEntity.VERIFIED,
             VerificationTierEntity.UNVERIFIED,
             VerificationTierEntity.TRUSTED,

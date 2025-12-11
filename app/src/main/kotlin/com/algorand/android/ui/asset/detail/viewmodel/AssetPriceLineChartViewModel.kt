@@ -14,7 +14,9 @@ package com.algorand.android.ui.asset.detail.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryChartData
 import com.algorand.android.ui.asset.detail.usecase.GetAssetPriceLineChartData
+import com.algorand.android.ui.compose.widget.chart.extensions.getChangePercentage
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
@@ -52,12 +54,16 @@ class AssetPriceLineChartViewModel @Inject constructor(
             stateDelegate.updateState { Content(contentState = ContentState.Loading, INITIAL_CHART_PERIOD, PERIODS) }
             selectedPeriodFlow.onEach { period ->
                 val viewState = getAssetPriceLineChartData(assetId, walletWealthPeriodMapper(period)).use(
-                    onSuccess = { history -> Content(Data(history), period, PERIODS) },
+                    onSuccess = { history -> Content(Data(history, getTendencyValues(history)), period, PERIODS) },
                     onFailed = { _, _ -> ViewState.Error }
                 )
                 stateDelegate.updateState { viewState }
             }.launchIn(viewModelScope)
         }
+    }
+
+    private fun getTendencyValues(items: List<AssetPriceHistoryChartData>): Data.ChartTendencyValues {
+        return Data.ChartTendencyValues(delta = null, deltaRenderer = null, percentage = items.getChangePercentage())
     }
 
     override fun displaySelectedPeriodValues(period: PeraLineChartPeriodChip) {

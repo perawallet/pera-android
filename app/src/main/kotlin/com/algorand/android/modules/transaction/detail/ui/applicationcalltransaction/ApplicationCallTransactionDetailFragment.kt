@@ -16,13 +16,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.ui.BaseTransactionDetailFragment
 import com.algorand.android.modules.transaction.detail.ui.adapter.TransactionDetailAdapter
+import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -31,18 +31,19 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ApplicationCallTransactionDetailFragment : BaseTransactionDetailFragment() {
 
-    override val toolbarConfiguration = ToolbarConfiguration(
+    override val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.app_call,
         startIconResId = R.drawable.ic_close,
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
         toolbarConfiguration = toolbarConfiguration,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
     )
 
-    override val transactionDetailViewModel by viewModels<ApplicationCallTransactionDetailViewModel>()
+    override val transactionDetailViewModel: ApplicationCallTransactionDetailViewModel
+            by viewModels<ApplicationCallTransactionDetailViewModel>()
 
     private val navToInnerTransactionFragmentEventCollector: suspend (Event<Unit>?) -> Unit = {
         it?.consume()?.let { navToInnerTransactionFragment() }
@@ -65,7 +66,7 @@ class ApplicationCallTransactionDetailFragment : BaseTransactionDetailFragment()
             }
         }
 
-    override val transactionDetailAdapter = TransactionDetailAdapter(
+    override val transactionDetailAdapter: TransactionDetailAdapter = TransactionDetailAdapter(
         extrasExtrasClickListener = transactionDetailClickListener,
         longPressListener = transactionDetailLongClickListener,
         tooltipListener = transactionDetailTooltipListener,

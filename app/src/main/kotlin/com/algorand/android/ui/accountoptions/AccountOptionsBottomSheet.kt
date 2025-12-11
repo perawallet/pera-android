@@ -59,7 +59,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(viewEvent)
             HideFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.dismiss()
             ShowFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.show(requireContext())
-            ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
+            ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred))
         }
     }
 
@@ -283,6 +283,6 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     companion object {
-        const val ACCOUNT_REMOVE_ACTION_KEY = "remove_account_action"
+        const val ACCOUNT_REMOVE_ACTION_KEY: String = "remove_account_action"
     }
 }

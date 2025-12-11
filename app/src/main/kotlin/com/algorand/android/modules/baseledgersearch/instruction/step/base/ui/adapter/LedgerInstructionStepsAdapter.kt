@@ -20,7 +20,7 @@ import com.algorand.android.utils.extensions.clearAndAddAll
 class LedgerInstructionStepsAdapter : RecyclerView.Adapter<LedgerInstructionStepViewHolder>() {
 
     // Related: https://issuetracker.google.com/issues/209843426
-    // private val stepsResIdList = mutableListOf<@StringRes Int>()
+    // private val stepsResIdList = mutableListOf<@param:StringRes Int>()
     private val stepsResIdList = mutableListOf<Int>()
 
     fun setItems(newStepsList: List<Int>) {
@@ -32,7 +32,7 @@ class LedgerInstructionStepsAdapter : RecyclerView.Adapter<LedgerInstructionStep
         return LedgerInstructionStepViewHolder.create(parent)
     }
 
-    override fun getItemCount() = stepsResIdList.size
+    override fun getItemCount(): Int = stepsResIdList.size
 
     override fun onBindViewHolder(holder: LedgerInstructionStepViewHolder, position: Int) {
         holder.bind(stepsResIdList[position], position)

@@ -77,6 +77,7 @@ internal class AccountInformationFetchHelperImpl @Inject constructor(
             errorCode == ACCOUNT_NOT_FOUND -> {
                 PeraResult.Success(accountInformationResponseMapper.createEmptyAccount(address))
             }
+
             exception is IOException -> PeraResult.Error(exception, errorCode)
             else -> fetchAccountAndAssetsSeparately(address)
         }

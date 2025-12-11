@@ -12,6 +12,7 @@
 
 package com.algorand.android.utils.fonts
 
+@Suppress("unused")
 enum class FontStyleIdentifier(val identifierName: String) {
     REGULAR("regular"),
     MEDIUM("medium"),

@@ -50,7 +50,7 @@ class PassphraseInputConfigurationUtil @Inject constructor() {
     ): PassphraseInputConfiguration? {
         return passphraseInputConfigurationList?.firstOrNull { passphraseInputConfiguration ->
             passphraseInputConfiguration is PassphraseInputConfiguration.Valid.Focused ||
-                passphraseInputConfiguration is PassphraseInputConfiguration.Invalid.Focused
+                    passphraseInputConfiguration is PassphraseInputConfiguration.Invalid.Focused
         }
     }
 

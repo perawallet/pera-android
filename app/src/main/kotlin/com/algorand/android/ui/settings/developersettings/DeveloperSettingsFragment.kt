@@ -37,7 +37,8 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentDeveloperSettingsBinding::bind)
 
@@ -46,14 +47,13 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         binding.nodeSettingsListItem.setOnClickListener { onNodeSettingsClick() }
         binding.dispenserListItem.setOnClickListener { onDispenserClick() }
         binding.createLegacyAlgo25ListItem.setOnClickListener { onCreateLegacyAlgo25Click() }
-        binding.migrationListItem.setOnClickListener { onMigrationViewerClick() }
+        binding.developerOptionsListItem.setOnClickListener { onDeveloperOptionsClick() }
     }
 
     override fun onResume() {
         super.onResume()
         binding.dispenserListItem.isVisible = developerSettingsViewModel.isConnectedToTestnet()
-        binding.createLegacyAlgo25ListItem.isVisible = developerSettingsViewModel.showCreateLegacyAlgo25Account()
-        binding.migrationListItem.isVisible = developerSettingsViewModel.showMigrationViewer()
+        binding.developerOptionsListItem.isVisible = developerSettingsViewModel.showDeveloperOptions()
     }
 
     private fun onNodeSettingsClick() {
@@ -71,8 +71,8 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         )
     }
 
-    private fun onMigrationViewerClick() {
-        nav(DeveloperSettingsFragmentDirections.actionDeveloperSettingsFragmentToMigrationViewerFragment())
+    private fun onDeveloperOptionsClick() {
+        nav(DeveloperSettingsFragmentDirections.actionDeveloperSettingsFragmentToDeveloperOptionsFragment())
     }
 
     private fun onCreateLegacyAlgo25Click() {

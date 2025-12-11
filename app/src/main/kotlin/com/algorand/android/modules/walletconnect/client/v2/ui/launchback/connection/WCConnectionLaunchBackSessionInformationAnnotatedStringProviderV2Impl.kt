@@ -37,6 +37,6 @@ class WCConnectionLaunchBackSessionInformationAnnotatedStringProviderV2Impl :
     }
 
     companion object {
-        const val INJECTION_NAME = "wcConnectionLaunchBackSessionInformationAnnotatedStringV2InjectionName"
+        const val INJECTION_NAME: String = "wcConnectionLaunchBackSessionInformationAnnotatedStringV2InjectionName"
     }
 }

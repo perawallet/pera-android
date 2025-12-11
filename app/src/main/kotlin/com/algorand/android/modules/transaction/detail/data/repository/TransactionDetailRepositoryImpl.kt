@@ -20,9 +20,9 @@ import com.algorand.android.modules.transaction.detail.domain.model.BaseTransact
 import com.algorand.android.modules.transaction.detail.domain.repository.TransactionDetailRepository
 import com.algorand.android.network.IndexerApi
 import com.algorand.android.network.request
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class TransactionDetailRepositoryImpl @Inject constructor(
     private val indexerApi: IndexerApi,

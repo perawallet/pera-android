@@ -34,6 +34,7 @@ class WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl :
                     )
                 )
             }
+
             else -> {
                 AnnotatedString(
                     stringResId = R.string.please_select_your_browser_to_return,
@@ -46,6 +47,6 @@ class WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl :
     }
 
     companion object {
-        const val INJECTION_NAME = "wcConnectionLaunchBackBrowserDescriptionAnnotatedStringV2InjectionName"
+        const val INJECTION_NAME: String = "wcConnectionLaunchBackBrowserDescriptionAnnotatedStringV2InjectionName"
     }
 }

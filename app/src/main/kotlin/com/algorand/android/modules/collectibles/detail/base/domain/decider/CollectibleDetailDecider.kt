@@ -39,9 +39,11 @@ class CollectibleDetailDecider @Inject constructor() {
             Algo25, LedgerBle, Rekeyed, RekeyedAuth, HdKey -> {
                 R.string.you_are_not_the_owner
             }
+
             NoAuth -> {
                 R.string.this_watch_account_has_opted
             }
+
             else -> null
         }
     }

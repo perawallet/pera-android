@@ -24,7 +24,7 @@ class PeraSerializer @Inject constructor(val gson: Gson) : JsonSerializer {
     override fun <T> fromJson(json: String, type: Class<T>): T? {
         return try {
             gson.fromJson(json, type)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

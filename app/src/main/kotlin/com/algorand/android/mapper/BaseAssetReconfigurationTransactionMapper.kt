@@ -28,8 +28,8 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
 import com.algorand.android.utils.extensions.mapNotBlank
-import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.utils.multiplyOrZero
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -52,12 +52,15 @@ class BaseAssetReconfigurationTransactionMapper @Inject constructor(
             isTransactionWithCloseToAndRekeyed(transactionRequest) -> {
                 createAssetReconfigurationTransactionWithCloseToAndRekey(peerMeta, transactionRequest, rawTxn)
             }
+
             isTransactionWithCloseTo(transactionRequest) -> {
                 createAssetReconfigurationTransactionWithClose(peerMeta, transactionRequest, rawTxn)
             }
+
             isTransactionWithRekeyed(transactionRequest) -> {
                 createAssetReconfigurationTransactionWithRekey(peerMeta, transactionRequest, rawTxn)
             }
+
             else -> {
                 createAssetReconfigurationTransaction(peerMeta, transactionRequest, rawTxn)
             }
@@ -96,7 +99,9 @@ class BaseAssetReconfigurationTransactionMapper @Inject constructor(
                 reserveAddress = createWalletConnectAddress(assetConfigParams?.reserveAddress),
                 frozenAddress = createWalletConnectAddress(assetConfigParams?.frozenAddress),
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
-                groupId = groupId
+                groupId = groupId,
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -138,7 +143,9 @@ class BaseAssetReconfigurationTransactionMapper @Inject constructor(
                 frozenAddress = createWalletConnectAddress(assetConfigParams?.frozenAddress),
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
                 groupId = groupId,
-                warningCount = 1.takeIf { isLocalAccountSigner }
+                warningCount = 1.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -180,7 +187,9 @@ class BaseAssetReconfigurationTransactionMapper @Inject constructor(
                 frozenAddress = createWalletConnectAddress(assetConfigParams?.frozenAddress),
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
                 groupId = groupId,
-                warningCount = 1.takeIf { isLocalAccountSigner }
+                warningCount = 1.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -223,7 +232,9 @@ class BaseAssetReconfigurationTransactionMapper @Inject constructor(
                 frozenAddress = createWalletConnectAddress(assetConfigParams?.frozenAddress),
                 clawbackAddress = createWalletConnectAddress(assetConfigParams?.clawbackAddress),
                 groupId = groupId,
-                warningCount = 2.takeIf { isLocalAccountSigner }
+                warningCount = 2.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }

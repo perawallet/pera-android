@@ -64,7 +64,8 @@ private class PeraAssetListItemPreviewParameterProvider : PreviewParameterProvid
                 usdValue = PeraAmount(BigDecimal.ZERO),
                 primaryAmountRenderer = AmountRenderer(primaryAmount, AmountRenderer.RenderType.Plain),
                 secondaryAmountRenderer = AmountRenderer(secondaryAmount, AmountRenderer.RenderType.Plain)
-            )
+            ),
+            isFavorite = true
         )
     }
 }

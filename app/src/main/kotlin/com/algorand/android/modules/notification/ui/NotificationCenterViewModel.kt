@@ -17,6 +17,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
@@ -26,11 +27,13 @@ import com.algorand.android.modules.notification.ui.model.NotificationCenterPrev
 import com.algorand.android.modules.notification.ui.model.NotificationListItem
 import com.algorand.android.modules.notification.ui.usecase.NotificationCenterPreviewUseCase
 import com.algorand.android.notification.PeraNotificationManager
+import com.algorand.android.notification.tracking.NotificationClickEventTracker
 import com.algorand.android.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.shareIn
@@ -42,12 +45,13 @@ class NotificationCenterViewModel @Inject constructor(
     private val deviceIdUseCase: DeviceIdUseCase,
     private val notificationRepository: NotificationRepository,
     private val notificationCenterPreviewUseCase: NotificationCenterPreviewUseCase,
-    private val notificationStatusUseCase: NotificationStatusUseCase
+    private val notificationStatusUseCase: NotificationStatusUseCase,
+    private val notificationClickEventTracker: NotificationClickEventTracker
 ) : BaseViewModel() {
 
     private var notificationDataSource: NotificationDataSource? = null
 
-    val notificationPaginationFlow = Pager(
+    val notificationPaginationFlow: SharedFlow<PagingData<NotificationListItem>> = Pager(
         config = PagingConfig(
             pageSize = DEFAULT_NOTIFICATION_COUNT
         ),
@@ -82,6 +86,7 @@ class NotificationCenterViewModel @Inject constructor(
     fun onNotificationClickEvent(notificationListItem: NotificationListItem) {
         viewModelScope.launch {
             notificationCenterPreviewUseCase.onNotificationClickEvent(notificationListItem).collect {
+                notificationClickEventTracker.log(notificationListItem.id)
                 _notificationCenterPreviewFlow.emit(it)
             }
         }

@@ -14,7 +14,7 @@ package com.algorand.android.ui.asset.detail.model
 
 sealed interface AssetDetailQuickActionItem {
 
-    data class SwapButton(val isSelected: Boolean) : AssetDetailQuickActionItem
+    data object SwapButton : AssetDetailQuickActionItem
 
     data object BuyAlgoButton : AssetDetailQuickActionItem
 

@@ -31,7 +31,9 @@ class UndoRekeyConfirmationFragment : BaseRekeyConfirmationFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val undoRekeyConfirmationViewModel by viewModels<UndoRekeyConfirmationViewModel>()
 

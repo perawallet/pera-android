@@ -20,7 +20,6 @@ import com.algorand.android.utils.toBigIntegerOrZero
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
@@ -85,6 +84,7 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.InternalBrowser -> handleInternalBrowserDeepLink(deepLink)
             is DeepLink.Swap -> handleSwapDeepLink(deepLink)
             is DeepLink.Home -> handleHomeDeepLink()
+            is DeepLink.Fido -> handleFidoDeepLink(deepLink)
         }
         if (isDeeplinkHandled) {
             listener?.onDeepLinkHandled()
@@ -143,7 +143,7 @@ class DeeplinkHandler @Inject constructor(
     }
 
     private suspend fun handleAssetTransferDeepLink(deepLink: DeepLink.AssetTransfer): Boolean {
-        val safeAssetId = getSafeAssetIdForResponse(deepLink.assetId) ?: ALGO_ID
+        val safeAssetId = deepLink.assetId
         val isAssetOptedInByAnyLocalAccount = if (safeAssetId == ALGO_ID) {
             true
         } else {
@@ -245,6 +245,12 @@ class DeeplinkHandler @Inject constructor(
         }
     }
 
+    private fun handleFidoDeepLink(deepLink: DeepLink.Fido): Boolean {
+        return triggerListener {
+            it.onFidoDeepLink(deepLink.uri)
+        }
+    }
+
     private fun triggerListener(action: (Listener) -> Boolean): Boolean {
         return listener?.run(action) ?: false
     }
@@ -290,8 +296,9 @@ class DeeplinkHandler @Inject constructor(
         fun onInternalBrowserDeepLink(url: String): Boolean = false
         fun onSwapDeepLink(address: String, assetInId: Long?, assetOutId: Long?): Boolean = false
         fun onHomeDeeplink(): Boolean = false
-        fun onDeepLinkHandled() = false
+        fun onDeepLinkHandled(): Boolean = false
         fun onUndefinedDeepLink()
         fun onDeepLinkNotHandled(deepLink: DeepLink)
+        fun onFidoDeepLink(uri: String): Boolean = false
     }
 }

@@ -28,8 +28,8 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
 import com.algorand.android.utils.extensions.mapNotBlank
-import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.utils.multiplyOrZero
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -52,12 +52,15 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
             isTransactionWithCloseToAndRekeyed(transactionRequest) -> {
                 createAssetDeletionTransactionWithCloseToAndRekey(peerMeta, transactionRequest, rawTxn)
             }
+
             isTransactionWithCloseTo(transactionRequest) -> {
                 createAssetDeletionTransactionWithCloseTo(peerMeta, transactionRequest, rawTxn)
             }
+
             isTransactionWithRekeyed(transactionRequest) -> {
                 createAssetDeletionTransactionWithRekey(peerMeta, transactionRequest, rawTxn)
             }
+
             else -> {
                 createAssetDeletionTransaction(peerMeta, transactionRequest, rawTxn)
             }
@@ -96,7 +99,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
                 url = assetConfigParams?.url,
                 groupId = groupId,
                 warningCount = 1.takeIf { isLocalAccountSigner },
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -134,7 +139,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
                 url = assetConfigParams?.url,
                 groupId = groupId,
                 warningCount = 2.takeIf { isLocalAccountSigner },
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -172,7 +179,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
                 url = assetConfigParams?.url,
                 groupId = groupId,
                 warningCount = 2.takeIf { isLocalAccountSigner },
-                transactionSigner = getWalletConnectTransactionSigner(signer)
+                transactionSigner = getWalletConnectTransactionSigner(signer),
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }
@@ -212,7 +221,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
                 assetId = assetIdBeingConfigured,
                 url = assetConfigParams?.url,
                 groupId = groupId,
-                warningCount = 3.takeIf { isLocalAccountSigner }
+                warningCount = 3.takeIf { isLocalAccountSigner },
+                rejectVersion = rejectVersion,
+                accessListSize = accessList?.size
             )
         }
     }

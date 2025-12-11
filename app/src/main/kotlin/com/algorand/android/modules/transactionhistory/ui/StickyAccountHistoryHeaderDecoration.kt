@@ -18,6 +18,7 @@ import android.graphics.Canvas
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.MeasureSpec
+import androidx.core.graphics.withSave
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemAccountHistoryTitleBinding
@@ -57,16 +58,16 @@ class StickyAccountHistoryHeaderDecoration(
 
     private fun drawHeaderView(canvas: Canvas, topItemView: View, secondItemView: View?) {
         with(canvas) {
-            save()
-            headerView.apply {
-                setBackgroundColor(context.getColor(R.color.primary_background))
-                translate(
-                    resources.getDimensionPixelSize(R.dimen.spacing_xlarge).toFloat(),
-                    calculateHeaderTop(topItemView, secondItemView)
-                )
+            withSave {
+                headerView.apply {
+                    setBackgroundColor(context.getColor(R.color.primary_background))
+                    translate(
+                        resources.getDimensionPixelSize(R.dimen.spacing_xlarge).toFloat(),
+                        calculateHeaderTop(topItemView, secondItemView)
+                    )
+                }
+                headerView.draw(this)
             }
-            headerView.draw(this)
-            restore()
         }
     }
 

@@ -53,6 +53,6 @@ class SingleButtonBottomSheet : BaseSingleButtonBottomSheet() {
     }
 
     companion object {
-        const val CLOSE_KEY = "close_key"
+        const val CLOSE_KEY: String = "close_key"
     }
 }

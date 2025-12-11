@@ -81,6 +81,6 @@ class AddAssetActionBottomSheet : BaseAssetActionBottomSheet() {
     }
 
     companion object {
-        const val ADD_ASSET_ACTION_RESULT_KEY = "add_asset_action_result_key"
+        const val ADD_ASSET_ACTION_RESULT_KEY: String = "add_asset_action_result_key"
     }
 }

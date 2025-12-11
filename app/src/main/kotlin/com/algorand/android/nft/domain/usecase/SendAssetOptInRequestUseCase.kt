@@ -15,24 +15,29 @@ package com.algorand.android.nft.domain.usecase
 import com.algorand.android.nft.domain.mapper.AssetSupportRequestMapper
 import com.algorand.android.repository.AssetRepository
 import com.algorand.android.utils.DataResource
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class SendAssetOptInRequestUseCase @Inject constructor(
     private val assetRepository: AssetRepository,
     private val assetSupportRequestMapper: AssetSupportRequestMapper // TODO create dedicated model for asset support
 ) {
 
-    fun sendAssetOptInRequest(senderPublicKey: String, receiverPublicKey: String, assetId: Long) = flow {
-        emit(DataResource.Loading<Unit>())
+    fun sendAssetOptInRequest(
+        senderPublicKey: String,
+        receiverPublicKey: String,
+        assetId: Long
+    ): Flow<DataResource<Unit>> = flow {
+        emit(DataResource.Loading())
         val assetSupportRequest =
             assetSupportRequestMapper.mapToAssetSupportRequest(senderPublicKey, receiverPublicKey, assetId)
         assetRepository.postAssetSupportRequest(assetSupportRequest).use(
             onSuccess = {
-                emit(DataResource.Success<Unit>(Unit))
+                emit(DataResource.Success(Unit))
             },
             onFailed = { exception, code ->
-                emit(DataResource.Error.Api<Unit>(exception, code))
+                emit(DataResource.Error.Api(exception, code))
             }
         )
     }

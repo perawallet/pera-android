@@ -35,6 +35,9 @@ sealed class BaseTransactionDetail : Parcelable {
 
     abstract val toolbarTitleResId: Int
 
+    abstract val rejectVersion: Long?
+    abstract val accessListSize: Int?
+
     @Parcelize
     data class PaymentTransaction(
         override val id: String?,
@@ -47,7 +50,9 @@ sealed class BaseTransactionDetail : Parcelable {
         override val noteInBase64: String?,
         override val closeToAccountAddress: String?,
         override val transactionCloseAmount: BigInteger?,
-        override val transactionAmount: BigInteger
+        override val transactionAmount: BigInteger,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?
     ) : BaseTransactionDetail() {
 
         override val toolbarTitleResId: Int
@@ -67,6 +72,8 @@ sealed class BaseTransactionDetail : Parcelable {
         override val closeToAccountAddress: String?,
         override val transactionCloseAmount: BigInteger?,
         override val transactionAmount: BigInteger,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val assetId: Long
     ) : BaseTransactionDetail() {
         override val toolbarTitleResId: Int
@@ -86,6 +93,8 @@ sealed class BaseTransactionDetail : Parcelable {
         override val closeToAccountAddress: String? = null,
         override val transactionCloseAmount: BigInteger? = null,
         override val transactionAmount: BigInteger? = null,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val name: String?,
         val unitName: String?,
         val assetId: Long?,
@@ -107,6 +116,8 @@ sealed class BaseTransactionDetail : Parcelable {
         override val closeToAccountAddress: String? = null,
         override val transactionCloseAmount: BigInteger? = null,
         override val transactionAmount: BigInteger? = null,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
         val innerTransactions: List<BaseTransactionDetail>?,
         val innerTransactionCount: Int,
         val onCompletion: OnCompletionDTO?,
@@ -134,7 +145,9 @@ sealed class BaseTransactionDetail : Parcelable {
         override val noteInBase64: String? = null,
         override val closeToAccountAddress: String? = null,
         override val transactionCloseAmount: BigInteger? = null,
-        override val transactionAmount: BigInteger? = null
+        override val transactionAmount: BigInteger? = null,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
     ) : BaseTransactionDetail() {
 
         override val toolbarTitleResId: Int
@@ -156,6 +169,8 @@ sealed class BaseTransactionDetail : Parcelable {
             override val closeToAccountAddress: String?,
             override val transactionCloseAmount: BigInteger?,
             override val transactionAmount: BigInteger?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val voteKey: String,
             val selectionKey: String,
             val stateProofKey: String,
@@ -181,6 +196,8 @@ sealed class BaseTransactionDetail : Parcelable {
             override val closeToAccountAddress: String?,
             override val transactionCloseAmount: BigInteger?,
             override val transactionAmount: BigInteger?,
+            override val rejectVersion: Long?,
+            override val accessListSize: Int?,
             val isParticipating: Boolean
         ) : BaseKeyRegTransaction() {
 
@@ -201,7 +218,9 @@ sealed class BaseTransactionDetail : Parcelable {
         override val noteInBase64: String? = null,
         override val closeToAccountAddress: String? = null,
         override val transactionCloseAmount: BigInteger? = null,
-        override val transactionAmount: BigInteger? = null
+        override val transactionAmount: BigInteger? = null,
+        override val rejectVersion: Long?,
+        override val accessListSize: Int?,
     ) : BaseTransactionDetail() {
 
         override val toolbarTitleResId: Int

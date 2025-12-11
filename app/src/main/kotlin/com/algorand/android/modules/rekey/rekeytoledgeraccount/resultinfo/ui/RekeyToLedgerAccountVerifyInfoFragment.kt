@@ -34,12 +34,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val rekeyToLedgerAccountVerifyInfoViewModel: RekeyToLedgerAccountVerifyInfoViewModel by viewModels()
 
     @Composable
-    override fun Icon(modifier: Modifier) =
+    override fun Icon(modifier: Modifier): Unit =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = stringResource(id = R.string.check),
@@ -48,7 +48,7 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier): Unit =
         PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.account_successfully_rekeyed)
@@ -68,7 +68,7 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState): Unit =
         PeraPrimaryButton(
             onClick = { nav(RekeyLedgerNavigationDirections.actionRekeyLedgerNavigationPop()) },
             modifier = modifier,

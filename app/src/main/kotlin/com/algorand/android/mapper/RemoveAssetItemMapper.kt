@@ -51,7 +51,8 @@ class RemoveAssetItemMapper @Inject constructor(
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetStatus),
                 amountInPrimaryCurrency = parityDisplayValue.primaryParityValue.amountAsCurrency,
-                type = mapToRemoveAssetItemType(assetLite)
+                type = mapToRemoveAssetItemType(assetLite),
+                isFavorite = assetLite.isFavorite
             )
         }
     }
@@ -63,6 +64,7 @@ class RemoveAssetItemMapper @Inject constructor(
                     verificationTierConfigurationDecider.decideVerificationTierConfiguration(assetLite.verificationTier)
                 )
             }
+
             is AssetLite.Type.Collectible -> RemoveAssetItem.RemoveAssetItemType.Collectible
         }
     }

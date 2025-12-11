@@ -12,8 +12,8 @@
 
 package com.algorand.android.ui.lockpreference
 
-import androidx.navigation.fragment.navArgs
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.ui.password.BasePasswordFragment
 import com.algorand.android.ui.password.model.PasswordScreenType

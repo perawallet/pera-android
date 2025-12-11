@@ -15,6 +15,8 @@
 package com.algorand.android.modules.walletconnect.client.v1
 
 import android.app.Application
+import app.perawallet.walletconnectv1.Session
+import app.perawallet.walletconnectv1.impls.WCSession
 import com.algorand.android.modules.walletconnect.client.utils.WalletConnectClientErrorMessageUtils.createDappErrorMessage
 import com.algorand.android.modules.walletconnect.client.utils.WalletConnectSessionNotFoundException
 import com.algorand.android.modules.walletconnect.client.v1.domain.decider.WalletConnectV1ChainIdentifierDecider
@@ -53,8 +55,6 @@ import com.algorand.android.utils.walletconnect.WalletConnectSessionRetryCounter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import org.walletconnect.Session
-import org.walletconnect.impls.WCSession
 import javax.inject.Named
 
 @Suppress("LongParameterList")
@@ -63,7 +63,7 @@ class WalletConnectClientV1Impl(
     private val walletConnectMapper: WalletConnectClientV1Mapper,
     private val errorCodeProvider: WalletConnectV1ErrorCodeProvider,
     private val sessionCachedDataHandler: WalletConnectV1SessionCachedDataHandler,
-    @Named(WalletConnectRepository.INJECTION_NAME)
+    @param:Named(WalletConnectRepository.INJECTION_NAME)
     private val walletConnectRepository: WalletConnectRepository,
     private val getConnectedAccountsOfWalletConnectSessionUseCase: GetConnectedAccountsOfWalletConnectSessionUseCase,
     private val getWalletConnectSessionsByAccountAddressUseCase: GetWalletConnectSessionsByAccountAddressUseCase,
@@ -183,7 +183,7 @@ class WalletConnectClientV1Impl(
 
     override fun connect(uri: String) {
         val session = sessionBuilder.createSession(uri) ?: run {
-            val error = walletConnectMapper.mapToError(InvalidWalletConnectUrlException, null)
+            val error = walletConnectMapper.mapToError(InvalidWalletConnectUrlException(), null)
             listener?.onError(error)
             return
         }
@@ -445,8 +445,8 @@ class WalletConnectClientV1Impl(
 
     companion object {
         const val MAX_LOCAL_SESSION_COUNT: Int = 30
-        const val CACHE_STORAGE_NAME = "session_store.json"
-        const val INJECTION_NAME = "walletConnectClientV1InjectionName"
-        val DEFAULT_CHAIN_IDENTIFIER_FOR_V1 = ChainIdentifier.MAINNET
+        const val CACHE_STORAGE_NAME: String = "session_store.json"
+        const val INJECTION_NAME: String = "walletConnectClientV1InjectionName"
+        val DEFAULT_CHAIN_IDENTIFIER_FOR_V1: ChainIdentifier = ChainIdentifier.MAINNET
     }
 }

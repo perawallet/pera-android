@@ -14,7 +14,6 @@ package com.algorand.android.ui.accounts.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.CurrencyCachingError
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Data
@@ -23,6 +22,7 @@ import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteC
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
 import com.algorand.android.ui.accounts.usecase.GetFilteredPortfolioAccountLites
+import com.algorand.android.ui.compose.widget.chart.mapper.ChartTendencyValuesMapper
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneMonth
@@ -38,7 +38,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 
 @HiltViewModel
 class AccountsLineChartViewModel @Inject constructor(
@@ -46,7 +48,8 @@ class AccountsLineChartViewModel @Inject constructor(
     private val walletWealthPeriodMapper: WalletWealthPeriodMapper,
     private val stateDelegate: StateDelegate<ViewState>,
     private val getAccountsLineChartData: GetAccountsLineChartData,
-    private val getFilteredPortfolioAccountLites: GetFilteredPortfolioAccountLites
+    private val getFilteredPortfolioAccountLites: GetFilteredPortfolioAccountLites,
+    private val tendencyValuesMapper: ChartTendencyValuesMapper
 ) : ViewModel(), StatefulPeraLineChartViewModel {
 
     override val state: StateFlow<ViewState>
@@ -60,43 +63,62 @@ class AccountsLineChartViewModel @Inject constructor(
 
     fun init() {
         stateDelegate.onState<Idle> {
-            combine(getAccountLiteCacheFlow(), selectedPeriodFlow) { accountLiteCacheStatus, selectedPeriod ->
-                when (accountLiteCacheStatus) {
-                    EmptyLocalAccounts, AccountLiteCacheStatus.Idle -> Idle
-                    AccountLiteCacheStatus.Loading -> stateDelegate.updateState { ViewState.Loading }
-                    is CurrencyCachingError -> stateDelegate.updateState { ViewState.Error }
-                    is Data -> updateAccountChartState(accountLiteCacheStatus.accountLites, selectedPeriod)
-                }
-            }.launchIn(viewModelScope)
+            getAccountLiteCacheFlow()
+                .mapLatest(::mapAccountLiteCacheMediatorState)
+                .distinctUntilChanged()
+                .combine(selectedPeriodFlow, ::updateViewState)
+                .launchIn(viewModelScope)
         }
     }
 
     override fun getSelectedChartData(index: Int): AccountsLineChartData? {
         return ((state.value as? ViewState.Content)?.contentState as? ContentState.Data)
             ?.chartData
-            ?.getOrNull(index)
-            as? AccountsLineChartData
+            ?.getOrNull(index) as? AccountsLineChartData
     }
 
     override fun displaySelectedPeriodValues(period: PeraLineChartPeriodChip) {
         selectedPeriodFlow.value = period
     }
 
-    private suspend fun updateAccountChartState(
-        accountLites: Map<String, AccountLite>,
+    private fun mapAccountLiteCacheMediatorState(cacheStatus: AccountLiteCacheStatus): AccountCacheMediatorState {
+        return when (cacheStatus) {
+            EmptyLocalAccounts, AccountLiteCacheStatus.Idle -> AccountCacheMediatorState.Loading
+            AccountLiteCacheStatus.Loading -> AccountCacheMediatorState.Loading
+            is CurrencyCachingError -> AccountCacheMediatorState.Error
+            is Data -> {
+                val accountLites = getFilteredPortfolioAccountLites(cacheStatus.accountLites).keys.toList()
+                AccountCacheMediatorState.Data(accountLites)
+            }
+        }
+    }
+
+    private suspend fun updateViewState(
+        cacheMediator: AccountCacheMediatorState,
         selectedPeriod: PeraLineChartPeriodChip
     ) {
-        stateDelegate.updateState { ViewState.Content(ContentState.Loading, selectedPeriod, PERIODS) }
-        val authAddresses = getFilteredPortfolioAccountLites(accountLites).keys.toList()
-        val viewState = getAccountsLineChartData(authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
-            onSuccess = {
-                ViewState.Content(ContentState.Data(it), selectedPeriod, PERIODS)
-            },
-            onFailed = { _, _ ->
-                ViewState.Error
+        when (cacheMediator) {
+            AccountCacheMediatorState.Loading -> stateDelegate.updateState { ViewState.Loading }
+            AccountCacheMediatorState.Error -> stateDelegate.updateState { ViewState.Error }
+            is AccountCacheMediatorState.Data -> {
+                stateDelegate.updateState { ViewState.Content(ContentState.Loading, selectedPeriod, PERIODS) }
+                getAccountsLineChartData(cacheMediator.authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
+                    onSuccess = {
+                        val contentState = ContentState.Data(it, tendencyValuesMapper(it))
+                        stateDelegate.updateState { ViewState.Content(contentState, selectedPeriod, PERIODS) }
+                    },
+                    onFailed = { _, _ ->
+                        stateDelegate.updateState { ViewState.Error }
+                    }
+                )
             }
-        )
-        stateDelegate.updateState { viewState }
+        }
+    }
+
+    private sealed interface AccountCacheMediatorState {
+        data object Loading : AccountCacheMediatorState
+        data object Error : AccountCacheMediatorState
+        data class Data(val authAddresses: List<String>) : AccountCacheMediatorState
     }
 
     private companion object {

@@ -24,8 +24,6 @@ import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.wallet.remoteconfig.domain.usecase.ASSET_DETAIL_CHART_TOGGLE
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,13 +37,12 @@ import javax.inject.Inject
 class AssetDetailViewModel @Inject constructor(
     private val assetDetailPreviewUseCase: AssetDetailPreviewUseCase,
     private val algoSwapClickEventTracker: AssetDetailAlgoSwapClickEventTracker,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val eventDelegate: EventDelegate<ViewEvent>,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
-    val assetId = savedStateHandle.getOrThrow<Long>(ASSET_ID_KEY)
-    val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
+    val assetId: Long = savedStateHandle.getOrThrow(ASSET_ID_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(ACCOUNT_ADDRESS_KEY)
     private val isQuickActionButtonsVisible = savedStateHandle.getOrThrow<Boolean>(IS_QUICK_ACTION_BUTTONS_VISIBLE_KEY)
 
     private val _assetDetailPreviewFlow = MutableStateFlow<AssetDetailPreview?>(null)
@@ -67,8 +64,6 @@ class AssetDetailViewModel @Inject constructor(
             }
         }
     }
-
-    fun isChartFeatureEnabled(): Boolean = isFeatureToggleEnabled(ASSET_DETAIL_CHART_TOGGLE)
 
     fun displayAssetLineChart(item: AssetLineChartData) {
         val event = ViewEvent.UpdateAssetBalanceText(
@@ -139,8 +134,8 @@ class AssetDetailViewModel @Inject constructor(
     }
 
     companion object {
-        const val ASSET_ID_KEY = "assetId"
-        const val ACCOUNT_ADDRESS_KEY = "accountAddress"
-        const val IS_QUICK_ACTION_BUTTONS_VISIBLE_KEY = "isQuickActionButtonsVisible"
+        const val ASSET_ID_KEY: String = "assetId"
+        const val ACCOUNT_ADDRESS_KEY: String = "accountAddress"
+        const val IS_QUICK_ACTION_BUTTONS_VISIBLE_KEY: String = "isQuickActionButtonsVisible"
     }
 }

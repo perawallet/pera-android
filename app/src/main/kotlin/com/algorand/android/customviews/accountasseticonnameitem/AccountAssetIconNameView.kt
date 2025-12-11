@@ -23,11 +23,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.algorand.android.R
-import com.algorand.android.customviews.accountasseticonnameitem.model.AccountAssetIconNameConfiguration
 import com.algorand.android.databinding.ItemAccountAssetIconNameBinding
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 
@@ -38,43 +34,7 @@ class AccountAssetIconNameView @JvmOverloads constructor(
 
     private val binding = viewBinding(ItemAccountAssetIconNameBinding::inflate)
 
-    fun initWithConfiguration(configuration: AccountAssetIconNameConfiguration) {
-        with(configuration) {
-            setStartAccountIconResource(accountIconDrawablePreview)
-            setStartIconResId?.let { setStartIconResource(it) }
-            startSmallIconDrawable?.let { setStartSmallIconDrawable(it) }
-            startSmallIconResId?.let { setStartSmallIconDrawableResource(it) }
-            titleEndIconDrawable?.let { setTrailingIconOfTitleText(it) }
-            titleEndIconResId?.let { setTrailingIconOfTitleText(it) }
-            title?.let { setTitleText(it) }
-            titleResId?.let { setTitleText(it) }
-            titleTextColorResId?.let { setTitleTextColor(it) }
-            description?.let { setDescriptionText(it) }
-            descriptionResId?.let { setDescriptionText(it) }
-        }
-    }
-
     fun getStartIconImageView(): AppCompatImageView = binding.startIconImageView
-
-    private fun setStartAccountIconResource(accountIconDrawablePreview: AccountIconDrawablePreview) {
-        binding.startIconImageView.apply {
-            setImageDrawable(
-                AccountIconDrawable.create(
-                    context = context,
-                    accountIconDrawablePreview = accountIconDrawablePreview,
-                    sizeResId = R.dimen.spacing_xxxxlarge
-                )
-            )
-        }
-    }
-
-    fun setStartIconResource(@DrawableRes iconResId: Int?) {
-        binding.startIconImageView.apply {
-            isVisible = iconResId != null
-            if (iconResId == null) return
-            setImageResource(iconResId)
-        }
-    }
 
     fun setTitleText(title: String?) {
         binding.titleTextView.apply {
@@ -103,24 +63,6 @@ class AccountAssetIconNameView @JvmOverloads constructor(
         binding.descriptionTextView.setText(textResId)
     }
 
-    fun setStartSmallIconDrawable(drawable: Drawable?) {
-        binding.startSmallIconImageView.apply {
-            isVisible = drawable != null
-            setImageDrawable(drawable)
-        }
-    }
-
-    fun setStartSmallIconDrawableResource(@DrawableRes drawableResId: Int?) {
-        binding.startSmallIconImageView.apply {
-            isVisible = drawableResId != null
-            if (drawableResId == null) {
-                setImageDrawable(null)
-            } else {
-                setImageResource(drawableResId)
-            }
-        }
-    }
-
     fun setTrailingIconOfTitleText(@DrawableRes iconResId: Int?) {
         val endIconDrawable = if (iconResId != null) AppCompatResources.getDrawable(context, iconResId) else null
         binding.titleTextView.setDrawable(end = endIconDrawable)
@@ -128,9 +70,5 @@ class AccountAssetIconNameView @JvmOverloads constructor(
 
     fun setTrailingIconOfTitleText(iconDrawable: Drawable?) {
         binding.titleTextView.setDrawable(end = iconDrawable)
-    }
-
-    fun setStartIconProgressBarVisibility(isVisible: Boolean) {
-        binding.startIconProgressBar.isVisible = isVisible
     }
 }

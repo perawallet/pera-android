@@ -14,11 +14,12 @@ package com.algorand.wallet.account.info.domain.usecase
 
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.math.BigInteger
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.math.BigInteger
 
 class IsAssetOwnedByAccountUseCaseTest {
 
@@ -28,7 +29,7 @@ class IsAssetOwnedByAccountUseCaseTest {
     private val sut = IsAssetOwnedByAccountUseCase(getAccountAlgoBalance, getAccountAssetHoldingAmount)
 
     @Test
-    fun `EXPECT false WHEN invoked by address and account information is null`() = runTest {
+    fun `EXPECT false WHEN invoked by address and account information is null`(): TestResult = runTest {
         coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns null
 
         val result = sut(ADDRESS, ASSET_ID)
@@ -37,7 +38,7 @@ class IsAssetOwnedByAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN invoked by address, asset id is ALGO_ID and account amount is greater than zero`() = runTest {
+    fun `EXPECT true WHEN invoked by address, asset id is ALGO_ID and account amount is greater than zero`(): TestResult = runTest {
         coEvery { getAccountAlgoBalance(ADDRESS) } returns BigInteger.TWO
 
         val result = sut(ADDRESS, ALGO_ID)
@@ -46,7 +47,7 @@ class IsAssetOwnedByAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT false WHEN invoked by address, asset id is ALGO_ID and account amount is zero`() = runTest {
+    fun `EXPECT false WHEN invoked by address, asset id is ALGO_ID and account amount is zero`(): TestResult = runTest {
         coEvery { getAccountAlgoBalance(ADDRESS) } returns BigInteger.ZERO
 
         val result = sut(ADDRESS, ALGO_ID)
@@ -55,7 +56,7 @@ class IsAssetOwnedByAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN invoked by address, asset id is not ALGO_ID and account has asset holdings with amount greater than zero`() =
+    fun `EXPECT true WHEN invoked by address, asset id is not ALGO_ID and account has asset holdings with amount greater than zero`(): TestResult =
         runTest {
             coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns BigInteger.ONE
 
@@ -65,7 +66,7 @@ class IsAssetOwnedByAccountUseCaseTest {
         }
 
     @Test
-    fun `EXPECT false WHEN invoked by address, asset id is not ALGO_ID and account has asset holdings with amount zero`() =
+    fun `EXPECT false WHEN invoked by address, asset id is not ALGO_ID and account has asset holdings with amount zero`(): TestResult =
         runTest {
             coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns BigInteger.ZERO
 
@@ -75,7 +76,7 @@ class IsAssetOwnedByAccountUseCaseTest {
         }
 
     @Test
-    fun `EXPECT false WHEN invoked by address, asset id is not ALGO_ID and account has no asset holdings`() = runTest {
+    fun `EXPECT false WHEN invoked by address, asset id is not ALGO_ID and account has no asset holdings`(): TestResult = runTest {
         coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns null
 
         val result = sut(ADDRESS, ASSET_ID)
@@ -86,6 +87,6 @@ class IsAssetOwnedByAccountUseCaseTest {
     private companion object {
         const val ADDRESS = "address"
         const val ASSET_ID = 1L
-        const val ALGO_ID = -7L
+        const val ALGO_ID = 0L
     }
 }

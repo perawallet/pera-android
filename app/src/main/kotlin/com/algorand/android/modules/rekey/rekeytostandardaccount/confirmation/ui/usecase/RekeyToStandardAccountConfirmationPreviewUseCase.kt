@@ -28,8 +28,9 @@ import com.algorand.android.utils.calculateRekeyFee
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     private val rekeyToStandardAccountConfirmationPreviewMapper: RekeyToStandardAccountConfirmationPreviewMapper,
@@ -43,7 +44,7 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     fun sendRekeyToStandardAccountTransaction(
         preview: RekeyToStandardAccountConfirmationPreview,
         transactionDetail: SignedTransactionDetail.RekeyOperation
-    ) = flow {
+    ): Flow<RekeyToStandardAccountConfirmationPreview> = flow {
         emit(preview.copy(isLoading = true))
         sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
             onSuccess = {
@@ -98,7 +99,9 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun updatePreviewWithTransactionFee(preview: RekeyToStandardAccountConfirmationPreview) = flow {
+    fun updatePreviewWithTransactionFee(
+        preview: RekeyToStandardAccountConfirmationPreview
+    ): Flow<RekeyToStandardAccountConfirmationPreview> = flow {
         transactionsRepository.getTransactionParams().use(
             onSuccess = { params ->
                 val calculatedFee = calculateRekeyFee(params.fee, params.minFee)

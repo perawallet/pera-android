@@ -111,7 +111,8 @@ class AssetOptInDeepLinkBuilderTest {
     @Test
     fun `EXPECT asset opt in deeplink WHEN assetId is not null`() {
         val result = sut.createDeepLink(VALID_DEEP_LINK_PAYLOAD)
-        val expected = DeepLink.AssetOptIn(VALID_DEEP_LINK_PAYLOAD.assetId!!, VALID_DEEP_LINK_PAYLOAD.accountAddress)
+        val expected =
+            DeepLink.AssetOptIn(VALID_DEEP_LINK_PAYLOAD.assetId ?: return, VALID_DEEP_LINK_PAYLOAD.accountAddress)
         assertEquals(expected, result)
     }
 

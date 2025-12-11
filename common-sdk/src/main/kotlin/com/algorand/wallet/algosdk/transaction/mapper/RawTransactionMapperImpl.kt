@@ -52,7 +52,8 @@ internal class RawTransactionMapperImpl @Inject constructor(
             stateHash = payload.stateHash,
             assetIdBeingConfigured = payload.assetIdBeingConfigured,
             assetConfigParameters = assetConfigParametersMapper(payload.decodedAssetConfigParameters),
-            groupId = payload.groupId
+            groupId = payload.groupId,
+            innerTransactions = payload.innerTransactions?.map { invoke(it) }
         )
     }
 }

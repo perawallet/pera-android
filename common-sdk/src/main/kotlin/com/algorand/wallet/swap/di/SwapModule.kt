@@ -58,6 +58,8 @@ import com.algorand.wallet.swap.domain.repository.SwapRepository
 import com.algorand.wallet.swap.domain.repository.SwapSelectedAssetRepository
 import com.algorand.wallet.swap.domain.usecase.GetAvailableSwapAssets
 import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
+import com.algorand.wallet.swap.domain.usecase.GetParsedSwapTransactions
+import com.algorand.wallet.swap.domain.usecase.GetParsedSwapTransactionsUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetail
 import com.algorand.wallet.swap.domain.usecase.GetSelectedSwapAssetDetailUseCase
 import com.algorand.wallet.swap.domain.usecase.GetSwapAmountByPercentage
@@ -299,4 +301,7 @@ internal object SwapModule {
     fun provideGetSwapSlippageTolerancePercentage(repository: SwapRepository): GetSwapSlippageTolerancePercentage {
         return GetSwapSlippageTolerancePercentage(repository::getSlippageTolerancePercentage)
     }
+
+    @Provides
+    fun provideGetParsedSwapTransactions(useCase: GetParsedSwapTransactionsUseCase): GetParsedSwapTransactions = useCase
 }

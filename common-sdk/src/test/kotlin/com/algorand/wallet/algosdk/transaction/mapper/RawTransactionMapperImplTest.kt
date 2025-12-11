@@ -136,7 +136,7 @@ class RawTransactionMapperImplTest {
 
         val GROUP_ID = peraFixture<String?>()
 
-        val PAYLOAD = RawTransactionPayload(
+        val INNER_TXN = RawTransactionPayload(
             amount = AMOUNT,
             fee = FEE,
             firstValidRound = FIRST_VALID_ROUND,
@@ -163,10 +163,13 @@ class RawTransactionMapperImplTest {
             stateHash = STATE_HASH,
             assetIdBeingConfigured = ASSET_ID_BEING_CONFIGURED,
             decodedAssetConfigParameters = ASSET_CONFIG_PARAMETERS_PAYLOAD,
-            groupId = GROUP_ID
+            groupId = GROUP_ID,
+            innerTransactions = null
         )
 
-        val RAW_TXN = RawTransaction(
+        val PAYLOAD = INNER_TXN.copy(innerTransactions = listOf(INNER_TXN))
+
+        val INNER_RAW_TXN = RawTransaction(
             amount = AMOUNT,
             fee = FEE,
             firstValidRound = FIRST_VALID_ROUND,
@@ -193,7 +196,9 @@ class RawTransactionMapperImplTest {
             stateHash = STATE_HASH,
             assetIdBeingConfigured = ASSET_ID_BEING_CONFIGURED,
             assetConfigParameters = ASSET_CONFIG_PARAMETERS,
-            groupId = GROUP_ID
+            groupId = GROUP_ID,
+            innerTransactions = null
         )
+        val RAW_TXN = INNER_RAW_TXN.copy(innerTransactions = listOf(INNER_RAW_TXN))
     }
 }

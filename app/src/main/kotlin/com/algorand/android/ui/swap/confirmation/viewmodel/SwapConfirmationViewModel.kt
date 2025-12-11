@@ -101,9 +101,8 @@ class SwapConfirmationViewModel @Inject constructor(
             swapTransactionSignManager.manualStopAllResources()
             confirmTransactionJob = viewModelScope.launch {
                 swapConfirmationEventTracker.logSwapConfirmation()
-                val quoteId = contentState.quote.quoteId
                 val accountAddress = contentState.quote.accountAddress
-                createSwapV2QuoteTransactions(quoteId, accountAddress).use(
+                createSwapV2QuoteTransactions(contentState.quote, accountAddress).use(
                     onSuccess = ::signTransactions,
                     onFailed = ::displayFailedToCreateTxnError
                 )

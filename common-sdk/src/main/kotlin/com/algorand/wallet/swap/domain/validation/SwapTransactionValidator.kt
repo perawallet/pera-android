@@ -15,5 +15,5 @@ package com.algorand.wallet.swap.domain.validation
 import com.algorand.wallet.swap.domain.validation.model.SwapTransactionValidationData
 
 interface SwapTransactionValidator {
-    fun isTransactionsValid(data: SwapTransactionValidationData): Boolean
+    fun areTransactionsValid(data: SwapTransactionValidationData): Boolean
 }

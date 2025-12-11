@@ -18,6 +18,7 @@ import com.algorand.android.modules.swap.confirmswap.domain.mapper.SignedSwapSin
 import com.algorand.android.modules.swap.confirmswap.domain.mapper.UnsignedSwapSingleTransactionDataMapper
 import com.algorand.android.modules.swap.confirmswap.domain.model.SignedSwapSingleTransactionData
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransactionDTO
+import com.algorand.android.modules.swap.confirmswap.domain.model.SwapTransactionPurpose
 import com.algorand.android.modules.swap.confirmswap.domain.model.UnsignedSwapSingleTransactionData
 import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
 import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactionsDto
@@ -25,7 +26,14 @@ import com.algorand.android.ui.swap.domain.repository.SwapQuoteTransactionsRepos
 import com.algorand.android.usecase.NetworkSlugUseCase
 import com.algorand.android.utils.decodeBase64
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.logger.PeraErrorLogger
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.swap.domain.validation.SwapTransactionValidator
+import com.algorand.wallet.swap.domain.validation.model.SwapTransactionValidationData
 import javax.inject.Inject
 
 internal class CreateSwapV2QuoteTransactionsUseCase @Inject constructor(
@@ -35,14 +43,26 @@ internal class CreateSwapV2QuoteTransactionsUseCase @Inject constructor(
     private val swapTransactionItemFactory: SwapTransactionItemFactory,
     private val networkSlugUseCase: NetworkSlugUseCase,
     private val parseTransactionMsgPackUseCase: ParseTransactionMsgPackUseCase,
-    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress,
+    private val swapTransactionValidator: SwapTransactionValidator,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses,
+    private val errorLogger: PeraErrorLogger
 ) : CreateSwapV2QuoteTransactions {
 
-    override suspend fun invoke(quoteId: Long, accountAddress: String): PeraResult<SwapQuoteTransactions> {
-        return swapQuoteTransactionsRepository.createQuoteTransactions(quoteId).use(
+    override suspend fun invoke(quote: SwapQuoteV2, accountAddress: String): PeraResult<SwapQuoteTransactions> {
+        return swapQuoteTransactionsRepository.createQuoteTransactions(quote.quoteId).use(
             onSuccess = { txns ->
-                val swapQuoteTransactions = createSwapQuoteTransactions(accountAddress, txns)
-                PeraResult.Success(swapQuoteTransactions)
+                if (isFeatureToggleEnabled(FeatureToggle.SWAP_TXN_VALIDATION.key)) {
+                    if (areTransactionsValid(quote, txns)) {
+                        createSwapQuoteTransactionsResult(accountAddress, txns)
+                    } else {
+                        errorLogger.logError("Swap transaction validation failed for quoteId: ${quote.quoteId}")
+                        PeraResult.Error(Exception())
+                    }
+                } else {
+                    createSwapQuoteTransactionsResult(accountAddress, txns)
+                }
             },
             onFailed = { exception, _ ->
                 PeraResult.Error(exception)
@@ -50,10 +70,10 @@ internal class CreateSwapV2QuoteTransactionsUseCase @Inject constructor(
         )
     }
 
-    private suspend fun createSwapQuoteTransactions(
+    private suspend fun createSwapQuoteTransactionsResult(
         accountAddress: String,
         transactionsDto: SwapQuoteTransactionsDto
-    ): SwapQuoteTransactions {
+    ): PeraResult<SwapQuoteTransactions> {
         val transactions = transactionsDto.transactions.mapIndexed { parentListIndex, swapQuoteTransactionDTO ->
             val signedSingleTransactions = createSingleSignedTransactions(swapQuoteTransactionDTO, parentListIndex)
             val unsignedSingleTransactions = createUnsignedSingleTransactions(
@@ -69,7 +89,17 @@ internal class CreateSwapV2QuoteTransactionsUseCase @Inject constructor(
                 transactionNetworkSlug = networkSlugUseCase.getActiveNodeSlug().orEmpty()
             )
         }
-        return SwapQuoteTransactions(transactions, transactionsDto.swapId)
+        return PeraResult.Success(SwapQuoteTransactions(transactions, transactionsDto.swapId))
+    }
+
+    private suspend fun areTransactionsValid(quote: SwapQuoteV2, txns: SwapQuoteTransactionsDto): Boolean {
+        val swapTxns = txns.transactions.first { it.purpose == SwapTransactionPurpose.SWAP }
+        val signedTxns = swapTxns.signedTransactions?.mapNotNull { it?.decodeBase64() }.orEmpty()
+        val unsignedTxns = swapTxns.signedTransactions?.mapIndexedNotNull { index, txn ->
+            if (txn == null) swapTxns.transactions?.get(index)?.decodeBase64() else null
+        }.orEmpty()
+        val data = SwapTransactionValidationData(quote, signedTxns, unsignedTxns, getLocalAccountsAddresses())
+        return swapTransactionValidator.areTransactionsValid(data)
     }
 
     private fun createSingleSignedTransactions(

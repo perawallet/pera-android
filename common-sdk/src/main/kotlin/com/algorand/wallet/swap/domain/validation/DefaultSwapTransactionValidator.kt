@@ -19,7 +19,7 @@ internal class DefaultSwapTransactionValidator @Inject constructor(
     private val swapTransactionValidationRules: Set<@JvmSuppressWildcards SwapTransactionValidationRule>
 ) : SwapTransactionValidator {
 
-    override fun isTransactionsValid(data: SwapTransactionValidationData): Boolean {
+    override fun areTransactionsValid(data: SwapTransactionValidationData): Boolean {
         return swapTransactionValidationRules.all { rule ->
             rule(data)
         }

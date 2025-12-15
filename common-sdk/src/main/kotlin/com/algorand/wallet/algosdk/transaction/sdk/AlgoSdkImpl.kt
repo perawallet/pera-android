@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.algosdk.sdk.Sdk
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.util.Encoder
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkNumberExtensions.toUint64

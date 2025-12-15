@@ -30,7 +30,8 @@ class SwapCloseToValidationRuleTest {
     @Test
     fun `EXPECT false WHEN there is closeTo address and sender is local address`() {
         val invalidTransaction = VALID_TRANSACTION.copy(
-            closeToAddress = AlgorandAddress(LOCAL_ADDRESS, null)
+            senderAddress = AlgorandAddress(LOCAL_ADDRESS, null),
+            closeToAddress = AlgorandAddress("some address", null)
         )
         every { getParsedSwapTransactions(SIGNED_TXNS, UNSIGNED_TXNS) } returns listOf(invalidTransaction)
 
@@ -42,7 +43,8 @@ class SwapCloseToValidationRuleTest {
     @Test
     fun `EXPECT false WHEN there is assetCloseTo address and sender is local address`() {
         val invalidTransaction = VALID_TRANSACTION.copy(
-            assetCloseToAddress = AlgorandAddress(LOCAL_ADDRESS, null)
+            senderAddress = AlgorandAddress(LOCAL_ADDRESS, null),
+            assetCloseToAddress = AlgorandAddress("some address", null)
         )
         every { getParsedSwapTransactions(SIGNED_TXNS, UNSIGNED_TXNS) } returns listOf(invalidTransaction)
 

@@ -30,8 +30,8 @@ internal class SwapCloseToValidationRule @Inject constructor(
     }
 
     private infix fun RawTransaction.isClosing(localAddresses: List<String>): Boolean {
-        val closeToAddress = this.closeToAddress?.decodedAddress
-        val assetCloseToAddress = this.assetCloseToAddress?.decodedAddress
-        return localAddresses.any { it == closeToAddress || it == assetCloseToAddress }
+        val hasCloseToAddress = closeToAddress != null || assetCloseToAddress != null
+        val isSenderLocalAddress = localAddresses.any { it == senderAddress?.decodedAddress }
+        return hasCloseToAddress && isSenderLocalAddress
     }
 }

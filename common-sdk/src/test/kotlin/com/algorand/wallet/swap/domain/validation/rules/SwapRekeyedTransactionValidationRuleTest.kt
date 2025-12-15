@@ -31,7 +31,8 @@ class SwapRekeyedTransactionValidationRuleTest {
     @Test
     fun `EXPECT false WHEN there is transaction that rekeys local address`() {
         val rekeyTxn = VALID_TRANSACTION.copy(
-            rekeyAddress = AlgorandAddress(LOCAL_ADDRESS_1, null)
+            senderAddress = AlgorandAddress(LOCAL_ADDRESS_1, null),
+            rekeyAddress = AlgorandAddress("some address", null)
         )
         every { getParsedSwapTransactions(SIGNED_TXNS, UNSIGNED_TXNS) } returns listOf(rekeyTxn)
 
@@ -43,9 +44,11 @@ class SwapRekeyedTransactionValidationRuleTest {
     @Test
     fun `EXPECT true WHEN there is no transaction that rekeys local address`() {
         val rekeyTxn1 = VALID_TRANSACTION.copy(
+            senderAddress = AlgorandAddress("not local address", null),
             rekeyAddress = AlgorandAddress("random address", null)
         )
         val rekeyTxn2 = VALID_TRANSACTION.copy(
+            senderAddress = AlgorandAddress("not local address", null),
             rekeyAddress = AlgorandAddress(null, null)
         )
         every { getParsedSwapTransactions(SIGNED_TXNS, UNSIGNED_TXNS) } returns listOf(rekeyTxn1, rekeyTxn2)

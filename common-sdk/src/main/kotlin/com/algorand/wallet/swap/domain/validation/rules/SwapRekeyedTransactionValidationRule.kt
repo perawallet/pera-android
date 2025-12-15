@@ -28,7 +28,8 @@ internal class SwapRekeyedTransactionValidationRule @Inject constructor(
     }
 
     private fun RawTransaction.isRekeyingLocalAddress(localAddresses: List<String>): Boolean {
-        val rekeyedAddress = this.rekeyAddress?.decodedAddress ?: return false
-        return localAddresses.any { it == rekeyedAddress }
+        val hasRekeyAddress = rekeyAddress != null
+        val isSenderLocalAddress = localAddresses.any { it == senderAddress?.decodedAddress }
+        return hasRekeyAddress && isSenderLocalAddress
     }
 }

@@ -46,7 +46,9 @@ internal object SwapValidationRuleTransactionBuilder {
             assetIdBeingConfigured = null,
             assetConfigParameters = null,
             groupId = null,
-            innerTransactions = null
+            innerTransactions = null,
+            rejectVersion = null,
+            accessListSize = null
         )
     }
 }

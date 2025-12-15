@@ -36,6 +36,7 @@ import com.algorand.wallet.swap.domain.validation.SwapTransactionValidator
 import com.algorand.wallet.swap.domain.validation.model.SwapTransactionValidationData
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 internal class CreateSwapV2QuoteTransactionsUseCase @Inject constructor(
     private val swapQuoteTransactionsRepository: SwapQuoteTransactionsRepository,
     private val unsignedSwapQuoteTransactionMapper: UnsignedSwapSingleTransactionDataMapper,

@@ -16,7 +16,6 @@ import com.algorand.wallet.swap.domain.validation.DefaultSwapTransactionValidato
 import com.algorand.wallet.swap.domain.validation.SwapTransactionValidationRule
 import com.algorand.wallet.swap.domain.validation.SwapTransactionValidator
 import com.algorand.wallet.swap.domain.validation.rules.SwapCloseToValidationRule
-import com.algorand.wallet.swap.domain.validation.rules.SwapReceivedAmountValidationRule
 import com.algorand.wallet.swap.domain.validation.rules.SwapRekeyedTransactionValidationRule
 import com.algorand.wallet.swap.domain.validation.rules.SwapSentAmountValidationRule
 import com.algorand.wallet.swap.domain.validation.rules.SwapSignerValidationRule
@@ -30,11 +29,11 @@ import dagger.multibindings.IntoSet
 @InstallIn(SingletonComponent::class)
 internal object SwapTransactionValidationModule {
 
-    @IntoSet
-    @Provides
-    fun provideSwapReceivedAmountValidationRule(
-        rule: SwapReceivedAmountValidationRule
-    ): SwapTransactionValidationRule = rule
+//    @IntoSet
+//    @Provides
+//    fun provideSwapReceivedAmountValidationRule(
+//        rule: SwapReceivedAmountValidationRule
+//    ): SwapTransactionValidationRule = rule
 
     @IntoSet
     @Provides

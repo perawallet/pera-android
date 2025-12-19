@@ -25,9 +25,13 @@ class OwnedAssetViewHolder(
     private val listener: Listener
 ) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
 
+    var assetId: Long? = null
+        private set
+
     override fun bind(item: AccountDetailAssetsItem) {
         if (item !is AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem) return
         with(item) {
+            assetId = item.id
             with(binding.assetItemView) {
                 getStartIconImageView().apply {
                     baseAssetDrawableProvider.provideAssetDrawable(

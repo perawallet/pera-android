@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.NFTItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.ASSET
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.NFT
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.NO_ASSET_FOUND
@@ -98,11 +100,21 @@ class AccountAssetsAdapter(
         return PagingPlaceholderViewHolder.create(parent)
     }
 
+    fun onSwiped(position: Int) {
+        when (val item = getItem(position)) {
+            is AssetItem -> listener.onRemoveAsset(item.id)
+            is NFTItem -> listener.onRemoveCollectible(item.id)
+            else -> Unit
+        }
+    }
+
     interface Listener {
         fun onAssetClick(assetId: Long)
         fun onAssetLongClick(assetId: Long)
         fun onNFTClick(nftId: Long)
         fun onNFTLongClick(nftId: Long)
+        fun onRemoveAsset(assetId: Long)
+        fun onRemoveCollectible(assetId: Long)
     }
 
     companion object {

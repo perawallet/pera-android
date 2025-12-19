@@ -17,5 +17,5 @@ import androidx.paging.PagingData
 data class AccountAssetsPreview(
     val accountDetailAssetsItemList: PagingData<AccountDetailAssetsItem>,
     val accountDetailAccountItems: List<AccountDetailAccountsItem>,
-    val isWatchAccount: Boolean
+    val canSignTransaction: Boolean
 )

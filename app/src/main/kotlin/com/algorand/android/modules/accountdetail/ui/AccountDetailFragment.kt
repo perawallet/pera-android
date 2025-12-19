@@ -28,6 +28,7 @@
 package com.algorand.android.modules.accountdetail.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -155,6 +156,14 @@ class AccountDetailFragment :
 
     override fun onNFTLongClick(nftId: Long) {
         onAssetIdLongClick(nftId)
+    }
+
+    override fun onRemoveAsset(assetId: Long) {
+        Log.e("AccountDetailFragment", "onRemoveAsset: $assetId")
+    }
+
+    override fun onRemoveCollectible(assetId: Long) {
+        Log.e("AccountDetailFragment", "onRemoveCollectible: $assetId")
     }
 
     override fun onAssetInboxClick() {

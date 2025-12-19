@@ -18,20 +18,24 @@ import android.view.ViewGroup
 import com.algorand.android.databinding.ItemAccountAssetViewBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import kotlin.text.Typography.middleDot
 
 class OwnedAssetViewHolder(
     private val binding: ItemAccountAssetViewBinding,
     private val listener: Listener
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAssetsItem>(binding.root), SwipeableAssetViewHolder {
 
-    var assetId: Long? = null
-        private set
+    private var assetId: Long? = null
+
+    override fun getAssetId(): Long? = assetId
+
+    override fun isSwipeEnabled(): Boolean = assetId != null && assetId != ALGO_ID
 
     override fun bind(item: AccountDetailAssetsItem) {
         if (item !is AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem) return
         with(item) {
-            assetId = item.id
+            assetId = id
             with(binding.assetItemView) {
                 getStartIconImageView().apply {
                     baseAssetDrawableProvider.provideAssetDrawable(

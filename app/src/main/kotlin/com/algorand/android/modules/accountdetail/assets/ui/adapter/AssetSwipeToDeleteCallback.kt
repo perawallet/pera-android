@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.algorand.android.R
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.ASSET
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.NFT
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import kotlin.math.absoluteValue
 
 class AssetSwipeToDeleteCallback(private val onSwiped: (Int) -> Unit) : ItemTouchHelper.SimpleCallback(0, LEFT) {
@@ -123,11 +122,7 @@ class AssetSwipeToDeleteCallback(private val onSwiped: (Int) -> Unit) : ItemTouc
     }
 
     private fun ViewHolder.isSwipeable(): Boolean {
-        return when (this) {
-            is OwnedAssetViewHolder -> assetId != null && assetId != ALGO_ID
-            is OwnedNFTViewHolder -> true
-            else -> false
-        }
+        return this is SwipeableAssetViewHolder && isSwipeEnabled()
     }
 
     companion object Companion {

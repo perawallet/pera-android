@@ -29,11 +29,18 @@ import com.algorand.android.utils.appendSpace
 class OwnedNFTViewHolder(
     private val binding: ItemNftVerticalLinearListBinding,
     private val listener: Listener
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAssetsItem>(binding.root), SwipeableAssetViewHolder {
+
+    private var assetId: Long? = null
+
+    override fun getAssetId(): Long? = assetId
+
+    override fun isSwipeEnabled(): Boolean = assetId != null
 
     override fun bind(item: AccountDetailAssetsItem) {
         if (item !is AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.NFTItem) return
         with(item) {
+            assetId = id
             with(binding) {
                 nftStartIconImageView.apply {
                     setOpacity(shouldDecreaseOpacity)

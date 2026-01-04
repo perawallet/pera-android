@@ -20,12 +20,14 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAccountAssetsBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountAssetsAccountDetailAdapter
 import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountAssetsAdapter
+import com.algorand.android.modules.accountdetail.assets.ui.adapter.AssetSwipeToDeleteCallback
 import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetailAccountsItemProcessor
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
@@ -77,6 +79,14 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
         override fun onNFTLongClick(nftId: Long) {
             listener?.onNFTLongClick(nftId)
+        }
+
+        override fun onRemoveAsset(assetId: Long) {
+            listener?.onRemoveAsset(assetId)
+        }
+
+        override fun onRemoveCollectible(assetId: Long) {
+            listener?.onRemoveCollectible(assetId)
         }
     }
 
@@ -150,12 +160,24 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
     private lateinit var accountAssetsConcatAdapter: ConcatAdapter
 
+    private val swipeToDeleteCallback = AssetSwipeToDeleteCallback(accountAssetsAdapter::onSwiped)
+
+    private val itemTouchHelper: ItemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+
     private val accountAssetsCollector: suspend (PagingData<AccountDetailAssetsItem>?) -> Unit = { items ->
         items?.let { accountAssetsAdapter.submitData(items) }
     }
 
     private val accountAssetsHeadersCollector: suspend (List<AccountDetailAccountsItem>?) -> Unit = { items ->
         items?.let { accountAssetsAccountDetailAdapter.submitList(items) }
+    }
+
+    private val canSignTransactionCollector: suspend (Boolean?) -> Unit = { canSignTransaction ->
+        if (canSignTransaction == true) {
+            itemTouchHelper.attachToRecyclerView(binding.accountAssetsRecyclerView)
+        } else {
+            itemTouchHelper.attachToRecyclerView(null)
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -193,8 +215,8 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
             )
         }
         binding.accountQuickActionsFloatingActionButton.setOnClickListener {
-            accountAssetsViewModel.isWatchAccount?.let { isWatchAccount ->
-                listener?.onAccountQuickActionsFloatingActionButtonClicked(isWatchAccount)
+            accountAssetsViewModel.canSignTransaction?.let { canSignTransaction ->
+                listener?.onAccountQuickActionsFloatingActionButtonClicked(isWatchAccount = !canSignTransaction)
             }
         }
     }
@@ -209,6 +231,10 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
                 flow = map { it?.accountDetailAccountItems }.distinctUntilChanged(),
                 collection = accountAssetsHeadersCollector
             )
+            collectLatestOnLifecycle(
+                flow = map { it?.canSignTransaction }.distinctUntilChanged(),
+                collection = canSignTransactionCollector
+            )
         }
     }
 
@@ -218,6 +244,8 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         fun onAssetLongClick(assetId: Long)
         fun onNFTClick(nftId: Long)
         fun onNFTLongClick(nftId: Long)
+        fun onRemoveAsset(assetId: Long)
+        fun onRemoveCollectible(assetId: Long)
         fun onAssetInboxClick()
         fun onSendClick()
         fun onSwapClick()

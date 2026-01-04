@@ -156,6 +156,6 @@ abstract class BaseFragment(
     }
 
     protected fun navigateToXoSwap() {
-        (activity as CoreMainActivity?)?.setBottomNavigationBarSelectedItem(R.id.xoSwapFragment)
+        (activity as? MainActivity)?.navToXoSwapFragment()
     }
 }

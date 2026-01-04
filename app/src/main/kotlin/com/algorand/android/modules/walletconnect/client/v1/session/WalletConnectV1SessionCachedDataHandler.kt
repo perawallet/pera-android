@@ -20,7 +20,8 @@ import javax.inject.Singleton
 @Singleton
 class WalletConnectV1SessionCachedDataHandler @Inject constructor() {
 
-    private val connectedSessions: ConcurrentHashMap<Long, WalletConnectV1SessionCachedData> = ConcurrentHashMap(50)
+    private val connectedSessions: ConcurrentHashMap<Long, WalletConnectV1SessionCachedData> =
+        ConcurrentHashMap(INITIAL_CAPACITY)
 
     fun getSessionById(id: Long): WCSession? = connectedSessions[id]?.session
 
@@ -33,5 +34,9 @@ class WalletConnectV1SessionCachedDataHandler @Inject constructor() {
 
     fun deleteCachedData(sessionId: Long, onCacheDeleted: (WalletConnectV1SessionCachedData) -> Unit) {
         connectedSessions.remove(sessionId)?.also { onCacheDeleted(it) }
+    }
+
+    private companion object {
+        const val INITIAL_CAPACITY = 50
     }
 }

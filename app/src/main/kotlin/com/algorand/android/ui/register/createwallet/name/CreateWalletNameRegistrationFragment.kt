@@ -12,6 +12,9 @@
 
 package com.algorand.android.ui.register.createwallet.name
 
+import android.os.Bundle
+import android.view.View
+import com.algorand.android.R
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.nameregistration.BaseNameRegistrationFragment
@@ -29,5 +32,11 @@ class CreateWalletNameRegistrationFragment : BaseNameRegistrationFragment() {
             CreateWalletNameRegistrationFragmentDirections
                 .actionCreateWalletNameRegistrationFragmentToHomeNavigation()
         )
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.labelTextView.setText(R.string.name_your_wallet)
+        binding.descriptionTextView.setText(R.string.name_your_wallet_to)
     }
 }

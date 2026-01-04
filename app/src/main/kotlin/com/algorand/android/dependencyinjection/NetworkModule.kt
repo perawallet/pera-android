@@ -28,14 +28,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.util.concurrent.TimeUnit
+import javax.inject.Named
+import javax.inject.Singleton
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
-import javax.inject.Named
-import javax.inject.Singleton
 
 /**
  * Module which provides all required dependencies about network
@@ -139,20 +139,6 @@ object NetworkModule {
     @Singleton
     @Named("algodExplorerPriceHttpClient")
     fun provideAlgodExplorerPriceHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    @Named("walletConnectHttpClient")
-    fun provideWalletConnectHttpClient(
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()

@@ -52,10 +52,10 @@ import com.algorand.android.utils.getCurrentTimeAsSec
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.walletconnect.WalletConnectSessionRetryCounter
+import javax.inject.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import javax.inject.Named
 
 @Suppress("LongParameterList")
 class WalletConnectClientV1Impl(
@@ -352,7 +352,7 @@ class WalletConnectClientV1Impl(
     private fun connectToSession(sessionCacheData: WalletConnectV1SessionCachedData) {
         with(sessionCacheData) {
             addCallback(sessionCacheDataCallback)
-            session.offer()
+            session.init()
         }
         sessionCachedDataHandler.addNewCachedData(sessionCacheData)
     }

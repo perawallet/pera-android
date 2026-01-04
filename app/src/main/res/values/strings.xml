@@ -524,7 +524,7 @@
     <string name="passphrase_verified">Passphrase Verified</string>
     <string name="keep_this_recovery">Keep this recovery passphrase in a secure location that is accessible only by you. Do not lose this recovery passphrase.</string>
     <string name="mnemonic_type_universal_title">Universal</string>
-    <string name="mnemonic_type_universal_description">New inter-operable format that enables important features like HD Wallet</string>
+    <string name="mnemonic_type_universal_description">Wallet that lets you derive new accounts, all using the same mnemonic</string>
     <string name="mnemonic_type_universal_footer">24 Key mnemonic keys</string>
     <string name="mnemonic_type_algo25_title">Algo25</string>
     <string name="mnemonic_type_algo25_description">Legacy format that is specific to Algorand ecosystem</string>

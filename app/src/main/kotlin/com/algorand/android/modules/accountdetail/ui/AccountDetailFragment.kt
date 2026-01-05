@@ -36,6 +36,7 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseAccountIconButton
 import com.algorand.android.databinding.FragmentAccountDetailBinding
+import com.algorand.android.models.AssetActionResult
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.FragmentConfiguration
@@ -46,7 +47,14 @@ import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragmen
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
+import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirections.Companion.actionAccountDetailFragmentToAssetRemovalActionNavigation
+import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirections.Companion.actionAccountDetailFragmentToAssetTransferBalanceActionNavigation
+import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirections.Companion.actionAccountDetailFragmentToNftOptOutConfirmationNavigation
+import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToRemoveAsset
+import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToRemoveCollectible
+import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToTransferBalance
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
+import com.algorand.android.modules.assets.action.transferbalance.TransferBalanceActionBottomSheet.Companion.TRANSFER_ASSET_ACTION_RESULT
 import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
@@ -55,6 +63,7 @@ import com.algorand.android.ui.accounts.RenameAccountBottomSheet
 import com.algorand.android.ui.asset.collectible.listing.account.view.AccountCollectiblesFragment
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.emptyString
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useFragmentResultListenerValue
@@ -64,6 +73,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import java.math.BigInteger
 import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
@@ -101,6 +111,18 @@ class AccountDetailFragment :
 
     private val navBackEventCollector: suspend (Event<Unit>?) -> Unit = {
         it?.consume()?.run { navBack() }
+    }
+
+    private val viewEventCollector: suspend (AccountDetailViewModel.ViewEvent) -> Unit = { viewEvent ->
+        when (viewEvent) {
+            is NavToRemoveAsset -> nav(actionAccountDetailFragmentToAssetRemovalActionNavigation(viewEvent.assetAction))
+            is NavToTransferBalance -> {
+                nav(actionAccountDetailFragmentToAssetTransferBalanceActionNavigation(viewEvent.assetAction))
+            }
+            is NavToRemoveCollectible -> {
+                nav(actionAccountDetailFragmentToNftOptOutConfirmationNavigation(viewEvent.assetAction))
+            }
+        }
     }
 
     private lateinit var accountDetailPagerAdapter: AccountDetailPagerAdapter
@@ -155,6 +177,14 @@ class AccountDetailFragment :
 
     override fun onNFTLongClick(nftId: Long) {
         onAssetIdLongClick(nftId)
+    }
+
+    override fun onRemoveAsset(assetId: Long) {
+        accountDetailViewModel.removeAsset(assetId)
+    }
+
+    override fun onRemoveCollectible(assetId: Long) {
+        accountDetailViewModel.removeCollectible(assetId)
     }
 
     override fun onAssetInboxClick() {
@@ -290,6 +320,16 @@ class AccountDetailFragment :
                 }
             }
         }
+        useFragmentResultListenerValue<AssetActionResult>(TRANSFER_ASSET_ACTION_RESULT, ::navToSendAlgoNavigation)
+    }
+
+    private fun navToSendAlgoNavigation(assetActionResult: AssetActionResult) {
+        val assetTransaction = AssetTransaction(
+            assetId = assetActionResult.assetId,
+            senderAddress = accountDetailViewModel.accountAddress,
+            amount = BigInteger.ZERO,
+        )
+        nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction, true))
     }
 
     private fun initUi() {
@@ -310,6 +350,7 @@ class AccountDetailFragment :
             flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.navBackEvent },
             collection = navBackEventCollector
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(accountDetailViewModel.viewEvent, viewEventCollector)
     }
 
     private fun setupTabLayout() {

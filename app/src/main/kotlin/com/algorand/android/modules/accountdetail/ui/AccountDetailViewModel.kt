@@ -17,27 +17,39 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.AccountDetailTab
+import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSummary
+import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent
+import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToRemoveAsset
+import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToRemoveCollectible
+import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToTransferBalance
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.tracking.accountdetail.AccountDetailFragmentEventTracker
 import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.math.BigInteger
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AccountDetailViewModel @Inject constructor(
@@ -46,8 +58,11 @@ class AccountDetailViewModel @Inject constructor(
     private val accountDetailFragmentEventTracker: AccountDetailFragmentEventTracker,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getAccountDetailSummary: GetAccountDetailSummary,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
-) : ViewModel() {
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val getAccountAssetHolding: GetAccountAssetHolding,
+    private val getAsset: GetAsset,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
     private val accountDetailTab = savedStateHandle.get<AccountDetailTab?>(ACCOUNT_DETAIL_TAB)
@@ -120,6 +135,44 @@ class AccountDetailViewModel @Inject constructor(
         viewModelScope.launch {
             accountDetailFragmentEventTracker.logAccountDetailTransactionHistoryTapEvent()
         }
+    }
+
+    fun removeCollectible(assetId: Long) {
+        viewModelScope.launchIO {
+            val action = getAssetAction(assetId) ?: return@launchIO
+            eventDelegate.sendEvent(
+                if (isAssetBalanceZero(assetId)) NavToRemoveCollectible(action) else NavToTransferBalance(action)
+            )
+        }
+    }
+
+    fun removeAsset(assetId: Long) {
+        viewModelScope.launchIO {
+            val action = getAssetAction(assetId) ?: return@launchIO
+            eventDelegate.sendEvent(
+                if (isAssetBalanceZero(assetId)) NavToRemoveAsset(action) else NavToTransferBalance(action)
+            )
+        }
+    }
+
+    private suspend fun isAssetBalanceZero(assetId: Long): Boolean {
+        return getAccountAssetHolding(accountAddress, assetId)?.amount isEqualTo BigInteger.ZERO
+    }
+
+    private suspend fun getAssetAction(assetId: Long): AssetAction? {
+        return getAsset(assetId)?.run {
+            AssetAction(
+                assetId = id,
+                publicKey = accountAddress,
+                assetFullName = AssetName(fullName.orEmpty(), shortName.orEmpty())
+            )
+        }
+    }
+
+    sealed interface ViewEvent {
+        data class NavToTransferBalance(val assetAction: AssetAction) : ViewEvent
+        data class NavToRemoveAsset(val assetAction: AssetAction) : ViewEvent
+        data class NavToRemoveCollectible(val assetAction: AssetAction) : ViewEvent
     }
 
     companion object {

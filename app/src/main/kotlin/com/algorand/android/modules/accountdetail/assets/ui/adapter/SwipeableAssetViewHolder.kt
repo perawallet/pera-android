@@ -10,12 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountdetail.assets.ui.model
+package com.algorand.android.modules.accountdetail.assets.ui.adapter
 
-import androidx.paging.PagingData
-
-data class AccountAssetsPreview(
-    val accountDetailAssetsItemList: PagingData<AccountDetailAssetsItem>,
-    val accountDetailAccountItems: List<AccountDetailAccountsItem>,
-    val canSignTransaction: Boolean
-)
+interface SwipeableAssetViewHolder {
+    fun getAssetId(): Long?
+    fun isSwipeEnabled(): Boolean
+}

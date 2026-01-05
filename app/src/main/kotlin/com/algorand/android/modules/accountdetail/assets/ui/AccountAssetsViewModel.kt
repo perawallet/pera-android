@@ -22,8 +22,11 @@ import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetail
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
 import com.algorand.android.ui.accountdetail.assets.tracker.AccountAssetsEventTracker
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +38,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AccountAssetsViewModel @Inject constructor(
@@ -43,6 +45,7 @@ class AccountAssetsViewModel @Inject constructor(
     private val assetsItemProcessor: AccountDetailAssetsItemProcessor,
     private val togglePrivacyMode: TogglePrivacyMode,
     private val accountAssetsEventTracker: AccountAssetsEventTracker,
+    private val getAccountType: GetAccountType,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), AccountAssetsEventTracker by accountAssetsEventTracker {
 
@@ -51,8 +54,8 @@ class AccountAssetsViewModel @Inject constructor(
     val accountAssetsFlow: StateFlow<AccountAssetsPreview?> get() = _accountAssetsFlow
     private val _accountAssetsFlow = MutableStateFlow<AccountAssetsPreview?>(null)
 
-    val isWatchAccount: Boolean?
-        get() = _accountAssetsFlow.value?.isWatchAccount
+    val canSignTransaction: Boolean?
+        get() = _accountAssetsFlow.value?.canSignTransaction
 
     private val searchQueryFlow = MutableStateFlow("")
 
@@ -84,7 +87,8 @@ class AccountAssetsViewModel @Inject constructor(
             accountsItemProcessor.getAccountDetailsItemsFlow(accountAddress, query),
             assetsItemProcessor.getAssetsPagingFlow(viewModelScope, accountAddress, query)
         ) { accountDetailItems, assetPagingItems ->
-            AccountAssetsPreview(assetPagingItems, accountDetailItems, false)
+            val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
+            AccountAssetsPreview(assetPagingItems, accountDetailItems, canSignTransaction)
         }
     }
 

@@ -20,6 +20,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.util.concurrent.TimeUnit
+import javax.inject.Named
+import javax.inject.Singleton
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -34,4 +39,20 @@ internal object WalletConnectDiModule {
     fun provideCreateWalletConnectAccount(
         useCase: CreateWalletConnectAccountUseCase
     ): CreateWalletConnectAccount = useCase
+
+    @Provides
+    @Singleton
+    @Suppress("MagicNumber")
+    @Named("walletConnectHttpClient")
+    fun provideWalletConnectHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.SECONDS)
+            .pingInterval(30, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+    }
 }

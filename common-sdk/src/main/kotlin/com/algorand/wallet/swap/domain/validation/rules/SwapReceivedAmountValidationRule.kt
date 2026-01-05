@@ -21,6 +21,12 @@ import com.algorand.wallet.swap.domain.validation.model.SwapTransactionValidatio
 import java.math.BigInteger
 import javax.inject.Inject
 
+/**
+ * This rule is disabled temporarily because we are unable to parse the received amount correctly
+ * from the swap transactions due to app transactions. It will be enabled once we have a way to simulate transactions.
+ *
+ * To enable this rule, uncomment the provider function in SwapTransactionValidationModule.
+ */
 internal class SwapReceivedAmountValidationRule @Inject constructor(
     private val getParsedSwapTransactions: GetParsedSwapTransactions
 ) : SwapTransactionValidationRule {

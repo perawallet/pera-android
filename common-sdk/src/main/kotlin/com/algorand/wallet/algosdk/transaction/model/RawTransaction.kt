@@ -45,4 +45,11 @@ data class RawTransaction(
     val rejectVersion: Long?,
     val accessListSize: Int?,
     val innerTransactions: List<RawTransaction>?
-)
+) {
+
+    infix fun isRekeyingAddressesIn(addresses: List<String>): Boolean {
+        val hasRekeyAddress = rekeyAddress != null
+        val isSenderInAddresses = addresses.any { it == senderAddress?.decodedAddress }
+        return hasRekeyAddress && isSenderInAddresses
+    }
+}

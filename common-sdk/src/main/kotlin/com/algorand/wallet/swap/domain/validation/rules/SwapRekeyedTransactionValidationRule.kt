@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.swap.domain.validation.rules
 
-import com.algorand.wallet.algosdk.transaction.model.RawTransaction
 import com.algorand.wallet.swap.domain.usecase.GetParsedSwapTransactions
 import com.algorand.wallet.swap.domain.validation.SwapTransactionValidationRule
 import com.algorand.wallet.swap.domain.validation.model.SwapTransactionValidationData
@@ -24,12 +23,6 @@ internal class SwapRekeyedTransactionValidationRule @Inject constructor(
 
     override fun invoke(data: SwapTransactionValidationData): Boolean {
         val transactions = getParsedSwapTransactions(data.signedTransactions, data.unsignedTransactions)
-        return transactions.none { it.isRekeyingLocalAddress(data.localAddresses) }
-    }
-
-    private fun RawTransaction.isRekeyingLocalAddress(localAddresses: List<String>): Boolean {
-        val hasRekeyAddress = rekeyAddress != null
-        val isSenderLocalAddress = localAddresses.any { it == senderAddress?.decodedAddress }
-        return hasRekeyAddress && isSenderLocalAddress
+        return transactions.none { it isRekeyingAddressesIn data.localAddresses }
     }
 }

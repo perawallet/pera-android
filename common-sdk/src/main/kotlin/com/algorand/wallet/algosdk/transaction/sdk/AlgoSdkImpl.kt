@@ -13,6 +13,8 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import app.perawallet.gomobilesdk.sdk.Sdk
+import com.algorand.algosdk.transaction.SignedTransaction
+import com.algorand.algosdk.util.Encoder
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkNumberExtensions.toUint64
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapper
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
@@ -121,5 +123,10 @@ internal class AlgoSdkImpl @Inject constructor(private val suggestedParamsMapper
 
     override fun transactionMsgpackToJson(txnByteArray: ByteArray): String {
         return Sdk.transactionMsgpackToJson(txnByteArray)
+    }
+
+    override fun signedTransactionMsgpackToJson(signedTxnByteArray: ByteArray): String {
+        val txn = Encoder.decodeFromMsgPack(signedTxnByteArray, SignedTransaction::class.java).tx
+        return Encoder.encodeToJson(txn)
     }
 }

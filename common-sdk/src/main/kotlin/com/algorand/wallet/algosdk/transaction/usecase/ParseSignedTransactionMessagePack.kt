@@ -10,12 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.domain.usecase
+package com.algorand.wallet.algosdk.transaction.usecase
 
-import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.swap.domain.model.SwapQuoteV2
+import com.algorand.wallet.algosdk.transaction.model.RawTransaction
 
-fun interface CreateSwapV2QuoteTransactions {
-    suspend operator fun invoke(quote: SwapQuoteV2, accountAddress: String): PeraResult<SwapQuoteTransactions>
+fun interface ParseSignedTransactionMessagePack {
+    operator fun invoke(txnByteArray: ByteArray): RawTransaction?
 }

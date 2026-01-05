@@ -10,12 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.swap.domain.usecase
+package com.algorand.wallet.swap.domain.validation.model
 
-import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
-import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 
-fun interface CreateSwapV2QuoteTransactions {
-    suspend operator fun invoke(quote: SwapQuoteV2, accountAddress: String): PeraResult<SwapQuoteTransactions>
-}
+data class SwapTransactionValidationData(
+    val quote: SwapQuoteV2,
+    val signedTransactions: List<ByteArray?>,
+    val unsignedTransactions: List<ByteArray?>,
+    val localAddresses: List<String>
+)

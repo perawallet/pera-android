@@ -54,7 +54,8 @@ internal class RawTransactionMapperImpl @Inject constructor(
             assetConfigParameters = assetConfigParametersMapper(payload.decodedAssetConfigParameters),
             groupId = payload.groupId,
             rejectVersion = payload.rejectVersion,
-            accessListSize = payload.accessList?.size
+            accessListSize = payload.accessList?.size,
+            innerTransactions = payload.innerTransactions?.map { invoke(it) }
         )
     }
 }

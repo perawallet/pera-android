@@ -44,5 +44,6 @@ internal data class RawTransactionPayload(
     @SerializedName("apar") val decodedAssetConfigParameters: RawTransactionAssetConfigParametersPayload? = null,
     @SerializedName("grp") val groupId: String? = null,
     @SerializedName("aprv") val rejectVersion: Long? = null,
-    @SerializedName("al") val accessList: List<RawAccessItemPayload>? = null
+    @SerializedName("al") val accessList: List<RawAccessItemPayload>? = null,
+    @SerializedName("inner-txns") val innerTransactions: List<RawTransactionPayload>? = null
 )

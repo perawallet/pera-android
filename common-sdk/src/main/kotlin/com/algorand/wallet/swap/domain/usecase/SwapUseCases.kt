@@ -13,6 +13,7 @@
 package com.algorand.wallet.swap.domain.usecase
 
 import androidx.paging.PagingData
+import com.algorand.wallet.algosdk.transaction.model.RawTransaction
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
 import com.algorand.wallet.swap.domain.model.SignedSwapTransaction
@@ -106,4 +107,11 @@ fun interface SetSwapSlippageTolerancePercentage {
 
 fun interface GetSwapSlippageTolerancePercentage {
     suspend operator fun invoke(): Double?
+}
+
+internal fun interface GetParsedSwapTransactions {
+    operator fun invoke(
+        signedTxns: List<ByteArray?>,
+        unsignedTxns: List<ByteArray?>
+    ): List<RawTransaction>
 }

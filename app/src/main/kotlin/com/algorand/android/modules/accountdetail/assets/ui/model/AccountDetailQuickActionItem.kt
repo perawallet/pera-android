@@ -27,4 +27,6 @@ sealed interface AccountDetailQuickActionItem {
     data object ShowAddressButton : AccountDetailQuickActionItem
 
     data object BuyAlgoButton : AccountDetailQuickActionItem
+
+    data object FundButton : AccountDetailQuickActionItem
 }

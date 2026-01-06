@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.AbstractComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.FundQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonContainer
 import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.StakeQuickActionButton
@@ -40,7 +41,11 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
                     is ViewState.Idle -> Unit
                     is ViewState.Content -> {
                         SwapQuickActionButton { listener?.onSwapClick() }
-                        BuySellQuickActionButton { listener?.onBuySellClick() }
+                        if (state.isXoSwapEnabled) {
+                            FundQuickActionButton { listener?.onFundClick() }
+                        } else {
+                            BuySellQuickActionButton { listener?.onBuySellClick() }
+                        }
                         if (state.isStakingEnabled) {
                             StakeQuickActionButton { listener?.onStakingClick() }
                         }
@@ -55,8 +60,8 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
         this.listener = listener
     }
 
-    fun init(isStakingEnabled: Boolean) {
-        viewState = ViewState.Content(isStakingEnabled)
+    fun init(isStakingEnabled: Boolean, isXoSwapEnabled: Boolean) {
+        viewState = ViewState.Content(isStakingEnabled, isXoSwapEnabled)
     }
 
     interface AccountsQuickActionsListener {
@@ -64,10 +69,14 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
         fun onSendClick()
         fun onSwapClick()
         fun onStakingClick()
+        fun onFundClick()
     }
 
     private sealed interface ViewState {
         data object Idle : ViewState
-        data class Content(val isStakingEnabled: Boolean) : ViewState
+        data class Content(
+            val isStakingEnabled: Boolean,
+            val isXoSwapEnabled: Boolean
+        ) : ViewState
     }
 }

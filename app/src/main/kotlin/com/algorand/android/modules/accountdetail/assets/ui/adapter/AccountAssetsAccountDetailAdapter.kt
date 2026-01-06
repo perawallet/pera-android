@@ -82,6 +82,10 @@ class AccountAssetsAccountDetailAdapter(
         override fun onBuySellClick() {
             listener.onBuySellClick()
         }
+
+        override fun onFundClick() {
+            listener.onFundClick()
+        }
     }
 
     private val assetsTitleViewHolderListener = object : AccountDetailAssetsTitleViewHolderListener {
@@ -161,6 +165,7 @@ class AccountAssetsAccountDetailAdapter(
         fun onBuySellClick()
         fun onAccountValueClick()
         fun onChartTap()
+        fun onFundClick()
     }
 
     companion object {

@@ -21,4 +21,6 @@ sealed interface AssetDetailQuickActionItem {
     data object SendButton : AssetDetailQuickActionItem
 
     data object ReceiveButton : AssetDetailQuickActionItem
+
+    data object StakeButton : AssetDetailQuickActionItem
 }

@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.AnnotatedString
@@ -32,6 +33,7 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.Vie
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToMeld
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSendNavigation
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToShowQr
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToStake
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewEvent.NavigateToSwapV2
 import com.algorand.android.ui.asset.detail.viewmodel.AssetLineChartViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetPriceLineChartViewModel
@@ -77,6 +79,7 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
             is NavigateToSwapV2 -> navToSwapV2(event.address, event.assetOutId)
             is NavigateToMeld -> navToMeldNavigation(event.address)
             is NavigateToShowQr -> navToShowQRBottomSheet(event.address)
+            NavigateToStake -> nav(HomeNavigationDirections.actionGlobalNestedStakingFragment())
         }
     }
 

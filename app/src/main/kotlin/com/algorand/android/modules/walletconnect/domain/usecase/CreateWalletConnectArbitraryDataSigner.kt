@@ -15,5 +15,5 @@ package com.algorand.android.modules.walletconnect.domain.usecase
 import com.algorand.android.models.WalletConnectArbitraryDataSigner
 
 fun interface CreateWalletConnectArbitraryDataSigner {
-    suspend operator fun invoke(signerAddress: String) : WalletConnectArbitraryDataSigner
+    suspend operator fun invoke(signerAddress: String): WalletConnectArbitraryDataSigner
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2022-2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,18 +15,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="@dimen/spacing_xlarge"
-    android:paddingTop="@dimen/spacing_xxlarge">
-
-    <View
-        android:id="@+id/firstDividerLineView"
-        style="@style/Divider"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/divider_height"
-        android:layout_marginEnd="@dimen/spacing_normal"
-        app:layout_constraintBottom_toBottomOf="@id/titleTextView"
-        app:layout_constraintEnd_toStartOf="@id/titleTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/titleTextView" />
+    android:paddingTop="@dimen/spacing_xlarge"
+    android:paddingBottom="@dimen/spacing_xsmall">
 
     <TextView
         android:id="@+id/titleTextView"
@@ -36,21 +25,7 @@
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.Caption.Medium"
         android:textColor="@color/text_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/secondDividerLineView"
-        app:layout_constraintStart_toEndOf="@id/firstDividerLineView"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem[2]" />
-
-    <View
-        android:id="@+id/secondDividerLineView"
-        style="@style/Divider"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/divider_height"
-        android:layout_marginStart="@dimen/spacing_normal"
-        app:layout_constraintBottom_toBottomOf="@id/titleTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/titleTextView"
-        app:layout_constraintTop_toTopOf="@id/titleTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

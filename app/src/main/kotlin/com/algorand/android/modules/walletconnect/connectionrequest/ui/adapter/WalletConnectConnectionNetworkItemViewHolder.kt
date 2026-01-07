@@ -29,24 +29,22 @@ class WalletConnectConnectionNetworkItemViewHolder(
 
     override fun bind(item: BaseWalletConnectConnectionItem) {
         if (item !is BaseWalletConnectConnectionItem.NetworkItem) return
-        with(binding) {
-            labelTextView.text = root.resources.getQuantityString(
-                R.plurals.networks,
-                item.networkCount,
-                item.networkCount
-            )
-            item.networkList.forEach { walletConnectNetworkItem ->
-                createNetworkItemTextView(walletConnectNetworkItem)
-            }
+        if (binding.networkListFlow.referencedIds.isNotEmpty()) return
+        item.networkList.forEach { walletConnectNetworkItem ->
+            createNetworkItemTextView(walletConnectNetworkItem)
         }
     }
 
     private fun createNetworkItemTextView(walletConnectConnectionNetworkItem: WalletConnectConnectionNetworkItem) {
         val textView = TextView(binding.root.context).apply {
             id = generateViewId()
+            val horizontalPadding = resources.getDimensionPixelSize(R.dimen.spacing_small)
+            val verticalPadding = resources.getDimensionPixelSize(R.dimen.spacing_xxsmall)
+            setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
             setTextAppearance(R.style.TextAppearance_Caption_Bold)
-            text = resources.getString(R.string.interpunct_and_text, walletConnectConnectionNetworkItem.networkName)
-            setTextColor(ContextCompat.getColor(context, walletConnectConnectionNetworkItem.tintResId))
+            text = walletConnectConnectionNetworkItem.networkName
+            setBackgroundResource(walletConnectConnectionNetworkItem.backgroundResId)
+            setTextColor(ContextCompat.getColor(context, R.color.background))
         }
         binding.rootConstraintLayout.addView(textView)
         binding.networkListFlow.referencedIds += textView.id

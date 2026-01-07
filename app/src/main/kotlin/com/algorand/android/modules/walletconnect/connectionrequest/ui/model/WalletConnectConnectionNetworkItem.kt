@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.walletconnect.connectionrequest.ui.model
 
-import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 
 data class WalletConnectConnectionNetworkItem(
     val networkName: String,
-    @param:ColorRes val tintResId: Int
+    @param:DrawableRes val backgroundResId: Int
 )

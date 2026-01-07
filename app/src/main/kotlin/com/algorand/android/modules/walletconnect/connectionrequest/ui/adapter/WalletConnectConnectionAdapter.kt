@@ -19,8 +19,8 @@ import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem.ItemType.ACCOUNT_ITEM
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem.ItemType.DAPP_INFO_ITEM
-import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem.ItemType.EVENT_ITEM
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem.ItemType.NETWORK_ITEM
+import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem.ItemType.PERMISSIONS_ITEM
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem.ItemType.TITLE_ITEM
 
 class WalletConnectConnectionAdapter(
@@ -44,8 +44,8 @@ class WalletConnectConnectionAdapter(
             DAPP_INFO_ITEM.ordinal -> createDappInfoItemViewHolder(parent)
             TITLE_ITEM.ordinal -> createTitleItemViewHolder(parent)
             ACCOUNT_ITEM.ordinal -> createAccountItemViewHolder(parent)
-            EVENT_ITEM.ordinal -> createEventItemViewHolder(parent)
             NETWORK_ITEM.ordinal -> createNetworkItemViewHolder(parent)
+            PERMISSIONS_ITEM.ordinal -> createPermissionsItemViewHolder(parent)
             else -> throw Exception("$logTag list item is unknown {$viewType}")
         }
     }
@@ -64,12 +64,12 @@ class WalletConnectConnectionAdapter(
         return WalletConnectConnectionAccountItemViewHolder.create(parent, accountItemListener)
     }
 
-    private fun createEventItemViewHolder(parent: ViewGroup): WalletConnectConnectionEventItemViewHolder {
-        return WalletConnectConnectionEventItemViewHolder.create(parent)
-    }
-
     private fun createNetworkItemViewHolder(parent: ViewGroup): WalletConnectConnectionNetworkItemViewHolder {
         return WalletConnectConnectionNetworkItemViewHolder.create(parent)
+    }
+
+    private fun createPermissionsItemViewHolder(parent: ViewGroup): WalletConnectConnectionPermissionsItemHolder {
+        return WalletConnectConnectionPermissionsItemHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<BaseWalletConnectConnectionItem>, position: Int) {

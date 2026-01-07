@@ -25,6 +25,7 @@ import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WC
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WalletConnectConnectionPreviewMapper
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WalletConnectNetworkItemMapper
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem
+import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem.RequestedPermissionsItem
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WalletConnectConnectionPreview
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBlockchain
@@ -62,35 +63,16 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
             titleTextResId = R.plurals.select_accounts
         )
         val algorandNamepace = sessionProposal.requiredNamespaces[WalletConnectBlockchain.ALGORAND]
-        val eventList = algorandNamepace?.events?.map { it.value }.orEmpty()
         val networkList = algorandNamepace?.chains?.map {
             walletConnectNetworkItemMapper.mapToWalletConnectConnectionNetworkItem(it)
         }.orEmpty()
 
-        val networkCount = networkList.size
-        val networkItem = baseWalletConnectConnectionItemMapper.mapToWalletConnectConnectionNetworkItem(
-            networkCount = networkCount,
-            walletConnectConnectionNetworkList = networkList
-        )
-
-        val eventCount = eventList.size
-        val eventItem = baseWalletConnectConnectionItemMapper.mapToEventItem(
-            eventCount = eventCount,
-            eventList = eventList
-        )
-
-        val requestedPermissionTitle = baseWalletConnectConnectionItemMapper.mapToTitleItem(
-            titleTextResId = R.plurals.requested_permission,
-            memberCount = eventCount + networkCount
-        )
+        val networkItem = baseWalletConnectConnectionItemMapper.mapToWalletConnectConnectionNetworkItem(networkList)
 
         val baseWalletConnectConnectionItems = mutableListOf<BaseWalletConnectConnectionItem>().apply {
-            add(dAppInfoItem)
-            if (networkList.isNotEmpty() || eventList.isNotEmpty()) {
-                add(requestedPermissionTitle)
-            }
             if (networkList.isNotEmpty()) add(networkItem)
-            if (eventList.isNotEmpty()) add(eventItem)
+            add(dAppInfoItem)
+            add(RequestedPermissionsItem)
             add(accountsTitleItem)
             addAll(accountItems)
         }
@@ -133,10 +115,9 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
         val baseWalletConnectConnectionItems = preview.baseWalletConnectConnectionItems.map {
             when (it) {
                 is BaseWalletConnectConnectionItem.TitleItem,
-                is BaseWalletConnectConnectionItem.EventItem,
                 is BaseWalletConnectConnectionItem.NetworkItem,
-                is BaseWalletConnectConnectionItem.DappInfoItem -> it
-
+                is BaseWalletConnectConnectionItem.DappInfoItem,
+                is RequestedPermissionsItem -> it
                 is BaseWalletConnectConnectionItem.AccountItem -> updateSelectedItemButtonState(it, accountAddress)
             }
         }

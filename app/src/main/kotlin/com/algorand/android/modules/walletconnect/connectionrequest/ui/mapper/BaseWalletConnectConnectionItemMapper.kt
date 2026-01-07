@@ -61,22 +61,8 @@ class BaseWalletConnectConnectionItemMapper @Inject constructor() {
     }
 
     fun mapToWalletConnectConnectionNetworkItem(
-        networkCount: Int,
         walletConnectConnectionNetworkList: List<WalletConnectConnectionNetworkItem>,
     ): BaseWalletConnectConnectionItem.NetworkItem {
-        return BaseWalletConnectConnectionItem.NetworkItem(
-            networkCount = networkCount,
-            networkList = walletConnectConnectionNetworkList
-        )
-    }
-
-    fun mapToEventItem(
-        eventCount: Int,
-        eventList: List<String>
-    ): BaseWalletConnectConnectionItem.EventItem {
-        return BaseWalletConnectConnectionItem.EventItem(
-            eventCount = eventCount,
-            eventList = eventList
-        )
+        return BaseWalletConnectConnectionItem.NetworkItem(walletConnectConnectionNetworkList)
     }
 }

@@ -16,14 +16,12 @@ import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.WCArbitraryData
 import com.algorand.android.models.WalletConnectAccount
 import com.algorand.android.models.WalletConnectArbitraryData
-import com.algorand.android.models.WalletConnectArbitraryDataSigner
 import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
+import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectArbitraryDataSigner
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.asset.domain.util.AssetConstants
 import com.algorand.wallet.utils.multiplyOrZero
@@ -32,13 +30,12 @@ import javax.inject.Inject
 
 @SuppressWarnings("ReturnCount")
 class WalletConnectArbitraryDataMapper @Inject constructor(
-    private val errorProvider: WalletConnectErrorProvider,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper,
     private val getAccountCustomName: GetAccountCustomName,
     private val getAccountAlgoBalance: GetAccountAlgoBalance,
     private val getAccountOwnedAssetData: GetAccountOwnedAssetData,
-    private val getAccountType: GetAccountType
+    private val createArbitraryDataSigner: CreateWalletConnectArbitraryDataSigner
 ) {
 
     suspend fun createWalletConnectArbitraryData(
@@ -56,13 +53,7 @@ class WalletConnectArbitraryDataMapper @Inject constructor(
             val ownedAsset = getAccountOwnedAssetData(signerAddress, AssetConstants.ALGO_ID)
 
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
-            val wcSigner = signer?.let {
-                WalletConnectArbitraryDataSigner.create(
-                    signerAccountType = getAccountType(signerAddress),
-                    signer,
-                    errorProvider
-                )
-            }
+            val wcSigner = createArbitraryDataSigner(signerAddress)
 
             WalletConnectArbitraryData(
                 chainId = arbitraryData.chainId,

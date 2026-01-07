@@ -14,6 +14,8 @@ package com.algorand.android.modules.walletconnect.di
 
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccountUseCase
+import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectArbitraryDataSigner
+import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectArbitraryDataSignerUseCase
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSignerUseCase
 import dagger.Module
@@ -55,4 +57,9 @@ internal object WalletConnectDiModule {
             .writeTimeout(60, TimeUnit.SECONDS)
             .build()
     }
+
+    @Provides
+    fun provideCreateWalletConnectArbitraryDataSigner(
+        useCase: CreateWalletConnectArbitraryDataSignerUseCase
+    ): CreateWalletConnectArbitraryDataSigner = useCase
 }

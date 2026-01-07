@@ -10,23 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.modules.walletconnect.domain.usecase
 
-import android.os.Parcelable
-import com.algorand.android.utils.decodeBase64
-import kotlinx.parcelize.Parcelize
+import com.algorand.android.models.WalletConnectArbitraryDataSigner
 
-@Parcelize
-data class WalletConnectArbitraryData(
-    val chainId: Float?,
-    val data: String?,
-    val message: String?,
-    val signer: WalletConnectArbitraryDataSigner,
-    val signerAccount: WalletConnectAccount?,
-    val peerMeta: WalletConnectPeerMeta?,
-    val signerAlgoBalance: WalletConnectAssetInformation?
-) : Parcelable {
-
-    val decodedTransaction: ByteArray?
-        get() = data?.decodeBase64()
+fun interface CreateWalletConnectArbitraryDataSigner {
+    suspend operator fun invoke(signerAddress: String) : WalletConnectArbitraryDataSigner
 }

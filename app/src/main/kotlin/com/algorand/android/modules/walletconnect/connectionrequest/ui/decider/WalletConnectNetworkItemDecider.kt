@@ -18,13 +18,11 @@ import javax.inject.Inject
 
 class WalletConnectNetworkItemDecider @Inject constructor() {
 
-    // TODO: We have the same thing in somewhere else
-    // https://github.com/Hipo/algorand-android/pull/2032#discussion_r1146072510
-    fun decideTintResId(chainIdentifier: WalletConnect.ChainIdentifier): Int {
+    fun decideBackgroundResId(chainIdentifier: WalletConnect.ChainIdentifier): Int {
         return when (chainIdentifier) {
-            WalletConnect.ChainIdentifier.MAINNET -> R.color.positive
-            WalletConnect.ChainIdentifier.TESTNET -> R.color.yellow_600
-            WalletConnect.ChainIdentifier.UNKNOWN -> R.color.yellow_600
+            WalletConnect.ChainIdentifier.MAINNET -> R.drawable.bg_mainnet_chip
+            WalletConnect.ChainIdentifier.TESTNET -> R.drawable.bg_testnet_chip
+            WalletConnect.ChainIdentifier.UNKNOWN -> R.drawable.bg_testnet_chip
         }
     }
 

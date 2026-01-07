@@ -26,7 +26,7 @@ class WalletConnectNetworkItemMapper @Inject constructor(
     ): WalletConnectConnectionNetworkItem {
         return WalletConnectConnectionNetworkItem(
             networkName = walletConnectNetworkItemDecider.decideNetworkName(chainIdentifier),
-            tintResId = walletConnectNetworkItemDecider.decideTintResId(chainIdentifier)
+            backgroundResId = walletConnectNetworkItemDecider.decideBackgroundResId(chainIdentifier),
         )
     }
 }

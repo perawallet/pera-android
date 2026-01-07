@@ -375,7 +375,11 @@
     <string name="this_address_is_already_in_your_contract">This address is already in your contacts as %1$s. Would you like to replace that contact?</string>
     <string name="balance">Balance</string>
     <string name="minimum_balance_required">Minimum Balance Required</string>
-    <string name="wallet_wants_to_connect"><annotation type="bold"><annotation replacement="app_name">app_name_placeholder</annotation></annotation> wants to\nconnect to your wallet</string>
+    <string name="wallet_wants_to_connect"><annotation type="bold"><annotation replacement="app_name">app_name_placeholder</annotation></annotation> wants to\nconnect to your account</string>
+    <string name="requested_permissions">Requested permissions</string>
+    <string name="view_your_wallet_address">View your wallet address &amp; balances</string>
+    <string name="request_transaction_sign">Request transaction sign</string>
+    <string name="request_arbitrary_data_signature">Request arbitrary data signature</string>
     <string name="the_wallet_does_not_support">The wallet does not support the requested operation.</string>
     <string name="paste_with_account">Paste (<annotation custom="account_text_size"><annotation custom="account_color"><annotation font="dmmono_regular"><annotation replacement="account">accountPlaceholder</annotation></annotation></annotation></annotation>)</string>
     <string name="go_to_accounts">Go to Accounts</string>

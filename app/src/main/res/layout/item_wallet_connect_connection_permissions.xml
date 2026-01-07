@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/spacing_xlarge"
+    android:layout_marginTop="@dimen/spacing_xlarge"
+    android:background="@drawable/bg_wc_permissions"
+    android:padding="@dimen/spacing_normal">
+
+    <TextView
+        android:id="@+id/titleTextView"
+        style="@style/TextAppearance.Body.Sans.Medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/requested_permissions"
+        android:textAllCaps="true"
+        android:textColor="@color/text_gray"
+        android:textSize="@dimen/text_size_11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/viewBalanceTextView"
+        style="@style/TextAppearance.Body.Sans"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:drawablePadding="@dimen/spacing_xsmall"
+        android:gravity="center|start"
+        android:text="@string/view_your_wallet_address"
+        android:textColor="@color/text_gray"
+        app:drawableStartCompat="@drawable/ic_check"
+        app:drawableTint="@color/positive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView" />
+
+    <TextView
+        android:id="@+id/transactionSignTextView"
+        style="@style/TextAppearance.Body.Sans"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:drawablePadding="@dimen/spacing_xsmall"
+        android:gravity="center|start"
+        android:text="@string/request_transaction_sign"
+        android:textColor="@color/text_gray"
+        app:drawableStartCompat="@drawable/ic_check"
+        app:drawableTint="@color/positive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewBalanceTextView" />
+
+    <TextView
+        android:id="@+id/arbitraryDataTextView"
+        style="@style/TextAppearance.Body.Sans"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:drawablePadding="@dimen/spacing_xsmall"
+        android:gravity="center|start"
+        android:text="@string/request_arbitrary_data_signature"
+        android:textColor="@color/text_gray"
+        app:drawableStartCompat="@drawable/ic_check"
+        app:drawableTint="@color/positive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/transactionSignTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

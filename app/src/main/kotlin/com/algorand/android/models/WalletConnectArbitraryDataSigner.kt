@@ -13,10 +13,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectError
-import com.algorand.android.utils.isValidAddress
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import kotlinx.parcelize.Parcelize
 
 sealed class WalletConnectArbitraryDataSigner : Parcelable {
@@ -24,38 +21,6 @@ sealed class WalletConnectArbitraryDataSigner : Parcelable {
     open val address: String? = null
 
     open val isValidSigner: Boolean = false
-
-    companion object {
-
-        fun create(
-            signerAccountType: AccountType?,
-            signerAddress: String,
-            errorProvider: WalletConnectErrorProvider
-        ): WalletConnectArbitraryDataSigner {
-            return when {
-                signerAddress.isBlank() -> DisplayOnly
-                else -> returnInvalidInputIfSignerIsInvalid(
-                    signerAccountType,
-                    Signer(signerAddress, signerAccountType is AccountType.LedgerBle),
-                    errorProvider.getInvalidPublicKeyError()
-                )
-            }
-        }
-
-        private fun returnInvalidInputIfSignerIsInvalid(
-            signerAccountType: AccountType?,
-            signer: WalletConnectArbitraryDataSigner,
-            error: WalletConnectError
-        ): WalletConnectArbitraryDataSigner {
-            return signer.takeIf {
-                it.address?.isValidAddress() == true &&
-                        (signerAccountType == AccountType.Algo25 ||
-                                signerAccountType == AccountType.HdKey ||
-                                signerAccountType == AccountType.Rekeyed ||
-                                signerAccountType == AccountType.RekeyedAuth)
-            } ?: Unsignable(error)
-        }
-    }
 
     @Parcelize
     data class Signer(override val address: String, val isLedger: Boolean) : WalletConnectArbitraryDataSigner() {

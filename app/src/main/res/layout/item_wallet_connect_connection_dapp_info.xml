@@ -24,7 +24,7 @@
         android:id="@+id/appIconImageView"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:layout_marginTop="@dimen/spacing_xxlarge"
+        android:layout_marginTop="@dimen/spacing_normal"
         app:shapeAppearance="@style/CircleImageShapeAppearance"
         tools:srcCompat="@drawable/ic_pera" />
 

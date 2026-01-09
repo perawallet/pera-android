@@ -376,7 +376,11 @@
     <string name="this_address_is_already_in_your_contract">This address is already in your contacts as %1$s. Would you like to replace that contact?</string>
     <string name="balance">Balance</string>
     <string name="minimum_balance_required">Minimum Balance Required</string>
-    <string name="wallet_wants_to_connect"><annotation type="bold"><annotation replacement="app_name">app_name_placeholder</annotation></annotation> wants to\nconnect to your wallet</string>
+    <string name="wallet_wants_to_connect"><annotation type="bold"><annotation replacement="app_name">app_name_placeholder</annotation></annotation> wants to\nconnect to your account</string>
+    <string name="requested_permissions">Requested permissions</string>
+    <string name="view_your_wallet_address">View your wallet address &amp; balances</string>
+    <string name="request_transaction_sign">Request transaction sign</string>
+    <string name="request_arbitrary_data_signature">Request arbitrary data signature</string>
     <string name="the_wallet_does_not_support">The wallet does not support the requested operation.</string>
     <string name="paste_with_account">Paste (<annotation custom="account_text_size"><annotation custom="account_color"><annotation font="dmmono_regular"><annotation replacement="account">accountPlaceholder</annotation></annotation></annotation></annotation>)</string>
     <string name="go_to_accounts">Go to Accounts</string>
@@ -525,7 +529,7 @@
     <string name="passphrase_verified">Passphrase Verified</string>
     <string name="keep_this_recovery">Keep this recovery passphrase in a secure location that is accessible only by you. Do not lose this recovery passphrase.</string>
     <string name="mnemonic_type_universal_title">Universal</string>
-    <string name="mnemonic_type_universal_description">New inter-operable format that enables important features like HD Wallet</string>
+    <string name="mnemonic_type_universal_description">Wallet that lets you derive new accounts, all using the same mnemonic</string>
     <string name="mnemonic_type_universal_footer">24 Key mnemonic keys</string>
     <string name="mnemonic_type_algo25_title">Algo25</string>
     <string name="mnemonic_type_algo25_description">Legacy format that is specific to Algorand ecosystem</string>
@@ -548,7 +552,9 @@
     <string name="welcome_to_pera">Welcome to\nPera Wallet</string>
     <string name="increase_your_security">Increase your security with a PIN</string>
     <string name="name_your_account">Name your account</string>
+    <string name="name_your_wallet">Name your wallet</string>
     <string name="name_your_account_to">Name your account to easily identify it while using the Pera Wallet. These names are stored locally, and can only be seen by you.</string>
+    <string name="name_your_wallet_to">Name your wallet to easily identify it while using the Pera Wallet. These names are stored locally, and can only be seen by you.</string>
     <string name="create_a_watch_account">Create a watch\naccount</string>
     <string name="step_one">Step 1</string>
     <string name="step_two">Step 2</string>

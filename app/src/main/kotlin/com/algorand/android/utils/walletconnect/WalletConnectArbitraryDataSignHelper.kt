@@ -28,7 +28,7 @@ class WalletConnectArbitraryDataSignHelper @Inject constructor() :
     private var arbitraryDataToSignCount = enqueuedItemCount
 
     override fun initItemsToBeEnqueued(enqueuedItems: List<WalletConnectArbitraryData>) {
-        arbitraryDataToSignCount = enqueuedItems.filter { it.signerAccount?.address != null }.size
+        arbitraryDataToSignCount = enqueuedItems.filter { it.signer.address != null }.size
         super.initItemsToBeEnqueued(enqueuedItems)
     }
 }

@@ -13,47 +13,30 @@
 package com.algorand.android.modules.walletconnect.client.v1.session
 
 import app.perawallet.walletconnectv1.impls.WCSession
-import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectV1SessionCachedData.Companion.INITIAL_RETRY_COUNT
-import com.algorand.android.utils.popIfOrNull
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class WalletConnectV1SessionCachedDataHandler @Inject constructor() {
 
-    private val connectedSessions: MutableList<WalletConnectV1SessionCachedData> = mutableListOf()
+    private val connectedSessions: ConcurrentHashMap<Long, WalletConnectV1SessionCachedData> =
+        ConcurrentHashMap(INITIAL_CAPACITY)
 
-    fun getSessionById(id: Long): WCSession? = getCachedDataById(id)?.session
+    fun getSessionById(id: Long): WCSession? = connectedSessions[id]?.session
 
-    fun getCachedDataById(id: Long): WalletConnectV1SessionCachedData? =
-        getConnectedSessions { sessions -> sessions.firstOrNull { it.sessionId == id } }
+    fun getCachedDataById(id: Long): WalletConnectV1SessionCachedData? = connectedSessions[id]
 
     fun addNewCachedData(sessionCachedData: WalletConnectV1SessionCachedData) {
-        getConnectedSessions { sessions ->
-            val cachedSession = sessions.popIfOrNull { it.sessionId == sessionCachedData.sessionId }
-            val safeRetryCount = cachedSession?.retryCount ?: INITIAL_RETRY_COUNT
-            sessionCachedData.retryCount = safeRetryCount
-            sessions.add(sessionCachedData)
-        }
+        if (connectedSessions.contains(sessionCachedData.sessionId)) return
+        connectedSessions[sessionCachedData.sessionId] = sessionCachedData
     }
 
     fun deleteCachedData(sessionId: Long, onCacheDeleted: (WalletConnectV1SessionCachedData) -> Unit) {
-        getConnectedSessions { sessions ->
-            val sessionIndex = sessions.indexOfFirst { it.sessionId == sessionId }
-            if (sessionIndex != ITEM_NOT_FOUND_INDEX) {
-                sessions.removeAt(sessionIndex).also { onCacheDeleted(it) }
-            }
-        }
+        connectedSessions.remove(sessionId)?.also { onCacheDeleted(it) }
     }
 
-    // TODO Use Mutex
-    private fun <T> getConnectedSessions(action: (MutableList<WalletConnectV1SessionCachedData>) -> T): T {
-        return synchronized(this) {
-            action(connectedSessions)
-        }
-    }
-
-    companion object {
-        private const val ITEM_NOT_FOUND_INDEX = -1
+    private companion object {
+        const val INITIAL_CAPACITY = 50
     }
 }

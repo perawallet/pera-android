@@ -28,8 +28,8 @@ import com.algorand.android.utils.walletconnect.peermeta.WalletConnectPeraPeerMe
 import com.algorand.android.utils.walletconnect.peermeta.WalletConnectSessionPeerMetaBuilder
 import com.google.gson.Gson
 import com.squareup.moshi.Moshi
-import okhttp3.OkHttpClient
 import javax.inject.Inject
+import okhttp3.OkHttpClient
 
 class WalletConnectSessionBuilder @Inject constructor(
     private val gson: Gson,
@@ -76,9 +76,7 @@ class WalletConnectSessionBuilder @Inject constructor(
             sessionStore = storage,
             transportBuilder = OkHttpTransport.Builder(okHttpClient, moshi),
             clientMeta = WalletConnectSessionPeerMetaBuilder.build(WalletConnectPeraPeerMeta)
-        ).apply {
-            init()
-        }
+        )
 
         return WalletConnectV1SessionCachedData.create(
             session = session,

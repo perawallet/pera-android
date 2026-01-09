@@ -25,7 +25,7 @@ sealed class BaseWalletConnectConnectionItem : RecyclerListItem {
         TITLE_ITEM,
         ACCOUNT_ITEM,
         NETWORK_ITEM,
-        EVENT_ITEM
+        PERMISSIONS_ITEM
     }
 
     abstract val itemType: ItemType
@@ -86,7 +86,6 @@ sealed class BaseWalletConnectConnectionItem : RecyclerListItem {
     }
 
     data class NetworkItem(
-        val networkCount: Int,
         val networkList: List<WalletConnectConnectionNetworkItem>,
     ) : BaseWalletConnectConnectionItem() {
 
@@ -102,29 +101,21 @@ sealed class BaseWalletConnectConnectionItem : RecyclerListItem {
         }
     }
 
-    data class EventItem(
-        val eventCount: Int,
-        val eventList: List<String>
-    ) : BaseWalletConnectConnectionItem() {
+    data object RequestedPermissionsItem : BaseWalletConnectConnectionItem() {
 
         override val itemType: ItemType
-            get() = ItemType.EVENT_ITEM
+            get() = ItemType.PERMISSIONS_ITEM
 
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is EventItem && eventList == other.eventList
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is EventItem && this == other
-        }
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = other is RequestedPermissionsItem
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
     }
 
     companion object {
         val excludedItemFromDivider: List<Int> = listOf(
             ItemType.DAPP_INFO_ITEM.ordinal,
             ItemType.TITLE_ITEM.ordinal,
-            ItemType.EVENT_ITEM.ordinal,
-            ItemType.NETWORK_ITEM.ordinal
+            ItemType.NETWORK_ITEM.ordinal,
+            ItemType.PERMISSIONS_ITEM.ordinal
         )
     }
 }

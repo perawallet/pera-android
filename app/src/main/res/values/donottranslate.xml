@@ -104,4 +104,7 @@
 
     <string name="heartbeat">Heartbeat</string>
     <string name="pera_dot_separated">P.E.R.A</string>
+
+    <string name="mainnet">Mainnet</string>
+    <string name="testnet">Testnet</string>
 </resources>

@@ -22,6 +22,14 @@ import com.algorand.wallet.algosdk.transaction.builders.RemoveAssetTransactionBu
 import com.algorand.wallet.algosdk.transaction.builders.RemoveAssetTransactionBuilderImpl
 import com.algorand.wallet.algosdk.transaction.builders.SendAndRemoveAssetTransactionBuilder
 import com.algorand.wallet.algosdk.transaction.builders.SendAndRemoveAssetTransactionBuilderImpl
+import com.algorand.wallet.algosdk.transaction.mapper.ApplicationCallStateSchemaMapper
+import com.algorand.wallet.algosdk.transaction.mapper.ApplicationCallStateSchemaMapperImpl
+import com.algorand.wallet.algosdk.transaction.mapper.AssetConfigParametersMapper
+import com.algorand.wallet.algosdk.transaction.mapper.AssetConfigParametersMapperImpl
+import com.algorand.wallet.algosdk.transaction.mapper.RawTransactionMapper
+import com.algorand.wallet.algosdk.transaction.mapper.RawTransactionMapperImpl
+import com.algorand.wallet.algosdk.transaction.mapper.RawTransactionTypeMapper
+import com.algorand.wallet.algosdk.transaction.mapper.RawTransactionTypeMapperImpl
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdk
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddressImpl
@@ -34,6 +42,10 @@ import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransactionImpl
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapper
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapperImpl
+import com.algorand.wallet.algosdk.transaction.usecase.ParseSignedTransactionMessagePack
+import com.algorand.wallet.algosdk.transaction.usecase.ParseSignedTransactionMessagePackUseCase
+import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePack
+import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePackUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -86,4 +98,28 @@ internal object AlgoSdkTransactionModule {
 
     @Provides
     fun provideSignHdKeyTransaction(impl: SignHdKeyTransactionImpl): SignHdKeyTransaction = impl
+
+    @Provides
+    fun provideParseSignedTransactionMessagePack(
+        useCase: ParseSignedTransactionMessagePackUseCase
+    ): ParseSignedTransactionMessagePack = useCase
+
+    @Provides
+    fun provideParseTransactionMessagePack(
+        useCase: ParseTransactionMessagePackUseCase
+    ): ParseTransactionMessagePack = useCase
+
+    @Provides
+    fun provideRawTransactionMapper(impl: RawTransactionMapperImpl): RawTransactionMapper = impl
+
+    @Provides
+    fun provideRawTransactionTypeMapper(impl: RawTransactionTypeMapperImpl): RawTransactionTypeMapper = impl
+
+    @Provides
+    fun provideAssetConfigParametersMapper(impl: AssetConfigParametersMapperImpl): AssetConfigParametersMapper = impl
+
+    @Provides
+    fun provideApplicationCallStateSchemaMapper(
+        impl: ApplicationCallStateSchemaMapperImpl
+    ): ApplicationCallStateSchemaMapper = impl
 }

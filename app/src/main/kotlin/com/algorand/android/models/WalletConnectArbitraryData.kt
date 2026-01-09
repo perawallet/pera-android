@@ -21,7 +21,7 @@ data class WalletConnectArbitraryData(
     val chainId: Float?,
     val data: String?,
     val message: String?,
-    val signer: WalletConnectArbitraryDataSigner?,
+    val signer: WalletConnectArbitraryDataSigner,
     val signerAccount: WalletConnectAccount?,
     val peerMeta: WalletConnectPeerMeta?,
     val signerAlgoBalance: WalletConnectAssetInformation?

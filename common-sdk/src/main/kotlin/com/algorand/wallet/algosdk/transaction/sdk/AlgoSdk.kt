@@ -64,4 +64,6 @@ interface AlgoSdk {
     ): ByteArray
 
     fun transactionMsgpackToJson(txnByteArray: ByteArray): String
+
+    fun signedTransactionMsgpackToJson(signedTxnByteArray: ByteArray): String
 }

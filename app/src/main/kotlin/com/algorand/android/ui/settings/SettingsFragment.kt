@@ -28,6 +28,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet.Companion.WARNING_CONFIRMATION_KEY
 import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.NavigateToPasskeys
 import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowDataClearedBottomSheet
 import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowDevOptionsAlreadyEnabled
 import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowDevOptionsEnabled
@@ -43,8 +44,8 @@ import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
@@ -84,6 +85,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             is ShowRemainingClicksToDevOptions -> {
                 showToast(getString(R.string.more_click_to_enable_developer, event.remainingClicks))
             }
+            NavigateToPasskeys -> nav(SettingsFragmentDirections.actionSettingsFragmentToPasskeysFragment())
         }
     }
 
@@ -115,7 +117,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             }
             passkeysListItem.apply {
                 if (settingsViewModel.isPasskeysFeatureEnabled()) show() else hide()
-                setOnClickListener { onPasskeysClick() }
+                setOnClickListener { settingsViewModel.onPasskeysClick() }
             }
         }
     }
@@ -224,10 +226,6 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             negativeButtonTextRes = R.string.keep_it
         )
         nav(SettingsFragmentDirections.actionSettingsFragmentToWarningConfirmationNavigation(warningConfirmation))
-    }
-
-    private fun onPasskeysClick() {
-        nav(SettingsFragmentDirections.actionSettingsFragmentToPasskeysFragment())
     }
 
     private fun onTermsAndServicesClick() {

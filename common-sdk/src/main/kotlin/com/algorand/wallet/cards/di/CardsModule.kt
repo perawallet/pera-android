@@ -21,15 +21,13 @@ import com.algorand.wallet.cards.data.service.CardApiService
 import com.algorand.wallet.cards.domain.repository.CardRepository
 import com.algorand.wallet.cards.domain.usecase.GetCardFundAddresses
 import com.algorand.wallet.cards.domain.usecase.GetCardFundAddressesUseCase
-import com.algorand.wallet.cards.domain.usecase.IsCountryWaitlistedForCards
-import com.algorand.wallet.cards.domain.usecase.IsCountryWaitlistedForCardsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
+import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -52,9 +50,4 @@ internal object CardsModule {
     fun provideCardApiService(@Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit): CardApiService {
         return retrofit.create(CardApiService::class.java)
     }
-
-    @Provides
-    fun provideIsCountryWaitlistedForCards(
-        useCase: IsCountryWaitlistedForCardsUseCase
-    ): IsCountryWaitlistedForCards = useCase
 }

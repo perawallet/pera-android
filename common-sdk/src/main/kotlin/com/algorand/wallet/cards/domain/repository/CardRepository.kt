@@ -17,5 +17,4 @@ import com.algorand.wallet.foundation.PeraResult
 
 internal interface CardRepository {
     suspend fun getCardFundAddresses(addresses: List<String>): PeraResult<List<FundAddress>>
-    suspend fun isCountryWaitlisted(addresses: List<String>): PeraResult<Boolean>
 }

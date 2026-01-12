@@ -49,8 +49,6 @@ fun MenuScreen(
     ) {
         MenuToolbar(listener::onSettingsClick, listener::onScanQrClick)
         MenuItemSpacer()
-        MenuListCardItem(menuCardViewModel, listener)
-        MenuItemSpacer()
         MenuListNftItem(menuNftViewModel, listener::onNftClick)
         MenuItemSpacer()
         MenuListBuyAlgoItem(listener::onBuyAlgoClick)
@@ -58,6 +56,8 @@ fun MenuScreen(
         MenuListReceiveItem(listener::onReceiveClick)
         MenuItemSpacer()
         MenuListInviteFriendsItem(listener::onInviteFriendsClick)
+        MenuItemSpacer()
+        MenuListCardItem(menuCardViewModel, listener)
     }
 }
 

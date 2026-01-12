@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.cards.data.service
 
-import com.algorand.wallet.cards.data.model.CountryAvailabilityResponse
 import com.algorand.wallet.cards.data.model.FundAddressResultResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -21,7 +20,4 @@ internal interface CardApiService {
 
     @GET("v1/cards/fund-addresses/")
     suspend fun getFundAddresses(@Query("addresses") addresses: String): FundAddressResultResponse
-
-    @GET("/v1/cards/country-availability-request/")
-    suspend fun isCountryAvailable(@Query("address") addresses: String): CountryAvailabilityResponse
 }

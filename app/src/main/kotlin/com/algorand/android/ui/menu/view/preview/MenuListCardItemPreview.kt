@@ -23,9 +23,7 @@ import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.CardCreated
 import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Error
 import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Idle
-import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Loading
 import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.NewUser
-import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Waitlisted
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -45,8 +43,6 @@ private class MenuListCardItemPreviewProvider : PreviewParameterProvider<MenuCar
 
     override val values: Sequence<MenuCardsViewModel> = listOf(
         createViewModel(Idle),
-        createViewModel(Loading),
-        createViewModel(Waitlisted),
         createViewModel(NewUser),
         createViewModel(CardCreated),
         createViewModel(Error)

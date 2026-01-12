@@ -36,15 +36,5 @@ internal class DefaultCardRepository @Inject constructor(
         }
     }
 
-    override suspend fun isCountryWaitlisted(addresses: List<String>): PeraResult<Boolean> {
-        return try {
-            val addressesQuery = addresses.toAddressQuery()
-            val isWaitlisted = cardApiService.isCountryAvailable(addressesQuery).isWaitlisted == true
-            PeraResult.Success(isWaitlisted)
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
-        }
-    }
-
     private fun List<String>.toAddressQuery(): String = joinToString(",")
 }

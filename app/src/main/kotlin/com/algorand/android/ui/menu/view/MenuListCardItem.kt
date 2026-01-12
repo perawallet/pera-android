@@ -13,6 +13,9 @@
 package com.algorand.android.ui.menu.view
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,21 +44,17 @@ import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
 import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.CardCreated
-import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Error
-import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Idle
-import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Loading
-import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.NewUser
-import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel.ViewState.Waitlisted
 
 @Composable
 internal fun MenuListCardItem(viewModel: MenuCardsViewModel, listener: MenuListCardItemListener) {
     val currentState = viewModel.state.collectAsStateWithLifecycle().value
-    when (currentState) {
-        Idle, Loading -> LoadingState()
-        Error -> ErrorState(viewModel::initCardState)
-        CardCreated -> GoToCardsState(listener::onGoToCardsClick)
-        NewUser -> CreateCardState(listener::onCreateCardClick)
-        Waitlisted -> WaitlistedState()
+    AnimatedVisibility(
+        modifier = Modifier.fillMaxWidth(),
+        visible = currentState is CardCreated,
+        enter = expandIn(),
+        exit = shrinkOut()
+    ) {
+        GoToCardsState(listener::onGoToCardsClick)
     }
     LaunchedEffect(Unit) {
         viewModel.initCardState()

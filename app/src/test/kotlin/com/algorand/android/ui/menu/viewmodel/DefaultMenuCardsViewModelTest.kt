@@ -64,7 +64,6 @@ class DefaultMenuCardsViewModelTest {
         stateObserver.assertValueHistory(ViewState.Idle, ViewState.Error)
     }
 
-
     @Test
     fun `EXPECT card created state WHEN there are fund addresses and nft reward is processed`(): TestResult = runTest {
         val fundAddresses = listOf(

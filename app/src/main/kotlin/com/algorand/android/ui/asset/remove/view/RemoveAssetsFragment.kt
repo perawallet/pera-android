@@ -90,10 +90,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
     private val viewStateCollector: suspend (RemoveAssetsViewModel.ViewState) -> Unit = { state ->
         when (state) {
             Idle -> Unit
-            is Content -> {
-                removeAssetHeaderAdapter.submitList(state.headerItems)
-                removeAssetAdapter.submitData(state.removeAssetItems)
-            }
+            is Content -> removeAssetHeaderAdapter.submitList(state.headerItems)
         }
     }
 
@@ -121,7 +118,10 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
     }
 
     private fun initObservers() {
-        viewLifecycleOwner.collectLatestOnLifecycle(removeAssetsViewModel.state, viewStateCollector)
+        with(viewLifecycleOwner) {
+            collectLatestOnLifecycle(removeAssetsViewModel.state, viewStateCollector)
+            collectLatestOnLifecycle(removeAssetsViewModel.assetItemsPagingDataFlow, removeAssetAdapter::submitData)
+        }
     }
 
     private fun onRemoveAssetClick(removeAssetItem: RemoveAssetItem) {

@@ -31,12 +31,13 @@ import com.algorand.android.credentials.passkeys.ui.model.CreatePasskeyIntentVal
 import com.algorand.android.credentials.passkeys.ui.model.CreatePasskeyIntentValidationResult.InvalidRequestType
 import com.algorand.android.credentials.passkeys.ui.model.CreatePasskeyIntentValidationResult.Success
 import com.algorand.android.credentials.passkeys.ui.model.CreatePasskeyIntentValidationResult.UnableToExtractData
+import com.algorand.android.credentials.passkeys.ui.tracking.PasskeyEventTracker
 import com.algorand.android.credentials.passkeys.validator.CreatePasskeyIntentValidator
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @HiltViewModel
@@ -45,7 +46,8 @@ internal class CreatePasskeyViewModel @Inject constructor(
     private val addNewPasskey: AddNewPasskey,
     private val createPublicKeyCredentialResponseProcessor: CreatePublicKeyCredentialResponseProcessor,
     private val createPublicKeyCredentialResponseArgsMapper: CreatePublicKeyCredentialResponseArgsMapper,
-    private val createPasskeyIntentValidator: CreatePasskeyIntentValidator
+    private val createPasskeyIntentValidator: CreatePasskeyIntentValidator,
+    private val passkeyEventTracker: PasskeyEventTracker
 ) : ViewModel(), EventViewModel<CreatePasskeyViewModel.ViewEvent> by eventDelegate {
 
     fun processIntent(intent: Intent) {
@@ -79,6 +81,7 @@ internal class CreatePasskeyViewModel @Inject constructor(
 
     fun createPasskey(params: CreatePasskeyParams) {
         viewModelScope.launch {
+            passkeyEventTracker.logPasskeyCreated(params.appInfoOrigin)
             with(params) {
                 val args = createPublicKeyCredentialResponseArgsMapper(params, appInfoOrigin)
                 val responseData = createPublicKeyCredentialResponseProcessor(args)

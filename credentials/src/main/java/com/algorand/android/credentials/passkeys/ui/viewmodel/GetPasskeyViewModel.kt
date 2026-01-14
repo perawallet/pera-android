@@ -25,18 +25,20 @@ import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyIntentValida
 import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyIntentValidationResult.PasskeyNotFound
 import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyIntentValidationResult.Success
 import com.algorand.android.credentials.passkeys.ui.model.GetPasskeyIntentValidationResult.UnableToExtractData
+import com.algorand.android.credentials.passkeys.ui.tracking.PasskeyEventTracker
 import com.algorand.android.credentials.passkeys.ui.viewmodel.GetPasskeyViewModel.ViewEvent
 import com.algorand.android.credentials.passkeys.validator.GetPasskeyIntentValidator
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 internal class GetPasskeyViewModel @Inject constructor(
     private val getPasskeyIntentValidator: GetPasskeyIntentValidator,
     private val getCredentialResponseProcessor: GetCredentialResponseProcessor,
+    private val passkeyEventTracker: PasskeyEventTracker,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
@@ -62,6 +64,7 @@ internal class GetPasskeyViewModel @Inject constructor(
 
     fun createGetCredentialResponse(params: GetCredentialsParams) {
         viewModelScope.launch {
+            passkeyEventTracker.logPasskeyAuthenticated(params.callingAppInfo.orEmpty())
             val response = getCredentialResponseProcessor.getResponseWithSignature(params)
             eventDelegate.sendEvent(ViewEvent.SetGetResponseAndFinishActivity(response))
         }

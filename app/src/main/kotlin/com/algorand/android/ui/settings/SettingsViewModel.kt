@@ -28,11 +28,11 @@ import com.algorand.wallet.utils.ClickCounter
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -41,7 +41,8 @@ class SettingsViewModel @Inject constructor(
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val isDeveloperOptionsEnabled: IsDeveloperOptionsEnabled,
-    private val enableDeveloperOps: EnableDeveloperOptions
+    private val enableDeveloperOps: EnableDeveloperOptions,
+    private val settingsEventTracker: SettingsEventTracker
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     private val _settingsPreviewFlow = MutableStateFlow<SettingsPreview?>(null)
@@ -70,6 +71,13 @@ class SettingsViewModel @Inject constructor(
         devOptionsClickCounter.click()
     }
 
+    fun onPasskeysClick() {
+        viewModelScope.launch {
+            settingsEventTracker.logPasskeysClickEvent()
+            eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToPasskeys)
+        }
+    }
+
     private fun processDevOptionsClick(clickCount: Int) {
         when {
             clickCount == DEV_OPTIONS_ENABLE_CLICK_THRESHOLD -> {
@@ -94,6 +102,7 @@ class SettingsViewModel @Inject constructor(
         data class ShowRemainingClicksToDevOptions(val remainingClicks: Int) : ViewEvent
         data object ShowDevOptionsEnabled : ViewEvent
         data object ShowDevOptionsAlreadyEnabled : ViewEvent
+        data object NavigateToPasskeys : ViewEvent
     }
 
     private companion object {

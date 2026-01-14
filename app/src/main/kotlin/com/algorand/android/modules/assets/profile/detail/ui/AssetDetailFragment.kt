@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.core.BaseFragment
@@ -160,6 +161,10 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
         override fun onReceiveClick() {
             navToShowQRBottomSheet()
+        }
+
+        override fun onStakeClick() {
+            nav(HomeNavigationDirections.actionGlobalNestedStakingFragment())
         }
     }
 

@@ -104,6 +104,10 @@ class AssetDetailV2ViewModel @Inject constructor(
         }
     }
 
+    fun navigateToStake() {
+        eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToStake)
+    }
+
     fun navigateToReceive() {
         stateDelegate.onState<Content> { content ->
             eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToShowQr(content.address))
@@ -142,6 +146,7 @@ class AssetDetailV2ViewModel @Inject constructor(
         data class NavigateToSendNavigation(val assetTransaction: AssetTransaction) : ViewEvent
         data class NavigateToMeld(val address: String) : ViewEvent
         data class NavigateToShowQr(val address: String) : ViewEvent
+        data object NavigateToStake : ViewEvent
         data class DisplayError(val errorResId: Int) : ViewEvent
     }
 }

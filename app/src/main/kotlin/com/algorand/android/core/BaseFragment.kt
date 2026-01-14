@@ -154,4 +154,8 @@ abstract class BaseFragment(
     protected fun handleWalletConnectUrl(url: String) {
         (activity as? MainActivity)?.handleWalletConnectUrl(url)
     }
+
+    protected fun navigateToXoSwap() {
+        (activity as? MainActivity)?.navToXoSwapFragment()
+    }
 }

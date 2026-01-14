@@ -221,6 +221,8 @@ android {
 
             buildConfigField("String", "MELD_MAINNET_URL", "\"https://mainnet.staging.api.perawallet.app\"")
             buildConfigField("String", "CARDS_MAINNET_URL", "\"https://cards-mobile-staging-mainnet.perawallet.app\"")
+
+            buildConfigField("String", "ONRAMP_URL", "\"https://onramp-mobile-staging.perawallet.app\"")
         }
 
         create("prod") {
@@ -271,6 +273,8 @@ android {
 
             buildConfigField("String", "MELD_MAINNET_URL", "\"https://mainnet.api.perawallet.app\"")
             buildConfigField("String", "CARDS_MAINNET_URL", "\"https://cards-mobile.perawallet.app\"")
+
+            buildConfigField("String", "ONRAMP_URL", "\"https://onramp-mobile.perawallet.app\"")
         }
     }
 

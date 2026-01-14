@@ -203,6 +203,10 @@ class AccountDetailFragment :
         navToBuySellActionsBottomSheet()
     }
 
+    override fun onFundClick() {
+        navigateToXoSwap()
+    }
+
     override fun onMoreClick() {
         navToAccountOptionsBottomSheet()
     }

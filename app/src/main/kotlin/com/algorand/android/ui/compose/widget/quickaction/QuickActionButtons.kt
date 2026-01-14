@@ -97,3 +97,13 @@ fun ReceiveQuickActionButton(onClick: () -> Unit) {
         onClick = onClick
     )
 }
+
+@Composable
+fun FundQuickActionButton(onClick: () -> Unit) {
+    SecondaryQuickActionButton(
+        iconResId = R.drawable.ic_import,
+        text = stringResource(R.string.fund),
+        onClick = onClick,
+        showIndicator = true
+    )
+}

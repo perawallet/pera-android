@@ -55,6 +55,10 @@ internal class DefaultMenuEventTracker @Inject constructor(
         peraAnalyticsEventTracker.logEvent(INVITE_FRIENDS_CLICK)
     }
 
+    override fun logBuyGiftCardClick() {
+        peraAnalyticsEventTracker.logEvent(BUY_GIFT_CARD_CLICK)
+    }
+
     private companion object EventNames {
         const val QR_SCAN_CLICK = "menuscr_qr_scan"
         const val SETTINGS_CLICK = "lowermenu_settings_tap"
@@ -65,5 +69,6 @@ internal class DefaultMenuEventTracker @Inject constructor(
         const val BUY_ALGO_CLICK = "menuscr_buyalgo_tap"
         const val RECEIVE_CLICK = "menuscr_receive_tap"
         const val INVITE_FRIENDS_CLICK = "menuscr_invite_friends_tap"
+        const val BUY_GIFT_CARD_CLICK = "menuscr_bidali_tap"
     }
 }

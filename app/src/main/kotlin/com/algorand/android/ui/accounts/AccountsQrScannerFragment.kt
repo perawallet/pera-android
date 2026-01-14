@@ -155,7 +155,7 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
 
     override fun onBuyDeepLink(address: String): Boolean {
         return true.also {
-            mainActivity?.navToMeldNavigation(address)
+            mainActivity?.navToOnramp(address)
         }
     }
 

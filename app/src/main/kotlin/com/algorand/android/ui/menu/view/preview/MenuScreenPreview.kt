@@ -32,10 +32,12 @@ fun MenuScreenPreview() {
         override fun onInviteFriendsClick() {}
         override fun onReceiveClick() {}
         override fun onNftClick() {}
+        override fun onBuyGiftCardClick() {}
         override fun onGoToCardsClick() {}
         override fun onCreateCardClick() {}
+        override fun onStakeClick() {}
     }
-    MenuScreen(getNftViewModel(), getCardViewModel(), listener)
+    MenuScreen(isXoSwapEnabled = true, isStakeEnabled = true, getNftViewModel(), getCardViewModel(), listener)
 }
 
 private fun getNftViewModel(): MenuNftViewModel {

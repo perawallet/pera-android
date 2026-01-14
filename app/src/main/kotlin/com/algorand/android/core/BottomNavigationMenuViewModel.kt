@@ -20,16 +20,19 @@ import com.algorand.android.core.BottomNavigationMenuViewModel.ViewState
 import com.algorand.android.core.bottomnav.model.BottomNavMenuItem
 import com.algorand.android.utils.isStagingApp
 import com.algorand.wallet.node.domain.usecase.IsSelectedNodeTestnet
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BottomNavigationMenuViewModel @Inject constructor(
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val isSelectedNodeTestnet: IsSelectedNodeTestnet,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
@@ -59,7 +62,11 @@ class BottomNavigationMenuViewModel @Inject constructor(
             add(getHomeItem())
             add(getDiscoverItem())
             add(getSwapItem())
-            add(getStakingItem())
+            if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
+                add(getFundItem())
+            } else {
+                add(getStakingItem())
+            }
             add(getMenuItem())
         }
     }
@@ -98,6 +105,15 @@ class BottomNavigationMenuViewModel @Inject constructor(
             id = R.id.stakingFragment,
             titleResId = R.string.staking,
             iconResId = R.drawable.ic_staking,
+            enabled = true
+        )
+    }
+
+    private fun getFundItem(): BottomNavMenuItem {
+        return BottomNavMenuItem(
+            id = R.id.xoSwapFragment,
+            titleResId = R.string.fund,
+            iconResId = R.drawable.ic_import,
             enabled = true
         )
     }

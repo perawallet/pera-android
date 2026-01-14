@@ -157,6 +157,7 @@
     <string name="search">Search</string>
     <string name="there_are_no">There are no transactions to be displayed for the selected period</string>
     <string name="home">Home</string>
+    <string name="fund">Fund</string>
     <string name="alphabetically_a_to_z">Alphabetically A to Z</string>
     <string name="alphabetically_z_to_a">Alphabetically Z to A</string>
     <string name="highest_value_to_lowest">Highest Value to Lowest</string>
@@ -838,6 +839,7 @@
     <string name="buy_gift_cards_with_bidali">Buy gift cards with Bidali</string>
     <string name="buy_gift_cards_with_crypto">Buy gift cards with Crypto</string>
     <string name="buy_gift_cards">Buy gift cards</string>
+    <string name="buy_gift_card">Buy Gift Card</string>
     <string name="you_can_not_purchase_bidali">You cannot purchase while on TestNet. Please switch back to MainNet from Settings to use Bidali.</string>
     <string name="buy_algo_with_meld">Buy ALGO with Meld</string>
     <string name="meld_offers">Meld offers the fastest way to buy ALGO with your local currency. Buy crypto with

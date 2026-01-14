@@ -25,6 +25,7 @@ import com.algorand.android.migration.MigrationManager
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
+import com.algorand.android.ui.vibration.PeraVibration
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
@@ -32,9 +33,9 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.security.PeraSecurityManager
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @HiltAndroidApp
 open class PeraApp : Application() {
@@ -85,6 +86,7 @@ open class PeraApp : Application() {
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
         initializeMigrationManager()
+        PeraVibration.init(this)
     }
 
     private fun initializeMigrationManager() {

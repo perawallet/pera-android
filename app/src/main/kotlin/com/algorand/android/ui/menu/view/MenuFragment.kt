@@ -25,7 +25,10 @@ import com.algorand.android.ui.menu.viewmodel.DefaultMenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.DefaultMenuNftViewModel
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MenuFragment : BaseFragment(0), MenuScreenListener,
@@ -37,9 +40,18 @@ class MenuFragment : BaseFragment(0), MenuScreenListener,
 
     private val cardsViewModel: DefaultMenuCardsViewModel by viewModels()
 
+    @Inject
+    lateinit var isFeatureToggleEnabled: IsFeatureToggleEnabled
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            MenuScreen(menuNftViewModel, cardsViewModel, this)
+            MenuScreen(
+                isXoSwapEnabled = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key),
+                isStakeEnabled = isFeatureToggleEnabled(FeatureToggle.STAKING.key),
+                menuNftViewModel = menuNftViewModel,
+                menuCardViewModel = cardsViewModel,
+                listener = this
+            )
         }
     }
 
@@ -86,5 +98,14 @@ class MenuFragment : BaseFragment(0), MenuScreenListener,
     override fun onGoToCardsClick() {
         menuNftViewModel.logGoToCardsClick()
         nav(HomeNavigationDirections.actionGlobalCardsFragment())
+    }
+
+    override fun onBuyGiftCardClick() {
+        menuNftViewModel.logBuyGiftCardClick()
+        nav(HomeNavigationDirections.actionGlobalBidaliNavigation())
+    }
+
+    override fun onStakeClick() {
+        nav(HomeNavigationDirections.actionGlobalNestedStakingFragment())
     }
 }

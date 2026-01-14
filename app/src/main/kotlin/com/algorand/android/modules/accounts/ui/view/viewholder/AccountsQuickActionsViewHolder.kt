@@ -27,7 +27,7 @@ class AccountsQuickActionsViewHolder(
     override fun bind(item: BaseAccountListItem) {
         if (item !is BaseAccountListItem.QuickActionsItem) return
         binding.root.apply {
-            init(item.isStakingEnabled)
+            init(item.isStakingEnabled, item.isXoSwapEnabled)
             setListener(listener)
         }
     }

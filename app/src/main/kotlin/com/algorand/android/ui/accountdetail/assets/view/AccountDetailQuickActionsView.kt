@@ -21,6 +21,7 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQ
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.AssetInbox
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.CopyAddressButton
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.FundButton
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.MoreButton
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.SendButton
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.ShowAddressButton
@@ -29,6 +30,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.quickaction.AssetInboxQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.CopyAddressQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.FundQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.MoreQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonContainer
 import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
@@ -48,6 +50,7 @@ class AccountDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Ab
                 quickActions.forEach {
                     when (it) {
                         BuyAlgoButton -> BuySellQuickActionButton { listener?.onBuySellClick() }
+                        FundButton -> FundQuickActionButton { listener?.onFundClick() }
                         CopyAddressButton -> CopyAddressQuickActionButton { listener?.onCopyAddressClick() }
                         MoreButton -> MoreQuickActionButton { listener?.onMoreClick() }
                         SendButton -> SendQuickActionButton { listener?.onSendClick() }
@@ -77,5 +80,6 @@ class AccountDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Ab
         fun onCopyAddressClick()
         fun onShowAddressClick()
         fun onBuySellClick()
+        fun onFundClick()
     }
 }

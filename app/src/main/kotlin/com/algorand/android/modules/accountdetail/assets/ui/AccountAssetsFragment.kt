@@ -152,6 +152,10 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         override fun onChartTap() {
             accountAssetsViewModel.logChartTap()
         }
+
+        override fun onFundClick() {
+            listener?.onFundClick()
+        }
     }
 
     private val accountAssetsAdapter = AccountAssetsAdapter(accountAssetsListener)
@@ -257,6 +261,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         fun onShowAddressClick()
         fun onBackupNowClick()
         fun onBuySellClick()
+        fun onFundClick()
     }
 
     companion object {

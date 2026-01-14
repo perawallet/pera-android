@@ -21,12 +21,14 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SendButton
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.StakeButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonContainer
 import com.algorand.android.ui.compose.widget.quickaction.ReceiveQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.StakeQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SwapQuickActionButton
 
 class AssetDetailQuickActionsView(context: Context, attrs: AttributeSet?) : AbstractComposeView(context, attrs) {
@@ -45,6 +47,7 @@ class AssetDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Abst
                         BuyAlgoButton -> BuySellQuickActionButton { listener?.onBuyAlgoClick() }
                         ReceiveButton -> ReceiveQuickActionButton { listener?.onReceiveClick() }
                         SendButton -> SendQuickActionButton { listener?.onSendClick() }
+                        StakeButton -> StakeQuickActionButton { listener?.onStakeClick() }
                     }
                 }
             }
@@ -65,5 +68,6 @@ class AssetDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Abst
         fun onBuyAlgoClick()
         fun onSendClick()
         fun onReceiveClick()
+        fun onStakeClick()
     }
 }

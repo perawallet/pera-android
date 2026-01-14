@@ -22,4 +22,5 @@ interface MenuEventTracker {
     fun logBuyAlgoClick()
     fun logReceiveClick()
     fun logInviteFriendsClick()
+    fun logBuyGiftCardClick()
 }

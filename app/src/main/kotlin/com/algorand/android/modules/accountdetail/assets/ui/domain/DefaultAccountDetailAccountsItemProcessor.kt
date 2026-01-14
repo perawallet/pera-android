@@ -33,6 +33,8 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.can
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -47,6 +49,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val accountDetailAssetItemMapper: AccountDetailAssetItemMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : AccountDetailAccountsItemProcessor {
 
     override fun getAccountDetailsItemsFlow(address: String, query: String?): Flow<List<AccountDetailAccountsItem>> {
@@ -118,7 +121,11 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private suspend fun getAuthAccountQuickActionItem(address: String): List<AccountDetailQuickActionItem> {
         return mutableListOf<AccountDetailQuickActionItem>().apply {
             add(AccountDetailQuickActionItem.SwapButton)
-            add(AccountDetailQuickActionItem.BuyAlgoButton)
+            if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
+                add(AccountDetailQuickActionItem.FundButton)
+            } else {
+                add(AccountDetailQuickActionItem.BuyAlgoButton)
+            }
             add(AssetInbox(hasInboxItem(address)))
         }
     }

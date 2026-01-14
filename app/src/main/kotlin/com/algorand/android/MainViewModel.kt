@@ -59,6 +59,8 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -102,7 +104,8 @@ class MainViewModel @Inject constructor(
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
-    private val notificationClickEventTracker: NotificationClickEventTracker
+    private val notificationClickEventTracker: NotificationClickEventTracker,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
     BottomNavigationEventTracker by bottomNavigationEventTracker {
 
@@ -299,6 +302,8 @@ class MainViewModel @Inject constructor(
             eventDelegate.sendEvent(viewEvent)
         }
     }
+
+    fun isXoSwapFeatureEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
 
     private suspend fun shouldAppLocked(): Boolean {
         return autoLockManagerUseCase.shouldAppLocked()

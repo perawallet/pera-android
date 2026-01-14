@@ -16,6 +16,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.algorand.android.R
 import com.algorand.android.modules.accountsorting.domain.usecase.GetAssetCollectibleLiteSortType
 import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem
@@ -32,15 +33,16 @@ import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteSortType
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class RemoveAssetsViewModel @Inject constructor(
@@ -59,28 +61,23 @@ class RemoveAssetsViewModel @Inject constructor(
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val assetItemsPagingDataFlow: Flow<PagingData<BaseRemoveAssetItem>> = assetQueryFlow
+        .debounce(QUERY_DEBOUNCE)
+        .distinctUntilChanged()
+        .flatMapLatest(::getPagedRemoveAssetItemsFlow)
+        .cachedIn(viewModelScope)
+
     fun initializeViewState() {
-        viewModelScope.launch {
-            initializeContentState()
-            initializeAssetQueryFlow()
-        }
-    }
-
-    @OptIn(
-        kotlinx.coroutines.FlowPreview::class,
-        kotlinx.coroutines.ExperimentalCoroutinesApi::class
-    )
-    private suspend fun initializeAssetQueryFlow() {
-        assetQueryFlow.debounce(QUERY_DEBOUNCE)
-            .distinctUntilChanged()
-            .flatMapLatest(::getPagedRemoveAssetItemsFlow)
-            .collectLatest(::updateContentState)
-    }
-
-    private fun updateContentState(pagingData: PagingData<BaseRemoveAssetItem>) {
-        stateDelegate.onState<ViewState.Content> { currentState ->
-            stateDelegate.updateState {
-                currentState.copy(removeAssetItems = pagingData)
+        stateDelegate.onState<ViewState.Idle> {
+            viewModelScope.launch {
+                val isThereAnyAssetCanAddressOptOut = isThereAnyAssetCanAddressOptOut(accountAddress)
+                val viewState = ViewState.Content(
+                    sortType = getAssetCollectibleLiteSortType(),
+                    isThereAnyAssetCanAddressOptOut = isThereAnyAssetCanAddressOptOut,
+                    headerItems = getAssetHeaderItems(isThereAnyAssetCanAddressOptOut)
+                )
+                stateDelegate.updateState { viewState }
             }
         }
     }
@@ -88,20 +85,6 @@ class RemoveAssetsViewModel @Inject constructor(
     private fun getPagedRemoveAssetItemsFlow(searchKeyword: String): Flow<PagingData<BaseRemoveAssetItem>> {
         val data = getRemoveAssetItemProcessorData(searchKeyword) ?: return emptyFlow()
         return removeAssetItemProcessor.getPagedAssetItems(data)
-    }
-
-    private suspend fun initializeContentState() {
-        val isThereAnyAssetCanAddressOptOut = isThereAnyAssetCanAddressOptOut(accountAddress)
-        val headerItems = getAssetHeaderItems(isThereAnyAssetCanAddressOptOut)
-        val sortType = getAssetCollectibleLiteSortType()
-        stateDelegate.updateState {
-            ViewState.Content(
-                sortType = sortType,
-                isThereAnyAssetCanAddressOptOut = isThereAnyAssetCanAddressOptOut,
-                removeAssetItems = PagingData.from(emptyList()),
-                headerItems = headerItems
-            )
-        }
     }
 
     private fun getRemoveAssetItemProcessorData(searchKeyword: String): RemoveAssetItemProcessorData? {
@@ -135,7 +118,6 @@ class RemoveAssetsViewModel @Inject constructor(
         data class Content(
             val sortType: AssetCollectibleLiteSortType,
             val isThereAnyAssetCanAddressOptOut: Boolean,
-            val removeAssetItems: PagingData<BaseRemoveAssetItem>,
             val headerItems: List<RemoveAssetHeaderItem>
         ) : ViewState
     }

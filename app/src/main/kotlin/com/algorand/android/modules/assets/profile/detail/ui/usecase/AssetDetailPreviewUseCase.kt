@@ -26,6 +26,7 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SendButton
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.StakeButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.Event
@@ -37,11 +38,13 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFl
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AssetDetailPreviewUseCase @Inject constructor(
@@ -52,7 +55,8 @@ class AssetDetailPreviewUseCase @Inject constructor(
     private val getAccountType: GetAccountType,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) {
 
     fun updatePreviewForDiscoverMarketEvent(currentPreview: AssetDetailPreview): AssetDetailPreview {
@@ -163,12 +167,19 @@ class AssetDetailPreviewUseCase @Inject constructor(
         if (isUserOptedInToAsa) {
             quickActionItems.add(SwapButton)
         }
-
         if (isAlgo) {
-            quickActionItems.add(BuyAlgoButton)
+            if (isXoSwapEnabled() && isStakingEnabled()) {
+                quickActionItems.add(StakeButton)
+            } else {
+                quickActionItems.add(BuyAlgoButton)
+            }
         }
         quickActionItems.add(SendButton)
         quickActionItems.add(ReceiveButton)
         return quickActionItems
     }
+
+    private fun isStakingEnabled() = isFeatureToggleEnabled(FeatureToggle.STAKING.key)
+
+    private fun isXoSwapEnabled() = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
 }

@@ -19,5 +19,7 @@ enum class FeatureToggle(val key: String, val description: String) {
     LEDGER_DEFLEX_FILTER("enable_ledger_deflex_filter", "Ledger Deflex Filter"),
     ASSET_DETAIL_V2("enable_asset_detail_v2", "Asset Detail V2"),
     ASSET_DETAIL_V2_ENDPOINTS("enable_asset_detail_v2_endpoint", "Asset Detail V2 Endpoints"),
-    SWAP_TXN_VALIDATION("enable_swap_txn_validation", "Swap Transaction Validation")
+    SWAP_TXN_VALIDATION("enable_swap_txn_validation", "Swap Transaction Validation"),
+    XO_SWAP("enable_xo_swap", "XO Swap Feature"),
+    XO_SWAP_TEST_PAGE("enable_xo_swap_test_page", "XO Swap Test Page")
 }

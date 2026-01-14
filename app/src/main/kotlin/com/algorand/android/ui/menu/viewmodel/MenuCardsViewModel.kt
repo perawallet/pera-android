@@ -21,8 +21,6 @@ interface MenuCardsViewModel : StateViewModel<ViewState> {
 
     sealed interface ViewState {
         data object Idle : ViewState
-        data object Loading : ViewState
-        data object Waitlisted : ViewState
         data object NewUser : ViewState
         data object CardCreated : ViewState
         data object Error : ViewState

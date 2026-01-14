@@ -59,6 +59,15 @@ tasks.register("kover") {
     description = "Runs koverHtmlReport for the common-sdk module"
 }
 
+tasks.register("runGithubActionUnitTests") {
+    group = "verification"
+    description = "Runs specific unit tests for app, common-sdk, and credentials modules"
+
+    dependsOn(":app:testProdDebugUnitTest")
+    dependsOn(":common-sdk:testDebugUnitTest")
+    dependsOn(":credentials:testDebugUnitTest")
+}
+
 subprojects {
     configurations.all {
         resolutionStrategy {

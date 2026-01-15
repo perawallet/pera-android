@@ -25,6 +25,10 @@ internal data class TransactionHistorySwapGroupDetailResponse(
     val assetIn: TransactionHistoryAssetSummaryResponse?,
     @SerializedName("asset_out")
     val assetOut: TransactionHistoryAssetSummaryResponse?,
+    @SerializedName("amount_in")
+    val amountIn: String?,
+    @SerializedName("amount_out")
+    val amountOut: String?,
     @SerializedName("amount_in_with_slippage")
     val amountInWithSlippage: String?,
     @SerializedName("amount_out_with_slippage")

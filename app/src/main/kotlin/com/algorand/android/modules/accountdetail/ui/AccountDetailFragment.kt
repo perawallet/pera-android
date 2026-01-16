@@ -46,6 +46,7 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
+import com.algorand.android.modules.accountdetail.history.ui.AccountTransactionHistoryFragment.AccountTransactionHistoryListener
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirections.Companion.actionAccountDetailFragmentToAssetRemovalActionNavigation
 import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirections.Companion.actionAccountDetailFragmentToAssetTransferBalanceActionNavigation
@@ -81,7 +82,8 @@ class AccountDetailFragment :
     BaseFragment(R.layout.fragment_account_detail),
     AccountHistoryFragment.Listener,
     AccountAssetsFragment.Listener,
-    AccountCollectiblesFragment.Listener {
+    AccountCollectiblesFragment.Listener,
+    AccountTransactionHistoryListener {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -128,23 +130,38 @@ class AccountDetailFragment :
     private lateinit var accountDetailPagerAdapter: AccountDetailPagerAdapter
 
     override fun onStandardTransactionClick(transaction: BaseTransactionItem.TransactionItem) {
-        nav(
-            AccountDetailFragmentDirections.actionAccountDetailFragmentToTransactionDetailNavigation(
-                transactionId = transaction.id ?: return,
-                accountAddress = accountDetailViewModel.accountAddress,
-                entryPoint = TransactionDetailEntryPoint.STANDARD_TRANSACTION
-            )
-        )
+        navToTransactionDetail(transaction.id ?: return, TransactionDetailEntryPoint.STANDARD_TRANSACTION)
     }
 
     override fun onApplicationCallTransactionClick(
         transaction: BaseTransactionItem.TransactionItem.ApplicationCallItem
     ) {
+        navToTransactionDetail(transaction.id ?: return, TransactionDetailEntryPoint.APPLICATION_CALL_TRANSACTION)
+    }
+
+    override fun onStandardTransactionClick(id: String) {
+        navToTransactionDetail(id, TransactionDetailEntryPoint.STANDARD_TRANSACTION)
+    }
+
+    override fun onApplicationCallTransactionClick(id: String) {
+        navToTransactionDetail(id, TransactionDetailEntryPoint.APPLICATION_CALL_TRANSACTION)
+    }
+
+    override fun onSwapTransactionClick(groupId: String) {
+        nav(
+            AccountDetailFragmentDirections.actionAccountDetailFragmentToSwapGroupDetailFragment(
+                accountAddress = accountDetailViewModel.accountAddress,
+                groupId = groupId
+            )
+        )
+    }
+
+    private fun navToTransactionDetail(txnId: String, entryPoint: TransactionDetailEntryPoint) {
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToTransactionDetailNavigation(
-                transactionId = transaction.id ?: return,
+                transactionId = txnId,
                 accountAddress = accountDetailViewModel.accountAddress,
-                entryPoint = TransactionDetailEntryPoint.APPLICATION_CALL_TRANSACTION
+                entryPoint = entryPoint
             )
         )
     }
@@ -415,7 +432,11 @@ class AccountDetailFragment :
     }
 
     private fun initAccountDetailPager() {
-        accountDetailPagerAdapter = AccountDetailPagerAdapter(this, accountDetailViewModel.accountAddress)
+        accountDetailPagerAdapter = AccountDetailPagerAdapter(
+            fragment = this,
+            address = accountDetailViewModel.accountAddress,
+            isAccountHistoryV2Enabled = accountDetailViewModel.isAccountHistoryV2Enabled()
+        )
         binding.accountDetailViewPager.adapter = accountDetailPagerAdapter
     }
 

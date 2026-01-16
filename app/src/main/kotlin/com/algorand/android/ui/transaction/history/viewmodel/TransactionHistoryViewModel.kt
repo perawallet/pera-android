@@ -32,6 +32,7 @@ import com.algorand.wallet.transaction.history.domain.usecase.GetTransactionHist
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +40,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 @HiltViewModel
 class TransactionHistoryViewModel @Inject constructor(
@@ -54,7 +54,7 @@ class TransactionHistoryViewModel @Inject constructor(
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
-    fun initViewState(address: String, assetId: Long) {
+    fun initViewState(address: String, assetId: Long?) {
         stateDelegate.onState<ViewState.Idle> {
             stateDelegate.updateState {
                 ViewState.Content(address, assetId, getTransactionPagingDataFlow(address, assetId))
@@ -73,7 +73,10 @@ class TransactionHistoryViewModel @Inject constructor(
     fun getDateFilter(): DateFilter = dateFilter.value
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getTransactionPagingDataFlow(address: String, assetId: Long): Flow<PagingData<TransactionHistoryItem>> {
+    private fun getTransactionPagingDataFlow(
+        address: String,
+        assetId: Long?
+    ): Flow<PagingData<TransactionHistoryItem>> {
         return dateFilter
             .flatMapLatest { filter ->
                 val pagingData = getPagingData(address, assetId, filter)
@@ -111,7 +114,7 @@ class TransactionHistoryViewModel @Inject constructor(
         }
     }
 
-    private fun getPagingData(address: String, assetId: Long, filter: DateFilter?): TransactionHistoryPagingData {
+    private fun getPagingData(address: String, assetId: Long?, filter: DateFilter?): TransactionHistoryPagingData {
         return TransactionHistoryPagingData(
             address = address,
             assetId = assetId,
@@ -125,7 +128,7 @@ class TransactionHistoryViewModel @Inject constructor(
         data object Idle : ViewState
         data class Content(
             val address: String,
-            val assetId: Long,
+            val assetId: Long?,
             val pagingData: Flow<PagingData<TransactionHistoryItem>>
         ) : ViewState
     }

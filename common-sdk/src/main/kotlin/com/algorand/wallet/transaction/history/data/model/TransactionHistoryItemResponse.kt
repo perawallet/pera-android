@@ -42,5 +42,7 @@ internal data class TransactionHistoryItemResponse(
     @SerializedName("asset")
     val asset: TransactionHistoryAssetSummaryResponse?,
     @SerializedName("application_id")
-    val applicationId: Long?
+    val applicationId: Long?,
+    @SerializedName("inner_transaction_count")
+    val innerTransactionCount: Int?
 )

@@ -18,12 +18,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.algorand.android.R
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
+import com.algorand.android.modules.accountdetail.history.ui.AccountTransactionHistoryFragment
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPagerAdapterItem
 import com.algorand.android.ui.asset.collectible.listing.account.view.AccountCollectiblesFragment
 
 class AccountDetailPagerAdapter(
     fragment: Fragment,
-    address: String
+    address: String,
+    isAccountHistoryV2Enabled: Boolean
 ) : FragmentStateAdapter(fragment) {
 
     // TODO: 9.08.2022 Since all fragment instance references are kept inside the list, they may cause memory leak
@@ -37,10 +39,17 @@ class AccountDetailPagerAdapter(
             fragmentInstance = AccountCollectiblesFragment.newInstance(address),
             titleResId = R.string.nfts
         ),
-        AccountDetailPagerAdapterItem(
-            fragmentInstance = AccountHistoryFragment.newInstance(address),
-            titleResId = R.string.history
-        )
+        if (isAccountHistoryV2Enabled) {
+            AccountDetailPagerAdapterItem(
+                fragmentInstance = AccountTransactionHistoryFragment.newInstance(address),
+                titleResId = R.string.history
+            )
+        } else {
+            AccountDetailPagerAdapterItem(
+                fragmentInstance = AccountHistoryFragment.newInstance(address),
+                titleResId = R.string.history
+            )
+        }
     )
 
     override fun getItemCount(): Int = pagerItemList.size

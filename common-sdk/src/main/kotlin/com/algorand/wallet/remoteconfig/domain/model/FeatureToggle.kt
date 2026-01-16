@@ -21,5 +21,6 @@ enum class FeatureToggle(val key: String, val description: String) {
     ASSET_DETAIL_V2_ENDPOINTS("enable_asset_detail_v2_endpoint", "Asset Detail V2 Endpoints"),
     SWAP_TXN_VALIDATION("enable_swap_txn_validation", "Swap Transaction Validation"),
     XO_SWAP("enable_xo_swap", "XO Swap Feature"),
-    XO_SWAP_TEST_PAGE("enable_xo_swap_test_page", "XO Swap Test Page")
+    XO_SWAP_TEST_PAGE("enable_xo_swap_test_page", "XO Swap Test Page"),
+    ACCOUNT_HISTORY_V2("enable_account_history_v2", "Account Transaction History V2"),
 }

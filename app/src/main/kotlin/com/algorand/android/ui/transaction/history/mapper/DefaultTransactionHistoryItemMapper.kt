@@ -33,7 +33,7 @@ internal class DefaultTransactionHistoryItemMapper @Inject constructor() : Trans
     override fun map(transactionHistory: TransactionHistory): TransactionHistoryItem {
         return with(transactionHistory) {
             when (this.type) {
-                is ApplicationCall -> TransactionHistoryItem.ApplicationCall(id, fee.formatAsFee())
+                is ApplicationCall -> mapApplicationCallTransaction(transactionHistory)
                 is AssetConfiguration -> TransactionHistoryItem.AssetConfiguration(id, fee.formatAsFee())
                 Heartbeat -> TransactionHistoryItem.Heartbeat(id, fee.formatAsFee())
                 KeyRegistration -> TransactionHistoryItem.KeyRegistration(id, fee.formatAsFee())
@@ -123,6 +123,16 @@ internal class DefaultTransactionHistoryItemMapper @Inject constructor() : Trans
                 formattedAmountOut = formatAmount(assetOutId, amountOut, assetOutUnitName)
             )
         }
+    }
+
+    private fun mapApplicationCallTransaction(transactionHistory: TransactionHistory): TransactionHistoryItem {
+        val applicationCall = transactionHistory.type as ApplicationCall
+        return TransactionHistoryItem.ApplicationCall(
+            id = transactionHistory.id,
+            appId = applicationCall.applicationId.toString(),
+            txnCount = applicationCall.txnCount,
+            formattedFee = transactionHistory.fee.formatAsFee()
+        )
     }
 
     private fun BigDecimal.formatAsFee(): String {

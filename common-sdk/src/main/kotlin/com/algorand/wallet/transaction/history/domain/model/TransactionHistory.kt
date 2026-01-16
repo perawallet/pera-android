@@ -66,7 +66,7 @@ data class TransactionHistory(
 
         data class AssetConfiguration(val assetId: Long) : Type
 
-        data class ApplicationCall(val applicationId: Long) : Type
+        data class ApplicationCall(val applicationId: Long, val txnCount: Int) : Type
 
         data object KeyRegistration : Type
 

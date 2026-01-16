@@ -95,6 +95,8 @@ class AccountDetailViewModel @Inject constructor(
 
     fun isAssetDetailV2Enabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.ASSET_DETAIL_V2.key)
 
+    fun isAccountHistoryV2Enabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.ACCOUNT_HISTORY_V2.key)
+
     fun removeAccount(publicKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
             accountDeletionUseCase.removeAccount(publicKey)

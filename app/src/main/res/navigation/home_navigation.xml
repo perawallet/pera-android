@@ -1100,6 +1100,9 @@
                 android:name="assetAction"
                 app:argType="com.algorand.android.models.AssetAction" />
         </action>
+        <action
+            android:id="@+id/action_accountDetailFragment_to_swapGroupDetailFragment"
+            app:destination="@id/swapGroupDetailFragment" />
     </fragment>
 
     <fragment

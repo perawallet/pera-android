@@ -100,13 +100,28 @@ private fun LazyListScope.contentState(
     historyItems: LazyPagingItems<TransactionHistoryItem>,
     listener: TransactionHistoryListListener
 ) {
-    items(
-        count = historyItems.itemCount,
-        key = { index -> index }
-    ) { index ->
+    for (index in 0 until historyItems.itemCount) {
         val historyItem = historyItems[index]
         if (historyItem != null) {
-            TransactionHistoryListItem(historyItem, listener)
+            if (historyItem is Date) {
+                stickyDateHeader(index, historyItem)
+            } else {
+                item(key = index) {
+                    TransactionHistoryListItem(historyItem, listener)
+                }
+            }
+        }
+    }
+}
+
+private fun LazyListScope.stickyDateHeader(index: Int, dateItem: Date) {
+    stickyHeader(key = "${index}${dateItem.date}") {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(PeraTheme.colors.background.primary)
+        ) {
+            DateItem(dateItem.date)
         }
     }
 }

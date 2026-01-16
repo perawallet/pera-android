@@ -17,7 +17,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.FragmentConfiguration
@@ -25,6 +27,9 @@ import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.transaction.csv.model.CreateCsvArgs
 import com.algorand.android.ui.transaction.csv.viewmodel.CsvViewModel
 import com.algorand.android.ui.transaction.history.viewmodel.TransactionHistoryViewModel
+import com.algorand.android.utils.CSV_FILE_MIME_TYPE
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.shareFile
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,10 +41,21 @@ class AccountTransactionHistoryFragment : BaseFragment(0), AccountHistoryScreenL
     private val transactionHistoryViewModel: TransactionHistoryViewModel by viewModels()
     private val csvViewModel: CsvViewModel by viewModels()
 
+    private val shareResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        // Nothing to do
+    }
+
     private var listener: AccountTransactionHistoryListener? = null
 
     private val address: String
         get() = arguments?.getString(ADDRESS_KEY).orEmpty()
+
+    private val csvViewEventCollector: suspend (CsvViewModel.ViewEvent) -> Unit = {
+        when (it) {
+            is CsvViewModel.ViewEvent.ShareFile -> shareFile(it.file, CSV_FILE_MIME_TYPE, shareResultLauncher)
+            CsvViewModel.ViewEvent.ShowErrorMessage -> showGlobalError(getString(R.string.an_error_occurred))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
@@ -60,6 +76,7 @@ class AccountTransactionHistoryFragment : BaseFragment(0), AccountHistoryScreenL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         transactionHistoryViewModel.initViewState(address, assetId = null)
+        viewLifecycleOwner.collectLatestOnLifecycle(csvViewModel.viewEvent, csvViewEventCollector)
     }
 
     override fun onFilterClick() {

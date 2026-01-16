@@ -14,15 +14,14 @@ package com.algorand.android.ui.menu.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,8 +44,8 @@ fun MenuScreen(
     Column(
         modifier = Modifier
             .background(color = PeraTheme.colors.background.primary)
-            .fillMaxSize()
-            .scrollable(rememberScrollState(), orientation = Orientation.Vertical)
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
             .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
     ) {
         MenuToolbar(listener::onSettingsClick, listener::onScanQrClick)

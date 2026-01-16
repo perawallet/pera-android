@@ -86,6 +86,7 @@
     <string name="disconnect">Disconnect</string>
     <string name="the_requested_operation_and">The requested operation and/or account has not been authorized by the user.</string>
     <string name="application_id">Application ID</string>
+    <string name="formatted_application_id">Application ID: %1$s</string>
     <string name="connected_with_formatted">Connected with %1$s</string>
     <string name="off">Off</string>
     <string name="on">On</string>

@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -154,7 +155,7 @@ private fun LazyListScope.emptyState() {
 private fun TransactionHistoryListItem(item: TransactionHistoryItem, listener: TransactionHistoryListListener) {
     with(listener) {
         when (item) {
-            is ApplicationCall -> GenericItemContainer(R.string.application_call, item.formattedFee) {
+            is ApplicationCall -> ApplicationCallItem(item) {
                 onApplicationCallClick(item.id)
             }
 
@@ -218,6 +219,35 @@ private fun SendItem(item: Send, onClick: () -> Unit) {
         amountTextColor = if (item.amount > ZERO) PeraTheme.colors.helper.negative else PeraTheme.colors.text.main,
         onClick = onClick
     )
+}
+
+@Composable
+private fun ApplicationCallItem(item: ApplicationCall, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .clickableNoRipple(onClick = onClick)
+            .fillMaxWidth()
+            .padding(vertical = 16.dp, horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TxnIcon(R.drawable.ic_buy_sell_small)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            PrimaryText(stringResource(R.string.app_call))
+            SecondaryText(stringResource(R.string.formatted_application_id, item.appId))
+            if (item.txnCount > 0) {
+                Text(
+                    text = pluralStringResource(R.plurals.count_inner_transactions, item.txnCount, item.txnCount),
+                    style = PeraTheme.typography.footnote.sans,
+                    color = PeraTheme.colors.link.primary
+                )
+            }
+        }
+    }
 }
 
 @Composable

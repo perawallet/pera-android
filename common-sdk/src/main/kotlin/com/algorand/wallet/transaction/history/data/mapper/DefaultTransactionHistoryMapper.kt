@@ -62,7 +62,7 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
         return when (response.txType) {
             PAY_TRANSACTION -> paymentTypeMapper(address, response)
             ASSET_TRANSACTION -> assetTransferTypeMapper(address, response)
-            APP_TRANSACTION -> Type.ApplicationCall(response.applicationTransaction?.applicationId ?: return null)
+            APP_TRANSACTION -> mapAppCallTxn(response.applicationTransaction?.applicationId, response.innerTxns?.size)
             ASSET_CONFIGURATION -> Type.AssetConfiguration(response.assetConfigTransaction?.assetId ?: return null)
             KEYREG_TRANSACTION -> Type.KeyRegistration
             HEARTBEAT_TRANSACTION -> Type.Heartbeat
@@ -89,12 +89,19 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
         return when (response.txType) {
             PAY_TRANSACTION -> paymentTypeMapper(address, response)
             ASSET_TRANSACTION -> assetTransferTypeMapper(address, response)
-            APP_TRANSACTION -> Type.ApplicationCall(response.applicationId ?: return null)
+            APP_TRANSACTION -> mapAppCallTxn(response.applicationId, response.innerTransactionCount)
             ASSET_CONFIGURATION -> Type.AssetConfiguration(response.asset?.id ?: return null)
             KEYREG_TRANSACTION -> Type.KeyRegistration
             HEARTBEAT_TRANSACTION -> Type.Heartbeat
             UNDEFINED, null -> null
         }
+    }
+
+    private fun mapAppCallTxn(appId: Long?, innerTxnCount: Int?): Type? {
+        return Type.ApplicationCall(
+            applicationId = appId ?: return null,
+            txnCount = innerTxnCount ?: DEFAULT_INNER_TXN_COUNT
+        )
     }
 
     private fun mapSwapTransaction(response: TransactionHistoryItemResponse): Type.Swap? {
@@ -109,5 +116,9 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
                 amountOut = amountOut.formatToBigDecimal(assetOut.decimals) ?: return null
             )
         }
+    }
+
+    private companion object {
+        const val DEFAULT_INNER_TXN_COUNT = 0
     }
 }

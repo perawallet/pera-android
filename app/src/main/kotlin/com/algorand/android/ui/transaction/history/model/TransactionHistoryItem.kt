@@ -49,7 +49,12 @@ sealed interface TransactionHistoryItem {
 
     data class Self(val id: String, val formattedAmount: String) : TransactionHistoryItem
 
-    data class ApplicationCall(val id: String, val formattedFee: String) : TransactionHistoryItem
+    data class ApplicationCall(
+        val id: String,
+        val appId: String,
+        val txnCount: Int,
+        val formattedFee: String
+    ) : TransactionHistoryItem
 
     data class AssetConfiguration(val id: String, val formattedFee: String) : TransactionHistoryItem
 

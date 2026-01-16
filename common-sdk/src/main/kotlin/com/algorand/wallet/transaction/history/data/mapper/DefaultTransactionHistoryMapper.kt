@@ -105,8 +105,8 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
                 assetInUnitName = assetIn.unitName.orEmpty(),
                 assetOutId = assetOut?.id ?: return null,
                 assetOutUnitName = assetOut.unitName.orEmpty(),
-                amountIn = amountInWithSlippage.formatToBigDecimal(assetIn.decimals) ?: return null,
-                amountOut = amountOutWithSlippage.formatToBigDecimal(assetOut.decimals) ?: return null
+                amountIn = amountIn.formatToBigDecimal(assetIn.decimals) ?: return null,
+                amountOut = amountOut.formatToBigDecimal(assetOut.decimals) ?: return null
             )
         }
     }

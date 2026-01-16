@@ -41,14 +41,14 @@ internal class DefaultTransactionHistoryAssetTransferTypeMapper @Inject construc
         val assetTransferType = mapAssetTransferType(address, response) ?: return null
         return Type.AssetTransfer(
             assetId = response.assetTransferTransaction?.assetId ?: return null,
-            assetUnitName = "", // TODO
+            assetUnitName = response.assetTransferTransaction.asset?.unitName.orEmpty(),
             type = assetTransferType
         )
     }
 
     private fun mapAssetTransferType(address: String, response: TransactionHistoryDetailResponse): AssetTransferType? {
         return response.assetTransferTransaction?.run {
-            mapAssetTransferType(address, receiver, closeTo, response.sender, amount, null) // TODO
+            mapAssetTransferType(address, receiver, closeTo, response.sender, amount, asset)
         }
     }
 

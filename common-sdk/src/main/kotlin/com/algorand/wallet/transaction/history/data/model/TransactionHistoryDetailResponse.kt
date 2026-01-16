@@ -80,7 +80,9 @@ internal data class TransactionHistoryDetailResponse(
         @SerializedName("close_to")
         val closeTo: String?,
         @SerializedName("clawback_address")
-        val clawbackAddress: String?
+        val clawbackAddress: String?,
+        @SerializedName("asset")
+        val asset: TransactionHistoryAssetSummaryResponse?
     )
 
     internal data class ApplicationTransactionResponse(

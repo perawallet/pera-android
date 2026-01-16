@@ -25,13 +25,13 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.math.BigDecimal.ZERO
+import java.time.ZonedDateTime
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.math.BigDecimal.ZERO
-import java.time.ZonedDateTime
 
 class DefaultTransactionHistoryRepositoryTest {
 
@@ -76,7 +76,7 @@ class DefaultTransactionHistoryRepositoryTest {
         const val ADDRESS = "address"
         const val GROUP_ID = "groupId"
         val SWAP_GROUP_DETAIL_RESPONSE = TransactionHistorySwapGroupDetailResponse(
-            "", "", "", null, null, "", "", 0, null, "", null, null
+            "", "", "", null, null, "", "", "", "", 0, null, "", null, null
         )
         val SWAP_GROUP_DETAIL = TransactionHistorySwapGroupDetail(
             "", "", "", "", 1L, "", ZERO, 2L, "", ZERO, emptyList(), null, ZonedDateTime.now()

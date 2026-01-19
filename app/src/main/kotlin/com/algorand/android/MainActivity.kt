@@ -59,6 +59,7 @@ import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.transaction.refactor.ui.AssetOperationViewModel
+import com.algorand.android.ui.xoswap.view.XoSwapFragment
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
@@ -528,8 +529,9 @@ class MainActivity :
     }
 
     fun isBasePeraWebViewFragmentActive(): Boolean {
-        return (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
-            .childFragmentManager.fragments.first() is BasePeraWebViewFragment
+        val currentFragment = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
+            .childFragmentManager.fragments.first()
+        return currentFragment is BasePeraWebViewFragment || currentFragment is XoSwapFragment
     }
 
     fun launchIntentWithUri(uri: String) {

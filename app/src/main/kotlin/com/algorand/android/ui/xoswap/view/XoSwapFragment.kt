@@ -132,7 +132,10 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
         val isTestPageEnabled = isFeatureToggleEnabled.invoke(FeatureToggle.XO_SWAP_TEST_PAGE.key)
         return StringBuilder(BuildConfig.ONRAMP_URL).apply {
             if (isTestPageEnabled) append("/test")
-            if (args.path.isNotBlank()) append("/${args.path}")
+            if (args.path.isNotBlank()) {
+                if (!args.path.startsWith("/")) append("/")
+                append(args.path)
+            }
         }.toString()
     }
 

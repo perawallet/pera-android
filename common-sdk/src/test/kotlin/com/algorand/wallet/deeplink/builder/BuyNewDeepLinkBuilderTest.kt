@@ -50,10 +50,10 @@ class BuyNewDeepLinkBuilderTest {
 
     @Test
     fun `EXPECT buy deeplink with path`() {
-        val deepLinkWithPath = VALID_DEEP_LINK.copy(path = "/custom/path")
+        val deepLinkWithPath = VALID_DEEP_LINK.copy(path = "customPath")
         val result = sut.createDeepLink(deepLinkWithPath)
 
-        val expected = DeepLink.Buy(address = "accountAddress", path = "/custom/path")
+        val expected = DeepLink.Buy(address = "accountAddress", path = "customPath")
 
         assertEquals(expected, result)
     }

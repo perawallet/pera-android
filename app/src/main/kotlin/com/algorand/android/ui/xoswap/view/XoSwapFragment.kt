@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.BuildConfig
 import com.algorand.android.CoreMainActivity
 import com.algorand.android.R
@@ -55,6 +56,8 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
     lateinit var isFeatureToggleEnabled: IsFeatureToggleEnabled
 
     private val peraWebViewViewModel: PeraWebViewViewModel by viewModels()
+
+    private val args: XoSwapFragmentArgs by navArgs()
 
     private var _binding: FragmentXoSwapBinding? = null
     private val binding: FragmentXoSwapBinding
@@ -127,8 +130,10 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
 
     private fun getInitialUrl(): String {
         val isTestPageEnabled = isFeatureToggleEnabled.invoke(FeatureToggle.XO_SWAP_TEST_PAGE.key)
-        val testPageSuffix = if (isTestPageEnabled) "/test" else ""
-        return "${BuildConfig.ONRAMP_URL}$testPageSuffix"
+        return StringBuilder(BuildConfig.ONRAMP_URL).apply {
+            if (isTestPageEnabled) append("/test")
+            if (args.path.isNotBlank()) append("/${args.path}")
+        }.toString()
     }
 
     private companion object {

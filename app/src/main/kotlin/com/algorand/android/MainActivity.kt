@@ -614,7 +614,7 @@ class MainActivity :
 
     fun navToOnramp(address: String, path: String?) {
         if (mainViewModel.isXoSwapFeatureEnabled()) {
-            navToXoSwapFragment()
+            navToXoSwapFragment(path)
         } else {
             nav(HomeNavigationDirections.actionGlobalMeldNavigation(address))
         }
@@ -947,8 +947,8 @@ class MainActivity :
         showGlobalError(errorMessage = getString(R.string.invalid_link_found), tag = activityTag)
     }
 
-    fun navToXoSwapFragment() {
-        setBottomNavigationBarSelectedItem(R.id.xoSwapFragment)
+    fun navToXoSwapFragment(path: String?) {
+        nav(HomeNavigationDirections.actionGlobalXoSwapFragment(path.orEmpty()))
     }
 
     companion object {

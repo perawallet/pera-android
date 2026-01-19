@@ -218,7 +218,7 @@ class DeeplinkHandler @Inject constructor(
     }
 
     private fun handleBuyDeepLink(deepLink: DeepLink.Buy): Boolean {
-        return triggerListener { it.onBuyDeepLink(deepLink.address) }
+        return triggerListener { it.onBuyDeepLink(deepLink.address, deepLink.path) }
     }
 
     private fun handleInternalBrowserDeepLink(deepLink: DeepLink.InternalBrowser): Boolean {
@@ -291,7 +291,7 @@ class DeeplinkHandler @Inject constructor(
         fun onAddWatchAccountDeepLink(address: String, label: String?): Boolean = false
         fun onAddressActionsDeepLink(address: String, label: String?): Boolean = false
         fun onAssetDetailDeepLink(address: String, assetId: Long): Boolean = false
-        fun onBuyDeepLink(address: String): Boolean = false
+        fun onBuyDeepLink(address: String, path: String?): Boolean = false
         fun onSellDeepLink(address: String): Boolean = false
         fun onInternalBrowserDeepLink(url: String): Boolean = false
         fun onSwapDeepLink(address: String, assetInId: Long?, assetOutId: Long?): Boolean = false

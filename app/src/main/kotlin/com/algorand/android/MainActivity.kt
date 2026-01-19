@@ -67,6 +67,7 @@ import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.ui.accounts.AccountsQrScannerViewModel
 import com.algorand.android.ui.accountselection.receive.ReceiveAccountSelectionFragment
+import com.algorand.android.ui.xoswap.view.XoSwapFragment
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase.Companion.MAX_NUMBER_OF_ACCOUNTS
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
@@ -331,8 +332,8 @@ class MainActivity :
             return true
         }
 
-        override fun onBuyDeepLink(address: String): Boolean {
-            navToOnramp(address)
+        override fun onBuyDeepLink(address: String, path: String?): Boolean {
+            navToOnramp(address, path)
             return true
         }
 
@@ -528,8 +529,9 @@ class MainActivity :
     }
 
     fun isBasePeraWebViewFragmentActive(): Boolean {
-        return (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
-            .childFragmentManager.fragments.first() is BasePeraWebViewFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(binding.navigationHostFragment.id)
+        val currentFragment = (navHostFragment as NavHostFragment).childFragmentManager.fragments.first()
+        return currentFragment is BasePeraWebViewFragment || currentFragment is XoSwapFragment
     }
 
     fun launchIntentWithUri(uri: String) {
@@ -612,9 +614,9 @@ class MainActivity :
         )
     }
 
-    fun navToOnramp(address: String) {
+    fun navToOnramp(address: String, path: String?) {
         if (mainViewModel.isXoSwapFeatureEnabled()) {
-            navToXoSwapFragment()
+            navToXoSwapFragment(path)
         } else {
             nav(HomeNavigationDirections.actionGlobalMeldNavigation(address))
         }
@@ -947,8 +949,8 @@ class MainActivity :
         showGlobalError(errorMessage = getString(R.string.invalid_link_found), tag = activityTag)
     }
 
-    fun navToXoSwapFragment() {
-        setBottomNavigationBarSelectedItem(R.id.xoSwapFragment)
+    fun navToXoSwapFragment(path: String?) {
+        nav(HomeNavigationDirections.actionGlobalXoSwapFragment(path.orEmpty()))
     }
 
     companion object {

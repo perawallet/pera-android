@@ -171,6 +171,7 @@ abstract class CoreMainActivity : BaseActivity() {
             R.id.discoverHomeFragment -> R.id.discoverHomeNavigation
             R.id.swapFragment -> R.id.swapV2Navigation
             R.id.stakingFragment -> R.id.stakingFragment
+            R.id.xoSwapFragment -> R.id.xoSwapFragment
             R.id.collectiblesFragment -> R.id.collectiblesFragment
             else -> null
         }

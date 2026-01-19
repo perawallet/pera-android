@@ -349,6 +349,12 @@
         app:popUpToInclusive="true" />
 
     <action
+        android:id="@+id/action_global_xoSwapFragment"
+        app:destination="@id/xoSwapFragment"
+        app:popUpTo="@id/accountsFragment"
+        app:popUpToInclusive="true" />
+
+    <action
         android:id="@+id/action_global_nested_stakingFragment"
         app:destination="@id/stakingFragment" />
 
@@ -1688,6 +1694,10 @@
         android:id="@+id/xoSwapFragment"
         android:name="com.algorand.android.ui.xoswap.view.XoSwapFragment"
         android:label="XoSwapFragment">
+        <argument
+            android:name="path"
+            android:defaultValue=""
+            app:argType="string" />
         <action
             android:id="@+id/action_xoSwapFragment_to_publicWebViewFragment"
             app:destination="@id/publicWebViewFragment" />

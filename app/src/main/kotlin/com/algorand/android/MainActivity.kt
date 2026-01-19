@@ -59,7 +59,6 @@ import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.transaction.refactor.ui.AssetOperationViewModel
-import com.algorand.android.ui.xoswap.view.XoSwapFragment
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
@@ -68,6 +67,7 @@ import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.ui.accounts.AccountsQrScannerViewModel
 import com.algorand.android.ui.accountselection.receive.ReceiveAccountSelectionFragment
+import com.algorand.android.ui.xoswap.view.XoSwapFragment
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase.Companion.MAX_NUMBER_OF_ACCOUNTS
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
@@ -529,8 +529,8 @@ class MainActivity :
     }
 
     fun isBasePeraWebViewFragmentActive(): Boolean {
-        val currentFragment = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
-            .childFragmentManager.fragments.first()
+        val navHostFragment = supportFragmentManager.findFragmentById(binding.navigationHostFragment.id)
+        val currentFragment = (navHostFragment as NavHostFragment).childFragmentManager.fragments.first()
         return currentFragment is BasePeraWebViewFragment || currentFragment is XoSwapFragment
     }
 

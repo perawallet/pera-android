@@ -125,7 +125,7 @@ sealed interface DeepLink {
 
     data class Swap(val address: String, val assetInId: Long?, val assetOutId: Long?) : DeepLink
 
-    data class Buy(val address: String) : DeepLink
+    data class Buy(val address: String, val path: String? = null) : DeepLink
 
     data class Sell(val address: String) : DeepLink
 

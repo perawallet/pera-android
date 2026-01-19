@@ -19,7 +19,7 @@ internal class BuyNewDeepLinkBuilder : NewDeepLinkBuilder {
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink? {
         return payload.accountAddress?.let { address ->
-            DeepLink.Buy(address)
+            DeepLink.Buy(address, payload.path)
         }
     }
 }

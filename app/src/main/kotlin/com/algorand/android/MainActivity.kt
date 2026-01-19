@@ -331,8 +331,8 @@ class MainActivity :
             return true
         }
 
-        override fun onBuyDeepLink(address: String): Boolean {
-            navToOnramp(address)
+        override fun onBuyDeepLink(address: String, path: String?): Boolean {
+            navToOnramp(address, path)
             return true
         }
 
@@ -612,7 +612,7 @@ class MainActivity :
         )
     }
 
-    fun navToOnramp(address: String) {
+    fun navToOnramp(address: String, path: String?) {
         if (mainViewModel.isXoSwapFeatureEnabled()) {
             navToXoSwapFragment()
         } else {

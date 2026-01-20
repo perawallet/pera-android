@@ -230,6 +230,16 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/exportShareAccountButton"
+            style="@style/Button.Text.Options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_share_account"
+            android:visibility="gone"
+            app:icon="@drawable/ic_share"
+            tools:visibility="visible" />
+
         <View
             style="@style/Divider"
             android:layout_width="match_parent"

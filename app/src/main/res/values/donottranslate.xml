@@ -49,7 +49,6 @@
     <string name="discord">Discord</string>
     <string name="twitter">Twitter</string>
     <string name="telegram">Telegram</string>
-    <string name="interpunct_asset_id">· %1$d</string>
 
     <!-- Fallback Browser Names -->
     <string name="chrome">Chrome</string>

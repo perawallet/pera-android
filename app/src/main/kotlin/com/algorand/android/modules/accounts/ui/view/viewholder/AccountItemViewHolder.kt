@@ -41,6 +41,11 @@ class AccountItemViewHolder(
                 root.setOnLongClickListener(getOnLongClickListener(item.canCopyable, address))
             }
         }
+        setParticipantCountBadge(item.participantCount)
+    }
+
+    private fun setParticipantCountBadge(participantCount: Int?) {
+        binding.accountItemView.setParticipantCountBadge(participantCount)
     }
 
     private fun setAccountStartIconDrawable(accountIconDrawablePreview: AccountIconDrawablePreview?) {

@@ -86,10 +86,26 @@
         android:textAppearance="@style/TextAppearance.Footnote.Mono.Medium"
         android:textColor="@color/link_primary"
         android:visibility="gone"
+        app:drawableTint="@color/link_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem[1]"
         tools:visibility="visible" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/signTransactionRequestBannerComposeView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/assetInboxAllAccountsButton" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/jointAccountRequestBannerComposeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/signTransactionRequestBannerComposeView" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/qrImageButton"

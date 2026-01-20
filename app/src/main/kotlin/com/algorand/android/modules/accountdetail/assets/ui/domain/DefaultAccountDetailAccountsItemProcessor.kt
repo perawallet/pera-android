@@ -17,7 +17,7 @@ import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountDetail
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.AccountPortfolioItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.AssetInbox
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.Inbox
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite.CachedInfo
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
@@ -30,7 +30,8 @@ import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoDisplayString
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequest
+import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddress
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
@@ -45,11 +46,12 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getPrivacyModeFlow: GetPrivacyModeFlow,
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
-    private val getAssetInboxRequest: GetAssetInboxRequest,
+    private val hasInboxItemsForAddress: HasInboxItemsForAddress,
     private val accountDetailAssetItemMapper: AccountDetailAssetItemMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val getJointAccountParticipantCount: GetJointAccountParticipantCount,
 ) : AccountDetailAccountsItemProcessor {
 
     override fun getAccountDetailsItemsFlow(address: String, query: String?): Flow<List<AccountDetailAccountsItem>> {
@@ -69,6 +71,10 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
         privacyMode: PrivacyMode
     ): List<AccountDetailAccountsItem> {
         return mutableListOf<AccountDetailAccountsItem>().apply {
+            if (cachedInfo.type is AccountType.Joint) {
+                val participantCount = getJointAccountParticipantCount(accountLite.address)
+                add(AccountDetailAccountsItem.JointAccountBadgeItem(participantCount))
+            }
             add(createAccountPortfolioItem(cachedInfo, privacyMode))
             add(createQuickActionItemList(accountLite))
             if (!accountLite.isBackedUp && cachedInfo.primaryAccountValue > BigDecimal.ZERO) {
@@ -78,11 +84,6 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
             add(accountDetailAssetItemMapper.mapToTitleItem(R.string.assets, hasAccountAuthority))
             add(accountDetailAssetItemMapper.mapToSearchViewItem(query.orEmpty()))
         }
-    }
-
-    private suspend fun hasInboxItem(address: String): Boolean {
-        val addressRequest = getAssetInboxRequest(address) ?: return false
-        return addressRequest.requestCount > 0
     }
 
     private fun createAccountPortfolioItem(cachedInfo: CachedInfo, privacyMode: PrivacyMode): AccountPortfolioItem {
@@ -126,7 +127,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
             } else {
                 add(AccountDetailQuickActionItem.BuyAlgoButton)
             }
-            add(AssetInbox(hasInboxItem(address)))
+            add(Inbox(hasInboxItemsForAddress(address)))
         }
     }
 }

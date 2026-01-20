@@ -16,6 +16,8 @@ import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetail
 import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetailAssetsItemProcessor
 import com.algorand.android.modules.accountdetail.assets.ui.domain.DefaultAccountDetailAccountsItemProcessor
 import com.algorand.android.modules.accountdetail.assets.ui.domain.DefaultAccountDetailAssetsItemProcessor
+import com.algorand.android.ui.accountdetail.assets.tracker.AccountAssetsEventTracker
+import com.algorand.android.ui.accountdetail.assets.tracker.DefaultAccountAssetsEventTracker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,4 +36,9 @@ internal object AccountAssetsUiModule {
     fun provideAccountDetailAssetsItemProcessor(
         processor: DefaultAccountDetailAssetsItemProcessor
     ): AccountDetailAssetsItemProcessor = processor
+
+    @Provides
+    fun provideAccountAssetsEventTracker(
+        tracker: DefaultAccountAssetsEventTracker
+    ): AccountAssetsEventTracker = tracker
 }

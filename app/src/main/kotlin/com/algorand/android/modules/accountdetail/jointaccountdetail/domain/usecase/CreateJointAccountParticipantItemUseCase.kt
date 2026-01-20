@@ -1,0 +1,64 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase
+
+import android.net.Uri
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
+import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import javax.inject.Inject
+
+internal class CreateJointAccountParticipantItemUseCase @Inject constructor(
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getLocalAccounts: GetLocalAccounts,
+    private val contactRepository: ContactRepository
+) : CreateJointAccountParticipantItem {
+
+    override suspend fun getLocalAccountAddresses(): List<String> {
+        return getLocalAccounts().map { it.algoAddress }
+    }
+
+    override suspend operator fun invoke(
+        address: String,
+        localAccountAddresses: List<String>
+    ): JointAccountParticipantItem {
+        val displayName = getAccountDisplayName(address)
+        val iconDrawablePreview = getAccountIconDrawablePreview(address)
+        val isLocalAccount = address in localAccountAddresses
+        val contact = contactRepository.getContactByAddress(address)
+        val imageUri = contact?.imageUriAsString?.let { Uri.parse(it) }
+        val isContact = contact != null && !isLocalAccount
+
+        return JointAccountParticipantItem(
+            address = address,
+            displayName = displayName.primaryDisplayName,
+            secondaryDisplayName = displayName.secondaryDisplayName,
+            iconDrawablePreview = iconDrawablePreview,
+            imageUri = imageUri,
+            isLocalAccount = isLocalAccount,
+            isContact = isContact
+        )
+    }
+
+    override suspend fun createParticipantItems(
+        participantAddresses: List<String>
+    ): List<JointAccountParticipantItem> {
+        val localAccountAddresses = getLocalAccountAddresses()
+        return participantAddresses.map { address ->
+            invoke(address, localAccountAddresses)
+        }
+    }
+}

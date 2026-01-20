@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.accountdetail.assets.di
+package com.algorand.android.modules.accountdetail.jointaccountdetail.di
 
-import com.algorand.android.ui.accountdetail.assets.tracker.AccountAssetsEventTracker
-import com.algorand.android.ui.accountdetail.assets.tracker.DefaultAccountAssetsEventTracker
+import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.DefaultJointAccountDetailProcessor
+import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailProcessor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,10 +21,10 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
-internal object AccountAssetsUiModule {
+internal object JointAccountDetailViewModelModule {
 
     @Provides
-    fun provideAccountAssetsEventTracker(
-        tracker: DefaultAccountAssetsEventTracker
-    ): AccountAssetsEventTracker = tracker
+    fun provideJointAccountDetailProcessor(
+        processor: DefaultJointAccountDetailProcessor
+    ): JointAccountDetailProcessor = processor
 }

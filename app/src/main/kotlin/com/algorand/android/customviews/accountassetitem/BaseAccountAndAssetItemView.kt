@@ -109,6 +109,13 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
         }
     }
 
+    fun setParticipantCountBadge(participantCount: Int?) {
+        binding.participantCountBadgeTextView.apply {
+            isVisible = participantCount != null
+            text = participantCount?.toString().orEmpty()
+        }
+    }
+
     fun setPrimaryValueText(primaryValue: String?) {
         binding.primaryValueTextView.apply {
             isVisible = !primaryValue.isNullOrBlank()

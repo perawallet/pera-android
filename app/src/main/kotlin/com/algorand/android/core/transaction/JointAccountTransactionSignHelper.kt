@@ -117,16 +117,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
         jointAccount: LocalAccount.Joint,
         rawTransactions: List<String>
     ) {
-        val participantAddresses = jointAccount.participantAddresses
-        val allLocalAccounts = getLocalAccounts()
-
-        val eligibleSigners = participantAddresses.mapNotNull { address ->
-            allLocalAccounts.find { it.algoAddress == address }
-        }.filter { localAccount ->
-            localAccount is LocalAccount.Algo25 || localAccount is LocalAccount.HdKey
-        }
-
-        TODO("Implement auto sign with local accounts")
+        TODO("Implement this")
     }
 
     companion object {

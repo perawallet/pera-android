@@ -105,9 +105,9 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
             listener?.onManageAssetsClick()
         }
 
-        override fun onInboxClick() {
+        override fun onAssetInboxClick() {
             accountAssetsViewModel.logInboxClick()
-            listener?.onInboxClick()
+            listener?.onAssetInboxClick()
         }
 
         override fun onSendClick() {

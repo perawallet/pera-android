@@ -55,7 +55,7 @@ class AccountDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Ab
                         MoreButton -> MoreQuickActionButton { listener?.onMoreClick() }
                         SendButton -> SendQuickActionButton { listener?.onSendClick() }
                         ShowAddressButton -> ShowAddressQuickActionButton { listener?.onShowAddressClick() }
-                        is Inbox -> InboxQuickActionButton(it.isSelected) { listener?.onInboxClick() }
+                        is AssetInbox -> InboxQuickActionButton(it.isSelected) { listener?.onInboxClick() }
                         is SwapButton -> SwapQuickActionButton { listener?.onSwapClick() }
                     }
                 }

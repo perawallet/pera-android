@@ -19,6 +19,7 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import io.mockk.coEvery
@@ -28,10 +29,12 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 internal class DeleteLocalAccountUseCaseTest {
+
     private val hdKeyAccountRepository: HdKeyAccountRepository = mockk(relaxed = true)
     private val algo25AccountRepository: Algo25AccountRepository = mockk(relaxed = true)
     private val noAuthAccountRepository: NoAuthAccountRepository = mockk(relaxed = true)
     private val ledgerBleAccountRepository: LedgerBleAccountRepository = mockk(relaxed = true)
+    private val jointAccountRepository: JointAccountRepository = mockk(relaxed = true)
     private val getAccountRegistrationType: GetAccountRegistrationType = mockk(relaxed = true)
     private val hdSeedRepository: HdSeedRepository = mockk(relaxed = true)
 
@@ -40,12 +43,13 @@ internal class DeleteLocalAccountUseCaseTest {
         algo25AccountRepository,
         noAuthAccountRepository,
         ledgerBleAccountRepository,
+        jointAccountRepository,
         getAccountRegistrationType,
         hdSeedRepository,
     )
 
     @Test
-    fun `EXPECT ledger account to be removed`() = runTest {
+    fun `EXPECT ledger account to be removed WHEN account type is LedgerBle`() = runTest {
         coEvery { getAccountRegistrationType(ADDRESS) } returns AccountRegistrationType.LedgerBle
 
         deleteLocalAccount(ADDRESS)
@@ -54,49 +58,67 @@ internal class DeleteLocalAccountUseCaseTest {
     }
 
     @Test
-    fun `EXPECT algo25 account to be removed`() = runTest {
+    fun `EXPECT algo25 account to be removed WHEN account type is Algo25`() = runTest {
         coEvery { getAccountRegistrationType(ADDRESS) } returns AccountRegistrationType.Algo25
 
         deleteLocalAccount(ADDRESS)
+
+        coVerify { algo25AccountRepository.deleteAccount(ADDRESS) }
     }
 
     @Test
-    fun `EXPECT noAuth account to be removed`() = runTest {
+    fun `EXPECT noAuth account to be removed WHEN account type is NoAuth`() = runTest {
         coEvery { getAccountRegistrationType(ADDRESS) } returns AccountRegistrationType.NoAuth
 
         deleteLocalAccount(ADDRESS)
+
+        coVerify { noAuthAccountRepository.deleteAccount(ADDRESS) }
+    }
+
+    @Test
+    fun `EXPECT joint account to be removed WHEN account type is Joint`() = runTest {
+        coEvery { getAccountRegistrationType(ADDRESS) } returns AccountRegistrationType.Joint
+
+        deleteLocalAccount(ADDRESS)
+
+        coVerify { jointAccountRepository.deleteAccount(ADDRESS) }
     }
 
     @Test
     fun `EXPECT hdKey account to be removed without seed WHEN its seed has other accounts`() = runTest {
-        val hdKey = peraFixture<LocalAccount.HdKey>().copy(
-            algoAddress = ADDRESS,
-            seedId = 1
-        )
+        val hdKey = peraFixture<LocalAccount.HdKey>().copy(algoAddress = ADDRESS)
         coEvery { getAccountRegistrationType(ADDRESS) } returns AccountRegistrationType.HdKey
         coEvery { hdKeyAccountRepository.getAccount(ADDRESS) } returns hdKey
-        coEvery { hdKeyAccountRepository.getDerivedAddressCountOfSeed(1) } returns 1
+        coEvery { hdKeyAccountRepository.getDerivedAddressCountOfSeed(hdKey.seedId) } returns 1
 
         deleteLocalAccount(ADDRESS)
 
         coVerify { hdKeyAccountRepository.deleteAccount(ADDRESS) }
-        coVerify(exactly = 0) { hdSeedRepository.deleteHdSeed(1) }
+        coVerify(exactly = 0) { hdSeedRepository.deleteHdSeed(hdKey.seedId) }
     }
 
     @Test
     fun `EXPECT hdKey account and its seed to be removed WHEN its seed does not have other accounts`() = runTest {
-        val hdKey = peraFixture<LocalAccount.HdKey>().copy(
-            algoAddress = ADDRESS,
-            seedId = 1
-        )
+        val hdKey = peraFixture<LocalAccount.HdKey>().copy(algoAddress = ADDRESS)
         coEvery { getAccountRegistrationType(ADDRESS) } returns AccountRegistrationType.HdKey
         coEvery { hdKeyAccountRepository.getAccount(ADDRESS) } returns hdKey
-        coEvery { hdKeyAccountRepository.getDerivedAddressCountOfSeed(1) } returns 0
+        coEvery { hdKeyAccountRepository.getDerivedAddressCountOfSeed(hdKey.seedId) } returns 0
 
         deleteLocalAccount(ADDRESS)
 
         coVerify { hdKeyAccountRepository.deleteAccount(ADDRESS) }
-        coVerify { hdSeedRepository.deleteHdSeed(1) }
+        coVerify { hdSeedRepository.deleteHdSeed(hdKey.seedId) }
+    }
+
+    @Test
+    fun `EXPECT no deletion WHEN hdKey account not found`() = runTest {
+        coEvery { getAccountRegistrationType(ADDRESS) } returns AccountRegistrationType.HdKey
+        coEvery { hdKeyAccountRepository.getAccount(ADDRESS) } returns null
+
+        deleteLocalAccount(ADDRESS)
+
+        coVerify(exactly = 0) { hdKeyAccountRepository.deleteAccount(any()) }
+        coVerify(exactly = 0) { hdSeedRepository.deleteHdSeed(any()) }
     }
 
     private companion object {

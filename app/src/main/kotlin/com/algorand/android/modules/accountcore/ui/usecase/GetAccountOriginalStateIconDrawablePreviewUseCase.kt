@@ -56,6 +56,11 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
                     R.color.layer_gray_lighter
                 }
             }
+
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                STANDARD.backgroundColorResId
+            }
         }
     }
 
@@ -68,6 +73,11 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountType?.canSignTransaction() == true) STANDARD.iconTintResId else R.color.text_gray_lighter
             }
+
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                STANDARD.iconTintResId
+            }
         }
     }
 
@@ -79,6 +89,11 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.HdKey -> HD.iconResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountType?.canSignTransaction() == true) STANDARD.iconResId else R.drawable.ic_question
+            }
+
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                STANDARD.iconResId
             }
         }
     }

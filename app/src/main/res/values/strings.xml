@@ -241,6 +241,7 @@
     <string name="you_can_use_your_algo_or">You can use your ALGO or USDC balance to Buy gift card and mobile topups from thousands of brands worldwide!</string>
     <string name="confirm">Confirm</string>
     <string name="standard">Standard</string>
+    <string name="joint">Joint</string>
     <string name="watch">Watch</string>
     <string name="this_action_is_not_available">This action is not available for this account type</string>
     <string name="skip_for_now">Skip for now</string>

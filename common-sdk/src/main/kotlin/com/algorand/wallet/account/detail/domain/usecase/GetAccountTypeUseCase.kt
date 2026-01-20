@@ -64,6 +64,7 @@ internal class GetAccountTypeUseCase @Inject constructor(
             is LocalAccount.LedgerBle -> AccountType.LedgerBle
             is LocalAccount.NoAuth -> AccountType.NoAuth
             is LocalAccount.HdKey -> AccountType.HdKey
+            is LocalAccount.Joint -> AccountType.Joint
         }
     }
 }

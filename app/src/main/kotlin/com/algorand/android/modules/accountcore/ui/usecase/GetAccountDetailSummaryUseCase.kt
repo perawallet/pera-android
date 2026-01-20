@@ -55,6 +55,10 @@ internal class GetAccountDetailSummaryUseCase @Inject constructor(
         return when (type) {
             AccountType.LedgerBle, AccountType.NoAuth, AccountType.Algo25, AccountType.HdKey -> false
             AccountType.Rekeyed, AccountType.RekeyedAuth, null -> true
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                false
+            }
         }
     }
 
@@ -66,6 +70,10 @@ internal class GetAccountDetailSummaryUseCase @Inject constructor(
             AccountType.Rekeyed, null -> R.string.no_auth
             AccountType.RekeyedAuth -> R.string.rekeyed
             AccountType.HdKey -> R.string.hd_account
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                R.string.joint
+            }
         }
     }
 }

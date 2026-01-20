@@ -27,6 +27,10 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
             // [null] and [Watch] cases are not possible
             AccountType.NoAuth, null -> R.drawable.ic_rekey_from_rekeyed_banner
             AccountType.HdKey -> R.drawable.ic_rekey_from_hdkey_banner
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                R.drawable.ic_rekey_from_rekeyed_banner
+            }
         }
     }
 
@@ -37,6 +41,10 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.string.rekey_your_account_to_a_different_account
             AccountType.NoAuth, null -> null
             AccountType.HdKey -> R.string.back_your_standard_account_with
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                null
+            }
         }
         // TODO find a way to use `click spannable` in use case
         return AnnotatedString(stringResId = stringResId ?: return null)
@@ -67,6 +75,9 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
                 }
 
                 AccountType.NoAuth, null -> Unit
+                AccountType.Joint -> {
+                    TODO("Handle Joint Account")
+                }
             }
         }
     }

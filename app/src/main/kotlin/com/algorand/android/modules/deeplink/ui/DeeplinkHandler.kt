@@ -85,6 +85,9 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.Swap -> handleSwapDeepLink(deepLink)
             is DeepLink.Home -> handleHomeDeepLink()
             is DeepLink.Fido -> handleFidoDeepLink(deepLink)
+            is DeepLink.JointAccountImport -> {
+                TODO("Handle Joint Account")
+            }
         }
         if (isDeeplinkHandled) {
             listener?.onDeepLinkHandled()

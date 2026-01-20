@@ -18,6 +18,8 @@ import com.algorand.wallet.account.core.domain.usecase.AddHdKeyAccount
 import com.algorand.wallet.account.core.domain.usecase.AddHdKeyAccountUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddHdSeed
 import com.algorand.wallet.account.core.domain.usecase.AddHdSeedUseCase
+import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
+import com.algorand.wallet.account.core.domain.usecase.AddJointAccountUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccountUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
@@ -53,6 +55,9 @@ internal object AccountCoreModule {
 
     @Provides
     fun provideAddNoAuthAccount(useCase: AddNoAuthAccountUseCase): AddNoAuthAccount = useCase
+
+    @Provides
+    fun provideAddJointAccount(useCase: AddJointAccountUseCase): AddJointAccount = useCase
 
     @Provides
     fun provideAddHdKeyAccount(useCase: AddHdKeyAccountUseCase): AddHdKeyAccount = useCase

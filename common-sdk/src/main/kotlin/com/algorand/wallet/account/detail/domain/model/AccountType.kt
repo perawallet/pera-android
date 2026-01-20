@@ -26,9 +26,15 @@ sealed interface AccountType {
 
     data object HdKey : AccountType
 
+    data object Joint : AccountType
+
     companion object {
         fun AccountType.canSignTransaction(): Boolean {
-            return this is Algo25 || this is HdKey || this is LedgerBle || this is RekeyedAuth
+            return this is Algo25 ||
+                    this is HdKey ||
+                    this is LedgerBle ||
+                    this is RekeyedAuth ||
+                    this is Joint
         }
     }
 }

@@ -36,4 +36,9 @@ sealed interface AccountRegistrationType {
         override val hasSignerDetails: Boolean
             get() = true
     }
+
+    data object Joint : AccountRegistrationType {
+        override val hasSignerDetails: Boolean
+            get() = true
+    }
 }

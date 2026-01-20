@@ -22,5 +22,6 @@ enum class FeatureToggle(val key: String, val description: String) {
     SWAP_TXN_VALIDATION("enable_swap_txn_validation", "Swap Transaction Validation"),
     XO_SWAP("enable_xo_swap", "XO Swap Feature"),
     XO_SWAP_TEST_PAGE("enable_xo_swap_test_page", "XO Swap Test Page"),
-    ACCOUNT_HISTORY_V2("enable_account_history_v2", "Account Transaction History V2"),
+    JOINT_ACCOUNT("enable_joint_account", "Joint Account"),
+    ACCOUNT_HISTORY_V2("enable_account_history_v2", "Account Transaction History V2")
 }

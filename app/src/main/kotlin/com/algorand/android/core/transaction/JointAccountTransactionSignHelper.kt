@@ -15,7 +15,6 @@ package com.algorand.android.core.transaction
 import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.util.Encoder
 import com.algorand.android.models.TransactionSignData
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.utils.extensions.encodeBase64
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
@@ -26,7 +25,6 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import android.util.Log
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
@@ -42,7 +40,6 @@ class JointAccountTransactionSignHelper @Inject constructor(
     private val getHdSeed: GetHdSeed,
     private val signHdKeyTransaction: SignHdKeyTransaction,
     private val proposeJointSignRequest: ProposeJointSignRequest,
-    private val signAndSubmitJointAccountSignature: SignAndSubmitJointAccountSignature,
     private val getJointAccountProposerAddress: GetJointAccountProposerAddress,
     private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) {
@@ -120,25 +117,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
         jointAccount: LocalAccount.Joint,
         rawTransactions: List<String>
     ) {
-        val participantAddresses = jointAccount.participantAddresses
-        val allLocalAccounts = getLocalAccounts()
-
-        val eligibleSigners = participantAddresses.mapNotNull { address ->
-            allLocalAccounts.find { it.algoAddress == address }
-        }.filter { localAccount ->
-            localAccount is LocalAccount.Algo25 || localAccount is LocalAccount.HdKey
-        }
-
-        for (signer in eligibleSigners) {
-            val result = signAndSubmitJointAccountSignature(
-                signRequestId = signRequestId,
-                participantAddress = signer.algoAddress,
-                rawTransactions = rawTransactions
-            )
-            if (result !is PeraResult.Success) {
-                Log.w(TAG, "Failed to auto-sign for participant")
-            }
-        }
+        TODO("Implement this")
     }
 
     companion object {

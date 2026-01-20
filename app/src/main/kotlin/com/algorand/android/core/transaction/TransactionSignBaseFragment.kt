@@ -102,7 +102,7 @@ abstract class TransactionSignBaseFragment(
     }
 
     protected open fun onJointAccountSignRequestCreated(signRequestId: String) {
-        nav(HomeNavigationDirections.actionGlobalToJointAccountSignRequestFragment(signRequestId))
+        TODO("Implement this")
     }
 
     private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener { shouldStopResources ->

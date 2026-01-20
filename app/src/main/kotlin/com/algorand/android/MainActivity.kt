@@ -394,8 +394,7 @@ class MainActivity :
                 is TransactionManagerResult.OnTransactionRequestSigned -> {
                     hideProgress()
                     hideLedgerLoadingDialog()
-                    PendingSignaturesDialogFragment.newInstance(result.signRequestId)
-                        .show(supportFragmentManager, PendingSignaturesDialogFragment.TAG)
+                    TODO("Implement this")
                 }
 
                 TransactionManagerResult.LedgerOperationCanceled -> {
@@ -578,11 +577,7 @@ class MainActivity :
 
     private fun navToJointAccountImportDeepLink(address: String) {
         navToHome()
-        nav(
-            HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
-                accountAddress = address
-            )
-        )
+        TODO("Implement this")
     }
 
     fun navToContactAdditionNavigation(address: String, label: String?) {

@@ -18,6 +18,7 @@ import com.algorand.wallet.deeplink.model.DeepLink
 internal class CreateDeepLinkImpl(
     private val parseDeepLinkPayload: ParseDeepLinkPayload,
     private val accountAddressDeepLinkBuilder: DeepLinkBuilder,
+    private val jointAccountImportDeepLinkBuilder: DeepLinkBuilder,
     private val assetOptInDeepLinkBuilder: DeepLinkBuilder,
     private val assetTransferDeepLinkBuilder: DeepLinkBuilder,
     private val recoverAccountDeepLinkBuilder: DeepLinkBuilder,
@@ -40,6 +41,10 @@ internal class CreateDeepLinkImpl(
         return when {
             accountAddressDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 accountAddressDeepLinkBuilder.createDeepLink(payload)
+            }
+
+            jointAccountImportDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                jointAccountImportDeepLinkBuilder.createDeepLink(payload)
             }
 
             assetOptInDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {

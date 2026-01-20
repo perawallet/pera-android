@@ -31,7 +31,7 @@ internal class ParseDeepLinkPayloadImpl(
     override fun invoke(url: String): DeepLinkPayload {
         val peraUri = peraUriParser.parseUri(url)
         return DeepLinkPayload(
-            accountAddress = accountAddressQueryParser.parseQuery(peraUri),
+            accountAddress = peraUri.getQueryParam(ADDRESS_QUERY_KEY) ?: accountAddressQueryParser.parseQuery(peraUri),
             walletConnectUrl = walletConnectUrlQueryParser.parseQuery(peraUri),
             assetId = assetIdQueryParser.parseQuery(peraUri),
             amount = peraUri.getQueryParam(AMOUNT_QUERY_KEY),
@@ -64,6 +64,7 @@ internal class ParseDeepLinkPayloadImpl(
         const val NOTE_QUERY_KEY = "note"
         const val XNOTE_QUERY_KEY = "xnote"
         const val LABEL_QUERY_KEY = "label"
+        const val ADDRESS_QUERY_KEY = "address"
         const val TRANSACTION_ID_KEY = "transactionId"
         const val TRANSACTION_STATUS_KEY = "transactionStatus"
         const val TYPE_QUERY_KEY = "type"

@@ -72,6 +72,34 @@ internal class SignHdKeyTransactionImpl @Inject constructor(
         }
     }
 
+    override fun signTransactionSignatureOnly(
+        transactionByteArray: ByteArray,
+        seed: ByteArray,
+        account: Int,
+        change: Int,
+        key: Int
+    ): ByteArray? {
+        return try {
+            val xHDWalletAPI = XHDWalletAPIAndroid(seed)
+            val (accountIndex, changeIndex, keyIndex) = listOf(
+                account.toUInt(),
+                change.toUInt(),
+                key.toUInt()
+            )
+
+            xHDWalletAPI.signAlgoTransaction(
+                KeyContext.Address,
+                accountIndex,
+                changeIndex,
+                keyIndex,
+                rawTransactionBytesToSign(transactionByteArray)
+            )
+        } catch (e: Exception) {
+            peraExceptionLogger.logException(e)
+            null
+        }
+    }
+
     private fun rawTransactionBytesToSign(tx: ByteArray): ByteArray {
         val txIdPrefix = "TX".toByteArray(StandardCharsets.UTF_8)
         return txIdPrefix + tx

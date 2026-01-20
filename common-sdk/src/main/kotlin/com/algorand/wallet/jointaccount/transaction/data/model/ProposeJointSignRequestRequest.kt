@@ -10,13 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.transaction.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class AssetInboxRequestResponse(
-    @SerializedName("address")
-    val address: String?,
-    @SerializedName("request_count")
-    val requestCount: Int?
+data class ProposeJointSignRequestRequest(
+    @SerializedName("joint_account_address")
+    val jointAccountAddress: String,
+    @SerializedName("proposer_address")
+    val proposerAddress: String,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("raw_transaction_lists")
+    val rawTransactionLists: List<List<String>>,
+    @SerializedName("transaction_signature_lists")
+    val transactionSignatureLists: List<List<String?>>
 )

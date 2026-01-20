@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.transaction.domain.model
 
-import com.google.gson.annotations.SerializedName
-
-internal data class AssetInboxRequestsResponse(
-    @SerializedName("results")
-    val assetInboxRequests: List<AssetInboxRequestsResponse>?
+data class SignRequestTransactionListResponseDTO(
+    val address: String,
+    val response: SignRequestResponseType,
+    val signatures: List<List<String?>>?, // List<List<signature>> - nested list structure
+    val deviceId: String? = null // Required if declining
 )

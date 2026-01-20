@@ -10,11 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.transaction.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class AssetInboxRequestsResponse(
+data class SearchSignRequestsResponse(
+    @SerializedName("count")
+    val count: Int?,
+    @SerializedName("next")
+    val next: String?,
+    @SerializedName("previous")
+    val previous: String?,
     @SerializedName("results")
-    val assetInboxRequests: List<AssetInboxRequestsResponse>?
+    val results: List<JointSignRequestResponse>?
 )

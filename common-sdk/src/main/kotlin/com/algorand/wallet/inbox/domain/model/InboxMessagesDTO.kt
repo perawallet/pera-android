@@ -10,11 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.cards.domain.usecase
+package com.algorand.wallet.inbox.domain.model
 
-import com.algorand.wallet.cards.domain.model.FundAddress
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
 
-fun interface GetCardFundAddresses {
-    suspend operator fun invoke(): PeraResult<List<FundAddress>>
-}
+data class InboxMessagesDTO(
+    val jointAccountImportRequests: List<JointAccountDTO>?,
+    val jointAccountSignRequests: List<JointSignRequestDTO>?,
+    val assetInboxes: List<AssetInboxDTO>?
+)

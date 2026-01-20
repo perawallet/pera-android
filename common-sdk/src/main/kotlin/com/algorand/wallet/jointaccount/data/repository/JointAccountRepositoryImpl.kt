@@ -15,6 +15,11 @@ package com.algorand.wallet.jointaccount.data.repository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
 import com.algorand.wallet.foundation.network.utils.requestWithPeraApiErrorHandler
+import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
+import com.algorand.wallet.inbox.jointaccount.data.mapper.InboxSearchDTOMapper
+import com.algorand.wallet.inbox.jointaccount.data.model.InboxSearchResponse
+import com.algorand.wallet.inbox.jointaccount.data.service.InboxApiService
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
@@ -35,12 +40,14 @@ import javax.inject.Inject
 
 internal class JointAccountRepositoryImpl @Inject constructor(
     private val jointAccountApiService: JointAccountApiService,
+    private val inboxApiService: InboxApiService,
     private val createJointAccountDTOMapper: CreateJointAccountDTOMapper,
     private val jointAccountDTOMapper: JointAccountDTOMapper,
     private val proposeJointSignRequestDTOMapper: ProposeJointSignRequestDTOMapper,
     private val jointSignRequestDTOMapper: JointSignRequestDTOMapper,
     private val signRequestTransactionListResponseDTOMapper: SignRequestTransactionListResponseDTOMapper,
     private val searchSignRequestsDTOMapper: SearchSignRequestsDTOMapper,
+    private val inboxSearchDTOMapper: InboxSearchDTOMapper,
     private val peraApiErrorHandler: PeraRetrofitErrorHandler
 ) : JointAccountRepository {
 
@@ -115,6 +122,36 @@ internal class JointAccountRepositoryImpl @Inject constructor(
                     }
                 }
             } ?: emptyList()
+        }
+    }
+
+    override suspend fun getInboxMessages(
+        deviceId: Long,
+        inboxSearchDTO: InboxSearchDTO
+    ): PeraResult<InboxMessagesDTO> {
+        val request = inboxSearchDTOMapper.mapToInboxSearchRequest(inboxSearchDTO)
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            inboxApiService.getInboxMessages(deviceId, request)
+        }.mapToInboxMessagesDTO()
+    }
+
+    private fun PeraResult<InboxSearchResponse>.mapToInboxMessagesDTO(): PeraResult<InboxMessagesDTO> {
+        return when (this) {
+            is PeraResult.Success -> {
+                val dto = inboxSearchDTOMapper.mapToInboxMessagesDTO(data)
+                if (dto != null) PeraResult.Success(dto) else PeraResult.Error(Exception("Failed to map inbox messages"))
+            }
+
+            is PeraResult.Error -> this
+        }
+    }
+
+    override suspend fun deleteInboxJointInvitationNotification(
+        deviceId: Long,
+        jointAddress: String
+    ): PeraResult<Unit> {
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            inboxApiService.deleteInboxJointInvitationNotification(deviceId, jointAddress)
         }
     }
 }

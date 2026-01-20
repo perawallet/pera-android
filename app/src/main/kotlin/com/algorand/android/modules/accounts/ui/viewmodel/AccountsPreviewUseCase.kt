@@ -24,8 +24,8 @@ import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
 import com.algorand.android.utils.CacheResult
-import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
 import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
+import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequestCountFlow
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.usecase.GetSpotBannersFlow

@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.cards.domain.usecase
+package com.algorand.wallet.inbox.asset.domain.model
 
-import com.algorand.wallet.cards.domain.model.FundAddress
-import com.algorand.wallet.foundation.PeraResult
-
-fun interface GetCardFundAddresses {
-    suspend operator fun invoke(): PeraResult<List<FundAddress>>
-}
+data class AssetInboxRequest(
+    val address: String,
+    val requestCount: Int
+)

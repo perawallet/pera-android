@@ -30,16 +30,16 @@ import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoDisplayString
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
+import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import java.math.BigDecimal
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import java.math.BigDecimal
+import javax.inject.Inject
 
 internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,

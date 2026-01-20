@@ -13,6 +13,8 @@
 package com.algorand.wallet.jointaccount.domain.repository
 
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
 import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountDTO
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
@@ -38,6 +40,17 @@ interface JointAccountRepository {
     suspend fun searchSignRequests(
         searchSignRequestsDTO: SearchSignRequestsDTO
     ): PeraResult<List<JointSignRequestDTO>>
+
+    suspend fun getInboxMessages(
+        deviceId: Long,
+        inboxSearchDTO: InboxSearchDTO
+    ): PeraResult<InboxMessagesDTO>
+
+    suspend fun deleteInboxJointInvitationNotification(
+        deviceId: Long,
+        jointAddress: String
+    ): PeraResult<Unit>
+
 
     companion object {
         const val INJECTION_NAME: String = "jointAccountRepositoryInjectionName"

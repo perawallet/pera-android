@@ -10,11 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.cards.domain.usecase
+package com.algorand.wallet.inbox.asset.domain.repository
 
-import com.algorand.wallet.cards.domain.model.FundAddress
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.asset.domain.model.AssetInboxRequest
+import kotlinx.coroutines.flow.Flow
 
-fun interface GetCardFundAddresses {
-    suspend operator fun invoke(): PeraResult<List<FundAddress>>
+internal interface AssetInboxRepository {
+
+    fun getRequestCountFlow(): Flow<Int>
+
+    suspend fun getRequest(address: String): AssetInboxRequest?
 }

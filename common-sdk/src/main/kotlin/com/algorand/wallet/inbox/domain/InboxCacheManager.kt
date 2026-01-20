@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.cards.domain.usecase
+package com.algorand.wallet.inbox.domain
 
-import com.algorand.wallet.cards.domain.model.FundAddress
-import com.algorand.wallet.foundation.PeraResult
+import androidx.lifecycle.Lifecycle
 
-fun interface GetCardFundAddresses {
-    suspend operator fun invoke(): PeraResult<List<FundAddress>>
+interface InboxCacheManager {
+    fun initialize(lifecycle: Lifecycle)
+    suspend fun refreshCache()
 }

@@ -16,7 +16,7 @@ interface AccountAssetsEventTracker {
     fun logChartTap()
     fun logSwapClick()
     fun logBuyAlgoClick()
-    fun logAssetInboxClick()
+    fun logInboxClick()
     fun logMoreClick()
     fun logAddAssetClick()
     fun logManageAssetsClick()

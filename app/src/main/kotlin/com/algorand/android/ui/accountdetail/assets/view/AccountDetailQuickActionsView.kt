@@ -27,10 +27,10 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQ
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.ShowAddressButton
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.SwapButton
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.quickaction.AssetInboxQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.CopyAddressQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.FundQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.InboxQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.MoreQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonContainer
 import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
@@ -55,7 +55,7 @@ class AccountDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Ab
                         MoreButton -> MoreQuickActionButton { listener?.onMoreClick() }
                         SendButton -> SendQuickActionButton { listener?.onSendClick() }
                         ShowAddressButton -> ShowAddressQuickActionButton { listener?.onShowAddressClick() }
-                        is AssetInbox -> AssetInboxQuickActionButton(it.isSelected) { listener?.onAssetInboxClick() }
+                        is AssetInbox -> InboxQuickActionButton(it.isSelected) { listener?.onInboxClick() }
                         is SwapButton -> SwapQuickActionButton { listener?.onSwapClick() }
                     }
                 }
@@ -73,7 +73,7 @@ class AccountDetailQuickActionsView(context: Context, attrs: AttributeSet?) : Ab
     }
 
     interface AccountDetailQuickActionsViewListener {
-        fun onAssetInboxClick()
+        fun onInboxClick()
         fun onSendClick()
         fun onSwapClick()
         fun onMoreClick()

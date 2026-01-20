@@ -35,6 +35,7 @@ import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationT
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.banner.domain.model.Banner
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
@@ -58,7 +59,8 @@ class AccountPreviewProcessor @Inject constructor(
     private val sortAccountsBySortingPreference: SortAccountsBySortingPreference,
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val getJointAccountParticipantCount: GetJointAccountParticipantCount
 ) {
 
     suspend fun prepareAccountPreview(
@@ -105,30 +107,38 @@ class AccountPreviewProcessor @Inject constructor(
         accountLites: Map<String, AccountLite>,
         rendererType: AmountRenderer.RenderType
     ): List<BaseAccountListItem> {
-        return sortAccountsBySortingPreference.sortAccountLites(accountLites).map { (_, accountLite) ->
-            if (accountLite.cachedInfo != null) {
-                getAccountSuccessItem(accountLite, accountLite.cachedInfo, rendererType)
-            } else {
-                getAccountErrorItem(accountLite)
+        return sortAccountsBySortingPreference.sortAccountLites(accountLites)
+            .filter { (_, accountLite) ->
+                shouldIncludeAccount(accountLite.cachedInfo?.type, accountLite.registrationType)
             }
-        }
+            .map { (_, accountLite) ->
+                if (accountLite.cachedInfo != null) {
+                    getAccountSuccessItem(accountLite, accountLite.cachedInfo, rendererType)
+                } else {
+                    getAccountErrorItem(accountLite)
+                }
+            }
     }
 
     suspend fun createAccountErrorItemList(): List<BaseAccountListItem> {
         val localAccounts = getLocalAccounts()
         val customInfos = getAccountsCustomInfo(localAccounts.map { it.algoAddress })
-        val accountErrorItems = localAccounts.map { localAccount ->
-            val customInfo = customInfos[localAccount.algoAddress]
-            val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = null)
-            val registrationType = getAccountRegistrationType(localAccount)
-            BaseAccountListItem.AccountErrorItem(
-                address = localAccount.algoAddress,
-                primaryDisplayName = displayName.primaryDisplayName,
-                secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
-                accountIconDrawablePreview = getAccountIconDrawablePreviewByType(registrationType),
-                canCopyable = registrationType != AccountRegistrationType.NoAuth
-            )
-        }
+        val accountErrorItems = localAccounts
+            .mapNotNull { localAccount ->
+                val registrationType = getAccountRegistrationType(localAccount)
+                if (!shouldIncludeAccount(accountType = null, registrationType)) {
+                    return@mapNotNull null
+                }
+                val customInfo = customInfos[localAccount.algoAddress]
+                val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = null)
+                BaseAccountListItem.AccountErrorItem(
+                    address = localAccount.algoAddress,
+                    primaryDisplayName = displayName.primaryDisplayName,
+                    secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
+                    accountIconDrawablePreview = getAccountIconDrawablePreviewByType(registrationType),
+                    canCopyable = registrationType != AccountRegistrationType.NoAuth
+                )
+            }
 
         if (accountErrorItems.isEmpty()) return emptyList()
         return mutableListOf<BaseAccountListItem>().apply {
@@ -146,6 +156,11 @@ class AccountPreviewProcessor @Inject constructor(
         val displayName = getAccountDisplayName(accountLite)
         val primaryAmount = PeraAmount(cachedInfo.primaryAccountValue)
         val secondaryAmount = PeraAmount(cachedInfo.secondaryAccountValue)
+        val participantCount = if (cachedInfo.type == AccountType.Joint) {
+            getJointAccountParticipantCount(address).takeIf { it > 0 }
+        } else {
+            null
+        }
         return BaseAccountListItem.AccountSuccessItem(
             address = address,
             primaryDisplayName = displayName.primaryDisplayName,
@@ -154,7 +169,8 @@ class AccountPreviewProcessor @Inject constructor(
             formattedPrimaryValue = getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType),
             formattedSecondaryValue = getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType),
             canCopyable = cachedInfo.type != AccountType.NoAuth,
-            startSmallIconResource = accountLite.getStartSmallIconResource()
+            startSmallIconResource = accountLite.getStartSmallIconResource(),
+            participantCount = participantCount
         )
     }
 
@@ -186,5 +202,14 @@ class AccountPreviewProcessor @Inject constructor(
                 isXoSwapEnabled = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
             )
         )
+    }
+
+    private fun shouldIncludeAccount(
+        accountType: AccountType?,
+        registrationType: AccountRegistrationType
+    ): Boolean {
+        val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
+        if (isJointAccountEnabled) return true
+        return accountType != AccountType.Joint && registrationType != AccountRegistrationType.Joint
     }
 }

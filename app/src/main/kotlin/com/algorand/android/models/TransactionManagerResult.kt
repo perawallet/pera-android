@@ -69,11 +69,13 @@ sealed class TransactionManagerResult {
         }
     }
 
-    object LedgerOperationCanceled : TransactionManagerResult()
+    data object LedgerOperationCanceled : TransactionManagerResult()
 
-    object Loading : TransactionManagerResult()
+    data object Loading : TransactionManagerResult()
 
     data class LedgerWaitingForApproval(val bluetoothName: String?) : TransactionManagerResult()
 
-    object LedgerScanFailed : TransactionManagerResult()
+    data object LedgerScanFailed : TransactionManagerResult()
+
+    data class OnTransactionRequestSigned(val signRequestId: String) : TransactionManagerResult()
 }

@@ -10,20 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.utils.executer
+package com.algorand.android.ui.compose.widget
 
-import com.algorand.android.utils.recordException
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.asExecutor
-import java.util.concurrent.Executor
-
-@Suppress("UnnecessaryAbstractClass")
-abstract class PeraExecutor(private val coroutineDispatcher: CoroutineDispatcher) : Executor {
-    override fun execute(command: Runnable) {
-        try {
-            coroutineDispatcher.asExecutor().execute(command)
-        } catch (exception: Exception) {
-            recordException(exception)
-        }
-    }
+enum class PeraToolbarTextStyle {
+    Default,
+    Large
 }

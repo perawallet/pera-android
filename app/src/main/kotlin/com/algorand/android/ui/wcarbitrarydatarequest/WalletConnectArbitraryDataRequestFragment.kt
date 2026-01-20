@@ -136,6 +136,15 @@ class WalletConnectArbitraryDataRequestFragment :
         arbitraryDataRequestViewModel.setupWalletConnectSignManager(viewLifecycleOwner.lifecycle)
         initObservers()
         initUi()
+        initSavedStateListener()
+    }
+
+    private fun initSavedStateListener() {
+        startSavedStateListener(R.id.walletConnectArbitraryDataRequestFragment) {
+            useSavedStateValue<ConfirmationBottomSheetResult>(RESULT_KEY) { result ->
+                if (result.isAccepted) confirmArbitraryData()
+            }
+        }
     }
 
     private fun initNavController() {
@@ -174,15 +183,6 @@ class WalletConnectArbitraryDataRequestFragment :
                 else -> {
                     motionArbitraryData.isEnabled = true
                 }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startSavedStateListener(R.id.walletConnectArbitraryDataRequestFragment) {
-            useSavedStateValue<ConfirmationBottomSheetResult>(RESULT_KEY) { result ->
-                if (result.isAccepted) confirmArbitraryData()
             }
         }
     }

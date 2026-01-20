@@ -30,6 +30,7 @@ import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.viewbinding.viewBinding
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null

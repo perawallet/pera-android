@@ -159,15 +159,11 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
+        initSavedStateListener()
     }
 
     private fun setTransactionNote(note: String?, isEditable: Boolean) {
         transactionNote = Pair(note, isEditable)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
     }
 
     private fun initSavedStateListener() {
@@ -397,6 +393,10 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
                 titleResId = R.string.asset_transfer_completed
             )
         )
+    }
+
+    override fun onJointAccountSignRequestCreated(signRequestId: String) {
+        TODO("Implement this")
     }
 
     companion object {

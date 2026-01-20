@@ -14,6 +14,7 @@ package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource.HD
+import com.algorand.android.models.AccountIconResource.JOINT
 import com.algorand.android.models.AccountIconResource.LEDGER
 import com.algorand.android.models.AccountIconResource.STANDARD
 import com.algorand.android.models.AccountIconResource.WATCH
@@ -49,6 +50,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.NoAuth -> WATCH.backgroundColorResId
             AccountType.Algo25 -> STANDARD.backgroundColorResId
             AccountType.HdKey -> HD.backgroundColorResId
+            AccountType.Joint -> JOINT.backgroundColorResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountType?.canSignTransaction() == true) {
                     STANDARD.backgroundColorResId
@@ -70,6 +72,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.NoAuth -> WATCH.iconTintResId
             AccountType.Algo25 -> STANDARD.iconTintResId
             AccountType.HdKey -> HD.iconTintResId
+            AccountType.Joint -> JOINT.iconTintResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountType?.canSignTransaction() == true) STANDARD.iconTintResId else R.color.text_gray_lighter
             }
@@ -87,6 +90,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.NoAuth -> WATCH.iconResId
             AccountType.Algo25 -> STANDARD.iconResId
             AccountType.HdKey -> HD.iconResId
+            AccountType.Joint -> JOINT.iconResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountType?.canSignTransaction() == true) STANDARD.iconResId else R.drawable.ic_question
             }

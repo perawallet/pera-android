@@ -15,6 +15,7 @@ package com.algorand.android.core.transaction.external
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
+import com.algorand.android.R
 import com.algorand.android.ledger.CustomScanCallback
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
@@ -66,9 +67,9 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     protected var transaction: List<TRANSACTION>? = null
 
     private val signHelperListener = object : ListQueuingHelper.Listener<ExternalTransaction, ByteArray> {
-        override fun onAllItemsDequeued(signedTransactions: List<ByteArray?>) {
+        override fun onAllItemsDequeued(dequeuedItemList: List<ByteArray?>) {
             transaction?.run {
-                _signResultFlow.value = ExternalTransactionSignResult.Success(this, signedTransactions)
+                _signResultFlow.value = ExternalTransactionSignResult.Success(this, dequeuedItemList)
             }
         }
 
@@ -143,7 +144,9 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
 
                 is OperationCancelledResult -> postResult(ExternalTransactionSignResult.TransactionCancelled())
                 else -> {
-                    sendErrorLog("Unhandled else case in WalletConnectSignManager.operationManagerCollectorAction")
+                    val errorMessage =
+                        "Unhandled else case in ExternalTransactionSignManager.operationManagerCollectorAction"
+                    sendErrorLog(errorMessage)
                 }
             }
         }
@@ -187,7 +190,7 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                 }
 
                 is TransactionSigner.Joint -> {
-                    TODO("Handle Joint Account")
+                    signJointAccountTransaction()
                 }
             }
         }
@@ -245,8 +248,12 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     }
 
     private fun signTransactionWithSecretKey(transaction: ExternalTransaction, secretKey: ByteArray) {
-        val signedTransaction = transaction.transactionByteArray?.signTx(secretKey)
-        onTransactionSigned(transaction, signedTransaction)
+        try {
+            val signedTransaction = transaction.transactionByteArray?.signTx(secretKey)
+            onTransactionSigned(transaction, signedTransaction)
+        } finally {
+            secretKey.clearFromMemory()
+        }
     }
 
     private suspend fun signHdTransaction(transaction: ExternalTransaction, accountAddress: String) {
@@ -254,12 +261,24 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         val hdKey = getLocalAccount(accountAddress) as? LocalAccount.HdKey ?: return handleSignError(transaction)
         val seed = getHdSeed(seedId = hdKey.seedId) ?: return handleSignError(transaction)
 
-        val transactionSignedByteArray = signHdKeyTransaction.signTransaction(
-            transactionBytes, seed.copyOf(), hdKey.account, hdKey.change, hdKey.keyIndex
-        ) ?: return handleSignError(transaction)
+        try {
+            val transactionSignedByteArray = signHdKeyTransaction.signTransaction(
+                transactionBytes, seed, hdKey.account, hdKey.change, hdKey.keyIndex
+            ) ?: return handleSignError(transaction)
+            onTransactionSigned(transaction, transactionSignedByteArray)
+        } finally {
+            seed.clearFromMemory()
+        }
+    }
 
-        seed.clearFromMemory()
-        onTransactionSigned(transaction, transactionSignedByteArray)
+    private fun signJointAccountTransaction() {
+        // Joint accounts are not supported for external transactions (swaps, WalletConnect, etc.)
+        // These require synchronous signing, but joint accounts need async signature collection
+        postResult(
+            ExternalTransactionSignResult.Error.Defined(
+                AnnotatedString(R.string.joint_account_feature_not_supported)
+            )
+        )
     }
 
     private fun handleSignError(transaction: ExternalTransaction) {

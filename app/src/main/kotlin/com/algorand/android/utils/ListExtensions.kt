@@ -12,12 +12,6 @@
 
 package com.algorand.android.utils
 
-fun <T> MutableList<T>.popIfOrNull(predicate: (T) -> Boolean): T? {
-    val element = firstOrNull { predicate(it) } ?: return null
-    remove(element)
-    return element
-}
-
 fun <T, R> List<T?>.mapToNotNullableListOrNull(transform: (T?) -> R?): List<R>? {
     val safeList = mutableListOf<R>()
     forEach {

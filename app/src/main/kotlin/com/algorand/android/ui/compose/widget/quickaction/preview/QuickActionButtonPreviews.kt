@@ -21,9 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.algorand.android.ui.compose.widget.quickaction.AssetInboxQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.CopyAddressQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.InboxQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.MoreQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.ShowAddressQuickActionButton
@@ -45,8 +45,8 @@ fun QuickActionButtonPreviews() {
         BuySellQuickActionButton {}
         StakeQuickActionButton {}
         SendQuickActionButton {}
-        AssetInboxQuickActionButton(isSelected = false) {}
-        AssetInboxQuickActionButton(isSelected = true) {}
+        InboxQuickActionButton(isSelected = false) {}
+        InboxQuickActionButton(isSelected = true) {}
         CopyAddressQuickActionButton {}
         MoreQuickActionButton {}
         ShowAddressQuickActionButton {}

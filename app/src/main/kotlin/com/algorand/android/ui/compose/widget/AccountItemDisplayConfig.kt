@@ -10,20 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.utils.executer
+package com.algorand.android.ui.compose.widget
 
-import com.algorand.android.utils.recordException
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.asExecutor
-import java.util.concurrent.Executor
-
-@Suppress("UnnecessaryAbstractClass")
-abstract class PeraExecutor(private val coroutineDispatcher: CoroutineDispatcher) : Executor {
-    override fun execute(command: Runnable) {
-        try {
-            coroutineDispatcher.asExecutor().execute(command)
-        } catch (exception: Exception) {
-            recordException(exception)
-        }
-    }
-}
+/**
+ * Configuration for optional display values in PeraAccountItem.
+ */
+data class AccountItemDisplayConfig(
+    val primaryValueText: String? = null,
+    val secondaryValueText: String? = null,
+    val startSmallIconResId: Int? = null,
+    val startSmallIconContentDescription: String? = null
+)

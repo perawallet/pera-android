@@ -13,14 +13,18 @@
 package com.algorand.android.ui.compose.widget
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import com.algorand.android.R
@@ -41,25 +46,77 @@ fun PeraAccountItem(
     modifier: Modifier = Modifier,
     iconDrawablePreview: AccountIconDrawablePreview,
     displayName: AccountDisplayName,
+    displayConfig: AccountItemDisplayConfig = AccountItemDisplayConfig(),
+    canCopyable: Boolean = true,
     onCopyAddress: (String) -> Unit = {},
     onAccountClick: (String) -> Unit = {}
 ) {
-    val longClickModifier = Modifier.pointerInput(Unit) {
-        detectTapGestures(
-            onLongPress = { onCopyAddress(displayName.accountAddress) },
-            onTap = { onAccountClick(displayName.accountAddress) }
-        )
+    PeraAccountItem(
+        modifier = modifier,
+        displayName = displayName,
+        displayConfig = displayConfig,
+        canCopyable = canCopyable,
+        onCopyAddress = onCopyAddress,
+        onAccountClick = onAccountClick,
+        iconContent = {
+            AccountIcon(
+                modifier = Modifier.size(40.dp),
+                iconDrawablePreview = iconDrawablePreview
+            )
+        }
+    )
+}
+
+@Composable
+fun PeraAccountItem(
+    modifier: Modifier = Modifier,
+    displayName: AccountDisplayName,
+    displayConfig: AccountItemDisplayConfig = AccountItemDisplayConfig(),
+    canCopyable: Boolean = true,
+    onCopyAddress: (String) -> Unit = {},
+    onAccountClick: (String) -> Unit = {},
+    iconContent: @Composable () -> Unit,
+    trailingContent: (@Composable () -> Unit)? = null
+) {
+    val longClickModifier = if (canCopyable) {
+        Modifier.pointerInput(onCopyAddress, onAccountClick, displayName.accountAddress) {
+            detectTapGestures(
+                onLongPress = { onCopyAddress(displayName.accountAddress) },
+                onTap = { onAccountClick(displayName.accountAddress) }
+            )
+        }
+    } else {
+        Modifier.clickable { onAccountClick(displayName.accountAddress) }
     }
+
     Row(
-        modifier = modifier.then(longClickModifier),
+        modifier = modifier
+            .fillMaxWidth()
+            .then(longClickModifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AccountIcon(
+        Box(
             modifier = Modifier.size(40.dp),
-            iconDrawablePreview
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            iconContent()
+            if (displayConfig.startSmallIconResId != null) {
+                Icon(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .align(Alignment.BottomEnd),
+                    painter = painterResource(displayConfig.startSmallIconResId),
+                    contentDescription = displayConfig.startSmallIconContentDescription,
+                    tint = PeraTheme.colors.text.main
+                )
+            }
+        }
         Spacer(modifier = Modifier.width(16.dp))
-        DisplayName(displayName)
+        DisplayName(
+            displayName = displayName,
+            displayConfig = displayConfig,
+            trailingContent = trailingContent
+        )
     }
 }
 
@@ -80,23 +137,58 @@ fun AccountIcon(
 }
 
 @Composable
-private fun RowScope.DisplayName(displayName: AccountDisplayName) {
+private fun RowScope.DisplayName(
+    displayName: AccountDisplayName,
+    displayConfig: AccountItemDisplayConfig,
+    trailingContent: (@Composable () -> Unit)? = null
+) {
     with(displayName) {
-        Column(
+        Row(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = primaryDisplayName,
-                style = PeraTheme.typography.body.regular.sans,
-                color = PeraTheme.colors.text.main
-            )
-            if (secondaryDisplayName != null && primaryDisplayName != secondaryDisplayName) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    text = secondaryDisplayName,
-                    style = PeraTheme.typography.footnote.sans,
-                    color = PeraTheme.colors.text.grayLighter
+                    text = primaryDisplayName,
+                    style = PeraTheme.typography.body.regular.sans,
+                    color = PeraTheme.colors.text.main
                 )
+                if (secondaryDisplayName != null && primaryDisplayName != secondaryDisplayName) {
+                    Text(
+                        text = secondaryDisplayName,
+                        style = PeraTheme.typography.footnote.sans,
+                        color = PeraTheme.colors.text.grayLighter
+                    )
+                }
+            }
+            if (displayConfig.primaryValueText != null || displayConfig.secondaryValueText != null) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+                    if (displayConfig.primaryValueText != null) {
+                        Text(
+                            text = displayConfig.primaryValueText,
+                            style = PeraTheme.typography.body.regular.sans,
+                            color = PeraTheme.colors.text.main
+                        )
+                    }
+                    if (displayConfig.secondaryValueText != null) {
+                        Text(
+                            text = displayConfig.secondaryValueText,
+                            style = PeraTheme.typography.footnote.sans,
+                            color = PeraTheme.colors.text.gray
+                        )
+                    }
+                }
+            }
+            if (trailingContent != null) {
+                Spacer(modifier = Modifier.width(16.dp))
+                trailingContent()
             }
         }
     }

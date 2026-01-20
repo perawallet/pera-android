@@ -112,10 +112,6 @@ class RegisterWatchAccountFragment : DaggerBaseFragment(R.layout.fragment_regist
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
-    }
-
-    override fun onStart() {
-        super.onStart()
         initSavedStateListeners()
     }
 

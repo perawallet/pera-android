@@ -100,6 +100,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
         setupRecyclerView()
         initObservers()
         removeAssetsViewModel.initializeViewState()
+        initSavedStateListener()
     }
 
     private fun setupToolbar() {
@@ -190,11 +191,6 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
             assetFullName = removeAssetItem.name,
             publicKey = removeAssetsViewModel.accountAddress
         )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
     }
 
     private fun navToSendAlgoNavigation(assetTransaction: AssetTransaction, shouldPopulateAmountWithMax: Boolean) {

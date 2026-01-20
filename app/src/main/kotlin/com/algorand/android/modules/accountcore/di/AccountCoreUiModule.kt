@@ -42,6 +42,7 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalSta
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreviewUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetWalletIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetWalletIconDrawablePreviewUseCase
+import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.wallet.nameservice.domain.usecase.GetAccountNameService
@@ -70,13 +71,15 @@ internal object AccountCoreUiModule {
         getAccountCustomInfoOrNull: GetAccountCustomInfoOrNull,
         getAccountDetail: GetAccountDetail,
         @ApplicationContext context: Context,
-        getAccountNameService: GetAccountNameService
+        getAccountNameService: GetAccountNameService,
+        contactRepository: ContactRepository
     ): GetAccountDisplayName {
         return GetAccountDisplayNameUseCase(
             getCustomInfoOrNull = getAccountCustomInfoOrNull,
             getAccountDetail = getAccountDetail,
             resources = context.resources,
-            getAccountNameService = getAccountNameService
+            getAccountNameService = getAccountNameService,
+            contactRepository = contactRepository
         )
     }
 

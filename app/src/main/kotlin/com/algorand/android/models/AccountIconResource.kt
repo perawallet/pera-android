@@ -34,5 +34,9 @@ enum class AccountIconResource(
 
     HD(R.drawable.ic_hd_wallet, R.color.wallet_4, R.color.wallet_4_icon),
 
+    JOINT(R.drawable.ic_joint, R.color.wallet_1_icon, R.color.wallet_1),
+
+    CONTACT(R.drawable.ic_user, R.color.wallet_1_icon, R.color.wallet_1),
+
     UNDEFINED(R.drawable.ic_wallet, R.color.transparent, R.color.transparent);
 }

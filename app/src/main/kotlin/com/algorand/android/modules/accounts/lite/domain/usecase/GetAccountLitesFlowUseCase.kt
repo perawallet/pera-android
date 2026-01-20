@@ -98,11 +98,15 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
                 async {
                     val localAccount = localAccounts.first { it.algoAddress == address }
                     val customAccountInfo = customInfo[address]
+                    val storedBackupStatus = customAccountInfo?.isBackedUp ?: false
+                    val needsPassphraseBackup = localAccount is LocalAccount.Algo25 ||
+                            localAccount is LocalAccount.HdKey
+                    val effectiveBackupStatus = !needsPassphraseBackup || storedBackupStatus
                     address to AccountLite(
                         address = address,
                         registrationType = getAccountRegistrationType(localAccount),
                         customName = customAccountInfo?.customName ?: address.toShortenedAddress(),
-                        isBackedUp = customAccountInfo?.isBackedUp ?: false,
+                        isBackedUp = effectiveBackupStatus,
                         sortIndex = customAccountInfo?.orderIndex ?: Int.MAX_VALUE,
                         cachedInfo = getCachedInfo(localAccounts, address, accountsLiteCombined)
                     )

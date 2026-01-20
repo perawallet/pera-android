@@ -16,11 +16,13 @@ package com.algorand.android.ui.contacts
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import com.algorand.android.R
@@ -41,6 +43,19 @@ abstract class BaseAddEditContactFragment : DaggerBaseFragment(R.layout.fragment
 
     private val binding by viewBinding(FragmentBaseAddEditContactBinding::bind)
 
+    // Photo Picker for Android 13+ (no permission required)
+    private val photoPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                contactImageUri = uri.toString()
+                with(binding.editProfilePhotoButton) {
+                    setIconResource(R.drawable.ic_pen_solid)
+                    setIconTintResource(R.color.primary_background)
+                }
+            }
+        }
+
+    // Legacy image picker for Android 9-12
     private val startForContactImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -101,6 +116,7 @@ abstract class BaseAddEditContactFragment : DaggerBaseFragment(R.layout.fragment
             setAddPhotoTextView(addPhotoTextView)
         }
         initObservers()
+        initDialogSavedStateListener()
     }
 
     open fun initUi() {
@@ -114,21 +130,22 @@ abstract class BaseAddEditContactFragment : DaggerBaseFragment(R.layout.fragment
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        initDialogSavedStateListener()
-    }
-
     protected fun onBackPressed() {
         view?.hideKeyboard()
         navBack()
     }
 
     protected fun onImageAddClick() {
-        if (context?.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE) == true) {
-            startImagePicker()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+ (API 33+): Use Photo Picker - no permission needed
+            photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         } else {
-            requestForImagePickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            // Android 9-12 (API 28-32): Use legacy approach with READ_EXTERNAL_STORAGE
+            if (context?.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE) == true) {
+                startImagePicker()
+            } else {
+                requestForImagePickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
         }
     }
 

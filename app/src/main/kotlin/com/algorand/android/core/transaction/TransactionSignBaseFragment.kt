@@ -92,8 +92,17 @@ abstract class TransactionSignBaseFragment(
                 TransactionManagerResult.LedgerOperationCanceled -> {
                     onSignTransactionCancelledByLedger()
                 }
+
+                is TransactionManagerResult.OnTransactionRequestSigned -> {
+                    hideLoading()
+                    onJointAccountSignRequestCreated(signRequestId)
+                }
             }
         }
+    }
+
+    protected open fun onJointAccountSignRequestCreated(signRequestId: String) {
+        TODO("Implement this")
     }
 
     private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener { shouldStopResources ->

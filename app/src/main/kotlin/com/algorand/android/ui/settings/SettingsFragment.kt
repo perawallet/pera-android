@@ -150,11 +150,6 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        initDialogSavedStateListener()
-    }
-
     private fun onContactsClick() {
         nav(SettingsFragmentDirections.actionSettingsFragmentToContactsFragment())
     }

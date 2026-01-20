@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -41,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
 
 /**
  * A visually appealing error state widget that displays an error message.
@@ -97,12 +97,12 @@ fun ErrorContentWidget(
                 if (showNavigateBackButton) {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Button(
+                    PeraSecondaryButton(
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = onClick,
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(stringResource(id = R.string.back))
-                    }
+                        text = stringResource(id = R.string.back),
+                        cornerRadius = 8.dp
+                    )
                 }
             }
         }

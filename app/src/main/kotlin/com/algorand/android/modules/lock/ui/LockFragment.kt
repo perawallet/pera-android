@@ -100,6 +100,7 @@ class LockFragment : DaggerBaseFragment(R.layout.fragment_lock) {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
         initObserver()
         initUi()
+        initDialogSavedStateListener()
     }
 
     private fun initObserver() {
@@ -120,7 +121,6 @@ class LockFragment : DaggerBaseFragment(R.layout.fragment_lock) {
 
     override fun onResume() {
         super.onResume()
-        initDialogSavedStateListener()
         setRemainingTime(lockViewModel.getLockPenaltyRemainingTime())
         setLockAttemptCount(lockViewModel.getLockAttemptCount())
         showShowBiometricAuthenticationIfNeed()

@@ -1,4 +1,4 @@
-package com.algorand.android.ui.compose.widget/*
+/*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,6 +10,8 @@ package com.algorand.android.ui.compose.widget/*
  * limitations under the License
  */
 
+package com.algorand.android.ui.compose.widget
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,20 +22,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.algorand.android.ui.compose.preview.PeraPreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
+import java.util.Locale
 
 @Composable
 fun GroupChoiceWidget(
@@ -42,33 +44,50 @@ fun GroupChoiceWidget(
     description: String,
     icon: ImageVector,
     iconContentDescription: String,
+    showNewBadge: Boolean = false,
     onClick: () -> Unit
 ) {
     Row(
         modifier = modifier
             .clickable { onClick() }
-            .padding(horizontal = 24.dp)
-            .fillMaxWidth()
-            .padding(vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .background(
+                color = PeraTheme.colors.layer.grayLighter,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(16.dp)
+            .fillMaxWidth(),
     ) {
         Icon(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(PeraTheme.colors.layer.grayLighter)
-                .padding(8.dp),
+            modifier = Modifier.size(24.dp),
             imageVector = icon,
             contentDescription = iconContentDescription,
             tint = PeraTheme.colors.text.main
         )
-        Spacer(modifier = Modifier.width(24.dp))
+        Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text(
-                style = PeraTheme.typography.body.regular.sansMedium,
-                color = PeraTheme.colors.text.main,
-                text = title
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    style = PeraTheme.typography.body.large.sansMedium,
+                    color = PeraTheme.colors.text.main,
+                    text = title
+                )
+                if (showNewBadge) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        modifier = Modifier
+                            .background(
+                                color = PeraTheme.colors.wallet.wallet4.background,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        text = stringResource(R.string.new_text).uppercase(Locale.ENGLISH),
+                        style = PeraTheme.typography.caption.sansMedium,
+                        color = PeraTheme.colors.wallet.wallet4.icon
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 style = PeraTheme.typography.footnote.sans,
@@ -79,14 +98,15 @@ fun GroupChoiceWidget(
     }
 }
 
-@PreviewLightDark
+@PeraPreviewLightDark
 @Composable
-fun GroupChoiceWidgetPreview() {
+private fun GroupChoiceWidgetPreview() {
     GroupChoiceWidget(
         title = stringResource(id = R.string.import_an_account),
         description = stringResource(id = R.string.import_an_existing),
         iconContentDescription = stringResource(id = R.string.import_an_existing),
         icon = ImageVector.vectorResource(R.drawable.ic_key),
+        showNewBadge = true,
         onClick = {},
     )
 }

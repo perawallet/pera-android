@@ -39,7 +39,7 @@ interface ContactDao {
     suspend fun insertUsers(userList: List<User>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertContact(contact: User)
+    suspend fun addContact(contact: User)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateContact(contact: User)

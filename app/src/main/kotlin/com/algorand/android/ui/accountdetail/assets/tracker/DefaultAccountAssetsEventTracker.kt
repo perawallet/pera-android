@@ -31,7 +31,7 @@ internal class DefaultAccountAssetsEventTracker @Inject constructor(
         peraAnalyticsEventTracker.logEvent(BUY_SELL_CLICK)
     }
 
-    override fun logAssetInboxClick() {
+    override fun logInboxClick() {
         peraAnalyticsEventTracker.logEvent(ASSET_INBOX_CLICK)
     }
 

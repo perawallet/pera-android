@@ -55,7 +55,7 @@ class AccountAssetsAccountDetailAdapter(
     }
 
     private val quickActionsViewHolderListener = object : AccountDetailQuickActionsListener {
-        override fun onAssetInboxClick() {
+        override fun onInboxClick() {
             listener.onAssetInboxClick()
         }
 

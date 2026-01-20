@@ -54,7 +54,6 @@ internal class GetGetAddressesWebResponseUseCase @Inject constructor(
             AccountType.NoAuth -> "NoAuth"
             AccountType.Rekeyed -> "Rekeyed"
             AccountType.RekeyedAuth -> "RekeyedAuth"
-            AccountType.Joint -> "Joint"
         }
     }
 }

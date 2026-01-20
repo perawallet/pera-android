@@ -97,10 +97,10 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
         initObservers()
         viewModel.initializePreview()
         arc59ClaimRejectTransactionSignManager.setup(viewLifecycleOwner.lifecycle)
+        initSavedStateListener()
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun initSavedStateListener() {
         startSavedStateListener(R.id.arc59ReceiveDetailFragment) {
             useSavedStateValue<ConfirmationBottomSheetResult>(RESULT_KEY) {
                 if (it.isAccepted) viewModel.rejectTransaction()

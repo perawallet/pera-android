@@ -12,13 +12,15 @@
 
 package com.algorand.android.modules.inbox.jointaccountinvitation.ui.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import java.time.ZonedDateTime
 
-@Parcelize
-data class JointAccountInvitationDetailNavArgs(
+data class JointAccountInvitationInboxItem(
+    val id: String,
     val accountAddress: String,
     val accountAddressShortened: String,
+    val creationDateTime: ZonedDateTime,
+    val timeDifference: Long,
+    val isRead: Boolean,
     val threshold: Int,
     val participantAddresses: List<String>
-) : Parcelable
+)

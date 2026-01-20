@@ -21,11 +21,15 @@ import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheS
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Loading
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
+import com.algorand.android.modules.inbox.allaccounts.ui.usecase.InboxPreviewUseCase
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
+import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequestCountFlow
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.usecase.GetSpotBannersFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,10 +46,13 @@ class AccountsPreviewUseCase @Inject constructor(
     private val portfolioValueItemMapper: PortfolioValueItemMapper,
     private val peraConnectivityManager: PeraConnectivityManager,
     private val accountPreviewProcessor: AccountPreviewProcessor,
+    private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getPrivacyModeFlow: GetPrivacyModeFlow,
     private val getBannerFlow: GetBannerFlow,
     private val getSpotBannersFlow: GetSpotBannersFlow,
+    private val inboxPreviewUseCase: InboxPreviewUseCase,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) {
 
     suspend fun getInitialAccountPreview(): AccountPreview {
@@ -81,16 +88,37 @@ class AccountsPreviewUseCase @Inject constructor(
         return combine(
             getBannerFlow(),
             getSpotBannersFlow(getSpotBannerFlowData(accountLiteCacheData)),
+            getTotalInboxCountFlow(),
             getPrivacyModeFlow()
-        ) { banner, spotBanners, privacyMode ->
+        ) { banner, spotBanners, totalInboxCount, privacyMode ->
             accountPreviewProcessor.prepareAccountPreview(
                 accountLiteCacheData.localAccounts,
                 accountLiteCacheData.accountLites,
                 banner,
-                0,
+                totalInboxCount,
                 privacyMode,
                 spotBanners
             )
+        }
+    }
+
+    @OptIn(
+        kotlinx.coroutines.FlowPreview::class,
+        kotlinx.coroutines.ExperimentalCoroutinesApi::class
+    )
+    private suspend fun getTotalInboxCountFlow(): Flow<Int> {
+        val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
+        return getAssetInboxRequestCountFlow().flatMapLatest { asaInboxCount ->
+            inboxPreviewUseCase.getInboxPreview()
+                .mapLatest { inboxPreview ->
+                    if (isJointAccountEnabled) {
+                        val jointAccountSignRequestsCount = inboxPreview.signatureRequestList.size
+                        val jointAccountImportRequestsCount = inboxPreview.jointAccountInvitationList.size
+                        asaInboxCount + jointAccountSignRequestsCount + jointAccountImportRequestsCount
+                    } else {
+                        asaInboxCount
+                    }
+                }
         }
     }
 

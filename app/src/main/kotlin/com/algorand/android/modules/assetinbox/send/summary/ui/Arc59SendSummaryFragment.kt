@@ -137,10 +137,6 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
         initObservers()
         arc59SendSummaryViewModel.initializePreview()
         arc59SendTransactionSignManager.setup(viewLifecycleOwner.lifecycle)
-    }
-
-    override fun onResume() {
-        super.onResume()
         initSavedStateListener()
     }
 

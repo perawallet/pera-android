@@ -41,6 +41,7 @@ import com.algorand.android.models.TransactionSignData
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
@@ -393,7 +394,8 @@ class MainActivity :
                 is TransactionManagerResult.OnTransactionRequestSigned -> {
                     hideProgress()
                     hideLedgerLoadingDialog()
-                    TODO("Implement this")
+                    PendingSignaturesDialogFragment.newInstance(result.signRequestId)
+                        .show(supportFragmentManager, PendingSignaturesDialogFragment.TAG)
                 }
 
                 TransactionManagerResult.LedgerOperationCanceled -> {
@@ -576,7 +578,11 @@ class MainActivity :
 
     private fun navToJointAccountImportDeepLink(address: String) {
         navToHome()
-        TODO("Implement this")
+        nav(
+            HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
+                accountAddress = address
+            )
+        )
     }
 
     fun navToContactAdditionNavigation(address: String, label: String?) {

@@ -7,16 +7,12 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- *  limitations under the License
+ * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.modules.addaccount.joint.core
 
-import androidx.annotation.StringRes
-
-data class RegisterIntroPreview(
-    @param:StringRes val titleRes: Int,
-    val isSkipButtonVisible: Boolean,
-    val isCloseButtonVisible: Boolean,
-    val hasHdWallet: Boolean
-)
+object JointAccountConstants {
+    const val CURRENT_VERSION = 1
+    const val MIN_THRESHOLD = 2
+}

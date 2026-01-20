@@ -256,7 +256,11 @@ class AccountDetailFragment :
     }
 
     private fun navToJointAccountDetailFragment() {
-        TODO("Implement this")
+        nav(
+            AccountDetailFragmentDirections.actionAccountDetailFragmentToJointAccountDetailFragment(
+                accountDetailViewModel.accountAddress
+            )
+        )
     }
 
     override fun onImageItemClick(nftAssetId: Long) {
@@ -559,7 +563,12 @@ class AccountDetailFragment :
     }
 
     private fun navToInboxWithFilter() {
-        TODO("Implement this")
+        nav(
+            AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToAssetInboxAllAccountsNavigation(
+                    filterAccountAddress = accountDetailViewModel.accountAddress
+                )
+        )
     }
 
     private fun navToBuySellActionsBottomSheet() {

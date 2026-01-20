@@ -13,7 +13,11 @@
 package com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase
 
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.android.models.Result
+import com.algorand.android.modules.addaccount.joint.core.domain.repository.JointAccountRepository
+import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.DeleteInboxJointInvitationNotification
+import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -21,7 +25,20 @@ class JointAccountInboxOperationsUseCase @Inject constructor(
     private val deviceIdUseCase: DeviceIdUseCase,
     @param:Named(JointAccountRepository.INJECTION_NAME)
     private val jointAccountRepository: JointAccountRepository,
+    private val deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification
 ) {
 
     fun getDeviceId(): String? = deviceIdUseCase.getSelectedNodeDeviceId()
+
+    suspend fun getInboxMessages(addresses: List<String>): Result<InboxMessagesDTO> {
+        val deviceId = getDeviceId()?.toLongOrNull()
+            ?: return Result.Error(Exception("Device ID not available"))
+        return jointAccountRepository.getInboxMessages(deviceId, InboxSearchDTO(addresses))
+    }
+
+    suspend fun deleteNotification(accountAddress: String): Boolean {
+        val deviceId = getDeviceId()?.toLongOrNull() ?: return false
+        val result = deleteInboxJointInvitationNotification(deviceId, accountAddress)
+        return result is Result.Success
+    }
 }

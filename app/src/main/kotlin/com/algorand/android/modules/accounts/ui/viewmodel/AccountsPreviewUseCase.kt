@@ -25,9 +25,7 @@ import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
-import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequestCountFlow
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.usecase.GetSpotBannersFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -44,12 +42,10 @@ class AccountsPreviewUseCase @Inject constructor(
     private val portfolioValueItemMapper: PortfolioValueItemMapper,
     private val peraConnectivityManager: PeraConnectivityManager,
     private val accountPreviewProcessor: AccountPreviewProcessor,
-    private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getPrivacyModeFlow: GetPrivacyModeFlow,
     private val getBannerFlow: GetBannerFlow,
     private val getSpotBannersFlow: GetSpotBannersFlow,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) {
 
     suspend fun getInitialAccountPreview(): AccountPreview {
@@ -82,7 +78,6 @@ class AccountsPreviewUseCase @Inject constructor(
     }
 
     private suspend fun getAccountPreviewInitializationFlow(accountLiteCacheData: Data): Flow<AccountPreview> {
-        TODO("Implement this")
         return combine(
             getBannerFlow(),
             getSpotBannersFlow(getSpotBannerFlowData(accountLiteCacheData)),

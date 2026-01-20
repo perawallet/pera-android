@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel
@@ -70,11 +71,23 @@ class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailScre
     }
 
     private fun navigateToNameJointAccount(event: ViewEvent.NavigateToNameJointAccount) {
-        TODO("Implement this")
+        nav(
+            HomeNavigationDirections.actionGlobalToNameJointAccountFragment(
+                threshold = event.threshold,
+                participantAddresses = event.participantAddresses.toTypedArray()
+            )
+        )
     }
 
     private fun navigateToEditContact(event: ViewEvent.NavigateToEditContact) {
-        TODO("Implement this")
+        nav(
+            HomeNavigationDirections.actionGlobalEditContactFragment(
+                contactName = event.contactName,
+                contactPublicKey = event.contactPublicKey,
+                contactDatabaseId = event.contactDatabaseId,
+                contactProfileImageUri = event.contactProfileImageUri
+            )
+        )
     }
 
     override fun onBackClick() {

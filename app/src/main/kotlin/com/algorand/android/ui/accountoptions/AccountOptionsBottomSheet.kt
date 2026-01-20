@@ -182,7 +182,12 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun onExportShareAccountClick() {
-        TODO("Implement this")
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToExportShareAccountNavigation(
+                    accountOptionsViewModel.accountAddress
+                )
+        )
     }
 
     private fun setupRenameAccountButton() {

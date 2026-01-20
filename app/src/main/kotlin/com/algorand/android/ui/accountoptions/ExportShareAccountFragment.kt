@@ -14,6 +14,7 @@ package com.algorand.android.ui.accountoptions
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentExportShareAccountBinding
@@ -43,6 +44,8 @@ class ExportShareAccountFragment : DaggerBaseFragment(R.layout.fragment_export_s
 
     private val binding by viewBinding(FragmentExportShareAccountBinding::bind)
 
+    private val args: ExportShareAccountFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getAppToolbar()?.changeTitle(getString(R.string.export_share_account))
@@ -55,7 +58,7 @@ class ExportShareAccountFragment : DaggerBaseFragment(R.layout.fragment_export_s
     }
 
     private fun getExportUrl(): String {
-        TODO("Implement this")
+        return "perawallet://joint-account-import?address=${args.accountAddress}"
     }
 
     private fun onCopyUrlClick() {

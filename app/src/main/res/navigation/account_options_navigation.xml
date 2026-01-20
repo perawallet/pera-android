@@ -35,6 +35,8 @@
 
     <include app:graph="@navigation/no_rekeyed_accounts_navigation" />
 
+    <include app:graph="@navigation/export_share_account_navigation" />
+
     <dialog
         android:id="@+id/accountOptionsBottomSheet"
         android:name="com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet"
@@ -122,6 +124,16 @@
         <action
             android:id="@+id/action_accountOptionsBottomSheet_to_noRekeyedAccountsNavigation"
             app:destination="@id/noRekeyedAccountsNavigation" />
+
+        <action
+            android:id="@+id/action_accountOptionsBottomSheet_to_exportShareAccountNavigation"
+            app:destination="@id/exportShareAccountNavigation"
+            app:popUpTo="@id/accountOptionsBottomSheet"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
     </dialog>
 
 </navigation>

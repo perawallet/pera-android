@@ -12,8 +12,10 @@
 
 package com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel
 
+import com.algorand.android.models.Result
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase.CreateJointAccountParticipantItem
+import com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase.JointAccountInboxOperationsUseCase
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
@@ -27,6 +29,7 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
     private val getAccountDisplayName: GetAccountDisplayName,
     private val contactRepository: ContactRepository,
     private val createJointAccountParticipantItem: CreateJointAccountParticipantItem,
+    private val inboxOperationsUseCase: JointAccountInboxOperationsUseCase
 ) : JointAccountDetailProcessor {
 
     override suspend fun createContentState(
@@ -71,8 +74,10 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
     ): JointAccountDetailProcessor.InvitationResult {
         val addresses = createJointAccountParticipantItem.getLocalAccountAddresses()
 
-        TODO("Implement this")
-        return JointAccountDetailProcessor.InvitationResult.NetworkError
+        return when (val result = inboxOperationsUseCase.getInboxMessages(addresses)) {
+            is Result.Success -> parseInvitationFromInboxMessages(result.data, accountAddress)
+            is Result.Error -> JointAccountDetailProcessor.InvitationResult.NetworkError
+        }
     }
 
     override suspend fun createParticipantItems(
@@ -82,8 +87,7 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
     }
 
     override suspend fun deleteInboxNotification(accountAddress: String) {
-//        inboxOperationsUseCase.deleteNotification(accountAddress)
-        TODO("Implement this")
+        inboxOperationsUseCase.deleteNotification(accountAddress)
     }
 
     override suspend fun isJointAccountExists(accountAddress: String): Boolean {

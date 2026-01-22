@@ -73,7 +73,6 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
 
     override fun onResume() {
         super.onResume()
-        initSavedStateListener()
     }
 
     private fun customizeToolbar() {

@@ -15,7 +15,6 @@ package com.algorand.android.ui.webview.bridge.usecase
 import com.algorand.android.ui.webview.bridge.model.AddressWebResponse
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import java.math.BigInteger

@@ -16,7 +16,7 @@ import android.util.Log
 import com.algorand.android.R
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.DeleteInboxJointInvitationNotification
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
 import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
 import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount

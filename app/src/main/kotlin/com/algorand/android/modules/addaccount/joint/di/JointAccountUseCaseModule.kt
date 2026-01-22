@@ -12,12 +12,6 @@
 
 package com.algorand.android.modules.addaccount.joint.di
 
-import com.algorand.android.modules.addaccount.joint.core.data.repository.JointAccountRepositoryImpl
-import com.algorand.android.modules.addaccount.joint.core.domain.repository.JointAccountRepository
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.CreateJointAccount
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.CreateJointAccountUseCase
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.DeleteInboxJointInvitationNotification
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.DeleteInboxJointInvitationNotificationUseCase
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContactUseCase
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
@@ -36,32 +30,15 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object JointAccountUseCaseModule {
 
     @Provides
-    @Named(JointAccountRepository.INJECTION_NAME)
-    fun provideJointAccountRepository(
-        repository: JointAccountRepositoryImpl
-    ): JointAccountRepository = repository
-
-    @Provides
     fun provideSignAndSubmitJointAccountSignature(
         useCase: SignAndSubmitJointAccountSignatureUseCase
     ): SignAndSubmitJointAccountSignature = useCase
-
-    @Provides
-    fun provideCreateJointAccount(
-        useCase: CreateJointAccountUseCase
-    ): CreateJointAccount = useCase
-
-    @Provides
-    fun provideDeleteInboxJointInvitationNotification(
-        useCase: DeleteInboxJointInvitationNotificationUseCase
-    ): DeleteInboxJointInvitationNotification = useCase
 
     @Provides
     fun provideGetDefaultJointAccountName(

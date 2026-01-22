@@ -16,12 +16,12 @@ import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
 import com.google.gson.annotations.SerializedName
 
-data class InboxSearchRequest(
+internal data class InboxSearchRequest(
     @SerializedName("addresses")
     val addresses: List<String>
 )
 
-data class InboxSearchResponse(
+internal data class InboxSearchResponse(
     @SerializedName("joint_account_import_requests")
     val jointAccountImportRequests: List<JointAccountResponse>?,
     @SerializedName("joint_account_sign_requests")
@@ -30,7 +30,7 @@ data class InboxSearchResponse(
     val asaInboxes: List<AssetInboxResponse>?
 )
 
-data class AssetInboxResponse(
+internal data class AssetInboxResponse(
     @SerializedName("address")
     val address: String?,
     @SerializedName("inbox_address")

@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.inbox.domain.usecase
 
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxRepository
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
@@ -36,19 +36,19 @@ internal class HasInboxItemsForAddressUseCase @Inject constructor(
         }
     }
 
-    private fun hasAssetInboxRequests(messages: InboxMessagesDTO, address: String): Boolean {
+    private fun hasAssetInboxRequests(messages: InboxMessages, address: String): Boolean {
         return messages.assetInboxes.orEmpty().any {
             it.address == address && it.requestCount > 0
         }
     }
 
-    private fun hasJointAccountInvitations(messages: InboxMessagesDTO, address: String): Boolean {
+    private fun hasJointAccountInvitations(messages: InboxMessages, address: String): Boolean {
         return messages.jointAccountImportRequests.orEmpty().any {
             it.participantAddresses.orEmpty().contains(address)
         }
     }
 
-    private fun hasSignRequests(messages: InboxMessagesDTO, address: String): Boolean {
+    private fun hasSignRequests(messages: InboxMessages, address: String): Boolean {
         return messages.jointAccountSignRequests.orEmpty().any { signRequest ->
             signRequest.jointAccount?.let { jointAccount ->
                 jointAccount.address == address ||

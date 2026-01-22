@@ -37,7 +37,6 @@ import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleLi
 import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleListingViewModel.ViewState.ContentState.ContentStateType.Empty
 import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleListingViewModel.ViewState.ContentState.ContentStateType.Empty.AllFilteredOut
 import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleListingViewModel.ViewState.ContentState.ContentStateType.Error
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.asset.collectible.domain.model.FilteredCollectibleCount
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.viewmodel.StateDelegate

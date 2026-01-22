@@ -23,11 +23,11 @@ import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import javax.inject.Inject
 
@@ -36,7 +36,7 @@ fun interface SignAndSubmitJointAccountSignature {
         signRequestId: String,
         participantAddress: String,
         rawTransactions: List<String>
-    ): PeraResult<JointSignRequestDTO>
+    ): PeraResult<JointSignRequest>
 }
 
 internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
@@ -51,7 +51,7 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
         signRequestId: String,
         participantAddress: String,
         rawTransactions: List<String>
-    ): PeraResult<JointSignRequestDTO> {
+    ): PeraResult<JointSignRequest> {
         val signatures = mutableListOf<String?>()
 
         for (rawTransaction in rawTransactions) {
@@ -64,14 +64,14 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
             signatures.add(Base64.encodeToString(signatureBytes, Base64.NO_WRAP))
         }
 
-        val signRequest = SignRequestTransactionListResponseDTO(
+        val addSignatureInput = AddSignatureInput(
             address = participantAddress,
             response = SignRequestResponseType.SIGNED,
             signatures = listOf(signatures),
             deviceId = null
         )
 
-        return addJointAccountSignature(signRequestId, signRequest)
+        return addJointAccountSignature(signRequestId, addSignatureInput)
     }
 
     private suspend fun signTransaction(transactionBytes: ByteArray, signerAddress: String): ByteArray? {

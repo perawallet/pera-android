@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.inbox.data.repository
 
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 
 internal class InboxRepositoryImpl : InboxRepository {
 
-    private val inboxMessagesCache = MutableStateFlow<InboxMessagesDTO?>(null)
+    private val inboxMessagesCache = MutableStateFlow<InboxMessages?>(null)
 
-    override suspend fun cacheInboxMessages(inboxMessages: InboxMessagesDTO) {
+    override suspend fun cacheInboxMessages(inboxMessages: InboxMessages) {
         inboxMessagesCache.value = inboxMessages
     }
 
@@ -30,11 +30,11 @@ internal class InboxRepositoryImpl : InboxRepository {
         inboxMessagesCache.value = null
     }
 
-    override fun getInboxMessagesFlow(): Flow<InboxMessagesDTO?> {
+    override fun getInboxMessagesFlow(): Flow<InboxMessages?> {
         return inboxMessagesCache.asStateFlow()
     }
 
-    override suspend fun getInboxMessages(): InboxMessagesDTO? {
+    override suspend fun getInboxMessages(): InboxMessages? {
         return inboxMessagesCache.value
     }
 }

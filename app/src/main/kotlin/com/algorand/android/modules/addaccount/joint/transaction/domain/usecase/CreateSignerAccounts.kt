@@ -13,12 +13,12 @@
 package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
-import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignatureDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
 
 interface CreateSignerAccounts {
     suspend operator fun invoke(
         participantAddresses: List<String>,
-        responses: List<ParticipantSignatureDTO>
+        responses: List<ParticipantSignature>
     ): List<JointAccountSignerItem>
 
     suspend fun hasSigningCapableLocalAccount(address: String): Boolean

@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.core.JointAccountConstants
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.CreateJointAccount
+import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel

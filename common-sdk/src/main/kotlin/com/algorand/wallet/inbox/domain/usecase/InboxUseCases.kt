@@ -12,11 +12,11 @@
 
 package com.algorand.wallet.inbox.domain.usecase
 
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import kotlinx.coroutines.flow.Flow
 
 fun interface CacheInboxMessages {
-    suspend operator fun invoke(inboxMessages: InboxMessagesDTO)
+    suspend operator fun invoke(inboxMessages: InboxMessages)
 }
 
 fun interface ClearInboxCache {
@@ -24,11 +24,11 @@ fun interface ClearInboxCache {
 }
 
 fun interface GetInboxMessagesFlow {
-    operator fun invoke(): Flow<InboxMessagesDTO?>
+    operator fun invoke(): Flow<InboxMessages?>
 }
 
 fun interface GetInboxMessages {
-    suspend operator fun invoke(): InboxMessagesDTO?
+    suspend operator fun invoke(): InboxMessages?
 }
 
 fun interface GetInboxValidAddresses {

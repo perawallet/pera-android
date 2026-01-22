@@ -14,7 +14,7 @@ package com.algorand.wallet.jointaccount.transaction.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class SignRequestTransactionListResponseRequest(
+internal data class SignRequestTransactionListResponseRequest(
     @SerializedName("response")
     val response: String,
     @SerializedName("signatures")

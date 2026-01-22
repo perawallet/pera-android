@@ -12,16 +12,16 @@
 
 package com.algorand.wallet.inbox.domain.repository
 
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import kotlinx.coroutines.flow.Flow
 
 interface InboxRepository {
 
-    suspend fun cacheInboxMessages(inboxMessages: InboxMessagesDTO)
+    suspend fun cacheInboxMessages(inboxMessages: InboxMessages)
 
     suspend fun clearCache()
 
-    fun getInboxMessagesFlow(): Flow<InboxMessagesDTO?>
+    fun getInboxMessagesFlow(): Flow<InboxMessages?>
 
-    suspend fun getInboxMessages(): InboxMessagesDTO?
+    suspend fun getInboxMessages(): InboxMessages?
 }

@@ -13,20 +13,8 @@
 package com.algorand.wallet.jointaccount.creation.data.mapper
 
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
-import javax.inject.Inject
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 
-class JointAccountDTOMapper @Inject constructor() {
-
-    fun mapToJointAccountDTO(response: JointAccountResponse?): JointAccountDTO? {
-        return response?.let {
-            JointAccountDTO(
-                creationDatetime = it.creationDatetime,
-                address = it.address,
-                version = it.version,
-                threshold = it.threshold,
-                participantAddresses = it.participantAddresses
-            )
-        }
-    }
+internal interface JointAccountDTOMapper {
+    fun mapToJointAccountDTO(response: JointAccountResponse?): JointAccount?
 }

@@ -14,7 +14,7 @@ package com.algorand.wallet.jointaccount.transaction.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class SearchSignRequestsRequest(
+internal data class SearchSignRequestsRequest(
     @SerializedName("device_id")
     val deviceId: Long,
     @SerializedName("sign_request_id")

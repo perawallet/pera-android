@@ -13,44 +13,44 @@
 package com.algorand.wallet.jointaccount.domain.repository
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
-import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
-import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountDTO
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.model.InboxSearchInput
+import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
 interface JointAccountRepository {
 
     suspend fun createJointAccount(
-        createJointAccountDTO: CreateJointAccountDTO
-    ): PeraResult<JointAccountDTO>
+        createJointAccount: CreateJointAccountInput
+    ): PeraResult<JointAccount>
 
     suspend fun proposeSignRequest(
-        proposeJointSignRequestDTO: ProposeJointSignRequestDTO
-    ): PeraResult<JointSignRequestDTO>
+        createSignRequestInput: CreateSignRequestInput
+    ): PeraResult<JointSignRequest>
 
     suspend fun addSignature(
         signRequestId: String,
-        signRequestTransactionListResponseDTO: SignRequestTransactionListResponseDTO
-    ): PeraResult<JointSignRequestDTO>
+        addSignatureInput: AddSignatureInput
+    ): PeraResult<JointSignRequest>
 
-    suspend fun searchSignRequests(
-        searchSignRequestsDTO: SearchSignRequestsDTO
-    ): PeraResult<List<JointSignRequestDTO>>
+    suspend fun getSignRequestWithSignatures(
+        deviceId: Long,
+        signRequestId: String
+    ): PeraResult<SignRequestWithFullSignature>
 
     suspend fun getInboxMessages(
         deviceId: Long,
-        inboxSearchDTO: InboxSearchDTO
-    ): PeraResult<InboxMessagesDTO>
+        inboxSearchInput: InboxSearchInput
+    ): PeraResult<InboxMessages>
 
     suspend fun deleteInboxJointInvitationNotification(
         deviceId: Long,
         jointAddress: String
     ): PeraResult<Unit>
-
 
     companion object {
         const val INJECTION_NAME: String = "jointAccountRepositoryInjectionName"

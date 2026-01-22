@@ -12,29 +12,29 @@
 
 package com.algorand.wallet.jointaccount.transaction.domain.model
 
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 
-data class JointSignRequestDTO(
+data class JointSignRequest(
     val id: String?,
-    val jointAccount: JointAccountDTO?,
+    val jointAccount: JointAccount?,
     val proposerAddress: String?,
     val type: String?,
     val rawTransactionLists: List<List<String>>?,
-    val transactionLists: List<JointSignRequestTransactionListDTO>?,
+    val transactionLists: List<JointSignRequestTransactionList>?,
     val expectedExpireDatetime: String?,
     val status: SignRequestStatus?
 )
 
-data class JointSignRequestTransactionListDTO(
+data class JointSignRequestTransactionList(
     val id: String?,
     val rawTransactions: List<String>?,
     val firstValidBlock: String?,
     val lastValidBlock: String?,
-    val responses: List<JointSignRequestTransactionListResponseDTO>?,
+    val responses: List<JointSignRequestTransactionListItem>?,
     val expectedExpireDatetime: String?
 )
 
-data class JointSignRequestTransactionListResponseDTO(
+data class JointSignRequestTransactionListItem(
     val address: String?,
     val response: SignRequestResponseType?,
     val signatures: List<String>?

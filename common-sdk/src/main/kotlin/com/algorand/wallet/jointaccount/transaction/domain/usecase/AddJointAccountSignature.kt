@@ -10,11 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.model
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-import com.algorand.wallet.account.local.data.database.model.JointEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 
-internal interface JointMapper {
-    operator fun invoke(entity: JointEntity): LocalAccount.Joint
+fun interface AddJointAccountSignature {
+    suspend operator fun invoke(
+        signRequestId: String,
+        addSignatureInput: AddSignatureInput
+    ): PeraResult<JointSignRequest>
 }

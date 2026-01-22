@@ -10,11 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.transaction.domain.model
+package com.algorand.wallet.inbox.domain.model
 
-data class SignRequestTransactionListResponseDTO(
-    val address: String,
-    val response: SignRequestResponseType,
-    val signatures: List<List<String?>>?, // List<List<signature>> - nested list structure
-    val deviceId: String? = null // Required if declining
+data class InboxSearchInput(
+    val addresses: List<String>
 )

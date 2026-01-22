@@ -10,11 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.model
+package com.algorand.wallet.jointaccount.transaction.domain.model
 
-import com.algorand.wallet.account.local.data.database.model.JointEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-
-internal interface JointMapper {
-    operator fun invoke(entity: JointEntity): LocalAccount.Joint
-}
+data class CreateSignRequestInput(
+    val jointAccountAddress: String,
+    val proposerAddress: String,
+    val type: String,
+    val rawTransactionLists: List<List<String>>,
+    val transactionSignatureLists: List<List<String?>>
+)

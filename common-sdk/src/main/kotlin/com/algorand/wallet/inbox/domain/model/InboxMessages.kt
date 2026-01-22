@@ -10,12 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.transaction.domain.model
+package com.algorand.wallet.inbox.domain.model
 
-data class ProposeJointSignRequestDTO(
-    val jointAccountAddress: String,
-    val proposerAddress: String,
-    val type: String,
-    val rawTransactionLists: List<List<String>>,
-    val transactionSignatureLists: List<List<String?>>
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+
+data class InboxMessages(
+    val jointAccountImportRequests: List<JointAccount>?,
+    val jointAccountSignRequests: List<JointSignRequest>?,
+    val assetInboxes: List<AssetInbox>?
 )

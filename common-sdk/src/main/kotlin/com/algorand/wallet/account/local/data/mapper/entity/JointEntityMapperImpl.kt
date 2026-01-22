@@ -10,11 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.model
+package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.JointEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.foundation.json.JsonSerializer
+import javax.inject.Inject
 
-internal interface JointMapper {
-    operator fun invoke(entity: JointEntity): LocalAccount.Joint
+internal class JointEntityMapperImpl @Inject constructor(
+    private val jsonSerializer: JsonSerializer
+) : JointEntityMapper {
+
+    override fun invoke(localAccount: LocalAccount.Joint): JointEntity {
+        return JointEntity(
+            algoAddress = localAccount.algoAddress,
+            participantAddresses = jsonSerializer.toJson(localAccount.participantAddresses),
+            threshold = localAccount.threshold,
+            version = localAccount.version
+        )
+    }
 }

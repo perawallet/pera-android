@@ -24,7 +24,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface JointAccountApiService {
+internal interface JointAccountApiService {
 
     @POST("v1/joint-accounts/accounts/")
     suspend fun createJointAccount(

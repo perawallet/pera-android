@@ -12,11 +12,11 @@
 
 package com.algorand.wallet.inbox.domain.usecase
 
-import com.algorand.wallet.inbox.domain.model.AssetInboxDTO
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.AssetInbox
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxRepository
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import io.mockk.coEvery
@@ -84,7 +84,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     fun `EXPECT false WHEN joint account disabled and has invitation`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns false
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
-            jointAccountImportRequests = listOf(createJointAccountDTO(participantAddresses = listOf(TEST_ADDRESS)))
+            jointAccountImportRequests = listOf(createJointAccount(participantAddresses = listOf(TEST_ADDRESS)))
         )
         val sut = createUseCase()
 
@@ -97,7 +97,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     fun `EXPECT true WHEN joint account enabled and has invitation with address as participant`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
-            jointAccountImportRequests = listOf(createJointAccountDTO(participantAddresses = listOf(TEST_ADDRESS, "OTHER")))
+            jointAccountImportRequests = listOf(createJointAccount(participantAddresses = listOf(TEST_ADDRESS, "OTHER")))
         )
         val sut = createUseCase()
 
@@ -110,7 +110,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     fun `EXPECT false WHEN joint account enabled and has invitation but address is not participant`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
-            jointAccountImportRequests = listOf(createJointAccountDTO(participantAddresses = listOf("OTHER1", "OTHER2")))
+            jointAccountImportRequests = listOf(createJointAccount(participantAddresses = listOf("OTHER1", "OTHER2")))
         )
         val sut = createUseCase()
 
@@ -124,7 +124,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
             jointAccountSignRequests = listOf(
-                createSignRequestDTO(jointAccountAddress = TEST_ADDRESS, participantAddresses = listOf("P1", "P2"))
+                createSignRequest(jointAccountAddress = TEST_ADDRESS, participantAddresses = listOf("P1", "P2"))
             )
         )
         val sut = createUseCase()
@@ -139,7 +139,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
             jointAccountSignRequests = listOf(
-                createSignRequestDTO(jointAccountAddress = "JOINT", participantAddresses = listOf(TEST_ADDRESS, "OTHER"))
+                createSignRequest(jointAccountAddress = "JOINT", participantAddresses = listOf(TEST_ADDRESS, "OTHER"))
             )
         )
         val sut = createUseCase()
@@ -154,7 +154,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
             jointAccountSignRequests = listOf(
-                createSignRequestDTO(jointAccountAddress = "OTHER_JOINT", participantAddresses = listOf("P1", "P2"))
+                createSignRequest(jointAccountAddress = "OTHER_JOINT", participantAddresses = listOf("P1", "P2"))
             )
         )
         val sut = createUseCase()
@@ -184,14 +184,14 @@ internal class HasInboxItemsForAddressUseCaseTest {
     private fun createInboxMessages(
         assetInboxes: List<AssetInboxDTO>? = null,
         jointAccountImportRequests: List<JointAccountDTO>? = null,
-        jointAccountSignRequests: List<JointSignRequestDTO>? = null
-    ) = InboxMessagesDTO(
+        jointAccountSignRequests: List<JointSignRequest>? = null
+    ) = InboxMessages(
         assetInboxes = assetInboxes,
         jointAccountImportRequests = jointAccountImportRequests,
         jointAccountSignRequests = jointAccountSignRequests
     )
 
-    private fun createJointAccountDTO(participantAddresses: List<String>) = JointAccountDTO(
+    private fun createJointAccount(participantAddresses: List<String>) = JointAccount(
         creationDatetime = null,
         address = "JOINT_ADDRESS",
         version = 1,
@@ -199,12 +199,12 @@ internal class HasInboxItemsForAddressUseCaseTest {
         participantAddresses = participantAddresses
     )
 
-    private fun createSignRequestDTO(
+    private fun createSignRequest(
         jointAccountAddress: String,
         participantAddresses: List<String>
-    ) = JointSignRequestDTO(
+    ) = JointSignRequest(
         id = "1",
-        jointAccount = JointAccountDTO(
+        jointAccount = JointAccount(
             creationDatetime = null,
             address = jointAccountAddress,
             version = 1,

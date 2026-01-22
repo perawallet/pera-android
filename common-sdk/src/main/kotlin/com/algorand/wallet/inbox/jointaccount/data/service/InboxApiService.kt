@@ -20,7 +20,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface InboxApiService {
+internal interface InboxApiService {
 
     @POST("v1/inbox/{device_id}/")
     suspend fun getInboxMessages(

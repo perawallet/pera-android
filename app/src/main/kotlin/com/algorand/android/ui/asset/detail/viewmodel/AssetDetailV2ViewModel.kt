@@ -27,7 +27,6 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.Vie
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState.Content
 import com.algorand.android.usecase.NetworkSlugUseCase
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.usecase.FetchAsset

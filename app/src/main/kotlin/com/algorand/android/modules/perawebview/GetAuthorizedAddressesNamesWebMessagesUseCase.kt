@@ -13,7 +13,6 @@
 package com.algorand.android.modules.perawebview
 
 import com.algorand.android.modules.peraserializer.PeraSerializer
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.google.crypto.tink.subtle.Base64

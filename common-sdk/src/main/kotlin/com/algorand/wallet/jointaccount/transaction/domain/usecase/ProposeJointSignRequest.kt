@@ -10,8 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.inbox.domain.model
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-data class InboxSearchDTO(
-    val addresses: List<String>
-)
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+
+fun interface ProposeJointSignRequest {
+    suspend operator fun invoke(
+        jointAccountAddress: String,
+        proposerAddress: String,
+        type: String,
+        rawTransactionLists: List<List<String>>,
+        transactionSignatureLists: List<List<String?>>
+    ): PeraResult<JointSignRequest>
+}

@@ -94,9 +94,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Release builds support all architectures, debug builds only arm64-v8a for faster compilation
-        ndk { abiFilters += listOf("arm64-v8a") }
-
         // BuildConfig fields
         buildConfigField("String", "GitHash", "\"${gitHashProvider.get()}\"")
         buildConfigField("String", "APPLICATION_NAME", "\"pera\"")
@@ -141,7 +138,7 @@ android {
             manifestPlaceholders["enableFirebasePerformanceLogcat"] = "false"
 
             // Release builds support all architectures
-            ndk { abiFilters.clear(); abiFilters += listOf("armeabi-v7a", "x86", "x86_64", "arm64-v8a") }
+            ndk { abiFilters += listOf("armeabi-v7a", "x86", "x86_64", "arm64-v8a") }
         }
 
         getByName("debug") {
@@ -155,8 +152,8 @@ android {
 
             resValue("string", "app_name", "Pera (Dev)")
 
-            // Debug build optimizations
-            // Only build arm64-v8a for faster debug builds (already set in defaultConfig)
+            // Debug build optimizations - only arm64-v8a for faster builds
+            ndk { abiFilters += listOf("arm64-v8a") }
             // Disable PNG crunching for faster builds
             isCrunchPngs = false
         }

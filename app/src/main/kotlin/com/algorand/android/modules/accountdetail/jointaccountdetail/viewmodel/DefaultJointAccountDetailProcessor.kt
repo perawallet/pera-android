@@ -18,7 +18,7 @@ import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.Jo
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import javax.inject.Inject
 
@@ -101,15 +101,15 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
     }
 
     private fun parseInvitationFromInboxMessages(
-        inboxMessages: InboxMessagesDTO,
+        inboxMessages: InboxMessages,
         accountAddress: String
     ): JointAccountDetailProcessor.InvitationResult {
-        val dto = inboxMessages.jointAccountImportRequests
+        val jointAccount = inboxMessages.jointAccountImportRequests
             ?.firstOrNull { it.address == accountAddress }
             ?: return JointAccountDetailProcessor.InvitationResult.NotFound
 
-        val participantAddresses = dto.participantAddresses
-        val threshold = dto.threshold
+        val participantAddresses = jointAccount.participantAddresses
+        val threshold = jointAccount.threshold
 
         if (participantAddresses.isNullOrEmpty() || threshold == null) {
             return JointAccountDetailProcessor.InvitationResult.NotFound

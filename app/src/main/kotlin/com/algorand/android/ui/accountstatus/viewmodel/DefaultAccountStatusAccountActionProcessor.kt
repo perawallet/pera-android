@@ -14,7 +14,6 @@ package com.algorand.android.ui.accountstatus.viewmodel
 
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountAction
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import javax.inject.Inject
 
 internal class DefaultAccountStatusAccountActionProcessor @Inject constructor() : AccountStatusAccountActionProcessor {

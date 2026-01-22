@@ -1,0 +1,1436 @@
+# Cursor Rules for Pera Wallet Android
+
+## Critical Rules - Always Follow
+
+### Verification & Validation
+- **Don't assume, always check the source and make sure** - Verify existing code patterns, imports, and dependencies before making changes
+- **Make sure the code you write is error free and compilable** - Always verify code compiles before submitting
+- **Make sure the code you write is aligned with detekt and ktlint rules** - Follow the project's code quality standards
+- **Reformat and clean the code you write automatically** - Use IDE auto-format and remove unused code
+- **Optimize imports before running the project** - Always optimize imports (remove duplicates, organize by groups) before compiling or running the project
+- **Always verify class types before extending** - Check if classes are `final`, `open`, or `abstract` before trying to extend them. Final classes cannot be extended
+- **Always verify constructor signatures before mocking** - Check actual constructor parameters, types, and dependencies before creating mocks in preview files
+- **Always run compilation check after creating new files** - After creating preview files or any new code, verify it compiles without errors
+- **When adding a new sealed type/interface variant, search for ALL usages first** - Before fixing compilation errors one by one, search comprehensively for all `when` expressions and pattern matches that use the type:
+  1. **Search for when expressions**: Use `grep` or `codebase_search` to find all `when (type)` or `when (accountType)` patterns
+  2. **Search for pattern matching**: Find all places where the type is used in sealed class/interface pattern matching
+  3. **Update all occurrences at once** - Fix all usages in a single pass rather than fixing them one by one as errors appear
+  4. **Examples**: When adding `AccountType.Joint`, search for all `when (accountType)`, `when (type: AccountType)`, and similar patterns. When adding `TransactionSigner.Joint`, search for all `when (signer)`, `when (transactionSigner)`, etc.
+  5. **Use efficient build commands** - Capture errors from first build: `./gradlew :app:compileProdDebugKotlin 2>&1 | tee /tmp/build_output.txt | tail -100` then grep errors from the saved file instead of building twice
+- **Run linting checks before compilation** - Always run linting checks first, then compilation:
+  1. **Run detekt first**: `./gradlew :app:detektProdDebug --no-daemon 2>&1 | grep -E "(violation|error)"` - Fix any violations before proceeding
+  2. **Run ktlint check**: `./gradlew :app:ktlintCheck --no-daemon 2>&1 | grep -E "(error|warning|FAILED|BUILD SUCCESS)"` - Fix any ktlint violations before proceeding
+  3. **Then run compilation**: `./gradlew :app:compileProdDebugKotlin --no-daemon 2>&1 | grep -E "(error:|FAILED|BUILD SUCCESS)"` - Fix compilation errors
+  4. **Optimize imports** - Always optimize imports before running checks (remove duplicates, organize by groups)
+- **Common ktlint violations to avoid**:
+  1. **Needless blank lines** - No blank lines before closing braces `}`, no multiple consecutive blank lines
+  2. **Unused imports** - Remove all unused imports after refactoring
+  3. **Comment formatting** - Always add a space after `//` in comments (e.g., `// comment` not `//comment`)
+  4. **Trailing whitespace** - No trailing spaces at end of lines
+  5. **File naming** - File name must match the top-level class name (e.g., `PeraPreviewLightDark.kt` for `PeraPreviewLightDark` class)
+  6. **Final newline** - Files must end with exactly one newline character
+- **Faster compilation checks** - Use `--continue` flag and filter output: `./gradlew :app:compileProdDebugKotlin --continue 2>&1 | grep -E "(error:|FAILED|BUILD SUCCESS)"` to see only errors. Use daemon for faster subsequent runs (remove `--no-daemon` flag)
+- **Run tests after significant changes** - After making changes to test files or classes under test, run the relevant tests:
+  - For a specific test class: `./gradlew :app:testProdDebugUnitTest --tests "com.algorand.android.path.to.TestClass"`
+  - For all app tests: `./gradlew :app:testProdDebugUnitTest`
+  - For common-sdk tests: `./gradlew :common-sdk:testDebugUnitTest`
+  - For clean build and all tests: `./gradlew clean :app:testProdDebugUnitTest :common-sdk:testDebugUnitTest`
+- **Check existing patterns before creating similar code** - Look for similar files (e.g., other preview files) to understand the correct patterns and conventions
+- **Check resource usage before updating** - When updating a resource (string, color, drawable, etc.), always check where it's used first using `grep` or `codebase_search`. If the resource is used in multiple places and the change would affect other screens/features, ask the user before making the change. Only proceed if the change is isolated to the intended location or if the user confirms the change should apply everywhere.
+- **Always verify access to functions and classes before using them** - Before calling a function or using a class, verify that you have the right access (check if it's `public`, `internal`, `private`, or `protected`). Verify inheritance hierarchy, package visibility, and module boundaries. If you don't have access, ask the user about scope changes (making it `public`, `internal`, or moving to a different package/module) instead of assuming you can use it. Use `read_file` to check the actual class/function definition and its visibility modifiers.
+- **Check for breaking changes when modifying existing classes or resources** - When modifying existing classes, functions, resources (strings, colors, drawables, etc.), or any shared code, always check for usages first using `grep` or `codebase_search` to identify all places that might be affected. If the change would break other parts of the codebase or affect multiple features/screens, ask the user before proceeding. Only make changes that affect other places after getting explicit confirmation. This prevents unintended side effects and breaking changes.
+
+### Resource & Build Rules
+- **Make icons theme-aware** - Use color resources like `@color/text_main` instead of hardcoded hex colors like `#F1F1F2` in drawable XML files to support light/dark themes properly.
+- **Use format placeholders in strings** - When a string contains dynamic content (e.g., account name, amount), use format placeholders like `%1$s` (e.g., `"Transfer to %1$s"`). This supports proper localization for languages with different word orders.
+- **Keep ndk abiFilters in build type scope** - Don't rely only on `defaultConfig` for `ndk { abiFilters }`. Place it in the `debug` build type for faster debug builds (arm64-v8a only), and explicitly clear and set all architectures in `release` build type.
+
+### Data Layer Rules
+- **Split interface and implementation into separate files** - When you have `interface Foo` and `class FooImpl`, put them in separate files: `Foo.kt` and `FooImpl.kt`.
+- **Use interface+impl pattern for mappers in common-sdk** - Internal mappers in common-sdk should be `internal interface FooMapper` + `internal class FooMapperImpl`. Add DI bindings in the module to provide the interface.
+- **Update tests when changing class structure** - When changing class structure (e.g., adding interface), update corresponding tests to use the correct classes (e.g., `FooMapperImpl()` instead of `FooMapper()`).
+
+### Cross-Module Architecture (app ↔ common-sdk)
+- **common-sdk data layer is internal** - API services, mappers, and request/response models in common-sdk should be `internal`. They are implementation details.
+- **common-sdk domain layer is public** - Repository interfaces and use cases in common-sdk should be `public`. They are the contract between modules.
+- **App module must NOT directly use common-sdk data layer** - Never import or use API services, mappers, or request/response models from common-sdk in the app module. This violates module boundaries.
+- **App module uses common-sdk domain layer** - App module should only depend on common-sdk's public repository interfaces and use cases.
+- **App module can wrap common-sdk repositories** - If app module needs its own repository interface (e.g., using app's `Result` instead of `PeraResult`), create a repository implementation that delegates to common-sdk's repository and converts result types.
+- **Convert PeraResult to Result when bridging** - When app module wraps common-sdk repository, add a conversion function: `PeraResult.Success -> Result.Success`, `PeraResult.Error -> Result.Error`.
+
+### File Formatting
+- **Have single trailing newline at the end of each file** - Files must end with exactly one newline character, no more, no less
+
+### Code Quality
+- **Keep functions shorter than 50 lines** - Split longer functions into smaller, focused functions
+- **Make sure the code you generated is efficient and performant** - Avoid unnecessary allocations, use lazy initialization, optimize Compose recompositions
+- **Don't add extra comments to explain the code** - Instead create functions with explanatory names and variables that are self-explanatory
+- **Make sure you are added all the imports needed for the code you added** - Never leave missing imports, always add required imports
+- **Use imports instead of fully qualified class names** - Always import classes and use short names instead of fully qualified names like `androidx.compose.material3.ButtonDefaults.outlinedButtonColors`. Import `androidx.compose.material3.ButtonDefaults` and use `ButtonDefaults.outlinedButtonColors`. Similarly, import `com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview` instead of using the full path. This improves readability and maintainability.
+- **Remove unused imports after making changes** - After removing explicit type arguments, changing code structure, or refactoring, always check if any imports are no longer used and remove them. For example, if you remove `emptyList<LocalAccount>()` and change it to `emptyList()`, remove the `import com.algorand.wallet.account.local.domain.model.LocalAccount` import if it's no longer referenced anywhere in the file.
+
+### Reusability
+- **Make sure using existing ui items and resources if they already exist in the project** - Always search for existing components, icons, strings, and colors before creating new ones
+
+### Testing & Documentation
+- **Create unit tests for data and domain layers** - All UseCases, Repositories, and data transformations must have unit tests
+- **Create Screen and Preview files for each fragment you create** - Every new Fragment must have a corresponding Screen composable and Preview file
+
+## Project Overview
+- **Language**: Kotlin
+- **Platform**: Android (minSdk 28, targetSdk 36)
+- **UI Framework**: Jetpack Compose (primary), ViewBinding (legacy)
+- **Architecture**: MVVM with Hilt dependency injection
+- **Build System**: Gradle with Kotlin DSL
+- **Java Version**: 28
+
+### iOS Comparison & Cross-Platform Alignment
+- **iOS Repository**: https://github.com/perawallet/pera-ios/
+- **When asked to "compare with iOS"**: Compare Android implementation with iOS implementation and identify:
+  1. **Architectural differences**: How patterns differ between platforms (e.g., ViewModel vs DataController, Compose vs UIKit)
+  2. **Business logic differences**: Missing business logic, different validation rules, or different feature implementations
+  3. **Feature parity gaps**: Features present in iOS but missing in Android, or vice versa
+  4. **Data model differences**: Differences in domain models, entities, or data structures
+  5. **API/Service differences**: Different API calls, endpoints, or service implementations
+  6. **Error handling differences**: Different error handling strategies or missing error cases
+  7. **State management differences**: Different approaches to state management between platforms
+- **Common iOS patterns to compare**:
+  - **DataController**: iOS equivalent of ViewModel/Processor - contains business logic
+  - **ViewController**: iOS UI layer (similar to Fragment in Android)
+  - **ViewModel**: iOS presentation models (structs, different from Android ViewModels)
+  - **PeraWalletCore**: iOS equivalent of `common-sdk` - platform-agnostic business logic
+- **Alignment goal**: Ensure business logic parity between platforms while respecting platform-specific UI patterns
+
+## Code Style & Conventions
+
+### Kotlin Style
+- Follow official Kotlin coding conventions
+- Use `camelCase` for variables and functions
+- Use `PascalCase` for classes and types
+- Prefer `val` over `var` when possible
+- Use expression bodies for single-expression functions
+- Use trailing commas in multi-line parameter lists
+
+### File Organization
+- One public class/interface per file
+- File name should match the primary class/interface name
+- Group related files in packages by feature/module
+- Use descriptive package names: `com.algorand.android.modules.{feature}.{layer}`
+
+### Naming Conventions
+- **Screens**: `{Feature}Screen.kt` (e.g., `RegisterIntroScreen.kt`)
+- **Fragments**: `{Feature}Fragment.kt` (e.g., `RegisterIntroFragment.kt`)
+- **ViewModels**: `{Feature}ViewModel.kt`
+- **Dialogs**: `{Feature}Dialog.kt` or `{Feature}BottomSheet.kt`
+- **Widgets/Components**: `{ComponentName}.kt` (e.g., `PeraAccountItem.kt`)
+- **Preview files**: `{Screen}Preview.kt` in `preview/` subdirectory
+- **Component naming**: Prefix with `Pera` (e.g., `PeraButton`, `PeraCard`, `PeraTextField`)
+- **Component naming**: Descriptive - Include component type and variant (e.g., `PeraPrimaryButton`, `PeraSecondaryButton` not `PeraButton1`, `PeraButton2`)
+- **Resource naming**: Drawables use `ic_[name].xml`, `bg_[name].xml` format
+- **Resource naming**: Colors use semantic names in theme files, not `color_1`, `color_2`
+- **Resource naming**: Dimensions - Use dp values directly in Compose, reference dimens.xml only in XML layouts
+
+## Architecture Patterns
+
+### Wallet-As-A-Service Architecture
+- **app module**: Native UI layer (Screens, Fragments, Navigation)
+- **common-sdk module**: Wallet service layer (ViewModels, Repositories, Business Logic)
+- **Separation**: UI layer depends on `common-sdk`, not vice versa
+- **Platform Agnostic**: Business logic in `common-sdk` should be platform-independent
+
+#### MVVM Structure
+- **Screen**: Compose UI that observes ViewModel state
+- **Fragment**: Thin wrapper around Screen, handles navigation and lifecycle
+- **ViewModel**: Business logic and state management (uses StateDelegate/EventDelegate)
+- **Processor**: Extract complex logic from ViewModels (interface + Default/Impl)
+- **UseCase**: Domain logic (interface + UseCase suffix implementation)
+- **Repository**: Data access layer (interface + Impl suffix)
+
+#### Processor Pattern
+- **Purpose**: Extract complex business logic from ViewModels
+- **Structure**: Interface + `Default{ProcessorName}` or `{ProcessorName}Impl` (internal class)
+- **Location**: Same package as ViewModel or in `viewmodel/` subdirectory
+- **When to use**: Complex data transformation, business rules, reusable logic, ViewModel >200 lines
+- **Example**: `AccountStatusAccountActionProcessor` interface + `DefaultAccountStatusAccountActionProcessor` implementation
+
+#### UseCase Pattern
+- **Structure**: Interface (can be fun interface) + `{UseCaseName}UseCase` implementation (internal class)
+- **Location**: `domain/usecase/` or `ui/usecase/` depending on layer
+- **Operator**: Use `operator fun invoke(...)` for functional interfaces
+- **Example**: `GetAccountDisplayName` interface + `GetAccountDisplayNameUseCase` implementation
+
+#### Repository Pattern
+- **Structure**: Interface in `domain/repository/` + `{RepositoryName}Impl` in `data/repository/`
+- **Reactive**: Use `Flow` for all data streams
+- **Caching**: Implement caching layers in repositories
+- **Example**: `AccountInformationRepository` interface + `AccountInformationRepositoryImpl` implementation
+
+#### Mapper Pattern
+- **Structure**: Direct class (no interface needed for simple mappers)
+- **Dependencies**: Inject via constructor
+- **Style**: Use `with` scope function for cleaner code
+- **Location**: `mapper/` or `ui/mapper/` package
+- **Example**: `RemoveAssetItemMapper` with injected dependencies
+
+#### Dependency Injection
+- Use Hilt for dependency injection
+- Annotate ViewModels with `@HiltViewModel`
+- Use `@Inject` constructor for dependencies
+- Create feature-specific modules: `@Module`, `@InstallIn`, `@Provides`
+- **Component Selection**:
+  - `ViewModelComponent`: ViewModel-scoped (Processors, ViewModel-specific UseCases)
+  - `SingletonComponent`: App-wide (Repositories, shared UseCases, Mappers)
+- Mark implementations as `internal` to hide from public API
+
+## Design System & UI
+
+### Design System Overview
+- **Architecture Type**: Hybrid (Jetpack Compose + XML Legacy)
+- **Primary UI Framework**: Jetpack Compose (Modern, declarative)
+- **Legacy Support**: Fragment-based XML layouts
+- **Theme System**: Dual-mode (Light/Dark) with semantic tokens
+- **Design Philosophy**:
+  - Semantic color naming (not hardcoded values)
+  - Centralized design tokens
+  - Reusable component library
+  - System-aware dark mode support
+
+### Color System
+
+#### File Locations
+**Jetpack Compose (Primary):**
+```
+app/src/main/kotlin/com/algorand/android/ui/compose/theme/
+├── Color.kt                 # ColorPalette object & PeraColor interface
+├── PeraLightColor.kt       # Light theme implementation
+├── PeraDarkColor.kt        # Dark theme implementation
+└── PeraTheme.kt            # Theme composition
+```
+
+**XML Resources (Legacy):**
+```
+app/src/main/res/values/colors.xml        # Light mode colors
+app/src/main/res/values-night/colors.xml  # Dark mode colors
+```
+
+#### Color Palette Structure
+**Color Families in `Color.kt`:**
+```kotlin
+object ColorPalette {
+    // Primary color families (each with V50-V900 variants)
+    val Turquoise = ColorFamily(...)  // Primary accent, success
+    val Purple = ColorFamily(...)     // Helper elements
+    val Salmon = ColorFamily(...)     // Negative/error states
+    val Gray = ColorFamily(...)       // Backgrounds, text, layers
+    val Yellow = ColorFamily(...)     // Warnings, dark mode primary
+    val Blue = ColorFamily(...)       // Information
+    val Pink = ColorFamily(...)       // Accent variations
+    val Navy = ColorFamily(...)       // Deep backgrounds
+    val Red = ColorFamily(...)        // Errors
+
+    // Alpha variants available: A10, A20, A30, A40, A50, A60, A70, A80, A90
+}
+```
+
+#### Semantic Color Mapping
+**Interface Definition (`PeraColor`):**
+```kotlin
+interface PeraColor {
+    val background: Background
+    val text: Text
+    val button: Button
+    val layer: Layer
+    val border: Border
+    val icon: Icon
+    // ... and many more semantic categories
+}
+
+interface Background {
+    val primary: Color
+    val secondary: Color
+    val tertiary: Color
+    val disabled: Color
+}
+```
+
+**Light vs Dark Theme Examples:**
+
+| Semantic Token                | Light Mode     | Dark Mode   |
+|-------------------------------|----------------|-------------|
+| `button.primary.background`   | Gray.V800      | Yellow.V400 |
+| `button.primary.text`         | Gray.V50       | Gray.V900   |
+| `button.secondary.background` | Gray.V100      | Gray.V800   |
+| `text.main`                   | Gray.V900      | Gray.V100   |
+| `text.secondary`              | Gray.V500      | Gray.V400   |
+| `background.primary`          | Gray.V50       | Gray.V900   |
+| `link.primary`                | Turquoise.V600 | Yellow.V400 |
+
+#### Usage Pattern
+```kotlin
+@Composable
+fun MyComponent() {
+    Box(
+        modifier = Modifier.background(PeraTheme.colors.background.primary)
+    ) {
+        Text(
+            text = "Hello",
+            color = PeraTheme.colors.text.main
+        )
+    }
+}
+```
+
+#### Adding New Colors from Figma
+1. **Add to ColorPalette in `Color.kt`:**
+   ```kotlin
+   val NewColor = ColorFamily(
+       V900 = Color(0xFF...), // Darkest
+       V800 = Color(0xFF...),
+       // ... down to V50
+   )
+   ```
+
+2. **Add semantic mapping in `PeraColor` interface:**
+   ```kotlin
+   interface PeraColor {
+       val myNewFeature: MyNewFeature
+   }
+
+   interface MyNewFeature {
+       val primary: Color
+       val secondary: Color
+   }
+   ```
+
+3. **Implement in both theme files:**
+   ```kotlin
+   // PeraLightColor.kt
+   override val myNewFeature = object : PeraColor.MyNewFeature {
+       override val primary = ColorPalette.Turquoise.V600
+       override val secondary = ColorPalette.Gray.V200
+   }
+
+   // PeraDarkColor.kt
+   override val myNewFeature = object : PeraColor.MyNewFeature {
+       override val primary = ColorPalette.Yellow.V400
+       override val secondary = ColorPalette.Gray.V700
+   }
+   ```
+
+### Typography System
+
+#### File Locations
+```
+app/src/main/kotlin/com/algorand/android/ui/compose/typography/
+├── PeraTypography.kt              # Main structure
+├── PeraTypographyTitle.kt         # Title styles (Large, Regular, Small)
+├── PeraTypographyBody.kt          # Body styles (Large, Regular)
+├── PeraTypographyFootnote.kt      # Footnote styles
+└── PeraTypographyCaption.kt       # Caption styles
+```
+
+**Font Files:**
+```
+app/src/main/res/font/
+├── dmsans_regular.ttf
+├── dmsans_medium.ttf
+├── dmsans_bold.ttf
+├── dmmono_regular.ttf
+└── dmmono_medium.ttf
+```
+
+#### Typography Hierarchy
+**Main Structure:**
+```kotlin
+data class PeraTypography(
+    val title: Title,      // 3 sizes: Large, Regular, Small
+    val body: Body,        // 2 sizes: Large, Regular
+    val footnote: Footnote,
+    val caption: Caption
+)
+```
+
+**Complete Specifications:**
+
+| Category          | Size | Line Height | Weight                   | Letter Spacing |
+|-------------------|------|-------------|--------------------------|----------------|
+| **Title Large**   | 36sp | 48sp        | Regular/Medium/Mono      | -0.72sp        |
+| **Title Regular** | 32sp | 40sp        | Regular/Medium/Bold      | -0.64sp        |
+| **Title Small**   | 28sp | 32sp        | Regular/Medium           | -0.56sp        |
+| **Body Large**    | 19sp | 28sp        | Regular/Medium/Mono      | 0sp            |
+| **Body Regular**  | 15sp | 24sp        | Regular/Medium/Bold/Mono | 0sp            |
+| **Footnote**      | 13sp | 20sp        | Regular/Bold/Medium/Mono | 0sp            |
+| **Caption**       | 11sp | 16sp        | Regular/Bold/Medium/Mono | 0sp            |
+
+#### Font Variants
+**Each level has 3-4 variants:**
+- `.sans` - DM Sans Regular
+- `.sansMedium` - DM Sans Medium
+- `.sansBold` - DM Sans Bold (where applicable)
+- `.mono` - DM Mono Regular/Medium
+
+#### Usage Pattern
+```kotlin
+@Composable
+fun MyText() {
+    Text(
+        text = "Headline",
+        style = PeraTheme.typography.title.regular.sansMedium
+    )
+
+    Text(
+        text = "Body copy",
+        style = PeraTheme.typography.body.regular.sans
+    )
+
+    Text(
+        text = "Small print",
+        style = PeraTheme.typography.footnote.sansMedium
+    )
+}
+```
+
+#### Adding Typography from Figma
+1. **Identify the closest existing style** (Title, Body, Footnote, Caption)
+2. **If new size needed**, add to appropriate file:
+   ```kotlin
+   // In PeraTypographyTitle.kt
+   data class Title(
+       val large: TitleLarge,
+       val regular: TitleRegular,
+       val small: TitleSmall,
+       val extraSmall: TitleExtraSmall  // New addition
+   )
+
+   data class TitleExtraSmall(
+       val sans: TextStyle,
+       val sansMedium: TextStyle
+   )
+   ```
+
+3. **Create the styles:**
+   ```kotlin
+   private fun titleExtraSmall(fontFamily: FontFamily): TitleExtraSmall {
+       return TitleExtraSmall(
+           sans = TextStyle(
+               fontFamily = fontFamily,
+               fontWeight = FontWeight.Normal,
+               fontSize = 24.sp,
+               lineHeight = 28.sp,
+               letterSpacing = (-0.48).sp
+           ),
+           sansMedium = TextStyle(/* ... */)
+       )
+   }
+   ```
+
+### Dimensions & Spacing
+
+#### File Location
+```
+app/src/main/res/values/dimens.xml
+```
+
+#### Spacing Scale
+**Standard increments:**
+```xml
+<dimen name="spacing_xxxsmall">2dp</dimen>
+<dimen name="spacing_xxsmall">4dp</dimen>
+<dimen name="spacing_xsmall">8dp</dimen>
+<dimen name="spacing_small">12dp</dimen>
+<dimen name="spacing_normal">16dp</dimen>
+<dimen name="spacing_large">20dp</dimen>
+<dimen name="spacing_xlarge">24dp</dimen>
+<dimen name="spacing_xxlarge">32dp</dimen>
+<dimen name="spacing_xxxlarge">36dp</dimen>
+<dimen name="spacing_xxxxlarge">40dp</dimen>
+<dimen name="spacing_xxxxxlarge">48dp</dimen>
+```
+
+**In Compose, use dp directly:**
+```kotlin
+modifier = Modifier.padding(16.dp)  // spacing_normal
+modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+```
+
+#### Component Dimensions
+
+**Buttons:**
+```xml
+<dimen name="button_height_normal">52dp</dimen>
+<dimen name="button_height_small">40dp</dimen>
+<dimen name="button_corner_radius">4dp</dimen>
+<dimen name="button_corner_radius_small">32dp</dimen>
+```
+
+**Icons:**
+```xml
+<dimen name="icon_size_small">20dp</dimen>
+<dimen name="icon_size_normal">24dp</dimen>
+<dimen name="icon_size_large">36dp</dimen>
+<dimen name="icon_size_xlarge">40dp</dimen>
+```
+
+**Other:**
+```xml
+<dimen name="toolbar_height">44dp</dimen>
+<dimen name="card_corner_radius">8dp</dimen>
+<dimen name="divider_height">1dp</dimen>
+```
+
+### Component Library
+
+#### File Location
+```
+app/src/main/kotlin/com/algorand/android/ui/compose/widget/
+├── button/              # Button components (15 files)
+├── text/                # Text components (8 files)
+├── textfield/           # Input fields (11 files)
+├── icon/                # Icon components (4 files)
+├── bottomsheet/         # Bottom sheet (2 files)
+├── asset/               # Asset displays (3 files)
+├── chart/               # Charts (2 files)
+├── progress/            # Progress indicators (2 files)
+├── quickaction/         # Quick actions (3 files)
+├── modifier/            # Custom modifiers (5 files)
+└── [other widgets]      # 32+ additional component files
+```
+
+#### Core Components
+
+**Button Components:**
+- **Files**: `widget/button/PeraPrimaryButton.kt`, `PeraSecondaryButton.kt`, `PeraTertiaryButton.kt`
+- **Specs**: Min height 52dp (normal), 40dp (small); Corner radius 4dp (default), 32dp (pill-shaped)
+- **States**: ENABLED, DISABLED, LOADING
+- **Visual Specs**:
+  - Primary: Dark background (Gray.V800 light, Yellow.V400 dark), white text
+  - Secondary: Light background (Gray.V100 light, Gray.V800 dark), dark text
+  - Tertiary: Transparent background, colored text
+
+**Text Components:**
+- **Files**: `widget/text/PeraHeadlineText.kt`, `PeraTitleText.kt`, `PeraBodyText.kt`, etc.
+- **Available Components**:
+  - `PeraHeadlineText` - Title.regular.sansMedium
+  - `PeraTitleText` - Body.large.sansMedium (1 line max)
+  - `PeraBodyText` - Body.regular.sansMedium
+  - `PeraLinkText` - Colored link text
+  - `PeraHighlightedGrayText` - Gray background text box
+
+**TextField Components:**
+- **File**: `widget/textfield/PeraTextField.kt`
+- **Features**: Labels, icons, error states, helper text
+- **Specialized**: `PeraTextField`, `PeraSlimTextField`, `AmountInputTextField`
+
+**Icon Components:**
+- **File**: `widget/icon/PeraIcon.kt`
+- **Variants**: `PeraIcon`, `PeraIconRoundShapeBig` (64dp circular), `FavoriteIcon`
+- **Common Sizes**: 20dp (small action), 24dp (normal), 36dp (large), 40dp (xlarge), 64dp+ (standalone)
+- **Icon Sources**:
+  1. Material Icons (via Compose library)
+  2. Custom Vector Drawables (`res/drawable/ic_*.xml`)
+  3. Brand Icons (logos, third-party)
+- **Icon Coloring**: Use `tint = PeraTheme.colors.icon.primary` for semantic colors, `Color.Unspecified` to preserve original colors
+
+**Other Key Components:**
+- **Card**: `PeraCard` - Card with title, description, icon, onClick
+- **Checkbox/Switch/Radio**: `PeraCheckbox`, `PeraSwitch`, `PeraRadioButton`, `PeraTriStateCheckbox`
+- **Progress**: `PeraCircularProgressIndicator`, `AnimationLoader`, `ShimmerTextBox`
+
+#### Creating New Components from Figma
+
+**Step-by-step process:**
+
+1. **Identify component category** (Button, Text, Input, etc.)
+
+2. **Create new file in appropriate widget subdirectory:**
+   ```
+   app/src/main/kotlin/com/algorand/android/ui/compose/widget/[category]/MyNewComponent.kt
+   ```
+
+3. **Use design tokens, not hardcoded values:**
+   ```kotlin
+   @Composable
+   fun PeraMyComponent(
+       text: String,
+       modifier: Modifier = Modifier
+   ) {
+       Box(
+           modifier = modifier
+               .background(
+                   color = PeraTheme.colors.background.secondary,  // Good
+                   shape = RoundedCornerShape(4.dp)
+               )
+               .padding(16.dp)
+       ) {
+           Text(
+               text = text,
+               style = PeraTheme.typography.body.regular.sansMedium,  // Good
+               color = PeraTheme.colors.text.main  // Good
+           )
+       }
+   }
+   ```
+
+4. **Support component states** (enabled, disabled, loading, error):
+   ```kotlin
+   enum class MyComponentState {
+       ENABLED, DISABLED, LOADING, ERROR
+   }
+   ```
+
+5. **Follow naming conventions**:
+   - Prefix: `Pera` (e.g., `PeraMyComponent`)
+   - Descriptive: Include component type (e.g., `PeraPrimaryButton`, not `PeraButton1`)
+
+### Compose Guidelines
+- Split large Composable functions into smaller, focused functions
+- Use meaningful function names that describe what they render
+- Extract reusable components to separate files
+- Use `@PreviewLightDark` annotations for preview functions - Always use `PreviewLightDark` to show both light and dark themes
+- Prefer `Modifier` parameter as the first parameter in Composables
+- Use `remember` for expensive computations
+- Use `LaunchedEffect` for side effects
+- Avoid `@file:Suppress("LongMethod")` - split functions instead
+- **Always use design tokens** - Never use hardcoded colors, dimensions, or typography values. Always use `PeraTheme.colors.*`, `PeraTheme.typography.*`
+- **Support component states** - ENABLED, DISABLED, LOADING, ERROR states where applicable
+- **Provide content descriptions** - Always provide content descriptions for icons and images for accessibility
+
+### Theme & Styling
+
+#### Multi-Layer Architecture
+**Layer 1: Design Tokens** (Foundation)
+- Location: `ui/compose/theme/Color.kt`, `PeraTypography.kt`
+- Purpose: Single source of truth for colors, typography, spacing
+- Access: `PeraTheme.colors.*`, `PeraTheme.typography.*`
+
+**Layer 2: Component Library** (Building Blocks)
+- Location: `ui/compose/widget/*/`
+- Purpose: Reusable UI components using design tokens
+- Examples: PeraPrimaryButton, PeraTextField, PeraCard
+
+**Layer 3: Feature Screens** (Application)
+- Location: Various feature directories
+- Purpose: Compose screens using components
+- Pattern: Combine components into full UIs
+
+**Layer 4: XML Styles** (Legacy Support)
+- Location: `res/values/styles.xml`, `res/values-night/styles.xml`
+- Purpose: Fragment-based screens still using XML layouts
+- Status: Being migrated to Compose
+
+#### Theme Composition
+**PeraTheme Setup:**
+```kotlin
+@Composable
+fun PeraTheme(
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val peraColors = if (isDarkTheme) {
+        PeraDarkColor()
+    } else {
+        PeraLightColor()
+    }
+
+    CompositionLocalProvider(
+        localPeraColors provides peraColors
+    ) {
+        MaterialTheme(
+            colorScheme = if (isDarkTheme) darkColorScheme() else lightColorScheme(),
+            typography = Typography,
+            content = content
+        )
+    }
+}
+```
+
+**Usage in screens:**
+```kotlin
+@Composable
+fun MyScreen() {
+    PeraTheme {  // Provides theme context
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PeraTheme.colors.background.primary)
+        ) {
+            PeraHeadlineText("Welcome")
+            PeraPrimaryButton(
+                text = "Get Started",
+                onClick = { /* ... */ }
+            )
+        }
+    }
+}
+```
+
+#### Usage Pattern
+- Use `PeraTheme` for colors, typography, and spacing
+- Access via: `PeraTheme.colors.{category}.{name}`
+- Access typography via: `PeraTheme.typography.{size}.{weight}.{font}`
+- Use `stringResource()` for all text content
+- Use `painterResource()` or `ImageVector.vectorResource()` for icons
+- **Never use hardcoded colors** - Always use semantic tokens from `PeraTheme.colors.*`
+- **Never use hardcoded typography** - Always use styles from `PeraTheme.typography.*`
+
+### UI Components
+
+#### Compose Screens
+- Create separate Screen composables for UI logic
+- Screens should accept a ViewModel and a Listener interface
+- Use `collectAsStateWithLifecycle()` for observing ViewModel state
+- Keep fragments thin - they should only set up Compose and handle navigation
+
+#### Listener Pattern
+- Define listener interfaces for screen callbacks
+- Name them: `{Screen}Listener`
+- Fragments implement the listener interface
+- Pass listener to Screen composable
+
+#### Composable Structure
+**Follow this pattern:**
+```kotlin
+@Composable
+fun PeraMyComponent(
+    // Required params first
+    title: String,
+
+    // Optional params with defaults
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    iconRes: Int? = null,
+
+    // Callbacks last
+    onClick: (() -> Unit)? = null
+) {
+    // Remember state
+    var expanded by remember { mutableStateOf(false) }
+
+    // Derived values using design tokens
+    val backgroundColor = if (expanded) {
+        PeraTheme.colors.layer.gray.lighter
+    } else {
+        PeraTheme.colors.background.secondary
+    }
+
+    // Layout
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(backgroundColor)
+            .clickable { onClick?.invoke() }
+            .padding(16.dp)
+    ) {
+        // Content
+    }
+}
+```
+
+### Asset Management
+
+#### Drawable Resources
+**Structure:**
+```
+app/src/main/res/
+├── drawable/              # Default density, vector drawables
+├── drawable-hdpi/         # High density (1.5x)
+├── drawable-mdpi/         # Medium density (1x)
+├── drawable-xhdpi/        # Extra high density (2x)
+├── drawable-xxhdpi/       # Extra extra high density (3x)
+├── drawable-xxxhdpi/      # Extra extra extra high density (4x)
+├── drawable-anydpi/       # API 21+ (vector priority)
+└── drawable-night/        # Dark theme variants
+```
+
+**Counts:**
+- 286+ background shapes (`bg_*.xml`)
+- 80+ icons (`ic_*.xml`)
+- Multiple density variants for raster images
+
+#### Naming Conventions
+**Format:** `[type]_[description]_[details].xml`
+
+**Prefixes:**
+- `bg_` - Backgrounds, shapes
+- `ic_` - Icons
+- `anim_` - Animations
+- `img_` - Images
+
+**Examples:**
+```
+bg_rectangle_radius_4dp.xml
+bg_layer_gray_lighter.xml
+bg_button_primary_disabled.xml
+ic_staking.xml
+ic_algo_sign.xml
+ic_search.xml
+```
+
+#### Vector Drawable Format
+**Standard structure:**
+```xml
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/primary_text"
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2z"/>
+</vector>
+```
+
+#### Adding Assets from Figma
+1. **Export as SVG** from Figma (or get vector path data)
+2. **Convert to Android Vector Drawable**:
+   - Use Android Studio: Right-click `drawable/` → New → Vector Asset → Local file
+   - Or use online converters
+   - Or manually create XML with path data
+3. **Name following convention**: `ic_[feature_name]_[description].xml`, `bg_[shape]_[color/style]_[variant].xml`
+4. **Place in `drawable/` directory** (vectors are density-independent)
+5. **Create night variant if needed** in `drawable-night/`
+6. **Reference in code**: `painterResource(R.drawable.ic_my_icon)`
+
+### Resource Files
+
+#### Drawable Icons
+- Use vector drawables (`.xml`) for icons
+- Name icons descriptively: `ic_{action}_{object}.xml` (e.g., `ic_add_account.xml`)
+- Files should end with exactly one trailing newline
+- Use `@color/text_main` or theme colors, not hardcoded colors
+- **Icon sizing**: 20dp (small action), 24dp (normal), 36dp (large), 40dp (xlarge), 64dp+ (standalone)
+- **Icon coloring**: Use `tint = PeraTheme.colors.icon.primary` or semantic colors, `Color.Unspecified` to preserve original colors
+
+#### Strings
+- All user-facing text must use string resources
+- Use descriptive keys: `{feature}_{description}` (e.g., `add_account_desc`)
+
+### Code Quality
+
+#### Function Length
+- **Keep functions under 50 lines** - Split functions over 50 lines into smaller, meaningful functions
+- Remove `@file:Suppress("LongMethod")` suppressions
+- Extract private helper functions with descriptive names
+- Use descriptive function and variable names instead of comments
+
+#### Line Length
+- **Keep lines shorter than 150 characters** - Break long lines into multiple lines for better readability
+- Use line breaks for function parameters, method chains, and long expressions
+- Prefer readability over keeping everything on one line
+
+#### Modifiers
+- Use `Modifier.fillMaxWidth()` or `Modifier.fillMaxSize()` instead of `weight(1f)` where appropriate
+- `weight` modifier is only available in `RowScope` and `ColumnScope` - don't import it explicitly
+- Chain modifiers in a logical order: size → padding → clickable → background
+
+#### Imports
+- **Always add all necessary imports when adding code** - Never leave missing imports
+- **Use imports instead of fully qualified names** - Never use fully qualified class names like `com.algorand.android.ui.register.recoveraccounttypeselection.AccountRecoveryTypeSelectionViewModel.ViewState`, always import the class and use the short name
+- **Import parent classes for nested access** - When accessing nested members like `androidx.compose.material3.ButtonDefaults.outlinedButtonColors`, import `androidx.compose.material3.ButtonDefaults` and use `ButtonDefaults.outlinedButtonColors`. Similarly, for `androidx.compose.ui.graphics.Color.Transparent`, import `androidx.compose.ui.graphics.Color` and use `Color.Transparent`
+- **Import project classes** - For project classes like `com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview`, always import the class and use `AccountIconDrawablePreview` instead of the full path
+- **Detect and fix inline fully qualified names** - Use regex pattern to find fully qualified names that should be imported:
+  - Pattern: `^(?!\s*(import|package)\s).*com\.algorand\.android\.` or similar for `kotlinx.coroutines.`, `androidx.lifecycle.`, etc.
+  - Common violations to fix:
+    - `kotlinx.coroutines.flow.flowOf(...)` → import `flowOf` and use `flowOf(...)`
+    - `androidx.lifecycle.MutableLiveData(...)` → import `MutableLiveData` and use `MutableLiveData(...)`
+    - `com.algorand.android.SomeClass` → import `SomeClass` and use `SomeClass`
+  - When you see inline fully qualified names in code, always refactor to use imports
+- **Remove unused imports after making changes** - After removing explicit type arguments, changing code structure, or refactoring, always check if any imports are no longer used and remove them. For example, if you remove `emptyList<LocalAccount>()` and change it to `emptyList()`, remove the `import com.algorand.wallet.account.local.domain.model.LocalAccount` import if it's no longer referenced anywhere in the file
+- Remove unused imports
+- Group imports: Kotlin stdlib, Android, Compose, project imports
+- Verify imports are correct and compile successfully
+
+### Error Handling
+- Use sealed classes for state representation
+- Handle loading, success, and error states explicitly
+- Show appropriate UI feedback for each state
+
+### Testing
+- **Create unit tests for data and domain layers** - All UseCases, Repositories, and data transformations must have unit tests
+- Write unit tests for ViewModels
+- **ALWAYS create preview files for every new screen** - Every new Compose screen must have a corresponding preview file in `preview/` subdirectory
+- Use `@PreviewLightDark` for Compose UI testing during development - Always use `PreviewLightDark` annotation instead of `@Preview` to show both light and dark themes
+- Create preview files in `preview/` subdirectories
+- Test files should be in `test/` directory matching the source structure
+
+#### Preview Files Guidelines
+- **Verify ViewModel constructors before mocking** - Check the actual ViewModel constructor signature, all required parameters, and their types before creating mocks
+- **Check if ViewModels are final classes** - Hilt ViewModels are typically final and cannot be extended. Create instances directly instead of using `object : ViewModel(...) {}`
+- **Verify all dependency constructors** - Check constructor signatures for all dependencies (UseCases, Repositories, Mappers, etc.) before creating mocks
+- **Check existing preview file patterns** - Look at other preview files in the codebase (e.g., `MenuScreenPreview.kt`) to understand the correct mocking patterns
+- **Use proper mock implementations** - For interfaces, create proper implementations. For final classes, instantiate directly. For abstract classes, check if concrete implementations exist
+- **Verify compilation after creating preview files** - Always run a compilation check (`./gradlew :app:compileProdDebugKotlin`) after creating or modifying preview files. This catches dependency injection errors, final class extension attempts, and constructor signature mismatches. For faster checks, use: `./gradlew :app:compileProdDebugKotlin --continue 2>&1 | grep -E "(error:|FAILED|BUILD SUCCESS)"` to see only errors without full build output
+- **Use `@Suppress` annotations appropriately** - Use `@file:Suppress` or `@Suppress` for preview files when necessary, but only after verifying the code is correct
+- **Preview both themes** - Always preview components in both light and dark themes using `@PreviewLightDark`:
+  ```kotlin
+  @PreviewLightDark
+  @Composable
+  private fun PeraMyComponentPreview() {
+      PeraTheme {
+          PeraMyComponent(
+              title = "Preview Title",
+              description = "Preview description"
+          )
+      }
+  }
+  ```
+
+#### Unit Test Naming Conventions
+- **Test class visibility** - Always mark test classes as `internal class`
+- **Test method naming pattern** - Use the `EXPECT ... WHEN ...` pattern:
+  - Format: `` `EXPECT {expected outcome} WHEN {condition}` ``
+  - The `WHEN` clause is optional if the condition is implicit
+- **Examples of proper test naming**:
+  ```kotlin
+  internal class GetJointAccountUseCaseTest {
+      
+      @Test
+      fun `EXPECT null WHEN no local account exists`() = runTest { ... }
+      
+      @Test
+      fun `EXPECT joint account WHEN joint account with matching address exists`() = runTest { ... }
+      
+      @Test
+      fun `EXPECT success WHEN repository succeeds`() = runTest { ... }
+      
+      @Test
+      fun `EXPECT error WHEN repository fails`() = runTest { ... }
+      
+      @Test
+      fun `EXPECT id to be mapped correctly`() { ... }
+      
+      @Test
+      fun `EXPECT PENDING status WHEN status is pending`() { ... }
+      
+      @Test
+      fun `EXPECT correct joint account address to be passed to repository`() = runTest { ... }
+  }
+  ```
+- **Common patterns**:
+  - Success/Error cases: `EXPECT success WHEN ...`, `EXPECT error WHEN ...`
+  - Null cases: `EXPECT null WHEN ...`
+  - Mapping: `EXPECT {field} to be mapped correctly`
+  - Status mapping: `EXPECT {STATUS} status WHEN status is {value}`
+  - Parameter passing: `EXPECT correct {param} to be passed to {target}`
+  - Empty/null handling: `EXPECT empty lists WHEN lists are empty`, `EXPECT null WHEN {field} is null`
+- **Bad naming examples to avoid**:
+  ```kotlin
+  // BAD - Don't use these patterns:
+  fun `invoke returns success when repository succeeds`()  // Should be: EXPECT success WHEN ...
+  fun `when no account exists, returns null`()  // Should be: EXPECT null WHEN ...
+  fun `mapToDTO maps field correctly`()  // Should be: EXPECT field to be mapped correctly
+  fun `test success case`()  // Too vague, use EXPECT pattern
+  ```
+
+#### Unit Test Best Practices
+- **ViewModel Test Setup** - When testing ViewModels, ensure all dependencies are properly mocked BEFORE the ViewModel is instantiated:
+  - ViewModel's `init` block runs during construction, so any unmocked dependencies will cause test failures
+  - Always call `setupMocks()` or configure `coEvery` blocks before creating the ViewModel instance
+  - Example:
+  ```kotlin
+  @Test
+  fun `EXPECT content state WHEN local account exists`() = runTest {
+      // Setup mocks FIRST
+      coEvery { getJointAccount(TEST_ADDRESS) } returns jointAccount
+      coEvery { processor.createUiState(...) } returns uiState
+      
+      // THEN create ViewModel
+      val viewModel = createViewModel(savedStateHandle)
+      advanceUntilIdle()
+      
+      // Verify
+      assertEquals(expectedState, viewModel.state.value)
+  }
+  ```
+- **Event Capture Pattern** - Use `launch` + `toList()` to capture events BEFORE triggering actions to avoid race conditions with SharedFlow:
+  ```kotlin
+  @Test
+  fun `EXPECT NavigateBack event WHEN onIgnoreClick called`() = runTest {
+      val viewModel = createViewModel()
+      advanceUntilIdle()
+      
+      // Start collecting events BEFORE the action
+      val events = mutableListOf<ViewEvent>()
+      val job = launch { eventDelegate.viewEvent.toList(events) }
+      
+      // Trigger the action
+      viewModel.onIgnoreClick()
+      advanceUntilIdle()
+      job.cancel()
+      
+      // Verify
+      assertTrue(events.contains(ViewEvent.NavigateBack))
+  }
+  ```
+- **Gson/TypeToken Mocking** - Don't mock Gson when the implementation uses `TypeToken`:
+  - `TypeToken` creates anonymous classes that are impossible to match with MockK matchers
+  - Use a real `Gson()` instance instead for mapper tests
+  - Example of what NOT to do:
+  ```kotlin
+  // BAD - This won't work because TypeToken creates anonymous classes
+  every { gson.fromJson(json, Array<String>::class.java) } returns arrayOf(...)
+  
+  // When the actual code does:
+  val type = object : TypeToken<List<String>>() {}.type
+  gson.fromJson(json, type)  // MockK can't match this!
+  ```
+  - Correct approach:
+  ```kotlin
+  // GOOD - Use real Gson for mapper tests
+  private val gson = Gson()
+  private val mapper = JointMapperImpl(gson)
+  
+  @Test
+  fun `EXPECT all fields mapped correctly WHEN invoke is called`() {
+      val entity = createTestEntity()
+      val result = mapper(entity)
+      assertEquals(expectedValue, result.field)
+  }
+  ```
+- **Mapper Tests** - For mapper tests involving serialization/deserialization:
+  - Prefer using real serializer instances (Gson, Moshi, etc.) over mocking
+  - This provides better integration testing and catches actual serialization issues
+  - Mock only the external dependencies, not the serialization library itself
+- **Boolean Assertions** - Use idiomatic assertions:
+  ```kotlin
+  // BAD
+  assertEquals(true, result.isSuccess)
+  
+  // GOOD
+  assertTrue(result.isSuccess)
+  assertFalse(result.hasError)
+  ```
+- **Verification Best Practices**:
+  - Use `coVerify` for suspend functions, `verify` for regular functions
+  - Use `coVerify(exactly = 0)` to assert a method was NOT called
+  - Use `coVerify(ordering = Ordering.SEQUENCE)` when call order matters
+
+### Accessibility
+- **Always provide content descriptions** - Always provide content descriptions for icons and images:
+  ```kotlin
+  PeraIcon(
+      painter = painterResource(R.drawable.ic_search),
+      contentDescription = "Search"  // Always describe icon purpose
+  )
+
+  Image(
+      painter = painterResource(R.drawable.img_feature),
+      contentDescription = "Feature illustration"
+  )
+
+  // For decorative images
+  Image(
+      painter = painterResource(R.drawable.img_decoration),
+      contentDescription = null  // Explicitly null for decorative
+  )
+  ```
+- **Support semantic properties** - Use semantic properties for better accessibility:
+  ```kotlin
+  Button(
+      onClick = onClick,
+      modifier = Modifier.semantics {
+          contentDescription = "Submit form"
+          role = Role.Button
+      }
+  ) {
+      Text("Submit")
+  }
+  ```
+
+### Build Configuration
+- Use KSP for code generation (Hilt, Room, etc.)
+- Enable incremental processing: `ksp.incremental=true`
+- Use build cache for faster builds
+- Only build for `arm64-v8a` in debug builds for speed
+
+### Common Patterns
+
+#### Account Display
+- Use `AccountDisplayName` for account information
+- Use `AccountIconDrawablePreview` for account icons
+- Use `PeraAccountItem` composable for account lists
+
+#### Navigation
+- Use Navigation Component with Safe Args
+- Define navigation actions in navigation graphs
+- Pass data via arguments, not through ViewModels
+
+#### State Management
+- Use `StateDelegate` and `EventDelegate` for ViewModel state/event management
+- Sealed interfaces for `ViewState` and `ViewEvent` (use `data object` for singletons, `data class` for state with data)
+- Use `StateFlow` or `Flow` in ViewModels
+- Expose UI state as sealed classes/interfaces
+- Use `collectAsStateWithLifecycle()` in Composables
+- Use `collectLatest` in ViewModels for reactive updates
+- Cancel jobs properly: `job?.cancel()` and set to `null`
+- **ViewState Pattern**: `sealed interface ViewState { data object Idle : ViewState; data class Content(...) : ViewState }`
+- **ViewEvent Pattern**: `sealed interface ViewEvent { data object ShowDialog : ViewEvent; data class NavigateTo(...) : ViewEvent }`
+
+### Code Review Checklist
+- [ ] **Verified existing code patterns before making changes**
+- [ ] **Code compiles without errors** - Always run compilation check after creating new files
+- [ ] **Code passes detekt checks** - Run `./gradlew :app:detektProdDebug`
+- [ ] **Code passes ktlint checks** - Run `./gradlew :app:ktlintCheck` (or `ktlintFormat` to auto-fix)
+- [ ] **Verified class types (final/open/abstract) before extending** - Checked if classes can be extended
+- [ ] **Verified constructor signatures before mocking** - Checked all parameters and types for mocks
+- [ ] **Modern architecture patterns used** - Processors, UseCases, Repositories with proper interfaces
+- [ ] **Module structure follows modern pattern** - Feature-based organization
+- [ ] **State management uses StateDelegate/EventDelegate** - Sealed interfaces for ViewState/ViewEvent
+- [ ] **XML layouts converted to Compose** (if touching legacy UI)
+- [ ] All strings are in string resources
+- [ ] **No hardcoded colors or dimensions** - All colors use `PeraTheme.colors.*`, all typography uses `PeraTheme.typography.*`
+- [ ] **Functions are under 50 lines or properly split**
+- [ ] **Lines are shorter than 150 characters**
+- [ ] **No fully qualified class names - all classes are imported**
+- [ ] No `@Suppress` annotations for code quality issues
+- [ ] **Preview files created for new screens with `@PreviewLightDark`**
+- [ ] **Preview files compile without errors** - Verified ViewModel mocks and dependencies are correct
+- [ ] **Unit tests created for data and domain layers** - UseCases, Repositories, Processors
+- [ ] **Unit tests follow naming convention** - Test classes are `internal`, methods use `EXPECT ... WHEN ...` pattern
+- [ ] Proper error handling implemented
+- [ ] **All imports are added and correct**
+- [ ] **File ends with exactly one trailing newline**
+- [ ] **Code is formatted and cleaned**
+- [ ] **Used existing UI components and resources when available**
+- [ ] **No unnecessary comments - code is self-explanatory**
+- [ ] **Internal classes marked as `internal`** - Hide implementation details
+- [ ] **Accessibility support** - Content descriptions provided for icons and images
+
+### Module Structure
+
+#### Module Organization
+- `app`: Main application module (Native UI layer)
+- `common-sdk`: Shared business logic and data layer (Wallet-As-A-Service)
+- `credentials`: Credential management module
+- `test-utils`: Testing utilities
+
+#### Modern Module Structure for New Features
+```
+{feature}/
+├── di/
+│   └── {Feature}UiModule.kt
+├── view/
+│   ├── {Feature}Screen.kt (Compose)
+│   └── {Feature}Fragment.kt
+├── viewmodel/
+│   ├── {Feature}ViewModel.kt
+│   └── processors/
+│       ├── {Feature}Processor.kt (interface)
+│       └── Default{Feature}Processor.kt (implementation)
+├── domain/
+│   ├── usecase/
+│   │   ├── {UseCaseName}.kt (interface)
+│   │   └── {UseCaseName}UseCase.kt (implementation)
+│   └── model/
+│       └── {ModelName}.kt
+└── data/
+    ├── repository/
+    │   ├── {RepositoryName}.kt (interface)
+    │   └── {RepositoryName}Impl.kt (implementation)
+    └── database/
+        └── dao/
+```
+
+#### Package Naming
+- Use descriptive package names: `com.algorand.android.modules.{feature}.{layer}`
+- Organize by feature, not by type (e.g., `accountstatus/` not `viewmodels/`)
+- Keep related code together in same package
+
+### When Creating New Features
+
+#### Modern Architecture Approach
+1. **Use modern module structure** - Always implement new features using the modern module structure
+2. **Refactor on touch** - When working on existing code, refactor it to align with modern architecture
+3. **Convert XML to Compose** - When touching XML-based UI, convert to Jetpack Compose
+4. **Extract Processors** - If ViewModel logic is complex, extract to Processors
+5. **Use UseCases** - Move business logic to UseCases (interface + UseCase implementation)
+6. **Repository pattern** - Use Repository pattern for all data access (interface + Impl)
+
+#### Step-by-Step Feature Creation
+1. **Check existing code patterns and components first** - Don't assume, verify
+2. **Prefer Compose over ViewBinding/Views** - Always use Compose for new UI
+3. Create feature module structure following modern pattern
+4. Create Screen composable in `view/` package
+5. Create Fragment wrapper in `view/` package (thin wrapper using ComposeView)
+6. Create ViewModel with Hilt (using StateDelegate/EventDelegate)
+7. Extract Processors if ViewModel logic is complex
+8. Create UseCases for business logic (interface + UseCase implementation)
+9. Create Repository for data access (interface + Impl)
+10. Create Listener interface for callbacks
+11. Create DI module (`{Feature}UiModule.kt`)
+12. **ALWAYS create preview file for every new screen** - Required for every new screen, use `@PreviewLightDark` annotation, place in `preview/` subdirectory
+13. **Create unit tests for data/domain layers** - Required for UseCases, Repositories, and Processors
+14. Add navigation routes if needed
+15. **Use existing UI components and resources when available** - Always search first
+16. **Verify code compiles and passes lint checks**
+17. **Ensure file ends with single trailing newline**
+
+### Design System Integration Workflow
+
+#### Step-by-Step Process for Figma → Android
+
+**1. Analyze Figma Design**
+- Extract: Colors (fill, stroke, background), Typography (font, size, weight, line height, letter spacing), Spacing/padding values, Corner radius, shadows, borders, Component states (default, hover, pressed, disabled), Icons and assets
+
+**2. Update Design Tokens (if new tokens needed)**
+- **Colors**: Add to ColorPalette → Add semantic mapping → Implement in both theme files
+- **Typography**: Identify closest existing style → Add new size/style if needed → Create styles
+
+**3. Create/Update Components**
+- Create new file in appropriate widget subdirectory
+- Use design tokens, not hardcoded values
+- Support component states (enabled, disabled, loading, error)
+- Follow naming conventions (prefix with `Pera`)
+
+**4. Add Assets**
+- **Icons/illustrations**: Export SVG → Convert to Android Vector Drawable → Save as `drawable/ic_[name].xml` → Use `painterResource(R.drawable.ic_[name])`
+- **Images**: Export PNG at multiple densities → Place in appropriate drawable-*dpi directories → Use `painterResource(R.drawable.img_[name])`
+
+**5. Implement Screen/Feature**
+- Create Composable screen using `PeraTheme` wrapper
+- Use existing components from component library
+- Combine components into full UI
+
+**6. Test Both Themes**
+- Preview both light and dark themes using `@PreviewLightDark`
+- Test all component states
+
+**7. Add Accessibility Support**
+- Provide content descriptions for icons and images
+- Support semantic properties
+
+### Modernization & Migration Strategy
+
+#### Current Direction
+- **Moving to module structure**: New features use modern module structure
+- **Refactor on touch**: When working on existing code, refactor to align with modern architecture
+- **XML to Compose**: Convert old XML UIs to Compose when touching features
+- **Gradual migration**: Migrate components incrementally as they are modified
+
+#### Refactoring Guidelines
+When refactoring existing code:
+1. **Align with modern architecture**:
+   - Extract logic to Processors if ViewModel is complex
+   - Move business logic to UseCases
+   - Use Repository pattern for data access
+   - Implement proper dependency injection
+2. **Module organization**: Organize by feature, not by type
+3. **Code quality**: Remove deprecated patterns, update to modern Kotlin idioms
+4. **Incremental approach**: Refactor when touching code, maintain backward compatibility
+
+#### XML to Compose Migration
+- **Convert when touching**: When modifying features with XML layouts, convert to Compose
+- **Migration steps**:
+  1. Create Compose screen composable
+  2. Extract UI logic from Fragment to Screen
+  3. Use `collectAsStateWithLifecycle()` for state observation
+  4. Implement listener interface for callbacks
+  5. Update Fragment to use `ComposeView`
+  6. Remove XML layout file
+  7. Test thoroughly
+- **Example pattern**:
+  ```kotlin
+  // Old: XML + ViewBinding
+  class OldFragment : Fragment() { /* ViewBinding */ }
+  
+  // New: Compose
+  @Composable
+  fun NewScreen(listener: Listener, viewModel: ViewModel) { /* Compose UI */ }
+  class NewFragment : Fragment() {
+      override fun onCreateView(...) = ComposeView(requireContext()).apply {
+          setContent { NewScreen(listener, viewModel) }
+      }
+  }
+  ```
+
+#### Legacy Code Migration
+- **Suggest converting existing UI classes to Compose** - When working with ViewBinding, ViewHolders, or custom Views, suggest converting to Compose equivalents
+- Migrating from ViewBinding to Compose
+- Replace `ContactIconDrawable` with `ContactIcon` composable
+- Convert ViewHolders to Composables when possible
+- Convert custom Views and ViewGroups to Composables
+- Update fragments to use Compose screens
+- **Always verify existing patterns before migrating**
+- When encountering legacy UI code, propose Compose migration as an improvement
+
+### Code Style Enforcement
+- **Follow detekt rules** - Run `./gradlew detekt` to check
+- **Follow ktlint rules** - Run `./gradlew ktlintCheck` to verify code style, run `./gradlew ktlintFormat` to auto-fix issues
+- **Auto-format code** - Use IDE formatter before committing
+- **Self-documenting code** - Use clear names instead of comments
+- **Performance conscious** - Avoid unnecessary recompositions, use `remember`, lazy initialization
+- **Line length limit** - Keep lines under 150 characters, break long lines appropriately
+- **Use imports** - Always import classes instead of using fully qualified names
+- **Always use design tokens** - Never use hardcoded colors, dimensions, or typography values
+
+### Caching & Polling Patterns
+
+#### Cache Initialization
+- **Flow**: Clear previous session → Get local accounts → Fetch account details → Cache → Fetch ASA details → Complete
+- Always clear previous session cache first
+- Initialize cache managers on Main dispatcher
+- Handle errors gracefully (e.g., indexer 5k ASA limit)
+
+#### Cache Manager Pattern
+- Use `LifecycleAwareCacheManager` for lifecycle management
+- Implement listener pattern for initialization and job start
+- Expose cache status via `StateFlow<CacheManagerStatus>`
+- Use infinite loop with delay for polling (3.5 seconds)
+
+#### Polling Pattern
+- Poll every 3.5 seconds (`NEXT_BLOCK_DELAY_AFTER = 3500L`)
+- Check if update is required before fetching
+- Update last known block number after cache update
+- Handle errors gracefully
+
+### Database Patterns
+
+#### Database Organization
+- **Address Database**: `algo_25`, `ledger_ble`, `no_auth`, `hd_seeds`, `hd_keys`
+- **Passkey Database**: `site`, `passkey`
+- **Pera Database** (cache): `account_information`, `asset_holding_table`, `asset_detail`, `collectible`, etc.
+
+#### DAO Pattern
+- Use Flow for reactive queries
+- Use `OnConflictStrategy.REPLACE` for upsert operations
+- Provide both suspend and Flow variants
+- Use transactions for multiple operations
+
+#### Entity Mapping
+- Keep entities in `data/database/entity/`
+- Keep domain models in `domain/model/`
+- Use mappers to convert between layers
+- Entities should match database schema exactly
+
+### UI Migration Strategy
+- **Always suggest Compose migration** - When working with or modifying legacy UI code (ViewBinding, ViewHolders, custom Views), suggest converting to Compose
+- **Identify migration opportunities** - Look for:
+  - ViewBinding layouts that could be Compose screens
+  - RecyclerView ViewHolders that could be Composables
+  - Custom Views that could be Composables
+  - XML layouts that could be Compose UI
+- **Migration approach**:
+  1. Identify the legacy UI component
+  2. Suggest creating a Compose equivalent
+  3. Maintain the same functionality and behavior
+  4. Update fragments to use the new Compose screen
+  5. Remove old ViewBinding/View code after migration is complete
+- **Benefits to highlight**: Better performance, easier testing, more maintainable code, better preview support
+
+### Quick Reference
+
+#### File Paths for Common Tasks
+
+| Task                    | File Path                                                                           |
+|-------------------------|-------------------------------------------------------------------------------------|
+| Add new color           | `app/src/main/kotlin/com/algorand/android/ui/compose/theme/Color.kt`                |
+| Light theme colors      | `app/src/main/kotlin/com/algorand/android/ui/compose/theme/PeraLightColor.kt`       |
+| Dark theme colors       | `app/src/main/kotlin/com/algorand/android/ui/compose/theme/PeraDarkColor.kt`        |
+| Add typography style    | `app/src/main/kotlin/com/algorand/android/ui/compose/typography/PeraTypography*.kt` |
+| Create button component | `app/src/main/kotlin/com/algorand/android/ui/compose/widget/button/`                |
+| Create text component   | `app/src/main/kotlin/com/algorand/android/ui/compose/widget/text/`                  |
+| Create input component  | `app/src/main/kotlin/com/algorand/android/ui/compose/widget/textfield/`             |
+| Add icon                | `app/src/main/res/drawable/ic_[name].xml`                                           |
+| Add background shape    | `app/src/main/res/drawable/bg_[name].xml`                                           |
+| Add dimension           | `app/src/main/res/values/dimens.xml`                                                |
+| XML styles (legacy)     | `app/src/main/res/values/styles.xml`                                               |
+
+#### Common Component Specs
+
+| Component      | Height | Corner Radius | Padding |
+|----------------|--------|---------------|---------|
+| Primary Button | 52dp   | 4dp           | 16dp    |
+| Small Button   | 40dp   | 32dp          | 12dp    |
+| TextField      | 48dp+  | 8dp           | 16dp    |
+| Card           | Wrap   | 8dp           | 16dp    |
+| Bottom Sheet   | Wrap   | 16dp (top)    | 16-24dp |
+
+#### Color Usage Guidelines
+
+| Semantic Token              | Light Mode     | Dark Mode      | Use Case                 |
+|-----------------------------|----------------|----------------|--------------------------|
+| `background.primary`        | Gray.V50       | Gray.V900      | Main background          |
+| `background.secondary`      | Gray.V100      | Gray.V800      | Cards, elevated surfaces |
+| `text.main`                 | Gray.V900      | Gray.V100      | Primary text             |
+| `text.secondary`            | Gray.V500      | Gray.V400      | Secondary text           |
+| `button.primary.background` | Gray.V800      | Yellow.V400    | Primary CTA              |
+| `link.primary`              | Turquoise.V600 | Yellow.V400    | Clickable links          |
+| `error.main`                | Salmon.V600    | Salmon.V400    | Error states             |
+| `success.main`              | Turquoise.V600 | Turquoise.V400 | Success states           |
+
+#### Project Structure
+
+**Source Organization:**
+```
+app/src/main/kotlin/com/algorand/android/
+├── ui/
+│   ├── compose/                        # Modern Compose UI
+│   │   ├── theme/                      # Design tokens
+│   │   │   ├── Color.kt               # Color palette
+│   │   │   ├── PeraLightColor.kt      # Light theme
+│   │   │   ├── PeraDarkColor.kt       # Dark theme
+│   │   │   └── PeraTheme.kt           # Theme setup
+│   │   ├── typography/                 # Typography system
+│   │   │   ├── PeraTypography.kt
+│   │   │   ├── PeraTypographyTitle.kt
+│   │   │   ├── PeraTypographyBody.kt
+│   │   │   ├── PeraTypographyFootnote.kt
+│   │   │   └── PeraTypographyCaption.kt
+│   │   └── widget/                     # Component library (87 files)
+│   │       ├── button/                 # Button components
+│   │       ├── text/                   # Text components
+│   │       ├── textfield/              # Input fields
+│   │       ├── icon/                   # Icon components
+│   │       ├── bottomsheet/            # Bottom sheets
+│   │       ├── asset/                  # Asset displays
+│   │       ├── chart/                  # Charts
+│   │       ├── progress/               # Progress indicators
+│   │       ├── quickaction/            # Quick actions
+│   │       └── modifier/              # Custom modifiers
+│   │
+│   ├── [feature modules]/              # Feature screens
+│   │   ├── home/
+│   │   ├── account/
+│   │   ├── asset/
+│   │   ├── discover/
+│   │   └── [other features]/
+│   │       └── *Fragment.kt            # Fragment screens (XML layout)
+│   │
+│   └── [legacy components]/            # Legacy UI components
+│
+├── model/                              # Data models
+├── repository/                         # Data layer
+├── utils/                              # Utilities
+└── [other packages]/
+
+app/src/main/res/
+├── values/
+│   ├── colors.xml                      # Color definitions (light)
+│   ├── dimens.xml                      # Dimensions & spacing
+│   ├── styles.xml                      # XML styles (765 lines)
+│   ├── strings.xml                     # Text resources
+│   └── attrs.xml                       # Custom attributes
+├── values-night/
+│   ├── colors.xml                      # Dark theme colors
+│   └── styles.xml                      # Dark theme style overrides
+├── drawable/                           # Vector drawables (286+)
+├── drawable-*dpi/                      # Density variants
+├── drawable-night/                     # Dark theme drawables
+├── font/                               # Font files
+├── layout/                             # XML layouts (349 files)
+├── navigation/                         # Navigation graphs (75 files)
+├── menu/                               # Menu resources
+├── anim/                               # Animations
+└── raw/                                # Raw assets
+```
+
+**Module Structure:**
+```
+PeraWalletAndroidPubic/
+├── app/                    # Main application module
+├── common-sdk/             # Shared SDK functionality
+├── credentials/            # Credential management
+├── test-utils/             # Testing utilities
+├── build.gradle.kts       # Root build config
+└── settings.gradle.kts    # Module configuration
+```

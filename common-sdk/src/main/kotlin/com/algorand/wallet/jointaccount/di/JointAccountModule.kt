@@ -12,16 +12,8 @@
 
 package com.algorand.wallet.jointaccount.di
 
-import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
-import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapperImpl
-import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
-import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapperImpl
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCountUseCase
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,27 +24,7 @@ import dagger.hilt.components.SingletonComponent
 internal object JointAccountModule {
 
     @Provides
-    fun provideGetJointAccount(
-        useCase: GetJointAccountUseCase
-    ): GetJointAccount = useCase
-
-    @Provides
-    fun provideGetJointAccountParticipantCount(
-        useCase: GetJointAccountParticipantCountUseCase
-    ): GetJointAccountParticipantCount = useCase
-
-    @Provides
     fun provideGetJointAccountProposerAddress(
         useCase: GetJointAccountProposerAddressUseCase
     ): GetJointAccountProposerAddress = useCase
-
-    @Provides
-    fun provideCreateJointAccountDTOMapper(
-        impl: CreateJointAccountDTOMapperImpl
-    ): CreateJointAccountDTOMapper = impl
-
-    @Provides
-    fun provideJointAccountDTOMapper(
-        impl: JointAccountDTOMapperImpl
-    ): JointAccountDTOMapper = impl
 }

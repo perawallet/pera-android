@@ -12,6 +12,7 @@
 
 package com.algorand.android.core.transaction
 
+import android.util.Log
 import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.util.Encoder
 import com.algorand.android.models.TransactionSignData
@@ -26,7 +27,6 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import android.util.Log
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
@@ -141,10 +141,6 @@ class JointAccountTransactionSignHelper @Inject constructor(
         }
     }
 
-    companion object {
-        private const val TAG = "JointAcctTxnSignHelper"
-    }
-
     private fun prepareRawTransactionLists(transactionDataList: List<TransactionSignData>): List<List<String>>? {
         val rawTransactions = transactionDataList.mapNotNull { transactionData ->
             transactionData.transactionByteArray?.encodeBase64()
@@ -209,5 +205,9 @@ class JointAccountTransactionSignHelper @Inject constructor(
             val signedTransaction = Encoder.decodeFromMsgPack(signedTransactionBytes, SignedTransaction::class.java)
             signedTransaction.sig?.bytes?.takeIf { it.isNotEmpty() }
         }.getOrNull()
+    }
+
+    companion object {
+        private const val TAG = "JointAcctTxnSignHelper"
     }
 }

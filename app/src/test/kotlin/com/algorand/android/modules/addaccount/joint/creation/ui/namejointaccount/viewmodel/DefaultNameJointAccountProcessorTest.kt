@@ -14,10 +14,10 @@ package com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccou
 
 import com.algorand.android.R
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.android.models.Result
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.DeleteInboxJointInvitationNotification
 import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
 import com.algorand.wallet.account.local.domain.model.LocalAccount
@@ -93,7 +93,7 @@ internal class DefaultNameJointAccountProcessorTest {
         coEvery { deviceIdUseCase.getSelectedNodeDeviceId() } returns TEST_DEVICE_ID
         coEvery {
             deleteInboxJointInvitationNotification(TEST_DEVICE_ID_LONG, TEST_ADDRESS)
-        } returns Result.Success(Unit)
+        } returns PeraResult.Success(Unit)
 
         val result = sut.createLocalAccount(
             jointAccountAddress = TEST_ADDRESS,
@@ -123,7 +123,7 @@ internal class DefaultNameJointAccountProcessorTest {
         coEvery { deviceIdUseCase.getSelectedNodeDeviceId() } returns TEST_DEVICE_ID
         coEvery {
             deleteInboxJointInvitationNotification(TEST_DEVICE_ID_LONG, TEST_ADDRESS)
-        } returns Result.Success(Unit)
+        } returns PeraResult.Success(Unit)
 
         val result = sut.createLocalAccount(
             jointAccountAddress = TEST_ADDRESS,

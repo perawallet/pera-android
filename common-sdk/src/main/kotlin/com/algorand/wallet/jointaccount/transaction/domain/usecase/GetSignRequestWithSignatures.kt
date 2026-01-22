@@ -13,27 +13,8 @@
 package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
-
-fun interface AddJointAccountSignature {
-    suspend operator fun invoke(
-        signRequestId: String,
-        addSignatureInput: AddSignatureInput
-    ): PeraResult<JointSignRequest>
-}
 
 fun interface GetSignRequestWithSignatures {
     suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature>
-}
-
-fun interface ProposeJointSignRequest {
-    suspend operator fun invoke(
-        jointAccountAddress: String,
-        proposerAddress: String,
-        type: String,
-        rawTransactionLists: List<List<String>>,
-        transactionSignatureLists: List<List<String?>>
-    ): PeraResult<JointSignRequest>
 }

@@ -29,7 +29,6 @@ import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselectio
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.model.RekeyToStandardAccountSelectionPreview
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 

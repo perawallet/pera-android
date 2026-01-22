@@ -10,17 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.wallet.jointaccount.creation.domain.model
 
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import javax.inject.Inject
-
-internal class GetJointAccountUseCase @Inject constructor(
-    private val getLocalAccount: GetLocalAccount
-) : GetJointAccount {
-
-    override suspend fun invoke(address: String): LocalAccount.Joint? {
-        return getLocalAccount(address) as? LocalAccount.Joint
-    }
-}
+data class CreateJointAccountInput(
+    val participantAddresses: List<String>,
+    val threshold: Int,
+    val version: Int
+)

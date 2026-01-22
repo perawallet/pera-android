@@ -10,18 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import javax.inject.Inject
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
-internal class GetJointAccountParticipantCountUseCase @Inject constructor(
-    private val getLocalAccount: GetLocalAccount
-) : GetJointAccountParticipantCount {
-
-    override suspend fun invoke(address: String): Int {
-        val jointAccount = getLocalAccount(address) as? LocalAccount.Joint
-        return jointAccount?.participantAddresses?.size ?: 0
-    }
+fun interface GetSignRequestWithSignatures {
+    suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature>
 }

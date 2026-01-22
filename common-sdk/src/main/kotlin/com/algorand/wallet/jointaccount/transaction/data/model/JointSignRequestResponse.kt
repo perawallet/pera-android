@@ -15,7 +15,7 @@ package com.algorand.wallet.jointaccount.transaction.data.model
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
 import com.google.gson.annotations.SerializedName
 
-data class JointSignRequestResponse(
+internal data class JointSignRequestResponse(
     @SerializedName("id")
     val id: String?,
     @SerializedName("joint_account")
@@ -34,7 +34,7 @@ data class JointSignRequestResponse(
     val status: String?
 )
 
-data class SignRequestTransactionListResponse(
+internal data class SignRequestTransactionListResponse(
     @SerializedName("id")
     val id: String?,
     @SerializedName("raw_transactions")
@@ -49,7 +49,7 @@ data class SignRequestTransactionListResponse(
     val expectedExpireDatetime: String?
 )
 
-data class SignRequestTransactionListResponseItem(
+internal data class SignRequestTransactionListResponseItem(
     @SerializedName("address")
     val address: String?,
     @SerializedName("response")

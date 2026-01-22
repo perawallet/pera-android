@@ -10,12 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.transaction.domain.model
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-data class SearchSignRequestsDTO(
-    val deviceId: Long,
-    val signRequestId: String? = null,
-    val participantAddresses: List<String>? = null,
-    val statuses: List<String>? = null,
-    val jointAccountAddress: List<String>? = null
-)
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+
+fun interface ProposeJointSignRequest {
+    suspend operator fun invoke(
+        jointAccountAddress: String,
+        proposerAddress: String,
+        type: String,
+        rawTransactionLists: List<List<String>>,
+        transactionSignatureLists: List<List<String?>>
+    ): PeraResult<JointSignRequest>
+}

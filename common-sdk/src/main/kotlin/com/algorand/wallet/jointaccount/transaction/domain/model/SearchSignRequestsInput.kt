@@ -10,12 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.creation.domain.model
+package com.algorand.wallet.jointaccount.transaction.domain.model
 
-data class JointAccountDTO(
-    val creationDatetime: String?,
-    val address: String?,
-    val version: Int?,
-    val threshold: Int?,
-    val participantAddresses: List<String>?
+data class SearchSignRequestsInput(
+    val deviceId: Long,
+    val signRequestId: String? = null,
+    val participantAddresses: List<String>? = null,
+    val statuses: List<String>? = null,
+    val jointAccountAddress: List<String>? = null
 )

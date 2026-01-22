@@ -10,8 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.wallet.jointaccount.creation.domain.model
 
-fun interface GetJointAccountParticipantCount {
-    suspend operator fun invoke(address: String): Int
-}
+data class JointAccount(
+    val creationDatetime: String?,
+    val address: String?,
+    val version: Int?,
+    val threshold: Int?,
+    val participantAddresses: List<String>?
+)

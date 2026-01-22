@@ -10,10 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.creation.domain.model
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-data class CreateJointAccountDTO(
-    val participantAddresses: List<String>,
-    val threshold: Int,
-    val version: Int
-)
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+
+fun interface AddJointAccountSignature {
+    suspend operator fun invoke(
+        signRequestId: String,
+        addSignatureInput: AddSignatureInput
+    ): PeraResult<JointSignRequest>
+}

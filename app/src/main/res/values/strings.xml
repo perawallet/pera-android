@@ -674,7 +674,7 @@
     <string name="approve_transaction">Approve Transaction</string>
     <string name="sender_account">Sender Account</string>
     <string name="transacting_fee">Transaction Fee</string>
-    <string name="transfer_to">Transfer to </string>
+    <string name="transfer_to">Transfer to %1$s</string>
     <string name="confirm_transfer">Confirm transfer</string>
     <string name="no_transactions">No transactions</string>
     <string name="send_transaction">Send transaction</string>

@@ -15,7 +15,7 @@ package com.algorand.wallet.inbox.domain.usecase
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 
-fun interface GetInboxMessages {
+fun interface FetchInboxMessages {
     suspend operator fun invoke(
         deviceId: Long,
         addresses: List<String>

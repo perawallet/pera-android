@@ -16,12 +16,12 @@ import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
-import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
+import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessages
 import javax.inject.Inject
 
 class JointAccountInboxOperationsUseCase @Inject constructor(
     private val deviceIdUseCase: DeviceIdUseCase,
-    private val getInboxMessages: GetInboxMessages,
+    private val fetchInboxMessages: FetchInboxMessages,
     private val deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification
 ) {
 
@@ -30,7 +30,7 @@ class JointAccountInboxOperationsUseCase @Inject constructor(
     suspend fun getInboxMessages(addresses: List<String>): PeraResult<InboxMessages> {
         val deviceId = getDeviceId()?.toLongOrNull()
             ?: return PeraResult.Error(Exception("Device ID not available"))
-        return getInboxMessages(deviceId, addresses)
+        return fetchInboxMessages(deviceId, addresses)
     }
 
     suspend fun deleteNotification(accountAddress: String): Boolean {

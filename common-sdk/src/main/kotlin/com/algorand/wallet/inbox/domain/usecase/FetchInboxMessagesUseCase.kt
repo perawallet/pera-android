@@ -19,10 +19,10 @@ import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import javax.inject.Inject
 import javax.inject.Named
 
-internal class GetInboxMessagesUseCase @Inject constructor(
+internal class FetchInboxMessagesUseCase @Inject constructor(
     @Named(JointAccountRepository.INJECTION_NAME)
     private val jointAccountRepository: JointAccountRepository
-) : GetInboxMessages {
+) : FetchInboxMessages {
 
     override suspend fun invoke(deviceId: Long, addresses: List<String>): PeraResult<InboxMessages> {
         return jointAccountRepository.getInboxMessages(deviceId, InboxSearchInput(addresses))

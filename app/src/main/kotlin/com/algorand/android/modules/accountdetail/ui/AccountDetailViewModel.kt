@@ -34,7 +34,6 @@ import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle

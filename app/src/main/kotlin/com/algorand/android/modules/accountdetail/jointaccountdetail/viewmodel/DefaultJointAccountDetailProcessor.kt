@@ -12,15 +12,15 @@
 
 package com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel
 
-import com.algorand.android.models.Result
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase.CreateJointAccountParticipantItem
 import com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase.JointAccountInboxOperationsUseCase
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import javax.inject.Inject
 
@@ -75,8 +75,8 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
         val addresses = createJointAccountParticipantItem.getLocalAccountAddresses()
 
         return when (val result = inboxOperationsUseCase.getInboxMessages(addresses)) {
-            is Result.Success -> parseInvitationFromInboxMessages(result.data, accountAddress)
-            is Result.Error -> JointAccountDetailProcessor.InvitationResult.NetworkError
+            is PeraResult.Success -> parseInvitationFromInboxMessages(result.data, accountAddress)
+            is PeraResult.Error -> JointAccountDetailProcessor.InvitationResult.NetworkError
         }
     }
 
@@ -105,15 +105,15 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
     }
 
     private fun parseInvitationFromInboxMessages(
-        inboxMessages: InboxMessagesDTO,
+        inboxMessages: InboxMessages,
         accountAddress: String
     ): JointAccountDetailProcessor.InvitationResult {
-        val dto = inboxMessages.jointAccountImportRequests
+        val jointAccount = inboxMessages.jointAccountImportRequests
             ?.firstOrNull { it.address == accountAddress }
             ?: return JointAccountDetailProcessor.InvitationResult.NotFound
 
-        val participantAddresses = dto.participantAddresses
-        val threshold = dto.threshold
+        val participantAddresses = jointAccount.participantAddresses
+        val threshold = jointAccount.threshold
 
         if (participantAddresses.isNullOrEmpty() || threshold == null) {
             return JointAccountDetailProcessor.InvitationResult.NotFound

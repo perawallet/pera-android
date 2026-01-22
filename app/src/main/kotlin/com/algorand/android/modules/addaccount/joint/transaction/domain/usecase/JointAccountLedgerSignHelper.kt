@@ -25,8 +25,8 @@ import com.algorand.android.ledger.operations.ExternalTransactionOperation
 import com.algorand.android.models.LedgerBleResult
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.LifecycleScopedCoroutineOwner
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -220,7 +220,7 @@ class JointAccountLedgerSignHelper @Inject constructor(
                 return@launch
             }
 
-            val responseDTO = SignRequestTransactionListResponseDTO(
+            val addSignatureInput = AddSignatureInput(
                 address = request.accountAddress,
                 response = SignRequestResponseType.SIGNED,
                 signatures = listOf(signatures.map { Encoder.encodeToBase64(it) })
@@ -228,7 +228,7 @@ class JointAccountLedgerSignHelper @Inject constructor(
 
             addJointAccountSignature(
                 signRequestId = request.signRequestId,
-                signRequestTransactionListResponseDTO = responseDTO
+                addSignatureInput = addSignatureInput
             ).use(
                 onSuccess = {
                     _signResultFlow.value = LedgerSignResult.Success

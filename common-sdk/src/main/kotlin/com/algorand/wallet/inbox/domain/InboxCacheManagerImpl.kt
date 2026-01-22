@@ -21,7 +21,7 @@ import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDevi
 import com.algorand.wallet.inbox.domain.usecase.CacheInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.ClearInboxCache
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
-import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
+import com.algorand.wallet.inbox.domain.model.InboxSearchInput
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -79,8 +79,8 @@ internal class InboxCacheManagerImpl @Inject constructor(
             return
         }
 
-        val inboxSearchDTO = InboxSearchDTO(addresses = validAddresses)
-        jointAccountRepository.getInboxMessages(deviceId, inboxSearchDTO).use(
+        val inboxSearchInput = InboxSearchInput(addresses = validAddresses)
+        jointAccountRepository.getInboxMessages(deviceId, inboxSearchInput).use(
             onSuccess = { inboxMessages ->
                 cacheInboxMessages(inboxMessages)
             },

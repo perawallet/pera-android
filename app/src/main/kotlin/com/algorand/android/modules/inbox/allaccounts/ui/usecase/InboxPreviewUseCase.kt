@@ -18,7 +18,7 @@ import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
 import com.algorand.android.modules.inbox.data.local.InboxLastOpenedTimeLocalSource
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.wallet.inbox.asset.domain.model.AssetInboxRequest
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
@@ -84,12 +84,12 @@ class InboxPreviewUseCase @Inject constructor(
     }
 
     private fun filterInboxMessages(
-        inboxMessages: InboxMessagesDTO?,
+        inboxMessages: InboxMessages?,
         filterAccountAddress: String?
-    ): InboxMessagesDTO? {
+    ): InboxMessages? {
         if (filterAccountAddress == null || inboxMessages == null) return inboxMessages
 
-        return InboxMessagesDTO(
+        return InboxMessages(
             jointAccountImportRequests = inboxMessages.jointAccountImportRequests?.filter { jointAccount ->
                 // Joint account invitations are sent to participants
                 jointAccount.participantAddresses?.contains(filterAccountAddress) == true
@@ -110,7 +110,7 @@ class InboxPreviewUseCase @Inject constructor(
     }
 
     private fun parseAssetInboxes(
-        inboxMessages: InboxMessagesDTO?
+        inboxMessages: InboxMessages?
     ): List<AssetInboxRequest> {
         return inboxMessages?.assetInboxes?.map { assetInbox ->
             AssetInboxRequest(
@@ -123,7 +123,7 @@ class InboxPreviewUseCase @Inject constructor(
     private suspend fun createInboxPreview(
         assetInboxList: List<AssetInboxRequest>,
         addresses: List<String>,
-        inboxMessages: InboxMessagesDTO?,
+        inboxMessages: InboxMessages?,
         lastOpenedTime: ZonedDateTime?,
         filterAccountAddress: String?,
         localAccountAddresses: List<String>

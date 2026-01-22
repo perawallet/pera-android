@@ -114,10 +114,6 @@ class InAppPinFragment : BaseFragment(R.layout.fragment_in_app_pin) {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
         initObservers()
         initUi()
-    }
-
-    override fun onResume() {
-        super.onResume()
         initSavedStateListener()
     }
 

@@ -13,7 +13,6 @@
 package com.algorand.android.ui.swap.usecase
 
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import javax.inject.Inject

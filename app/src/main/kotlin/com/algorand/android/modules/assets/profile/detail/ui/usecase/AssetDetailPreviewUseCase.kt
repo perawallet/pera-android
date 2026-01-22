@@ -31,7 +31,6 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.Swa
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow

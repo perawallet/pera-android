@@ -33,9 +33,9 @@ import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.banner.domain.model.Banner
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
@@ -60,7 +60,7 @@ class AccountPreviewProcessor @Inject constructor(
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
-    private val getJointAccountParticipantCount: GetJointAccountParticipantCount
+    private val getLocalAccount: GetLocalAccount
 ) {
 
     suspend fun prepareAccountPreview(
@@ -157,7 +157,7 @@ class AccountPreviewProcessor @Inject constructor(
         val primaryAmount = PeraAmount(cachedInfo.primaryAccountValue)
         val secondaryAmount = PeraAmount(cachedInfo.secondaryAccountValue)
         val participantCount = if (cachedInfo.type == AccountType.Joint) {
-            getJointAccountParticipantCount(address).takeIf { it > 0 }
+            (getLocalAccount(address) as? LocalAccount.Joint)?.participantAddresses?.size?.takeIf { it > 0 }
         } else {
             null
         }

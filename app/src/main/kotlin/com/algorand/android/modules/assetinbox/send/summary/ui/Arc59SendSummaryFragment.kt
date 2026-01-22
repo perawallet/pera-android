@@ -135,9 +135,9 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        initSavedStateListener()
         arc59SendSummaryViewModel.initializePreview()
         arc59SendTransactionSignManager.setup(viewLifecycleOwner.lifecycle)
-        initSavedStateListener()
     }
 
     private fun initUi() {

@@ -47,7 +47,6 @@ import com.algorand.android.ui.main.tracker.BottomNavigationEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.launchIO
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress

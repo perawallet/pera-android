@@ -13,32 +13,29 @@
 package com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase
 
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.android.models.Result
-import com.algorand.android.modules.addaccount.joint.core.domain.repository.JointAccountRepository
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.DeleteInboxJointInvitationNotification
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
-import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
+import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessages
 import javax.inject.Inject
-import javax.inject.Named
 
 class JointAccountInboxOperationsUseCase @Inject constructor(
     private val deviceIdUseCase: DeviceIdUseCase,
-    @param:Named(JointAccountRepository.INJECTION_NAME)
-    private val jointAccountRepository: JointAccountRepository,
+    private val fetchInboxMessages: FetchInboxMessages,
     private val deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification
 ) {
 
     fun getDeviceId(): String? = deviceIdUseCase.getSelectedNodeDeviceId()
 
-    suspend fun getInboxMessages(addresses: List<String>): Result<InboxMessagesDTO> {
+    suspend fun getInboxMessages(addresses: List<String>): PeraResult<InboxMessages> {
         val deviceId = getDeviceId()?.toLongOrNull()
-            ?: return Result.Error(Exception("Device ID not available"))
-        return jointAccountRepository.getInboxMessages(deviceId, InboxSearchDTO(addresses))
+            ?: return PeraResult.Error(Exception("Device ID not available"))
+        return fetchInboxMessages(deviceId, addresses)
     }
 
     suspend fun deleteNotification(accountAddress: String): Boolean {
         val deviceId = getDeviceId()?.toLongOrNull() ?: return false
         val result = deleteInboxJointInvitationNotification(deviceId, accountAddress)
-        return result is Result.Success
+        return result is PeraResult.Success
     }
 }

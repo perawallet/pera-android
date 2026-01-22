@@ -20,7 +20,7 @@ import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequ
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.wallet.inbox.asset.domain.model.AssetInboxRequest
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -77,7 +77,7 @@ class InboxPreviewMapperImpl @Inject constructor(
     }
 
     private suspend fun mapToSignatureRequestList(
-        inboxMessages: InboxMessagesDTO?,
+        inboxMessages: InboxMessages?,
         lastOpenedTime: ZonedDateTime?,
         localAccountAddresses: List<String>
     ): List<SignatureRequestInboxItem> {
@@ -96,7 +96,7 @@ class InboxPreviewMapperImpl @Inject constructor(
     }
 
     private suspend fun mapToJointAccountInvitationList(
-        inboxMessages: InboxMessagesDTO?,
+        inboxMessages: InboxMessages?,
         lastOpenedTime: ZonedDateTime?
     ): List<JointAccountInvitationInboxItem> {
         val importRequests = inboxMessages?.jointAccountImportRequests ?: return emptyList()

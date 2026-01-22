@@ -20,7 +20,6 @@ import com.algorand.android.models.AccountIconResource.STANDARD
 import com.algorand.android.models.AccountIconResource.WATCH
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 

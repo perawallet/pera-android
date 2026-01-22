@@ -13,8 +13,8 @@
 package com.algorand.wallet.jointaccount.domain.repository
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
-import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.model.InboxSearchInput
 import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
@@ -44,8 +44,8 @@ interface JointAccountRepository {
 
     suspend fun getInboxMessages(
         deviceId: Long,
-        inboxSearchDTO: InboxSearchDTO
-    ): PeraResult<InboxMessagesDTO>
+        inboxSearchInput: InboxSearchInput
+    ): PeraResult<InboxMessages>
 
     suspend fun deleteInboxJointInvitationNotification(
         deviceId: Long,

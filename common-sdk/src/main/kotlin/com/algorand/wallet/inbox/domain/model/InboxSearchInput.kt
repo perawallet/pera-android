@@ -12,6 +12,6 @@
 
 package com.algorand.wallet.inbox.domain.model
 
-data class InboxSearchDTO(
+data class InboxSearchInput(
     val addresses: List<String>
 )

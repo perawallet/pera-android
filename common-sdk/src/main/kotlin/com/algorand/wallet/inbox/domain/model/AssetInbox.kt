@@ -12,11 +12,8 @@
 
 package com.algorand.wallet.inbox.domain.model
 
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
-
-data class InboxMessagesDTO(
-    val jointAccountImportRequests: List<JointAccount>?,
-    val jointAccountSignRequests: List<JointSignRequest>?,
-    val assetInboxes: List<AssetInboxDTO>?
+data class AssetInbox(
+    val address: String,
+    val inboxAddress: String?,
+    val requestCount: Int
 )

@@ -12,46 +12,46 @@
 
 package com.algorand.wallet.inbox.jointaccount.data.mapper
 
-import com.algorand.wallet.inbox.domain.model.AssetInboxDTO
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
-import com.algorand.wallet.inbox.domain.model.InboxSearchDTO
+import com.algorand.wallet.inbox.domain.model.AssetInbox
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.model.InboxSearchInput
 import com.algorand.wallet.inbox.jointaccount.data.model.AssetInboxResponse
 import com.algorand.wallet.inbox.jointaccount.data.model.InboxSearchRequest
 import com.algorand.wallet.inbox.jointaccount.data.model.InboxSearchResponse
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
-import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestDTOMapper
+import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestMapper
 import javax.inject.Inject
 
-class InboxSearchDTOMapper @Inject constructor(
+internal class InboxSearchDTOMapper @Inject constructor(
     private val jointAccountDTOMapper: JointAccountDTOMapper,
-    private val jointSignRequestDTOMapper: JointSignRequestDTOMapper
+    private val jointSignRequestMapper: JointSignRequestMapper
 ) {
 
-    fun mapToInboxSearchRequest(dto: InboxSearchDTO): InboxSearchRequest {
+    fun mapToInboxSearchRequest(input: InboxSearchInput): InboxSearchRequest {
         return InboxSearchRequest(
-            addresses = dto.addresses
+            addresses = input.addresses
         )
     }
 
-    fun mapToInboxMessagesDTO(response: InboxSearchResponse?): InboxMessagesDTO? {
+    fun mapToInboxMessages(response: InboxSearchResponse?): InboxMessages? {
         return response?.let {
-            InboxMessagesDTO(
+            InboxMessages(
                 jointAccountImportRequests = it.jointAccountImportRequests?.mapNotNull { account ->
                     jointAccountDTOMapper.mapToJointAccountDTO(account)
                 },
                 jointAccountSignRequests = it.jointAccountSignRequests?.mapNotNull { signRequest ->
-                    jointSignRequestDTOMapper.mapToJointSignRequestDTO(signRequest)
+                    jointSignRequestMapper.mapToJointSignRequest(signRequest)
                 },
                 assetInboxes = it.asaInboxes?.mapNotNull { assetInbox ->
-                    mapToAssetInboxDTO(assetInbox)
+                    mapToAssetInbox(assetInbox)
                 }
             )
         }
     }
 
-    private fun mapToAssetInboxDTO(response: AssetInboxResponse): AssetInboxDTO? {
+    private fun mapToAssetInbox(response: AssetInboxResponse): AssetInbox? {
         val address = response.address ?: return null
-        return AssetInboxDTO(
+        return AssetInbox(
             address = address,
             inboxAddress = response.inboxAddress,
             requestCount = response.requestCount ?: 0

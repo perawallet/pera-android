@@ -14,7 +14,24 @@ package com.algorand.wallet.account.local.data.mapper.model
 
 import com.algorand.wallet.account.local.data.database.model.JointEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import javax.inject.Inject
 
-internal interface JointMapper {
-    operator fun invoke(entity: JointEntity): LocalAccount.Joint
+internal class JointMapperImpl @Inject constructor(
+    private val gson: Gson
+) : JointMapper {
+
+    override fun invoke(entity: JointEntity): LocalAccount.Joint {
+        val type = object : TypeToken<List<String>>() {}.type
+        val participantAddresses: List<String> = runCatching {
+            gson.fromJson<List<String>>(entity.participantAddresses, type)
+        }.getOrNull() ?: emptyList()
+        return LocalAccount.Joint(
+            algoAddress = entity.algoAddress,
+            participantAddresses = participantAddresses,
+            threshold = entity.threshold,
+            version = entity.version
+        )
+    }
 }

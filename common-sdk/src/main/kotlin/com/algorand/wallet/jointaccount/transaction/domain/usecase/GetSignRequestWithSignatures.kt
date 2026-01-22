@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.transaction.domain.model
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-data class ParticipantSignatureDTO(
-    val address: String,
-    val signatures: List<String?>,
-    val type: SignRequestResponseType?
-)
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
+
+fun interface GetSignRequestWithSignatures {
+    suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature>
+}

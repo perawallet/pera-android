@@ -10,10 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.inbox.domain.model
+package com.algorand.wallet.jointaccount.creation.domain.model
 
-data class AssetInboxDTO(
-    val address: String,
-    val inboxAddress: String?,
-    val requestCount: Int
+data class JointAccount(
+    val creationDatetime: String?,
+    val address: String?,
+    val version: Int?,
+    val threshold: Int?,
+    val participantAddresses: List<String>?
 )

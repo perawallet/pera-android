@@ -14,7 +14,7 @@ package com.algorand.wallet.jointaccount.creation.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class JointAccountResponse(
+internal data class JointAccountResponse(
     @SerializedName("creation_datetime")
     val creationDatetime: String?,
     @SerializedName("address")

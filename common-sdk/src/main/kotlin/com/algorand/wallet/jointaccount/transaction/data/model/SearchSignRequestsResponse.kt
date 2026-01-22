@@ -14,7 +14,7 @@ package com.algorand.wallet.jointaccount.transaction.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class SearchSignRequestsResponse(
+internal data class SearchSignRequestsResponse(
     @SerializedName("count")
     val count: Int?,
     @SerializedName("next")

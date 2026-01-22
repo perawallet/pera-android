@@ -40,6 +40,29 @@
 - **Always verify access to functions and classes before using them** - Before calling a function or using a class, verify that you have the right access (check if it's `public`, `internal`, `private`, or `protected`). Verify inheritance hierarchy, package visibility, and module boundaries. If you don't have access, ask the user about scope changes (making it `public`, `internal`, or moving to a different package/module) instead of assuming you can use it. Use `read_file` to check the actual class/function definition and its visibility modifiers.
 - **Check for breaking changes when modifying existing classes or resources** - When modifying existing classes, functions, resources (strings, colors, drawables, etc.), or any shared code, always check for usages first using `grep` or `codebase_search` to identify all places that might be affected. If the change would break other parts of the codebase or affect multiple features/screens, ask the user before proceeding. Only make changes that affect other places after getting explicit confirmation. This prevents unintended side effects and breaking changes.
 
+### Resource & Build Rules
+- **Make icons theme-aware** - Use color resources like `@color/text_main` instead of hardcoded hex colors like `#F1F1F2` in drawable XML files to support light/dark themes properly.
+- **Use format placeholders in strings** - When a string contains dynamic content (e.g., account name, amount), use format placeholders like `%1$s` (e.g., `"Transfer to %1$s"`). This supports proper localization for languages with different word orders.
+- **Keep ndk abiFilters in build type scope** - Don't rely only on `defaultConfig` for `ndk { abiFilters }`. Place it in the `debug` build type for faster debug builds (arm64-v8a only), and explicitly clear and set all architectures in `release` build type.
+
+### Data Layer Rules
+- **Split interface and implementation into separate files** - When you have `interface Foo` and `class FooImpl`, put them in separate files: `Foo.kt` and `FooImpl.kt`.
+- **Use interface+impl pattern for mappers in common-sdk** - Internal mappers in common-sdk should be `internal interface FooMapper` + `internal class FooMapperImpl`. Add DI bindings in the module to provide the interface.
+- **Update tests when changing class structure** - When changing class structure (e.g., adding interface), update corresponding tests to use the correct classes (e.g., `FooMapperImpl()` instead of `FooMapper()`).
+- **Data models (Request/Response) must be internal** - All data classes in `data/model/` package (request/response models for API) must be marked as `internal`. They are implementation details of the data layer.
+
+### Domain Layer Rules
+- **Domain models do NOT use DTO suffix** - Domain models shared with other layers should NOT have `DTO` suffix. Use descriptive names like `JointAccount`, `SignRequest`, `CreateSignRequestInput`. The `DTO` suffix is only acceptable for internal data transfer between repository and mapper within the same layer.
+- **Use descriptive input/output naming** - For domain models representing input parameters, use `*Input` suffix (e.g., `CreateJointAccountInput`, `SearchSignRequestsInput`). For output models, use plain names (e.g., `JointAccount`, `SignRequest`).
+
+### Cross-Module Architecture (app ↔ common-sdk)
+- **common-sdk data layer is internal** - API services, mappers, and request/response models in common-sdk should be `internal`. They are implementation details.
+- **common-sdk domain layer is public** - Repository interfaces and use cases in common-sdk should be `public`. They are the contract between modules.
+- **App module must NOT directly use common-sdk data layer** - Never import or use API services, mappers, or request/response models from common-sdk in the app module. This violates module boundaries.
+- **App module uses common-sdk domain layer** - App module should only depend on common-sdk's public repository interfaces and use cases.
+- **App module can wrap common-sdk repositories** - If app module needs its own repository interface (e.g., using app's `Result` instead of `PeraResult`), create a repository implementation that delegates to common-sdk's repository and converts result types.
+- **Convert PeraResult to Result when bridging** - When app module wraps common-sdk repository, add a conversion function: `PeraResult.Success -> Result.Success`, `PeraResult.Error -> Result.Error`.
+
 ### File Formatting
 - **Have single trailing newline at the end of each file** - Files must end with exactly one newline character, no more, no less
 
@@ -140,6 +163,24 @@
 - **Location**: `domain/usecase/` or `ui/usecase/` depending on layer
 - **Operator**: Use `operator fun invoke(...)` for functional interfaces
 - **Example**: `GetAccountDisplayName` interface + `GetAccountDisplayNameUseCase` implementation
+- **Avoid unnecessary use case implementations** - If a use case just delegates to repository without any business logic, provide it directly via DI lambda instead of creating an implementation class:
+  ```kotlin
+  // BAD - unnecessary implementation class
+  internal class AddSignatureUseCase @Inject constructor(
+      private val repository: JointAccountRepository
+  ) : AddSignature {
+      override suspend fun invoke(id: String, input: Input) = repository.addSignature(id, input)
+  }
+  
+  // GOOD - provide directly via DI
+  @Provides
+  fun provideAddSignature(
+      @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+  ): AddSignature = AddSignature { id, input ->
+      repository.addSignature(id, input)
+  }
+  ```
+- **When to create use case implementation** - Only create implementation class when there's actual business logic: data transformation, validation, combining multiple repository calls, error handling, etc.
 
 #### Repository Pattern
 - **Structure**: Interface in `domain/repository/` + `{RepositoryName}Impl` in `data/repository/`
@@ -779,7 +820,7 @@ ic_search.xml
 - Use vector drawables (`.xml`) for icons
 - Name icons descriptively: `ic_{action}_{object}.xml` (e.g., `ic_add_account.xml`)
 - Files should end with exactly one trailing newline
-- Use `@color/text_main` or theme colors, not hardcoded colors
+- Use theme colors, not hardcoded colors
 - **Icon sizing**: 20dp (small action), 24dp (normal), 36dp (large), 40dp (xlarge), 64dp+ (standalone)
 - **Icon coloring**: Use `tint = PeraTheme.colors.icon.primary` or semantic colors, `Color.Unspecified` to preserve original colors
 
@@ -905,6 +946,87 @@ ic_search.xml
   ```
 
 #### Unit Test Best Practices
+- **Mock ALL dependencies** - When unit testing a class, mock ALL its constructor dependencies. If you don't mock a dependency, you're also testing that dependency which breaks unit testing purpose:
+  ```kotlin
+  // BAD - not mocking dependency
+  private val jointAccountMapper = JointAccountDTOMapperImpl() // Testing both classes!
+  private val mapper = JointSignRequestMapper(jointAccountMapper)
+  
+  // GOOD - mock dependency and initialize inline
+  private val jointAccountMapper: JointAccountDTOMapper = mockk()
+  private val mapper = JointSignRequestMapper(jointAccountMapper)
+  ```
+- **Avoid unnecessary @Before setup** - Only use `@Before` when you need to reset state between tests or set up complex dependencies (like dispatchers). For simple mock creation, initialize inline:
+  ```kotlin
+  // BAD - unnecessary @Before for simple mocks
+  private lateinit var mapper: FooMapper
+  
+  @Before
+  fun setup() {
+      mapper = FooMapperImpl()
+  }
+  
+  // GOOD - inline initialization
+  private val mapper = FooMapperImpl()
+  
+  // GOOD - @Before needed for dispatcher or resettable state
+  @Before
+  fun setup() {
+      Dispatchers.setMain(testDispatcher)
+  }
+  ```
+- **Use companion object for test constants** - Place test constants in a private companion object, not as class properties:
+  ```kotlin
+  // BAD
+  private val testAddress = "ADDRESS_123"
+  private val testAmount = 1000L
+  
+  // GOOD
+  private companion object {
+      const val TEST_ADDRESS = "ADDRESS_123"
+      const val TEST_AMOUNT = 1000L
+  }
+  ```
+- **Use .copy() for test variations** - Use `.copy()` to create variations of test data instead of creating new objects:
+  ```kotlin
+  // BAD - creating new object for each variation
+  @Test
+  fun `EXPECT empty WHEN list is empty`() {
+      val input = TestInput(address = "ADDR", items = emptyList()) // Duplicating all fields
+      // ...
+  }
+  
+  // GOOD - using .copy()
+  @Test
+  fun `EXPECT empty WHEN list is empty`() {
+      val input = createTestInput().copy(items = emptyList())
+      // ...
+  }
+  ```
+- **Place test helpers appropriately** - Simple helpers without parameters go in companion object. Helpers with default parameters referencing constants stay as private functions:
+  ```kotlin
+  // Simple helper - in companion object
+  private companion object {
+      const val TEST_ADDRESS = "ADDRESS_123"
+      val TEST_ITEMS = listOf("item1", "item2")
+      
+      fun createTestInput() = TestInput(
+          address = TEST_ADDRESS,
+          items = TEST_ITEMS
+      )
+  }
+  
+  // Helper with defaults from companion - private function
+  private fun createTestResponse(
+      id: String? = TEST_ID,
+      status: String? = TEST_STATUS_PENDING
+  ) = TestResponse(id = id, status = status)
+  
+  private companion object {
+      const val TEST_ID = "123"
+      const val TEST_STATUS_PENDING = "pending"
+  }
+  ```
 - **ViewModel Test Setup** - When testing ViewModels, ensure all dependencies are properly mocked BEFORE the ViewModel is instantiated:
   - ViewModel's `init` block runs during construction, so any unmocked dependencies will cause test failures
   - Always call `setupMocks()` or configure `coEvery` blocks before creating the ViewModel instance

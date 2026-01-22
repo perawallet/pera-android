@@ -31,7 +31,6 @@ import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.Wal
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBlockchain
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
 import com.algorand.android.utils.Event
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")

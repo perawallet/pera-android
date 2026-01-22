@@ -13,8 +13,8 @@
 package com.algorand.wallet.inbox.asset.data.repository
 
 import com.algorand.test.test
-import com.algorand.wallet.inbox.domain.model.AssetInboxDTO
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.AssetInbox
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxRepository
 import io.mockk.coEvery
 import io.mockk.every
@@ -26,7 +26,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-class AssetInboxRepositoryImplTest {
+internal class AssetInboxRepositoryImplTest {
 
     private val inboxRepository: InboxRepository = mockk(relaxed = true)
 
@@ -34,13 +34,13 @@ class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT request count flow to return sum of request counts`(): TestResult = runTest {
-        val inboxMessagesFlow = MutableStateFlow<InboxMessagesDTO?>(
-            InboxMessagesDTO(
+        val inboxMessagesFlow = MutableStateFlow<InboxMessages?>(
+            InboxMessages(
                 jointAccountImportRequests = null,
                 jointAccountSignRequests = null,
                 assetInboxes = listOf(
-                    AssetInboxDTO(ADDRESS_1, null, 1),
-                    AssetInboxDTO(ADDRESS_2, null, 4)
+                    AssetInbox(ADDRESS_1, null, 1),
+                    AssetInbox(ADDRESS_2, null, 4)
                 )
             )
         )
@@ -53,8 +53,8 @@ class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT zero WHEN asset inboxes is null`(): TestResult = runTest {
-        val inboxMessagesFlow = MutableStateFlow<InboxMessagesDTO?>(
-            InboxMessagesDTO(
+        val inboxMessagesFlow = MutableStateFlow<InboxMessages?>(
+            InboxMessages(
                 jointAccountImportRequests = null,
                 jointAccountSignRequests = null,
                 assetInboxes = null
@@ -69,7 +69,7 @@ class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT zero WHEN inbox messages is null`(): TestResult = runTest {
-        val inboxMessagesFlow = MutableStateFlow<InboxMessagesDTO?>(null)
+        val inboxMessagesFlow = MutableStateFlow<InboxMessages?>(null)
         every { inboxRepository.getInboxMessagesFlow() } returns inboxMessagesFlow
 
         val result = assetInboxRepositoryImpl.getRequestCountFlow().test()
@@ -79,10 +79,10 @@ class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT null WHEN getRequest is invoked but requested address is not in inbox`(): TestResult = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns InboxMessagesDTO(
+        coEvery { inboxRepository.getInboxMessages() } returns InboxMessages(
             jointAccountImportRequests = null,
             jointAccountSignRequests = null,
-            assetInboxes = listOf(AssetInboxDTO(ADDRESS_2, null, 4))
+            assetInboxes = listOf(AssetInbox(ADDRESS_2, null, 4))
         )
 
         val result = assetInboxRepositoryImpl.getRequest(ADDRESS_1)
@@ -92,7 +92,7 @@ class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT null WHEN getRequest is invoked but asset inboxes is null`(): TestResult = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns InboxMessagesDTO(
+        coEvery { inboxRepository.getInboxMessages() } returns InboxMessages(
             jointAccountImportRequests = null,
             jointAccountSignRequests = null,
             assetInboxes = null
@@ -114,12 +114,12 @@ class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT request detail WHEN getRequest is invoked and requested address is in inbox`(): TestResult = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns InboxMessagesDTO(
+        coEvery { inboxRepository.getInboxMessages() } returns InboxMessages(
             jointAccountImportRequests = null,
             jointAccountSignRequests = null,
             assetInboxes = listOf(
-                AssetInboxDTO(ADDRESS_1, null, 1),
-                AssetInboxDTO(ADDRESS_2, null, 4)
+                AssetInbox(ADDRESS_1, null, 1),
+                AssetInbox(ADDRESS_2, null, 4)
             )
         )
 

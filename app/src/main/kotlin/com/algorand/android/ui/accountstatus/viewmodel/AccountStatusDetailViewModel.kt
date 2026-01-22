@@ -27,7 +27,6 @@ import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewMo
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.NavToNoRekeyedAccounts
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.NavToRekeyedAccountSelection
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeedId

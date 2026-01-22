@@ -10,10 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.wallet.jointaccount.transaction.domain.model
 
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-
-fun interface GetJointAccount {
-    suspend operator fun invoke(address: String): LocalAccount.Joint?
-}
+data class CreateSignRequestInput(
+    val jointAccountAddress: String,
+    val proposerAddress: String,
+    val type: String,
+    val rawTransactionLists: List<List<String>>,
+    val transactionSignatureLists: List<List<String?>>
+)

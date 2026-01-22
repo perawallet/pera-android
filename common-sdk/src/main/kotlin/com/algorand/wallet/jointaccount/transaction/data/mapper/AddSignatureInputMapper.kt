@@ -13,13 +13,13 @@
 package com.algorand.wallet.jointaccount.transaction.data.mapper
 
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponseRequest
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import javax.inject.Inject
 
-class SignRequestTransactionListResponseDTOMapper @Inject constructor() {
+internal class AddSignatureInputMapper @Inject constructor() {
 
     fun mapToSignRequestTransactionListResponseRequest(
-        dto: SignRequestTransactionListResponseDTO
+        dto: AddSignatureInput
     ): SignRequestTransactionListResponseRequest {
         return SignRequestTransactionListResponseRequest(
             response = dto.response.value,

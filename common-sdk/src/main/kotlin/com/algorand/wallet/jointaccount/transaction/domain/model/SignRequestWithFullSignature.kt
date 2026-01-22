@@ -12,8 +12,22 @@
 
 package com.algorand.wallet.jointaccount.transaction.domain.model
 
-data class ParticipantSignatureDTO(
-    val address: String,
-    val signatures: List<String?>,
-    val type: SignRequestResponseType?
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
+
+data class SignRequestWithFullSignature(
+    val id: Long?,
+    val type: String?,
+    val jointAccount: JointAccount?,
+    val proposerAddress: String?,
+    val lastValidExpectedDatetime: String?,
+    val transactionLists: List<TransactionListWithFullSignature>?,
+    val status: SignRequestStatus?
+)
+
+data class TransactionListWithFullSignature(
+    val rawTransactions: List<String>?,
+    val firstValidBlock: Long?,
+    val lastValidBlock: Long?,
+    val responses: List<ParticipantSignature>?,
+    val lastValidExpectedDatetime: String?
 )

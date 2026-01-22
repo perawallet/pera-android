@@ -21,7 +21,6 @@ import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAn
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject

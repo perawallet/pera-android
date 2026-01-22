@@ -20,7 +20,6 @@ import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountA
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper.configureListItem
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListWhichNotBackedUpUseCase @Inject constructor(

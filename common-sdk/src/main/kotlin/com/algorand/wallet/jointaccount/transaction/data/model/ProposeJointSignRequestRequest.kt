@@ -14,7 +14,7 @@ package com.algorand.wallet.jointaccount.transaction.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ProposeJointSignRequestRequest(
+internal data class ProposeJointSignRequestRequest(
     @SerializedName("joint_account_address")
     val jointAccountAddress: String,
     @SerializedName("proposer_address")

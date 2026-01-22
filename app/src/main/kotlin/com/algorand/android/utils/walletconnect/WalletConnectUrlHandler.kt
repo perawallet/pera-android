@@ -14,7 +14,6 @@ package com.algorand.android.utils.walletconnect
 
 import com.algorand.android.R
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import javax.inject.Inject
 

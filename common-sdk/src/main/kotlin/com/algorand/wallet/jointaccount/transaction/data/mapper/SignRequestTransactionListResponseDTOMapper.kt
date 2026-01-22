@@ -16,7 +16,7 @@ import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransa
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
 import javax.inject.Inject
 
-class SignRequestTransactionListResponseDTOMapper @Inject constructor() {
+internal class SignRequestTransactionListResponseDTOMapper @Inject constructor() {
 
     fun mapToSignRequestTransactionListResponseRequest(
         dto: SignRequestTransactionListResponseDTO

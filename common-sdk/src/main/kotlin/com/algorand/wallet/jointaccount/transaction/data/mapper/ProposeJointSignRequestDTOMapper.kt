@@ -16,7 +16,7 @@ import com.algorand.wallet.jointaccount.transaction.data.model.ProposeJointSignR
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestDTO
 import javax.inject.Inject
 
-class ProposeJointSignRequestDTOMapper @Inject constructor() {
+internal class ProposeJointSignRequestDTOMapper @Inject constructor() {
 
     fun mapToProposeJointSignRequestRequest(
         dto: ProposeJointSignRequestDTO

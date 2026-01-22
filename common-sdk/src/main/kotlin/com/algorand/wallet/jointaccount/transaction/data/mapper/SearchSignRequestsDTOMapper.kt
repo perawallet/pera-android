@@ -16,7 +16,7 @@ import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsDTO
 import javax.inject.Inject
 
-class SearchSignRequestsDTOMapper @Inject constructor() {
+internal class SearchSignRequestsDTOMapper @Inject constructor() {
 
     fun mapToSearchSignRequestsRequest(dto: SearchSignRequestsDTO): SearchSignRequestsRequest {
         return SearchSignRequestsRequest(

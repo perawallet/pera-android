@@ -12,15 +12,15 @@
 
 package com.algorand.wallet.jointaccount.di
 
+import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapperImpl
+import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapperImpl
 import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryImpl
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCountUseCase
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountUseCase
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignatureUseCase
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
@@ -70,17 +70,17 @@ internal object JointAccountModule {
     ): AddJointAccountSignature = useCase
 
     @Provides
-    fun provideGetJointAccount(
-        useCase: GetJointAccountUseCase
-    ): GetJointAccount = useCase
-
-    @Provides
-    fun provideGetJointAccountParticipantCount(
-        useCase: GetJointAccountParticipantCountUseCase
-    ): GetJointAccountParticipantCount = useCase
-
-    @Provides
     fun provideGetJointAccountProposerAddress(
         useCase: GetJointAccountProposerAddressUseCase
     ): GetJointAccountProposerAddress = useCase
+
+    @Provides
+    fun provideCreateJointAccountDTOMapper(
+        impl: CreateJointAccountDTOMapperImpl
+    ): CreateJointAccountDTOMapper = impl
+
+    @Provides
+    fun provideJointAccountDTOMapper(
+        impl: JointAccountDTOMapperImpl
+    ): JointAccountDTOMapper = impl
 }

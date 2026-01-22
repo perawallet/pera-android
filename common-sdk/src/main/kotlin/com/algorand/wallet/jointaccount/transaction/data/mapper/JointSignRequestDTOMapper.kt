@@ -23,7 +23,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResp
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
 import javax.inject.Inject
 
-class JointSignRequestDTOMapper @Inject constructor(
+internal class JointSignRequestDTOMapper @Inject constructor(
     private val jointAccountDTOMapper: JointAccountDTOMapper
 ) {
 

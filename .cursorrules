@@ -40,6 +40,24 @@
 - **Always verify access to functions and classes before using them** - Before calling a function or using a class, verify that you have the right access (check if it's `public`, `internal`, `private`, or `protected`). Verify inheritance hierarchy, package visibility, and module boundaries. If you don't have access, ask the user about scope changes (making it `public`, `internal`, or moving to a different package/module) instead of assuming you can use it. Use `read_file` to check the actual class/function definition and its visibility modifiers.
 - **Check for breaking changes when modifying existing classes or resources** - When modifying existing classes, functions, resources (strings, colors, drawables, etc.), or any shared code, always check for usages first using `grep` or `codebase_search` to identify all places that might be affected. If the change would break other parts of the codebase or affect multiple features/screens, ask the user before proceeding. Only make changes that affect other places after getting explicit confirmation. This prevents unintended side effects and breaking changes.
 
+### Resource & Build Rules
+- **Make icons theme-aware** - Use color resources like `@color/text_main` instead of hardcoded hex colors like `#F1F1F2` in drawable XML files to support light/dark themes properly.
+- **Use format placeholders in strings** - When a string contains dynamic content (e.g., account name, amount), use format placeholders like `%1$s` (e.g., `"Transfer to %1$s"`). This supports proper localization for languages with different word orders.
+- **Keep ndk abiFilters in build type scope** - Don't rely only on `defaultConfig` for `ndk { abiFilters }`. Place it in the `debug` build type for faster debug builds (arm64-v8a only), and explicitly clear and set all architectures in `release` build type.
+
+### Data Layer Rules
+- **Split interface and implementation into separate files** - When you have `interface Foo` and `class FooImpl`, put them in separate files: `Foo.kt` and `FooImpl.kt`.
+- **Use interface+impl pattern for mappers in common-sdk** - Internal mappers in common-sdk should be `internal interface FooMapper` + `internal class FooMapperImpl`. Add DI bindings in the module to provide the interface.
+- **Update tests when changing class structure** - When changing class structure (e.g., adding interface), update corresponding tests to use the correct classes (e.g., `FooMapperImpl()` instead of `FooMapper()`).
+
+### Cross-Module Architecture (app ↔ common-sdk)
+- **common-sdk data layer is internal** - API services, mappers, and request/response models in common-sdk should be `internal`. They are implementation details.
+- **common-sdk domain layer is public** - Repository interfaces and use cases in common-sdk should be `public`. They are the contract between modules.
+- **App module must NOT directly use common-sdk data layer** - Never import or use API services, mappers, or request/response models from common-sdk in the app module. This violates module boundaries.
+- **App module uses common-sdk domain layer** - App module should only depend on common-sdk's public repository interfaces and use cases.
+- **App module can wrap common-sdk repositories** - If app module needs its own repository interface (e.g., using app's `Result` instead of `PeraResult`), create a repository implementation that delegates to common-sdk's repository and converts result types.
+- **Convert PeraResult to Result when bridging** - When app module wraps common-sdk repository, add a conversion function: `PeraResult.Success -> Result.Success`, `PeraResult.Error -> Result.Error`.
+
 ### File Formatting
 - **Have single trailing newline at the end of each file** - Files must end with exactly one newline character, no more, no less
 

@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.spotbanner.domain.usecase
 
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.repository.SpotBannerRepository

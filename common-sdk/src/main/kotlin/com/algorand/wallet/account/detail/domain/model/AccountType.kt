@@ -14,27 +14,33 @@ package com.algorand.wallet.account.detail.domain.model
 
 sealed interface AccountType {
 
-    data object Algo25 : AccountType
+    fun canSignTransaction(): Boolean
 
-    data object LedgerBle : AccountType
+    data object Algo25 : AccountType {
+        override fun canSignTransaction(): Boolean = true
+    }
 
-    data object Rekeyed : AccountType
+    data object LedgerBle : AccountType {
+        override fun canSignTransaction(): Boolean = true
+    }
 
-    data object RekeyedAuth : AccountType
+    data object Rekeyed : AccountType {
+        override fun canSignTransaction(): Boolean = false
+    }
 
-    data object NoAuth : AccountType
+    data object RekeyedAuth : AccountType {
+        override fun canSignTransaction(): Boolean = true
+    }
 
-    data object HdKey : AccountType
+    data object NoAuth : AccountType {
+        override fun canSignTransaction(): Boolean = false
+    }
 
-    data object Joint : AccountType
+    data object HdKey : AccountType {
+        override fun canSignTransaction(): Boolean = true
+    }
 
-    companion object {
-        fun AccountType.canSignTransaction(): Boolean {
-            return this is Algo25 ||
-                    this is HdKey ||
-                    this is LedgerBle ||
-                    this is RekeyedAuth ||
-                    this is Joint
-        }
+    data object Joint : AccountType {
+        override fun canSignTransaction(): Boolean = true
     }
 }

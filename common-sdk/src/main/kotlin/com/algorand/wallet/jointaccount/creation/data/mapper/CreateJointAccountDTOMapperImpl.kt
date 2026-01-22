@@ -10,18 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.wallet.jointaccount.creation.data.mapper
 
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.jointaccount.creation.data.model.CreateJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountDTO
 import javax.inject.Inject
 
-internal class GetJointAccountParticipantCountUseCase @Inject constructor(
-    private val getLocalAccount: GetLocalAccount
-) : GetJointAccountParticipantCount {
+internal class CreateJointAccountDTOMapperImpl @Inject constructor() : CreateJointAccountDTOMapper {
 
-    override suspend fun invoke(address: String): Int {
-        val jointAccount = getLocalAccount(address) as? LocalAccount.Joint
-        return jointAccount?.participantAddresses?.size ?: 0
+    override fun mapToCreateJointAccountRequest(dto: CreateJointAccountDTO): CreateJointAccountRequest {
+        return CreateJointAccountRequest(
+            participantAddresses = dto.participantAddresses,
+            threshold = dto.threshold,
+            version = dto.version
+        )
     }
 }

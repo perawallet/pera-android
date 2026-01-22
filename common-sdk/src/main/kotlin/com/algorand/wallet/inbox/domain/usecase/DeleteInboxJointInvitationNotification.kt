@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.addaccount.joint.creation.domain.usecase
+package com.algorand.wallet.inbox.domain.usecase
 
-import com.algorand.android.models.Result
+import com.algorand.wallet.foundation.PeraResult
 
 fun interface DeleteInboxJointInvitationNotification {
-    suspend operator fun invoke(deviceId: Long, jointAddress: String): Result<Unit>
+    suspend operator fun invoke(deviceId: Long, jointAddress: String): PeraResult<Unit>
 }

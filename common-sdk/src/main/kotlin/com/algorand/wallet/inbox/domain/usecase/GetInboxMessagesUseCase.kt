@@ -10,19 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.addaccount.joint.creation.domain.usecase
+package com.algorand.wallet.inbox.domain.usecase
 
-import com.algorand.android.models.Result
-import com.algorand.android.modules.addaccount.joint.core.domain.repository.JointAccountRepository
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.model.InboxSearchInput
+import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import javax.inject.Inject
 import javax.inject.Named
 
-internal class DeleteInboxJointInvitationNotificationUseCase @Inject constructor(
-    @param:Named(JointAccountRepository.INJECTION_NAME)
+internal class GetInboxMessagesUseCase @Inject constructor(
+    @Named(JointAccountRepository.INJECTION_NAME)
     private val jointAccountRepository: JointAccountRepository
-) : DeleteInboxJointInvitationNotification {
+) : GetInboxMessages {
 
-    override suspend operator fun invoke(deviceId: Long, jointAddress: String): Result<Unit> {
-        return jointAccountRepository.deleteInboxJointInvitationNotification(deviceId, jointAddress)
+    override suspend fun invoke(deviceId: Long, addresses: List<String>): PeraResult<InboxMessages> {
+        return jointAccountRepository.getInboxMessages(deviceId, InboxSearchInput(addresses))
     }
 }

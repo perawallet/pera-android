@@ -22,7 +22,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignReque
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
-interface JointAccountRepository {
+internal interface JointAccountRepository {
 
     suspend fun createJointAccount(
         createJointAccount: CreateJointAccountInput

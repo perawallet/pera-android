@@ -10,15 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.addaccount.joint.creation.domain.usecase
+package com.algorand.wallet.inbox.domain.usecase
 
-import com.algorand.android.models.Result
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 
-interface CreateJointAccount {
+fun interface GetInboxMessages {
     suspend operator fun invoke(
-        participantAddresses: List<String>,
-        threshold: Int,
-        version: Int = 1
-    ): Result<JointAccountDTO>
+        deviceId: Long,
+        addresses: List<String>
+    ): PeraResult<InboxMessages>
 }

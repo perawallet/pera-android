@@ -20,6 +20,12 @@ import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapp
 import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryImpl
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotificationUseCase
+import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
+import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesUseCase
+import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
+import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccountUseCase
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCountUseCase
@@ -118,4 +124,19 @@ internal object JointAccountModule {
     fun provideGetJointAccountParticipantCount(
         useCase: GetJointAccountParticipantCountUseCase
     ): GetJointAccountParticipantCount = useCase
+
+    @Provides
+    fun provideCreateJointAccount(
+        useCase: CreateJointAccountUseCase
+    ): CreateJointAccount = useCase
+
+    @Provides
+    fun provideGetInboxMessages(
+        useCase: GetInboxMessagesUseCase
+    ): GetInboxMessages = useCase
+
+    @Provides
+    fun provideDeleteInboxJointInvitationNotification(
+        useCase: DeleteInboxJointInvitationNotificationUseCase
+    ): DeleteInboxJointInvitationNotification = useCase
 }

@@ -35,6 +35,7 @@ import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfa
 import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult
 import com.algorand.android.ui.webview.bridge.model.event.PeraWebInterfaceEventResult.Result
 import com.algorand.android.ui.webview.bridge.usecase.GetGetAddressesWebResponse
+import com.algorand.android.ui.webview.view.PeraMobileWebView
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewViewModel.ViewEvent
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.foundation.json.rpc.JsonRpcResponse
@@ -54,6 +55,20 @@ class PeraWebViewViewModel @Inject constructor(
     private val getDeviceConfig: GetDeviceConfig,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
+
+    private var savedWebView: PeraMobileWebView? = null
+
+    fun saveWebView(webView: PeraMobileWebView?) {
+        savedWebView = webView
+    }
+
+    fun getSavedWebView(): PeraMobileWebView? = savedWebView
+
+    override fun onCleared() {
+        super.onCleared()
+        savedWebView?.destroyWebView()
+        savedWebView = null
+    }
 
     fun processBackPress() {
         val request = responseMapper.mapRequest(ON_BACK_PRESSED, null)

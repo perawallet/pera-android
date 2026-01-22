@@ -30,6 +30,7 @@ import com.algorand.android.ui.webview.bridge.PeraWebViewInternalBridge
 import com.algorand.android.ui.webview.bridge.mapper.PeraInternalWebInterfaceEventMapper
 import com.algorand.android.ui.webview.bridge.model.event.PeraInternalWebInterfaceEvent.Command.PushPublicWebView
 import com.algorand.android.ui.webview.publicfragment.model.PublicWebViewFragmentNavArgs
+import com.algorand.android.ui.webview.view.PeraMobileWebView
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewFragmentDelegate
 import com.algorand.android.ui.webview.viewmodel.PeraWebViewViewModel
 import com.algorand.android.utils.delegation.bottomnavbarvisibility.BottomNavBarVisibilityDelegation
@@ -91,7 +92,19 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentXoSwapBinding.inflate(inflater, container, false)
+        restoreSavedWebViewIfExists()
         return _binding?.root
+    }
+
+    private fun restoreSavedWebViewIfExists() {
+        val savedWebView = peraWebViewViewModel.getSavedWebView() ?: return
+        val parent = savedWebView.parent as? ViewGroup
+        parent?.removeView(savedWebView)
+        val container = binding.root as? ViewGroup ?: return
+        val currentWebView = binding.xoSwapWebView
+        val currentWebViewIndex = container.indexOfChild(currentWebView)
+        container.removeView(currentWebView)
+        container.addView(savedWebView, currentWebViewIndex)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -102,19 +115,27 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
     }
 
     private fun initWebViewFragmentDelegate() {
+        val webView = getWebView()
+        val isNewWebView = peraWebViewViewModel.getSavedWebView() == null
         webViewFragmentDelegate = PeraWebViewFragmentDelegate(
             fragment = this,
-            webView = binding.xoSwapWebView,
+            webView = webView,
             listener = this,
             webViewClientListener = webViewClientListener
         )
-        val bridge = PeraWebViewInternalBridge(webInterfaceEventMapper, peraWebViewViewModel::processWebEvents)
-        webViewFragmentDelegate?.initWebView(getInitialUrl(), bridge)
+        if (isNewWebView) {
+            val bridge = PeraWebViewInternalBridge(webInterfaceEventMapper, peraWebViewViewModel::processWebEvents)
+            webViewFragmentDelegate?.initWebView(getInitialUrl(), bridge)
+        }
+        peraWebViewViewModel.saveWebView(webView)
+    }
+
+    private fun getWebView(): PeraMobileWebView {
+        return peraWebViewViewModel.getSavedWebView() ?: binding.xoSwapWebView
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        webViewFragmentDelegate?.destroyWebView()
         webViewFragmentDelegate = null
         _binding = null
     }

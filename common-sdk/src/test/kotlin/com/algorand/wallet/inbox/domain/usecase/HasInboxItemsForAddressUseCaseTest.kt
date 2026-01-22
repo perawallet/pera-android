@@ -47,7 +47,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT true WHEN has asset inbox with matching address and count greater than 0`() = runTest {
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
-            assetInboxes = listOf(AssetInboxDTO(address = TEST_ADDRESS, inboxAddress = null, requestCount = 5))
+            assetInboxes = listOf(AssetInbox(address = TEST_ADDRESS, inboxAddress = null, requestCount = 5))
         )
         val sut = createUseCase()
 
@@ -59,7 +59,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT false WHEN has asset inbox with matching address but count is 0`() = runTest {
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
-            assetInboxes = listOf(AssetInboxDTO(address = TEST_ADDRESS, inboxAddress = null, requestCount = 0))
+            assetInboxes = listOf(AssetInbox(address = TEST_ADDRESS, inboxAddress = null, requestCount = 0))
         )
         val sut = createUseCase()
 
@@ -71,7 +71,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT false WHEN has asset inbox with different address`() = runTest {
         coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
-            assetInboxes = listOf(AssetInboxDTO(address = "OTHER", inboxAddress = null, requestCount = 5))
+            assetInboxes = listOf(AssetInbox(address = "OTHER", inboxAddress = null, requestCount = 5))
         )
         val sut = createUseCase()
 
@@ -182,8 +182,8 @@ internal class HasInboxItemsForAddressUseCaseTest {
     private fun createUseCase() = HasInboxItemsForAddressUseCase(inboxRepository, isFeatureToggleEnabled)
 
     private fun createInboxMessages(
-        assetInboxes: List<AssetInboxDTO>? = null,
-        jointAccountImportRequests: List<JointAccountDTO>? = null,
+        assetInboxes: List<AssetInbox>? = null,
+        jointAccountImportRequests: List<JointAccount>? = null,
         jointAccountSignRequests: List<JointSignRequest>? = null
     ) = InboxMessages(
         assetInboxes = assetInboxes,

@@ -1002,11 +1002,30 @@ ic_search.xml
       val input = createTestInput().copy(items = emptyList())
       // ...
   }
+  ```
+- **Place test helpers appropriately** - Simple helpers without parameters go in companion object. Helpers with default parameters referencing constants stay as private functions:
+  ```kotlin
+  // Simple helper - in companion object
+  private companion object {
+      const val TEST_ADDRESS = "ADDRESS_123"
+      val TEST_ITEMS = listOf("item1", "item2")
+      
+      fun createTestInput() = TestInput(
+          address = TEST_ADDRESS,
+          items = TEST_ITEMS
+      )
+  }
   
-  private fun createTestInput() = TestInput(
-      address = TEST_ADDRESS,
-      items = TEST_ITEMS
-  )
+  // Helper with defaults from companion - private function
+  private fun createTestResponse(
+      id: String? = TEST_ID,
+      status: String? = TEST_STATUS_PENDING
+  ) = TestResponse(id = id, status = status)
+  
+  private companion object {
+      const val TEST_ID = "123"
+      const val TEST_STATUS_PENDING = "pending"
+  }
   ```
 - **ViewModel Test Setup** - When testing ViewModels, ensure all dependencies are properly mocked BEFORE the ViewModel is instantiated:
   - ViewModel's `init` block runs during construction, so any unmocked dependencies will cause test failures

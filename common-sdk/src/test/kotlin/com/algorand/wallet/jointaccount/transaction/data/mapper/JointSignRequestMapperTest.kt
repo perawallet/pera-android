@@ -25,19 +25,12 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Before
 import org.junit.Test
 
 internal class JointSignRequestMapperTest {
 
-    private lateinit var jointAccountDTOMapper: JointAccountDTOMapper
-    private lateinit var mapper: JointSignRequestMapper
-
-    @Before
-    fun setup() {
-        jointAccountDTOMapper = mockk()
-        mapper = JointSignRequestMapper(jointAccountDTOMapper)
-    }
+    private val jointAccountDTOMapper: JointAccountDTOMapper = mockk()
+    private val mapper = JointSignRequestMapper(jointAccountDTOMapper)
 
     @Test
     fun `EXPECT null WHEN response is null`() {

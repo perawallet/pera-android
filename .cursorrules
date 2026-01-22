@@ -820,7 +820,7 @@ ic_search.xml
 - Use vector drawables (`.xml`) for icons
 - Name icons descriptively: `ic_{action}_{object}.xml` (e.g., `ic_add_account.xml`)
 - Files should end with exactly one trailing newline
-- Use `@color/text_main` or theme colors, not hardcoded colors
+- Use theme colors, not hardcoded colors
 - **Icon sizing**: 20dp (small action), 24dp (normal), 36dp (large), 40dp (xlarge), 64dp+ (standalone)
 - **Icon coloring**: Use `tint = PeraTheme.colors.icon.primary` or semantic colors, `Color.Unspecified` to preserve original colors
 
@@ -952,14 +952,27 @@ ic_search.xml
   private val jointAccountMapper = JointAccountDTOMapperImpl() // Testing both classes!
   private val mapper = JointSignRequestMapper(jointAccountMapper)
   
-  // GOOD - mock dependency
-  private lateinit var jointAccountMapper: JointAccountDTOMapper
-  private lateinit var mapper: JointSignRequestMapper
+  // GOOD - mock dependency and initialize inline
+  private val jointAccountMapper: JointAccountDTOMapper = mockk()
+  private val mapper = JointSignRequestMapper(jointAccountMapper)
+  ```
+- **Avoid unnecessary @Before setup** - Only use `@Before` when you need to reset state between tests or set up complex dependencies (like dispatchers). For simple mock creation, initialize inline:
+  ```kotlin
+  // BAD - unnecessary @Before for simple mocks
+  private lateinit var mapper: FooMapper
   
   @Before
   fun setup() {
-      jointAccountMapper = mockk()
-      mapper = JointSignRequestMapper(jointAccountMapper)
+      mapper = FooMapperImpl()
+  }
+  
+  // GOOD - inline initialization
+  private val mapper = FooMapperImpl()
+  
+  // GOOD - @Before needed for dispatcher or resettable state
+  @Before
+  fun setup() {
+      Dispatchers.setMain(testDispatcher)
   }
   ```
 - **Use companion object for test constants** - Place test constants in a private companion object, not as class properties:

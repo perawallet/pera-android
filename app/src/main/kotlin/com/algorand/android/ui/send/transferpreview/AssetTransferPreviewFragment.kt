@@ -396,6 +396,7 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     override fun onJointAccountSignRequestCreated(signRequestId: String) {
+        // Show pending signatures bottom sheet directly instead of navigating to full screen
         TODO("Implement this")
     }
 

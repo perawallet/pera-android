@@ -40,6 +40,20 @@
 - **Always verify access to functions and classes before using them** - Before calling a function or using a class, verify that you have the right access (check if it's `public`, `internal`, `private`, or `protected`). Verify inheritance hierarchy, package visibility, and module boundaries. If you don't have access, ask the user about scope changes (making it `public`, `internal`, or moving to a different package/module) instead of assuming you can use it. Use `read_file` to check the actual class/function definition and its visibility modifiers.
 - **Check for breaking changes when modifying existing classes or resources** - When modifying existing classes, functions, resources (strings, colors, drawables, etc.), or any shared code, always check for usages first using `grep` or `codebase_search` to identify all places that might be affected. If the change would break other parts of the codebase or affect multiple features/screens, ask the user before proceeding. Only make changes that affect other places after getting explicit confirmation. This prevents unintended side effects and breaking changes.
 
+### Refactoring Restrictions - Do NOT Change Without Explicit Request
+The following patterns should NEVER be changed unless the user explicitly requests it. These are intentional design decisions:
+
+- **Do NOT change data class to sealed interface** - If a result class uses `data class` with boolean flags (e.g., `data class JointSignResult(val isSuccess: Boolean, val signRequestId: String?)`), do NOT refactor it to a sealed interface pattern. The existing pattern is intentional.
+- **Do NOT remove wrapper/delegation functions** - If a helper class wraps another use case (e.g., `LocalAccountSigningHelper.getLocalAccount()` wrapping `GetLocalAccount`), do NOT remove the wrapper. These abstractions provide flexibility for future changes.
+- **Do NOT change filter+map to mapNotNull** - If code uses `.filter { condition }.map { transform }`, do NOT refactor to `.mapNotNull { if (!condition) null else transform }`. The explicit separation is intentional for readability.
+- **Do NOT remove TODO placeholders** - If code contains `TODO("Implement this")` or similar, do NOT remove them without implementing the feature. They are intentional markers for future work.
+- **Do NOT move data classes or companion objects** - If a data class or companion object is placed in a specific location within a file (e.g., at the beginning, inside a class), do NOT move it to the end or elsewhere. The placement is intentional.
+- **Do NOT inject use cases directly when helper exists** - If a helper class (e.g., `LocalAccountSigningHelper`) is injected and used for a purpose, do NOT bypass it by injecting the underlying use case directly. Use the helper.
+- **Do NOT change existing class dependencies** - If a class already has certain dependencies injected, do NOT add new dependencies that duplicate functionality or bypass existing patterns.
+- **Do NOT rename existing identifiers without explicit request** - Do NOT rename function parameters, class names, or variable names (e.g., `Inbox` to `AssetInbox` or vice versa) without explicit request.
+- **Do NOT remove string resources** - Do NOT remove strings from `strings.xml` unless explicitly requested. Unused strings may be used in other features or planned for future use.
+- **Do NOT simplify when expressions** - If a `when` expression has explicit branches for each case with braces and multiple lines, do NOT simplify to single-line expressions. The verbose format may be intentional for readability.
+
 ### Resource & Build Rules
 - **Make icons theme-aware** - Use color resources like `@color/text_main` instead of hardcoded hex colors like `#F1F1F2` in drawable XML files to support light/dark themes properly.
 - **Use format placeholders in strings** - When a string contains dynamic content (e.g., account name, amount), use format placeholders like `%1$s` (e.g., `"Transfer to %1$s"`). This supports proper localization for languages with different word orders.

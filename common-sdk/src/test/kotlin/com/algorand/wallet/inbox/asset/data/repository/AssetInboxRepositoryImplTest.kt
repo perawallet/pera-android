@@ -26,7 +26,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-class AssetInboxRepositoryImplTest {
+internal class AssetInboxRepositoryImplTest {
 
     private val inboxRepository: InboxRepository = mockk(relaxed = true)
 

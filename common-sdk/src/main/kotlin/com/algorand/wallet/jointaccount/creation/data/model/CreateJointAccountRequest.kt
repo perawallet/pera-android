@@ -14,7 +14,7 @@ package com.algorand.wallet.jointaccount.creation.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CreateJointAccountRequest(
+internal data class CreateJointAccountRequest(
     @SerializedName("participant_addresses")
     val participantAddresses: List<String>,
     @SerializedName("threshold")

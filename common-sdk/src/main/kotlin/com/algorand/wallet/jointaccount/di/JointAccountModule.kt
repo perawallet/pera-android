@@ -12,6 +12,10 @@
 
 package com.algorand.wallet.jointaccount.di
 
+import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapperImpl
+import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapperImpl
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCountUseCase
@@ -41,4 +45,14 @@ internal object JointAccountModule {
     fun provideGetJointAccountProposerAddress(
         useCase: GetJointAccountProposerAddressUseCase
     ): GetJointAccountProposerAddress = useCase
+
+    @Provides
+    fun provideCreateJointAccountDTOMapper(
+        impl: CreateJointAccountDTOMapperImpl
+    ): CreateJointAccountDTOMapper = impl
+
+    @Provides
+    fun provideJointAccountDTOMapper(
+        impl: JointAccountDTOMapperImpl
+    ): JointAccountDTOMapper = impl
 }

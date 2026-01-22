@@ -20,7 +20,7 @@ import org.junit.Test
 
 internal class JointAccountDTOMapperTest {
 
-    private val mapper = JointAccountDTOMapper()
+    private val mapper = JointAccountDTOMapperImpl()
 
     @Test
     fun `EXPECT null WHEN response is null`() {

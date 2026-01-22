@@ -18,7 +18,7 @@ import org.junit.Test
 
 internal class CreateJointAccountDTOMapperTest {
 
-    private val mapper = CreateJointAccountDTOMapper()
+    private val mapper = CreateJointAccountDTOMapperImpl()
 
     @Test
     fun `EXPECT all fields mapped correctly WHEN mapToCreateJointAccountRequest is called`() {

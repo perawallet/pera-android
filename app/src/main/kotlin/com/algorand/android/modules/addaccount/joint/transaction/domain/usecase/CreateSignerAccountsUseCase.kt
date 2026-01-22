@@ -20,7 +20,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.model.JointAcco
 import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignatureDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import javax.inject.Inject
 
@@ -33,7 +33,7 @@ internal class CreateSignerAccountsUseCase @Inject constructor(
 
     override suspend operator fun invoke(
         participantAddresses: List<String>,
-        responses: List<ParticipantSignatureDTO>
+        responses: List<ParticipantSignature>
     ): List<JointAccountSignerItem> {
         val responseMap = responses.associateBy { it.address }
         return participantAddresses.map { address ->
@@ -48,7 +48,7 @@ internal class CreateSignerAccountsUseCase @Inject constructor(
 
     private suspend fun createSignerItem(
         address: String,
-        response: ParticipantSignatureDTO?
+        response: ParticipantSignature?
     ): JointAccountSignerItem {
         val status = when (response?.type) {
             SignRequestResponseType.SIGNED -> JointAccountSignatureStatus.Signed

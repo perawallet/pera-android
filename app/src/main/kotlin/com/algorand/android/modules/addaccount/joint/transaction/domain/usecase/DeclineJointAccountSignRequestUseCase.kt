@@ -14,9 +14,9 @@ package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import javax.inject.Inject
 
@@ -28,8 +28,8 @@ internal class DeclineJointAccountSignRequestUseCase @Inject constructor(
     override suspend operator fun invoke(
         signRequestId: String,
         participantAddress: String
-    ): PeraResult<JointSignRequestDTO> {
-        val declineRequest = SignRequestTransactionListResponseDTO(
+    ): PeraResult<JointSignRequest> {
+        val declineRequest = AddSignatureInput(
             address = participantAddress,
             response = SignRequestResponseType.DECLINED,
             signatures = null,

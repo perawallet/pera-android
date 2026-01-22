@@ -13,8 +13,8 @@
 package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 
 fun interface DeclineJointAccountSignRequest {
-    suspend operator fun invoke(signRequestId: String, participantAddress: String): PeraResult<JointSignRequestDTO>
+    suspend operator fun invoke(signRequestId: String, participantAddress: String): PeraResult<JointSignRequest>
 }

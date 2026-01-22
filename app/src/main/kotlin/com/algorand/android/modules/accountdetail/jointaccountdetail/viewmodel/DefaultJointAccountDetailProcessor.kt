@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel
 
-import com.algorand.android.models.Result
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase.CreateJointAccountParticipantItem
 import com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase.JointAccountInboxOperationsUseCase
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
@@ -75,8 +75,8 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
         val addresses = createJointAccountParticipantItem.getLocalAccountAddresses()
 
         return when (val result = inboxOperationsUseCase.getInboxMessages(addresses)) {
-            is Result.Success -> parseInvitationFromInboxMessages(result.data, accountAddress)
-            is Result.Error -> JointAccountDetailProcessor.InvitationResult.NetworkError
+            is PeraResult.Success -> parseInvitationFromInboxMessages(result.data, accountAddress)
+            is PeraResult.Error -> JointAccountDetailProcessor.InvitationResult.NetworkError
         }
     }
 

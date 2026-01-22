@@ -34,8 +34,8 @@ import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePa
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignatureDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignatureDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -65,7 +65,7 @@ internal class GetJointAccountTransactionPreviewUseCase @Inject constructor(
     }
 
     private suspend fun createPreview(
-        signRequest: SignRequestWithFullSignatureDTO
+        signRequest: SignRequestWithFullSignature
     ): PeraResult<JointAccountTransactionPreview> {
         val jointAccount = signRequest.jointAccount
             ?: return PeraResult.Error(Exception("Joint account is null"))
@@ -94,8 +94,8 @@ internal class GetJointAccountTransactionPreviewUseCase @Inject constructor(
 
     private suspend fun buildParticipantData(
         participantAddresses: List<String>,
-        transactionLists: List<TransactionListWithFullSignatureDTO>,
-        signRequest: SignRequestWithFullSignatureDTO
+        transactionLists: List<TransactionListWithFullSignature>,
+        signRequest: SignRequestWithFullSignature
     ): ParticipantData {
         val responses = transactionLists.firstOrNull()?.responses.orEmpty()
         val responseMap = responses.associateBy { it.address }
@@ -137,7 +137,7 @@ internal class GetJointAccountTransactionPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun buildExpirationData(signRequest: SignRequestWithFullSignatureDTO): ExpirationData {
+    private fun buildExpirationData(signRequest: SignRequestWithFullSignature): ExpirationData {
         val status = signRequest.status
         val isExpiredByStatus = status == SignRequestStatus.EXPIRED || status?.isFinalized() == true
         val isExpiredByTime = isSignRequestExpiredByTime(signRequest)
@@ -149,7 +149,7 @@ internal class GetJointAccountTransactionPreviewUseCase @Inject constructor(
     }
 
     private suspend fun buildPreview(
-        signRequest: SignRequestWithFullSignatureDTO,
+        signRequest: SignRequestWithFullSignature,
         jointAccountAddress: String,
         threshold: Int,
         transactionData: TransactionData,
@@ -192,7 +192,7 @@ internal class GetJointAccountTransactionPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun isSignRequestExpiredByTime(signRequest: SignRequestWithFullSignatureDTO): Boolean {
+    private fun isSignRequestExpiredByTime(signRequest: SignRequestWithFullSignature): Boolean {
         val expireDatetime = signRequest.lastValidExpectedDatetime
             ?: signRequest.transactionLists?.firstOrNull()?.lastValidExpectedDatetime
             ?: return false
@@ -202,7 +202,7 @@ internal class GetJointAccountTransactionPreviewUseCase @Inject constructor(
     }
 
     private fun calculateTimeRemaining(
-        signRequest: SignRequestWithFullSignatureDTO,
+        signRequest: SignRequestWithFullSignature,
         isExpired: Boolean
     ): String? {
         if (isExpired) return "0m"
@@ -227,7 +227,7 @@ internal class GetJointAccountTransactionPreviewUseCase @Inject constructor(
     }
 
     private fun extractTransactionData(
-        transactionLists: List<TransactionListWithFullSignatureDTO>
+        transactionLists: List<TransactionListWithFullSignature>
     ): TransactionData {
         var totalAmount = BigInteger.ZERO
         var recipientAddress = ""

@@ -14,25 +14,16 @@ package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import javax.inject.Inject
 import javax.inject.Named
-
-fun interface ProposeJointSignRequest {
-    suspend operator fun invoke(
-        jointAccountAddress: String,
-        proposerAddress: String,
-        type: String,
-        rawTransactionLists: List<List<String>>,
-        transactionSignatureLists: List<List<String?>>
-    ): PeraResult<JointSignRequest>
-}
 
 internal class ProposeJointSignRequestUseCase @Inject constructor(
     @param:Named(JointAccountRepository.INJECTION_NAME)
     private val jointAccountRepository: JointAccountRepository
 ) : ProposeJointSignRequest {
+
     override suspend fun invoke(
         jointAccountAddress: String,
         proposerAddress: String,

@@ -22,20 +22,17 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionList
 import javax.inject.Inject
 import javax.inject.Named
 
-fun interface GetSignRequestWithSignatures {
-    suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature>
-}
-
 internal class GetSignRequestWithSignaturesUseCase @Inject constructor(
     @param:Named(JointAccountRepository.INJECTION_NAME)
     private val jointAccountRepository: JointAccountRepository
 ) : GetSignRequestWithSignatures {
+
     override suspend fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature> {
-        val searchDTO = SearchSignRequestsInput(
+        val searchInput = SearchSignRequestsInput(
             deviceId = deviceId,
             signRequestId = signRequestId
         )
-        return when (val result = jointAccountRepository.searchSignRequests(searchDTO)) {
+        return when (val result = jointAccountRepository.searchSignRequests(searchInput)) {
             is PeraResult.Success -> {
                 val signRequest = result.data.firstOrNull { it.id == signRequestId }
                 if (signRequest != null) {
@@ -44,7 +41,6 @@ internal class GetSignRequestWithSignaturesUseCase @Inject constructor(
                     PeraResult.Error(Exception("Sign request not found"))
                 }
             }
-
             is PeraResult.Error -> result
         }
     }

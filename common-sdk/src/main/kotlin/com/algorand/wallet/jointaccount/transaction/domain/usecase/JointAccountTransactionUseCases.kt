@@ -13,21 +13,27 @@
 package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
-import javax.inject.Inject
-import javax.inject.Named
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
-internal class AddJointAccountSignatureUseCase @Inject constructor(
-    @param:Named(JointAccountRepository.INJECTION_NAME)
-    private val jointAccountRepository: JointAccountRepository
-) : AddJointAccountSignature {
-
-    override suspend fun invoke(
+fun interface AddJointAccountSignature {
+    suspend operator fun invoke(
         signRequestId: String,
         addSignatureInput: AddSignatureInput
-    ): PeraResult<JointSignRequest> {
-        return jointAccountRepository.addSignature(signRequestId, addSignatureInput)
-    }
+    ): PeraResult<JointSignRequest>
+}
+
+fun interface GetSignRequestWithSignatures {
+    suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature>
+}
+
+fun interface ProposeJointSignRequest {
+    suspend operator fun invoke(
+        jointAccountAddress: String,
+        proposerAddress: String,
+        type: String,
+        rawTransactionLists: List<List<String>>,
+        transactionSignatureLists: List<List<String?>>
+    ): PeraResult<JointSignRequest>
 }

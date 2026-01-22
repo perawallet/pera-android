@@ -23,7 +23,7 @@ import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.getRelativeTimeDifference
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -38,7 +38,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     }
 
     suspend fun mapToSignatureRequestInboxItem(
-        jointSignRequestDTO: JointSignRequestDTO,
+        jointSignRequestDTO: JointSignRequest,
         resources: Resources,
         lastOpenedTime: ZonedDateTime?,
         currentBlockNumber: Long?,
@@ -73,7 +73,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         )
     }
 
-    private fun extractRequiredData(dto: JointSignRequestDTO): RequiredData? {
+    private fun extractRequiredData(dto: JointSignRequest): RequiredData? {
         val jointAccount = dto.jointAccount
         val signRequestId = dto.id
         val address = jointAccount?.address
@@ -88,7 +88,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     }
 
     private fun canUserSign(
-        jointSignRequestDTO: JointSignRequestDTO,
+        jointSignRequestDTO: JointSignRequest,
         participantAddresses: List<String>,
         localAccountAddresses: List<String>,
         isExpired: Boolean
@@ -111,12 +111,12 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         return localParticipants.any { it !in respondedAddresses }
     }
 
-    private fun isSignRequestExpired(dto: JointSignRequestDTO): Boolean {
+    private fun isSignRequestExpired(dto: JointSignRequest): Boolean {
         val expireDateTime = getExpireDateTime(dto) ?: return false
         return ZonedDateTime.now().isAfter(expireDateTime)
     }
 
-    private fun getSignedCount(dto: JointSignRequestDTO): Int {
+    private fun getSignedCount(dto: JointSignRequest): Int {
         return dto.transactionLists
             ?.flatMap { it.responses.orEmpty() }
             ?.filter { it.response == SignRequestResponseType.SIGNED && !it.address.isNullOrBlank() }
@@ -126,7 +126,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     }
 
     private fun getTimeAgo(
-        dto: JointSignRequestDTO,
+        dto: JointSignRequest,
         resources: Resources,
         currentBlockNumber: Long?
     ): String {
@@ -153,7 +153,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         return getRelativeTimeDifference(resources, estimatedCreationDateTime, timeDifference)
     }
 
-    private fun getTimeLeft(dto: JointSignRequestDTO): String? {
+    private fun getTimeLeft(dto: JointSignRequest): String? {
         val expireDateTime = getExpireDateTime(dto) ?: return null
         val timeDifferenceMillis = expireDateTime.toInstant().toEpochMilli() -
             ZonedDateTime.now().toInstant().toEpochMilli()
@@ -171,7 +171,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         }
     }
 
-    private fun getExpireDateTime(dto: JointSignRequestDTO): ZonedDateTime? {
+    private fun getExpireDateTime(dto: JointSignRequest): ZonedDateTime? {
         val expireDatetimeString = dto.expectedExpireDatetime
             ?: dto.transactionLists?.firstOrNull()?.expectedExpireDatetime
             ?: return null
@@ -180,7 +180,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
 
     // TODO: This returns the joint account creation time, not the sign request creation time.
     // The sign request DTO doesn't have a creation timestamp. Consider adding one to the API.
-    private fun getCreationDateTime(dto: JointSignRequestDTO): ZonedDateTime {
+    private fun getCreationDateTime(dto: JointSignRequest): ZonedDateTime {
         val creationDatetimeString = dto.jointAccount?.creationDatetime ?: return ZonedDateTime.now()
         return creationDatetimeString.parseFormattedDate(getAlgorandMobileDateFormatter()) ?: ZonedDateTime.now()
     }

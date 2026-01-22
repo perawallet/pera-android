@@ -16,18 +16,18 @@ import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointA
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class JointAccountInvitationInboxItemMapper @Inject constructor() {
 
     fun mapToJointAccountInvitationInboxItem(
-        jointAccountDTO: JointAccountDTO,
+        jointAccount: JointAccount,
         lastOpenedTime: ZonedDateTime?
     ): JointAccountInvitationInboxItem? {
-        val accountAddress = jointAccountDTO.address ?: return null
-        val creationDatetimeString = jointAccountDTO.creationDatetime ?: return null
+        val accountAddress = jointAccount.address ?: return null
+        val creationDatetimeString = jointAccount.creationDatetime ?: return null
 
         val dateFormatter = getAlgorandMobileDateFormatter()
         val creationDateTime = creationDatetimeString.parseFormattedDate(dateFormatter)
@@ -38,8 +38,8 @@ class JointAccountInvitationInboxItemMapper @Inject constructor() {
         val creationInTimeMillis = creationDateTime.toInstant().toEpochMilli()
         val timeDifference = nowInTimeMillis - creationInTimeMillis
 
-        val threshold = jointAccountDTO.threshold ?: 2 // Default to 2 if not provided
-        val participantAddresses = jointAccountDTO.participantAddresses ?: emptyList()
+        val threshold = jointAccount.threshold ?: 2 // Default to 2 if not provided
+        val participantAddresses = jointAccount.participantAddresses ?: emptyList()
 
         // Determine read status: if lastOpenedTime is null, mark as read (first time opening)
         // Otherwise, mark as read if creation date is before last opened time

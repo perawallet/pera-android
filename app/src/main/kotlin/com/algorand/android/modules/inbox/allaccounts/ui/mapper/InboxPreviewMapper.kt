@@ -16,13 +16,13 @@ import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import com.algorand.wallet.inbox.asset.domain.model.AssetInboxRequest
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import java.time.ZonedDateTime
 
 data class InboxPreviewParams(
     val assetInboxList: List<AssetInboxRequest>,
     val addresses: List<String>,
-    val inboxMessages: InboxMessagesDTO?,
+    val inboxMessages: InboxMessages?,
     val isLoading: Boolean,
     val isEmptyStateVisible: Boolean,
     val showError: Event<ErrorResource>? = null,

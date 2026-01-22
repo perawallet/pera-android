@@ -13,8 +13,8 @@
 package com.algorand.wallet.jointaccount.creation.data.mapper
 
 import com.algorand.wallet.jointaccount.creation.data.model.CreateJointAccountRequest
-import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountDTO
+import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
 
 internal interface CreateJointAccountDTOMapper {
-    fun mapToCreateJointAccountRequest(dto: CreateJointAccountDTO): CreateJointAccountRequest
+    fun mapToCreateJointAccountRequest(dto: CreateJointAccountInput): CreateJointAccountRequest
 }

@@ -14,16 +14,16 @@ package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import javax.inject.Inject
 import javax.inject.Named
 
 fun interface AddJointAccountSignature {
     suspend operator fun invoke(
         signRequestId: String,
-        signRequestTransactionListResponseDTO: SignRequestTransactionListResponseDTO
-    ): PeraResult<JointSignRequestDTO>
+        signRequestTransactionListResponseDTO: AddSignatureInput
+    ): PeraResult<JointSignRequest>
 }
 
 internal class AddJointAccountSignatureUseCase @Inject constructor(
@@ -32,8 +32,8 @@ internal class AddJointAccountSignatureUseCase @Inject constructor(
 ) : AddJointAccountSignature {
     override suspend fun invoke(
         signRequestId: String,
-        signRequestTransactionListResponseDTO: SignRequestTransactionListResponseDTO
-    ): PeraResult<JointSignRequestDTO> {
+        signRequestTransactionListResponseDTO: AddSignatureInput
+    ): PeraResult<JointSignRequest> {
         return jointAccountRepository.addSignature(signRequestId, signRequestTransactionListResponseDTO)
     }
 }

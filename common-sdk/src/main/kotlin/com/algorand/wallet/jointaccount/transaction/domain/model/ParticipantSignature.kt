@@ -12,10 +12,8 @@
 
 package com.algorand.wallet.jointaccount.transaction.domain.model
 
-data class SearchSignRequestsDTO(
-    val deviceId: Long,
-    val signRequestId: String? = null,
-    val participantAddresses: List<String>? = null,
-    val statuses: List<String>? = null,
-    val jointAccountAddress: List<String>? = null
+data class ParticipantSignature(
+    val address: String,
+    val signatures: List<String?>,
+    val type: SignRequestResponseType?
 )

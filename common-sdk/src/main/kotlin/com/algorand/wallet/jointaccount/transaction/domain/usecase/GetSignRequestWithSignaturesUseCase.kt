@@ -14,24 +14,24 @@ package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignatureDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignatureDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignatureDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignature
 import javax.inject.Inject
 import javax.inject.Named
 
 fun interface GetSignRequestWithSignatures {
-    suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignatureDTO>
+    suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature>
 }
 
 internal class GetSignRequestWithSignaturesUseCase @Inject constructor(
     @param:Named(JointAccountRepository.INJECTION_NAME)
     private val jointAccountRepository: JointAccountRepository
 ) : GetSignRequestWithSignatures {
-    override suspend fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignatureDTO> {
-        val searchDTO = SearchSignRequestsDTO(
+    override suspend fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature> {
+        val searchDTO = SearchSignRequestsInput(
             deviceId = deviceId,
             signRequestId = signRequestId
         )
@@ -39,7 +39,7 @@ internal class GetSignRequestWithSignaturesUseCase @Inject constructor(
             is PeraResult.Success -> {
                 val signRequest = result.data.firstOrNull { it.id == signRequestId }
                 if (signRequest != null) {
-                    PeraResult.Success(mapToSignRequestWithFullSignatureDTO(signRequest))
+                    PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
                 } else {
                     PeraResult.Error(Exception("Sign request not found"))
                 }
@@ -49,22 +49,22 @@ internal class GetSignRequestWithSignaturesUseCase @Inject constructor(
         }
     }
 
-    private fun mapToSignRequestWithFullSignatureDTO(dto: JointSignRequestDTO): SignRequestWithFullSignatureDTO {
-        return SignRequestWithFullSignatureDTO(
+    private fun mapToSignRequestWithFullSignature(dto: JointSignRequest): SignRequestWithFullSignature {
+        return SignRequestWithFullSignature(
             id = dto.id?.toLongOrNull(),
             type = dto.type,
             jointAccount = dto.jointAccount,
             proposerAddress = dto.proposerAddress,
             lastValidExpectedDatetime = dto.expectedExpireDatetime,
             transactionLists = dto.transactionLists?.map { transactionList ->
-                TransactionListWithFullSignatureDTO(
+                TransactionListWithFullSignature(
                     rawTransactions = transactionList.rawTransactions,
                     firstValidBlock = transactionList.firstValidBlock?.toLongOrNull(),
                     lastValidBlock = transactionList.lastValidBlock?.toLongOrNull(),
                     responses = transactionList.responses?.mapNotNull { response ->
                         val address = response.address ?: return@mapNotNull null
                         val type = response.response ?: return@mapNotNull null
-                        ParticipantSignatureDTO(
+                        ParticipantSignature(
                             address = address,
                             signatures = response.signatures ?: emptyList(),
                             type = type

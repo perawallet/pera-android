@@ -12,19 +12,19 @@
 
 package com.algorand.wallet.jointaccount.transaction.data.mapper
 
-import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsRequest
-import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsDTO
+import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponseRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import javax.inject.Inject
 
-internal class SearchSignRequestsDTOMapper @Inject constructor() {
+internal class AddSignatureInputMapper @Inject constructor() {
 
-    fun mapToSearchSignRequestsRequest(dto: SearchSignRequestsDTO): SearchSignRequestsRequest {
-        return SearchSignRequestsRequest(
-            deviceId = dto.deviceId,
-            signRequestId = dto.signRequestId,
-            participantAddresses = dto.participantAddresses,
-            statuses = dto.statuses,
-            jointAccountAddress = dto.jointAccountAddress
+    fun mapToSignRequestTransactionListResponseRequest(
+        dto: AddSignatureInput
+    ): SignRequestTransactionListResponseRequest {
+        return SignRequestTransactionListResponseRequest(
+            response = dto.response.value,
+            signatures = dto.signatures,
+            deviceId = dto.deviceId
         )
     }
 }

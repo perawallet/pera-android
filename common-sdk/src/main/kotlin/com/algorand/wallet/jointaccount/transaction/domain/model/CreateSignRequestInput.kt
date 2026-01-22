@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.jointaccount.transaction.domain.model
 
-data class ProposeJointSignRequestDTO(
+data class CreateSignRequestInput(
     val jointAccountAddress: String,
     val proposerAddress: String,
     val type: String,

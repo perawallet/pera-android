@@ -14,8 +14,8 @@ package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -26,7 +26,7 @@ fun interface ProposeJointSignRequest {
         type: String,
         rawTransactionLists: List<List<String>>,
         transactionSignatureLists: List<List<String?>>
-    ): PeraResult<JointSignRequestDTO>
+    ): PeraResult<JointSignRequest>
 }
 
 internal class ProposeJointSignRequestUseCase @Inject constructor(
@@ -39,14 +39,14 @@ internal class ProposeJointSignRequestUseCase @Inject constructor(
         type: String,
         rawTransactionLists: List<List<String>>,
         transactionSignatureLists: List<List<String?>>
-    ): PeraResult<JointSignRequestDTO> {
-        val proposeJointSignRequestDTO = ProposeJointSignRequestDTO(
+    ): PeraResult<JointSignRequest> {
+        val createSignRequestInput = CreateSignRequestInput(
             jointAccountAddress = jointAccountAddress,
             proposerAddress = proposerAddress,
             type = type,
             rawTransactionLists = rawTransactionLists,
             transactionSignatureLists = transactionSignatureLists
         )
-        return jointAccountRepository.proposeSignRequest(proposeJointSignRequestDTO)
+        return jointAccountRepository.proposeSignRequest(createSignRequestInput)
     }
 }

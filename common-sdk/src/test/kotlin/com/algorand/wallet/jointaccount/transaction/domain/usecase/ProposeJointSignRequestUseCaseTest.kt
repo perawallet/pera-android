@@ -14,7 +14,7 @@ package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -29,7 +29,7 @@ internal class ProposeJointSignRequestUseCaseTest {
 
     @Test
     fun `EXPECT success WHEN repository succeeds`() = runTest {
-        val expectedResult = mockk<JointSignRequestDTO>()
+        val expectedResult = mockk<JointSignRequest>()
         coEvery { repository.proposeSignRequest(any()) } returns PeraResult.Success(expectedResult)
 
         val result = sut(TEST_JOINT_ADDRESS, TEST_PROPOSER, TEST_TYPE, TEST_RAW_TX, TEST_SIGS)

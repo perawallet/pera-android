@@ -14,9 +14,9 @@ package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestTransactionListResponseDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -31,7 +31,7 @@ internal class AddJointAccountSignatureUseCaseTest {
 
     @Test
     fun `EXPECT success WHEN repository succeeds`() = runTest {
-        val expectedResult = mockk<JointSignRequestDTO>()
+        val expectedResult = mockk<JointSignRequest>()
         coEvery { repository.addSignature(any(), any()) } returns PeraResult.Success(expectedResult)
 
         val result = sut(TEST_SIGN_REQUEST_ID, createResponseDTO())
@@ -51,7 +51,7 @@ internal class AddJointAccountSignatureUseCaseTest {
         assertEquals(exception, (result as PeraResult.Error).exception)
     }
 
-    private fun createResponseDTO() = SignRequestTransactionListResponseDTO(
+    private fun createResponseDTO() = AddSignatureInput(
         address = TEST_ADDRESS,
         response = SignRequestResponseType.SIGNED,
         signatures = listOf(listOf("signature_1", "signature_2")),

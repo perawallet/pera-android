@@ -10,11 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.transaction.domain.model
+package com.algorand.wallet.jointaccount.creation.domain.model
 
-data class SignRequestTransactionListResponseDTO(
-    val address: String,
-    val response: SignRequestResponseType,
-    val signatures: List<List<String?>>?, // List<List<signature>> - nested list structure
-    val deviceId: String? = null // Required if declining
+data class JointAccount(
+    val creationDatetime: String?,
+    val address: String?,
+    val version: Int?,
+    val threshold: Int?,
+    val participantAddresses: List<String>?
 )

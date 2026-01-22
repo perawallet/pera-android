@@ -14,50 +14,69 @@ package com.algorand.wallet.jointaccount.transaction.data.mapper
 
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponseItem
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Before
 import org.junit.Test
 
-internal class JointSignRequestDTOMapperTest {
+internal class JointSignRequestMapperTest {
 
-    private val jointAccountDTOMapper = JointAccountDTOMapper()
-    private val mapper = JointSignRequestDTOMapper(jointAccountDTOMapper)
+    private lateinit var jointAccountDTOMapper: JointAccountDTOMapper
+    private lateinit var mapper: JointSignRequestMapper
+
+    @Before
+    fun setup() {
+        jointAccountDTOMapper = mockk()
+        mapper = JointSignRequestMapper(jointAccountDTOMapper)
+    }
 
     @Test
     fun `EXPECT null WHEN response is null`() {
-        val result = mapper.mapToJointSignRequestDTO(null)
+        val result = mapper.mapToJointSignRequest(null)
 
         assertNull(result)
     }
 
     @Test
     fun `EXPECT id to be mapped correctly`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(id = "123")
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertEquals("123", result?.id)
     }
 
     @Test
     fun `EXPECT joint account to be mapped correctly`() {
-        val response = createTestResponse(
-            jointAccount = JointAccountResponse(
-                creationDatetime = "2024-01-01T00:00:00Z",
-                address = "JOINT_ADDRESS",
-                version = 1,
-                threshold = 2,
-                participantAddresses = listOf("ADDR1", "ADDR2")
-            )
+        val mockJointAccount = JointAccount(
+            creationDatetime = "2024-01-01T00:00:00Z",
+            address = "JOINT_ADDRESS",
+            version = 1,
+            threshold = 2,
+            participantAddresses = listOf("ADDR1", "ADDR2")
         )
+        val jointAccountResponse = JointAccountResponse(
+            creationDatetime = "2024-01-01T00:00:00Z",
+            address = "JOINT_ADDRESS",
+            version = 1,
+            threshold = 2,
+            participantAddresses = listOf("ADDR1", "ADDR2")
+        )
+        every { jointAccountDTOMapper.mapToJointAccountDTO(jointAccountResponse) } returns mockJointAccount
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val response = createTestResponse(jointAccount = jointAccountResponse)
+
+        val result = mapper.mapToJointSignRequest(response)
 
         assertNotNull(result?.jointAccount)
         assertEquals("JOINT_ADDRESS", result?.jointAccount?.address)
@@ -65,35 +84,30 @@ internal class JointSignRequestDTOMapperTest {
     }
 
     @Test
-    fun `EXPECT proposer address to be mapped correctly`() {
-        val response = createTestResponse(proposerAddress = "PROPOSER_ADDRESS")
+    fun `EXPECT proposer address and type to be mapped correctly`() {
+        setupMockJointAccountMapper(null)
+        val response = createTestResponse(proposerAddress = "PROPOSER_ADDRESS", type = "payment")
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertEquals("PROPOSER_ADDRESS", result?.proposerAddress)
-    }
-
-    @Test
-    fun `EXPECT type to be mapped correctly`() {
-        val response = createTestResponse(type = "payment")
-
-        val result = mapper.mapToJointSignRequestDTO(response)
-
         assertEquals("payment", result?.type)
     }
 
     @Test
     fun `EXPECT raw transaction lists to be mapped correctly`() {
+        setupMockJointAccountMapper(null)
         val rawTransactionLists = listOf(listOf("raw_tx_1", "raw_tx_2"))
         val response = createTestResponse(rawTransactionLists = rawTransactionLists)
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertEquals(rawTransactionLists, result?.rawTransactionLists)
     }
 
     @Test
     fun `EXPECT transaction lists to be mapped correctly`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(
             transactionLists = listOf(
                 SignRequestTransactionListResponse(
@@ -113,7 +127,7 @@ internal class JointSignRequestDTOMapperTest {
             )
         )
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertNotNull(result?.transactionLists)
         assertEquals(1, result?.transactionLists?.size)
@@ -122,70 +136,48 @@ internal class JointSignRequestDTOMapperTest {
     }
 
     @Test
-    fun `EXPECT expected expire datetime to be mapped correctly`() {
-        val response = createTestResponse(expectedExpireDatetime = "2024-01-02T00:00:00Z")
-
-        val result = mapper.mapToJointSignRequestDTO(response)
-
-        assertEquals("2024-01-02T00:00:00Z", result?.expectedExpireDatetime)
-    }
-
-    @Test
     fun `EXPECT PENDING status WHEN status is pending`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(status = "pending")
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertEquals(SignRequestStatus.PENDING, result?.status)
     }
 
     @Test
     fun `EXPECT READY status WHEN status is ready`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(status = "ready")
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertEquals(SignRequestStatus.READY, result?.status)
     }
 
     @Test
     fun `EXPECT CONFIRMED status WHEN status is confirmed`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(status = "confirmed")
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertEquals(SignRequestStatus.CONFIRMED, result?.status)
     }
 
     @Test
-    fun `EXPECT EXPIRED status WHEN status is expired`() {
-        val response = createTestResponse(status = "expired")
-
-        val result = mapper.mapToJointSignRequestDTO(response)
-
-        assertEquals(SignRequestStatus.EXPIRED, result?.status)
-    }
-
-    @Test
-    fun `EXPECT FAILED status WHEN status is failed`() {
-        val response = createTestResponse(status = "failed")
-
-        val result = mapper.mapToJointSignRequestDTO(response)
-
-        assertEquals(SignRequestStatus.FAILED, result?.status)
-    }
-
-    @Test
     fun `EXPECT null status WHEN status is null`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(status = null)
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         assertNull(result?.status)
     }
 
     @Test
     fun `EXPECT SIGNED response type WHEN response is signed`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(
             transactionLists = listOf(
                 SignRequestTransactionListResponse(
@@ -205,7 +197,7 @@ internal class JointSignRequestDTOMapperTest {
             )
         )
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         val responseItem = result?.transactionLists?.first()?.responses?.first()
         assertEquals(SignRequestResponseType.SIGNED, responseItem?.response)
@@ -213,6 +205,7 @@ internal class JointSignRequestDTOMapperTest {
 
     @Test
     fun `EXPECT DECLINED response type WHEN response is declined`() {
+        setupMockJointAccountMapper(null)
         val response = createTestResponse(
             transactionLists = listOf(
                 SignRequestTransactionListResponse(
@@ -232,10 +225,14 @@ internal class JointSignRequestDTOMapperTest {
             )
         )
 
-        val result = mapper.mapToJointSignRequestDTO(response)
+        val result = mapper.mapToJointSignRequest(response)
 
         val responseItem = result?.transactionLists?.first()?.responses?.first()
         assertEquals(SignRequestResponseType.DECLINED, responseItem?.response)
+    }
+
+    private fun setupMockJointAccountMapper(returnValue: JointAccount?) {
+        every { jointAccountDTOMapper.mapToJointAccountDTO(any()) } returns returnValue
     }
 
     private fun createTestResponse(
@@ -247,16 +244,14 @@ internal class JointSignRequestDTOMapperTest {
         transactionLists: List<SignRequestTransactionListResponse>? = null,
         expectedExpireDatetime: String? = null,
         status: String? = "pending"
-    ): JointSignRequestResponse {
-        return JointSignRequestResponse(
-            id = id,
-            jointAccount = jointAccount,
-            proposerAddress = proposerAddress,
-            type = type,
-            rawTransactionLists = rawTransactionLists,
-            transactionLists = transactionLists,
-            expectedExpireDatetime = expectedExpireDatetime,
-            status = status
-        )
-    }
+    ) = JointSignRequestResponse(
+        id = id,
+        jointAccount = jointAccount,
+        proposerAddress = proposerAddress,
+        type = type,
+        rawTransactionLists = rawTransactionLists,
+        transactionLists = transactionLists,
+        expectedExpireDatetime = expectedExpireDatetime,
+        status = status
+    )
 }

@@ -13,12 +13,12 @@
 package com.algorand.wallet.jointaccount.creation.data.mapper
 
 import com.algorand.wallet.jointaccount.creation.data.model.CreateJointAccountRequest
-import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountDTO
+import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
 import javax.inject.Inject
 
 internal class CreateJointAccountDTOMapperImpl @Inject constructor() : CreateJointAccountDTOMapper {
 
-    override fun mapToCreateJointAccountRequest(dto: CreateJointAccountDTO): CreateJointAccountRequest {
+    override fun mapToCreateJointAccountRequest(dto: CreateJointAccountInput): CreateJointAccountRequest {
         return CreateJointAccountRequest(
             participantAddresses = dto.participantAddresses,
             threshold = dto.threshold,

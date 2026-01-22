@@ -13,11 +13,11 @@
 package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionListDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionListResponseDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionList
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionListItem
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
 import io.mockk.coEvery
@@ -110,9 +110,9 @@ internal class GetSignRequestWithSignaturesUseCaseTest {
         assertEquals(123L, (result as PeraResult.Success).data.id)
     }
 
-    private fun createSignRequestDTO() = JointSignRequestDTO(
+    private fun createSignRequestDTO() = JointSignRequest(
         id = "123",
-        jointAccount = JointAccountDTO(
+        jointAccount = JointAccount(
             creationDatetime = "2024-01-01T00:00:00Z",
             address = "JOINT_ADDRESS",
             version = 1,
@@ -129,13 +129,13 @@ internal class GetSignRequestWithSignaturesUseCaseTest {
 
     private fun createSignRequestDTOWithTransactionLists() = createSignRequestDTO().copy(
         transactionLists = listOf(
-            JointSignRequestTransactionListDTO(
+            JointSignRequestTransactionList(
                 id = "txn_list_1",
                 rawTransactions = listOf("raw_tx_1"),
                 firstValidBlock = "100",
                 lastValidBlock = "200",
                 responses = listOf(
-                    JointSignRequestTransactionListResponseDTO(
+                    JointSignRequestTransactionListItem(
                         address = "PARTICIPANT_ADDRESS",
                         response = SignRequestResponseType.SIGNED,
                         signatures = listOf("sig_1", "sig_2")

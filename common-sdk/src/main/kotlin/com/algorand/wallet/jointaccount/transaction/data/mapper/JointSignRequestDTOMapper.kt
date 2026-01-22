@@ -16,27 +16,27 @@ import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapp
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponseItem
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionListDTO
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionListResponseDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionList
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionListItem
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
 import javax.inject.Inject
 
-internal class JointSignRequestDTOMapper @Inject constructor(
+internal class JointSignRequestMapper @Inject constructor(
     private val jointAccountDTOMapper: JointAccountDTOMapper
 ) {
 
-    fun mapToJointSignRequestDTO(response: JointSignRequestResponse?): JointSignRequestDTO? {
+    fun mapToJointSignRequest(response: JointSignRequestResponse?): JointSignRequest? {
         return response?.let {
-            JointSignRequestDTO(
+            JointSignRequest(
                 id = it.id,
                 jointAccount = jointAccountDTOMapper.mapToJointAccountDTO(it.jointAccount),
                 proposerAddress = it.proposerAddress,
                 type = it.type,
                 rawTransactionLists = it.rawTransactionLists,
                 transactionLists = it.transactionLists?.map { transactionList ->
-                    mapToJointSignRequestTransactionListDTO(transactionList)
+                    mapToJointSignRequestTransactionList(transactionList)
                 },
                 expectedExpireDatetime = it.expectedExpireDatetime,
                 status = SignRequestStatus.fromValue(it.status)
@@ -44,25 +44,25 @@ internal class JointSignRequestDTOMapper @Inject constructor(
         }
     }
 
-    private fun mapToJointSignRequestTransactionListDTO(
+    private fun mapToJointSignRequestTransactionList(
         response: SignRequestTransactionListResponse
-    ): JointSignRequestTransactionListDTO {
-        return JointSignRequestTransactionListDTO(
+    ): JointSignRequestTransactionList {
+        return JointSignRequestTransactionList(
             id = response.id,
             rawTransactions = response.rawTransactions,
             firstValidBlock = response.firstValidBlock,
             lastValidBlock = response.lastValidBlock,
             responses = response.responses?.map { item ->
-                mapToJointSignRequestTransactionListResponseDTO(item)
+                mapToJointSignRequestTransactionListItem(item)
             },
             expectedExpireDatetime = response.expectedExpireDatetime
         )
     }
 
-    private fun mapToJointSignRequestTransactionListResponseDTO(
+    private fun mapToJointSignRequestTransactionListItem(
         item: SignRequestTransactionListResponseItem
-    ): JointSignRequestTransactionListResponseDTO {
-        return JointSignRequestTransactionListResponseDTO(
+    ): JointSignRequestTransactionListItem {
+        return JointSignRequestTransactionListItem(
             address = item.address,
             response = SignRequestResponseType.fromValue(item.response),
             signatures = item.signatures

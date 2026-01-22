@@ -49,25 +49,25 @@ internal class JointSignRequestMapperTest {
     @Test
     fun `EXPECT id to be mapped correctly`() {
         setupMockJointAccountMapper(null)
-        val response = createTestResponse(id = "123")
+        val response = createTestResponse()
 
         val result = mapper.mapToJointSignRequest(response)
 
-        assertEquals("123", result?.id)
+        assertEquals(TEST_ID, result?.id)
     }
 
     @Test
     fun `EXPECT joint account to be mapped correctly`() {
         val mockJointAccount = JointAccount(
-            creationDatetime = "2024-01-01T00:00:00Z",
-            address = "JOINT_ADDRESS",
+            creationDatetime = TEST_CREATION_DATETIME,
+            address = TEST_JOINT_ADDRESS,
             version = 1,
             threshold = 2,
             participantAddresses = listOf("ADDR1", "ADDR2")
         )
         val jointAccountResponse = JointAccountResponse(
-            creationDatetime = "2024-01-01T00:00:00Z",
-            address = "JOINT_ADDRESS",
+            creationDatetime = TEST_CREATION_DATETIME,
+            address = TEST_JOINT_ADDRESS,
             version = 1,
             threshold = 2,
             participantAddresses = listOf("ADDR1", "ADDR2")
@@ -79,19 +79,19 @@ internal class JointSignRequestMapperTest {
         val result = mapper.mapToJointSignRequest(response)
 
         assertNotNull(result?.jointAccount)
-        assertEquals("JOINT_ADDRESS", result?.jointAccount?.address)
+        assertEquals(TEST_JOINT_ADDRESS, result?.jointAccount?.address)
         assertEquals(2, result?.jointAccount?.threshold)
     }
 
     @Test
     fun `EXPECT proposer address and type to be mapped correctly`() {
         setupMockJointAccountMapper(null)
-        val response = createTestResponse(proposerAddress = "PROPOSER_ADDRESS", type = "payment")
+        val response = createTestResponse()
 
         val result = mapper.mapToJointSignRequest(response)
 
-        assertEquals("PROPOSER_ADDRESS", result?.proposerAddress)
-        assertEquals("payment", result?.type)
+        assertEquals(TEST_PROPOSER_ADDRESS, result?.proposerAddress)
+        assertEquals(TEST_TYPE, result?.type)
     }
 
     @Test
@@ -111,18 +111,18 @@ internal class JointSignRequestMapperTest {
         val response = createTestResponse(
             transactionLists = listOf(
                 SignRequestTransactionListResponse(
-                    id = "txn_1",
-                    rawTransactions = listOf("raw_tx_1"),
-                    firstValidBlock = "100",
-                    lastValidBlock = "200",
+                    id = TEST_TRANSACTION_ID,
+                    rawTransactions = listOf(TEST_RAW_TX),
+                    firstValidBlock = TEST_FIRST_VALID_BLOCK,
+                    lastValidBlock = TEST_LAST_VALID_BLOCK,
                     responses = listOf(
                         SignRequestTransactionListResponseItem(
-                            address = "ADDR1",
-                            response = "signed",
-                            signatures = listOf("sig_1")
+                            address = TEST_PARTICIPANT_ADDRESS,
+                            response = TEST_RESPONSE_SIGNED,
+                            signatures = listOf(TEST_SIGNATURE)
                         )
                     ),
-                    expectedExpireDatetime = "2024-01-02T00:00:00Z"
+                    expectedExpireDatetime = TEST_EXPIRE_DATETIME
                 )
             )
         )
@@ -131,14 +131,14 @@ internal class JointSignRequestMapperTest {
 
         assertNotNull(result?.transactionLists)
         assertEquals(1, result?.transactionLists?.size)
-        assertEquals("txn_1", result?.transactionLists?.first()?.id)
-        assertEquals(listOf("raw_tx_1"), result?.transactionLists?.first()?.rawTransactions)
+        assertEquals(TEST_TRANSACTION_ID, result?.transactionLists?.first()?.id)
+        assertEquals(listOf(TEST_RAW_TX), result?.transactionLists?.first()?.rawTransactions)
     }
 
     @Test
     fun `EXPECT PENDING status WHEN status is pending`() {
         setupMockJointAccountMapper(null)
-        val response = createTestResponse(status = "pending")
+        val response = createTestResponse(status = TEST_STATUS_PENDING)
 
         val result = mapper.mapToJointSignRequest(response)
 
@@ -148,7 +148,7 @@ internal class JointSignRequestMapperTest {
     @Test
     fun `EXPECT READY status WHEN status is ready`() {
         setupMockJointAccountMapper(null)
-        val response = createTestResponse(status = "ready")
+        val response = createTestResponse(status = TEST_STATUS_READY)
 
         val result = mapper.mapToJointSignRequest(response)
 
@@ -158,7 +158,7 @@ internal class JointSignRequestMapperTest {
     @Test
     fun `EXPECT CONFIRMED status WHEN status is confirmed`() {
         setupMockJointAccountMapper(null)
-        val response = createTestResponse(status = "confirmed")
+        val response = createTestResponse(status = TEST_STATUS_CONFIRMED)
 
         val result = mapper.mapToJointSignRequest(response)
 
@@ -181,15 +181,15 @@ internal class JointSignRequestMapperTest {
         val response = createTestResponse(
             transactionLists = listOf(
                 SignRequestTransactionListResponse(
-                    id = "txn_1",
+                    id = TEST_TRANSACTION_ID,
                     rawTransactions = null,
                     firstValidBlock = null,
                     lastValidBlock = null,
                     responses = listOf(
                         SignRequestTransactionListResponseItem(
-                            address = "ADDR1",
-                            response = "signed",
-                            signatures = listOf("sig_1")
+                            address = TEST_PARTICIPANT_ADDRESS,
+                            response = TEST_RESPONSE_SIGNED,
+                            signatures = listOf(TEST_SIGNATURE)
                         )
                     ),
                     expectedExpireDatetime = null
@@ -209,14 +209,14 @@ internal class JointSignRequestMapperTest {
         val response = createTestResponse(
             transactionLists = listOf(
                 SignRequestTransactionListResponse(
-                    id = "txn_1",
+                    id = TEST_TRANSACTION_ID,
                     rawTransactions = null,
                     firstValidBlock = null,
                     lastValidBlock = null,
                     responses = listOf(
                         SignRequestTransactionListResponseItem(
-                            address = "ADDR1",
-                            response = "declined",
+                            address = TEST_PARTICIPANT_ADDRESS,
+                            response = TEST_RESPONSE_DECLINED,
                             signatures = null
                         )
                     ),
@@ -236,14 +236,14 @@ internal class JointSignRequestMapperTest {
     }
 
     private fun createTestResponse(
-        id: String? = "123",
+        id: String? = TEST_ID,
         jointAccount: JointAccountResponse? = null,
-        proposerAddress: String? = "PROPOSER",
-        type: String? = "payment",
+        proposerAddress: String? = TEST_PROPOSER_ADDRESS,
+        type: String? = TEST_TYPE,
         rawTransactionLists: List<List<String>>? = null,
         transactionLists: List<SignRequestTransactionListResponse>? = null,
         expectedExpireDatetime: String? = null,
-        status: String? = "pending"
+        status: String? = TEST_STATUS_PENDING
     ) = JointSignRequestResponse(
         id = id,
         jointAccount = jointAccount,
@@ -254,4 +254,24 @@ internal class JointSignRequestMapperTest {
         expectedExpireDatetime = expectedExpireDatetime,
         status = status
     )
+
+    private companion object {
+        const val TEST_ID = "123"
+        const val TEST_PROPOSER_ADDRESS = "PROPOSER"
+        const val TEST_TYPE = "payment"
+        const val TEST_STATUS_PENDING = "pending"
+        const val TEST_STATUS_READY = "ready"
+        const val TEST_STATUS_CONFIRMED = "confirmed"
+        const val TEST_JOINT_ADDRESS = "JOINT_ADDRESS"
+        const val TEST_CREATION_DATETIME = "2024-01-01T00:00:00Z"
+        const val TEST_EXPIRE_DATETIME = "2024-01-02T00:00:00Z"
+        const val TEST_TRANSACTION_ID = "txn_1"
+        const val TEST_RAW_TX = "raw_tx_1"
+        const val TEST_FIRST_VALID_BLOCK = "100"
+        const val TEST_LAST_VALID_BLOCK = "200"
+        const val TEST_PARTICIPANT_ADDRESS = "ADDR1"
+        const val TEST_RESPONSE_SIGNED = "signed"
+        const val TEST_RESPONSE_DECLINED = "declined"
+        const val TEST_SIGNATURE = "sig_1"
+    }
 }

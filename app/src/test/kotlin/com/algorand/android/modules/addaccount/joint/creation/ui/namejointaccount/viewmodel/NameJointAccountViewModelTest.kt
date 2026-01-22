@@ -13,12 +13,12 @@
 package com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel
 
 import com.algorand.android.R
-import com.algorand.android.models.Result
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.CreateJointAccount
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewEvent
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewState
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccountDTO
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
+import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import io.mockk.coEvery
@@ -87,7 +87,7 @@ internal class NameJointAccountViewModelTest {
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
             createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns Result.Success(createJointAccountDTO())
+        } returns PeraResult.Success(createJointAccount())
         coEvery {
             processor.createLocalAccount(any(), any(), any(), any(), any())
         } returns NameJointAccountProcessor.CreateLocalAccountResult.Success
@@ -108,7 +108,7 @@ internal class NameJointAccountViewModelTest {
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
             createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns Result.Success(createJointAccountDTO())
+        } returns PeraResult.Success(createJointAccount())
         coEvery {
             processor.createLocalAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME)
         } returns NameJointAccountProcessor.CreateLocalAccountResult.Success
@@ -133,7 +133,7 @@ internal class NameJointAccountViewModelTest {
         val exception = Exception("Network error")
         coEvery {
             createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns Result.Error(exception)
+        } returns PeraResult.Error(exception)
         coEvery { processor.mapExceptionToErrorResId(exception) } returns R.string.the_internet_connection
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
@@ -152,7 +152,7 @@ internal class NameJointAccountViewModelTest {
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
             createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns Result.Success(createJointAccountDTO(address = null))
+        } returns PeraResult.Success(createJointAccount(address = null))
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
 
@@ -170,7 +170,7 @@ internal class NameJointAccountViewModelTest {
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
             createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns Result.Success(createJointAccountDTO())
+        } returns PeraResult.Success(createJointAccount())
         coEvery {
             processor.createLocalAccount(any(), any(), any(), any(), any())
         } returns NameJointAccountProcessor.CreateLocalAccountResult.AlreadyExists
@@ -191,7 +191,7 @@ internal class NameJointAccountViewModelTest {
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
             createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns Result.Success(createJointAccountDTO())
+        } returns PeraResult.Success(createJointAccount())
         coEvery {
             processor.createLocalAccount(any(), any(), any(), any(), any())
         } returns NameJointAccountProcessor.CreateLocalAccountResult.Error(R.string.an_error_occurred)
@@ -211,7 +211,7 @@ internal class NameJointAccountViewModelTest {
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
             createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns Result.Success(createJointAccountDTO())
+        } returns PeraResult.Success(createJointAccount())
         coEvery {
             processor.createLocalAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME)
         } returns NameJointAccountProcessor.CreateLocalAccountResult.Success
@@ -261,11 +261,11 @@ internal class NameJointAccountViewModelTest {
         )
     }
 
-    private fun createJointAccountDTO(
+    private fun createJointAccount(
         address: String? = TEST_JOINT_ADDRESS,
         version: Int = TEST_VERSION
-    ): JointAccountDTO {
-        return JointAccountDTO(
+    ): JointAccount {
+        return JointAccount(
             creationDatetime = "2025-01-01T00:00:00Z",
             address = address,
             version = version,

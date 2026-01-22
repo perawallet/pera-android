@@ -13,16 +13,17 @@
 package com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase
 
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.android.models.Result
-import com.algorand.android.modules.addaccount.joint.core.domain.repository.JointAccountRepository
-import com.algorand.android.modules.addaccount.joint.creation.domain.usecase.DeleteInboxJointInvitationNotification
-import com.algorand.wallet.inbox.domain.model.InboxMessagesDTO
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
+import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessages
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -30,12 +31,12 @@ import org.junit.Test
 internal class JointAccountInboxOperationsUseCaseTest {
 
     private val deviceIdUseCase: DeviceIdUseCase = mockk()
-    private val jointAccountRepository: JointAccountRepository = mockk()
+    private val fetchInboxMessages: FetchInboxMessages = mockk()
     private val deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification = mockk()
 
     private val sut = JointAccountInboxOperationsUseCase(
         deviceIdUseCase = deviceIdUseCase,
-        jointAccountRepository = jointAccountRepository,
+        fetchInboxMessages = fetchInboxMessages,
         deleteInboxJointInvitationNotification = deleteInboxJointInvitationNotification
     )
 
@@ -63,46 +64,49 @@ internal class JointAccountInboxOperationsUseCaseTest {
 
         val result = sut.getInboxMessages(listOf("ADDR1"))
 
-        assertTrue(result is Result.Error)
+        assertTrue(result is PeraResult.Error)
     }
 
     @Test
     fun `EXPECT success WHEN getInboxMessages succeeds`() = runTest {
-        val expectedDTO = mockk<InboxMessagesDTO>()
+        val expectedMessages = mockk<InboxMessages>()
         every { deviceIdUseCase.getSelectedNodeDeviceId() } returns TEST_DEVICE_ID
-        coEvery { jointAccountRepository.getInboxMessages(TEST_DEVICE_ID_LONG, any()) } returns Result.Success(expectedDTO)
+        coEvery { fetchInboxMessages(TEST_DEVICE_ID_LONG, listOf("ADDR1")) } returns PeraResult.Success(expectedMessages)
 
         val result = sut.getInboxMessages(listOf("ADDR1"))
 
-        assertTrue(result is Result.Success)
-        assertEquals(expectedDTO, (result as Result.Success).data)
+        assertTrue(result is PeraResult.Success)
+        assertEquals(expectedMessages, (result as PeraResult.Success).data)
     }
 
     @Test
     fun `EXPECT deleteNotification to call deleteInboxJointInvitationNotification`() = runTest {
         every { deviceIdUseCase.getSelectedNodeDeviceId() } returns TEST_DEVICE_ID
-        coEvery { deleteInboxJointInvitationNotification(TEST_DEVICE_ID_LONG, TEST_ADDRESS) } returns Result.Success(Unit)
+        coEvery { deleteInboxJointInvitationNotification(TEST_DEVICE_ID_LONG, TEST_ADDRESS) } returns PeraResult.Success(Unit)
 
-        sut.deleteNotification(TEST_ADDRESS)
+        val result = sut.deleteNotification(TEST_ADDRESS)
 
+        assertTrue(result)
         coVerify { deleteInboxJointInvitationNotification(TEST_DEVICE_ID_LONG, TEST_ADDRESS) }
     }
 
     @Test
-    fun `EXPECT no action WHEN device id is null for deleteNotification`() = runTest {
+    fun `EXPECT false WHEN device id is null for deleteNotification`() = runTest {
         every { deviceIdUseCase.getSelectedNodeDeviceId() } returns null
 
-        sut.deleteNotification(TEST_ADDRESS)
+        val result = sut.deleteNotification(TEST_ADDRESS)
 
+        assertFalse(result)
         coVerify(exactly = 0) { deleteInboxJointInvitationNotification(any(), any()) }
     }
 
     @Test
-    fun `EXPECT no action WHEN device id is not a valid number for deleteNotification`() = runTest {
+    fun `EXPECT false WHEN device id is not a valid number for deleteNotification`() = runTest {
         every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "invalid"
 
-        sut.deleteNotification(TEST_ADDRESS)
+        val result = sut.deleteNotification(TEST_ADDRESS)
 
+        assertFalse(result)
         coVerify(exactly = 0) { deleteInboxJointInvitationNotification(any(), any()) }
     }
 

@@ -21,12 +21,10 @@ import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
+import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
-import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignatureUseCase
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
-import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignaturesUseCase
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
-import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequestUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,18 +54,32 @@ internal object JointAccountModule {
 
     @Provides
     fun provideProposeJointSignRequest(
-        useCase: ProposeJointSignRequestUseCase
-    ): ProposeJointSignRequest = useCase
+        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+    ): ProposeJointSignRequest = ProposeJointSignRequest { jointAccountAddress, proposerAddress, type, rawTransactionLists, transactionSignatureLists ->
+        repository.proposeSignRequest(
+            CreateSignRequestInput(
+                jointAccountAddress = jointAccountAddress,
+                proposerAddress = proposerAddress,
+                type = type,
+                rawTransactionLists = rawTransactionLists,
+                transactionSignatureLists = transactionSignatureLists
+            )
+        )
+    }
 
     @Provides
     fun provideGetSignRequestWithSignatures(
-        useCase: GetSignRequestWithSignaturesUseCase
-    ): GetSignRequestWithSignatures = useCase
+        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+    ): GetSignRequestWithSignatures = GetSignRequestWithSignatures { deviceId, signRequestId ->
+        repository.getSignRequestWithSignatures(deviceId, signRequestId)
+    }
 
     @Provides
     fun provideAddJointAccountSignature(
-        useCase: AddJointAccountSignatureUseCase
-    ): AddJointAccountSignature = useCase
+        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+    ): AddJointAccountSignature = AddJointAccountSignature { signRequestId, addSignatureInput ->
+        repository.addSignature(signRequestId, addSignatureInput)
+    }
 
     @Provides
     fun provideGetJointAccountProposerAddress(

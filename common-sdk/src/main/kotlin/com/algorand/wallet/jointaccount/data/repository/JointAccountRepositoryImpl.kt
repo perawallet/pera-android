@@ -27,10 +27,13 @@ import com.algorand.wallet.jointaccount.transaction.data.mapper.CreateSignReques
 import com.algorand.wallet.jointaccount.transaction.data.mapper.SearchSignRequestsInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.mapper.AddSignatureInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
-import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
-import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignature
 import javax.inject.Inject
 
 internal class JointAccountRepositoryImpl @Inject constructor(
@@ -98,23 +101,60 @@ internal class JointAccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun searchSignRequests(
-        searchSignRequestsDTO: SearchSignRequestsInput
-    ): PeraResult<List<JointSignRequest>> {
-        val request = searchSignRequestsInputMapper.mapToSearchSignRequestsRequest(searchSignRequestsDTO)
+    override suspend fun getSignRequestWithSignatures(
+        deviceId: Long,
+        signRequestId: String
+    ): PeraResult<SignRequestWithFullSignature> {
+        val searchInput = SearchSignRequestsInput(
+            deviceId = deviceId,
+            signRequestId = signRequestId
+        )
+        val request = searchSignRequestsInputMapper.mapToSearchSignRequestsRequest(searchInput)
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             jointAccountApiService.searchSignRequests(request)
-        }.map { paginatedResponse ->
-            paginatedResponse.results?.mapNotNull { response ->
-                jointSignRequestDTOMapper.mapToJointSignRequest(response).also { dto ->
-                    if (dto == null) {
-                        android.util.Log.w(
-                            "JointAccountRepository",
-                            "Failed to map sign request: id=${response.id}"
-                        )
+        }.let { result ->
+            when (result) {
+                is PeraResult.Success -> {
+                    val signRequests = result.data.results?.mapNotNull { response ->
+                        jointSignRequestDTOMapper.mapToJointSignRequest(response)
+                    } ?: emptyList()
+                    val signRequest = signRequests.firstOrNull { it.id == signRequestId }
+                    if (signRequest != null) {
+                        PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
+                    } else {
+                        PeraResult.Error(Exception("Sign request not found"))
                     }
                 }
-            } ?: emptyList()
+                is PeraResult.Error -> result
+            }
         }
+    }
+
+    private fun mapToSignRequestWithFullSignature(signRequest: JointSignRequest): SignRequestWithFullSignature {
+        return SignRequestWithFullSignature(
+            id = signRequest.id?.toLongOrNull(),
+            type = signRequest.type,
+            jointAccount = signRequest.jointAccount,
+            proposerAddress = signRequest.proposerAddress,
+            lastValidExpectedDatetime = signRequest.expectedExpireDatetime,
+            transactionLists = signRequest.transactionLists?.map { transactionList ->
+                TransactionListWithFullSignature(
+                    rawTransactions = transactionList.rawTransactions,
+                    firstValidBlock = transactionList.firstValidBlock?.toLongOrNull(),
+                    lastValidBlock = transactionList.lastValidBlock?.toLongOrNull(),
+                    responses = transactionList.responses?.mapNotNull { response ->
+                        val address = response.address ?: return@mapNotNull null
+                        val type = response.response ?: return@mapNotNull null
+                        ParticipantSignature(
+                            address = address,
+                            signatures = response.signatures ?: emptyList(),
+                            type = type
+                        )
+                    },
+                    lastValidExpectedDatetime = transactionList.expectedExpireDatetime
+                )
+            },
+            status = signRequest.status
+        )
     }
 }

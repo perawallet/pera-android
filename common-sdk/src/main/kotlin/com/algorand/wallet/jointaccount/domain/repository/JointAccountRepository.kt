@@ -15,10 +15,10 @@ package com.algorand.wallet.jointaccount.domain.repository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
-import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
-import com.algorand.wallet.jointaccount.transaction.domain.model.SearchSignRequestsInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
 interface JointAccountRepository {
 
@@ -32,12 +32,13 @@ interface JointAccountRepository {
 
     suspend fun addSignature(
         signRequestId: String,
-        signRequestTransactionListResponseDTO: AddSignatureInput
+        addSignatureInput: AddSignatureInput
     ): PeraResult<JointSignRequest>
 
-    suspend fun searchSignRequests(
-        searchSignRequestsDTO: SearchSignRequestsInput
-    ): PeraResult<List<JointSignRequest>>
+    suspend fun getSignRequestWithSignatures(
+        deviceId: Long,
+        signRequestId: String
+    ): PeraResult<SignRequestWithFullSignature>
 
     companion object {
         const val INJECTION_NAME: String = "jointAccountRepositoryInjectionName"

@@ -27,7 +27,7 @@ import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestDTO
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
 import javax.inject.Inject
 
@@ -94,7 +94,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
             return JointSignResult(isSuccess = false)
         }
 
-        val signRequestId = (result.data as? JointSignRequestDTO)?.id
+        val signRequestId = (result.data as? JointSignRequest)?.id
             ?.takeIf { it.isNotBlank() } ?: return JointSignResult(isSuccess = false)
 
         autoSignWithLocalAccounts(

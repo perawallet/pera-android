@@ -58,6 +58,7 @@ import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -75,7 +76,8 @@ class TransactionSignManager @Inject constructor(
     private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount,
     private val getAccountMinBalance: GetAccountMinBalance,
     private val localAccountSigningHelper: LocalAccountSigningHelper,
-    private val jointAccountTransactionSignHelper: JointAccountTransactionSignHelper
+    private val jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
+    private val getLocalAccount: GetLocalAccount
 ) : LifecycleScopedCoroutineOwner() {
 
     val transactionManagerResultLiveData: MutableLiveData<Event<TransactionManagerResult>?> = MutableLiveData()
@@ -252,7 +254,7 @@ class TransactionSignManager @Inject constructor(
 
             is TransactionSigner.HdKey -> {
                 val transactionBytes = transactionByteArray ?: return handleSignError()
-                val hdKey = localAccountSigningHelper.getLocalAccount(signer.address)
+                val hdKey = getLocalAccount(signer.address)
                     as? LocalAccount.HdKey ?: return handleSignError()
                 val signedTx = localAccountSigningHelper.signWithHdKey(transactionBytes, hdKey)
                     ?: return handleSignError()
@@ -270,10 +272,6 @@ class TransactionSignManager @Inject constructor(
             is TransactionSigner.SignerNotFound -> {
                 postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
             }
-
-            is TransactionSigner.Joint -> {
-                TODO("Handle Joint Account")
-            }
         }
     }
 
@@ -283,14 +281,16 @@ class TransactionSignManager @Inject constructor(
 
     private suspend fun handleJointAccountTransaction(signer: TransactionSigner.Joint) {
         val transactionDataList = this.transactionDataList ?: return postJointAccountError()
-        val result = jointAccountTransactionSignHelper.handleJointAccountTransaction(
+        when (val result = jointAccountTransactionSignHelper.handleJointAccountTransaction(
             jointAccountAddress = signer.address,
             transactionDataList = transactionDataList
-        )
-        if (result.isSuccess && result.signRequestId != null) {
-            postResult(TransactionManagerResult.OnTransactionRequestSigned(result.signRequestId))
-        } else {
-            postJointAccountError()
+        )) {
+            is JointAccountTransactionSignHelper.JointSignResult.Success -> {
+                postResult(TransactionManagerResult.OnTransactionRequestSigned(result.signRequestId))
+            }
+            is JointAccountTransactionSignHelper.JointSignResult.Error -> {
+                postJointAccountError()
+            }
         }
     }
 

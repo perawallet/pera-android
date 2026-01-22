@@ -108,10 +108,10 @@ class AccountPreviewProcessor @Inject constructor(
         rendererType: AmountRenderer.RenderType
     ): List<BaseAccountListItem> {
         return sortAccountsBySortingPreference.sortAccountLites(accountLites)
-            .filter { (_, accountLite) ->
-                shouldIncludeAccount(accountLite.cachedInfo?.type, accountLite.registrationType)
-            }
-            .map { (_, accountLite) ->
+            .mapNotNull { (_, accountLite) ->
+                if (!shouldIncludeAccount(accountLite.cachedInfo?.type, accountLite.registrationType)) {
+                    return@mapNotNull null
+                }
                 if (accountLite.cachedInfo != null) {
                     getAccountSuccessItem(accountLite, accountLite.cachedInfo, rendererType)
                 } else {

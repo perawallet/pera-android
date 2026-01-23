@@ -15,16 +15,16 @@ package com.algorand.wallet.inbox.domain.usecase
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.model.InboxSearchInput
-import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import javax.inject.Inject
 import javax.inject.Named
 
 internal class FetchInboxMessagesUseCase @Inject constructor(
-    @Named(JointAccountRepository.INJECTION_NAME)
-    private val jointAccountRepository: JointAccountRepository
+    @param:Named(InboxApiRepository.INJECTION_NAME)
+    private val inboxApiRepository: InboxApiRepository
 ) : FetchInboxMessages {
 
     override suspend fun invoke(deviceId: Long, addresses: List<String>): PeraResult<InboxMessages> {
-        return jointAccountRepository.getInboxMessages(deviceId, InboxSearchInput(addresses))
+        return inboxApiRepository.getInboxMessages(deviceId, InboxSearchInput(addresses))
     }
 }

@@ -13,16 +13,16 @@
 package com.algorand.wallet.inbox.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import javax.inject.Inject
 import javax.inject.Named
 
 internal class DeleteInboxJointInvitationNotificationUseCase @Inject constructor(
-    @Named(JointAccountRepository.INJECTION_NAME)
-    private val jointAccountRepository: JointAccountRepository
+    @param:Named(InboxApiRepository.INJECTION_NAME)
+    private val inboxApiRepository: InboxApiRepository
 ) : DeleteInboxJointInvitationNotification {
 
     override suspend fun invoke(deviceId: Long, jointAddress: String): PeraResult<Unit> {
-        return jointAccountRepository.deleteInboxJointInvitationNotification(deviceId, jointAddress)
+        return inboxApiRepository.deleteJointInvitationNotification(deviceId, jointAddress)
     }
 }

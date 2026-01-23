@@ -56,6 +56,7 @@ import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroVi
 import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel.ViewState.Content
 import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel.ViewState.Idle
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.GroupChoiceNewBadge
 import com.algorand.android.ui.compose.widget.GroupChoiceWidget
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
@@ -169,7 +170,7 @@ private fun AddJointAccountWidget(onClick: () -> Unit) {
         description = stringResource(id = R.string.add_joint_account_desc),
         icon = ImageVector.vectorResource(R.drawable.ic_joint),
         iconContentDescription = stringResource(id = R.string.add_joint_account),
-        showNewBadge = true,
+        badge = { GroupChoiceNewBadge() },
         onClick = onClick
     )
 }

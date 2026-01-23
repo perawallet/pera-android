@@ -107,7 +107,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
                 rawTransactions = rawTransactions
             )
             if (result !is PeraResult.Success) {
-                Log.w(TAG, "Failed to auto-sign for participant")
+                // Failed to auto-sign for participant, continue with others
             }
         }
     }

@@ -286,7 +286,7 @@ class TransactionSignManager @Inject constructor(
             transactionDataList = transactionDataList
         )) {
             is JointAccountTransactionSignHelper.JointSignResult.Success -> {
-                postResult(TransactionManagerResult.OnTransactionRequestSigned(result.signRequestId))
+                postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
             }
             is JointAccountTransactionSignHelper.JointSignResult.Error -> {
                 postJointAccountError()
@@ -627,9 +627,9 @@ class TransactionSignManager @Inject constructor(
         }
 
         val result = if (signedDetails.size == 1) {
-            TransactionManagerResult.Success(signedDetails.first())
+            TransactionManagerResult.Success.SignedTransaction(signedDetails.first())
         } else {
-            TransactionManagerResult.Success(
+            TransactionManagerResult.Success.SignedTransaction(
                 SignedTransactionDetail.Group(signedBytesArrayList.flatten(), signedDetails)
             )
         }

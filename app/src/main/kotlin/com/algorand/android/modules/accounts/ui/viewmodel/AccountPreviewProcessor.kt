@@ -108,10 +108,7 @@ class AccountPreviewProcessor @Inject constructor(
         rendererType: AmountRenderer.RenderType
     ): List<BaseAccountListItem> {
         return sortAccountsBySortingPreference.sortAccountLites(accountLites)
-            .mapNotNull { (_, accountLite) ->
-                if (!shouldIncludeAccount(accountLite.cachedInfo?.type, accountLite.registrationType)) {
-                    return@mapNotNull null
-                }
+            .map { (_, accountLite) ->
                 if (accountLite.cachedInfo != null) {
                     getAccountSuccessItem(accountLite, accountLite.cachedInfo, rendererType)
                 } else {
@@ -124,12 +121,9 @@ class AccountPreviewProcessor @Inject constructor(
         val localAccounts = getLocalAccounts()
         val customInfos = getAccountsCustomInfo(localAccounts.map { it.algoAddress })
         val accountErrorItems = localAccounts
-            .mapNotNull { localAccount ->
+            .map { localAccount ->
                 val accountType = getLocalAccountType(localAccount)
                 val registrationType = getAccountRegistrationType(localAccount)
-                if (!shouldIncludeAccount(accountType, registrationType)) {
-                    return@mapNotNull null
-                }
                 val customInfo = customInfos[localAccount.algoAddress]
                 val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = accountType)
                 BaseAccountListItem.AccountErrorItem(
@@ -203,15 +197,6 @@ class AccountPreviewProcessor @Inject constructor(
                 isXoSwapEnabled = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
             )
         )
-    }
-
-    private fun shouldIncludeAccount(
-        accountType: AccountType?,
-        registrationType: AccountRegistrationType
-    ): Boolean {
-        val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
-        if (isJointAccountEnabled) return true
-        return accountType != AccountType.Joint && registrationType != AccountRegistrationType.Joint
     }
 
     private fun getLocalAccountType(localAccount: LocalAccount): AccountType {

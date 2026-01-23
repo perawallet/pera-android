@@ -20,7 +20,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 internal class CreateJointAccountUseCase @Inject constructor(
-    @Named(JointAccountRepository.INJECTION_NAME)
+    @param:Named(JointAccountRepository.INJECTION_NAME)
     private val jointAccountRepository: JointAccountRepository
 ) : CreateJointAccount {
 

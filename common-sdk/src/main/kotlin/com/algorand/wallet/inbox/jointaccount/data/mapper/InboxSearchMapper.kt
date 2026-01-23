@@ -10,16 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.wallet.inbox.jointaccount.data.mapper
 
-import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
-import javax.inject.Inject
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.model.InboxSearchInput
+import com.algorand.wallet.inbox.jointaccount.data.model.InboxSearchRequest
+import com.algorand.wallet.inbox.jointaccount.data.model.InboxSearchResponse
 
-internal class GetJointAccountParticipantCountUseCase @Inject constructor(
-    private val jointAccountRepository: JointAccountRepository
-) : GetJointAccountParticipantCount {
-
-    override suspend fun invoke(address: String): Int {
-        return jointAccountRepository.getParticipantCount(address)
-    }
+internal interface InboxSearchMapper {
+    fun mapToInboxSearchRequest(input: InboxSearchInput): InboxSearchRequest
+    fun mapToInboxMessages(response: InboxSearchResponse?): InboxMessages?
 }

@@ -12,21 +12,13 @@
 
 package com.algorand.android.core.transaction
 
-import android.util.Log
-import com.algorand.algosdk.transaction.SignedTransaction
-import com.algorand.algosdk.util.Encoder
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.utils.extensions.encodeBase64
-import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
-import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
-import com.algorand.wallet.encryption.domain.utils.clearFromMemory
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
@@ -37,27 +29,20 @@ private const val JOINT_SIGN_REQUEST_TYPE_ASYNC = "async"
 
 class JointAccountTransactionSignHelper @Inject constructor(
     private val getLocalAccount: GetLocalAccount,
-    private val getLocalAccounts: GetLocalAccounts,
-    private val getAlgo25SecretKey: GetAlgo25SecretKey,
-    private val getHdSeed: GetHdSeed,
-    private val signHdKeyTransaction: SignHdKeyTransaction,
+    private val getSignableAccountsByAddresses: GetSignableAccountsByAddresses,
+    private val localAccountSigningHelper: LocalAccountSigningHelper,
     private val proposeJointSignRequest: ProposeJointSignRequest,
     private val signAndSubmitJointAccountSignature: SignAndSubmitJointAccountSignature,
     private val getJointAccountProposerAddress: GetJointAccountProposerAddress,
     private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) {
 
-    data class JointSignResult(
-        val isSuccess: Boolean,
-        val signRequestId: String? = null
-    )
-
     suspend fun handleJointAccountTransaction(
         jointAccountAddress: String,
         transactionDataList: List<TransactionSignData>
     ): JointSignResult {
         val preparedData = prepareJointAccountData(jointAccountAddress, transactionDataList)
-            ?: return JointSignResult(isSuccess = false)
+            ?: return JointSignResult.Error
 
         val result = proposeJointSignRequest(
             jointAccountAddress = preparedData.jointAccount.algoAddress,
@@ -94,40 +79,26 @@ class JointAccountTransactionSignHelper @Inject constructor(
         preparedData: PreparedJointAccountData
     ): JointSignResult {
         if (result !is PeraResult.Success) {
-            return JointSignResult(isSuccess = false)
+            return JointSignResult.Error
         }
 
         val signRequestId = (result.data as? JointSignRequest)?.id
-            ?.takeIf { it.isNotBlank() } ?: return JointSignResult(isSuccess = false)
+            ?.takeIf { it.isNotBlank() } ?: return JointSignResult.Error
 
         autoSignWithLocalAccounts(
             signRequestId = signRequestId,
             jointAccount = preparedData.jointAccount,
             rawTransactions = preparedData.rawTransactionLists.flatten()
         )
-        return JointSignResult(isSuccess = true, signRequestId = signRequestId)
+        return JointSignResult.Success(signRequestId)
     }
-
-    private data class PreparedJointAccountData(
-        val jointAccount: LocalAccount.Joint,
-        val proposerAddress: String,
-        val rawTransactionLists: List<List<String>>,
-        val transactionSignatureLists: List<List<String?>>
-    )
 
     private suspend fun autoSignWithLocalAccounts(
         signRequestId: String,
         jointAccount: LocalAccount.Joint,
         rawTransactions: List<String>
     ) {
-        val participantAddresses = jointAccount.participantAddresses
-        val allLocalAccounts = getLocalAccounts()
-
-        val eligibleSigners = participantAddresses.mapNotNull { address ->
-            allLocalAccounts.find { it.algoAddress == address }
-        }.filter { localAccount ->
-            localAccount is LocalAccount.Algo25 || localAccount is LocalAccount.HdKey
-        }
+        val eligibleSigners = getSignableAccountsByAddresses(jointAccount.participantAddresses)
 
         for (signer in eligibleSigners) {
             val result = signAndSubmitJointAccountSignature(
@@ -136,7 +107,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
                 rawTransactions = rawTransactions
             )
             if (result !is PeraResult.Success) {
-                Log.w(TAG, "Failed to auto-sign for participant")
+                // Failed to auto-sign for participant, continue with others
             }
         }
     }
@@ -174,40 +145,22 @@ class JointAccountTransactionSignHelper @Inject constructor(
     }
 
     private suspend fun signWithAlgo25Account(transactionBytes: ByteArray, signerAddress: String): ByteArray? {
-        val secretKey = getAlgo25SecretKey(signerAddress) ?: return null
-        return try {
-            val signedTransaction = runCatching { transactionBytes.signTx(secretKey) }.getOrNull()
-                ?.takeIf { it.isNotEmpty() } ?: return null
-            extractSignatureFromSignedTransaction(signedTransaction)
-        } finally {
-            secretKey.clearFromMemory()
-        }
+        return localAccountSigningHelper.signWithAlgo25AccountReturnSignature(transactionBytes, signerAddress)
     }
 
     private suspend fun signWithHdKeyAccount(transactionBytes: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
-        val seed = getHdSeed(seedId = hdKey.seedId) ?: return null
-        return try {
-            signHdKeyTransaction.signTransactionSignatureOnly(
-                transactionBytes,
-                seed,
-                hdKey.account,
-                hdKey.change,
-                hdKey.keyIndex
-            )
-        } finally {
-            seed.clearFromMemory()
-        }
+        return localAccountSigningHelper.signWithHdKeyAccountReturnSignature(transactionBytes, hdKey)
     }
 
-    private fun extractSignatureFromSignedTransaction(signedTransactionBytes: ByteArray): ByteArray? {
-        if (signedTransactionBytes.isEmpty()) return null
-        return runCatching {
-            val signedTransaction = Encoder.decodeFromMsgPack(signedTransactionBytes, SignedTransaction::class.java)
-            signedTransaction.sig?.bytes?.takeIf { it.isNotEmpty() }
-        }.getOrNull()
-    }
+    private data class PreparedJointAccountData(
+        val jointAccount: LocalAccount.Joint,
+        val proposerAddress: String,
+        val rawTransactionLists: List<List<String>>,
+        val transactionSignatureLists: List<List<String?>>
+    )
 
-    companion object {
-        private const val TAG = "JointAcctTxnSignHelper"
+    sealed interface JointSignResult {
+        data class Success(val signRequestId: String) : JointSignResult
+        data object Error : JointSignResult
     }
 }

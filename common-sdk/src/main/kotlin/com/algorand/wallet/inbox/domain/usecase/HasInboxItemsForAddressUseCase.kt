@@ -13,18 +13,17 @@
 package com.algorand.wallet.inbox.domain.usecase
 
 import com.algorand.wallet.inbox.domain.model.InboxMessages
-import com.algorand.wallet.inbox.domain.repository.InboxRepository
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Inject
 
 internal class HasInboxItemsForAddressUseCase @Inject constructor(
-    private val inboxRepository: InboxRepository,
+    private val getInboxMessages: GetInboxMessages,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : HasInboxItemsForAddress {
 
     override suspend fun invoke(address: String): Boolean {
-        val inboxMessages = inboxRepository.getInboxMessages() ?: return false
+        val inboxMessages = getInboxMessages() ?: return false
         val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
 
         return if (isJointAccountEnabled) {

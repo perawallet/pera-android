@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.account.local.data.mapper.model
 
-import com.algorand.wallet.account.local.data.database.model.JointEntity
+import com.algorand.wallet.account.local.data.database.model.JointWithParticipants
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 
 internal interface JointMapper {
-    operator fun invoke(entity: JointEntity): LocalAccount.Joint
+    operator fun invoke(jointWithParticipants: JointWithParticipants): LocalAccount.Joint
 }

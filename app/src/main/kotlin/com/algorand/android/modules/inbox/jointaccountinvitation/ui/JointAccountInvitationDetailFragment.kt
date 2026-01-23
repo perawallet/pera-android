@@ -30,17 +30,19 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accountdetail.jointaccountdetail.domain.usecase.JointAccountInboxOperationsUseCase
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationDetailNavArgs
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import javax.inject.Inject
+import javax.inject.Named
 
 @AndroidEntryPoint
 class JointAccountInvitationDetailFragment : DaggerBaseFragment(0),
@@ -53,7 +55,11 @@ class JointAccountInvitationDetailFragment : DaggerBaseFragment(0),
     lateinit var getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 
     @Inject
-    lateinit var inboxOperationsUseCase: JointAccountInboxOperationsUseCase
+    lateinit var getSelectedNodeDeviceId: GetSelectedNodeDeviceId
+
+    @Inject
+    @Named(InboxApiRepository.INJECTION_NAME)
+    lateinit var inboxApiRepository: InboxApiRepository
 
     @Inject
     lateinit var refreshInboxCache: RefreshInboxCache
@@ -126,7 +132,13 @@ class JointAccountInvitationDetailFragment : DaggerBaseFragment(0),
     override fun onRejectClick() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                inboxOperationsUseCase.deleteNotification(args.invitationNavArgs.accountAddress)
+                val deviceId = getSelectedNodeDeviceId()?.toLongOrNull()
+                if (deviceId != null) {
+                    inboxApiRepository.deleteJointInvitationNotification(
+                        deviceId,
+                        args.invitationNavArgs.accountAddress
+                    )
+                }
                 refreshInboxCache()
             } catch (e: Exception) {
                 showGlobalError(getString(R.string.an_error_occurred))

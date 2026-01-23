@@ -45,9 +45,8 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
 import com.algorand.android.ui.swap.domain.usecase.CreateSwapV2QuoteTransactions
+import com.algorand.android.ui.swap.domain.usecase.IsJointAccountInAddresses
 import com.algorand.android.ui.swap.tracking.SwapConfirmationEventTracker
-import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.USER_CANCELLED
 import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
@@ -75,7 +74,7 @@ class SwapConfirmationViewModel @Inject constructor(
     private val setSwapStatusFailed: SetSwapStatusFailed,
     private val createSwapV2QuoteTransactions: CreateSwapV2QuoteTransactions,
     private val swapConfirmationEventTracker: SwapConfirmationEventTracker,
-    private val getAccountType: GetAccountType,
+    private val isJointAccountInAddresses: IsJointAccountInAddresses,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -122,18 +121,14 @@ class SwapConfirmationViewModel @Inject constructor(
     }
 
     private suspend fun signTransactions(transactions: SwapQuoteTransactions) {
-        // Check if any transaction requires a joint account (not supported in swap)
         val accountAddresses = transactions.transactions
             .flatMap { it.getTransactionsThatNeedsToBeSigned() }
             .map { it.accountAddress }
             .distinct()
 
-        for (address in accountAddresses) {
-            val accountType = getAccountType(address)
-            if (accountType == AccountType.Joint) {
-                displayError(Local(AnnotatedString(R.string.joint_accounts_are_not_supported)))
-                return
-            }
+        if (isJointAccountInAddresses(accountAddresses)) {
+            displayError(Local(AnnotatedString(R.string.joint_accounts_are_not_supported)))
+            return
         }
 
         swapTransactionSignManager.signSwapQuoteTransaction(transactions.transactions)

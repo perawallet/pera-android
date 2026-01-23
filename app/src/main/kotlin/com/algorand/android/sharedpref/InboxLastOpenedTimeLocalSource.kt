@@ -12,31 +12,32 @@
 
 package com.algorand.android.sharedpref
 
-import android.content.SharedPreferences
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import javax.inject.Inject
 
 // ISO-8601 ISO_DATE_TIME
 class InboxLastOpenedTimeLocalSource @Inject constructor(
-    sharedPreferences: SharedPreferences
-) : SharedPrefLocalSource<String?>(sharedPreferences) {
+    persistentCacheProvider: PersistentCacheProvider
+) {
 
-    override val key: String
-        get() = INBOX_LAST_OPENED_TIME_KEY
+    private val cache = persistentCacheProvider.getPersistentCache<String>(
+        String::class.java,
+        INBOX_LAST_OPENED_TIME_KEY
+    )
 
-    override fun getData(defaultValue: String?): String? {
-        return sharedPref.getString(key, defaultValue)
+    fun getData(defaultValue: String?): String? {
+        return cache.get() ?: defaultValue
     }
 
-    override fun getDataOrNull(): String? {
-        return sharedPref.getString(key, defaultInboxLastOpenedTimePreferences)
+    fun getDataOrNull(): String? {
+        return cache.get()
     }
 
-    override fun saveData(data: String?) {
-        saveData { it.putString(key, data) }
+    fun saveData(data: String) {
+        cache.put(data)
     }
 
     companion object {
-        val defaultInboxLastOpenedTimePreferences: String? = null
         private const val INBOX_LAST_OPENED_TIME_KEY = "inbox_last_opened_time_key"
     }
 }

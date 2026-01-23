@@ -52,8 +52,9 @@ class JointAccountDetailViewModel @Inject constructor(
     fun refreshParticipants() {
         viewModelScope.launch {
             stateDelegate.onState<ViewState.Content> { contentState ->
-                if (contentState.participantAddresses.isNotEmpty()) {
-                    val updatedParticipants = processor.createParticipantItems(contentState.participantAddresses)
+                if (contentState.participants.isNotEmpty()) {
+                    val participantAddresses = contentState.participants.map { it.address }
+                    val updatedParticipants = processor.createParticipantItems(participantAddresses)
                     stateDelegate.updateState {
                         contentState.copy(participants = updatedParticipants)
                     }
@@ -71,17 +72,18 @@ class JointAccountDetailViewModel @Inject constructor(
 
     fun onAddClick() {
         stateDelegate.onState<ViewState.Content> { contentState ->
-            if (contentState.threshold > 0 && contentState.participantAddresses.isNotEmpty()) {
+            if (contentState.threshold > 0 && contentState.participants.isNotEmpty()) {
                 viewModelScope.launch {
                     processor.deleteInboxNotification(accountAddress)
 
                     if (processor.isJointAccountExists(accountAddress)) {
                         eventDelegate.sendEvent(ViewEvent.NavigateBack)
                     } else {
+                        val participantAddresses = contentState.participants.map { it.address }
                         eventDelegate.sendEvent(
                             ViewEvent.NavigateToNameJointAccount(
                                 threshold = contentState.threshold,
-                                participantAddresses = contentState.participantAddresses
+                                participantAddresses = participantAddresses
                             )
                         )
                     }
@@ -133,35 +135,36 @@ class JointAccountDetailViewModel @Inject constructor(
     }
 
     private suspend fun loadInvitationInfo() {
-        val invitation = getInvitationData() ?: return
-
-        val contentState = processor.createContentStateFromInvitation(
-            participantAddresses = invitation.participantAddresses,
-            threshold = invitation.threshold,
-            accountAddress = accountAddress
-        )
-        stateDelegate.updateState { contentState }
-    }
-
-    private suspend fun getInvitationData(): JointAccountDetailProcessor.InvitationData? {
-        if (participantAddressesArg.isNotEmpty() && thresholdArg > 0) {
-            return JointAccountDetailProcessor.InvitationData(
-                threshold = thresholdArg,
-                participantAddresses = participantAddressesArg
-            )
-        }
-
-        return when (val result = processor.fetchInvitationFromInbox(accountAddress)) {
-            is JointAccountDetailProcessor.InvitationResult.Success -> result.data
+        when (val result = getInvitationData()) {
+            is JointAccountDetailProcessor.InvitationResult.Success -> {
+                val invitation = result.data
+                val contentState = processor.createContentStateFromInvitation(
+                    participantAddresses = invitation.participantAddresses,
+                    threshold = invitation.threshold,
+                    accountAddress = accountAddress
+                )
+                stateDelegate.updateState { contentState }
+            }
             is JointAccountDetailProcessor.InvitationResult.NotFound -> {
                 stateDelegate.updateState { ViewState.Error(ErrorType.INVITATION_NOT_FOUND) }
-                null
             }
             is JointAccountDetailProcessor.InvitationResult.NetworkError -> {
                 stateDelegate.updateState { ViewState.Error(ErrorType.NETWORK_ERROR) }
-                null
             }
         }
+    }
+
+    private suspend fun getInvitationData(): JointAccountDetailProcessor.InvitationResult {
+        if (participantAddressesArg.isNotEmpty() && thresholdArg > 0) {
+            return JointAccountDetailProcessor.InvitationResult.Success(
+                JointAccountDetailProcessor.InvitationData(
+                    threshold = thresholdArg,
+                    participantAddresses = participantAddressesArg
+                )
+            )
+        }
+
+        return processor.fetchInvitationFromInbox(accountAddress)
     }
 
     enum class ErrorType {
@@ -178,7 +181,6 @@ class JointAccountDetailViewModel @Inject constructor(
             val numberOfAccounts: Int,
             val threshold: Int,
             val participants: List<JointAccountParticipantItem>,
-            val participantAddresses: List<String>,
             val showActions: Boolean
         ) : ViewState
 

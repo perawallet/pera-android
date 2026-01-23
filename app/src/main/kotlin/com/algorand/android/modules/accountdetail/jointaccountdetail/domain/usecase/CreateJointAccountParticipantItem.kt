@@ -15,7 +15,5 @@ package com.algorand.android.modules.accountdetail.jointaccountdetail.domain.use
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
 
 interface CreateJointAccountParticipantItem {
-    suspend fun getLocalAccountAddresses(): List<String>
     suspend operator fun invoke(address: String, localAccountAddresses: List<String>): JointAccountParticipantItem
-    suspend fun createParticipantItems(participantAddresses: List<String>): List<JointAccountParticipantItem>
 }

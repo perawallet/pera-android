@@ -67,6 +67,7 @@ import java.net.ConnectException
 import java.net.SocketException
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class TransactionSignManager @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
     private val transactionsRepository: TransactionsRepository,

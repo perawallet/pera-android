@@ -125,7 +125,11 @@ class AccountPreviewProcessor @Inject constructor(
                 val accountType = getLocalAccountType(localAccount)
                 val registrationType = getAccountRegistrationType(localAccount)
                 val customInfo = customInfos[localAccount.algoAddress]
-                val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = accountType)
+                val displayName = getAccountDisplayName(
+                    address = localAccount.algoAddress,
+                    name = customInfo?.customName,
+                    type = accountType
+                )
                 BaseAccountListItem.AccountErrorItem(
                     address = localAccount.algoAddress,
                     primaryDisplayName = displayName.primaryDisplayName,

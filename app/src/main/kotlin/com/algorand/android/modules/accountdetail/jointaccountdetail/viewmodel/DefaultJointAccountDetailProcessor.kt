@@ -18,15 +18,25 @@ import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.Jo
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
+import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.inbox.domain.model.InboxMessages
+import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
+import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import javax.inject.Inject
+import javax.inject.Named
 
 internal class DefaultJointAccountDetailProcessor @Inject constructor(
     private val getJointAccount: GetJointAccount,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val contactRepository: ContactRepository,
     private val createJointAccountParticipantItem: CreateJointAccountParticipantItem,
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses,
+    private val getInboxMessages: GetInboxMessages,
+    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
+    @param:Named(InboxApiRepository.INJECTION_NAME)
+    private val inboxApiRepository: InboxApiRepository
 ) : JointAccountDetailProcessor {
 
     override suspend fun createContentState(
@@ -43,7 +53,6 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
             numberOfAccounts = jointAccount.participantAddresses.size,
             threshold = jointAccount.threshold,
             participants = participants,
-            participantAddresses = jointAccount.participantAddresses,
             showActions = showActions
         )
     }
@@ -61,7 +70,6 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
             numberOfAccounts = participantAddresses.size,
             threshold = threshold,
             participants = participants,
-            participantAddresses = participantAddresses,
             showActions = true
         )
     }
@@ -69,21 +77,22 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
     override suspend fun fetchInvitationFromInbox(
         accountAddress: String
     ): JointAccountDetailProcessor.InvitationResult {
-        val addresses = createJointAccountParticipantItem.getLocalAccountAddresses()
-
-        TODO("Implement this")
-        return JointAccountDetailProcessor.InvitationResult.NetworkError
+        val inboxMessages = getInboxMessages() ?: return JointAccountDetailProcessor.InvitationResult.NotFound
+        return parseInvitationFromInboxMessages(inboxMessages, accountAddress)
     }
 
     override suspend fun createParticipantItems(
         participantAddresses: List<String>
     ): List<JointAccountParticipantItem> {
-        return createJointAccountParticipantItem.createParticipantItems(participantAddresses)
+        val localAccountAddresses = getLocalAccountsAddresses()
+        return participantAddresses.map { address ->
+            createJointAccountParticipantItem(address, localAccountAddresses)
+        }
     }
 
     override suspend fun deleteInboxNotification(accountAddress: String) {
-//        inboxOperationsUseCase.deleteNotification(accountAddress)
-        TODO("Implement this")
+        val deviceId = getSelectedNodeDeviceId()?.toLongOrNull() ?: return
+        inboxApiRepository.deleteJointInvitationNotification(deviceId, accountAddress)
     }
 
     override suspend fun isJointAccountExists(accountAddress: String): Boolean {

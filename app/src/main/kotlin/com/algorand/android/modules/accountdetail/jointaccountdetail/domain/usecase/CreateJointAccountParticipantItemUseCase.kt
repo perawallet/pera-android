@@ -17,19 +17,13 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
 import com.algorand.android.repository.ContactRepository
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import javax.inject.Inject
 
 internal class CreateJointAccountParticipantItemUseCase @Inject constructor(
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getLocalAccounts: GetLocalAccounts,
     private val contactRepository: ContactRepository
 ) : CreateJointAccountParticipantItem {
-
-    override suspend fun getLocalAccountAddresses(): List<String> {
-        return getLocalAccounts().map { it.algoAddress }
-    }
 
     override suspend operator fun invoke(
         address: String,
@@ -51,14 +45,5 @@ internal class CreateJointAccountParticipantItemUseCase @Inject constructor(
             isLocalAccount = isLocalAccount,
             isContact = isContact
         )
-    }
-
-    override suspend fun createParticipantItems(
-        participantAddresses: List<String>
-    ): List<JointAccountParticipantItem> {
-        val localAccountAddresses = getLocalAccountAddresses()
-        return participantAddresses.map { address ->
-            invoke(address, localAccountAddresses)
-        }
     }
 }

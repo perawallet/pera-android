@@ -57,4 +57,7 @@ internal interface HdKeyDao {
 
     @Query("DELETE FROM hd_keys")
     suspend fun clearAll()
+
+    @Query("SELECT * FROM hd_keys WHERE algo_address IN (:addresses)")
+    suspend fun getByAddresses(addresses: List<String>): List<HdKeyEntity>
 }

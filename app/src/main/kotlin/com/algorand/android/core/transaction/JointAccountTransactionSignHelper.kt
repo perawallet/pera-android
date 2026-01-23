@@ -17,6 +17,7 @@ import com.algorand.android.utils.extensions.encodeBase64
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
@@ -27,6 +28,7 @@ private const val JOINT_SIGN_REQUEST_TYPE_ASYNC = "async"
 
 class JointAccountTransactionSignHelper @Inject constructor(
     private val getLocalAccount: GetLocalAccount,
+    private val getSignableAccountsByAddresses: GetSignableAccountsByAddresses,
     private val localAccountSigningHelper: LocalAccountSigningHelper,
     private val proposeJointSignRequest: ProposeJointSignRequest,
     private val getJointAccountProposerAddress: GetJointAccountProposerAddress,
@@ -94,14 +96,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
         jointAccount: LocalAccount.Joint,
         rawTransactions: List<String>
     ) {
-        val participantAddresses = jointAccount.participantAddresses
-        val allLocalAccounts = getLocalAccounts()
-
-        val eligibleSigners = participantAddresses.mapNotNull { address ->
-            allLocalAccounts.find { it.algoAddress == address }
-        }.filter { localAccount ->
-            localAccount is LocalAccount.Algo25 || localAccount is LocalAccount.HdKey
-        }
+        val eligibleSigners = getSignableAccountsByAddresses(jointAccount.participantAddresses)
 
         TODO("Implement auto sign with local accounts")
     }

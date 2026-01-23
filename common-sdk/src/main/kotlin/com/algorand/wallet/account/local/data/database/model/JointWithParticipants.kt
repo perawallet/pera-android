@@ -10,14 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model
+package com.algorand.wallet.account.local.data.database.model
 
-data class JointAccountDetailUiState(
-    val accountDisplayName: String,
-    val accountAddressShortened: String,
-    val numberOfAccounts: Int,
-    val threshold: Int,
-    val participants: List<JointAccountParticipantItem>,
-    val participantAddresses: List<String>,
-    val showActions: Boolean
+import androidx.room.Embedded
+import androidx.room.Relation
+
+internal data class JointWithParticipants(
+    @Embedded
+    val joint: JointEntity,
+    @Relation(
+        parentColumn = "algo_address",
+        entityColumn = "joint_address"
+    )
+    val participants: List<JointParticipantEntity>
 )

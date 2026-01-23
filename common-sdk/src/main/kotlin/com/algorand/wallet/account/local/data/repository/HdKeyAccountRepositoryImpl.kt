@@ -120,4 +120,11 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
             hdKeyDao.getHdSeedId(address)
         }
     }
+
+    override suspend fun getAccountsByAddresses(addresses: List<String>): List<HdKey> {
+        return withContext(coroutineDispatcher) {
+            val entities = hdKeyDao.getByAddresses(addresses)
+            entities.map { hdKeyMapper(it) }
+        }
+    }
 }

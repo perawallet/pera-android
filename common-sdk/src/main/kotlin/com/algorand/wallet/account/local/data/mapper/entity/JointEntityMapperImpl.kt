@@ -13,20 +13,30 @@
 package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.JointEntity
+import com.algorand.wallet.account.local.data.database.model.JointParticipantEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.foundation.json.JsonSerializer
 import javax.inject.Inject
 
-internal class JointEntityMapperImpl @Inject constructor(
-    private val jsonSerializer: JsonSerializer
-) : JointEntityMapper {
+internal class JointEntityMapperImpl @Inject constructor() : JointEntityMapper {
 
-    override fun invoke(localAccount: LocalAccount.Joint): JointEntity {
-        return JointEntity(
+    override fun invoke(localAccount: LocalAccount.Joint): JointEntityMapperResult {
+        val jointEntity = JointEntity(
             algoAddress = localAccount.algoAddress,
-            participantAddresses = jsonSerializer.toJson(localAccount.participantAddresses),
             threshold = localAccount.threshold,
             version = localAccount.version
+        )
+
+        val participantEntities = localAccount.participantAddresses.mapIndexed { index, address ->
+            JointParticipantEntity(
+                jointAddress = localAccount.algoAddress,
+                participantIndex = index,
+                participantAddress = address
+            )
+        }
+
+        return JointEntityMapperResult(
+            jointEntity = jointEntity,
+            participantEntities = participantEntities
         )
     }
 }

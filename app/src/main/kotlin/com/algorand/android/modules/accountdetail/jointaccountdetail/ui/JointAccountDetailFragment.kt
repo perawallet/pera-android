@@ -16,7 +16,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel
@@ -26,7 +28,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailScreenListener {
+class JointAccountDetailFragment : DaggerBaseFragment(0) {
 
     private val viewModel: JointAccountDetailViewModel by viewModels()
 
@@ -38,10 +40,23 @@ class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailScre
         savedInstanceState: Bundle?
     ): View {
         return createComposeView {
+            val viewState by viewModel.state.collectAsStateWithLifecycle()
+
             JointAccountDetailScreen(
-                viewModel = viewModel,
-                listener = this
+                viewState = viewState,
+                accountAddress = viewModel.accountAddress,
+                onEvent = ::handleEvent
             )
+        }
+    }
+
+    private fun handleEvent(event: JointAccountDetailEvent) {
+        when (event) {
+            is JointAccountDetailEvent.BackClick -> navBack()
+            is JointAccountDetailEvent.EditAddressClick -> viewModel.onEditContactClick(event.address)
+            is JointAccountDetailEvent.CopyAddressClick -> onAccountAddressCopied(event.address)
+            is JointAccountDetailEvent.IgnoreClick -> viewModel.onIgnoreClick()
+            is JointAccountDetailEvent.AddClick -> viewModel.onAddClick()
         }
     }
 
@@ -75,25 +90,5 @@ class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailScre
 
     private fun navigateToEditContact(event: ViewEvent.NavigateToEditContact) {
         TODO("Implement this")
-    }
-
-    override fun onBackClick() {
-        navBack()
-    }
-
-    override fun onEditAddressClick(address: String) {
-        viewModel.onEditContactClick(address)
-    }
-
-    override fun onCopyAddressClick(address: String) {
-        onAccountAddressCopied(address)
-    }
-
-    override fun onIgnoreClick() {
-        viewModel.onIgnoreClick()
-    }
-
-    override fun onAddClick() {
-        viewModel.onAddClick()
     }
 }

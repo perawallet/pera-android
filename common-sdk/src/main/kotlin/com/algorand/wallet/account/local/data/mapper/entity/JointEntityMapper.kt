@@ -13,9 +13,15 @@
 package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.JointEntity
+import com.algorand.wallet.account.local.data.database.model.JointParticipantEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 
 internal interface JointEntityMapper {
 
-    operator fun invoke(localAccount: LocalAccount.Joint): JointEntity
+    operator fun invoke(localAccount: LocalAccount.Joint): JointEntityMapperResult
 }
+
+internal data class JointEntityMapperResult(
+    val jointEntity: JointEntity,
+    val participantEntities: List<JointParticipantEntity>
+)

@@ -80,13 +80,13 @@ internal class JointAccountRepositoryImpl @Inject constructor(
 
     override suspend fun addSignature(
         signRequestId: String,
-        signRequestTransactionListResponseDTO: AddSignatureInput
+        addSignatureInput: AddSignatureInput
     ): PeraResult<JointSignRequest> {
         val request = addSignatureInputMapper.mapToSignRequestTransactionListResponseRequest(
-            signRequestTransactionListResponseDTO
+            addSignatureInput
         )
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
-            jointAccountApiService.addSignature(signRequestId, signRequestTransactionListResponseDTO.address, request)
+            jointAccountApiService.addSignature(signRequestId, addSignatureInput.address, request)
         }.mapToJointSignRequest()
     }
 
@@ -125,6 +125,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
                         PeraResult.Error(Exception("Sign request not found"))
                     }
                 }
+
                 is PeraResult.Error -> result
             }
         }

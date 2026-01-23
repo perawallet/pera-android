@@ -18,11 +18,11 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStat
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.wallet.inbox.domain.model.InboxSearchInput
+import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.CacheInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.ClearInboxCache
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
-import com.algorand.wallet.inbox.domain.model.InboxSearchInput
-import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -36,8 +36,8 @@ internal class InboxCacheManagerImpl @Inject constructor(
     private val getInboxValidAddresses: GetInboxValidAddresses,
     private val getAllAccountInformationFlow: GetAllAccountInformationFlow,
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
-    @param:Named(JointAccountRepository.INJECTION_NAME)
-    private val jointAccountRepository: JointAccountRepository
+    @param:Named(InboxApiRepository.INJECTION_NAME)
+    private val inboxApiRepository: InboxApiRepository
 ) : InboxCacheManager, LifecycleAwareCacheManager.CacheManagerListener {
 
     override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {
@@ -80,7 +80,7 @@ internal class InboxCacheManagerImpl @Inject constructor(
         }
 
         val inboxSearchInput = InboxSearchInput(addresses = validAddresses)
-        jointAccountRepository.getInboxMessages(deviceId, inboxSearchInput).use(
+        inboxApiRepository.getInboxMessages(deviceId, inboxSearchInput).use(
             onSuccess = { inboxMessages ->
                 cacheInboxMessages(inboxMessages)
             },

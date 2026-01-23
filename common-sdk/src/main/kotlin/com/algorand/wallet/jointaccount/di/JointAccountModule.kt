@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.jointaccount.di
 
-import com.algorand.wallet.inbox.jointaccount.data.service.InboxApiService
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapperImpl
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
@@ -48,14 +47,6 @@ internal object JointAccountModule {
         @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
     ): JointAccountApiService {
         return retrofit.create(JointAccountApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideInboxApiService(
-        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
-    ): InboxApiService {
-        return retrofit.create(InboxApiService::class.java)
     }
 
     @Provides

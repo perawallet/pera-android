@@ -15,7 +15,7 @@ ndk = "29.0.14206865"
 
 # Pera / Algorand SDK
 algoSdk = "2.10.1"
-algoGoMobilesdk = "1.0.5"
+algoGoMobilesdk = "1.0.9"
 peraWalletConnect = "1.0.9"
 xhdwalletapi = "1.2.2"
 dP256 = "1.0.2"

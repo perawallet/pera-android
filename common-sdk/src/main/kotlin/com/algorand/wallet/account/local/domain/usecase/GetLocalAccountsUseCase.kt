@@ -18,6 +18,8 @@ import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepositor
 import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -30,6 +32,7 @@ internal class GetLocalAccountsUseCase @Inject constructor(
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
     private val jointAccountRepository: JointAccountRepository,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val dispatcher: CoroutineDispatcher
 ) : GetLocalAccounts {
 
@@ -39,7 +42,7 @@ internal class GetLocalAccountsUseCase @Inject constructor(
             val deferredAlgo25Accounts = async { algo25AccountRepository.getAll() }
             val deferredLedgerBleAccounts = async { ledgerBleAccountRepository.getAll() }
             val deferredNoAuthAccounts = async { noAuthAccountRepository.getAll() }
-            val deferredJointAccounts = async { jointAccountRepository.getAll() }
+            val deferredJointAccounts = async { getJointAccountsIfEnabled() }
             awaitAll(
                 deferredHdKeyAccounts,
                 deferredAlgo25Accounts,
@@ -47,6 +50,14 @@ internal class GetLocalAccountsUseCase @Inject constructor(
                 deferredNoAuthAccounts,
                 deferredJointAccounts
             ).flatten()
+        }
+    }
+
+    private suspend fun getJointAccountsIfEnabled(): List<LocalAccount.Joint> {
+        return if (isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)) {
+            jointAccountRepository.getAll()
+        } else {
+            emptyList()
         }
     }
 }

@@ -41,7 +41,6 @@ fun PeraToolbar(
     text: String = "",
     secondaryText: String? = null,
     textStyle: PeraToolbarTextStyle = PeraToolbarTextStyle.Default,
-    rightLabel: String? = null,
     startContainer: @Composable RowScope.() -> Unit = {},
     centerContainer: (@Composable () -> Unit)? = null,
     endContainer: @Composable RowScope.() -> Unit = {}
@@ -69,18 +68,23 @@ fun PeraToolbar(
         }
 
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-            if (rightLabel != null) {
-                Text(
-                    text = rightLabel,
-                    style = PeraTheme.typography.body.regular.sansMedium,
-                    color = PeraTheme.colors.link.primary,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.padding(end = 24.dp)
-                )
-            }
             endContainer()
         }
     }
+}
+
+@Composable
+fun PeraToolbarLinkText(
+    modifier: Modifier = Modifier,
+    text: String
+) {
+    Text(
+        text = text,
+        style = PeraTheme.typography.body.regular.sansMedium,
+        color = PeraTheme.colors.link.primary,
+        textAlign = TextAlign.End,
+        modifier = modifier.padding(end = 24.dp)
+    )
 }
 
 @Composable
@@ -150,6 +154,68 @@ private fun ToolbarText(
             text = text,
             style = primaryTextStyle,
             color = PeraTheme.colors.text.main
+        )
+    }
+}
+
+/**
+ * Composable for toolbar title text with default style.
+ * Use this in centerContainer slot of PeraToolbar.
+ */
+@Composable
+fun PeraToolbarTitle(
+    modifier: Modifier = Modifier,
+    text: String
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = PeraTheme.typography.body.regular.sansMedium,
+        color = PeraTheme.colors.text.main
+    )
+}
+
+/**
+ * Composable for toolbar title text with large style.
+ * Use this in centerContainer slot of PeraToolbar.
+ */
+@Composable
+fun PeraToolbarLargeTitle(
+    modifier: Modifier = Modifier,
+    text: String
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = PeraTheme.typography.title.large.sansMedium,
+        color = PeraTheme.colors.text.main
+    )
+}
+
+/**
+ * Composable for toolbar title with secondary text.
+ * Use this in centerContainer slot of PeraToolbar.
+ */
+@Composable
+fun PeraToolbarTitleWithSubtitle(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title,
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.text.main
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = subtitle,
+            style = PeraTheme.typography.footnote.sans,
+            color = PeraTheme.colors.text.gray
         )
     }
 }

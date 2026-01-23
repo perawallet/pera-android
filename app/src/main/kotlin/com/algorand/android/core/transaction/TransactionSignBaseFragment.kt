@@ -59,7 +59,7 @@ abstract class TransactionSignBaseFragment(
     private val transactionManagerObserver = Observer<Event<TransactionManagerResult>?> { event ->
         event?.consume()?.run {
             when (this) {
-                is TransactionManagerResult.Success -> {
+                is TransactionManagerResult.Success.SignedTransaction -> {
                     hideLoading()
                     transactionFragmentListener?.onSignTransactionFinished(this.signedTransactionDetail)
                 }
@@ -93,7 +93,7 @@ abstract class TransactionSignBaseFragment(
                     onSignTransactionCancelledByLedger()
                 }
 
-                is TransactionManagerResult.OnTransactionRequestSigned -> {
+                is TransactionManagerResult.Success.TransactionRequestSigned -> {
                     hideLoading()
                     onJointAccountSignRequestCreated(signRequestId)
                 }

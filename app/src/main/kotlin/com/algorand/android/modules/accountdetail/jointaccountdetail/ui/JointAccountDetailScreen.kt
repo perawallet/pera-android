@@ -32,18 +32,16 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
-import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel
+import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ErrorType
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
@@ -58,11 +56,10 @@ import com.algorand.android.utils.toShortenedAddress
 
 @Composable
 fun JointAccountDetailScreen(
-    viewModel: JointAccountDetailViewModel,
-    listener: JointAccountDetailScreenListener
+    viewState: ViewState,
+    accountAddress: String,
+    onEvent: (JointAccountDetailEvent) -> Unit
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,10 +67,10 @@ fun JointAccountDetailScreen(
     ) {
         ScreenHeader(
             viewState = viewState,
-            accountAddress = viewModel.accountAddress,
-            onBackClick = listener::onBackClick
+            accountAddress = accountAddress,
+            onEvent = onEvent
         )
-        ScreenContent(viewState = viewState, listener = listener)
+        ScreenContent(viewState = viewState, onEvent = onEvent)
     }
 }
 
@@ -81,7 +78,7 @@ fun JointAccountDetailScreen(
 private fun ScreenHeader(
     viewState: ViewState,
     accountAddress: String,
-    onBackClick: () -> Unit
+    onEvent: (JointAccountDetailEvent) -> Unit
 ) {
     val displayName = when (viewState) {
         is ViewState.Content -> viewState.accountDisplayName.ifBlank {
@@ -104,7 +101,7 @@ private fun ScreenHeader(
         startContainer = {
             PeraToolbarIcon(
                 iconResId = R.drawable.ic_left_arrow,
-                modifier = Modifier.clickableNoRipple(onClick = onBackClick)
+                modifier = Modifier.clickableNoRipple(onClick = { onEvent(JointAccountDetailEvent.BackClick) })
             )
         }
     )
@@ -113,11 +110,11 @@ private fun ScreenHeader(
 @Composable
 private fun ColumnScope.ScreenContent(
     viewState: ViewState,
-    listener: JointAccountDetailScreenListener
+    onEvent: (JointAccountDetailEvent) -> Unit
 ) {
     when (viewState) {
         is ViewState.Loading -> LoadingState()
-        is ViewState.Content -> ContentState(contentState = viewState, listener = listener)
+        is ViewState.Content -> ContentState(contentState = viewState, onEvent = onEvent)
         is ViewState.Error -> ErrorState(errorType = viewState.type)
     }
 }
@@ -135,7 +132,7 @@ private fun ColumnScope.LoadingState() {
 }
 
 @Composable
-private fun ColumnScope.ErrorState(errorType: JointAccountDetailViewModel.ErrorType) {
+private fun ColumnScope.ErrorState(errorType: ErrorType) {
     Box(
         modifier = Modifier
             .weight(1f)
@@ -143,11 +140,8 @@ private fun ColumnScope.ErrorState(errorType: JointAccountDetailViewModel.ErrorT
         contentAlignment = Alignment.Center
     ) {
         val errorMessage = when (errorType) {
-            JointAccountDetailViewModel.ErrorType.INVITATION_NOT_FOUND ->
-                stringResource(R.string.account_not_found)
-
-            JointAccountDetailViewModel.ErrorType.NETWORK_ERROR ->
-                stringResource(R.string.error_connection_title)
+            ErrorType.INVITATION_NOT_FOUND -> stringResource(R.string.account_not_found)
+            ErrorType.NETWORK_ERROR -> stringResource(R.string.error_connection_title)
         }
         Text(
             text = errorMessage,
@@ -160,7 +154,7 @@ private fun ColumnScope.ErrorState(errorType: JointAccountDetailViewModel.ErrorT
 @Composable
 private fun ColumnScope.ContentState(
     contentState: ViewState.Content,
-    listener: JointAccountDetailScreenListener
+    onEvent: (JointAccountDetailEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -172,23 +166,16 @@ private fun ColumnScope.ContentState(
         Spacer(modifier = Modifier.height(12.dp))
         InformationCard(numberOfAccounts = contentState.numberOfAccounts, threshold = contentState.threshold)
         Spacer(modifier = Modifier.height(32.dp))
-        AccountsSection(
-            accounts = contentState.participants,
-            onEditClick = listener::onEditAddressClick,
-            onCopyAddressClick = listener::onCopyAddressClick
-        )
+        AccountsSection(accounts = contentState.participants, onEvent = onEvent)
         Spacer(modifier = Modifier.height(24.dp))
     }
     if (contentState.showActions) {
-        ActionFooter(onIgnoreClick = listener::onIgnoreClick, onAddClick = listener::onAddClick)
+        ActionFooter(onEvent = onEvent)
     }
 }
 
 @Composable
-private fun ActionFooter(
-    onIgnoreClick: () -> Unit,
-    onAddClick: () -> Unit
-) {
+private fun ActionFooter(onEvent: (JointAccountDetailEvent) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -199,13 +186,13 @@ private fun ActionFooter(
         PeraSecondaryButton(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.ignore),
-            onClick = onIgnoreClick
+            onClick = { onEvent(JointAccountDetailEvent.IgnoreClick) }
         )
 
         PeraPrimaryButton(
             modifier = Modifier.weight(2f),
             text = stringResource(R.string.add_to_accounts),
-            onClick = onAddClick
+            onClick = { onEvent(JointAccountDetailEvent.AddClick) }
         )
     }
 }
@@ -292,8 +279,7 @@ private fun ThresholdRow(threshold: Int) {
 @Composable
 private fun AccountsSection(
     accounts: List<JointAccountParticipantItem>,
-    onEditClick: (String) -> Unit,
-    onCopyAddressClick: (String) -> Unit
+    onEvent: (JointAccountDetailEvent) -> Unit
 ) {
     Text(
         text = stringResource(R.string.accounts_with_count, accounts.size),
@@ -307,8 +293,8 @@ private fun AccountsSection(
         accounts.forEachIndexed { index, account ->
             ParticipantAccountItem(
                 account = account,
-                onEditClick = { onEditClick(account.address) },
-                onCopyAddressClick = { onCopyAddressClick(account.address) }
+                onEditClick = { onEvent(JointAccountDetailEvent.EditAddressClick(account.address)) },
+                onCopyAddressClick = { onEvent(JointAccountDetailEvent.CopyAddressClick(account.address)) }
             )
             if (index < accounts.size - 1) {
                 ParticipantDivider()
@@ -380,12 +366,4 @@ private fun ParticipantAccountItem(
             }
         }
     )
-}
-
-interface JointAccountDetailScreenListener {
-    fun onBackClick()
-    fun onEditAddressClick(address: String)
-    fun onCopyAddressClick(address: String)
-    fun onIgnoreClick()
-    fun onAddClick()
 }

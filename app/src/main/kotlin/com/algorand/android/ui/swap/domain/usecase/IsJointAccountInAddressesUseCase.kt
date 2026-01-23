@@ -10,14 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model
+package com.algorand.android.ui.swap.domain.usecase
 
-data class JointAccountDetailUiState(
-    val accountDisplayName: String,
-    val accountAddressShortened: String,
-    val numberOfAccounts: Int,
-    val threshold: Int,
-    val participants: List<JointAccountParticipantItem>,
-    val participantAddresses: List<String>,
-    val showActions: Boolean
-)
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import javax.inject.Inject
+
+internal class IsJointAccountInAddressesUseCase @Inject constructor(
+    private val getAccountType: GetAccountType
+) : IsJointAccountInAddresses {
+
+    override suspend fun invoke(addresses: List<String>): Boolean {
+        return addresses.any { address ->
+            getAccountType(address) == AccountType.Joint
+        }
+    }
+}

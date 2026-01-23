@@ -14,7 +14,6 @@ package com.algorand.wallet.inbox.domain.usecase
 
 import com.algorand.wallet.inbox.domain.model.AssetInbox
 import com.algorand.wallet.inbox.domain.model.InboxMessages
-import com.algorand.wallet.inbox.domain.repository.InboxRepository
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
@@ -29,14 +28,14 @@ import org.junit.Test
 
 internal class HasInboxItemsForAddressUseCaseTest {
 
-    private val inboxRepository: InboxRepository = mockk()
+    private val getInboxMessages: GetInboxMessages = mockk()
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled = mockk {
         every { this@mockk(any()) } returns false
     }
 
     @Test
     fun `EXPECT false WHEN inbox messages is null`() = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns null
+        coEvery { getInboxMessages() } returns null
         val sut = createUseCase()
 
         val result = sut(TEST_ADDRESS)
@@ -46,7 +45,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
 
     @Test
     fun `EXPECT true WHEN has asset inbox with matching address and count greater than 0`() = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             assetInboxes = listOf(AssetInbox(address = TEST_ADDRESS, inboxAddress = null, requestCount = 5))
         )
         val sut = createUseCase()
@@ -58,7 +57,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
 
     @Test
     fun `EXPECT false WHEN has asset inbox with matching address but count is 0`() = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             assetInboxes = listOf(AssetInbox(address = TEST_ADDRESS, inboxAddress = null, requestCount = 0))
         )
         val sut = createUseCase()
@@ -70,7 +69,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
 
     @Test
     fun `EXPECT false WHEN has asset inbox with different address`() = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             assetInboxes = listOf(AssetInbox(address = "OTHER", inboxAddress = null, requestCount = 5))
         )
         val sut = createUseCase()
@@ -83,7 +82,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT false WHEN joint account disabled and has invitation`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns false
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             jointAccountImportRequests = listOf(createJointAccount(participantAddresses = listOf(TEST_ADDRESS)))
         )
         val sut = createUseCase()
@@ -96,7 +95,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT true WHEN joint account enabled and has invitation with address as participant`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             jointAccountImportRequests = listOf(createJointAccount(participantAddresses = listOf(TEST_ADDRESS, "OTHER")))
         )
         val sut = createUseCase()
@@ -109,7 +108,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT false WHEN joint account enabled and has invitation but address is not participant`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             jointAccountImportRequests = listOf(createJointAccount(participantAddresses = listOf("OTHER1", "OTHER2")))
         )
         val sut = createUseCase()
@@ -122,7 +121,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT true WHEN joint account enabled and has sign request where address is joint account`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             jointAccountSignRequests = listOf(
                 createSignRequest(jointAccountAddress = TEST_ADDRESS, participantAddresses = listOf("P1", "P2"))
             )
@@ -137,7 +136,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT true WHEN joint account enabled and has sign request where address is participant`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             jointAccountSignRequests = listOf(
                 createSignRequest(jointAccountAddress = "JOINT", participantAddresses = listOf(TEST_ADDRESS, "OTHER"))
             )
@@ -152,7 +151,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT false WHEN joint account enabled and has sign request but address not related`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             jointAccountSignRequests = listOf(
                 createSignRequest(jointAccountAddress = "OTHER_JOINT", participantAddresses = listOf("P1", "P2"))
             )
@@ -167,7 +166,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
     @Test
     fun `EXPECT false WHEN all lists are empty`() = runTest {
         every { isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key) } returns true
-        coEvery { inboxRepository.getInboxMessages() } returns createInboxMessages(
+        coEvery { getInboxMessages() } returns createInboxMessages(
             assetInboxes = emptyList(),
             jointAccountImportRequests = emptyList(),
             jointAccountSignRequests = emptyList()
@@ -179,7 +178,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
         assertFalse(result)
     }
 
-    private fun createUseCase() = HasInboxItemsForAddressUseCase(inboxRepository, isFeatureToggleEnabled)
+    private fun createUseCase() = HasInboxItemsForAddressUseCase(getInboxMessages, isFeatureToggleEnabled)
 
     private fun createInboxMessages(
         assetInboxes: List<AssetInbox>? = null,

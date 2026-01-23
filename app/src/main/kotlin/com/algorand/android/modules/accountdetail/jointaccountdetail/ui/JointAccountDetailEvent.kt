@@ -10,16 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.android.modules.accountdetail.jointaccountdetail.ui
 
-import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
-import javax.inject.Inject
-
-internal class GetJointAccountParticipantCountUseCase @Inject constructor(
-    private val jointAccountRepository: JointAccountRepository
-) : GetJointAccountParticipantCount {
-
-    override suspend fun invoke(address: String): Int {
-        return jointAccountRepository.getParticipantCount(address)
-    }
+sealed interface JointAccountDetailEvent {
+    data object BackClick : JointAccountDetailEvent
+    data class EditAddressClick(val address: String) : JointAccountDetailEvent
+    data class CopyAddressClick(val address: String) : JointAccountDetailEvent
+    data object IgnoreClick : JointAccountDetailEvent
+    data object AddClick : JointAccountDetailEvent
 }

@@ -36,4 +36,12 @@ internal interface JointAccountRepository {
     suspend fun isAddressExists(address: String): Boolean
 
     suspend fun deleteAllAccounts()
+
+    suspend fun getParticipantCount(jointAddress: String): Int
+
+    suspend fun getParticipantAddresses(jointAddress: String): List<String>
+
+    suspend fun getJointAddressesByParticipant(participantAddress: String): List<String>
+
+    suspend fun isParticipant(jointAddress: String, participantAddress: String): Boolean
 }

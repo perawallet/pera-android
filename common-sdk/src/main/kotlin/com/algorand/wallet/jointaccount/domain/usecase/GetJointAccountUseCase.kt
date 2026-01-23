@@ -13,14 +13,14 @@
 package com.algorand.wallet.jointaccount.domain.usecase
 
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import javax.inject.Inject
 
 internal class GetJointAccountUseCase @Inject constructor(
-    private val getLocalAccount: GetLocalAccount
+    private val jointAccountRepository: JointAccountRepository
 ) : GetJointAccount {
 
     override suspend fun invoke(address: String): LocalAccount.Joint? {
-        return getLocalAccount(address) as? LocalAccount.Joint
+        return jointAccountRepository.getAccount(address)
     }
 }

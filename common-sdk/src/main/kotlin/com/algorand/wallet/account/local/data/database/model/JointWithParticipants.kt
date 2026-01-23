@@ -10,16 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.domain.usecase
+package com.algorand.wallet.account.local.data.database.model
 
-import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
-import javax.inject.Inject
+import androidx.room.Embedded
+import androidx.room.Relation
 
-internal class GetJointAccountParticipantCountUseCase @Inject constructor(
-    private val jointAccountRepository: JointAccountRepository
-) : GetJointAccountParticipantCount {
-
-    override suspend fun invoke(address: String): Int {
-        return jointAccountRepository.getParticipantCount(address)
-    }
-}
+internal data class JointWithParticipants(
+    @Embedded
+    val joint: JointEntity,
+    @Relation(
+        parentColumn = "algo_address",
+        entityColumn = "joint_address"
+    )
+    val participants: List<JointParticipantEntity>
+)

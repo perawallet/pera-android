@@ -51,4 +51,7 @@ internal interface Algo25Dao {
 
     @Query("DELETE FROM algo_25")
     suspend fun clearAll()
+
+    @Query("SELECT * FROM algo_25 WHERE algo_address IN (:addresses)")
+    suspend fun getByAddresses(addresses: List<String>): List<Algo25Entity>
 }

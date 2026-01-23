@@ -16,21 +16,19 @@ import com.algorand.wallet.inbox.asset.data.repository.AssetInboxRepositoryImpl
 import com.algorand.wallet.inbox.asset.domain.repository.AssetInboxRepository
 import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequestCountFlow
-import com.algorand.wallet.inbox.domain.repository.InboxRepository
+import com.algorand.wallet.inbox.data.cache.InboxInMemoryCache
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AssetInboxModule {
 
     @Provides
-    @Singleton
-    fun provideAssetInboxRepository(inboxRepository: InboxRepository): AssetInboxRepository {
-        return AssetInboxRepositoryImpl(inboxRepository)
+    fun provideAssetInboxRepository(inboxInMemoryCache: InboxInMemoryCache): AssetInboxRepository {
+        return AssetInboxRepositoryImpl(inboxInMemoryCache)
     }
 
     @Provides

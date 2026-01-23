@@ -13,9 +13,9 @@
 package com.algorand.wallet.inbox.asset.data.repository
 
 import com.algorand.test.test
+import com.algorand.wallet.inbox.data.cache.InboxInMemoryCache
 import com.algorand.wallet.inbox.domain.model.AssetInbox
 import com.algorand.wallet.inbox.domain.model.InboxMessages
-import com.algorand.wallet.inbox.domain.repository.InboxRepository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -28,9 +28,9 @@ import org.junit.Test
 
 internal class AssetInboxRepositoryImplTest {
 
-    private val inboxRepository: InboxRepository = mockk(relaxed = true)
+    private val inboxInMemoryCache: InboxInMemoryCache = mockk(relaxed = true)
 
-    private val assetInboxRepositoryImpl = AssetInboxRepositoryImpl(inboxRepository)
+    private val assetInboxRepositoryImpl = AssetInboxRepositoryImpl(inboxInMemoryCache)
 
     @Test
     fun `EXPECT request count flow to return sum of request counts`(): TestResult = runTest {
@@ -44,7 +44,7 @@ internal class AssetInboxRepositoryImplTest {
                 )
             )
         )
-        every { inboxRepository.getInboxMessagesFlow() } returns inboxMessagesFlow
+        every { inboxInMemoryCache.observe() } returns inboxMessagesFlow
 
         val result = assetInboxRepositoryImpl.getRequestCountFlow().test()
 
@@ -60,7 +60,7 @@ internal class AssetInboxRepositoryImplTest {
                 assetInboxes = null
             )
         )
-        every { inboxRepository.getInboxMessagesFlow() } returns inboxMessagesFlow
+        every { inboxInMemoryCache.observe() } returns inboxMessagesFlow
 
         val result = assetInboxRepositoryImpl.getRequestCountFlow().test()
 
@@ -70,7 +70,7 @@ internal class AssetInboxRepositoryImplTest {
     @Test
     fun `EXPECT zero WHEN inbox messages is null`(): TestResult = runTest {
         val inboxMessagesFlow = MutableStateFlow<InboxMessages?>(null)
-        every { inboxRepository.getInboxMessagesFlow() } returns inboxMessagesFlow
+        every { inboxInMemoryCache.observe() } returns inboxMessagesFlow
 
         val result = assetInboxRepositoryImpl.getRequestCountFlow().test()
 
@@ -79,7 +79,7 @@ internal class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT null WHEN getRequest is invoked but requested address is not in inbox`(): TestResult = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns InboxMessages(
+        coEvery { inboxInMemoryCache.get() } returns InboxMessages(
             jointAccountImportRequests = null,
             jointAccountSignRequests = null,
             assetInboxes = listOf(AssetInbox(ADDRESS_2, null, 4))
@@ -92,7 +92,7 @@ internal class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT null WHEN getRequest is invoked but asset inboxes is null`(): TestResult = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns InboxMessages(
+        coEvery { inboxInMemoryCache.get() } returns InboxMessages(
             jointAccountImportRequests = null,
             jointAccountSignRequests = null,
             assetInboxes = null
@@ -105,7 +105,7 @@ internal class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT null WHEN getRequest is invoked but inbox messages is null`(): TestResult = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns null
+        coEvery { inboxInMemoryCache.get() } returns null
 
         val result = assetInboxRepositoryImpl.getRequest(ADDRESS_1)
 
@@ -114,7 +114,7 @@ internal class AssetInboxRepositoryImplTest {
 
     @Test
     fun `EXPECT request detail WHEN getRequest is invoked and requested address is in inbox`(): TestResult = runTest {
-        coEvery { inboxRepository.getInboxMessages() } returns InboxMessages(
+        coEvery { inboxInMemoryCache.get() } returns InboxMessages(
             jointAccountImportRequests = null,
             jointAccountSignRequests = null,
             assetInboxes = listOf(

@@ -26,6 +26,8 @@ import com.algorand.android.ui.swap.tracking.SwapHistoryEventTracker
 import com.algorand.android.ui.swap.tracking.SwapHistoryWidgetEventTracker
 import com.algorand.android.ui.swap.tracking.SwapScreenEventTracker
 import com.algorand.android.ui.swap.tracking.SwapTopPairsEventTracker
+import com.algorand.android.ui.swap.domain.usecase.IsJointAccountInAddresses
+import com.algorand.android.ui.swap.domain.usecase.IsJointAccountInAddressesUseCase
 import com.algorand.android.ui.swap.usecase.GetPreselectedSwapAddress
 import com.algorand.android.ui.swap.usecase.GetPreselectedSwapAddressUseCase
 import com.algorand.android.ui.swap.widget.mapper.DefaultSwapQuoteFetchStateMapper
@@ -78,4 +80,9 @@ internal object SwapUiModule {
 
     @Provides
     fun provideGetPreselectedSwapAddress(useCase: GetPreselectedSwapAddressUseCase): GetPreselectedSwapAddress = useCase
+
+    @Provides
+    fun provideIsJointAccountInAddresses(
+        useCase: IsJointAccountInAddressesUseCase
+    ): IsJointAccountInAddresses = useCase
 }

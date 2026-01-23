@@ -161,8 +161,4 @@ class JointAccountTransactionSignHelper @Inject constructor(
         data class Success(val signRequestId: String) : JointSignResult
         data object Error : JointSignResult
     }
-
-    companion object {
-        private const val TAG = "JointAcctTxnSignHelper"
-    }
 }

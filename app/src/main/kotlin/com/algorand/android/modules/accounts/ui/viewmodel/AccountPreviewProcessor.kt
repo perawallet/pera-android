@@ -125,18 +125,19 @@ class AccountPreviewProcessor @Inject constructor(
         val customInfos = getAccountsCustomInfo(localAccounts.map { it.algoAddress })
         val accountErrorItems = localAccounts
             .mapNotNull { localAccount ->
+                val accountType = getLocalAccountType(localAccount)
                 val registrationType = getAccountRegistrationType(localAccount)
-                if (!shouldIncludeAccount(accountType = null, registrationType)) {
+                if (!shouldIncludeAccount(accountType, registrationType)) {
                     return@mapNotNull null
                 }
                 val customInfo = customInfos[localAccount.algoAddress]
-                val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = null)
+                val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = accountType)
                 BaseAccountListItem.AccountErrorItem(
                     address = localAccount.algoAddress,
                     primaryDisplayName = displayName.primaryDisplayName,
                     secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
                     accountIconDrawablePreview = getAccountIconDrawablePreviewByType(registrationType),
-                    canCopyable = registrationType != AccountRegistrationType.NoAuth
+                    canCopyable = accountType != AccountType.NoAuth
                 )
             }
 
@@ -211,5 +212,15 @@ class AccountPreviewProcessor @Inject constructor(
         val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
         if (isJointAccountEnabled) return true
         return accountType != AccountType.Joint && registrationType != AccountRegistrationType.Joint
+    }
+
+    private fun getLocalAccountType(localAccount: LocalAccount): AccountType {
+        return when (localAccount) {
+            is LocalAccount.Algo25 -> AccountType.Algo25
+            is LocalAccount.LedgerBle -> AccountType.LedgerBle
+            is LocalAccount.NoAuth -> AccountType.NoAuth
+            is LocalAccount.HdKey -> AccountType.HdKey
+            is LocalAccount.Joint -> AccountType.Joint
+        }
     }
 }

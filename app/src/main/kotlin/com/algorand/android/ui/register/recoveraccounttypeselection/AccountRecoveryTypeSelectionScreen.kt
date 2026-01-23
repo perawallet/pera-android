@@ -67,14 +67,14 @@ fun AccountRecoveryTypeSelectionScreen(
     )
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier.fillMaxSize()
     ) {
         TitleWidget()
         Spacer(modifier = Modifier.height(30.dp))
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             RecoverAnAccountWidget(
@@ -180,7 +180,7 @@ private fun AlgorandSecureBackupWidget(onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetContent(
+private fun BottomSheetContent(
     sheetState: SheetState,
     onDismiss: () -> Unit,
     onNavigateToRecoverAccountInfo: (OnboardingAccountType) -> Unit
@@ -234,7 +234,7 @@ fun BottomSheetContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("MagicNumber")
 @Composable
-fun BottomSheetHeader(
+private fun BottomSheetHeader(
     sheetState: SheetState,
     onDismiss: () -> Unit
 ) {

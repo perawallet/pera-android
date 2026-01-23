@@ -283,7 +283,6 @@ private fun createSampleContentState(): ViewState.Content {
                 iconDrawablePreview = AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
             )
         ),
-        participantAddresses = listOf("HZQ73C...PSDZZE", "tahir.algo", "CNSW64...C4HNPI"),
         showActions = false
     )
 }

@@ -10,21 +10,25 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.inbox.domain.usecase
+package com.algorand.wallet.inbox.domain.repository
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.model.InboxSearchInput
-import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
-import javax.inject.Inject
-import javax.inject.Named
 
-internal class FetchInboxMessagesUseCase @Inject constructor(
-    @param:Named(InboxApiRepository.INJECTION_NAME)
-    private val inboxApiRepository: InboxApiRepository
-) : FetchInboxMessages {
+interface InboxApiRepository {
 
-    override suspend fun invoke(deviceId: Long, addresses: List<String>): PeraResult<InboxMessages> {
-        return inboxApiRepository.getInboxMessages(deviceId, InboxSearchInput(addresses))
+    suspend fun getInboxMessages(
+        deviceId: Long,
+        inboxSearchInput: InboxSearchInput
+    ): PeraResult<InboxMessages>
+
+    suspend fun deleteJointInvitationNotification(
+        deviceId: Long,
+        jointAddress: String
+    ): PeraResult<Unit>
+
+    companion object {
+        const val INJECTION_NAME = "inboxApiRepositoryInjectionName"
     }
 }

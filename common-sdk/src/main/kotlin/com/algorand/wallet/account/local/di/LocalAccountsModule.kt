@@ -87,6 +87,8 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
@@ -154,6 +156,10 @@ internal object LocalAccountsModule {
     @Provides
     @Singleton
     fun provideJointDao(addressDatabase: AddressDatabase) = addressDatabase.jointDao()
+
+    @Provides
+    @Singleton
+    fun provideJointParticipantDao(addressDatabase: AddressDatabase) = addressDatabase.jointParticipantDao()
 
     @Provides
     fun provideHdSeedRepository(repository: HdSeedRepositoryImpl): HdSeedRepository = repository
@@ -266,6 +272,11 @@ internal object LocalAccountsModule {
     fun provideGetLocalAccounts(
         useCase: GetLocalAccountsUseCase
     ): GetLocalAccounts = useCase
+
+    @Provides
+    fun provideGetSignableAccountsByAddresses(
+        useCase: GetSignableAccountsByAddressesUseCase
+    ): GetSignableAccountsByAddresses = useCase
 
     @Provides
     fun provideGetLocalAccountsFlow(useCase: GetLocalAccountsFlowUseCase): GetLocalAccountsFlow = useCase

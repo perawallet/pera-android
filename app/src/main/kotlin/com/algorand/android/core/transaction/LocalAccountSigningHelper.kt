@@ -12,11 +12,11 @@
 
 package com.algorand.android.core.transaction
 
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import javax.inject.Inject
@@ -24,15 +24,10 @@ import javax.inject.Inject
 class LocalAccountSigningHelper @Inject constructor(
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val getHdSeed: GetHdSeed,
-    private val getLocalAccount: GetLocalAccount,
     private val signHdKeyTransaction: SignHdKeyTransaction
 ) {
 
-    suspend fun getLocalAccount(address: String): LocalAccount? {
-        return getLocalAccount.invoke(address)
-    }
-
-    suspend fun signWithAlgo25(transactionData: ByteArray, senderAddress: String): ByteArray? {
+    suspend fun signWithAlgo25Account(transactionData: ByteArray, senderAddress: String): ByteArray? {
         val secretKey = getAlgo25SecretKey(senderAddress) ?: return null
         return try {
             runCatching { transactionData.signTx(secretKey) }.getOrNull()
@@ -41,10 +36,37 @@ class LocalAccountSigningHelper @Inject constructor(
         }
     }
 
-    suspend fun signWithHdKey(transactionData: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
+    suspend fun signWithAlgo25AccountReturnSignature(
+        transactionData: ByteArray,
+        senderAddress: String
+    ): ByteArray? {
+        val secretKey = getAlgo25SecretKey(senderAddress) ?: return null
+        return try {
+            runCatching { Sdk.signTransactionReturnSignature(secretKey, transactionData) }.getOrNull()
+        } finally {
+            secretKey.clearFromMemory()
+        }
+    }
+
+    suspend fun signWithHdKeyAccount(transactionData: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
         val seed = getHdSeed(seedId = hdKey.seedId) ?: return null
         return try {
             signHdKeyTransaction.signTransaction(
+                transactionData,
+                seed,
+                hdKey.account,
+                hdKey.change,
+                hdKey.keyIndex
+            )
+        } finally {
+            seed.clearFromMemory()
+        }
+    }
+
+    suspend fun signWithHdKeyAccountReturnSignature(transactionData: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
+        val seed = getHdSeed(seedId = hdKey.seedId) ?: return null
+        return try {
+            signHdKeyTransaction.signTransactionReturnSignature(
                 transactionData,
                 seed,
                 hdKey.account,

@@ -14,15 +14,27 @@ package com.algorand.wallet.account.local.data.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.ForeignKey
+import androidx.room.Index
 
-@Entity(tableName = "joint_account")
-internal data class JointEntity(
-    @PrimaryKey
-    @ColumnInfo("algo_address")
-    val algoAddress: String,
-    @ColumnInfo("threshold")
-    val threshold: Int,
-    @ColumnInfo("version")
-    val version: Int
+@Entity(
+    tableName = "joint_participant",
+    primaryKeys = ["joint_address", "participant_index"],
+    foreignKeys = [
+        ForeignKey(
+            entity = JointEntity::class,
+            parentColumns = ["algo_address"],
+            childColumns = ["joint_address"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index("joint_address")]
+)
+internal data class JointParticipantEntity(
+    @ColumnInfo("joint_address")
+    val jointAddress: String,
+    @ColumnInfo("participant_index")
+    val participantIndex: Int,
+    @ColumnInfo("participant_address")
+    val participantAddress: String
 )

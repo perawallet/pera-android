@@ -101,7 +101,7 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
     ): ByteArray? {
         val seed = getHdSeed(seedId = hdKeyAccount.seedId) ?: return null
         return try {
-            signHdKeyTransaction.signTransactionSignatureOnly(
+            signHdKeyTransaction.signTransactionReturnSignature(
                 transactionBytes,
                 seed,
                 hdKeyAccount.account,

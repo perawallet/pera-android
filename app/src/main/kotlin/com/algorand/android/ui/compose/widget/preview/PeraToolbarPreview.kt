@@ -35,6 +35,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.compose.widget.PeraToolbarLinkText
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 
 @PeraPreviewLightDark
@@ -215,12 +216,14 @@ fun PeraToolbarWithRightLabelPreview() {
         Column {
             PeraToolbar(
                 text = "Placeholder",
-                rightLabel = "Label",
                 startContainer = {
                     PeraToolbarIcon(
                         iconResId = R.drawable.ic_plus,
                         modifier = Modifier.clickableNoRipple {}
                     )
+                },
+                endContainer = {
+                    PeraToolbarLinkText(text = "Label")
                 }
             )
             PreviewSeparator()

@@ -12,10 +12,13 @@
 
 package com.algorand.wallet.inbox.di
 
-import com.algorand.wallet.inbox.data.repository.InboxRepositoryImpl
+import com.algorand.wallet.foundation.cache.InMemoryCacheProvider
+import com.algorand.wallet.inbox.data.cache.DefaultInboxInMemoryCache
+import com.algorand.wallet.inbox.data.cache.InboxInMemoryCache
+import com.algorand.wallet.inbox.data.repository.InboxApiRepositoryImpl
 import com.algorand.wallet.inbox.domain.InboxCacheManager
 import com.algorand.wallet.inbox.domain.InboxCacheManagerImpl
-import com.algorand.wallet.inbox.domain.repository.InboxRepository
+import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.CacheInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.ClearInboxCache
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
@@ -25,10 +28,15 @@ import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddressesUseCase
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddress
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddressUseCase
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
+import com.algorand.wallet.inbox.jointaccount.data.mapper.InboxSearchMapper
+import com.algorand.wallet.inbox.jointaccount.data.mapper.InboxSearchMapperImpl
+import com.algorand.wallet.inbox.jointaccount.data.service.InboxApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -37,32 +45,50 @@ internal object InboxModule {
 
     @Provides
     @Singleton
+    fun provideInboxApiService(
+        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
+    ): InboxApiService {
+        return retrofit.create(InboxApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Named(InboxApiRepository.INJECTION_NAME)
+    fun provideInboxApiRepository(
+        repository: InboxApiRepositoryImpl
+    ): InboxApiRepository = repository
+
+    @Provides
+    @Singleton
     fun provideInboxCacheManager(impl: InboxCacheManagerImpl): InboxCacheManager = impl
 
     @Provides
     @Singleton
-    fun provideInboxRepository(): InboxRepository {
-        return InboxRepositoryImpl()
+    fun provideInboxInMemoryCache(inMemoryCacheProvider: InMemoryCacheProvider): InboxInMemoryCache {
+        return DefaultInboxInMemoryCache(inMemoryCacheProvider)
     }
 
     @Provides
-    fun provideCacheInboxMessages(repository: InboxRepository): CacheInboxMessages {
-        return CacheInboxMessages(repository::cacheInboxMessages)
+    fun provideInboxSearchMapper(impl: InboxSearchMapperImpl): InboxSearchMapper = impl
+
+    @Provides
+    fun provideCacheInboxMessages(cache: InboxInMemoryCache): CacheInboxMessages {
+        return CacheInboxMessages(cache::put)
     }
 
     @Provides
-    fun provideClearInboxCache(repository: InboxRepository): ClearInboxCache {
-        return ClearInboxCache(repository::clearCache)
+    fun provideClearInboxCache(cache: InboxInMemoryCache): ClearInboxCache {
+        return ClearInboxCache(cache::clear)
     }
 
     @Provides
-    fun provideGetInboxMessagesFlow(repository: InboxRepository): GetInboxMessagesFlow {
-        return GetInboxMessagesFlow(repository::getInboxMessagesFlow)
+    fun provideGetInboxMessagesFlow(cache: InboxInMemoryCache): GetInboxMessagesFlow {
+        return GetInboxMessagesFlow(cache::observe)
     }
 
     @Provides
-    fun provideGetInboxMessages(repository: InboxRepository): GetInboxMessages {
-        return GetInboxMessages(repository::getInboxMessages)
+    fun provideGetInboxMessages(cache: InboxInMemoryCache): GetInboxMessages {
+        return GetInboxMessages(cache::get)
     }
 
     @Provides
@@ -78,5 +104,5 @@ internal object InboxModule {
     @Provides
     fun provideRefreshInboxCache(
         inboxCacheManager: InboxCacheManager
-    ): RefreshInboxCache = RefreshInboxCache { inboxCacheManager.refreshCache() }
+    ): RefreshInboxCache = RefreshInboxCache(inboxCacheManager::refreshCache)
 }

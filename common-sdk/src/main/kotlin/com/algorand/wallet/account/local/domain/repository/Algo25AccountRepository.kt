@@ -36,4 +36,6 @@ internal interface Algo25AccountRepository {
     suspend fun deleteAllAccounts()
 
     suspend fun getSecretKey(address: String): ByteArray?
+
+    suspend fun getAccountsByAddresses(addresses: List<String>): List<LocalAccount.Algo25>
 }

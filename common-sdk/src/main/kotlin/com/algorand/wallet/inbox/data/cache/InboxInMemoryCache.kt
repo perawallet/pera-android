@@ -10,18 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.inbox.domain.repository
+package com.algorand.wallet.inbox.data.cache
 
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import kotlinx.coroutines.flow.Flow
 
-interface InboxRepository {
-
-    suspend fun cacheInboxMessages(inboxMessages: InboxMessages)
-
-    suspend fun clearCache()
-
-    fun getInboxMessagesFlow(): Flow<InboxMessages?>
-
-    suspend fun getInboxMessages(): InboxMessages?
+internal interface InboxInMemoryCache {
+    fun observe(): Flow<InboxMessages?>
+    suspend fun put(inboxMessages: InboxMessages)
+    suspend fun clear()
+    suspend fun get(): InboxMessages?
 }

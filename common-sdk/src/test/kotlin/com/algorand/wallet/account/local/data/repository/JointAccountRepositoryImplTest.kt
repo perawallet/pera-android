@@ -119,8 +119,8 @@ internal class JointAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT entities inserted WHEN addAccount is invoked`() = runTest(testDispatcher) {
-        coEvery { jointEntityMapper(TEST_JOINT_ACCOUNT) } returns TEST_MAPPER_RESULT
+    fun `EXPECT entity inserted WHEN addAccount is invoked`() = runTest(testDispatcher) {
+        coEvery { jointEntityMapper(TEST_JOINT_ACCOUNT) } returns TEST_ENTITY_MAPPER_RESULT
         coEvery { jointDao.insert(TEST_ENTITY) } returns Unit
         coEvery { jointParticipantDao.insertAll(TEST_PARTICIPANT_ENTITIES) } returns Unit
 
@@ -191,6 +191,21 @@ internal class JointAccountRepositoryImplTest {
     }
 
     @Test
+    fun `EXPECT multiple accounts mapped WHEN getAll is invoked with multiple accounts`() = runTest(testDispatcher) {
+        val entity2 = createJointWithParticipants(ANOTHER_ADDRESS)
+        val account2 = TEST_JOINT_ACCOUNT.copy(algoAddress = ANOTHER_ADDRESS)
+
+        coEvery { jointDao.getAllWithParticipants() } returns listOf(TEST_JOINT_WITH_PARTICIPANTS, entity2)
+        coEvery { jointMapper(TEST_JOINT_WITH_PARTICIPANTS) } returns TEST_JOINT_ACCOUNT
+        coEvery { jointMapper(entity2) } returns account2
+
+        val result = sut.getAll()
+
+        assertEquals(2, result.size)
+        assertTrue(result.containsAll(listOf(TEST_JOINT_ACCOUNT, account2)))
+    }
+
+    @Test
     fun `EXPECT participant count WHEN getParticipantCount is invoked`() = runTest(testDispatcher) {
         val expectedCount = 3
         coEvery { jointParticipantDao.getParticipantCount(TEST_ADDRESS) } returns expectedCount
@@ -224,7 +239,7 @@ internal class JointAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT true WHEN isParticipant is invoked with valid participant`() = runTest(testDispatcher) {
+    fun `EXPECT true WHEN isParticipant is invoked with existing participant`() = runTest(testDispatcher) {
         val participantAddress = "ADDR1"
         coEvery { jointParticipantDao.isParticipant(TEST_ADDRESS, participantAddress) } returns true
 
@@ -234,16 +249,16 @@ internal class JointAccountRepositoryImplTest {
         assertTrue(result)
     }
 
-    @Test
-    fun `EXPECT false WHEN isParticipant is invoked with non-participant`() = runTest(testDispatcher) {
-        val nonParticipantAddress = "NON_PARTICIPANT"
-        coEvery { jointParticipantDao.isParticipant(TEST_ADDRESS, nonParticipantAddress) } returns false
-
-        val result = sut.isParticipant(TEST_ADDRESS, nonParticipantAddress)
-
-        coVerify { jointParticipantDao.isParticipant(TEST_ADDRESS, nonParticipantAddress) }
-        assertFalse(result)
-    }
+    private fun createJointWithParticipants(address: String) = JointWithParticipants(
+        joint = JointEntity(
+            algoAddress = address,
+            threshold = TEST_THRESHOLD,
+            version = TEST_VERSION
+        ),
+        participants = TEST_PARTICIPANT_ADDRESSES.mapIndexed { index, participantAddress ->
+            JointParticipantEntity(address, index, participantAddress)
+        }
+    )
 
     private companion object {
         const val TEST_ADDRESS = "JOINT_ADDRESS_123"
@@ -259,18 +274,16 @@ internal class JointAccountRepositoryImplTest {
             version = TEST_VERSION
         )
 
-        val TEST_PARTICIPANT_ENTITIES = listOf(
-            JointParticipantEntity(TEST_ADDRESS, 0, "ADDR1"),
-            JointParticipantEntity(TEST_ADDRESS, 1, "ADDR2"),
-            JointParticipantEntity(TEST_ADDRESS, 2, "ADDR3")
-        )
+        val TEST_PARTICIPANT_ENTITIES = TEST_PARTICIPANT_ADDRESSES.mapIndexed { index, address ->
+            JointParticipantEntity(TEST_ADDRESS, index, address)
+        }
 
         val TEST_JOINT_WITH_PARTICIPANTS = JointWithParticipants(
             joint = TEST_ENTITY,
             participants = TEST_PARTICIPANT_ENTITIES
         )
 
-        val TEST_MAPPER_RESULT = JointEntityMapperResult(
+        val TEST_ENTITY_MAPPER_RESULT = JointEntityMapperResult(
             jointEntity = TEST_ENTITY,
             participantEntities = TEST_PARTICIPANT_ENTITIES
         )

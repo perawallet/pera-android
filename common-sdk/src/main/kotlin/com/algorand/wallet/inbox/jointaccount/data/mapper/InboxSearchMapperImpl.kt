@@ -22,18 +22,18 @@ import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapp
 import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestMapper
 import javax.inject.Inject
 
-internal class InboxSearchDTOMapper @Inject constructor(
+internal class InboxSearchMapperImpl @Inject constructor(
     private val jointAccountDTOMapper: JointAccountDTOMapper,
     private val jointSignRequestMapper: JointSignRequestMapper
-) {
+) : InboxSearchMapper {
 
-    fun mapToInboxSearchRequest(input: InboxSearchInput): InboxSearchRequest {
+    override fun mapToInboxSearchRequest(input: InboxSearchInput): InboxSearchRequest {
         return InboxSearchRequest(
             addresses = input.addresses
         )
     }
 
-    fun mapToInboxMessages(response: InboxSearchResponse?): InboxMessages? {
+    override fun mapToInboxMessages(response: InboxSearchResponse?): InboxMessages? {
         return response?.let {
             InboxMessages(
                 jointAccountImportRequests = it.jointAccountImportRequests?.mapNotNull { account ->

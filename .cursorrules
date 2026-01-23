@@ -72,7 +72,24 @@
 
 ### Mapper Pattern
 - Internal mappers: `internal interface FooMapper` + `internal class FooMapperImpl`
+- **No DTO suffix on mappers** - Use `InboxSearchMapper`, not `InboxSearchDTOMapper`
 - Use `with` scope function for cleaner code
+
+### Cache vs Repository Naming
+- **In-memory caches are NOT repositories** - Use `InboxInMemoryCache`, not `InboxRepository`
+- **Use InMemoryCacheProvider** for in-memory caches, not custom `MutableStateFlow` implementations
+- **Repository** = data access with external sources (API, database)
+- **Cache** = in-memory storage only
+
+### DI Module Rules
+- **Use method references, not lambdas** - `RefreshCache(manager::refresh)` not `RefreshCache { manager.refresh() }`
+- **Don't use @Singleton if state is external** - If cache/state is passed in constructor, no need for @Singleton
+- **Keep providers in correct feature modules** - `InboxApiService` belongs in `InboxModule`, not `JointAccountModule`
+
+### Feature Ownership
+- **Methods belong to their feature** - `getInboxMessages` belongs in inbox feature, not joint account
+- **Don't mix feature concerns** - Each repository handles only its own feature's API calls
+- **Cross-feature dependencies use interfaces** - Features depend on each other via domain interfaces, not implementations
 
 ## Code Quality
 
@@ -167,6 +184,10 @@
 - [ ] Unit tests for data/domain layers
 - [ ] Internal classes marked `internal`
 - [ ] Content descriptions for accessibility
+- [ ] In-memory caches use `InMemoryCacheProvider`, not custom StateFlow
+- [ ] No DTO suffix on mappers
+- [ ] Method references used in DI, not lambdas
+- [ ] Methods are in correct feature modules
 
 ---
 

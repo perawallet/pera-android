@@ -13,21 +13,21 @@
 package com.algorand.wallet.account.local.data.mapper.model
 
 import com.algorand.wallet.account.local.data.database.model.JointEntity
-import com.google.gson.Gson
+import com.algorand.wallet.account.local.data.database.model.JointParticipantEntity
+import com.algorand.wallet.account.local.data.database.model.JointWithParticipants
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 internal class JointMapperImplTest {
 
-    private val gson = Gson()
-    private val mapper = JointMapperImpl(gson)
+    private val mapper = JointMapperImpl()
 
     @Test
     fun `EXPECT all fields mapped correctly WHEN invoke is called`() {
-        val entity = createTestJointEntity()
+        val jointWithParticipants = createTestJointWithParticipants()
 
-        val localAccount = mapper(entity)
+        val localAccount = mapper(jointWithParticipants)
 
         assertEquals(TEST_ADDRESS, localAccount.algoAddress)
         assertEquals(TEST_PARTICIPANT_ADDRESSES, localAccount.participantAddresses)
@@ -36,48 +36,62 @@ internal class JointMapperImplTest {
     }
 
     @Test
-    fun `EXPECT participantAddresses mapped correctly WHEN invoke is called`() {
-        val entity = createTestJointEntity()
+    fun `EXPECT participants sorted by index WHEN invoke is called`() {
+        val unsortedParticipants = listOf(
+            JointParticipantEntity(TEST_ADDRESS, 2, "ADDR3"),
+            JointParticipantEntity(TEST_ADDRESS, 0, "ADDR1"),
+            JointParticipantEntity(TEST_ADDRESS, 1, "ADDR2")
+        )
+        val jointWithParticipants = JointWithParticipants(
+            joint = createTestJointEntity(),
+            participants = unsortedParticipants
+        )
 
-        val localAccount = mapper(entity)
+        val localAccount = mapper(jointWithParticipants)
 
-        assertEquals(TEST_PARTICIPANT_ADDRESSES, localAccount.participantAddresses)
+        assertEquals(listOf("ADDR1", "ADDR2", "ADDR3"), localAccount.participantAddresses)
     }
 
     @Test
-    fun `EXPECT empty list WHEN participant addresses is empty json array`() {
-        val emptySerializedAddresses = "[]"
-        val entity = JointEntity(
-            algoAddress = TEST_ADDRESS,
-            participantAddresses = emptySerializedAddresses,
-            threshold = TEST_THRESHOLD,
-            version = TEST_VERSION
+    fun `EXPECT empty list WHEN participants is empty`() {
+        val jointWithParticipants = JointWithParticipants(
+            joint = createTestJointEntity(),
+            participants = emptyList()
         )
 
-        val localAccount = mapper(entity)
+        val localAccount = mapper(jointWithParticipants)
 
         assertTrue(localAccount.participantAddresses.isEmpty())
     }
 
     @Test
-    fun `EXPECT single address list WHEN participant addresses has one element`() {
+    fun `EXPECT single address WHEN single participant provided`() {
         val singleAddress = "SINGLE_ADDR"
-        val singleAddressSerialized = "[\"$singleAddress\"]"
-        val entity = JointEntity(
-            algoAddress = TEST_ADDRESS,
-            participantAddresses = singleAddressSerialized,
-            threshold = 1,
-            version = TEST_VERSION
+        val jointWithParticipants = JointWithParticipants(
+            joint = JointEntity(
+                algoAddress = TEST_ADDRESS,
+                threshold = 1,
+                version = TEST_VERSION
+            ),
+            participants = listOf(
+                JointParticipantEntity(TEST_ADDRESS, 0, singleAddress)
+            )
         )
 
-        val localAccount = mapper(entity)
+        val localAccount = mapper(jointWithParticipants)
 
         assertEquals(listOf(singleAddress), localAccount.participantAddresses)
     }
 
+    private fun createTestJointWithParticipants() = JointWithParticipants(
+        joint = createTestJointEntity(),
+        participants = TEST_PARTICIPANT_ADDRESSES.mapIndexed { index, address ->
+            JointParticipantEntity(TEST_ADDRESS, index, address)
+        }
+    )
+
     private fun createTestJointEntity() = JointEntity(
         algoAddress = TEST_ADDRESS,
-        participantAddresses = SERIALIZED_ADDRESSES,
         threshold = TEST_THRESHOLD,
         version = TEST_VERSION
     )
@@ -87,6 +101,5 @@ internal class JointMapperImplTest {
         val TEST_PARTICIPANT_ADDRESSES = listOf("ADDR1", "ADDR2", "ADDR3")
         const val TEST_THRESHOLD = 2
         const val TEST_VERSION = 1
-        const val SERIALIZED_ADDRESSES = "[\"ADDR1\",\"ADDR2\",\"ADDR3\"]"
     }
 }

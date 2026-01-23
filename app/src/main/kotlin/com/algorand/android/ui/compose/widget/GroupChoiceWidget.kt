@@ -44,7 +44,7 @@ fun GroupChoiceWidget(
     description: String,
     icon: ImageVector,
     iconContentDescription: String,
-    showNewBadge: Boolean = false,
+    badge: (@Composable () -> Unit)? = null,
     onClick: () -> Unit
 ) {
     Row(
@@ -73,19 +73,9 @@ fun GroupChoiceWidget(
                     color = PeraTheme.colors.text.main,
                     text = title
                 )
-                if (showNewBadge) {
+                if (badge != null) {
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        modifier = Modifier
-                            .background(
-                                color = PeraTheme.colors.wallet.wallet4.background,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        text = stringResource(R.string.new_text).uppercase(Locale.ENGLISH),
-                        style = PeraTheme.typography.caption.sansMedium,
-                        color = PeraTheme.colors.wallet.wallet4.icon
-                    )
+                    badge()
                 }
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -98,6 +88,21 @@ fun GroupChoiceWidget(
     }
 }
 
+@Composable
+fun GroupChoiceNewBadge() {
+    Text(
+        modifier = Modifier
+            .background(
+                color = PeraTheme.colors.wallet.wallet4.background,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        text = stringResource(R.string.new_text).uppercase(Locale.ENGLISH),
+        style = PeraTheme.typography.caption.sansMedium,
+        color = PeraTheme.colors.wallet.wallet4.icon
+    )
+}
+
 @PeraPreviewLightDark
 @Composable
 private fun GroupChoiceWidgetPreview() {
@@ -106,7 +111,7 @@ private fun GroupChoiceWidgetPreview() {
         description = stringResource(id = R.string.import_an_existing),
         iconContentDescription = stringResource(id = R.string.import_an_existing),
         icon = ImageVector.vectorResource(R.drawable.ic_key),
-        showNewBadge = true,
+        badge = { GroupChoiceNewBadge() },
         onClick = {},
     )
 }

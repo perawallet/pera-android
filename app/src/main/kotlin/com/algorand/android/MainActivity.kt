@@ -356,7 +356,7 @@ class MainActivity :
     private val transactionManagerResultObserver = Observer<Event<TransactionManagerResult>?> {
         it?.consume()?.let { result ->
             when (result) {
-                is TransactionManagerResult.Success -> {
+                is TransactionManagerResult.Success.SignedTransaction -> {
                     hideLedgerLoadingDialog()
                     val signedTransactionDetail = result.signedTransactionDetail
                     if (signedTransactionDetail is SignedTransactionDetail.AssetOperation) {
@@ -390,7 +390,7 @@ class MainActivity :
                     navToLedgerConnectionIssueBottomSheet()
                 }
 
-                is TransactionManagerResult.OnTransactionRequestSigned -> {
+                is TransactionManagerResult.Success.TransactionRequestSigned -> {
                     hideProgress()
                     hideLedgerLoadingDialog()
                     TODO("Implement this")

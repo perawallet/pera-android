@@ -108,9 +108,6 @@ class AccountPreviewProcessor @Inject constructor(
         rendererType: AmountRenderer.RenderType
     ): List<BaseAccountListItem> {
         return sortAccountsBySortingPreference.sortAccountLites(accountLites)
-            .filter { (_, accountLite) ->
-                shouldIncludeAccount(accountLite.cachedInfo?.type, accountLite.registrationType)
-            }
             .map { (_, accountLite) ->
                 if (accountLite.cachedInfo != null) {
                     getAccountSuccessItem(accountLite, accountLite.cachedInfo, rendererType)
@@ -124,19 +121,21 @@ class AccountPreviewProcessor @Inject constructor(
         val localAccounts = getLocalAccounts()
         val customInfos = getAccountsCustomInfo(localAccounts.map { it.algoAddress })
         val accountErrorItems = localAccounts
-            .mapNotNull { localAccount ->
+            .map { localAccount ->
+                val accountType = getLocalAccountType(localAccount)
                 val registrationType = getAccountRegistrationType(localAccount)
-                if (!shouldIncludeAccount(accountType = null, registrationType)) {
-                    return@mapNotNull null
-                }
                 val customInfo = customInfos[localAccount.algoAddress]
-                val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = null)
+                val displayName = getAccountDisplayName(
+                    address = localAccount.algoAddress,
+                    name = customInfo?.customName,
+                    type = accountType
+                )
                 BaseAccountListItem.AccountErrorItem(
                     address = localAccount.algoAddress,
                     primaryDisplayName = displayName.primaryDisplayName,
                     secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
                     accountIconDrawablePreview = getAccountIconDrawablePreviewByType(registrationType),
-                    canCopyable = registrationType != AccountRegistrationType.NoAuth
+                    canCopyable = accountType != AccountType.NoAuth
                 )
             }
 
@@ -204,12 +203,13 @@ class AccountPreviewProcessor @Inject constructor(
         )
     }
 
-    private fun shouldIncludeAccount(
-        accountType: AccountType?,
-        registrationType: AccountRegistrationType
-    ): Boolean {
-        val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
-        if (isJointAccountEnabled) return true
-        return accountType != AccountType.Joint && registrationType != AccountRegistrationType.Joint
+    private fun getLocalAccountType(localAccount: LocalAccount): AccountType {
+        return when (localAccount) {
+            is LocalAccount.Algo25 -> AccountType.Algo25
+            is LocalAccount.LedgerBle -> AccountType.LedgerBle
+            is LocalAccount.NoAuth -> AccountType.NoAuth
+            is LocalAccount.HdKey -> AccountType.HdKey
+            is LocalAccount.Joint -> AccountType.Joint
+        }
     }
 }

@@ -15,7 +15,7 @@ package com.algorand.wallet.inbox.domain.usecase
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.model.InboxSearchInput
-import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -27,7 +27,7 @@ import org.junit.Test
 
 internal class FetchInboxMessagesUseCaseTest {
 
-    private val repository: JointAccountRepository = mockk()
+    private val repository: InboxApiRepository = mockk()
     private val sut = FetchInboxMessagesUseCase(repository)
 
     @Test

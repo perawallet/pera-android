@@ -18,13 +18,10 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.repository.ContactRepository
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -34,28 +31,13 @@ internal class CreateJointAccountParticipantItemUseCaseTest {
 
     private val getAccountDisplayName: GetAccountDisplayName = mockk()
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview = mockk()
-    private val getLocalAccounts: GetLocalAccounts = mockk()
     private val contactRepository: ContactRepository = mockk()
 
     private val sut = CreateJointAccountParticipantItemUseCase(
         getAccountDisplayName = getAccountDisplayName,
         getAccountIconDrawablePreview = getAccountIconDrawablePreview,
-        getLocalAccounts = getLocalAccounts,
         contactRepository = contactRepository
     )
-
-    @Test
-    fun `EXPECT local account addresses WHEN getLocalAccountAddresses called`() = runTest {
-        val localAccounts = listOf(
-            mockk<LocalAccount> { every { algoAddress } returns "ADDR1" },
-            mockk<LocalAccount> { every { algoAddress } returns "ADDR2" }
-        )
-        coEvery { getLocalAccounts() } returns localAccounts
-
-        val result = sut.getLocalAccountAddresses()
-
-        assertEquals(listOf("ADDR1", "ADDR2"), result)
-    }
 
     @Test
     fun `EXPECT participant item with isLocalAccount true WHEN address is local`() = runTest {
@@ -135,31 +117,6 @@ internal class CreateJointAccountParticipantItemUseCaseTest {
         val result = sut(TEST_ADDRESS, emptyList())
 
         assertNull(result.imageUri)
-    }
-
-    @Test
-    fun `EXPECT multiple participant items WHEN createParticipantItems called`() = runTest {
-        val addresses = listOf("ADDR1", "ADDR2", "ADDR3")
-        val localAccounts = listOf(
-            mockk<LocalAccount> { every { algoAddress } returns "ADDR1" }
-        )
-        val displayName = mockk<AccountDisplayName> {
-            every { primaryDisplayName } returns "Name"
-            every { secondaryDisplayName } returns "Secondary"
-        }
-        val iconPreview = mockk<AccountIconDrawablePreview>()
-
-        coEvery { getLocalAccounts() } returns localAccounts
-        coEvery { getAccountDisplayName(any<String>()) } returns displayName
-        coEvery { getAccountIconDrawablePreview(any<String>()) } returns iconPreview
-        coEvery { contactRepository.getContactByAddress(any()) } returns null
-
-        val result = sut.createParticipantItems(addresses)
-
-        assertEquals(3, result.size)
-        assertTrue(result[0].isLocalAccount)
-        assertFalse(result[1].isLocalAccount)
-        assertFalse(result[2].isLocalAccount)
     }
 
     private companion object {

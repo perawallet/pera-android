@@ -114,7 +114,7 @@ internal class JointAccountDetailViewModelTest {
     }
 
     @Test
-    fun `EXPECT participantAddresses exposed via Content state`() = runTest {
+    fun `EXPECT participants exposed via Content state`() = runTest {
         val jointAccount = createJointAccount()
         setupLocalAccountMocks(jointAccount, showActions = false)
         val savedStateHandle = createSavedStateHandle()
@@ -123,7 +123,8 @@ internal class JointAccountDetailViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.state.value as ViewState.Content
-        assertEquals(DEFAULT_PARTICIPANTS, state.participantAddresses)
+        val participantAddresses = state.participants.map { it.address }
+        assertEquals(DEFAULT_PARTICIPANTS, participantAddresses)
     }
 
     // endregion
@@ -410,9 +411,18 @@ internal class JointAccountDetailViewModelTest {
         accountAddressShortened = "JOINT...123",
         numberOfAccounts = participantAddresses.size,
         threshold = threshold,
-        participants = emptyList(),
-        participantAddresses = participantAddresses,
+        participants = participantAddresses.map { createParticipantItem(it) },
         showActions = showActions
+    )
+
+    private fun createParticipantItem(address: String) = JointAccountParticipantItem(
+        address = address,
+        displayName = address,
+        secondaryDisplayName = "${address.take(4)}...${address.takeLast(4)}",
+        iconDrawablePreview = mockk(),
+        imageUri = null,
+        isLocalAccount = false,
+        isContact = false
     )
 
     private fun setupLocalAccountMocks(jointAccount: LocalAccount.Joint, showActions: Boolean) {

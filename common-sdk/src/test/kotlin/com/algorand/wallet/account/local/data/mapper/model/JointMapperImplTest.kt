@@ -36,15 +36,15 @@ internal class JointMapperImplTest {
     }
 
     @Test
-    fun `EXPECT participants sorted by index WHEN invoke is called with unordered participants`() {
-        val unorderedParticipants = listOf(
+    fun `EXPECT participants sorted by index WHEN invoke is called`() {
+        val unsortedParticipants = listOf(
             JointParticipantEntity(TEST_ADDRESS, 2, "ADDR3"),
             JointParticipantEntity(TEST_ADDRESS, 0, "ADDR1"),
             JointParticipantEntity(TEST_ADDRESS, 1, "ADDR2")
         )
         val jointWithParticipants = JointWithParticipants(
-            joint = TEST_ENTITY,
-            participants = unorderedParticipants
+            joint = createTestJointEntity(),
+            participants = unsortedParticipants
         )
 
         val localAccount = mapper(jointWithParticipants)
@@ -53,9 +53,9 @@ internal class JointMapperImplTest {
     }
 
     @Test
-    fun `EXPECT empty list WHEN participant list is empty`() {
+    fun `EXPECT empty list WHEN participants is empty`() {
         val jointWithParticipants = JointWithParticipants(
-            joint = TEST_ENTITY,
+            joint = createTestJointEntity(),
             participants = emptyList()
         )
 
@@ -65,7 +65,7 @@ internal class JointMapperImplTest {
     }
 
     @Test
-    fun `EXPECT single address list WHEN participant list has one element`() {
+    fun `EXPECT single address WHEN single participant provided`() {
         val singleAddress = "SINGLE_ADDR"
         val jointWithParticipants = JointWithParticipants(
             joint = JointEntity(
@@ -84,8 +84,16 @@ internal class JointMapperImplTest {
     }
 
     private fun createTestJointWithParticipants() = JointWithParticipants(
-        joint = TEST_ENTITY,
-        participants = TEST_PARTICIPANT_ENTITIES
+        joint = createTestJointEntity(),
+        participants = TEST_PARTICIPANT_ADDRESSES.mapIndexed { index, address ->
+            JointParticipantEntity(TEST_ADDRESS, index, address)
+        }
+    )
+
+    private fun createTestJointEntity() = JointEntity(
+        algoAddress = TEST_ADDRESS,
+        threshold = TEST_THRESHOLD,
+        version = TEST_VERSION
     )
 
     private companion object {
@@ -93,17 +101,5 @@ internal class JointMapperImplTest {
         val TEST_PARTICIPANT_ADDRESSES = listOf("ADDR1", "ADDR2", "ADDR3")
         const val TEST_THRESHOLD = 2
         const val TEST_VERSION = 1
-
-        val TEST_ENTITY = JointEntity(
-            algoAddress = TEST_ADDRESS,
-            threshold = TEST_THRESHOLD,
-            version = TEST_VERSION
-        )
-
-        val TEST_PARTICIPANT_ENTITIES = listOf(
-            JointParticipantEntity(TEST_ADDRESS, 0, "ADDR1"),
-            JointParticipantEntity(TEST_ADDRESS, 1, "ADDR2"),
-            JointParticipantEntity(TEST_ADDRESS, 2, "ADDR3")
-        )
     }
 }

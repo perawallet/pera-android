@@ -46,7 +46,7 @@ internal class JointEntityMapperImplTest {
     }
 
     @Test
-    fun `EXPECT empty participant entities WHEN participant addresses is empty`() {
+    fun `EXPECT empty participant list WHEN participant addresses is empty`() {
         val localAccount = LocalAccount.Joint(
             algoAddress = TEST_ADDRESS,
             participantAddresses = emptyList(),
@@ -61,7 +61,7 @@ internal class JointEntityMapperImplTest {
     }
 
     @Test
-    fun `EXPECT single participant entity WHEN participant addresses has one element`() {
+    fun `EXPECT single participant entity WHEN single participant address provided`() {
         val singleAddress = "SINGLE_ADDR"
         val localAccount = LocalAccount.Joint(
             algoAddress = TEST_ADDRESS,

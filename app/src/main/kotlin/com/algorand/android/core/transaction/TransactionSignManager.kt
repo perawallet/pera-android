@@ -54,9 +54,6 @@ import com.algorand.android.utils.minBalancePerAssetAsBigInteger
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.toBytesArray
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
-import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
-import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -67,15 +64,12 @@ import java.net.ConnectException
 import java.net.SocketException
 import javax.inject.Inject
 
-@Suppress("LongParameterList")
 class TransactionSignManager @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
     private val transactionsRepository: TransactionsRepository,
     private val ledgerBleOperationManager: LedgerBleOperationManager,
     private val signHelper: TransactionSignSigningHelper,
-    private val getAccountAlgoBalance: GetAccountAlgoBalance,
-    private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount,
-    private val getAccountMinBalance: GetAccountMinBalance,
+    private val accountBalanceProvider: AccountBalanceProvider,
     private val localAccountSigningHelper: LocalAccountSigningHelper,
     private val jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
     private val getLocalAccount: GetLocalAccount
@@ -488,12 +482,12 @@ class TransactionSignManager @Inject constructor(
         return if (assetId != ALGO_ID) {
             false
         } else {
-            getAccountAlgoBalance(publicKey) == amount
+            accountBalanceProvider.getAlgoBalance(publicKey) == amount
         }
     }
 
     private suspend fun shouldCreateAssetRemoveTransaction(publicKey: String, assetId: Long): Boolean {
-        val assetHoldingAmount = getAccountAssetHoldingAmount(publicKey, assetId)
+        val assetHoldingAmount = accountBalanceProvider.getAssetHoldingAmount(publicKey, assetId)
         return assetHoldingAmount != null && assetHoldingAmount == BigInteger.ZERO
     }
 
@@ -511,7 +505,7 @@ class TransactionSignManager @Inject constructor(
         }
 
         // every asset addition increases min balance by $MIN_BALANCE_PER_ASSET
-        var minBalance = getAccountMinBalance(senderAccountAddress)
+        var minBalance = accountBalanceProvider.getMinBalance(senderAccountAddress)
         when (this) {
             is TransactionSignData.AddAsset ->
                 minBalance += minBalancePerAssetAsBigInteger
@@ -525,7 +519,7 @@ class TransactionSignManager @Inject constructor(
             }
         }
 
-        val balance = getAccountAlgoBalance(senderAccountAddress) ?: run {
+        val balance = accountBalanceProvider.getAlgoBalance(senderAccountAddress) ?: run {
             setSignFailed(Defined(AnnotatedString(stringResId = R.string.minimum_balance_required)))
             return true
         }

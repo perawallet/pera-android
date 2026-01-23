@@ -12,6 +12,7 @@
 
 ### Compilation & Quality
 - **Code must compile** - Always verify code compiles before submitting
+- **Never use @Suppress without approval** - Always ask user before adding any `@Suppress` annotation
 - **Run linting before compilation**:
   1. `./gradlew :app:detektProdDebug --no-daemon 2>&1 | grep -E "(violation|error)"`
   2. `./gradlew :app:ktlintCheck --no-daemon 2>&1 | grep -E "(error|warning|FAILED|BUILD SUCCESS)"`

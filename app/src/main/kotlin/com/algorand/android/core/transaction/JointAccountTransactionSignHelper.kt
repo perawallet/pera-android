@@ -12,8 +12,6 @@
 
 package com.algorand.android.core.transaction
 
-import com.algorand.algosdk.transaction.SignedTransaction
-import com.algorand.algosdk.util.Encoder
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.utils.extensions.encodeBase64
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
@@ -132,22 +130,11 @@ class JointAccountTransactionSignHelper @Inject constructor(
     }
 
     private suspend fun signWithAlgo25Account(transactionBytes: ByteArray, signerAddress: String): ByteArray? {
-        val signedTransaction = localAccountSigningHelper.signWithAlgo25(transactionBytes, signerAddress)
-            ?.takeIf { it.isNotEmpty() } ?: return null
-        return extractSignatureFromSignedTransaction(signedTransaction)
+        return localAccountSigningHelper.signWithAlgo25AccountReturnSignature(transactionBytes, signerAddress)
     }
 
     private suspend fun signWithHdKeyAccount(transactionBytes: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
-        return localAccountSigningHelper.signWithHdKey(transactionBytes, hdKey)
-    }
-
-    // TODO: Move this to AlgoSdk module
-    private fun extractSignatureFromSignedTransaction(signedTransactionBytes: ByteArray): ByteArray? {
-        if (signedTransactionBytes.isEmpty()) return null
-        return runCatching {
-            val signedTransaction = Encoder.decodeFromMsgPack(signedTransactionBytes, SignedTransaction::class.java)
-            signedTransaction.sig?.bytes?.takeIf { it.isNotEmpty() }
-        }.getOrNull()
+        return localAccountSigningHelper.signWithHdKeyAccountReturnSignature(transactionBytes, hdKey)
     }
 
     private data class PreparedJointAccountData(

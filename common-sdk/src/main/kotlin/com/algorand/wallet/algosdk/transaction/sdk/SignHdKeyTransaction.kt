@@ -21,7 +21,7 @@ interface SignHdKeyTransaction {
         key: Int
     ): ByteArray?
 
-    fun signTransactionSignatureOnly(
+    fun signTransactionReturnSignature(
         transactionByteArray: ByteArray,
         seed: ByteArray,
         account: Int,

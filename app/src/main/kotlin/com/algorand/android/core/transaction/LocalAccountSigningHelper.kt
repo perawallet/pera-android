@@ -12,6 +12,7 @@
 
 package com.algorand.android.core.transaction
 
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
@@ -26,7 +27,7 @@ class LocalAccountSigningHelper @Inject constructor(
     private val signHdKeyTransaction: SignHdKeyTransaction
 ) {
 
-    suspend fun signWithAlgo25(transactionData: ByteArray, senderAddress: String): ByteArray? {
+    suspend fun signWithAlgo25Account(transactionData: ByteArray, senderAddress: String): ByteArray? {
         val secretKey = getAlgo25SecretKey(senderAddress) ?: return null
         return try {
             runCatching { transactionData.signTx(secretKey) }.getOrNull()
@@ -35,10 +36,37 @@ class LocalAccountSigningHelper @Inject constructor(
         }
     }
 
-    suspend fun signWithHdKey(transactionData: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
+    suspend fun signWithAlgo25AccountReturnSignature(
+        transactionData: ByteArray,
+        senderAddress: String
+    ): ByteArray? {
+        val secretKey = getAlgo25SecretKey(senderAddress) ?: return null
+        return try {
+            runCatching { Sdk.signTransactionReturnSignature(secretKey, transactionData) }.getOrNull()
+        } finally {
+            secretKey.clearFromMemory()
+        }
+    }
+
+    suspend fun signWithHdKeyAccount(transactionData: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
         val seed = getHdSeed(seedId = hdKey.seedId) ?: return null
         return try {
             signHdKeyTransaction.signTransaction(
+                transactionData,
+                seed,
+                hdKey.account,
+                hdKey.change,
+                hdKey.keyIndex
+            )
+        } finally {
+            seed.clearFromMemory()
+        }
+    }
+
+    suspend fun signWithHdKeyAccountReturnSignature(transactionData: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
+        val seed = getHdSeed(seedId = hdKey.seedId) ?: return null
+        return try {
+            signHdKeyTransaction.signTransactionReturnSignature(
                 transactionData,
                 seed,
                 hdKey.account,

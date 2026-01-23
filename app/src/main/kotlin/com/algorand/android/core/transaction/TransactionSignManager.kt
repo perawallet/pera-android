@@ -244,7 +244,7 @@ class TransactionSignManager @Inject constructor(
         when (signer) {
             is TransactionSigner.Algo25 -> {
                 val transactionBytes = transactionByteArray ?: return handleSignError()
-                val signedTx = localAccountSigningHelper.signWithAlgo25(transactionBytes, signer.address)
+                val signedTx = localAccountSigningHelper.signWithAlgo25Account(transactionBytes, signer.address)
                 if (signedTx == null) {
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
                     return
@@ -256,7 +256,7 @@ class TransactionSignManager @Inject constructor(
                 val transactionBytes = transactionByteArray ?: return handleSignError()
                 val hdKey = getLocalAccount(signer.address)
                     as? LocalAccount.HdKey ?: return handleSignError()
-                val signedTx = localAccountSigningHelper.signWithHdKey(transactionBytes, hdKey)
+                val signedTx = localAccountSigningHelper.signWithHdKeyAccount(transactionBytes, hdKey)
                     ?: return handleSignError()
                 checkAndCacheSignedTransaction(signedTx)
             }

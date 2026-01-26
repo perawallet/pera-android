@@ -22,7 +22,9 @@ data class JointSignRequest(
     val rawTransactionLists: List<List<String>>?,
     val transactionLists: List<JointSignRequestTransactionList>?,
     val expectedExpireDatetime: String?,
-    val status: SignRequestStatus?
+    val status: SignRequestStatus?,
+    val creationDatetime: String?,
+    val failReasonDisplay: String?
 )
 
 data class JointSignRequestTransactionList(

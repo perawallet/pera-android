@@ -31,7 +31,11 @@ internal data class JointSignRequestResponse(
     @SerializedName("expected_expire_datetime")
     val expectedExpireDatetime: String?,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
+    @SerializedName("creation_datetime")
+    val creationDatetime: String?,
+    @SerializedName("fail_reason_display")
+    val failReasonDisplay: String?
 )
 
 internal data class SignRequestTransactionListResponse(

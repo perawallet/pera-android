@@ -215,7 +215,9 @@ internal class HasInboxItemsForAddressUseCaseTest {
         rawTransactionLists = null,
         transactionLists = null,
         expectedExpireDatetime = null,
-        status = null
+        status = null,
+        creationDatetime = null,
+        failReasonDisplay = null
     )
 
     private companion object {

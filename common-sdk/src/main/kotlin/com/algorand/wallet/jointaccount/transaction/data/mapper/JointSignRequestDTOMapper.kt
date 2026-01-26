@@ -39,7 +39,9 @@ internal class JointSignRequestMapper @Inject constructor(
                     mapToJointSignRequestTransactionList(transactionList)
                 },
                 expectedExpireDatetime = it.expectedExpireDatetime,
-                status = SignRequestStatus.fromValue(it.status)
+                status = SignRequestStatus.fromValue(it.status),
+                creationDatetime = it.creationDatetime,
+                failReasonDisplay = it.failReasonDisplay
             )
         }
     }

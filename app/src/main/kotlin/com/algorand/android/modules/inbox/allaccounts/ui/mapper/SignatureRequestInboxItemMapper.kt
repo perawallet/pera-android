@@ -15,10 +15,8 @@ package com.algorand.android.modules.inbox.allaccounts.ui.mapper
 import android.content.res.Resources
 import android.text.format.DateUtils
 import com.algorand.android.R
-import com.algorand.android.models.Result
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequestInboxItem
-import com.algorand.android.modules.transaction.domain.GetTransactionParams
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.getRelativeTimeDifference
 import com.algorand.android.utils.parseFormattedDate
@@ -29,19 +27,13 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class SignatureRequestInboxItemMapper @Inject constructor(
-    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getTransactionParams: GetTransactionParams
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
-
-    suspend fun getCurrentBlockNumber(): Long? {
-        return (getTransactionParams() as? Result.Success)?.data?.lastRound
-    }
 
     suspend fun mapToSignatureRequestInboxItem(
         jointSignRequestDTO: JointSignRequest,
         resources: Resources,
         lastOpenedTime: ZonedDateTime?,
-        currentBlockNumber: Long?,
         localAccountAddresses: List<String>
     ): SignatureRequestInboxItem? {
         val requiredData = extractRequiredData(jointSignRequestDTO) ?: return null
@@ -58,7 +50,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
                 R.string.signature_request_description,
                 requiredData.jointAccountAddress.toShortenedAddress()
             ),
-            timeAgo = getTimeAgo(jointSignRequestDTO, resources, currentBlockNumber),
+            timeAgo = getTimeAgo(jointSignRequestDTO, resources),
             signedCount = getSignedCount(jointSignRequestDTO),
             totalCount = requiredData.threshold,
             timeLeft = if (isExpired) "0m" else getTimeLeft(jointSignRequestDTO),
@@ -127,30 +119,15 @@ class SignatureRequestInboxItemMapper @Inject constructor(
 
     private fun getTimeAgo(
         dto: JointSignRequest,
-        resources: Resources,
-        currentBlockNumber: Long?
+        resources: Resources
     ): String {
-        val transactionList = dto.transactionLists?.firstOrNull()
-        val firstValidBlock = transactionList?.firstValidBlock?.toLongOrNull()
-
-        if (firstValidBlock != null && currentBlockNumber != null) {
-            val blocksSinceCreation = currentBlockNumber - firstValidBlock
-            val timeDifferenceMillis = blocksSinceCreation * BLOCK_TIME_MILLIS
-
-            if (timeDifferenceMillis < 0) return resources.getString(R.string.just_now)
-
-            val estimatedCreationDateTime = ZonedDateTime.now().minusSeconds(timeDifferenceMillis / MILLIS_PER_SECOND)
-            return getRelativeTimeDifference(resources, estimatedCreationDateTime, timeDifferenceMillis)
-        }
-
-        val expireDateTime = getExpireDateTime(dto) ?: return ""
-        val estimatedCreationDateTime = expireDateTime.minusMinutes(VALIDITY_WINDOW_MINUTES)
+        val creationDateTime = getCreationDateTime(dto)
         val timeDifference = ZonedDateTime.now().toInstant().toEpochMilli() -
-            estimatedCreationDateTime.toInstant().toEpochMilli()
+            creationDateTime.toInstant().toEpochMilli()
 
         if (timeDifference < 0) return resources.getString(R.string.just_now)
 
-        return getRelativeTimeDifference(resources, estimatedCreationDateTime, timeDifference)
+        return getRelativeTimeDifference(resources, creationDateTime, timeDifference)
     }
 
     private fun getTimeLeft(dto: JointSignRequest): String? {
@@ -178,10 +155,8 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         return expireDatetimeString.parseFormattedDate(getAlgorandMobileDateFormatter())
     }
 
-    // TODO: This returns the joint account creation time, not the sign request creation time.
-    // The sign request DTO doesn't have a creation timestamp. Consider adding one to the API.
     private fun getCreationDateTime(dto: JointSignRequest): ZonedDateTime {
-        val creationDatetimeString = dto.jointAccount?.creationDatetime ?: return ZonedDateTime.now()
+        val creationDatetimeString = dto.creationDatetime ?: return ZonedDateTime.now()
         return creationDatetimeString.parseFormattedDate(getAlgorandMobileDateFormatter()) ?: ZonedDateTime.now()
     }
 
@@ -197,9 +172,6 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     )
 
     private companion object {
-        const val BLOCK_TIME_MILLIS = 3500L
-        const val MILLIS_PER_SECOND = 1000L
-        const val VALIDITY_WINDOW_MINUTES = 50L
         const val THIRTY_SECONDS_MILLIS = 30_000L
     }
 }

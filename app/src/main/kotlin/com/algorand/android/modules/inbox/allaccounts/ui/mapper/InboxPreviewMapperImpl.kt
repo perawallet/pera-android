@@ -82,14 +82,12 @@ class InboxPreviewMapperImpl @Inject constructor(
         localAccountAddresses: List<String>
     ): List<SignatureRequestInboxItem> {
         val signRequests = inboxMessages?.jointAccountSignRequests ?: return emptyList()
-        val currentBlockNumber = signatureRequestInboxItemMapper.getCurrentBlockNumber()
 
         return signRequests.mapNotNull { signRequest ->
             signatureRequestInboxItemMapper.mapToSignatureRequestInboxItem(
                 signRequest,
                 context.resources,
                 lastOpenedTime,
-                currentBlockNumber,
                 localAccountAddresses
             )
         }

@@ -14,6 +14,8 @@ package com.algorand.android.modules.inbox.allaccounts.di
 
 import com.algorand.android.modules.inbox.allaccounts.ui.mapper.InboxPreviewMapper
 import com.algorand.android.modules.inbox.allaccounts.ui.mapper.InboxPreviewMapperImpl
+import com.algorand.android.modules.inbox.data.local.InboxLastOpenedTimeLocalSource
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,8 +25,19 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object InboxRepositoryModule {
 
+    private const val INBOX_LAST_OPENED_TIME_KEY = "inbox_last_opened_time"
+
     @Provides
     fun provideInboxPreviewMapper(
         inboxPreviewMapperImpl: InboxPreviewMapperImpl
     ): InboxPreviewMapper = inboxPreviewMapperImpl
+
+    @Provides
+    fun provideInboxLastOpenedTimeLocalSource(
+        persistentCacheProvider: PersistentCacheProvider
+    ): InboxLastOpenedTimeLocalSource {
+        return InboxLastOpenedTimeLocalSource(
+            persistentCacheProvider.getPersistentCache(String::class.java, INBOX_LAST_OPENED_TIME_KEY)
+        )
+    }
 }

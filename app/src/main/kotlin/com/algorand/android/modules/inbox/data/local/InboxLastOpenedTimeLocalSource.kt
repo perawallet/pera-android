@@ -13,10 +13,9 @@
 package com.algorand.android.modules.inbox.data.local
 
 import com.algorand.wallet.foundation.cache.PersistentCache
-import javax.inject.Inject
 
 // ISO-8601 ISO_DATE_TIME
-class InboxLastOpenedTimeLocalSource @Inject constructor(
+class InboxLastOpenedTimeLocalSource(
     private val cache: PersistentCache<String>
 ) {
 

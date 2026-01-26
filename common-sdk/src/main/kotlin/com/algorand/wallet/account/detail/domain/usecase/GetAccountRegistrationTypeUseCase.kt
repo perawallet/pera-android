@@ -14,19 +14,20 @@ package com.algorand.wallet.account.detail.domain.usecase
 
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import javax.inject.Inject
 
 internal class GetAccountRegistrationTypeUseCase @Inject constructor(
-    private val getLocalAccounts: GetLocalAccounts
+    private val getLocalAccount: GetLocalAccount
 ) : GetAccountRegistrationType {
 
     override suspend fun invoke(address: String): AccountRegistrationType? {
-        return when (getLocalAccounts().firstOrNull { it.algoAddress == address }) {
+        return when (getLocalAccount(address)) {
             is LocalAccount.Algo25 -> AccountRegistrationType.Algo25
             is LocalAccount.LedgerBle -> AccountRegistrationType.LedgerBle
             is LocalAccount.NoAuth -> AccountRegistrationType.NoAuth
             is LocalAccount.HdKey -> AccountRegistrationType.HdKey
+            is LocalAccount.Joint -> AccountRegistrationType.Joint
             else -> null
         }
     }
@@ -37,6 +38,7 @@ internal class GetAccountRegistrationTypeUseCase @Inject constructor(
             is LocalAccount.LedgerBle -> AccountRegistrationType.LedgerBle
             is LocalAccount.NoAuth -> AccountRegistrationType.NoAuth
             is LocalAccount.HdKey -> AccountRegistrationType.HdKey
+            is LocalAccount.Joint -> AccountRegistrationType.Joint
         }
     }
 }

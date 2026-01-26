@@ -19,11 +19,6 @@ import com.algorand.wallet.account.core.domain.model.TransactionSigner.SignerNot
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Algo25
-import com.algorand.wallet.account.detail.domain.model.AccountType.LedgerBle
-import com.algorand.wallet.account.detail.domain.model.AccountType.NoAuth
-import com.algorand.wallet.account.detail.domain.model.AccountType.Rekeyed
-import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
@@ -38,12 +33,13 @@ internal class GetTransactionSignerUseCase @Inject constructor(
     override suspend fun invoke(address: String): TransactionSigner {
         val accountDetail = getAccountDetail(address)
         return when (accountDetail.accountType) {
-            Algo25 -> getAlgo25Signer(address)
+            AccountType.Algo25 -> getAlgo25Signer(address)
             AccountType.HdKey -> getHdKeySigner(address)
-            LedgerBle -> getLedgerSigner(address)
-            NoAuth -> SignerNotFound.NoAuth(address)
-            Rekeyed -> SignerNotFound.NoAuth(address)
-            RekeyedAuth -> getRekeyedAuthSigner(accountDetail, address)
+            AccountType.LedgerBle -> getLedgerSigner(address)
+            AccountType.Joint -> TransactionSigner.Joint(address)
+            AccountType.NoAuth -> SignerNotFound.NoAuth(address)
+            AccountType.Rekeyed -> SignerNotFound.NoAuth(address)
+            AccountType.RekeyedAuth -> getRekeyedAuthSigner(accountDetail, address)
             null -> AccountNotFound(address)
         }
     }
@@ -64,6 +60,7 @@ internal class GetTransactionSignerUseCase @Inject constructor(
             AccountRegistrationType.Algo25 -> getAlgo25Signer(authAddress)
             AccountRegistrationType.HdKey -> getHdKeySigner(authAddress)
             AccountRegistrationType.LedgerBle -> getLedgerSigner(authAddress)
+            AccountRegistrationType.Joint -> TransactionSigner.Joint(authAddress)
             AccountRegistrationType.NoAuth -> SignerNotFound.AuthAccountIsNoAuth(authAddress)
             null -> AccountNotFound(authAddress)
         }

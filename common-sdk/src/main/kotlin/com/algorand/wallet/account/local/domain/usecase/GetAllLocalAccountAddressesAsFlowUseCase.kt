@@ -14,6 +14,7 @@ package com.algorand.wallet.account.local.domain.usecase
 
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +25,8 @@ internal class GetAllLocalAccountAddressesAsFlowUseCase @Inject constructor(
     private val hdKeyAccountRepository: HdKeyAccountRepository,
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
-    private val noAuthAccountRepository: NoAuthAccountRepository
+    private val noAuthAccountRepository: NoAuthAccountRepository,
+    private val jointAccountRepository: JointAccountRepository
 ) : GetAllLocalAccountAddressesAsFlow {
 
     override fun invoke(): Flow<List<String>> {
@@ -32,13 +34,15 @@ internal class GetAllLocalAccountAddressesAsFlowUseCase @Inject constructor(
             hdKeyAccountRepository.getAllAsFlow(),
             algo25AccountRepository.getAllAsFlow(),
             ledgerBleAccountRepository.getAllAsFlow(),
-            noAuthAccountRepository.getAllAsFlow()
-        ) { hdKeyAccounts, algo25Accounts, ledgerBleAccounts, noAuthAccounts ->
+            noAuthAccountRepository.getAllAsFlow(),
+            jointAccountRepository.getAllAsFlow()
+        ) { hdKeyAccounts, algo25Accounts, ledgerBleAccounts, noAuthAccounts, jointAccounts ->
             buildList {
                 addAll(hdKeyAccounts.map { it.algoAddress })
                 addAll(algo25Accounts.map { it.algoAddress })
                 addAll(ledgerBleAccounts.map { it.algoAddress })
                 addAll(noAuthAccounts.map { it.algoAddress })
+                addAll(jointAccounts.map { it.algoAddress })
             }
         }
     }

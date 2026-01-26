@@ -32,6 +32,9 @@ sealed interface TransactionSigner : Parcelable {
     @Parcelize
     data class HdKey(override val address: String) : TransactionSigner
 
+    @Parcelize
+    data class Joint(override val address: String) : TransactionSigner
+
     sealed interface SignerNotFound : TransactionSigner {
 
         @Parcelize

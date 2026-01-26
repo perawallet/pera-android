@@ -131,6 +131,12 @@ sealed interface DeepLink {
 
     data class InternalBrowser(val url: String) : DeepLink
 
+    /**
+     * Example:
+     *  - perawallet://joint-account-import?address=JOINT_ACCOUNT_ADDRESS
+     */
+    data class JointAccountImport(val address: String?) : DeepLink
+
     data class Undefined(val url: String?) : DeepLink
 
     data object Home : DeepLink

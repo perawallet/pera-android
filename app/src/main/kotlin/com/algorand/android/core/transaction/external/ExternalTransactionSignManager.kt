@@ -185,6 +185,10 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                 is TransactionSigner.LedgerBle -> {
                     sendTransactionWithLedger(transactionSigner, currentTransactionIndex, totalTransactionCount)
                 }
+
+                is TransactionSigner.Joint -> {
+                    TODO("Handle Joint Account")
+                }
             }
         }
     }

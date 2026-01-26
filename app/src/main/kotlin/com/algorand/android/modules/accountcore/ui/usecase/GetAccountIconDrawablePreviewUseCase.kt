@@ -64,6 +64,10 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
             AccountType.Rekeyed -> getRekeyedDrawable()
             AccountType.RekeyedAuth -> getRekeyedAuthDrawable(address, rekeyAuthAddress)
             null -> AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
+            }
         }
     }
 

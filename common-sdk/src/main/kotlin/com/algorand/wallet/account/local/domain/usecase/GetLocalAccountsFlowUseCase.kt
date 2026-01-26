@@ -15,6 +15,7 @@ package com.algorand.wallet.account.local.domain.usecase
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +26,8 @@ internal class GetLocalAccountsFlowUseCase @Inject constructor(
     private val hdKeyAccountRepository: HdKeyAccountRepository,
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
-    private val noAuthAccountRepository: NoAuthAccountRepository
+    private val noAuthAccountRepository: NoAuthAccountRepository,
+    private val jointAccountRepository: JointAccountRepository
 ) : GetLocalAccountsFlow {
 
     override fun invoke(): Flow<List<LocalAccount>> {
@@ -33,9 +35,10 @@ internal class GetLocalAccountsFlowUseCase @Inject constructor(
             hdKeyAccountRepository.getAllAsFlow(),
             algo25AccountRepository.getAllAsFlow(),
             ledgerBleAccountRepository.getAllAsFlow(),
-            noAuthAccountRepository.getAllAsFlow()
-        ) { hdKeyAccounts, algo25Accounts, ledgerBleAccounts, noAuthAccounts ->
-            hdKeyAccounts + algo25Accounts + ledgerBleAccounts + noAuthAccounts
+            noAuthAccountRepository.getAllAsFlow(),
+            jointAccountRepository.getAllAsFlow()
+        ) { hdKeyAccounts, algo25Accounts, ledgerBleAccounts, noAuthAccounts, jointAccounts ->
+            hdKeyAccounts + algo25Accounts + ledgerBleAccounts + noAuthAccounts + jointAccounts
         }
     }
 }

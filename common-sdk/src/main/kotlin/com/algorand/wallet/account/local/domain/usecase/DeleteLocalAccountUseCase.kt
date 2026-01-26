@@ -17,6 +17,7 @@ import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationT
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import javax.inject.Inject
@@ -26,6 +27,7 @@ internal class DeleteLocalAccountUseCase @Inject constructor(
     private val algo25AccountRepository: Algo25AccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
+    private val jointAccountRepository: JointAccountRepository,
     private val getAccountRegistrationType: GetAccountRegistrationType,
     private val hdSeedRepository: HdSeedRepository
 ) : DeleteLocalAccount {
@@ -37,6 +39,7 @@ internal class DeleteLocalAccountUseCase @Inject constructor(
             AccountRegistrationType.HdKey -> deleteHdKeyAccount(address)
             AccountRegistrationType.LedgerBle -> ledgerBleAccountRepository.deleteAccount(address)
             AccountRegistrationType.NoAuth -> noAuthAccountRepository.deleteAccount(address)
+            AccountRegistrationType.Joint -> jointAccountRepository.deleteAccount(address)
             null -> Unit
         }
     }

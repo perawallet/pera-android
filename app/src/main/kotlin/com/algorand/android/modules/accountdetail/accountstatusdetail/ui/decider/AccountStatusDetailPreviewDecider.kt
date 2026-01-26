@@ -32,12 +32,34 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
 
     fun decideTitleString(accountType: AccountType?): String {
         val typeResId = when (accountType) {
-            AccountType.LedgerBle -> R.string.ledger
-            AccountType.NoAuth -> R.string.watch
-            AccountType.Algo25 -> R.string.standard
-            AccountType.RekeyedAuth -> R.string.rekeyed
-            AccountType.Rekeyed, null -> R.string.no_auth
-            AccountType.HdKey -> R.string.wallet_address
+            AccountType.LedgerBle -> {
+                R.string.ledger
+            }
+
+            AccountType.NoAuth -> {
+                R.string.watch
+            }
+
+            AccountType.Algo25 -> {
+                R.string.standard
+            }
+
+            AccountType.RekeyedAuth -> {
+                R.string.rekeyed
+            }
+
+            AccountType.Rekeyed, null -> {
+                R.string.no_auth
+            }
+
+            AccountType.HdKey -> {
+                R.string.wallet_address
+            }
+
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                R.string.wallet_address
+            }
         }
         return buildString {
             append(context.getString(typeResId))
@@ -77,6 +99,11 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             }
 
             AccountType.HdKey -> context.getString(R.string.universal_wallet)
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                context.getString(R.string.joint)
+            }
+
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString
@@ -101,6 +128,10 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
 
             null -> R.string.your_account_is_rekeyed_to_an
             AccountType.HdKey -> R.string.your_account_is_a_hd_wallet_address
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                R.string.your_account_is_a_standard
+            }
         }
         val hyperlinkUrl = when (accountLite.cachedInfo?.type) {
             AccountType.Algo25 -> ALGO25_ACCOUNT_SUPPORT_URL
@@ -109,6 +140,11 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.NoAuth -> WATCH_SUPPORT_URL
             AccountType.Rekeyed -> REKEY_SUPPORT_URL
             AccountType.RekeyedAuth -> REKEY_SUPPORT_URL
+            AccountType.Joint -> {
+                TODO("Handle Joint Account")
+                ALGO25_ACCOUNT_SUPPORT_URL
+            }
+
             null -> ALGO25_ACCOUNT_SUPPORT_URL
         }
         return DescriptionDetail(

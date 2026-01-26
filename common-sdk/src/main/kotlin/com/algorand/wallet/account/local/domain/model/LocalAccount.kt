@@ -42,7 +42,9 @@ sealed interface LocalAccount {
         }
     }
 
-    data class Algo25(override val algoAddress: String) : LocalAccount
+    data class Algo25(
+        override val algoAddress: String
+    ) : LocalAccount
 
     data class LedgerBle(
         override val algoAddress: String,
@@ -53,5 +55,12 @@ sealed interface LocalAccount {
 
     data class NoAuth(
         override val algoAddress: String
+    ) : LocalAccount
+
+    data class Joint(
+        override val algoAddress: String,
+        val participantAddresses: List<String>,
+        val threshold: Int,
+        val version: Int
     ) : LocalAccount
 }

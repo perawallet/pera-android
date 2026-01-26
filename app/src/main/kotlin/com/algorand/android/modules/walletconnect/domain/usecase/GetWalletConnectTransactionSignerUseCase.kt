@@ -50,6 +50,10 @@ internal class GetWalletConnectTransactionSignerUseCase @Inject constructor(
             AccountRegistrationType.LedgerBle -> getLedgerSigner(address)
             AccountRegistrationType.NoAuth -> SignerNotFound.NoAuth(address)
             AccountRegistrationType.HdKey -> TransactionSigner.HdKey(address)
+            AccountRegistrationType.Joint -> {
+                TODO("Handle Joint Account")
+                TransactionSigner.Joint(address)
+            }
         }
     }
 

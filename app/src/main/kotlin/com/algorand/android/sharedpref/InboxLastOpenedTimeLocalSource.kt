@@ -31,9 +31,4 @@ class InboxLastOpenedTimeLocalSource @Inject constructor(
     fun saveData(data: String) {
         cache.put(data)
     }
-
-    companion object {
-        const val INJECTION_NAME = "inboxLastOpenedTimeCache"
-        const val CACHE_KEY = "inbox_last_opened_time_key"
-    }
 }

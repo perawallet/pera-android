@@ -15,10 +15,8 @@ package com.algorand.wallet.inbox.domain.usecase
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import javax.inject.Inject
-import javax.inject.Named
 
 internal class DeleteInboxJointInvitationNotificationUseCase @Inject constructor(
-    @param:Named(InboxApiRepository.INJECTION_NAME)
     private val inboxApiRepository: InboxApiRepository
 ) : DeleteInboxJointInvitationNotification {
 

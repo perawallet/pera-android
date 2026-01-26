@@ -123,18 +123,14 @@ class JointAccountTransactionSignHelper @Inject constructor(
     ): ByteArray? {
         val signerAccount = getLocalAccount(signerAddress) ?: return null
         return when (signerAccount) {
-            is LocalAccount.Algo25 -> signWithAlgo25Account(transactionBytes, signerAddress)
-            is LocalAccount.HdKey -> signWithHdKeyAccount(transactionBytes, signerAccount)
+            is LocalAccount.Algo25 -> {
+                localAccountSigningHelper.signWithAlgo25AccountReturnSignature(transactionBytes, signerAddress)
+            }
+            is LocalAccount.HdKey -> {
+                localAccountSigningHelper.signWithHdKeyAccountReturnSignature(transactionBytes, signerAccount)
+            }
             else -> null
         }
-    }
-
-    private suspend fun signWithAlgo25Account(transactionBytes: ByteArray, signerAddress: String): ByteArray? {
-        return localAccountSigningHelper.signWithAlgo25AccountReturnSignature(transactionBytes, signerAddress)
-    }
-
-    private suspend fun signWithHdKeyAccount(transactionBytes: ByteArray, hdKey: LocalAccount.HdKey): ByteArray? {
-        return localAccountSigningHelper.signWithHdKeyAccountReturnSignature(transactionBytes, hdKey)
     }
 
     private data class PreparedJointAccountData(

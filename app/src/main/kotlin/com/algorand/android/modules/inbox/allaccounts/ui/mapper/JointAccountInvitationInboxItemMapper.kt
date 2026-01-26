@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.inbox.allaccounts.ui.mapper
 
+import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
@@ -38,7 +39,7 @@ class JointAccountInvitationInboxItemMapper @Inject constructor() {
         val creationInTimeMillis = creationDateTime.toInstant().toEpochMilli()
         val timeDifference = nowInTimeMillis - creationInTimeMillis
 
-        val threshold = jointAccount.threshold ?: 2 // Default to 2 if not provided
+        val threshold = jointAccount.threshold ?: JointAccountValidationException.MIN_PARTICIPANTS
         val participantAddresses = jointAccount.participantAddresses ?: emptyList()
 
         // Determine read status: if lastOpenedTime is null, mark as read (first time opening)

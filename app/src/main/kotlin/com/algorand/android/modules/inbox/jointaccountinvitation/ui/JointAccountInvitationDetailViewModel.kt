@@ -24,11 +24,11 @@ import com.algorand.android.utils.launchIO
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
+import com.algorand.wallet.utils.date.TimeProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,6 +38,7 @@ class JointAccountInvitationDetailViewModel @Inject constructor(
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
     private val inboxApiRepository: InboxApiRepository,
     private val refreshInboxCache: RefreshInboxCache,
+    private val timeProvider: TimeProvider,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -46,7 +47,9 @@ class JointAccountInvitationDetailViewModel @Inject constructor(
 
     private val invitation = createInvitation()
 
-    private val _viewStateFlow = MutableStateFlow(JointAccountInvitationDetailViewState(invitation = invitation))
+    private val _viewStateFlow = MutableStateFlow<JointAccountInvitationDetailViewState>(
+        JointAccountInvitationDetailViewState.Loading
+    )
     val viewStateFlow: StateFlow<JointAccountInvitationDetailViewState> = _viewStateFlow.asStateFlow()
 
     init {
@@ -54,7 +57,7 @@ class JointAccountInvitationDetailViewModel @Inject constructor(
     }
 
     private fun createInvitation(): JointAccountInvitationInboxItem {
-        val creationTime = ZonedDateTime.now()
+        val creationTime = timeProvider.getZonedDateTimeNow()
         return JointAccountInvitationInboxItem(
             id = "${navArgs.accountAddress}_${creationTime.toInstant().toEpochMilli()}",
             accountAddress = navArgs.accountAddress,
@@ -76,10 +79,10 @@ class JointAccountInvitationDetailViewModel @Inject constructor(
             val icons = allAddresses.associateWith { address ->
                 getAccountIconDrawablePreview(address)
             }
-            _viewStateFlow.value = _viewStateFlow.value.copy(
+            _viewStateFlow.value = JointAccountInvitationDetailViewState.Content(
+                invitation = invitation,
                 accountDisplayNames = displayNames,
-                accountIcons = icons,
-                isLoading = false
+                accountIcons = icons
             )
         }
     }

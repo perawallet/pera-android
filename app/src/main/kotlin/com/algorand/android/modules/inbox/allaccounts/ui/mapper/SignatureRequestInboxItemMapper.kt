@@ -223,8 +223,6 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         return expireDatetimeString.parseFormattedDate(getAlgorandMobileDateFormatter())
     }
 
-    // TODO: This returns the joint account creation time, not the sign request creation time.
-    // The sign request DTO doesn't have a creation timestamp. Consider adding one to the API.
     private fun getCreationDateTime(dto: JointSignRequest): ZonedDateTime {
         val creationDatetimeString = dto.jointAccount?.creationDatetime
             ?: return timeProvider.getZonedDateTimeNow()

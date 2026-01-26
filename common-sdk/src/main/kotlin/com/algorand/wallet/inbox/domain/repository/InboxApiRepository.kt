@@ -27,8 +27,4 @@ interface InboxApiRepository {
         deviceId: Long,
         jointAddress: String
     ): PeraResult<Unit>
-
-    companion object {
-        const val INJECTION_NAME = "inboxApiRepositoryInjectionName"
-    }
 }

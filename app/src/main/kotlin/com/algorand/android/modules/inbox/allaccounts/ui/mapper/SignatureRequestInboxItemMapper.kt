@@ -20,17 +20,20 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequestInboxItem
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
-import com.algorand.android.utils.getRelativeTimeDifference
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
+import com.algorand.wallet.utils.date.RelativeTimeDifference
+import com.algorand.wallet.utils.date.TimeProvider
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class SignatureRequestInboxItemMapper @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getTransactionParams: GetTransactionParams
+    private val getTransactionParams: GetTransactionParams,
+    private val timeProvider: TimeProvider,
+    private val relativeTimeDifference: RelativeTimeDifference
 ) {
 
     suspend fun getCurrentBlockNumber(): Long? {
@@ -61,7 +64,11 @@ class SignatureRequestInboxItemMapper @Inject constructor(
             timeAgo = getTimeAgo(jointSignRequestDTO, resources, currentBlockNumber),
             signedCount = getSignedCount(jointSignRequestDTO),
             totalCount = requiredData.threshold,
-            timeLeft = if (isExpired) "0m" else getTimeLeft(jointSignRequestDTO),
+            timeLeft = if (isExpired) {
+                resources.getString(R.string.zero_minutes_short)
+            } else {
+                getTimeLeft(jointSignRequestDTO, resources)
+            },
             isRead = isRead(creationDateTime, lastOpenedTime),
             isExpired = isExpired,
             canUserSign = canUserSign(
@@ -113,7 +120,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
 
     private fun isSignRequestExpired(dto: JointSignRequest): Boolean {
         val expireDateTime = getExpireDateTime(dto) ?: return false
-        return ZonedDateTime.now().isAfter(expireDateTime)
+        return timeProvider.getZonedDateTimeNow().isAfter(expireDateTime)
     }
 
     private fun getSignedCount(dto: JointSignRequest): Int {
@@ -139,35 +146,73 @@ class SignatureRequestInboxItemMapper @Inject constructor(
 
             if (timeDifferenceMillis < 0) return resources.getString(R.string.just_now)
 
-            val estimatedCreationDateTime = ZonedDateTime.now().minusSeconds(timeDifferenceMillis / MILLIS_PER_SECOND)
-            return getRelativeTimeDifference(resources, estimatedCreationDateTime, timeDifferenceMillis)
+            val estimatedCreationDateTime = timeProvider.getZonedDateTimeNow()
+                .minusSeconds(timeDifferenceMillis / MILLIS_PER_SECOND)
+            return formatRelativeTime(
+                relativeTimeDifference.getRelativeTime(estimatedCreationDateTime, timeDifferenceMillis),
+                resources
+            )
         }
 
         val expireDateTime = getExpireDateTime(dto) ?: return ""
         val estimatedCreationDateTime = expireDateTime.minusMinutes(VALIDITY_WINDOW_MINUTES)
-        val timeDifference = ZonedDateTime.now().toInstant().toEpochMilli() -
+        val timeDifference = timeProvider.getCurrentTimeMillis() -
             estimatedCreationDateTime.toInstant().toEpochMilli()
 
         if (timeDifference < 0) return resources.getString(R.string.just_now)
 
-        return getRelativeTimeDifference(resources, estimatedCreationDateTime, timeDifference)
+        return formatRelativeTime(
+            relativeTimeDifference.getRelativeTime(estimatedCreationDateTime, timeDifference),
+            resources
+        )
     }
 
-    private fun getTimeLeft(dto: JointSignRequest): String? {
+    private fun formatRelativeTime(
+        relativeTime: RelativeTimeDifference.RelativeTime,
+        resources: Resources
+    ): String {
+        return when (relativeTime) {
+            is RelativeTimeDifference.RelativeTime.Now -> resources.getString(R.string.just_now)
+            is RelativeTimeDifference.RelativeTime.Minutes -> resources.getQuantityString(
+                R.plurals.min_ago,
+                relativeTime.value,
+                relativeTime.value.toString()
+            )
+            is RelativeTimeDifference.RelativeTime.Hours -> resources.getQuantityString(
+                R.plurals.hours_ago,
+                relativeTime.value,
+                relativeTime.value.toString()
+            )
+            is RelativeTimeDifference.RelativeTime.Days -> resources.getQuantityString(
+                R.plurals.days_ago,
+                relativeTime.value,
+                relativeTime.value.toString()
+            )
+            is RelativeTimeDifference.RelativeTime.Date -> relativeTime.value
+        }
+    }
+
+    private fun getTimeLeft(dto: JointSignRequest, resources: Resources): String? {
         val expireDateTime = getExpireDateTime(dto) ?: return null
         val timeDifferenceMillis = expireDateTime.toInstant().toEpochMilli() -
-            ZonedDateTime.now().toInstant().toEpochMilli()
-        return formatTimeLeft(timeDifferenceMillis)
+            timeProvider.getCurrentTimeMillis()
+        return formatTimeLeft(timeDifferenceMillis, resources)
     }
 
-    private fun formatTimeLeft(millis: Long): String {
-        if (millis <= THIRTY_SECONDS_MILLIS) return "0m"
+    private fun formatTimeLeft(millis: Long, resources: Resources): String {
+        if (millis <= THIRTY_SECONDS_MILLIS) return resources.getString(R.string.zero_minutes_short)
 
         return when {
-            millis < DateUtils.MINUTE_IN_MILLIS -> "1m"
-            millis < DateUtils.HOUR_IN_MILLIS -> "${millis / DateUtils.MINUTE_IN_MILLIS}m"
-            millis < DateUtils.DAY_IN_MILLIS -> "${millis / DateUtils.HOUR_IN_MILLIS}h"
-            else -> "${millis / DateUtils.DAY_IN_MILLIS}d"
+            millis < DateUtils.MINUTE_IN_MILLIS -> resources.getString(R.string.one_minute_short)
+            millis < DateUtils.HOUR_IN_MILLIS -> resources.getString(
+                R.string.minutes_short,
+                millis / DateUtils.MINUTE_IN_MILLIS
+            )
+            millis < DateUtils.DAY_IN_MILLIS -> resources.getString(
+                R.string.hours_short,
+                millis / DateUtils.HOUR_IN_MILLIS
+            )
+            else -> resources.getString(R.string.days_short, millis / DateUtils.DAY_IN_MILLIS)
         }
     }
 
@@ -181,8 +226,10 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     // TODO: This returns the joint account creation time, not the sign request creation time.
     // The sign request DTO doesn't have a creation timestamp. Consider adding one to the API.
     private fun getCreationDateTime(dto: JointSignRequest): ZonedDateTime {
-        val creationDatetimeString = dto.jointAccount?.creationDatetime ?: return ZonedDateTime.now()
-        return creationDatetimeString.parseFormattedDate(getAlgorandMobileDateFormatter()) ?: ZonedDateTime.now()
+        val creationDatetimeString = dto.jointAccount?.creationDatetime
+            ?: return timeProvider.getZonedDateTimeNow()
+        return creationDatetimeString.parseFormattedDate(getAlgorandMobileDateFormatter())
+            ?: timeProvider.getZonedDateTimeNow()
     }
 
     private fun isRead(creationDateTime: ZonedDateTime, lastOpenedTime: ZonedDateTime?): Boolean {

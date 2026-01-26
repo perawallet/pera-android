@@ -177,4 +177,12 @@ class InboxPreviewUseCase @Inject constructor(
             )
         }
     }
+
+    fun getJointAccountInboxCountFlow(): Flow<Int> {
+        return getInboxMessagesFlow().map { inboxMessages ->
+            val signRequestCount = inboxMessages?.jointAccountSignRequests?.size ?: 0
+            val importRequestCount = inboxMessages?.jointAccountImportRequests?.size ?: 0
+            signRequestCount + importRequestCount
+        }
+    }
 }

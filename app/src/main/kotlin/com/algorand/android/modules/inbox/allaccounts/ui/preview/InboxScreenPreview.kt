@@ -49,10 +49,10 @@ fun InboxScreenPreview() {
             InboxScreen(
                 viewStateFlow = MutableStateFlow(getMockPreview()),
                 listener = object : InboxScreenListener {
-                    override fun onAccountClick(accountAddress: String) {}
-                    override fun onSignatureRequestClick(signRequestId: String, canUserSign: Boolean) {}
-                    override fun onJointAccountInvitationClick(invitation: JointAccountInvitationInboxItem) {}
-                    override fun onInfoClick() {}
+                    override fun onAccountClick(accountAddress: String) = Unit
+                    override fun onSignatureRequestClick(signRequestId: String, canUserSign: Boolean) = Unit
+                    override fun onJointAccountInvitationClick(invitation: JointAccountInvitationInboxItem) = Unit
+                    override fun onInfoClick() = Unit
                 }
             )
         }

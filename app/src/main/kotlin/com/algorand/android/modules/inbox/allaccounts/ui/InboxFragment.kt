@@ -91,7 +91,11 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
                 navToJointAccountInvitationDetail(event.invitation)
             }
             is InboxViewEvent.NavigateToJointAccountDetail -> {
-                nav(HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(accountAddress = event.accountAddress))
+                nav(
+                    HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
+                        accountAddress = event.accountAddress
+                    )
+                )
             }
             is InboxViewEvent.ShowError -> {
                 showGlobalError(event.message, tag = baseActivityTag)

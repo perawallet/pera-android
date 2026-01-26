@@ -16,8 +16,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -25,8 +29,10 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationDetailViewState
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -49,12 +55,24 @@ class JointAccountInvitationDetailFragment : DaggerBaseFragment(0),
             val viewState by viewModel.viewStateFlow.collectAsState()
 
             PeraTheme {
-                JointAccountInvitationDetailScreen(
-                    invitation = viewState.invitation,
-                    accountDisplayNames = viewState.accountDisplayNames,
-                    accountIcons = viewState.accountIcons,
-                    listener = this@JointAccountInvitationDetailFragment
-                )
+                when (val state = viewState) {
+                    is JointAccountInvitationDetailViewState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            PeraCircularProgressIndicator()
+                        }
+                    }
+                    is JointAccountInvitationDetailViewState.Content -> {
+                        JointAccountInvitationDetailScreen(
+                            invitation = state.invitation,
+                            accountDisplayNames = state.accountDisplayNames,
+                            accountIcons = state.accountIcons,
+                            listener = this@JointAccountInvitationDetailFragment
+                        )
+                    }
+                }
             }
         }
     }

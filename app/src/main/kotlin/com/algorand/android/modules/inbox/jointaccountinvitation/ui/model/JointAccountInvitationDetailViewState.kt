@@ -15,9 +15,13 @@ package com.algorand.android.modules.inbox.jointaccountinvitation.ui.model
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 
-data class JointAccountInvitationDetailViewState(
-    val invitation: JointAccountInvitationInboxItem,
-    val accountDisplayNames: Map<String, AccountDisplayName> = emptyMap(),
-    val accountIcons: Map<String, AccountIconDrawablePreview> = emptyMap(),
-    val isLoading: Boolean = true
-)
+sealed interface JointAccountInvitationDetailViewState {
+
+    data object Loading : JointAccountInvitationDetailViewState
+
+    data class Content(
+        val invitation: JointAccountInvitationInboxItem,
+        val accountDisplayNames: Map<String, AccountDisplayName>,
+        val accountIcons: Map<String, AccountIconDrawablePreview>
+    ) : JointAccountInvitationDetailViewState
+}

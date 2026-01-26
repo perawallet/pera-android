@@ -17,20 +17,20 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
 import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import javax.inject.Inject
 
 internal class CreateJointAccountParticipantItemUseCase @Inject constructor(
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val contactRepository: ContactRepository
+    private val contactRepository: ContactRepository,
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses
 ) : CreateJointAccountParticipantItem {
 
-    override suspend operator fun invoke(
-        address: String,
-        localAccountAddresses: List<String>
-    ): JointAccountParticipantItem {
+    override suspend operator fun invoke(address: String): JointAccountParticipantItem {
         val displayName = getAccountDisplayName(address)
         val iconDrawablePreview = getAccountIconDrawablePreview(address)
+        val localAccountAddresses = getLocalAccountsAddresses()
         val isLocalAccount = address in localAccountAddresses
         val contact = contactRepository.getContactByAddress(address)
         val imageUri = contact?.imageUriAsString?.let { Uri.parse(it) }

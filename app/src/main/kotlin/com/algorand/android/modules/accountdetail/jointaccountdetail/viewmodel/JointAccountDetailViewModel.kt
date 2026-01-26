@@ -50,9 +50,9 @@ class JointAccountDetailViewModel @Inject constructor(
     }
 
     fun refreshParticipants() {
-        viewModelScope.launch {
-            stateDelegate.onState<ViewState.Content> { contentState ->
-                if (contentState.participants.isNotEmpty()) {
+        stateDelegate.onState<ViewState.Content> { contentState ->
+            if (contentState.participants.isNotEmpty()) {
+                viewModelScope.launch {
                     val participantAddresses = contentState.participants.map { it.address }
                     val updatedParticipants = processor.createParticipantItems(participantAddresses)
                     stateDelegate.updateState {

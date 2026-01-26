@@ -12,24 +12,26 @@
 
 package com.algorand.wallet.inbox.asset.data.repository
 
+import com.algorand.wallet.foundation.cache.InMemoryCachedObject
 import com.algorand.wallet.inbox.asset.domain.model.AssetInboxRequest
 import com.algorand.wallet.inbox.asset.domain.repository.AssetInboxRepository
-import com.algorand.wallet.inbox.data.cache.InboxInMemoryCache
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class AssetInboxRepositoryImpl(
-    private val inboxInMemoryCache: InboxInMemoryCache
+    private val inboxCache: InMemoryCachedObject<InboxMessages>,
+    private val inboxCacheFlow: Flow<InboxMessages?>
 ) : AssetInboxRepository {
 
     override fun getRequestCountFlow(): Flow<Int> {
-        return inboxInMemoryCache.observe().map { inboxMessages ->
+        return inboxCacheFlow.map { inboxMessages ->
             inboxMessages?.assetInboxes?.sumOf { it.requestCount } ?: 0
         }
     }
 
     override suspend fun getRequest(address: String): AssetInboxRequest? {
-        val inboxMessages = inboxInMemoryCache.get()
+        val inboxMessages = inboxCache.get()
         return inboxMessages?.assetInboxes?.find { it.address == address }?.let {
             AssetInboxRequest(address = it.address, requestCount = it.requestCount)
         }

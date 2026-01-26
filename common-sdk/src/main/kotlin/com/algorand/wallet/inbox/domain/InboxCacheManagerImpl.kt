@@ -26,7 +26,6 @@ import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
-import javax.inject.Named
 
 internal class InboxCacheManagerImpl @Inject constructor(
     private val cacheManager: LifecycleAwareCacheManager,
@@ -36,7 +35,6 @@ internal class InboxCacheManagerImpl @Inject constructor(
     private val getInboxValidAddresses: GetInboxValidAddresses,
     private val getAllAccountInformationFlow: GetAllAccountInformationFlow,
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
-    @param:Named(InboxApiRepository.INJECTION_NAME)
     private val inboxApiRepository: InboxApiRepository
 ) : InboxCacheManager, LifecycleAwareCacheManager.CacheManagerListener {
 

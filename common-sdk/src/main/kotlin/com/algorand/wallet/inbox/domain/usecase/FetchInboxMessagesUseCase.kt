@@ -17,10 +17,8 @@ import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.model.InboxSearchInput
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import javax.inject.Inject
-import javax.inject.Named
 
 internal class FetchInboxMessagesUseCase @Inject constructor(
-    @param:Named(InboxApiRepository.INJECTION_NAME)
     private val inboxApiRepository: InboxApiRepository
 ) : FetchInboxMessages {
 

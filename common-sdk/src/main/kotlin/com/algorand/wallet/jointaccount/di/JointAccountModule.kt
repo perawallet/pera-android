@@ -19,12 +19,11 @@ import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapp
 import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryImpl
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository as LocalJointAccountRepository
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCountUseCase
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
-import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountUseCase
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
@@ -102,11 +101,11 @@ internal object JointAccountModule {
 
     @Provides
     fun provideGetJointAccount(
-        useCase: GetJointAccountUseCase
-    ): GetJointAccount = useCase
+        repository: LocalJointAccountRepository
+    ): GetJointAccount = GetJointAccount(repository::getAccount)
 
     @Provides
     fun provideGetJointAccountParticipantCount(
-        useCase: GetJointAccountParticipantCountUseCase
-    ): GetJointAccountParticipantCount = useCase
+        repository: LocalJointAccountRepository
+    ): GetJointAccountParticipantCount = GetJointAccountParticipantCount(repository::getParticipantCount)
 }

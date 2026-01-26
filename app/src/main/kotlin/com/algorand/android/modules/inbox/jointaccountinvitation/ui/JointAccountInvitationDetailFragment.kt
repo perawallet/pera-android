@@ -16,53 +16,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationDetailNavArgs
-import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
-import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
-import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.time.ZonedDateTime
-import javax.inject.Inject
-import javax.inject.Named
 
 @AndroidEntryPoint
 class JointAccountInvitationDetailFragment : DaggerBaseFragment(0),
     JointAccountInvitationDetailScreenListener {
 
-    @Inject
-    lateinit var getAccountDisplayName: GetAccountDisplayName
-
-    @Inject
-    lateinit var getAccountIconDrawablePreview: GetAccountIconDrawablePreview
-
-    @Inject
-    lateinit var getSelectedNodeDeviceId: GetSelectedNodeDeviceId
-
-    @Inject
-    @Named(InboxApiRepository.INJECTION_NAME)
-    lateinit var inboxApiRepository: InboxApiRepository
-
-    @Inject
-    lateinit var refreshInboxCache: RefreshInboxCache
+    private val viewModel: JointAccountInvitationDetailViewModel by viewModels()
 
     private val args: JointAccountInvitationDetailFragmentArgs by navArgs()
 
@@ -73,52 +45,18 @@ class JointAccountInvitationDetailFragment : DaggerBaseFragment(0),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val invitation = createInvitationFromArgs(args.invitationNavArgs)
         return createComposeView {
-            var accountDisplayNames by remember {
-                mutableStateOf<Map<String, AccountDisplayName>>(emptyMap())
-            }
-            var accountIcons by remember {
-                mutableStateOf<Map<String, AccountIconDrawablePreview>>(emptyMap())
-            }
-
-            LaunchedEffect(Unit) {
-                this@JointAccountInvitationDetailFragment.viewLifecycleOwner.lifecycleScope.launch {
-                    val allAddresses = listOf(invitation.accountAddress) + invitation.participantAddresses
-                    accountDisplayNames = allAddresses.associateWith { address ->
-                        getAccountDisplayName(address)
-                    }
-                    accountIcons = allAddresses.associateWith { address ->
-                        getAccountIconDrawablePreview(address)
-                    }
-                }
-            }
+            val viewState by viewModel.viewStateFlow.collectAsState()
 
             PeraTheme {
                 JointAccountInvitationDetailScreen(
-                    invitation = invitation,
-                    accountDisplayNames = accountDisplayNames,
-                    accountIcons = accountIcons,
+                    invitation = viewState.invitation,
+                    accountDisplayNames = viewState.accountDisplayNames,
+                    accountIcons = viewState.accountIcons,
                     listener = this@JointAccountInvitationDetailFragment
                 )
             }
         }
-    }
-
-    private fun createInvitationFromArgs(
-        navArgs: JointAccountInvitationDetailNavArgs
-    ): JointAccountInvitationInboxItem {
-        val creationTime = ZonedDateTime.now()
-        return JointAccountInvitationInboxItem(
-            id = "${navArgs.accountAddress}_${creationTime.toInstant().toEpochMilli()}",
-            accountAddress = navArgs.accountAddress,
-            accountAddressShortened = navArgs.accountAddressShortened,
-            creationDateTime = creationTime,
-            timeDifference = 0L,
-            isRead = false,
-            threshold = navArgs.threshold,
-            participantAddresses = navArgs.participantAddresses
-        )
     }
 
     override fun onBackClick() {
@@ -131,16 +69,8 @@ class JointAccountInvitationDetailFragment : DaggerBaseFragment(0),
 
     override fun onRejectClick() {
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val deviceId = getSelectedNodeDeviceId()?.toLongOrNull()
-                if (deviceId != null) {
-                    inboxApiRepository.deleteJointInvitationNotification(
-                        deviceId,
-                        args.invitationNavArgs.accountAddress
-                    )
-                }
-                refreshInboxCache()
-            } catch (e: Exception) {
+            val success = viewModel.rejectInvitation()
+            if (!success) {
                 showGlobalError(getString(R.string.an_error_occurred))
             }
             navBack()

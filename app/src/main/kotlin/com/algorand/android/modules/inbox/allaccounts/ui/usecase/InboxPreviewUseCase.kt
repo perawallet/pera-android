@@ -14,7 +14,9 @@ package com.algorand.android.modules.inbox.allaccounts.ui.usecase
 
 import com.algorand.android.modules.inbox.allaccounts.ui.mapper.InboxPreviewMapper
 import com.algorand.android.modules.inbox.allaccounts.ui.mapper.InboxPreviewParams
+import com.algorand.android.modules.inbox.allaccounts.ui.mapper.InboxViewStateMapper
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
+import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewState
 import com.algorand.android.modules.inbox.data.local.InboxLastOpenedTimeLocalSource
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.wallet.inbox.asset.domain.model.AssetInboxRequest
@@ -30,6 +32,7 @@ import javax.inject.Inject
 
 class InboxPreviewUseCase @Inject constructor(
     private val inboxPreviewMapper: InboxPreviewMapper,
+    private val inboxViewStateMapper: InboxViewStateMapper,
     private val getInboxValidAddresses: GetInboxValidAddresses,
     private val getInboxMessagesFlow: GetInboxMessagesFlow,
     private val refreshInboxCache: RefreshInboxCache,
@@ -144,5 +147,42 @@ class InboxPreviewUseCase @Inject constructor(
                 localAccountAddresses = localAccountAddresses
             )
         )
+    }
+
+    fun getInboxViewState(filterAccountAddress: String? = null): Flow<InboxViewState> {
+        return getInboxMessagesFlow().map { inboxMessages ->
+            val allAccountAddresses = getInboxValidAddresses()
+            val lastOpenedTime = getLastOpenedTime()
+
+            if (allAccountAddresses.isEmpty()) {
+                return@map InboxViewState.Empty
+            }
+
+            val filteredInboxMessages = filterInboxMessages(inboxMessages, filterAccountAddress)
+            val assetInboxRequests = parseAssetInboxes(filteredInboxMessages)
+
+            val displayAddresses = if (filterAccountAddress != null) {
+                listOf(filterAccountAddress)
+            } else {
+                allAccountAddresses
+            }
+
+            inboxViewStateMapper.mapToViewState(
+                assetInboxList = assetInboxRequests,
+                addresses = displayAddresses,
+                inboxMessages = filteredInboxMessages,
+                lastOpenedTime = lastOpenedTime,
+                filterAccountAddress = filterAccountAddress,
+                localAccountAddresses = allAccountAddresses
+            )
+        }
+    }
+
+    fun getJointAccountInboxCountFlow(): Flow<Int> {
+        return getInboxMessagesFlow().map { inboxMessages ->
+            val signRequestCount = inboxMessages?.jointAccountSignRequests?.size ?: 0
+            val importRequestCount = inboxMessages?.jointAccountImportRequests?.size ?: 0
+            signRequestCount + importRequestCount
+        }
     }
 }

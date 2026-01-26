@@ -15,17 +15,18 @@ package com.algorand.android.modules.inbox.allaccounts.ui.model
 import com.algorand.android.modules.inbox.allaccounts.domain.model.InboxWithAccount
 import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequestInboxItem
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
-import com.algorand.android.utils.ErrorResource
-import com.algorand.android.utils.Event
 
-data class InboxPreview(
-    val isLoading: Boolean,
-    val isEmptyStateVisible: Boolean,
-    val showError: Event<ErrorResource>?,
-    val inboxWithAccountList: List<InboxWithAccount>,
-    val signatureRequestList: List<SignatureRequestInboxItem> = emptyList(),
-    val jointAccountInvitationList: List<JointAccountInvitationInboxItem> = emptyList(),
-    val filterAccountAddress: String? = null,
-    val jointAccountInvitationToOpen: Event<JointAccountInvitationInboxItem>? = null,
-    val jointAccountAddressToOpen: Event<String>? = null
-)
+sealed interface InboxViewState {
+    data object Loading : InboxViewState
+
+    data object Empty : InboxViewState
+
+    data class Content(
+        val inboxWithAccountList: List<InboxWithAccount>,
+        val signatureRequestList: List<SignatureRequestInboxItem>,
+        val jointAccountInvitationList: List<JointAccountInvitationInboxItem>,
+        val filterAccountAddress: String? = null
+    ) : InboxViewState
+
+    data class Error(val message: String? = null) : InboxViewState
+}

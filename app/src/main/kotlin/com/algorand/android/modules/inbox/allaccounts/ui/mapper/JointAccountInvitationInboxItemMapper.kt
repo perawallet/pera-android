@@ -12,15 +12,19 @@
 
 package com.algorand.android.modules.inbox.allaccounts.ui.mapper
 
+import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
+import com.algorand.wallet.utils.date.TimeProvider
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-class JointAccountInvitationInboxItemMapper @Inject constructor() {
+class JointAccountInvitationInboxItemMapper @Inject constructor(
+    private val timeProvider: TimeProvider
+) {
 
     fun mapToJointAccountInvitationInboxItem(
         jointAccount: JointAccount,
@@ -31,23 +35,17 @@ class JointAccountInvitationInboxItemMapper @Inject constructor() {
 
         val dateFormatter = getAlgorandMobileDateFormatter()
         val creationDateTime = creationDatetimeString.parseFormattedDate(dateFormatter)
-            ?: ZonedDateTime.now()
+            ?: timeProvider.getZonedDateTimeNow()
 
-        val now = ZonedDateTime.now()
+        val now = timeProvider.getZonedDateTimeNow()
         val nowInTimeMillis = now.toInstant().toEpochMilli()
         val creationInTimeMillis = creationDateTime.toInstant().toEpochMilli()
         val timeDifference = nowInTimeMillis - creationInTimeMillis
 
-        val threshold = jointAccount.threshold ?: 2 // Default to 2 if not provided
+        val threshold = jointAccount.threshold ?: JointAccountValidationException.MIN_PARTICIPANTS
         val participantAddresses = jointAccount.participantAddresses ?: emptyList()
 
-        // Determine read status: if lastOpenedTime is null, mark as read (first time opening)
-        // Otherwise, mark as read if creation date is before last opened time
-        val isRead = if (lastOpenedTime == null) {
-            true // First time opening inbox, mark everything as read
-        } else {
-            creationDateTime.isBefore(lastOpenedTime) || creationDateTime.isEqual(lastOpenedTime)
-        }
+        val isRead = isRead(creationDateTime, lastOpenedTime)
 
         return JointAccountInvitationInboxItem(
             id = "${accountAddress}_$creationInTimeMillis",
@@ -59,5 +57,11 @@ class JointAccountInvitationInboxItemMapper @Inject constructor() {
             threshold = threshold,
             participantAddresses = participantAddresses
         )
+    }
+
+    private fun isRead(creationDateTime: ZonedDateTime, lastOpenedTime: ZonedDateTime?): Boolean {
+        // If lastOpenedTime is null, mark as read (first time opening)
+        // Otherwise, mark as read if creation date is before or equal to last opened time
+        return lastOpenedTime == null || !creationDateTime.isAfter(lastOpenedTime)
     }
 }

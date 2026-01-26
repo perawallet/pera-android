@@ -10,25 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.android.sharedpref
+package com.algorand.android.modules.inbox.allaccounts.ui.model
 
-import com.algorand.wallet.foundation.cache.PersistentCache
-import javax.inject.Inject
+import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 
-// ISO-8601 ISO_DATE_TIME
-class InboxLastOpenedTimeLocalSource @Inject constructor(
-    private val cache: PersistentCache<String>
-) {
+sealed interface InboxViewEvent {
+    data class NavigateToJointAccountInvitation(
+        val invitation: JointAccountInvitationInboxItem
+    ) : InboxViewEvent
 
-    fun getData(defaultValue: String?): String? {
-        return cache.get() ?: defaultValue
-    }
+    data class NavigateToJointAccountDetail(
+        val accountAddress: String
+    ) : InboxViewEvent
 
-    fun getDataOrNull(): String? {
-        return cache.get()
-    }
-
-    fun saveData(data: String) {
-        cache.put(data)
-    }
+    data class ShowError(val message: String) : InboxViewEvent
 }

@@ -1247,6 +1247,16 @@
     <string name="decrease">Decrease</string>
 
     <!-- ============================================================ -->
+    <!-- TIME FORMATTING -->
+    <!-- ============================================================ -->
+
+    <string name="zero_minutes_short">0m</string>
+    <string name="one_minute_short">1m</string>
+    <string name="minutes_short">%1$dm</string>
+    <string name="hours_short">%1$dh</string>
+    <string name="days_short">%1$dd</string>
+
+    <!-- ============================================================ -->
     <!-- JOINT ACCOUNT TRANSACTION SIGNING -->
     <!-- ============================================================ -->
 

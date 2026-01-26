@@ -102,23 +102,17 @@ class AccountsPreviewUseCase @Inject constructor(
         }
     }
 
-    @OptIn(
-        kotlinx.coroutines.FlowPreview::class,
-        kotlinx.coroutines.ExperimentalCoroutinesApi::class
-    )
-    private suspend fun getTotalInboxCountFlow(): Flow<Int> {
+    private fun getTotalInboxCountFlow(): Flow<Int> {
         val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
-        return getAssetInboxRequestCountFlow().flatMapLatest { asaInboxCount ->
-            inboxPreviewUseCase.getInboxPreview()
-                .mapLatest { inboxPreview ->
-                    if (isJointAccountEnabled) {
-                        val jointAccountSignRequestsCount = inboxPreview.signatureRequestList.size
-                        val jointAccountImportRequestsCount = inboxPreview.jointAccountInvitationList.size
-                        asaInboxCount + jointAccountSignRequestsCount + jointAccountImportRequestsCount
-                    } else {
-                        asaInboxCount
-                    }
-                }
+        return if (isJointAccountEnabled) {
+            combine(
+                getAssetInboxRequestCountFlow(),
+                inboxPreviewUseCase.getJointAccountInboxCountFlow()
+            ) { asaInboxCount, jointAccountInboxCount ->
+                asaInboxCount + jointAccountInboxCount
+            }
+        } else {
+            getAssetInboxRequestCountFlow()
         }
     }
 

@@ -59,6 +59,39 @@
 - **Use Input suffix for input models** - `CreateJointAccountInput`
 - **Split interface and implementation into separate files**
 
+### Fragment/ViewModel State Management
+- **Never create state flags in Fragments** - State is lost on recreation. Move to ViewModel
+- **Logic depending on state goes in ViewModel** - Including deep link handling, initialization flags
+- **ViewModel calls stay in ViewModel** - Don't route events through Fragment back to ViewModel
+  ```kotlin
+  // BAD: Fragment routes event back to ViewModel
+  override fun onEvent(event: Event) {
+      viewModel.handleEvent(event)
+  }
+
+  // GOOD: Handle in Composable directly or use sealed ViewEvent
+  LaunchedEffect(event) { when(event) { ... } }
+  ```
+
+### ViewState/ViewEvent Pattern
+- **Use sealed interface ViewState** - Not data class with boolean flags
+- **Use sealed interface ViewEvent** - For one-time navigation/UI events
+- **Collect events in Fragment** - ViewEvents for navigation that requires Fragment context
+- **Collect state in Composable** - ViewState for UI rendering
+  ```kotlin
+  sealed interface MyViewState {
+      data object Loading : MyViewState
+      data object Empty : MyViewState
+      data class Content(val items: List<Item>) : MyViewState
+      data class Error(val message: String) : MyViewState
+  }
+
+  sealed interface MyViewEvent {
+      data class NavigateToDetail(val id: String) : MyViewEvent
+      data class ShowError(val message: String) : MyViewEvent
+  }
+  ```
+
 ### UseCase Pattern
 - Interface (fun interface) + `{UseCaseName}UseCase` implementation
 - Use `operator fun invoke(...)` for functional interfaces
@@ -78,13 +111,44 @@
 ### Cache vs Repository Naming
 - **In-memory caches are NOT repositories** - Use `InboxInMemoryCache`, not `InboxRepository`
 - **Use InMemoryCacheProvider** for in-memory caches, not custom `MutableStateFlow` implementations
+- **Use PersistentCacheProvider** for persistent storage, not SharedPreferences local sources
+  ```kotlin
+  // BAD: Custom SharedPreferences class
+  class LastOpenedTimeLocalSource @Inject constructor(sharedPref: SharedPreferences)
+
+  // GOOD: Use PersistentCacheProvider
+  @Provides
+  fun provideLastOpenedTimeCache(provider: PersistentCacheProvider): PersistentCache<String> =
+      provider.getPersistentCache(String::class.java, "last_opened_time")
+  ```
+- **Don't create unnecessary cache wrapper classes** - Use provider directly
 - **Repository** = data access with external sources (API, database)
-- **Cache** = in-memory storage only
+- **Cache** = in-memory or persistent storage only
 
 ### DI Module Rules
 - **Use method references, not lambdas** - `RefreshCache(manager::refresh)` not `RefreshCache { manager.refresh() }`
 - **Don't use @Singleton if state is external** - If cache/state is passed in constructor, no need for @Singleton
 - **Keep providers in correct feature modules** - `InboxApiService` belongs in `InboxModule`, not `JointAccountModule`
+- **Remove injection names when only one implementation** - `@Named` unnecessary if single implementation exists
+
+### Database/Data Access
+- **Create targeted DB queries** - Don't fetch all records and filter in memory
+  ```kotlin
+  // BAD: Fetch all and filter
+  val allAccounts = getLocalAccounts()
+  val jointAccounts = allAccounts.filter { it is Joint }
+
+  // GOOD: Targeted query
+  val jointAccounts = getJointAccounts()
+  ```
+- **Use mapNotNull for filtering + mapping** - Reduces iteration count
+  ```kotlin
+  // BAD: filter + map (two iterations)
+  items.filter { it.value != null }.map { it.value!! }
+
+  // GOOD: mapNotNull (single iteration)
+  items.mapNotNull { it.value }
+  ```
 
 ### Feature Ownership
 - **Methods belong to their feature** - `getInboxMessages` belongs in inbox feature, not joint account
@@ -93,10 +157,38 @@
 
 ## Code Quality
 
+### Use Existing Utility Classes
+- **TimeProvider** - For getting current time (testable)
+- **RelativeTimeDifference** - For calculating time differences (minutes, hours, days ago)
+- **Don't duplicate time formatting logic** - Check existing utilities first
+  ```kotlin
+  // BAD: Direct time calls
+  val now = System.currentTimeMillis()
+
+  // GOOD: Use TimeProvider
+  val now = timeProvider.currentTimeMillis()
+  ```
+
 ### Functions
 - **Keep under 50 lines** - Split into smaller functions
 - **Names must match behavior** - `signTransactionReturnSignature` if returning signature only
 - **Self-documenting code** - Use descriptive names instead of comments
+- **Companion objects at bottom** - After all functions
+- **Private functions at end** - After public/internal functions
+- **Prevent multiple clicks** - Update state before async operations to prevent double execution
+  ```kotlin
+  // BAD: No state protection
+  fun onSubmit() {
+      viewModelScope.launch { submitData() }
+  }
+
+  // GOOD: Protect with state
+  fun onSubmit() {
+      if (_state.value is Loading) return
+      _state.value = Loading
+      viewModelScope.launch { submitData() }
+  }
+  ```
 
 ### Formatting
 - **Lines under 150 characters**
@@ -128,10 +220,32 @@
 
 ### Unit Test Best Practices
 - **Mock ALL dependencies** - Don't test multiple classes at once
+  ```kotlin
+  // BAD: Using real mapper in test
+  val mapper = RealMapperImpl(anotherRealMapper)
+
+  // GOOD: Mock all dependencies
+  val mockMapper = mockk<MapperInterface>()
+  every { mockMapper.map(any()) } returns expectedResult
+  ```
 - **Inline initialization** - Use `@Before` only for dispatcher setup or resettable state
-- **Companion object for constants** - `const val TEST_ADDRESS = "ADDRESS_123"`
+- **Companion object for constants** - `const val TEST_ADDRESS = "ADDRESS_123"` in private companion object
 - **Use .copy() for variations** - Don't recreate objects for each test
+  ```kotlin
+  // BAD: Multiple similar test functions
+  @Test fun `test with null list`() { val dto = createDTO(list = null) }
+  @Test fun `test with empty list`() { val dto = createDTO(list = emptyList()) }
+
+  // GOOD: Use copy for variations
+  private fun createTestDTO() = TestDTO(...)
+  @Test fun `test variations`() {
+      val nullCase = createTestDTO().copy(list = null)
+      val emptyCase = createTestDTO().copy(list = emptyList())
+      // Assert both in single test if testing same behavior
+  }
+  ```
 - **Setup mocks BEFORE ViewModel creation** - init block runs during construction
+- **Test constants in private companion object** - Not as class-level properties
 
 ## UI & Compose
 
@@ -150,11 +264,26 @@
 - `Modifier` parameter first
 - Use `remember` for expensive computations
 - Provide content descriptions for accessibility
+- **Pass composables, not booleans** - For flexible shared components
+  ```kotlin
+  // BAD: Boolean limits flexibility
+  @Composable
+  fun PeraCard(showTag: Boolean = false)
+
+  // GOOD: Composable allows customization
+  @Composable
+  fun PeraCard(tag: @Composable (() -> Unit)? = null)
+  ```
+- **Use content slots for flexible layouts** - `centerContent`, `endContent` instead of specific text params
 
 ### Resource Rules
 - **Icons theme-aware** - Use `@color/text_main`, not hardcoded hex
 - **Format placeholders in strings** - `"Transfer to %1$s"` for localization
+  - Different languages have different word orders
+  - Always use numbered placeholders: `%1$s`, `%2$d`
+- **Use string resources for all user-visible text** - Including relative times like "0m", "1h"
 - **Drawables**: `ic_` prefix for icons, `bg_` for backgrounds
+- **Use existing plurals** - Check `plurals.xml` before adding new strings (e.g., `min_ago`, `hours_ago`)
 
 ## Preview Files
 - **Required for every new screen** - Place in `preview/` subdirectory
@@ -230,3 +359,40 @@
 - `StateDelegate` and `EventDelegate` for ViewModel state/events
 - `sealed interface ViewState { data object Idle; data class Content(...) }`
 - `collectAsStateWithLifecycle()` in Composables
+
+---
+
+## Common PR Feedback Summary
+
+These rules were derived from PR review feedback on PRs #510-519. Check before submitting:
+
+### Architecture
+- [ ] Data models in common-sdk are `internal`
+- [ ] Domain models don't use `DTO` suffix
+- [ ] UseCases that just call repository are provided via DI lambda
+- [ ] In-memory caches use `InMemoryCacheProvider`
+- [ ] Persistent storage uses `PersistentCacheProvider`, not SharedPreferences
+- [ ] Methods are in correct feature modules
+
+### ViewModel/Fragment
+- [ ] No state flags in Fragments (use ViewModel)
+- [ ] ViewState/ViewEvent pattern instead of Preview with flags
+- [ ] Multiple click prevention (update state before async)
+
+### Code Quality
+- [ ] Using existing utilities (TimeProvider, RelativeTimeDifference)
+- [ ] String resources for user-visible text (including relative times)
+- [ ] Formatted strings with numbered placeholders (`%1$s`)
+- [ ] Icons are theme-aware
+- [ ] Targeted DB queries instead of fetch-all-and-filter
+- [ ] mapNotNull instead of filter+map
+
+### Testing
+- [ ] ALL dependencies mocked
+- [ ] Test constants in private companion object
+- [ ] Using .copy() for test variations
+
+### DI
+- [ ] Method references, not lambdas
+- [ ] No unnecessary @Singleton
+- [ ] No @Named when single implementation exists

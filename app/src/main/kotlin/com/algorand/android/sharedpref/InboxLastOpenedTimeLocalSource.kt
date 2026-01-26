@@ -12,18 +12,13 @@
 
 package com.algorand.android.sharedpref
 
-import com.algorand.wallet.foundation.cache.PersistentCacheProvider
+import com.algorand.wallet.foundation.cache.PersistentCache
 import javax.inject.Inject
 
 // ISO-8601 ISO_DATE_TIME
 class InboxLastOpenedTimeLocalSource @Inject constructor(
-    persistentCacheProvider: PersistentCacheProvider
+    private val cache: PersistentCache<String>
 ) {
-
-    private val cache = persistentCacheProvider.getPersistentCache<String>(
-        String::class.java,
-        INBOX_LAST_OPENED_TIME_KEY
-    )
 
     fun getData(defaultValue: String?): String? {
         return cache.get() ?: defaultValue
@@ -35,9 +30,5 @@ class InboxLastOpenedTimeLocalSource @Inject constructor(
 
     fun saveData(data: String) {
         cache.put(data)
-    }
-
-    companion object {
-        private const val INBOX_LAST_OPENED_TIME_KEY = "inbox_last_opened_time_key"
     }
 }

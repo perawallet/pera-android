@@ -29,7 +29,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class JointAccountDetailFragment : DaggerBaseFragment(0) {
+class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailListener {
 
     private val viewModel: JointAccountDetailViewModel by viewModels()
 
@@ -46,19 +46,29 @@ class JointAccountDetailFragment : DaggerBaseFragment(0) {
             JointAccountDetailScreen(
                 viewState = viewState,
                 accountAddress = viewModel.accountAddress,
-                onEvent = ::handleEvent
+                listener = this@JointAccountDetailFragment
             )
         }
     }
 
-    private fun handleEvent(event: JointAccountDetailEvent) {
-        when (event) {
-            is JointAccountDetailEvent.BackClick -> navBack()
-            is JointAccountDetailEvent.EditAddressClick -> viewModel.onEditContactClick(event.address)
-            is JointAccountDetailEvent.CopyAddressClick -> onAccountAddressCopied(event.address)
-            is JointAccountDetailEvent.IgnoreClick -> viewModel.onIgnoreClick()
-            is JointAccountDetailEvent.AddClick -> viewModel.onAddClick()
-        }
+    override fun onBackClick() {
+        navBack()
+    }
+
+    override fun onEditAddressClick(address: String) {
+        viewModel.onEditContactClick(address)
+    }
+
+    override fun onCopyAddressClick(address: String) {
+        onAccountAddressCopied(address)
+    }
+
+    override fun onIgnoreClick() {
+        viewModel.onIgnoreClick()
+    }
+
+    override fun onAddClick() {
+        viewModel.onAddClick()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

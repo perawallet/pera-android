@@ -13,11 +13,11 @@
 package com.algorand.wallet.inbox.di
 
 import com.algorand.wallet.foundation.cache.InMemoryCacheProvider
-import com.algorand.wallet.inbox.data.cache.DefaultInboxInMemoryCache
-import com.algorand.wallet.inbox.data.cache.InboxInMemoryCache
+import com.algorand.wallet.foundation.cache.InMemoryCachedObject
 import com.algorand.wallet.inbox.data.repository.InboxApiRepositoryImpl
 import com.algorand.wallet.inbox.domain.InboxCacheManager
 import com.algorand.wallet.inbox.domain.InboxCacheManagerImpl
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.CacheInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.ClearInboxCache
@@ -35,6 +35,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -42,6 +43,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object InboxModule {
+
+    private const val INBOX_CACHE_NAME = "inboxCache"
+    private const val INBOX_CACHE_FLOW_NAME = "inboxCacheFlow"
 
     @Provides
     @Singleton
@@ -52,8 +56,6 @@ internal object InboxModule {
     }
 
     @Provides
-    @Singleton
-    @Named(InboxApiRepository.INJECTION_NAME)
     fun provideInboxApiRepository(
         repository: InboxApiRepositoryImpl
     ): InboxApiRepository = repository
@@ -64,31 +66,53 @@ internal object InboxModule {
 
     @Provides
     @Singleton
-    fun provideInboxInMemoryCache(inMemoryCacheProvider: InMemoryCacheProvider): InboxInMemoryCache {
-        return DefaultInboxInMemoryCache(inMemoryCacheProvider)
-    }
+    @Named(INBOX_CACHE_NAME)
+    fun provideInboxCache(
+        inMemoryCacheProvider: InMemoryCacheProvider
+    ): InMemoryCachedObject<InboxMessages> = inMemoryCacheProvider.getInMemoryCache()
+
+    @Provides
+    @Singleton
+    @Named(INBOX_CACHE_FLOW_NAME)
+    fun provideInboxCacheFlow(): MutableStateFlow<InboxMessages?> = MutableStateFlow(null)
 
     @Provides
     fun provideInboxSearchMapper(impl: InboxSearchMapperImpl): InboxSearchMapper = impl
 
     @Provides
-    fun provideCacheInboxMessages(cache: InboxInMemoryCache): CacheInboxMessages {
-        return CacheInboxMessages(cache::put)
+    fun provideCacheInboxMessages(
+        @Named(INBOX_CACHE_NAME) cache: InMemoryCachedObject<InboxMessages>,
+        @Named(INBOX_CACHE_FLOW_NAME) cacheFlow: MutableStateFlow<InboxMessages?>
+    ): CacheInboxMessages {
+        return CacheInboxMessages { inboxMessages ->
+            cache.put(inboxMessages)
+            cacheFlow.value = inboxMessages
+        }
     }
 
     @Provides
-    fun provideClearInboxCache(cache: InboxInMemoryCache): ClearInboxCache {
-        return ClearInboxCache(cache::clear)
+    fun provideClearInboxCache(
+        @Named(INBOX_CACHE_NAME) cache: InMemoryCachedObject<InboxMessages>,
+        @Named(INBOX_CACHE_FLOW_NAME) cacheFlow: MutableStateFlow<InboxMessages?>
+    ): ClearInboxCache {
+        return ClearInboxCache {
+            cache.clear()
+            cacheFlow.value = null
+        }
     }
 
     @Provides
-    fun provideGetInboxMessagesFlow(cache: InboxInMemoryCache): GetInboxMessagesFlow {
-        return GetInboxMessagesFlow(cache::observe)
+    fun provideGetInboxMessagesFlow(
+        @Named(INBOX_CACHE_FLOW_NAME) cacheFlow: MutableStateFlow<InboxMessages?>
+    ): GetInboxMessagesFlow {
+        return GetInboxMessagesFlow { cacheFlow }
     }
 
     @Provides
-    fun provideGetInboxMessages(cache: InboxInMemoryCache): GetInboxMessages {
-        return GetInboxMessages(cache::get)
+    fun provideGetInboxMessages(
+        @Named(INBOX_CACHE_NAME) cache: InMemoryCachedObject<InboxMessages>
+    ): GetInboxMessages {
+        return GetInboxMessages { cache.get() }
     }
 
     @Provides

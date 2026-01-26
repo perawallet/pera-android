@@ -32,6 +32,7 @@ import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
@@ -56,6 +57,7 @@ class AccountPreviewProcessor @Inject constructor(
     private val getLocalAccounts: GetLocalAccounts,
     private val getAccountsCustomInfo: GetAccountsCustomInfo,
     private val getAccountRegistrationType: GetAccountRegistrationType,
+    private val getAccountType: GetAccountType,
     private val sortAccountsBySortingPreference: SortAccountsBySortingPreference,
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
@@ -121,8 +123,8 @@ class AccountPreviewProcessor @Inject constructor(
         val localAccounts = getLocalAccounts()
         val customInfos = getAccountsCustomInfo(localAccounts.map { it.algoAddress })
         val accountErrorItems = localAccounts
-            .map { localAccount ->
-                val accountType = getLocalAccountType(localAccount)
+            .mapNotNull { localAccount ->
+                val accountType = getAccountType(localAccount.algoAddress) ?: return@mapNotNull null
                 val registrationType = getAccountRegistrationType(localAccount)
                 val customInfo = customInfos[localAccount.algoAddress]
                 val displayName = getAccountDisplayName(
@@ -201,15 +203,5 @@ class AccountPreviewProcessor @Inject constructor(
                 isXoSwapEnabled = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
             )
         )
-    }
-
-    private fun getLocalAccountType(localAccount: LocalAccount): AccountType {
-        return when (localAccount) {
-            is LocalAccount.Algo25 -> AccountType.Algo25
-            is LocalAccount.LedgerBle -> AccountType.LedgerBle
-            is LocalAccount.NoAuth -> AccountType.NoAuth
-            is LocalAccount.HdKey -> AccountType.HdKey
-            is LocalAccount.Joint -> AccountType.Joint
-        }
     }
 }

@@ -58,7 +58,7 @@ import com.algorand.android.utils.toShortenedAddress
 fun JointAccountDetailScreen(
     viewState: ViewState,
     accountAddress: String,
-    onEvent: (JointAccountDetailEvent) -> Unit
+    listener: JointAccountDetailListener
 ) {
     Column(
         modifier = Modifier
@@ -68,9 +68,9 @@ fun JointAccountDetailScreen(
         ScreenHeader(
             viewState = viewState,
             accountAddress = accountAddress,
-            onEvent = onEvent
+            listener = listener
         )
-        ScreenContent(viewState = viewState, onEvent = onEvent)
+        ScreenContent(viewState = viewState, listener = listener)
     }
 }
 
@@ -78,7 +78,7 @@ fun JointAccountDetailScreen(
 private fun ScreenHeader(
     viewState: ViewState,
     accountAddress: String,
-    onEvent: (JointAccountDetailEvent) -> Unit
+    listener: JointAccountDetailListener
 ) {
     val displayName = when (viewState) {
         is ViewState.Content -> viewState.accountDisplayName.ifBlank {
@@ -101,7 +101,7 @@ private fun ScreenHeader(
         startContainer = {
             PeraToolbarIcon(
                 iconResId = R.drawable.ic_left_arrow,
-                modifier = Modifier.clickableNoRipple(onClick = { onEvent(JointAccountDetailEvent.BackClick) })
+                modifier = Modifier.clickableNoRipple(onClick = { listener.onBackClick() })
             )
         }
     )
@@ -110,11 +110,11 @@ private fun ScreenHeader(
 @Composable
 private fun ColumnScope.ScreenContent(
     viewState: ViewState,
-    onEvent: (JointAccountDetailEvent) -> Unit
+    listener: JointAccountDetailListener
 ) {
     when (viewState) {
         is ViewState.Loading -> LoadingState()
-        is ViewState.Content -> ContentState(contentState = viewState, onEvent = onEvent)
+        is ViewState.Content -> ContentState(contentState = viewState, listener = listener)
         is ViewState.Error -> ErrorState(errorType = viewState.type)
     }
 }
@@ -154,7 +154,7 @@ private fun ColumnScope.ErrorState(errorType: ErrorType) {
 @Composable
 private fun ColumnScope.ContentState(
     contentState: ViewState.Content,
-    onEvent: (JointAccountDetailEvent) -> Unit
+    listener: JointAccountDetailListener
 ) {
     Column(
         modifier = Modifier
@@ -166,16 +166,16 @@ private fun ColumnScope.ContentState(
         Spacer(modifier = Modifier.height(12.dp))
         InformationCard(numberOfAccounts = contentState.numberOfAccounts, threshold = contentState.threshold)
         Spacer(modifier = Modifier.height(32.dp))
-        AccountsSection(accounts = contentState.participants, onEvent = onEvent)
+        AccountsSection(accounts = contentState.participants, listener = listener)
         Spacer(modifier = Modifier.height(24.dp))
     }
     if (contentState.showActions) {
-        ActionFooter(onEvent = onEvent)
+        ActionFooter(listener = listener)
     }
 }
 
 @Composable
-private fun ActionFooter(onEvent: (JointAccountDetailEvent) -> Unit) {
+private fun ActionFooter(listener: JointAccountDetailListener) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,13 +186,13 @@ private fun ActionFooter(onEvent: (JointAccountDetailEvent) -> Unit) {
         PeraSecondaryButton(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.ignore),
-            onClick = { onEvent(JointAccountDetailEvent.IgnoreClick) }
+            onClick = { listener.onIgnoreClick() }
         )
 
         PeraPrimaryButton(
             modifier = Modifier.weight(2f),
             text = stringResource(R.string.add_to_accounts),
-            onClick = { onEvent(JointAccountDetailEvent.AddClick) }
+            onClick = { listener.onAddClick() }
         )
     }
 }
@@ -279,7 +279,7 @@ private fun ThresholdRow(threshold: Int) {
 @Composable
 private fun AccountsSection(
     accounts: List<JointAccountParticipantItem>,
-    onEvent: (JointAccountDetailEvent) -> Unit
+    listener: JointAccountDetailListener
 ) {
     Text(
         text = stringResource(R.string.accounts_with_count, accounts.size),
@@ -293,8 +293,8 @@ private fun AccountsSection(
         accounts.forEachIndexed { index, account ->
             ParticipantAccountItem(
                 account = account,
-                onEditClick = { onEvent(JointAccountDetailEvent.EditAddressClick(account.address)) },
-                onCopyAddressClick = { onEvent(JointAccountDetailEvent.CopyAddressClick(account.address)) }
+                onEditClick = { listener.onEditAddressClick(account.address) },
+                onCopyAddressClick = { listener.onCopyAddressClick(account.address) }
             )
             if (index < accounts.size - 1) {
                 ParticipantDivider()

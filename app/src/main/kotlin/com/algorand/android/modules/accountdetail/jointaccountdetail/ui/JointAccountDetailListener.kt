@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.accountdetail.jointaccountdetail.ui
 
-sealed interface JointAccountDetailEvent {
-    data object BackClick : JointAccountDetailEvent
-    data class EditAddressClick(val address: String) : JointAccountDetailEvent
-    data class CopyAddressClick(val address: String) : JointAccountDetailEvent
-    data object IgnoreClick : JointAccountDetailEvent
-    data object AddClick : JointAccountDetailEvent
+interface JointAccountDetailListener {
+    fun onBackClick()
+    fun onEditAddressClick(address: String)
+    fun onCopyAddressClick(address: String)
+    fun onIgnoreClick()
+    fun onAddClick()
 }

@@ -61,6 +61,7 @@ import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePrev
 import com.algorand.android.modules.inbox.allaccounts.domain.model.InboxWithAccount
 import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequestInboxItem
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
+import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewState
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.ui.compose.theme.ColorPalette
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -74,11 +75,35 @@ fun InboxScreen(
     viewModel: InboxViewModel,
     listener: InboxScreenListener
 ) {
-    InboxScreen(
-        modifier = modifier,
-        viewStateFlow = viewModel.viewStateFlow,
-        listener = listener
-    )
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
+
+    Box(modifier = modifier.fillMaxSize()) {
+        when (viewState) {
+            is InboxViewState.Loading -> {
+                LoadingState()
+            }
+
+            is InboxViewState.Empty -> {
+                EmptyState()
+            }
+
+            is InboxViewState.Content -> {
+                val content = viewState as InboxViewState.Content
+                ContentState(
+                    accounts = content.inboxWithAccountList,
+                    signatureRequests = content.signatureRequestList,
+                    jointAccountInvitations = content.jointAccountInvitationList,
+                    onAccountClick = listener::onAccountClick,
+                    onSignatureRequestClick = listener::onSignatureRequestClick,
+                    onJointAccountInvitationClick = listener::onJointAccountInvitationClick
+                )
+            }
+
+            is InboxViewState.Error -> {
+                EmptyState()
+            }
+        }
+    }
 }
 
 @Composable

@@ -25,7 +25,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
-import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
+import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewEvent
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -80,23 +80,22 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
 
     private fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
-            flow = inboxViewModel.viewStateFlow,
-            collection = { preview ->
-                preview.showError?.consume()?.let { error ->
-                    context?.let { showGlobalError(error.parseError(it), tag = baseActivityTag) }
-                }
-                handleJointAccountDeepLinkNavigation(preview)
-            }
+            flow = inboxViewModel.viewEvent,
+            collection = ::handleViewEvent
         )
     }
 
-    private fun handleJointAccountDeepLinkNavigation(preview: InboxPreview) {
-        preview.jointAccountInvitationToOpen?.consume()?.let { invitation ->
-            navToJointAccountInvitationDetail(invitation)
-            return
-        }
-        preview.jointAccountAddressToOpen?.consume()?.let { address ->
-            nav(HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(accountAddress = address))
+    private fun handleViewEvent(event: InboxViewEvent) {
+        when (event) {
+            is InboxViewEvent.NavigateToJointAccountInvitation -> {
+                navToJointAccountInvitationDetail(event.invitation)
+            }
+            is InboxViewEvent.NavigateToJointAccountDetail -> {
+                nav(HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(accountAddress = event.accountAddress))
+            }
+            is InboxViewEvent.ShowError -> {
+                showGlobalError(event.message, tag = baseActivityTag)
+            }
         }
     }
 

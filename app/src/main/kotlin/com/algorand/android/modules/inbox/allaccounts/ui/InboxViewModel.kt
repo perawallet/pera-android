@@ -16,17 +16,18 @@ package com.algorand.android.modules.inbox.allaccounts.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
+import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewEvent
+import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewState
 import com.algorand.android.modules.inbox.allaccounts.ui.usecase.InboxPreviewUseCase
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -37,18 +38,22 @@ import javax.inject.Inject
 class InboxViewModel @Inject constructor(
     private val inboxPreviewUseCase: InboxPreviewUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val stateDelegate: StateDelegate<InboxViewState>,
+    private val eventDelegate: EventDelegate<InboxViewEvent>,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : ViewModel(),
+    StateViewModel<InboxViewState> by stateDelegate,
+    EventViewModel<InboxViewEvent> by eventDelegate {
 
     private val filterAccountAddress: String? = savedStateHandle[FILTER_ACCOUNT_ADDRESS_KEY]
-
-    private val _viewStateFlow = MutableStateFlow(inboxPreviewUseCase.getInitialPreview())
-
-    val viewStateFlow: StateFlow<InboxPreview> = _viewStateFlow.asStateFlow()
 
     private var refreshJob: Job? = null
     private var jointAccountAddressToOpen: String? = null
     private var isJointAccountImportHandled = false
+
+    init {
+        stateDelegate.setDefaultState(InboxViewState.Loading)
+    }
 
     fun initializePreview(jointAccountAddress: String? = null) {
         jointAccountAddressToOpen = jointAccountAddress
@@ -61,41 +66,44 @@ class InboxViewModel @Inject constructor(
     }
 
     private suspend fun fetchInboxPreview() {
-        inboxPreviewUseCase.getInboxPreview(filterAccountAddress)
-            .map { preview ->
+        inboxPreviewUseCase.getInboxViewState(filterAccountAddress)
+            .map { viewState ->
                 val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
-                val filteredPreview = if (isJointAccountEnabled) {
-                    preview
+                if (isJointAccountEnabled) {
+                    viewState
                 } else {
-                    preview.copy(
-                        signatureRequestList = emptyList(),
-                        jointAccountInvitationList = emptyList()
-                    )
+                    when (viewState) {
+                        is InboxViewState.Content -> viewState.copy(
+                            signatureRequestList = emptyList(),
+                            jointAccountInvitationList = emptyList()
+                        )
+                        else -> viewState
+                    }
                 }
-                handleJointAccountDeepLinkIfNeeded(filteredPreview)
             }
             .distinctUntilChanged()
-            .collectLatest { preview ->
-                _viewStateFlow.value = preview
+            .collectLatest { viewState ->
+                stateDelegate.updateState { viewState }
+                handleJointAccountDeepLinkIfNeeded(viewState)
             }
     }
 
-    private fun handleJointAccountDeepLinkIfNeeded(preview: InboxPreview): InboxPreview {
-        if (isJointAccountImportHandled) return preview
+    private suspend fun handleJointAccountDeepLinkIfNeeded(viewState: InboxViewState) {
+        if (isJointAccountImportHandled) return
 
-        val addressToOpen = jointAccountAddressToOpen ?: return preview
-        if (preview.isLoading) return preview
+        val addressToOpen = jointAccountAddressToOpen ?: return
+        if (viewState !is InboxViewState.Content) return
 
         isJointAccountImportHandled = true
 
-        val invitation = preview.jointAccountInvitationList.firstOrNull {
+        val invitation = viewState.jointAccountInvitationList.firstOrNull {
             it.accountAddress == addressToOpen
         }
 
-        return if (invitation != null) {
-            preview.copy(jointAccountInvitationToOpen = Event(invitation))
+        if (invitation != null) {
+            eventDelegate.sendEvent(InboxViewEvent.NavigateToJointAccountInvitation(invitation))
         } else {
-            preview.copy(jointAccountAddressToOpen = Event(addressToOpen))
+            eventDelegate.sendEvent(InboxViewEvent.NavigateToJointAccountDetail(addressToOpen))
         }
     }
 

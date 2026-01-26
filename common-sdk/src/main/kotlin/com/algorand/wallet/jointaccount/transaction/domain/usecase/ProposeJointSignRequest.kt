@@ -10,11 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 
-internal data class AssetInboxRequestsResponse(
-    @SerializedName("results")
-    val assetInboxRequests: List<AssetInboxRequestsResponse>?
-)
+fun interface ProposeJointSignRequest {
+    suspend operator fun invoke(
+        jointAccountAddress: String,
+        proposerAddress: String,
+        type: String,
+        rawTransactionLists: List<List<String>>,
+        transactionSignatureLists: List<List<String?>>
+    ): PeraResult<JointSignRequest>
+}

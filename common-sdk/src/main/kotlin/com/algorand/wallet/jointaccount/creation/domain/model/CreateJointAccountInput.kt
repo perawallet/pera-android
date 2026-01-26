@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.creation.domain.model
 
-import com.google.gson.annotations.SerializedName
-
-internal data class AssetInboxRequestsResponse(
-    @SerializedName("results")
-    val assetInboxRequests: List<AssetInboxRequestsResponse>?
+data class CreateJointAccountInput(
+    val participantAddresses: List<String>,
+    val threshold: Int,
+    val version: Int
 )

@@ -31,6 +31,9 @@ class CreateDeepLinkImplTest {
     private val accountAddressDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
+    private val jointAccountImportDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
     private val assetOptInDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
@@ -79,6 +82,7 @@ class CreateDeepLinkImplTest {
     private val sut = CreateDeepLinkImpl(
         parseDeepLinkPayload,
         accountAddressDeepLinkBuilder,
+        jointAccountImportDeepLinkBuilder,
         assetOptInDeepLinkBuilder,
         assetTransferDeepLinkBuilder,
         recoverAccountDeepLinkBuilder,

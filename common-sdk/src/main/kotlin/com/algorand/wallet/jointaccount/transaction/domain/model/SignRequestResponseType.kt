@@ -10,11 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.transaction.domain.model
 
-import com.google.gson.annotations.SerializedName
+enum class SignRequestResponseType(val value: String) {
+    SIGNED("signed"),
+    DECLINED("declined"),
+    REJECTED("rejected");
 
-internal data class AssetInboxRequestsResponse(
-    @SerializedName("results")
-    val assetInboxRequests: List<AssetInboxRequestsResponse>?
-)
+    companion object {
+        private val map = entries.associateBy(SignRequestResponseType::value)
+
+        fun fromValue(value: String?): SignRequestResponseType? = value?.let { map[it] }
+    }
+}

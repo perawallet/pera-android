@@ -12,19 +12,87 @@
 
 package com.algorand.wallet.jointaccount.di
 
+import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapperImpl
+import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapperImpl
+import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryImpl
+import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
+import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
+import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
+import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
+import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
+import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object JointAccountModule {
 
     @Provides
+    @Singleton
+    fun provideJointAccountApiService(
+        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
+    ): JointAccountApiService {
+        return retrofit.create(JointAccountApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Named(JointAccountRepository.INJECTION_NAME)
+    fun provideJointAccountRepository(
+        repository: JointAccountRepositoryImpl
+    ): JointAccountRepository = repository
+
+    @Provides
+    fun provideProposeJointSignRequest(
+        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+    ): ProposeJointSignRequest = ProposeJointSignRequest { jointAccountAddress, proposerAddress, type, rawTransactionLists, transactionSignatureLists ->
+        repository.proposeSignRequest(
+            CreateSignRequestInput(
+                jointAccountAddress = jointAccountAddress,
+                proposerAddress = proposerAddress,
+                type = type,
+                rawTransactionLists = rawTransactionLists,
+                transactionSignatureLists = transactionSignatureLists
+            )
+        )
+    }
+
+    @Provides
+    fun provideGetSignRequestWithSignatures(
+        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+    ): GetSignRequestWithSignatures = GetSignRequestWithSignatures { deviceId, signRequestId ->
+        repository.getSignRequestWithSignatures(deviceId, signRequestId)
+    }
+
+    @Provides
+    fun provideAddJointAccountSignature(
+        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+    ): AddJointAccountSignature = AddJointAccountSignature { signRequestId, addSignatureInput ->
+        repository.addSignature(signRequestId, addSignatureInput)
+    }
+
+    @Provides
     fun provideGetJointAccountProposerAddress(
         useCase: GetJointAccountProposerAddressUseCase
     ): GetJointAccountProposerAddress = useCase
+
+    @Provides
+    fun provideCreateJointAccountDTOMapper(
+        impl: CreateJointAccountDTOMapperImpl
+    ): CreateJointAccountDTOMapper = impl
+
+    @Provides
+    fun provideJointAccountDTOMapper(
+        impl: JointAccountDTOMapperImpl
+    ): JointAccountDTOMapper = impl
 }

@@ -37,6 +37,8 @@ import com.algorand.wallet.deeplink.builder.FidoDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.HomeDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.HomeNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.InternalBrowserNewDeepLinkBuilder
+import com.algorand.wallet.deeplink.builder.JointAccountImportDeepLinkBuilder
+import com.algorand.wallet.deeplink.builder.JointAccountImportNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.KeyRegNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.KeyRegTransactionDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.NotificationDeepLinkBuilder
@@ -122,6 +124,7 @@ internal object DeepLinkModule {
         return CreateDeepLinkImpl(
             parseDeepLinkPayload = parseDeepLinkPayload,
             accountAddressDeepLinkBuilder = AccountAddressDeepLinkBuilder(),
+            jointAccountImportDeepLinkBuilder = JointAccountImportDeepLinkBuilder(),
             assetOptInDeepLinkBuilder = AssetOptInDeepLinkBuilder(),
             assetTransferDeepLinkBuilder = AssetTransferDeepLinkBuilder(),
             recoverAccountDeepLinkBuilder = RecoverAccountDeepLinkBuilder(),
@@ -167,6 +170,7 @@ internal object DeepLinkModule {
             stakingPathNewDeepLinkBuilder = StakingPathNewDeepLinkBuilder(),
             accountDetailNewDeepLinkBuilder = AccountDetailNewDeepLinkBuilder(),
             internalBrowserNewDeepLinkBuilder = InternalBrowserNewDeepLinkBuilder(),
+            jointAccountImportNewDeepLinkBuilder = JointAccountImportNewDeepLinkBuilder(),
             homeNewDeepLinkBuilder = HomeNewDeepLinkBuilder()
         )
     }

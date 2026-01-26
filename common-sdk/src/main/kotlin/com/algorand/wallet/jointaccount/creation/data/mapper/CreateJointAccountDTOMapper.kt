@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.creation.data.mapper
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.wallet.jointaccount.creation.data.model.CreateJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
 
-internal data class AssetInboxRequestsResponse(
-    @SerializedName("results")
-    val assetInboxRequests: List<AssetInboxRequestsResponse>?
-)
+internal interface CreateJointAccountDTOMapper {
+    fun mapToCreateJointAccountRequest(dto: CreateJointAccountInput): CreateJointAccountRequest
+}

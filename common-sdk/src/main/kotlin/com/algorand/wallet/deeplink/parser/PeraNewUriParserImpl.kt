@@ -27,7 +27,7 @@ internal class PeraNewUriParserImpl @Inject constructor() : PeraNewUriParser {
             path = parsedUri.path,
             queryParams = getQueryParams(parsedUri),
             rawUri = uri,
-            lastPathSegment = parsedUri.lastPathSegment
+            lastPathSegment = parsedUri.pathSegments.lastOrNull()
         )
     }
 

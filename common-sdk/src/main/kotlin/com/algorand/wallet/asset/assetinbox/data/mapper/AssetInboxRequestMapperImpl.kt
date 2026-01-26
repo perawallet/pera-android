@@ -19,11 +19,13 @@ import javax.inject.Inject
 internal class AssetInboxRequestMapperImpl @Inject constructor() : AssetInboxRequestMapper {
 
     override fun invoke(response: AssetInboxRequestsResponse): List<AssetInboxRequest> {
-        return response.assetInboxRequests?.mapNotNull { requestResponse ->
-            AssetInboxRequest(
-                address = requestResponse.address ?: return@mapNotNull null,
-                requestCount = requestResponse.requestCount ?: 0
-            )
-        }.orEmpty()
+        return emptyList()
+        TODO("Implement the mapper ")
+//        return response.assetInboxRequests?.mapNotNull { requestResponse ->
+//            AssetInboxRequest(
+//                address = requestResponse.address ?: return@mapNotNull null,
+//                requestCount = requestResponse.requestCount ?: 0
+//            )
+//        }.orEmpty()
     }
 }

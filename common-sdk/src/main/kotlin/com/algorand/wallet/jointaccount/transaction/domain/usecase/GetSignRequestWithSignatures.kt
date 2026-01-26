@@ -10,13 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.assetinbox.data.model
+package com.algorand.wallet.jointaccount.transaction.domain.usecase
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
-internal data class AssetInboxRequestResponse(
-    @SerializedName("address")
-    val address: String?,
-    @SerializedName("request_count")
-    val requestCount: Int?
-)
+fun interface GetSignRequestWithSignatures {
+    suspend operator fun invoke(deviceId: Long, signRequestId: String): PeraResult<SignRequestWithFullSignature>
+}

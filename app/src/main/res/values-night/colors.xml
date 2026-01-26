@@ -179,6 +179,8 @@
     <color name="wallet_connect_dapp_icon_background_color">@color/gray_800</color>
     <color name="wallet_connect_dapp_icon_border_color">@color/transparent</color>
 
+    <color name="participant_count_badge_text_color">@color/wallet_3_icon</color>
+
     <color name="primary_background">@color/gray_900</color>
 
     <color name="primary_icon_tint_color">@color/gray_100</color>

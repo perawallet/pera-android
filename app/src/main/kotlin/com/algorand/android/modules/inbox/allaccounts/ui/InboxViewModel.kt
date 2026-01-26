@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
 import com.algorand.android.modules.inbox.allaccounts.ui.usecase.InboxPreviewUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
@@ -46,8 +47,11 @@ class InboxViewModel @Inject constructor(
     val viewStateFlow: StateFlow<InboxPreview> = _viewStateFlow.asStateFlow()
 
     private var refreshJob: Job? = null
+    private var jointAccountAddressToOpen: String? = null
+    private var isJointAccountImportHandled = false
 
-    fun initializePreview() {
+    fun initializePreview(jointAccountAddress: String? = null) {
+        jointAccountAddressToOpen = jointAccountAddress
         refreshJob?.cancel()
         refreshJob = viewModelScope.launchIO {
             inboxPreviewUseCase.setLastOpenedTime(ZonedDateTime.now())
@@ -60,7 +64,7 @@ class InboxViewModel @Inject constructor(
         inboxPreviewUseCase.getInboxPreview(filterAccountAddress)
             .map { preview ->
                 val isJointAccountEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
-                if (isJointAccountEnabled) {
+                val filteredPreview = if (isJointAccountEnabled) {
                     preview
                 } else {
                     preview.copy(
@@ -68,11 +72,31 @@ class InboxViewModel @Inject constructor(
                         jointAccountInvitationList = emptyList()
                     )
                 }
+                handleJointAccountDeepLinkIfNeeded(filteredPreview)
             }
             .distinctUntilChanged()
             .collectLatest { preview ->
                 _viewStateFlow.value = preview
             }
+    }
+
+    private fun handleJointAccountDeepLinkIfNeeded(preview: InboxPreview): InboxPreview {
+        if (isJointAccountImportHandled) return preview
+
+        val addressToOpen = jointAccountAddressToOpen ?: return preview
+        if (preview.isLoading) return preview
+
+        isJointAccountImportHandled = true
+
+        val invitation = preview.jointAccountInvitationList.firstOrNull {
+            it.accountAddress == addressToOpen
+        }
+
+        return if (invitation != null) {
+            preview.copy(jointAccountInvitationToOpen = Event(invitation))
+        } else {
+            preview.copy(jointAccountAddressToOpen = Event(addressToOpen))
+        }
     }
 
     private companion object {

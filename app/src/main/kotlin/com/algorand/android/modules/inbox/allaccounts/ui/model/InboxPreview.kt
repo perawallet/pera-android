@@ -25,5 +25,7 @@ data class InboxPreview(
     val inboxWithAccountList: List<InboxWithAccount>,
     val signatureRequestList: List<SignatureRequestInboxItem> = emptyList(),
     val jointAccountInvitationList: List<JointAccountInvitationInboxItem> = emptyList(),
-    val filterAccountAddress: String? = null
+    val filterAccountAddress: String? = null,
+    val jointAccountInvitationToOpen: Event<JointAccountInvitationInboxItem>? = null,
+    val jointAccountAddressToOpen: Event<String>? = null
 )

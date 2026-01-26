@@ -33,9 +33,9 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class InboxFragment : TransactionSignBaseFragment(0) {
+class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
 
-    private val infoButton by lazy { IconButton(R.drawable.ic_info, onClick = ::onInfoButtonClick) }
+    private val infoButton by lazy { IconButton(R.drawable.ic_info, onClick = ::onInfoClick) }
 
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.inbox,
@@ -50,8 +50,6 @@ class InboxFragment : TransactionSignBaseFragment(0) {
 
     private val args: InboxFragmentArgs by navArgs()
 
-    private var isJointAccountImportHandled = false
-
     override fun onCreateView(
         inflater: android.view.LayoutInflater,
         container: android.view.ViewGroup?,
@@ -61,23 +59,7 @@ class InboxFragment : TransactionSignBaseFragment(0) {
             PeraTheme {
                 InboxScreen(
                     viewModel = inboxViewModel,
-                    listener = object : InboxScreenListener {
-                        override fun onAccountClick(accountAddress: String) {
-                            onAccountClicked(accountAddress)
-                        }
-
-                        override fun onSignatureRequestClick(signRequestId: String, canUserSign: Boolean) {
-                            onSignatureRequestClicked(signRequestId, canUserSign)
-                        }
-
-                        override fun onJointAccountInvitationClick(invitation: JointAccountInvitationInboxItem) {
-                            onJointAccountInvitationClicked(invitation)
-                        }
-
-                        override fun onInfoClick() {
-                            onInfoButtonClick()
-                        }
-                    }
+                    listener = this@InboxFragment
                 )
             }
         }
@@ -87,7 +69,7 @@ class InboxFragment : TransactionSignBaseFragment(0) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
         initObservers()
-        inboxViewModel.initializePreview()
+        inboxViewModel.initializePreview(args.jointAccountAddressToOpen)
     }
 
     private fun setupToolbar() {
@@ -103,40 +85,26 @@ class InboxFragment : TransactionSignBaseFragment(0) {
                 preview.showError?.consume()?.let { error ->
                     context?.let { showGlobalError(error.parseError(it), tag = baseActivityTag) }
                 }
-                handleJointAccountImportDeepLinkIfNeeded(preview)
+                handleJointAccountDeepLinkNavigation(preview)
             }
         )
     }
 
-    private fun handleJointAccountImportDeepLinkIfNeeded(preview: InboxPreview) {
-        if (isJointAccountImportHandled) return
-
-        val jointAccountAddressToOpen = args.jointAccountAddressToOpen ?: return
-        if (preview.isLoading) return
-
-        val invitation = preview.jointAccountInvitationList.firstOrNull {
-            it.accountAddress == jointAccountAddressToOpen
-        }
-
-        isJointAccountImportHandled = true
-
-        if (invitation != null) {
+    private fun handleJointAccountDeepLinkNavigation(preview: InboxPreview) {
+        preview.jointAccountInvitationToOpen?.consume()?.let { invitation ->
             navToJointAccountInvitationDetail(invitation)
-        } else {
-            // Navigate to joint account detail - will fetch invitation data from API
-            nav(
-                HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
-                    accountAddress = jointAccountAddressToOpen
-                )
-            )
+            return
+        }
+        preview.jointAccountAddressToOpen?.consume()?.let { address ->
+            nav(HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(accountAddress = address))
         }
     }
 
-    private fun onAccountClicked(publicKey: String) {
-        navToAssetInboxOneAccountNavigation(AssetInboxOneAccountNavArgs(publicKey))
+    override fun onAccountClick(accountAddress: String) {
+        navToAssetInboxOneAccountNavigation(AssetInboxOneAccountNavArgs(accountAddress))
     }
 
-    private fun onInfoButtonClick() {
+    override fun onInfoClick() {
         navToAssetInboxInfoNavigation()
     }
 
@@ -156,17 +124,16 @@ class InboxFragment : TransactionSignBaseFragment(0) {
         )
     }
 
-    private fun onSignatureRequestClicked(signRequestId: String, canUserSign: Boolean) {
+    override fun onSignatureRequestClick(signRequestId: String, canUserSign: Boolean) {
         if (canUserSign) {
             nav(HomeNavigationDirections.actionGlobalToJointAccountSignRequestFragment(signRequestId))
         } else {
-            // Show pending signatures bottom sheet if user can't sign
             PendingSignaturesDialogFragment.newInstance(signRequestId)
                 .show(childFragmentManager, PendingSignaturesDialogFragment.TAG)
         }
     }
 
-    private fun onJointAccountInvitationClicked(invitation: JointAccountInvitationInboxItem) {
+    override fun onJointAccountInvitationClick(invitation: JointAccountInvitationInboxItem) {
         navToJointAccountInvitationDetail(invitation)
     }
 

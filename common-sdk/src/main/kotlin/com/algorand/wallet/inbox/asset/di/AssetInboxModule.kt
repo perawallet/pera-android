@@ -12,23 +12,29 @@
 
 package com.algorand.wallet.inbox.asset.di
 
+import com.algorand.wallet.foundation.cache.InMemoryCachedObject
 import com.algorand.wallet.inbox.asset.data.repository.AssetInboxRepositoryImpl
 import com.algorand.wallet.inbox.asset.domain.repository.AssetInboxRepository
 import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequestCountFlow
-import com.algorand.wallet.inbox.data.cache.InboxInMemoryCache
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Named
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AssetInboxModule {
 
     @Provides
-    fun provideAssetInboxRepository(inboxInMemoryCache: InboxInMemoryCache): AssetInboxRepository {
-        return AssetInboxRepositoryImpl(inboxInMemoryCache)
+    fun provideAssetInboxRepository(
+        @Named("inboxCache") inboxCache: InMemoryCachedObject<InboxMessages>,
+        @Named("inboxCacheFlow") inboxCacheFlow: MutableStateFlow<InboxMessages?>
+    ): AssetInboxRepository {
+        return AssetInboxRepositoryImpl(inboxCache, inboxCacheFlow)
     }
 
     @Provides

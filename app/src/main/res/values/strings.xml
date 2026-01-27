@@ -277,7 +277,7 @@
     <string name="dialpad_period">.</string>
     <string name="dialpad_0">0</string>
     <string name="rejecting_requests">Rejecting Requests</string>
-    <string name="this_feature_as_an_inbox">This is your unified inbox where you can manage all incoming requests. Here you can accept or reject asset transfer requests, respond to joint account invitations, and sign pending transactions for your joint accounts.</string>
+    <string name="this_feature_as_an_inbox">This is your unified inbox where you can manage all incoming requests. Here you can accept or reject asset transfer requests for assets or NFTs which you are not opted into already, respond to joint account invitations, and sign pending transactions for your joint accounts.</string>
     <string name="reject">Reject</string>
     <string name="ignore">Ignore</string>
     <string name="claim">Claim</string>

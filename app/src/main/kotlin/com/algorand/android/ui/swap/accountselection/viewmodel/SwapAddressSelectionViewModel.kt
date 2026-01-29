@@ -20,11 +20,12 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
 import com.algorand.android.ui.swap.accountselection.viewmodel.SwapAddressSelectionViewModel.ViewState
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SwapAddressSelectionViewModel @Inject constructor(
@@ -42,7 +43,10 @@ class SwapAddressSelectionViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Idle> {
             viewModelScope.launch {
                 val authAccountLites = getAccountLiteCacheData()?.accountLites?.values
-                    ?.filter { it.cachedInfo?.type?.canSignTransaction() == true }
+                    ?.filter {
+                        val accountType = it.cachedInfo?.type ?: return@filter false
+                        accountType.canSignTransaction() && accountType !is AccountType.Joint
+                    }
                     .orEmpty()
                 val addresses = authAccountLites.map { accountLite ->
                     getAccountDisplayName(accountLite) to getAccountIconDrawablePreview(accountLite)

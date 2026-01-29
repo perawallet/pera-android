@@ -35,11 +35,11 @@ import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import java.math.BigDecimal
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import java.math.BigDecimal
-import javax.inject.Inject
 
 internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
@@ -107,7 +107,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
             if (isWatchAccount) {
                 addAll(getWatchAccountQuickActionItems())
             } else {
-                addAll(getAuthAccountQuickActionItem(accountLite.address))
+                addAll(getAuthAccountQuickActionItem(accountLite))
             }
             add(AccountDetailQuickActionItem.MoreButton)
         }
@@ -118,15 +118,17 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
         return listOf(AccountDetailQuickActionItem.CopyAddressButton, AccountDetailQuickActionItem.ShowAddressButton)
     }
 
-    private suspend fun getAuthAccountQuickActionItem(address: String): List<AccountDetailQuickActionItem> {
+    private suspend fun getAuthAccountQuickActionItem(accountLite: AccountLite): List<AccountDetailQuickActionItem> {
         return mutableListOf<AccountDetailQuickActionItem>().apply {
-            add(AccountDetailQuickActionItem.SwapButton)
+            if (accountLite.cachedInfo?.type !is AccountType.Joint) {
+                add(AccountDetailQuickActionItem.SwapButton)
+            }
             if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
                 add(AccountDetailQuickActionItem.FundButton)
             } else {
                 add(AccountDetailQuickActionItem.BuyAlgoButton)
             }
-            add(Inbox(hasInboxItemsForAddress(address)))
+            add(Inbox(hasInboxItemsForAddress(accountLite.address)))
         }
     }
 }

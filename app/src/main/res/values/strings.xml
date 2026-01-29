@@ -793,7 +793,6 @@
     <string name="asset_transfer_requests">Asset Transfer Requests</string>
     <string name="asset_transfer_request">Asset Transfer Request</string>
     <string name="inbox">Inbox</string>
-    <string name="inbox">Inbox</string>
     <string name="no_pending_asset_transfer">No Pending Requests</string>
     <string name="when_you_have_an_asset">When you have requests or invitations, you can view them here. Tap on the info icon to learn more about this feature.</string>
     <string name="how_this_asset_transfer">How this asset transfer works?</string>

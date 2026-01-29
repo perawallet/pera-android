@@ -36,9 +36,9 @@ internal class GetSpotBannersFlowUseCase @Inject constructor(
 
     private fun isThereAnyNotBackedUpAuthAddressWithBalance(data: List<SpotBannerFlowData>): Boolean {
         return data.any {
-            !it.isBackedUp &&
-                    it.type?.canSignTransaction() == true &&
-                    (it.primaryBalance ?: BigDecimal.ZERO).compareTo(BigDecimal.ZERO) == 1
+            it.type?.canSignTransaction() == true &&
+                !it.isBackedUp &&
+                (it.primaryBalance ?: BigDecimal.ZERO).compareTo(BigDecimal.ZERO) == 1
         }
     }
 }

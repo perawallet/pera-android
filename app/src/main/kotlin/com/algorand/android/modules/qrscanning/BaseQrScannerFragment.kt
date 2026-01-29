@@ -55,6 +55,7 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
  *               In that case, if user scans WC qr, since onWalletConnectConnectionDeeplink is not overridden in child
  *               fragment, then onDeepLinkNotHandled will be called. This function can be used to show error.
  */
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseQrScannerFragment(
     private val fragmentId: Int
 ) : BaseFragment(R.layout.fragment_qr_code_scanner), DeeplinkHandler.Listener {
@@ -110,10 +111,10 @@ abstract class BaseQrScannerFragment(
         } else {
             requestPermissionFromUser(CAMERA_PERMISSION, CAMERA_PERMISSION_REQUEST_CODE, shouldShowAlways = true)
         }
+        initSavedStateListener()
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun initSavedStateListener() {
         startSavedStateListener(fragmentId) {
             useSavedStateValue<Boolean>(SingleButtonBottomSheet.CLOSE_KEY) { isSuccessBottomSheetClosed ->
                 if (isSuccessBottomSheetClosed) {
@@ -121,6 +122,10 @@ abstract class BaseQrScannerFragment(
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
         resumeCameraIfPossibleOrPause()
         view?.viewTreeObserver?.addOnWindowFocusChangeListener(onWindowFocusChangeListener)
     }

@@ -36,6 +36,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 // TODO: 5.08.2022 A work around is to provide all fields again in child classes which makes having default parameter
 // TODO: 5.08.2022 completely non-sense. It would be good to investigate
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseBottomSheet(
     @param:LayoutRes private val layoutResId: Int
 ) : BottomSheetDialogFragment() {

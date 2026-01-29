@@ -30,6 +30,7 @@ import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.viewbinding.viewBinding
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
@@ -105,6 +106,13 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
         binding.startSmallIconImageView.apply {
             isVisible = drawableResId != null
             drawableResId?.let { setImageResource(it) }
+        }
+    }
+
+    fun setParticipantCountBadge(participantCount: Int?) {
+        binding.participantCountBadgeTextView.apply {
+            isVisible = participantCount != null
+            text = participantCount?.toString().orEmpty()
         }
     }
 

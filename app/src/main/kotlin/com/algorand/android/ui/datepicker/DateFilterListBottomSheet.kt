@@ -61,6 +61,7 @@ class DateFilterListBottomSheet : DaggerBaseBottomSheet(R.layout.bottom_sheet_da
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        initSavedStateListener()
     }
 
     private fun initUi() {
@@ -73,11 +74,6 @@ class DateFilterListBottomSheet : DaggerBaseBottomSheet(R.layout.bottom_sheet_da
 
     private fun initObservers() {
         dateFilterListViewModel.dateFilterListLiveData.observe(viewLifecycleOwner, dateFilterListObserver)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
     }
 
     private fun initSavedStateListener() {

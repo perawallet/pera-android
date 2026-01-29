@@ -12,18 +12,6 @@
 
 @file:Suppress("TooManyFunctions") // TODO: We should remove this after function count decrease under 25
 
-/*
- * Copyright 2022-2025 Pera Wallet, LDA
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
- */
-
 package com.algorand.android
 
 import android.content.Context
@@ -53,6 +41,7 @@ import com.algorand.android.models.TransactionSignData
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
@@ -75,7 +64,6 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.getSafeParcelableExtra
 import com.algorand.android.utils.inappreview.InAppReviewManager
-import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
@@ -355,12 +343,21 @@ class MainActivity :
             handleHomeDeeplink()
             return true
         }
+
+        override fun onJointAccountImportDeepLink(address: String?): Boolean {
+            return if (address != null) {
+                navToJointAccountImportDeepLink(address)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private val transactionManagerResultObserver = Observer<Event<TransactionManagerResult>?> {
         it?.consume()?.let { result ->
             when (result) {
-                is TransactionManagerResult.Success -> {
+                is TransactionManagerResult.Success.SignedTransaction -> {
                     hideLedgerLoadingDialog()
                     val signedTransactionDetail = result.signedTransactionDetail
                     if (signedTransactionDetail is SignedTransactionDetail.AssetOperation) {
@@ -394,8 +391,15 @@ class MainActivity :
                     navToLedgerConnectionIssueBottomSheet()
                 }
 
-                else -> {
-                    sendErrorLog("Unhandled else case in transactionManagerResultLiveData")
+                is TransactionManagerResult.Success.TransactionRequestSigned -> {
+                    hideProgress()
+                    hideLedgerLoadingDialog()
+                    PendingSignaturesDialogFragment.newInstance(result.signRequestId)
+                        .show(supportFragmentManager, PendingSignaturesDialogFragment.TAG)
+                }
+
+                TransactionManagerResult.LedgerOperationCanceled -> {
+                    hideLedgerLoadingDialog()
                 }
             }
         }
@@ -570,6 +574,15 @@ class MainActivity :
         if (navController.currentDestination?.id != R.id.accountsFragment) {
             nav(MainNavigationDirections.actionGlobalMainNavigation())
         }
+    }
+
+    private fun navToJointAccountImportDeepLink(address: String) {
+        navToHome()
+        nav(
+            HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
+                accountAddress = address
+            )
+        )
     }
 
     fun navToContactAdditionNavigation(address: String, label: String?) {

@@ -24,10 +24,13 @@ import com.algorand.android.databinding.FragmentContactInfoBinding
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.models.User
 import com.algorand.android.utils.extensions.setContactIconDrawable
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.openTextShareBottomMenuChooser
+import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,6 +40,9 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
     private val args: ContactInfoFragmentArgs by navArgs()
 
     private val binding by viewBinding(FragmentContactInfoBinding::bind)
+
+    // Mutable contact that can be updated when returning from edit
+    private lateinit var currentContact: User
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -50,8 +56,23 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        currentContact = args.contact
         customizeToolbar()
         initUi()
+        initSavedStateListener()
+    }
+
+    private fun initSavedStateListener() {
+        startSavedStateListener(R.id.contactInfoFragment) {
+            useSavedStateValue<User>(CONTACT_UPDATED_KEY) { updatedContact ->
+                currentContact = updatedContact
+                updateContactUI()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun customizeToolbar() {
@@ -66,7 +87,13 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
     }
 
     private fun initUi() {
-        with(args.contact) {
+        updateContactUI()
+        binding.showQrButton.setOnClickListener { onShowQrClick() }
+        binding.sendAssetButton.setOnClickListener { onSendAssetClick() }
+    }
+
+    private fun updateContactUI() {
+        with(currentContact) {
             with(binding) {
                 contactImageView.setContactIconDrawable(
                     uri = imageUriAsString?.toUri(),
@@ -77,43 +104,42 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
                 addressTextView.text = publicKey
             }
         }
-        binding.showQrButton.setOnClickListener { onShowQrClick() }
-        binding.sendAssetButton.setOnClickListener { onSendAssetClick() }
     }
 
     private fun onShowQrClick() {
         binding.showQrButton.hideKeyboard()
         nav(
             ContactInfoFragmentDirections.actionGlobalShowQrNavigation(
-                title = args.contact.name,
-                qrText = args.contact.publicKey
+                title = currentContact.name,
+                qrText = currentContact.publicKey
             )
         )
     }
 
     private fun onShareClick() {
-        context?.openTextShareBottomMenuChooser(args.contact.publicKey, getString(R.string.share_via))
+        context?.openTextShareBottomMenuChooser(currentContact.publicKey, getString(R.string.share_via))
     }
 
     private fun onEditClick() {
         nav(
             ContactInfoFragmentDirections.actionContactInfoFragmentToEditContactFragment(
-                contactName = args.contact.name,
-                contactPublicKey = args.contact.publicKey,
-                contactDatabaseId = args.contact.contactDatabaseId,
-                contactProfileImageUri = args.contact.imageUriAsString
+                contactName = currentContact.name,
+                contactPublicKey = currentContact.publicKey,
+                contactDatabaseId = currentContact.contactDatabaseId,
+                contactProfileImageUri = currentContact.imageUriAsString
             )
         )
     }
 
     private fun onSendAssetClick() {
         val assetTransaction = AssetTransaction(
-            receiverUser = args.contact
+            receiverUser = currentContact
         )
         nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))
     }
 
     companion object {
         private const val FIREBASE_EVENT_SCREEN_ID = "screen_contact_detail"
+        private const val CONTACT_UPDATED_KEY = "contact_added_key"
     }
 }

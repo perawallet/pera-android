@@ -12,13 +12,22 @@
 
 package com.algorand.wallet.jointaccount.di
 
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository as LocalJointAccountRepository
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotificationUseCase
+import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessages
+import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessagesUseCase
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapperImpl
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapperImpl
+import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
+import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccountUseCase
 import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryImpl
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
@@ -95,4 +104,29 @@ internal object JointAccountModule {
     fun provideJointAccountDTOMapper(
         impl: JointAccountDTOMapperImpl
     ): JointAccountDTOMapper = impl
+
+    @Provides
+    fun provideGetJointAccount(
+        repository: LocalJointAccountRepository
+    ): GetJointAccount = GetJointAccount(repository::getAccount)
+
+    @Provides
+    fun provideGetJointAccountParticipantCount(
+        repository: LocalJointAccountRepository
+    ): GetJointAccountParticipantCount = GetJointAccountParticipantCount(repository::getParticipantCount)
+
+    @Provides
+    fun provideCreateJointAccount(
+        useCase: CreateJointAccountUseCase
+    ): CreateJointAccount = useCase
+
+    @Provides
+    fun provideFetchInboxMessages(
+        useCase: FetchInboxMessagesUseCase
+    ): FetchInboxMessages = useCase
+
+    @Provides
+    fun provideDeleteInboxJointInvitationNotification(
+        useCase: DeleteInboxJointInvitationNotificationUseCase
+    ): DeleteInboxJointInvitationNotification = useCase
 }

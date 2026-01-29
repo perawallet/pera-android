@@ -77,6 +77,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             setupUndoRekeyOptionButton(isUndoRekeyButtonVisible, authAccountDisplayName)
             setupRekeyToOptions(canSignTransaction)
             setupRescanRekeyedAccountsButton(registrationType)
+            setupExportShareAccountButton(registrationType)
         }
     }
 
@@ -171,6 +172,22 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             setOnClickListener { navToDisconnectAccountConfirmationBottomSheet() }
             show()
         }
+    }
+
+    private fun setupExportShareAccountButton(registrationType: AccountRegistrationType) {
+        binding.exportShareAccountButton.apply {
+            isVisible = registrationType is AccountRegistrationType.Joint
+            setOnClickListener { onExportShareAccountClick() }
+        }
+    }
+
+    private fun onExportShareAccountClick() {
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToExportShareAccountNavigation(
+                    accountOptionsViewModel.accountAddress
+                )
+        )
     }
 
     private fun setupRenameAccountButton() {

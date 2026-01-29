@@ -21,8 +21,6 @@ internal data class JointEntity(
     @PrimaryKey
     @ColumnInfo("algo_address")
     val algoAddress: String,
-    @ColumnInfo("participant_addresses")
-    val participantAddresses: String,
     @ColumnInfo("threshold")
     val threshold: Int,
     @ColumnInfo("version")

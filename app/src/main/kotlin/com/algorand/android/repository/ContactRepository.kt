@@ -32,4 +32,8 @@ class ContactRepository @Inject constructor(
     suspend fun getContactByAddress(accountAddress: String): User? {
         return contactDao.getContactByAddress(accountAddress)
     }
+
+    suspend fun addContact(contact: User) {
+        contactDao.addContact(contact)
+    }
 }

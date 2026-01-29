@@ -32,7 +32,9 @@ import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
@@ -55,10 +57,12 @@ class AccountPreviewProcessor @Inject constructor(
     private val getLocalAccounts: GetLocalAccounts,
     private val getAccountsCustomInfo: GetAccountsCustomInfo,
     private val getAccountRegistrationType: GetAccountRegistrationType,
+    private val getAccountType: GetAccountType,
     private val sortAccountsBySortingPreference: SortAccountsBySortingPreference,
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val getLocalAccount: GetLocalAccount
 ) {
 
     suspend fun prepareAccountPreview(
@@ -105,30 +109,37 @@ class AccountPreviewProcessor @Inject constructor(
         accountLites: Map<String, AccountLite>,
         rendererType: AmountRenderer.RenderType
     ): List<BaseAccountListItem> {
-        return sortAccountsBySortingPreference.sortAccountLites(accountLites).map { (_, accountLite) ->
-            if (accountLite.cachedInfo != null) {
-                getAccountSuccessItem(accountLite, accountLite.cachedInfo, rendererType)
-            } else {
-                getAccountErrorItem(accountLite)
+        return sortAccountsBySortingPreference.sortAccountLites(accountLites)
+            .map { (_, accountLite) ->
+                if (accountLite.cachedInfo != null) {
+                    getAccountSuccessItem(accountLite, accountLite.cachedInfo, rendererType)
+                } else {
+                    getAccountErrorItem(accountLite)
+                }
             }
-        }
     }
 
     suspend fun createAccountErrorItemList(): List<BaseAccountListItem> {
         val localAccounts = getLocalAccounts()
         val customInfos = getAccountsCustomInfo(localAccounts.map { it.algoAddress })
-        val accountErrorItems = localAccounts.map { localAccount ->
-            val customInfo = customInfos[localAccount.algoAddress]
-            val displayName = getAccountDisplayName(localAccount.algoAddress, customInfo?.customName, type = null)
-            val registrationType = getAccountRegistrationType(localAccount)
-            BaseAccountListItem.AccountErrorItem(
-                address = localAccount.algoAddress,
-                primaryDisplayName = displayName.primaryDisplayName,
-                secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
-                accountIconDrawablePreview = getAccountIconDrawablePreviewByType(registrationType),
-                canCopyable = registrationType != AccountRegistrationType.NoAuth
-            )
-        }
+        val accountErrorItems = localAccounts
+            .mapNotNull { localAccount ->
+                val accountType = getAccountType(localAccount.algoAddress) ?: return@mapNotNull null
+                val registrationType = getAccountRegistrationType(localAccount)
+                val customInfo = customInfos[localAccount.algoAddress]
+                val displayName = getAccountDisplayName(
+                    address = localAccount.algoAddress,
+                    name = customInfo?.customName,
+                    type = accountType
+                )
+                BaseAccountListItem.AccountErrorItem(
+                    address = localAccount.algoAddress,
+                    primaryDisplayName = displayName.primaryDisplayName,
+                    secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
+                    accountIconDrawablePreview = getAccountIconDrawablePreviewByType(registrationType),
+                    canCopyable = accountType != AccountType.NoAuth
+                )
+            }
 
         if (accountErrorItems.isEmpty()) return emptyList()
         return mutableListOf<BaseAccountListItem>().apply {
@@ -146,6 +157,11 @@ class AccountPreviewProcessor @Inject constructor(
         val displayName = getAccountDisplayName(accountLite)
         val primaryAmount = PeraAmount(cachedInfo.primaryAccountValue)
         val secondaryAmount = PeraAmount(cachedInfo.secondaryAccountValue)
+        val participantCount = if (cachedInfo.type == AccountType.Joint) {
+            (getLocalAccount(address) as? LocalAccount.Joint)?.participantAddresses?.size?.takeIf { it > 0 }
+        } else {
+            null
+        }
         return BaseAccountListItem.AccountSuccessItem(
             address = address,
             primaryDisplayName = displayName.primaryDisplayName,
@@ -154,7 +170,8 @@ class AccountPreviewProcessor @Inject constructor(
             formattedPrimaryValue = getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType),
             formattedSecondaryValue = getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType),
             canCopyable = cachedInfo.type != AccountType.NoAuth,
-            startSmallIconResource = accountLite.getStartSmallIconResource()
+            startSmallIconResource = accountLite.getStartSmallIconResource(),
+            participantCount = participantCount
         )
     }
 

@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseWebViewViewModel : BaseViewModel() {
 
     private val _peraWebViewFlow: MutableStateFlow<PeraWebView?> = MutableStateFlow(null)

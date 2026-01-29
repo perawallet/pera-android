@@ -16,41 +16,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.R
@@ -60,19 +26,12 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.theme.PeraTheme.typography
-import com.algorand.android.ui.compose.widget.GroupChoiceWidget
-import com.algorand.android.ui.compose.widget.PeraCard
-import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
-import com.algorand.android.ui.compose.widget.text.AutosizeText
-import com.algorand.android.ui.compose.widget.text.PeraHighlightedGrayText
-import com.algorand.android.ui.compose.widget.text.PeraHighlightedGreenText
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
+class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0),
+    AccountRecoveryTypeSelectionScreenListener {
 
     private val viewStateCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewState) -> Unit = { state ->
         when (state) {
@@ -155,221 +114,15 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
         return ComposeView(requireContext()).apply {
             setContent {
                 PeraTheme {
-                    AccountRecoveryTypeSelectionScreen()
+                    AccountRecoveryTypeSelectionScreen(
+                        listener = this@AccountRecoveryTypeSelectionFragment
+                    )
                 }
             }
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun AccountRecoveryTypeSelectionScreen() {
-        val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = true
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Top
-        ) {
-            TitleWidget()
-            Spacer(modifier = Modifier.height(30.dp))
-            RecoverAnAccountWidget(sheetState)
-            RecoverAnAccountWithQRWidget()
-            PairLedgerDeviceWidget()
-            ImportPeraWebWidget()
-            AlgorandSecureBackupWidget()
-        }
-    }
-
-    @Composable
-    private fun TitleWidget() {
-
-        Text(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            style = typography.title.regular.sansMedium,
-            color = PeraTheme.colors.text.main,
-            text = stringResource(R.string.import_a_wallet)
-        )
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun RecoverAnAccountWidget(sheetState: SheetState) {
-        val showBottomSheet = rememberSaveable { mutableStateOf(false) }
-
-        GroupChoiceWidget(
-            title = stringResource(id = R.string.recover_a_wallet),
-            description = stringResource(id = R.string.i_want_to_recover_wallet),
-            icon = ImageVector.vectorResource(R.drawable.ic_key),
-            iconContentDescription = stringResource(id = R.string.key),
-            onClick = {
-                showBottomSheet.value = true
-            }
-        )
-        if (showBottomSheet.value) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet.value = false
-                },
-                sheetState = sheetState,
-                containerColor = PeraTheme.colors.background.primary,
-                contentColor = PeraTheme.colors.text.grayLighter,
-                dragHandle = { PeraBottomSheetDragIndicator(modifier = Modifier.padding(vertical = 12.dp)) }
-            ) {
-                BottomSheetContent(
-                    sheetState = sheetState,
-                    onDismiss = { showBottomSheet.value = false }
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun RecoverAnAccountWithQRWidget() {
-        GroupChoiceWidget(
-            title = stringResource(id = R.string.recover_an_account_with_qr),
-            description = stringResource(id = R.string.i_want_to_recover_qr),
-            icon = ImageVector.vectorResource(R.drawable.ic_qr),
-            iconContentDescription = stringResource(id = R.string.qr_code),
-            onClick = ::navToRecoverWithPassphraseQrScannerFragment
-        )
-    }
-
-    @Composable
-    private fun PairLedgerDeviceWidget() {
-        GroupChoiceWidget(
-            title = stringResource(id = R.string.pair_ledger_device),
-            description = stringResource(id = R.string.i_want_to_recover_an),
-            iconContentDescription = stringResource(id = R.string.ledger),
-            icon = ImageVector.vectorResource(R.drawable.ic_ledger),
-            onClick = ::navToPairLedgerNavigation
-        )
-    }
-
-    @Composable
-    private fun ImportPeraWebWidget() {
-        GroupChoiceWidget(
-            title = stringResource(id = R.string.import_from_pera_web),
-            description = stringResource(id = R.string.i_want_to_import_algorand),
-            iconContentDescription = stringResource(id = R.string.import_from_pera_web),
-            icon = ImageVector.vectorResource(R.drawable.ic_global),
-            onClick = ::navToImportFromWeb
-        )
-    }
-
-    @Composable
-    private fun AlgorandSecureBackupWidget() {
-        GroupChoiceWidget(
-            title = stringResource(id = R.string.algorand_secure_backup),
-            description = stringResource(id = R.string.i_want_to_restore_my),
-            iconContentDescription = stringResource(id = R.string.i_want_to_restore_my),
-            icon = ImageVector.vectorResource(R.drawable.ic_backup),
-            onClick = ::navToAlgorandSecureRestoreNavigation
-        )
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun BottomSheetContent(
-        sheetState: SheetState,
-        onDismiss: () -> Unit
-    ) {
-        val coroutineScope = rememberCoroutineScope()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(PeraTheme.colors.background.primary)
-        ) {
-            BottomSheetHeader(sheetState, onDismiss)
-
-            PeraCard(
-                title = stringResource(R.string.mnemonic_type_universal_title),
-                description = stringResource(R.string.mnemonic_type_universal_description),
-                footer = stringResource(R.string.mnemonic_type_universal_footer),
-                highlightContent = {
-                    PeraHighlightedGreenText(
-                        text = stringResource(R.string.new_text)
-                    )
-                },
-                onClick = {
-                    navigateToRecoverAccountInfoFragment(
-                        OnboardingAccountType.HdKey
-                    )
-                    coroutineScope.launch {
-                        sheetState.hide()
-                    }
-                }
-            )
-
-            PeraCard(
-                title = stringResource(R.string.mnemonic_type_algo25_title),
-                description = stringResource(R.string.mnemonic_type_algo25_description),
-                footer = stringResource(R.string.mnemonic_type_algo25_footer),
-                highlightContent = {
-                    PeraHighlightedGrayText(
-                        text = stringResource(R.string.legacy_text)
-                    )
-                },
-                onClick = {
-                    navigateToRecoverAccountInfoFragment(
-                        OnboardingAccountType.Algo25
-                    )
-                    coroutineScope.launch {
-                        sheetState.hide()
-                    }
-                }
-            )
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Suppress("MagicNumber")
-    @Composable
-    fun BottomSheetHeader(
-        sheetState: SheetState,
-        onDismiss: () -> Unit
-    ) {
-        val coroutineScope = rememberCoroutineScope()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 10.dp,
-                    bottom = 24.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                        onDismiss()
-                    }
-                }) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    tint = PeraTheme.colors.text.main,
-                    contentDescription = stringResource(id = R.string.close)
-                )
-            }
-
-            AutosizeText(
-                modifier = Modifier.weight(1f),
-                text = stringResource(id = R.string.bottom_sheet_mnemonic_type_title),
-                style = typography.body.regular.sansMedium,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(Modifier.width(58.dp))
-        }
-    }
-
-    private fun navigateToRecoverAccountInfoFragment(onboardingAccountType: OnboardingAccountType) {
+    override fun onNavigateToRecoverAccountInfo(onboardingAccountType: OnboardingAccountType) {
         accountRecoveryTypeSelectionViewModel.logRecoverAccountTypeClickEvent(onboardingAccountType)
         nav(
             AccountRecoveryTypeSelectionFragmentDirections
@@ -377,5 +130,21 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0) {
                     onboardingAccountType = onboardingAccountType
                 )
         )
+    }
+
+    override fun onRecoverWithQRClick() {
+        navToRecoverWithPassphraseQrScannerFragment()
+    }
+
+    override fun onPairLedgerClick() {
+        navToPairLedgerNavigation()
+    }
+
+    override fun onImportFromWebClick() {
+        navToImportFromWeb()
+    }
+
+    override fun onAlgorandSecureBackupClick() {
+        navToAlgorandSecureRestoreNavigation()
     }
 }

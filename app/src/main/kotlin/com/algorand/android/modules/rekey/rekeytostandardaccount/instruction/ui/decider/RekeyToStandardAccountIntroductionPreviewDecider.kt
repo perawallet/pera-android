@@ -27,10 +27,7 @@ class RekeyToStandardAccountIntroductionPreviewDecider @Inject constructor() {
             // [null] and [Watch] cases are not possible
             AccountType.NoAuth, null -> R.drawable.ic_rekey_from_rekeyed_banner
             AccountType.HdKey -> R.drawable.ic_rekey_from_hdkey_banner
-            AccountType.Joint -> {
-                TODO("Handle Joint Account")
-                R.drawable.ic_rekey_from_rekeyed_banner
-            }
+            AccountType.Joint -> R.drawable.ic_rekey_from_rekeyed_banner
         }
     }
 
@@ -41,10 +38,7 @@ class RekeyToStandardAccountIntroductionPreviewDecider @Inject constructor() {
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.string.rekey_your_account_to
             AccountType.NoAuth, null -> null
             AccountType.HdKey -> R.string.use_another_account_s_private
-            AccountType.Joint -> {
-                TODO("Handle Joint Account")
-                null
-            }
+            AccountType.Joint -> null
         }
         // TODO find a way to use `click spannable` in use case
         return AnnotatedString(stringResId = stringResId ?: return null)
@@ -73,10 +67,7 @@ class RekeyToStandardAccountIntroductionPreviewDecider @Inject constructor() {
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
 
-                AccountType.NoAuth, null -> Unit
-                AccountType.Joint -> {
-                    TODO("Handle Joint Account")
-                }
+                AccountType.NoAuth, null, AccountType.Joint -> Unit
             }
         }
     }

@@ -46,7 +46,7 @@ class DefaultAccountAssetsEventTrackerTest {
 
     @Test
     fun `EXPECT asset inbox click to be logged`() {
-        sut.logAssetInboxClick()
+        sut.logInboxClick()
 
         verify { peraAnalyticsEventTracker.logEvent("accountscr_tapmenu_asset_inbox_tap") }
     }

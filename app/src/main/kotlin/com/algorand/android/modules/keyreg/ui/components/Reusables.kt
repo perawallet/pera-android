@@ -15,16 +15,12 @@ package com.algorand.android.modules.keyreg.ui.components
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 
 @SuppressLint("ComposableNaming")
 @Composable
@@ -44,19 +40,11 @@ fun algorandButton(
     buttonText: String,
     onClick: () -> Unit,
 ) {
-    Button(
+    PeraPrimaryButton(
+        modifier = Modifier
+            .width(327.dp)
+            .height(52.dp),
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(Color.Black),
-        shape = RoundedCornerShape(8.dp),
-        modifier =
-            Modifier
-                .width(327.dp)
-                .height(52.dp),
-    ) {
-        Text(
-            text = buttonText,
-            style = PeraTheme.typography.body.regular.sansMedium,
-            color = PeraTheme.colors.text.main,
-        )
-    }
+        text = buttonText
+    )
 }

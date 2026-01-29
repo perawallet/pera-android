@@ -15,6 +15,7 @@ package com.algorand.android.core
 import androidx.annotation.LayoutRes
 import com.algorand.android.utils.analytics.logScreen
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class DaggerBaseBottomSheet(
     @LayoutRes layoutResId: Int,
     override val fullPageNeeded: Boolean,

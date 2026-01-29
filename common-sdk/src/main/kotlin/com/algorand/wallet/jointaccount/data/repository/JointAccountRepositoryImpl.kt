@@ -22,10 +22,10 @@ import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccount
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
-import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestMapper
-import com.algorand.wallet.jointaccount.transaction.data.mapper.CreateSignRequestInputMapper
-import com.algorand.wallet.jointaccount.transaction.data.mapper.SearchSignRequestsInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.mapper.AddSignatureInputMapper
+import com.algorand.wallet.jointaccount.transaction.data.mapper.CreateSignRequestInputMapper
+import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestMapper
+import com.algorand.wallet.jointaccount.transaction.data.mapper.SearchSignRequestsInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
@@ -80,13 +80,13 @@ internal class JointAccountRepositoryImpl @Inject constructor(
 
     override suspend fun addSignature(
         signRequestId: String,
-        signRequestTransactionListResponseDTO: AddSignatureInput
+        addSignatureInput: AddSignatureInput
     ): PeraResult<JointSignRequest> {
         val request = addSignatureInputMapper.mapToSignRequestTransactionListResponseRequest(
-            signRequestTransactionListResponseDTO
+            addSignatureInput
         )
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
-            jointAccountApiService.addSignature(signRequestId, signRequestTransactionListResponseDTO.address, request)
+            jointAccountApiService.addSignature(signRequestId, addSignatureInput.address, request)
         }.mapToJointSignRequest()
     }
 
@@ -125,6 +125,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
                         PeraResult.Error(Exception("Sign request not found"))
                     }
                 }
+
                 is PeraResult.Error -> result
             }
         }

@@ -19,11 +19,9 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import com.algorand.android.R
+import com.algorand.android.models.AccountIconResource
 
 class ContactIconDrawable(
     private val backgroundColor: Int,
@@ -69,22 +67,14 @@ class ContactIconDrawable(
     }
 
     companion object {
-        @DrawableRes
-        private val DEFAULT_CONTACT_ICON_RES = R.drawable.ic_user
-
-        @ColorRes
-        private val DEFAULT_CONTACT_ICON_BG_COLOR = R.color.layer_gray_lighter
-
-        @ColorRes
-        private val DEFAULT_CONTACT_ICON_TINT_COLOR = R.color.text_gray
-
         private const val ICON_PADDING_RATIO_MULTIPLIER = .8
 
         fun create(context: Context, size: Int): ContactIconDrawable? {
             return ContactIconDrawable(
-                backgroundColor = ContextCompat.getColor(context, DEFAULT_CONTACT_ICON_BG_COLOR),
-                iconTint = ContextCompat.getColor(context, DEFAULT_CONTACT_ICON_TINT_COLOR),
-                iconDrawable = AppCompatResources.getDrawable(context, DEFAULT_CONTACT_ICON_RES) ?: return null,
+                backgroundColor = ContextCompat.getColor(context, AccountIconResource.CONTACT.backgroundColorResId),
+                iconTint = ContextCompat.getColor(context, AccountIconResource.CONTACT.iconTintResId),
+                iconDrawable = AppCompatResources.getDrawable(context, AccountIconResource.CONTACT.iconResId)
+                    ?: return null,
                 size = size
             )
         }

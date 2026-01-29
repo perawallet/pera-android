@@ -12,19 +12,6 @@
 
 @file:Suppress("TooManyFunctions")
 
-/*
- * Copyright 2022-2025 Pera Wallet, LDA
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- *  limitations under the License
- *
- */
-
 package com.algorand.android.modules.accountdetail.ui
 
 import android.os.Bundle
@@ -43,6 +30,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
+import com.algorand.android.modules.accountcore.ui.model.AccountIconClickAction
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
@@ -54,7 +42,6 @@ import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirect
 import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToRemoveAsset
 import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToRemoveCollectible
 import com.algorand.android.modules.accountdetail.ui.AccountDetailViewModel.ViewEvent.NavToTransferBalance
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.assets.action.transferbalance.TransferBalanceActionBottomSheet.Companion.TRANSFER_ASSET_ACTION_RESULT
 import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
@@ -74,8 +61,8 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import java.math.BigInteger
 import kotlinx.coroutines.flow.map
+import java.math.BigInteger
 
 @AndroidEntryPoint
 class AccountDetailFragment :
@@ -121,6 +108,7 @@ class AccountDetailFragment :
             is NavToTransferBalance -> {
                 nav(actionAccountDetailFragmentToAssetTransferBalanceActionNavigation(viewEvent.assetAction))
             }
+
             is NavToRemoveCollectible -> {
                 nav(actionAccountDetailFragmentToNftOptOutConfirmationNavigation(viewEvent.assetAction))
             }
@@ -204,8 +192,8 @@ class AccountDetailFragment :
         accountDetailViewModel.removeCollectible(assetId)
     }
 
-    override fun onAssetInboxClick() {
-        navToAssetInboxOneAccountNavigation()
+    override fun onInboxClick() {
+        navToInboxWithFilter()
     }
 
     override fun onSendClick() {
@@ -263,6 +251,18 @@ class AccountDetailFragment :
         navToBackupPassphraseInfoNavigation()
     }
 
+    override fun onJointAccountBadgeClick() {
+        navToJointAccountDetailFragment()
+    }
+
+    private fun navToJointAccountDetailFragment() {
+        nav(
+            AccountDetailFragmentDirections.actionAccountDetailFragmentToJointAccountDetailFragment(
+                accountDetailViewModel.accountAddress
+            )
+        )
+    }
+
     override fun onImageItemClick(nftAssetId: Long) {
         navToCollectibleDetailFragment(nftAssetId)
     }
@@ -303,10 +303,6 @@ class AccountDetailFragment :
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
-    }
-
-    override fun onStart() {
-        super.onStart()
         initSavedStateListener()
     }
 
@@ -391,20 +387,27 @@ class AccountDetailFragment :
             configure(toolbarConfiguration)
             configureToolbarName(accountDetailSummary)
             setOnTitleLongClickListener { onAccountAddressCopied(accountDetailSummary.address) }
-            // TODO: find a proper way to inflate button model in preview class
+            val onClickAction = getAccountIconClickAction(accountDetailSummary.accountIconClickAction)
             val endButton = if (accountDetailSummary.shouldDisplayAccountType) {
                 BaseAccountIconButton.ExtendedAccountButton(
                     accountIconDrawablePreview = accountDetailSummary.accountIconDrawable,
                     accountTypeResId = accountDetailSummary.accountTypeResId,
-                    onClick = ::navToAccountStatusDetailBottomSheet
+                    onClick = onClickAction
                 )
             } else {
                 BaseAccountIconButton.AccountButton(
                     accountIconDrawablePreview = accountDetailSummary.accountIconDrawable,
-                    onClick = ::navToAccountStatusDetailBottomSheet
+                    onClick = onClickAction
                 )
             }
             setEndButton(button = endButton)
+        }
+    }
+
+    private fun getAccountIconClickAction(action: AccountIconClickAction): () -> Unit {
+        return when (action) {
+            AccountIconClickAction.SHOW_JOINT_ACCOUNT_DETAIL -> ::navToJointAccountDetailFragment
+            AccountIconClickAction.SHOW_ACCOUNT_STATUS_DETAIL -> ::navToAccountStatusDetailBottomSheet
         }
     }
 
@@ -559,11 +562,11 @@ class AccountDetailFragment :
         showGlobalError(errorMessage = emptyString(), title = message)
     }
 
-    private fun navToAssetInboxOneAccountNavigation() {
+    private fun navToInboxWithFilter() {
         nav(
             AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToAssetInboxOneAccountNavigation(
-                    AssetInboxOneAccountNavArgs(accountDetailViewModel.accountAddress)
+                .actionAccountDetailFragmentToAssetInboxAllAccountsNavigation(
+                    filterAccountAddress = accountDetailViewModel.accountAddress
                 )
         )
     }

@@ -12,26 +12,18 @@
 
 package com.algorand.android.ui.asset.detail.view
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,9 +44,10 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetLineChartViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetMarketsViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetPriceLineChartViewModel
-import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.PeraSingleButtonState
+import com.algorand.android.ui.compose.widget.PeraToolbar
+import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
 import com.algorand.android.ui.transaction.csv.viewmodel.CsvViewModel
@@ -91,7 +84,11 @@ fun AssetDetailScreen(
                     holdingViewModel.init(viewState.address, viewState.asset)
                     marketsViewModel.initViewState(viewState.asset)
                 }
-                Toolbar(viewState.accountDisplayName, viewState.accountIconDrawable, listener::onNavBackClick)
+                Toolbar(
+                    accountDisplayName = viewState.accountDisplayName,
+                    accountIconDrawablePreview = viewState.accountIconDrawable,
+                    onBackClick = listener::onNavBackClick
+                )
                 AssetDetailPagerIndicator(pagerState) { selectedPage ->
                     scope.launch { pagerState.animateScrollToPage(selectedPage) }
                 }
@@ -133,46 +130,23 @@ private fun Toolbar(
     accountIconDrawablePreview: AccountIconDrawablePreview,
     onBackClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier
-                .size(40.dp)
-                .clickableNoRipple(onClick = onBackClick)
-                .padding(8.dp),
-            painter = painterResource(R.drawable.ic_left_arrow),
-            tint = PeraTheme.colors.text.main,
-            contentDescription = null
-        )
-
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = accountDisplayName.primaryDisplayName,
-                style = PeraTheme.typography.body.regular.sansMedium,
-                color = PeraTheme.colors.text.main
+    PeraToolbar(
+        modifier = Modifier.padding(horizontal = 12.dp),
+        text = accountDisplayName.primaryDisplayName,
+        secondaryText = accountDisplayName.secondaryDisplayName,
+        startContainer = {
+            PeraToolbarIcon(
+                iconResId = R.drawable.ic_left_arrow,
+                modifier = Modifier.clickableNoRipple(onClick = onBackClick)
             )
-            if (!accountDisplayName.secondaryDisplayName.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = accountDisplayName.secondaryDisplayName,
-                    style = PeraTheme.typography.footnote.sans,
-                    color = PeraTheme.colors.text.gray
-                )
-            }
+        },
+        endContainer = {
+            AccountIcon(
+                modifier = Modifier.size(28.dp),
+                iconDrawablePreview = accountIconDrawablePreview
+            )
         }
-        AccountIcon(
-            modifier = Modifier.size(28.dp),
-            iconDrawablePreview = accountIconDrawablePreview
-        )
-    }
+    )
 }
 
 @Composable

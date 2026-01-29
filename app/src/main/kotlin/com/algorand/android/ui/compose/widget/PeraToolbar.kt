@@ -15,10 +15,13 @@ package com.algorand.android.ui.compose.widget
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -27,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
@@ -34,8 +38,11 @@ import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 @Composable
 fun PeraToolbar(
     modifier: Modifier = Modifier,
-    text: String,
+    text: String = "",
+    secondaryText: String? = null,
+    textStyle: PeraToolbarTextStyle = PeraToolbarTextStyle.Default,
     startContainer: @Composable RowScope.() -> Unit = {},
+    centerContainer: (@Composable () -> Unit)? = null,
     endContainer: @Composable RowScope.() -> Unit = {}
 ) {
     Box(
@@ -46,10 +53,20 @@ fun PeraToolbar(
         Row(modifier = Modifier.align(Alignment.CenterStart)) {
             startContainer()
         }
-        ToolbarText(
-            modifier = Modifier.align(Alignment.Center),
-            text = text
-        )
+
+        if (centerContainer != null) {
+            Box(modifier = Modifier.align(Alignment.Center)) {
+                centerContainer()
+            }
+        } else if (text.isNotEmpty() || secondaryText != null) {
+            ToolbarText(
+                modifier = Modifier.align(Alignment.Center),
+                text = text,
+                secondaryText = secondaryText,
+                textStyle = textStyle
+            )
+        }
+
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
             endContainer()
         }
@@ -57,14 +74,32 @@ fun PeraToolbar(
 }
 
 @Composable
-fun PeraToolbarIcon(modifier: Modifier = Modifier, @DrawableRes iconResId: Int) {
+fun PeraToolbarLinkText(
+    modifier: Modifier = Modifier,
+    text: String
+) {
+    Text(
+        text = text,
+        style = PeraTheme.typography.body.regular.sansMedium,
+        color = PeraTheme.colors.link.primary,
+        textAlign = TextAlign.End,
+        modifier = modifier.padding(end = 24.dp)
+    )
+}
+
+@Composable
+fun PeraToolbarIcon(
+    modifier: Modifier = Modifier,
+    @DrawableRes iconResId: Int,
+    contentDescription: String? = null
+) {
     Icon(
         modifier = modifier
             .size(40.dp)
             .padding(8.dp),
         painter = painterResource(iconResId),
-        tint = PeraTheme.colors.text.gray,
-        contentDescription = null
+        tint = PeraTheme.colors.text.main,
+contentDescription = contentDescription
     )
 }
 
@@ -75,7 +110,7 @@ fun PeraToolbarTextButton(
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    val textColor = animateColorAsState(if (enabled) PeraTheme.colors.helper.positive else PeraTheme.colors.text.gray)
+    val textColor = animateColorAsState(if (enabled) PeraTheme.colors.link.primary else PeraTheme.colors.text.gray)
     Text(
         modifier = modifier.clickableNoRipple(enabled) { onClick() },
         text = text,
@@ -85,11 +120,102 @@ fun PeraToolbarTextButton(
 }
 
 @Composable
-private fun ToolbarText(modifier: Modifier = Modifier, text: String) {
+private fun ToolbarText(
+    modifier: Modifier = Modifier,
+    text: String,
+    secondaryText: String? = null,
+    textStyle: PeraToolbarTextStyle = PeraToolbarTextStyle.Default
+) {
+    val primaryTextStyle = when (textStyle) {
+        PeraToolbarTextStyle.Default -> PeraTheme.typography.body.regular.sansMedium
+        PeraToolbarTextStyle.Large -> PeraTheme.typography.title.large.sansMedium
+    }
+
+    if (secondaryText != null) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = text,
+                style = primaryTextStyle,
+                color = PeraTheme.colors.text.main
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = secondaryText,
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray
+            )
+        }
+    } else {
+        Text(
+            modifier = modifier,
+            text = text,
+            style = primaryTextStyle,
+            color = PeraTheme.colors.text.main
+        )
+    }
+}
+
+/**
+ * Composable for toolbar title text with default style.
+ * Use this in centerContainer slot of PeraToolbar.
+ */
+@Composable
+fun PeraToolbarTitle(
+    modifier: Modifier = Modifier,
+    text: String
+) {
     Text(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.regular.sansMedium,
         color = PeraTheme.colors.text.main
     )
+}
+
+/**
+ * Composable for toolbar title text with large style.
+ * Use this in centerContainer slot of PeraToolbar.
+ */
+@Composable
+fun PeraToolbarLargeTitle(
+    modifier: Modifier = Modifier,
+    text: String
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = PeraTheme.typography.title.large.sansMedium,
+        color = PeraTheme.colors.text.main
+    )
+}
+
+/**
+ * Composable for toolbar title with secondary text.
+ * Use this in centerContainer slot of PeraToolbar.
+ */
+@Composable
+fun PeraToolbarTitleWithSubtitle(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title,
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.text.main
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = subtitle,
+            style = PeraTheme.typography.footnote.sans,
+            color = PeraTheme.colors.text.gray
+        )
+    }
 }

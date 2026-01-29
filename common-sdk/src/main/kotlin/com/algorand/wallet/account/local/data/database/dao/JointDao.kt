@@ -16,7 +16,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.algorand.wallet.account.local.data.database.model.JointEntity
+import com.algorand.wallet.account.local.data.database.model.JointWithParticipants
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -30,6 +32,18 @@ internal interface JointDao {
 
     @Query("SELECT * FROM joint_account")
     suspend fun getAll(): List<JointEntity>
+
+    @Transaction
+    @Query("SELECT * FROM joint_account")
+    suspend fun getAllWithParticipants(): List<JointWithParticipants>
+
+    @Transaction
+    @Query("SELECT * FROM joint_account")
+    fun getAllWithParticipantsAsFlow(): Flow<List<JointWithParticipants>>
+
+    @Transaction
+    @Query("SELECT * FROM joint_account WHERE :algoAddress = algo_address")
+    suspend fun getWithParticipants(algoAddress: String): JointWithParticipants?
 
     @Query("SELECT algo_address FROM joint_account")
     suspend fun getAllAddresses(): List<String>

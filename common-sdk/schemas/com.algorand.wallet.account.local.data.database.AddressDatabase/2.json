@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "36b5b9eed2f2abcc9d00a303d80cff1d",
+    "identityHash": "4cb41ebba935369b59efeb0bbc4cd5f3",
     "entities": [
       {
         "tableName": "ledger_ble",
@@ -204,17 +204,11 @@
       },
       {
         "tableName": "joint_account",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`algo_address` TEXT NOT NULL, `participant_addresses` TEXT NOT NULL, `threshold` INTEGER NOT NULL, `version` INTEGER NOT NULL, PRIMARY KEY(`algo_address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`algo_address` TEXT NOT NULL, `threshold` INTEGER NOT NULL, `version` INTEGER NOT NULL, PRIMARY KEY(`algo_address`))",
         "fields": [
           {
             "fieldPath": "algoAddress",
             "columnName": "algo_address",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "participantAddresses",
-            "columnName": "participant_addresses",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -237,11 +231,66 @@
             "algo_address"
           ]
         }
+      },
+      {
+        "tableName": "joint_participant",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`joint_address` TEXT NOT NULL, `participant_index` INTEGER NOT NULL, `participant_address` TEXT NOT NULL, PRIMARY KEY(`joint_address`, `participant_index`), FOREIGN KEY(`joint_address`) REFERENCES `joint_account`(`algo_address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "jointAddress",
+            "columnName": "joint_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "participantIndex",
+            "columnName": "participant_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "participantAddress",
+            "columnName": "participant_address",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "joint_address",
+            "participant_index"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_joint_participant_joint_address",
+            "unique": false,
+            "columnNames": [
+              "joint_address"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_joint_participant_joint_address` ON `${TABLE_NAME}` (`joint_address`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "joint_account",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "joint_address"
+            ],
+            "referencedColumns": [
+              "algo_address"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '36b5b9eed2f2abcc9d00a303d80cff1d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4cb41ebba935369b59efeb0bbc4cd5f3')"
     ]
   }
 }

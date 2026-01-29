@@ -26,10 +26,7 @@ internal class GetAccountIconDrawablePreviewByTypeUseCase @Inject constructor() 
             AccountType.LedgerBle -> AccountIconDrawablePreviews.getLedgerBleDrawable()
             AccountType.NoAuth -> AccountIconDrawablePreviews.getNoAuthDrawable()
             AccountType.Rekeyed, AccountType.RekeyedAuth -> AccountIconDrawablePreviews.getRekeyedDrawable()
-            AccountType.Joint -> {
-                TODO("Handle Joint Account")
-                AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
-            }
+            AccountType.Joint -> AccountIconDrawablePreviews.getJointDrawable()
         }
     }
 
@@ -39,10 +36,7 @@ internal class GetAccountIconDrawablePreviewByTypeUseCase @Inject constructor() 
             AccountRegistrationType.HdKey -> AccountIconDrawablePreviews.getHdKeyDrawable()
             AccountRegistrationType.LedgerBle -> AccountIconDrawablePreviews.getLedgerBleDrawable()
             AccountRegistrationType.NoAuth -> AccountIconDrawablePreviews.getNoAuthDrawable()
-            AccountRegistrationType.Joint -> {
-                TODO("Handle Joint Account")
-                AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
-            }
+            AccountRegistrationType.Joint -> AccountIconDrawablePreviews.getJointDrawable()
         }
     }
 }

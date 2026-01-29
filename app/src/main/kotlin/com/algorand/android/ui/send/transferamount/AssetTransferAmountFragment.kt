@@ -144,6 +144,7 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
             maxButton.setOnClickListener { onMaxButtonClick() }
             addNoteButton.setOnClickListener { onAddButtonClick() }
         }
+        initSavedStateListener()
     }
 
     private fun initToolbar() {
@@ -300,11 +301,6 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
             AssetTransferAmountFragmentDirections
                 .actionAssetTransferAmountFragmentToAddNoteNavigation(note, lockedNote == null)
         )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
     }
 
     private fun initSavedStateListener() {

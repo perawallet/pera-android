@@ -13,6 +13,8 @@
 package com.algorand.android.ui.wctransactionrequest
 
 import android.content.Context
+import android.os.Bundle
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
@@ -46,12 +48,12 @@ class WalletConnectAsaProfileFragment : BaseAsaProfileFragment() {
         transactionRequestListener = parentFragment?.parentFragment as? TransactionRequestAction
     }
 
-    override fun onStart() {
-        super.onStart()
-        startSavedStateListener()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initWcAsaProfileSavedStateListener()
     }
 
-    private fun startSavedStateListener() {
+    private fun initWcAsaProfileSavedStateListener() {
         useFragmentResultListenerValue<AssetActionResult>(TRANSFER_ASSET_ACTION_RESULT) { assetActionResult ->
             navToSendAlgoFlow(assetActionResult)
         }

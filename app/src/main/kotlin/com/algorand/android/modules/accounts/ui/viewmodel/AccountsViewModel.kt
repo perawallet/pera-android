@@ -35,15 +35,14 @@ import com.algorand.wallet.spotbanner.domain.usecase.DismissSpotBanner
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 @HiltViewModel
@@ -80,12 +79,14 @@ class AccountsViewModel @Inject constructor(
     }
 
     private fun initializeTutorials() {
-        if (tutorialJob != null) return
+        if (tutorialJob?.isActive == true) return
         tutorialJob = viewModelScope.launch {
             combine(
                 tutorialUseCase.getTutorial(),
                 getAskNotificationPermissionEventFlowUseCase.invoke()
             ) { tutorial, notificationPermission ->
+                tutorial to notificationPermission
+            }.collectLatest { (tutorial, notificationPermission) ->
                 if (notificationPermission?.data != null) {
                     eventDelegate.sendEvent(ViewEvent.ShowNotificationPermission)
                 }
@@ -98,7 +99,7 @@ class AccountsViewModel @Inject constructor(
                     }
                     eventDelegate.sendEvent(tutorialEvent)
                 }
-            }.launchIn(viewModelScope)
+            }
         }
     }
 

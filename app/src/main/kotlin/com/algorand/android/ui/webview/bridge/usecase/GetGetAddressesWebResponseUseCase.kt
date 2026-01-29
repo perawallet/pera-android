@@ -48,6 +48,7 @@ internal class GetGetAddressesWebResponseUseCase @Inject constructor(
         return when (type) {
             AccountType.Algo25 -> "Algo25"
             AccountType.HdKey -> "HdKey"
+            AccountType.Joint -> "Joint"
             AccountType.LedgerBle -> "LedgerBle"
             AccountType.NoAuth -> "NoAuth"
             AccountType.Rekeyed -> "Rekeyed"

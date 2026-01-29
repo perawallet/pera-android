@@ -52,17 +52,10 @@ import com.algorand.android.utils.makeTx
 import com.algorand.android.utils.mapToNotNullableListOrNull
 import com.algorand.android.utils.minBalancePerAssetAsBigInteger
 import com.algorand.android.utils.sendErrorLog
-import com.algorand.android.utils.signTx
 import com.algorand.android.utils.toBytesArray
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
-import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
-import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
-import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -71,19 +64,15 @@ import java.net.ConnectException
 import java.net.SocketException
 import javax.inject.Inject
 
-@Suppress("LongParameterList")
 class TransactionSignManager @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
     private val transactionsRepository: TransactionsRepository,
     private val ledgerBleOperationManager: LedgerBleOperationManager,
     private val signHelper: TransactionSignSigningHelper,
-    private val getAccountAlgoBalance: GetAccountAlgoBalance,
-    private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount,
-    private val getAccountMinBalance: GetAccountMinBalance,
-    private val getAlgo25SecretKey: GetAlgo25SecretKey,
-    private val getHdSeed: GetHdSeed,
-    private val getLocalAccount: GetLocalAccount,
-    private val signHdKeyTransaction: SignHdKeyTransaction
+    private val accountBalanceProvider: AccountBalanceProvider,
+    private val localAccountSigningHelper: LocalAccountSigningHelper,
+    private val jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
+    private val getLocalAccount: GetLocalAccount
 ) : LifecycleScopedCoroutineOwner() {
 
     val transactionManagerResultLiveData: MutableLiveData<Event<TransactionManagerResult>?> = MutableLiveData()
@@ -141,21 +130,17 @@ class TransactionSignManager @Inject constructor(
     }
 
     private val signHelperListener = object : ListQueuingHelper.Listener<TransactionSignData, ByteArray> {
-        override fun onAllItemsDequeued(signedTransactions: List<ByteArray?>) {
-            if (signedTransactions.isEmpty() || signedTransactions.any { it == null }) {
+        override fun onAllItemsDequeued(dequeuedItemList: List<ByteArray?>) {
+            if (dequeuedItemList.isEmpty() || dequeuedItemList.any { it == null }) {
                 setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
                 return
             }
-            if (signedTransactions.size == 1) {
-                transactionDataList?.let { postTxnSignResult(signedTransactions.firstOrNull(), it.firstOrNull()) }
-            } else {
-                val safeSignedTransactions = signedTransactions.mapToNotNullableListOrNull { it }
-                if (safeSignedTransactions == null) {
-                    postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
-                    return
-                }
-                transactionDataList?.let { postGroupTxnSignResult(safeSignedTransactions, it) }
+            val safeSignedTransactions = dequeuedItemList.mapToNotNullableListOrNull { it }
+            if (safeSignedTransactions == null) {
+                postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                return
             }
+            transactionDataList?.let { postSignResult(safeSignedTransactions, it) }
         }
 
         override fun onNextItemToBeDequeued(
@@ -253,26 +238,32 @@ class TransactionSignManager @Inject constructor(
     private suspend fun TransactionSignData.signTxn() {
         when (signer) {
             is TransactionSigner.Algo25 -> {
-                val secretKey = getAlgo25SecretKey(signer.address) ?: run {
+                val transactionBytes = transactionByteArray ?: return handleSignError()
+                val signedTx = localAccountSigningHelper.signWithAlgo25Account(transactionBytes, signer.address)
+                if (signedTx == null) {
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
                     return
                 }
-                checkAndCacheSignedTransaction(transactionByteArray?.signTx(secretKey))
+                checkAndCacheSignedTransaction(signedTx)
             }
 
             is TransactionSigner.HdKey -> {
                 val transactionBytes = transactionByteArray ?: return handleSignError()
-                val hdKey = getLocalAccount(signer.address) as? LocalAccount.HdKey ?: return handleSignError()
-                val seed = getHdSeed(seedId = hdKey.seedId) ?: return handleSignError()
-
-                val transactionSignedByteArray = signHdKeyTransaction.signTransaction(
-                    transactionBytes, seed, hdKey.account, hdKey.change, hdKey.keyIndex
-                ) ?: return handleSignError()
-
-                checkAndCacheSignedTransaction(transactionSignedByteArray)
+                val hdKey = getLocalAccount(signer.address)
+                    as? LocalAccount.HdKey ?: return handleSignError()
+                val signedTx = localAccountSigningHelper.signWithHdKeyAccount(transactionBytes, hdKey)
+                    ?: return handleSignError()
+                checkAndCacheSignedTransaction(signedTx)
             }
 
-            is TransactionSigner.LedgerBle -> sendTransactionWithLedger(signer as TransactionSigner.LedgerBle)
+            is TransactionSigner.LedgerBle -> {
+                sendTransactionWithLedger(signer as TransactionSigner.LedgerBle)
+            }
+
+            is TransactionSigner.Joint -> {
+                handleJointAccountTransaction(signer as TransactionSigner.Joint)
+            }
+
             is TransactionSigner.SignerNotFound -> {
                 postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
             }
@@ -285,6 +276,25 @@ class TransactionSignManager @Inject constructor(
 
     private fun handleSignError() {
         setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+    }
+
+    private suspend fun handleJointAccountTransaction(signer: TransactionSigner.Joint) {
+        val transactionDataList = this.transactionDataList ?: return postJointAccountError()
+        when (val result = jointAccountTransactionSignHelper.handleJointAccountTransaction(
+            jointAccountAddress = signer.address,
+            transactionDataList = transactionDataList
+        )) {
+            is JointAccountTransactionSignHelper.JointSignResult.Success -> {
+                postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
+            }
+            is JointAccountTransactionSignHelper.JointSignResult.Error -> {
+                postJointAccountError()
+            }
+        }
+    }
+
+    private fun postJointAccountError() {
+        postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
     }
 
     private suspend fun TransactionSignData.createArc59SendTransactions(): List<Arc59TransactionData>? {
@@ -476,12 +486,12 @@ class TransactionSignManager @Inject constructor(
         return if (assetId != ALGO_ID) {
             false
         } else {
-            getAccountAlgoBalance(publicKey) == amount
+            accountBalanceProvider.getAlgoBalance(publicKey) == amount
         }
     }
 
     private suspend fun shouldCreateAssetRemoveTransaction(publicKey: String, assetId: Long): Boolean {
-        val assetHoldingAmount = getAccountAssetHoldingAmount(publicKey, assetId)
+        val assetHoldingAmount = accountBalanceProvider.getAssetHoldingAmount(publicKey, assetId)
         return assetHoldingAmount != null && assetHoldingAmount == BigInteger.ZERO
     }
 
@@ -499,7 +509,7 @@ class TransactionSignManager @Inject constructor(
         }
 
         // every asset addition increases min balance by $MIN_BALANCE_PER_ASSET
-        var minBalance = getAccountMinBalance(senderAccountAddress)
+        var minBalance = accountBalanceProvider.getMinBalance(senderAccountAddress)
         when (this) {
             is TransactionSignData.AddAsset ->
                 minBalance += minBalancePerAssetAsBigInteger
@@ -513,7 +523,7 @@ class TransactionSignManager @Inject constructor(
             }
         }
 
-        val balance = getAccountAlgoBalance(senderAccountAddress) ?: run {
+        val balance = accountBalanceProvider.getAlgoBalance(senderAccountAddress) ?: run {
             setSignFailed(Defined(AnnotatedString(stringResId = R.string.minimum_balance_required)))
             return true
         }
@@ -600,46 +610,29 @@ class TransactionSignManager @Inject constructor(
         return transactionDataList
     }
 
-    private fun postTxnSignResult(
-        bytesArray: ByteArray?,
-        transactionData: TransactionSignData?
-    ) {
-        if (bytesArray == null || transactionData == null) {
-            postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
-        } else {
-            postResult(TransactionManagerResult.Success(transactionData.getSignedTransactionDetail(bytesArray)))
-        }
-    }
-
-    private fun postGroupTxnSignResult(
-        groupedBytesArrayList: List<ByteArray>,
+    private fun postSignResult(
+        signedBytesArrayList: List<ByteArray>,
         transactionDataList: List<TransactionSignData>
     ) {
-        val signedGroupTxnDetailList = createSignedTransactionDetailList(transactionDataList, groupedBytesArrayList)
-        if (signedGroupTxnDetailList.isNotEmpty()) {
-            postResult(
-                TransactionManagerResult.Success(
-                    SignedTransactionDetail.Group(
-                        groupedBytesArrayList.flatten(),
-                        signedGroupTxnDetailList
-                    )
-                )
-            )
-        } else {
+        if (signedBytesArrayList.isEmpty() || transactionDataList.isEmpty() ||
+            signedBytesArrayList.size != transactionDataList.size
+        ) {
             postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+            return
         }
-    }
 
-    private fun createSignedTransactionDetailList(
-        transactionDataList: List<TransactionSignData>,
-        signedBytesArrayList: List<ByteArray>
-    ): List<SignedTransactionDetail> {
-        return mutableListOf<SignedTransactionDetail>().apply {
-            for (index in transactionDataList.indices) {
-                val signedTxn = signedBytesArrayList[index]
-                add(transactionDataList[index].getSignedTransactionDetail(signedTxn))
-            }
+        val signedDetails = transactionDataList.mapIndexed { index, transactionData ->
+            transactionData.getSignedTransactionDetail(signedBytesArrayList[index])
         }
+
+        val result = if (signedDetails.size == 1) {
+            TransactionManagerResult.Success.SignedTransaction(signedDetails.first())
+        } else {
+            TransactionManagerResult.Success.SignedTransaction(
+                SignedTransactionDetail.Group(signedBytesArrayList.flatten(), signedDetails)
+            )
+        }
+        postResult(result)
     }
 
     private fun createGroupedBytesArray(transactionDataList: List<TransactionSignData>): BytesArray? {

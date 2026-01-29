@@ -137,6 +137,7 @@ abstract class AlgorandDatabase : RoomDatabase() {
                         )
                     """.trimIndent()
                 )
+                @Suppress("UnreachableCode")
                 with(db.query("SELECT * FROM WalletConnectSessionEntity") ?: return) {
                     while (moveToNext()) {
                         // Get session id

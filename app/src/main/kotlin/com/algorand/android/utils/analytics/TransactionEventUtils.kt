@@ -22,6 +22,7 @@ private const val TRANSACTION_EVENT_KEY = "transaction" // event type
 private const val TRANSACTION_ACCOUNT_TYPE_KEY = "account_type" // param
 private const val TRANSACTION_STANDARD_ACCOUNT_KEY = "standard" // value
 private const val TRANSACTION_LEDGER_ACCOUNT_KEY = "ledger" // value
+private const val TRANSACTION_JOINT_ACCOUNT_KEY = "joint" // value
 
 private const val TRANSACTION_AMOUNT = "amount" // param
 private const val TRANSACTION_IS_MAX = "is_max" // param
@@ -38,6 +39,7 @@ fun FirebaseAnalytics.logTransactionEvent(
     val accountTypeValue = when (accountType) {
         AccountRegistrationType.Algo25 -> TRANSACTION_STANDARD_ACCOUNT_KEY
         AccountRegistrationType.LedgerBle -> TRANSACTION_LEDGER_ACCOUNT_KEY
+        AccountRegistrationType.Joint -> TRANSACTION_JOINT_ACCOUNT_KEY
         else -> "other"
     }
 

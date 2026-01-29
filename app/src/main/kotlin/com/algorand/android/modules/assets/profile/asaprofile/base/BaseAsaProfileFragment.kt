@@ -103,11 +103,6 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
     abstract fun onAccountSelected(selectedAccountAddress: String)
     abstract fun navToDiscoverTokenDetailPage()
 
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
-    }
-
     private fun initSavedStateListener() {
         useFragmentResultListenerValue<String>(ASA_PROFILE_ACCOUNT_SELECTION_RESULT_KEY) { selectedAccountAddress ->
             onAccountSelected(selectedAccountAddress)
@@ -131,6 +126,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        initSavedStateListener()
     }
 
     private fun initUi() {

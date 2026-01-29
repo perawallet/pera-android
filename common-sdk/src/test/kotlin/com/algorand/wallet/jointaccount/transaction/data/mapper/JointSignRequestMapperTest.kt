@@ -224,6 +224,36 @@ internal class JointSignRequestMapperTest {
         assertEquals(SignRequestResponseType.DECLINED, responseItem?.response)
     }
 
+    @Test
+    fun `EXPECT creationDatetime to be mapped correctly`() {
+        setupMockJointAccountMapper(null)
+        val response = createTestResponse(creationDatetime = TEST_CREATION_DATETIME)
+
+        val result = mapper.mapToJointSignRequest(response)
+
+        assertEquals(TEST_CREATION_DATETIME, result?.creationDatetime)
+    }
+
+    @Test
+    fun `EXPECT failReasonDisplay to be mapped correctly`() {
+        setupMockJointAccountMapper(null)
+        val response = createTestResponse(failReasonDisplay = TEST_FAIL_REASON)
+
+        val result = mapper.mapToJointSignRequest(response)
+
+        assertEquals(TEST_FAIL_REASON, result?.failReasonDisplay)
+    }
+
+    @Test
+    fun `EXPECT null failReasonDisplay WHEN response failReasonDisplay is null`() {
+        setupMockJointAccountMapper(null)
+        val response = createTestResponse(failReasonDisplay = null)
+
+        val result = mapper.mapToJointSignRequest(response)
+
+        assertNull(result?.failReasonDisplay)
+    }
+
     private fun setupMockJointAccountMapper(returnValue: JointAccount?) {
         every { jointAccountDTOMapper.mapToJointAccountDTO(any()) } returns returnValue
     }
@@ -236,7 +266,9 @@ internal class JointSignRequestMapperTest {
         rawTransactionLists: List<List<String>>? = null,
         transactionLists: List<SignRequestTransactionListResponse>? = null,
         expectedExpireDatetime: String? = null,
-        status: String? = TEST_STATUS_PENDING
+        status: String? = TEST_STATUS_PENDING,
+        creationDatetime: String? = TEST_CREATION_DATETIME,
+        failReasonDisplay: String? = null
     ) = JointSignRequestResponse(
         id = id,
         jointAccount = jointAccount,
@@ -245,7 +277,9 @@ internal class JointSignRequestMapperTest {
         rawTransactionLists = rawTransactionLists,
         transactionLists = transactionLists,
         expectedExpireDatetime = expectedExpireDatetime,
-        status = status
+        status = status,
+        creationDatetime = creationDatetime,
+        failReasonDisplay = failReasonDisplay
     )
 
     private companion object {
@@ -266,5 +300,6 @@ internal class JointSignRequestMapperTest {
         const val TEST_RESPONSE_SIGNED = "signed"
         const val TEST_RESPONSE_DECLINED = "declined"
         const val TEST_SIGNATURE = "sig_1"
+        const val TEST_FAIL_REASON = "Transaction expired"
     }
 }

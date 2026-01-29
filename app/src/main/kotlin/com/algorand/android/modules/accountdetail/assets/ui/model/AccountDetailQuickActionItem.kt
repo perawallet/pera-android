@@ -14,7 +14,7 @@ package com.algorand.android.modules.accountdetail.assets.ui.model
 
 sealed interface AccountDetailQuickActionItem {
 
-    data class AssetInbox(val isSelected: Boolean) : AccountDetailQuickActionItem
+    data class Inbox(val isSelected: Boolean) : AccountDetailQuickActionItem
 
     data object SwapButton : AccountDetailQuickActionItem
 

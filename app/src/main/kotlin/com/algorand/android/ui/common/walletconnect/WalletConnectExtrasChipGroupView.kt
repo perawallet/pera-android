@@ -13,7 +13,6 @@
 
 package com.algorand.android.ui.common.walletconnect
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.DimenRes
@@ -25,7 +24,6 @@ import com.algorand.android.models.WCAlgoTransactionRequest
 import com.algorand.android.models.WalletConnectTransactionAssetDetail
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.resources.TextAppearance
 
 class WalletConnectExtrasChipGroupView(
     context: Context,
@@ -97,11 +95,10 @@ class WalletConnectExtrasChipGroupView(
         }
     }
 
-    @SuppressLint("RestrictedApi")
     private fun createChip(@StringRes textRes: Int): Chip {
         return Chip(context).apply {
             text = context?.getString(textRes).orEmpty()
-            setTextAppearance(TextAppearance(context, R.style.TextAppearance_Footnote_Sans_Medium))
+            setTextAppearance(R.style.TextAppearance_Footnote_Sans_Medium)
             setChipBackgroundColorResource(R.color.layer_gray_lighter)
         }
     }

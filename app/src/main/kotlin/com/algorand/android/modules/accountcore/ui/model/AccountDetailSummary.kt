@@ -21,5 +21,11 @@ data class AccountDetailSummary(
     val accountDisplayName: AccountDisplayName,
     val accountTypeResId: Int,
     val shouldDisplayAccountType: Boolean,
-    val accountType: AccountType?
+    val accountType: AccountType?,
+    val accountIconClickAction: AccountIconClickAction
 )
+
+enum class AccountIconClickAction {
+    SHOW_JOINT_ACCOUNT_DETAIL,
+    SHOW_ACCOUNT_STATUS_DETAIL
+}

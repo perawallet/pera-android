@@ -13,8 +13,12 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.JointDao
+import com.algorand.wallet.account.local.data.database.dao.JointParticipantDao
 import com.algorand.wallet.account.local.data.database.model.JointEntity
+import com.algorand.wallet.account.local.data.database.model.JointParticipantEntity
+import com.algorand.wallet.account.local.data.database.model.JointWithParticipants
 import com.algorand.wallet.account.local.data.mapper.entity.JointEntityMapper
+import com.algorand.wallet.account.local.data.mapper.entity.JointEntityMapperResult
 import com.algorand.wallet.account.local.data.mapper.model.JointMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coEvery
@@ -35,11 +39,13 @@ internal class JointAccountRepositoryImplTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val jointDao: JointDao = mockk()
+    private val jointParticipantDao: JointParticipantDao = mockk()
     private val jointEntityMapper: JointEntityMapper = mockk()
     private val jointMapper: JointMapper = mockk()
 
     private val sut = JointAccountRepositoryImpl(
         jointDao,
+        jointParticipantDao,
         jointEntityMapper,
         jointMapper,
         testDispatcher
@@ -47,31 +53,31 @@ internal class JointAccountRepositoryImplTest {
 
     @Test
     fun `EXPECT mapped joint accounts WHEN getAll is invoked`() = runTest(testDispatcher) {
-        coEvery { jointDao.getAll() } returns listOf(TEST_ENTITY)
-        coEvery { jointMapper(TEST_ENTITY) } returns TEST_JOINT_ACCOUNT
+        coEvery { jointDao.getAllWithParticipants() } returns listOf(TEST_JOINT_WITH_PARTICIPANTS)
+        coEvery { jointMapper(TEST_JOINT_WITH_PARTICIPANTS) } returns TEST_JOINT_ACCOUNT
 
         val result = sut.getAll()
 
-        coVerify { jointDao.getAll() }
-        coVerify { jointMapper(TEST_ENTITY) }
+        coVerify { jointDao.getAllWithParticipants() }
+        coVerify { jointMapper(TEST_JOINT_WITH_PARTICIPANTS) }
         assertEquals(1, result.size)
         assertEquals(TEST_JOINT_ACCOUNT, result.first())
     }
 
     @Test
     fun `EXPECT empty list WHEN getAll is invoked with no accounts`() = runTest(testDispatcher) {
-        coEvery { jointDao.getAll() } returns emptyList()
+        coEvery { jointDao.getAllWithParticipants() } returns emptyList()
 
         val result = sut.getAll()
 
-        coVerify { jointDao.getAll() }
+        coVerify { jointDao.getAllWithParticipants() }
         assertTrue(result.isEmpty())
     }
 
     @Test
     fun `EXPECT flow of mapped accounts WHEN getAllAsFlow is invoked`() = runTest(testDispatcher) {
-        every { jointDao.getAllAsFlow() } returns flowOf(listOf(TEST_ENTITY))
-        coEvery { jointMapper(TEST_ENTITY) } returns TEST_JOINT_ACCOUNT
+        every { jointDao.getAllWithParticipantsAsFlow() } returns flowOf(listOf(TEST_JOINT_WITH_PARTICIPANTS))
+        coEvery { jointMapper(TEST_JOINT_WITH_PARTICIPANTS) } returns TEST_JOINT_ACCOUNT
 
         val result = sut.getAllAsFlow().first()
 
@@ -92,35 +98,37 @@ internal class JointAccountRepositoryImplTest {
 
     @Test
     fun `EXPECT mapped account WHEN getAccount is invoked with existing address`() = runTest(testDispatcher) {
-        coEvery { jointDao.get(TEST_ADDRESS) } returns TEST_ENTITY
-        coEvery { jointMapper(TEST_ENTITY) } returns TEST_JOINT_ACCOUNT
+        coEvery { jointDao.getWithParticipants(TEST_ADDRESS) } returns TEST_JOINT_WITH_PARTICIPANTS
+        coEvery { jointMapper(TEST_JOINT_WITH_PARTICIPANTS) } returns TEST_JOINT_ACCOUNT
 
         val result = sut.getAccount(TEST_ADDRESS)
 
-        coVerify { jointDao.get(TEST_ADDRESS) }
-        coVerify { jointMapper(TEST_ENTITY) }
+        coVerify { jointDao.getWithParticipants(TEST_ADDRESS) }
+        coVerify { jointMapper(TEST_JOINT_WITH_PARTICIPANTS) }
         assertEquals(TEST_JOINT_ACCOUNT, result)
     }
 
     @Test
     fun `EXPECT null WHEN getAccount is invoked with non-existent address`() = runTest(testDispatcher) {
-        coEvery { jointDao.get(NON_EXISTENT_ADDRESS) } returns null
+        coEvery { jointDao.getWithParticipants(NON_EXISTENT_ADDRESS) } returns null
 
         val result = sut.getAccount(NON_EXISTENT_ADDRESS)
 
-        coVerify { jointDao.get(NON_EXISTENT_ADDRESS) }
+        coVerify { jointDao.getWithParticipants(NON_EXISTENT_ADDRESS) }
         assertNull(result)
     }
 
     @Test
     fun `EXPECT entity inserted WHEN addAccount is invoked`() = runTest(testDispatcher) {
-        coEvery { jointEntityMapper(TEST_JOINT_ACCOUNT) } returns TEST_ENTITY
+        coEvery { jointEntityMapper(TEST_JOINT_ACCOUNT) } returns TEST_ENTITY_MAPPER_RESULT
         coEvery { jointDao.insert(TEST_ENTITY) } returns Unit
+        coEvery { jointParticipantDao.insertAll(TEST_PARTICIPANT_ENTITIES) } returns Unit
 
         sut.addAccount(TEST_JOINT_ACCOUNT)
 
         coVerify { jointEntityMapper(TEST_JOINT_ACCOUNT) }
         coVerify { jointDao.insert(TEST_ENTITY) }
+        coVerify { jointParticipantDao.insertAll(TEST_PARTICIPANT_ENTITIES) }
     }
 
     @Test
@@ -184,11 +192,11 @@ internal class JointAccountRepositoryImplTest {
 
     @Test
     fun `EXPECT multiple accounts mapped WHEN getAll is invoked with multiple accounts`() = runTest(testDispatcher) {
-        val entity2 = TEST_ENTITY.copy(algoAddress = ANOTHER_ADDRESS)
+        val entity2 = createJointWithParticipants(ANOTHER_ADDRESS)
         val account2 = TEST_JOINT_ACCOUNT.copy(algoAddress = ANOTHER_ADDRESS)
 
-        coEvery { jointDao.getAll() } returns listOf(TEST_ENTITY, entity2)
-        coEvery { jointMapper(TEST_ENTITY) } returns TEST_JOINT_ACCOUNT
+        coEvery { jointDao.getAllWithParticipants() } returns listOf(TEST_JOINT_WITH_PARTICIPANTS, entity2)
+        coEvery { jointMapper(TEST_JOINT_WITH_PARTICIPANTS) } returns TEST_JOINT_ACCOUNT
         coEvery { jointMapper(entity2) } returns account2
 
         val result = sut.getAll()
@@ -196,6 +204,61 @@ internal class JointAccountRepositoryImplTest {
         assertEquals(2, result.size)
         assertTrue(result.containsAll(listOf(TEST_JOINT_ACCOUNT, account2)))
     }
+
+    @Test
+    fun `EXPECT participant count WHEN getParticipantCount is invoked`() = runTest(testDispatcher) {
+        val expectedCount = 3
+        coEvery { jointParticipantDao.getParticipantCount(TEST_ADDRESS) } returns expectedCount
+
+        val result = sut.getParticipantCount(TEST_ADDRESS)
+
+        coVerify { jointParticipantDao.getParticipantCount(TEST_ADDRESS) }
+        assertEquals(expectedCount, result)
+    }
+
+    @Test
+    fun `EXPECT participant addresses WHEN getParticipantAddresses is invoked`() = runTest(testDispatcher) {
+        coEvery { jointParticipantDao.getParticipantAddresses(TEST_ADDRESS) } returns TEST_PARTICIPANT_ADDRESSES
+
+        val result = sut.getParticipantAddresses(TEST_ADDRESS)
+
+        coVerify { jointParticipantDao.getParticipantAddresses(TEST_ADDRESS) }
+        assertEquals(TEST_PARTICIPANT_ADDRESSES, result)
+    }
+
+    @Test
+    fun `EXPECT joint addresses WHEN getJointAddressesByParticipant is invoked`() = runTest(testDispatcher) {
+        val participantAddress = "ADDR1"
+        val jointAddresses = listOf(TEST_ADDRESS, ANOTHER_ADDRESS)
+        coEvery { jointParticipantDao.getJointAddressesByParticipant(participantAddress) } returns jointAddresses
+
+        val result = sut.getJointAddressesByParticipant(participantAddress)
+
+        coVerify { jointParticipantDao.getJointAddressesByParticipant(participantAddress) }
+        assertEquals(jointAddresses, result)
+    }
+
+    @Test
+    fun `EXPECT true WHEN isParticipant is invoked with existing participant`() = runTest(testDispatcher) {
+        val participantAddress = "ADDR1"
+        coEvery { jointParticipantDao.isParticipant(TEST_ADDRESS, participantAddress) } returns true
+
+        val result = sut.isParticipant(TEST_ADDRESS, participantAddress)
+
+        coVerify { jointParticipantDao.isParticipant(TEST_ADDRESS, participantAddress) }
+        assertTrue(result)
+    }
+
+    private fun createJointWithParticipants(address: String) = JointWithParticipants(
+        joint = JointEntity(
+            algoAddress = address,
+            threshold = TEST_THRESHOLD,
+            version = TEST_VERSION
+        ),
+        participants = TEST_PARTICIPANT_ADDRESSES.mapIndexed { index, participantAddress ->
+            JointParticipantEntity(address, index, participantAddress)
+        }
+    )
 
     private companion object {
         const val TEST_ADDRESS = "JOINT_ADDRESS_123"
@@ -207,9 +270,22 @@ internal class JointAccountRepositoryImplTest {
 
         val TEST_ENTITY = JointEntity(
             algoAddress = TEST_ADDRESS,
-            participantAddresses = "[\"ADDR1\",\"ADDR2\",\"ADDR3\"]",
             threshold = TEST_THRESHOLD,
             version = TEST_VERSION
+        )
+
+        val TEST_PARTICIPANT_ENTITIES = TEST_PARTICIPANT_ADDRESSES.mapIndexed { index, address ->
+            JointParticipantEntity(TEST_ADDRESS, index, address)
+        }
+
+        val TEST_JOINT_WITH_PARTICIPANTS = JointWithParticipants(
+            joint = TEST_ENTITY,
+            participants = TEST_PARTICIPANT_ENTITIES
+        )
+
+        val TEST_ENTITY_MAPPER_RESULT = JointEntityMapperResult(
+            jointEntity = TEST_ENTITY,
+            participantEntities = TEST_PARTICIPANT_ENTITIES
         )
 
         val TEST_JOINT_ACCOUNT = LocalAccount.Joint(

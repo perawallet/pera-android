@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.assets.profile.asaprofile.ui
 
+import android.os.Bundle
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
@@ -34,12 +36,12 @@ class AsaProfileFragment : BaseAsaProfileFragment() {
 
     override val asaProfileViewModel: AsaProfileViewModel by viewModels<AsaProfileViewModel>()
 
-    override fun onStart() {
-        super.onStart()
-        startSavedStateListener()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initAsaProfileSavedStateListener()
     }
 
-    private fun startSavedStateListener() {
+    private fun initAsaProfileSavedStateListener() {
         useFragmentResultListenerValue<AssetActionResult>(TRANSFER_ASSET_ACTION_RESULT) { assetActionResult ->
             navToSendAlgoFlow(assetActionResult)
         }

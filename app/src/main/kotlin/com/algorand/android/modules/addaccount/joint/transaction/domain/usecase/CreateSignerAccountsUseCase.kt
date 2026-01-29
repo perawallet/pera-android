@@ -12,12 +12,14 @@
 
 package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
-import android.net.Uri
+import androidx.core.net.toUri
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
@@ -28,7 +30,8 @@ internal class CreateSignerAccountsUseCase @Inject constructor(
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getLocalAccount: GetLocalAccount,
-    private val contactRepository: ContactRepository
+    private val contactRepository: ContactRepository,
+    private val getAccountType: GetAccountType
 ) : CreateSignerAccounts {
 
     override suspend operator fun invoke(
@@ -42,8 +45,7 @@ internal class CreateSignerAccountsUseCase @Inject constructor(
     }
 
     override suspend fun hasSigningCapableLocalAccount(address: String): Boolean {
-        val account = getLocalAccount(address)
-        return account != null && account !is LocalAccount.NoAuth
+        return getAccountType(address)?.canSignTransaction() == true
     }
 
     private suspend fun createSignerItem(
@@ -57,13 +59,13 @@ internal class CreateSignerAccountsUseCase @Inject constructor(
         }
         val contact = contactRepository.getContactByAddress(address)
         val localAccount = getLocalAccount(address)
-        val isLedger = localAccount is LocalAccount.LedgerBle
+        val isLedger = getAccountType(address) is AccountType.LedgerBle
 
         return JointAccountSignerItem(
             accountAddress = address,
             accountDisplayName = getAccountDisplayName(address),
             accountIconDrawablePreview = getAccountIconDrawablePreview(address),
-            imageUri = contact?.imageUriAsString?.let { Uri.parse(it) },
+            imageUri = contact?.imageUriAsString?.toUri(),
             signatureStatus = status,
             isLedgerAccount = isLedger,
             ledgerBluetoothAddress = (localAccount as? LocalAccount.LedgerBle)?.deviceMacAddress,

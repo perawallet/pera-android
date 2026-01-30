@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.jointaccount.transaction.domain.usecase
+package com.algorand.wallet.jointaccount.transaction.domain.model
 
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
-
-fun interface ProposeJointSignRequest {
-    suspend operator fun invoke(createSignRequestInput: CreateSignRequestInput): PeraResult<JointSignRequest>
-}
+data class ProposeJointSignRequestResponseInput(
+    val address: String,
+    val responseType: ProposeJointSignRequestResult,
+    val signatures: List<List<String?>>,
+    val deviceId: String? = null
+)

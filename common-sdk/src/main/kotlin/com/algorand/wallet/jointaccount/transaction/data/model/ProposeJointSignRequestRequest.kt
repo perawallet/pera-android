@@ -23,6 +23,6 @@ internal data class ProposeJointSignRequestRequest(
     val type: String,
     @SerializedName("raw_transaction_lists")
     val rawTransactionLists: List<List<String>>,
-    @SerializedName("transaction_signature_lists")
-    val transactionSignatureLists: List<List<String?>>
+    @SerializedName("responses")
+    val responses: List<ProposeJointSignRequestResponse>
 )

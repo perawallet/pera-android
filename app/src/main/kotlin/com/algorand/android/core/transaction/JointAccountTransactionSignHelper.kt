@@ -21,7 +21,10 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
+import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResponseInput
+import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResult
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
 import javax.inject.Inject
 
@@ -44,13 +47,8 @@ class JointAccountTransactionSignHelper @Inject constructor(
         val preparedData = prepareJointAccountData(jointAccountAddress, transactionDataList)
             ?: return JointSignResult.Error
 
-        val result = proposeJointSignRequest(
-            jointAccountAddress = preparedData.jointAccount.algoAddress,
-            proposerAddress = preparedData.proposerAddress,
-            type = JOINT_SIGN_REQUEST_TYPE_ASYNC,
-            rawTransactionLists = preparedData.rawTransactionLists,
-            transactionSignatureLists = preparedData.transactionSignatureLists
-        )
+        val inputData = mapToCreateSignRequestInput(preparedData)
+        val result = proposeJointSignRequest(inputData)
 
         return processProposalResult(result, preparedData)
     }
@@ -145,6 +143,23 @@ class JointAccountTransactionSignHelper @Inject constructor(
                 localAccountSigningHelper.signWithHdKeyAccountReturnSignature(transactionBytes, signerAccount)
             }
             else -> null
+        }
+    }
+
+    private fun mapToCreateSignRequestInput(data: PreparedJointAccountData): CreateSignRequestInput {
+        return with(data) {
+            val defaultResponse = ProposeJointSignRequestResponseInput(
+                address = data.proposerAddress,
+                responseType = ProposeJointSignRequestResult.SIGNED,
+                signatures = data.transactionSignatureLists
+            )
+            CreateSignRequestInput(
+                jointAccountAddress = jointAccount.algoAddress,
+                proposerAddress = proposerAddress,
+                type = JOINT_SIGN_REQUEST_TYPE_ASYNC,
+                rawTransactionLists = rawTransactionLists,
+                responses = listOf(defaultResponse)
+            )
         }
     }
 

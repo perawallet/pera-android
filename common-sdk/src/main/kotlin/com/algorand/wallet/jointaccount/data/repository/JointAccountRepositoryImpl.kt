@@ -70,9 +70,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
     override suspend fun proposeSignRequest(
         createSignRequestInput: CreateSignRequestInput
     ): PeraResult<JointSignRequest> {
-        val request = createSignRequestInputMapper.mapToProposeJointSignRequestRequest(
-            createSignRequestInput
-        )
+        val request = createSignRequestInputMapper.mapToProposeJointSignRequestRequest(createSignRequestInput)
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             jointAccountApiService.proposeSignRequest(request)
         }.mapToJointSignRequest()

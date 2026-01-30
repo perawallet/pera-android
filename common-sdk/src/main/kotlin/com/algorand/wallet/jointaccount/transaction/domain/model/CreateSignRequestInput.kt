@@ -17,5 +17,5 @@ data class CreateSignRequestInput(
     val proposerAddress: String,
     val type: String,
     val rawTransactionLists: List<List<String>>,
-    val transactionSignatureLists: List<List<String?>>
+    val responses: List<ProposeJointSignRequestResponseInput>
 )

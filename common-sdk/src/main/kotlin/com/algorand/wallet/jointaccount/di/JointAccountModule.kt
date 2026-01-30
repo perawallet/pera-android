@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.jointaccount.di
 
-import com.algorand.wallet.account.local.domain.repository.JointAccountRepository as LocalJointAccountRepository
 import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
 import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotificationUseCase
 import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessages
@@ -30,7 +29,6 @@ import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
-import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
@@ -38,9 +36,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
+import retrofit2.Retrofit
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository as LocalJointAccountRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -64,17 +63,7 @@ internal object JointAccountModule {
     @Provides
     fun provideProposeJointSignRequest(
         @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
-    ): ProposeJointSignRequest = ProposeJointSignRequest { jointAccountAddress, proposerAddress, type, rawTransactionLists, transactionSignatureLists ->
-        repository.proposeSignRequest(
-            CreateSignRequestInput(
-                jointAccountAddress = jointAccountAddress,
-                proposerAddress = proposerAddress,
-                type = type,
-                rawTransactionLists = rawTransactionLists,
-                transactionSignatureLists = transactionSignatureLists
-            )
-        )
-    }
+    ): ProposeJointSignRequest = ProposeJointSignRequest(repository::proposeSignRequest)
 
     @Provides
     fun provideGetSignRequestWithSignatures(

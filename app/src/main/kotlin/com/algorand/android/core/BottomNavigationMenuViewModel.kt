@@ -113,7 +113,7 @@ class BottomNavigationMenuViewModel @Inject constructor(
         return BottomNavMenuItem(
             id = R.id.xoSwapFragment,
             titleResId = R.string.fund,
-            iconResId = R.drawable.ic_import,
+            iconResId = R.drawable.ic_fund,
             enabled = true
         )
     }

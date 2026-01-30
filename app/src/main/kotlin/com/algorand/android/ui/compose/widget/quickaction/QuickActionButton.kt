@@ -62,7 +62,7 @@ private fun QuickActionButton(
             if (showIndicator) {
                 Box(
                     modifier = Modifier
-                        .padding(top = 16.dp, end = 12.dp)
+                        .padding(top = 18.dp, end = 18.dp)
                         .size(4.dp)
                         .background(color = PeraTheme.colors.helper.negative, shape = CircleShape)
                         .align(Alignment.TopEnd)

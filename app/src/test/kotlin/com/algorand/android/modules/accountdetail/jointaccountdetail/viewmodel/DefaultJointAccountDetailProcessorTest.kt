@@ -20,7 +20,6 @@ import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.Jo
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
@@ -45,7 +44,6 @@ internal class DefaultJointAccountDetailProcessorTest {
     private val getAccountDisplayName: GetAccountDisplayName = mockk()
     private val contactRepository: ContactRepository = mockk()
     private val createJointAccountParticipantItem: CreateJointAccountParticipantItem = mockk()
-    private val getLocalAccountsAddresses: GetLocalAccountsAddresses = mockk()
     private val getInboxMessages: GetInboxMessages = mockk()
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId = mockk()
     private val inboxApiRepository: InboxApiRepository = mockk()
@@ -55,7 +53,6 @@ internal class DefaultJointAccountDetailProcessorTest {
         getAccountDisplayName = getAccountDisplayName,
         contactRepository = contactRepository,
         createJointAccountParticipantItem = createJointAccountParticipantItem,
-        getLocalAccountsAddresses = getLocalAccountsAddresses,
         getInboxMessages = getInboxMessages,
         getSelectedNodeDeviceId = getSelectedNodeDeviceId,
         inboxApiRepository = inboxApiRepository
@@ -72,8 +69,7 @@ internal class DefaultJointAccountDetailProcessorTest {
         val participantItem = createParticipantItem("ADDR1")
 
         coEvery { getAccountDisplayName(TEST_ADDRESS) } returns displayName
-        coEvery { getLocalAccountsAddresses() } returns emptyList()
-        coEvery { createJointAccountParticipantItem(any(), any()) } returns participantItem
+        coEvery { createJointAccountParticipantItem(any()) } returns participantItem
 
         val result = sut.createContentState(jointAccount, TEST_ADDRESS, showActions = false)
 
@@ -92,8 +88,7 @@ internal class DefaultJointAccountDetailProcessorTest {
         val participantItem = createParticipantItem("ADDR1")
 
         coEvery { getAccountDisplayName(TEST_ADDRESS) } returns displayName
-        coEvery { getLocalAccountsAddresses() } returns emptyList()
-        coEvery { createJointAccountParticipantItem(any(), any()) } returns participantItem
+        coEvery { createJointAccountParticipantItem(any()) } returns participantItem
 
         val result = sut.createContentState(jointAccount, TEST_ADDRESS, showActions = true)
 
@@ -108,8 +103,7 @@ internal class DefaultJointAccountDetailProcessorTest {
     fun `EXPECT content state from invitation WHEN createContentStateFromInvitation called`() = runTest {
         val participantItem = createParticipantItem("ADDR1")
 
-        coEvery { getLocalAccountsAddresses() } returns emptyList()
-        coEvery { createJointAccountParticipantItem(any(), any()) } returns participantItem
+        coEvery { createJointAccountParticipantItem(any()) } returns participantItem
 
         val result = sut.createContentStateFromInvitation(
             participantAddresses = DEFAULT_PARTICIPANTS,
@@ -317,16 +311,14 @@ internal class DefaultJointAccountDetailProcessorTest {
 
     @Test
     fun `EXPECT participant items created for all addresses`() = runTest {
-        val localAddresses = listOf("ADDR1")
-        coEvery { getLocalAccountsAddresses() } returns localAddresses
-        coEvery { createJointAccountParticipantItem("ADDR1", localAddresses) } returns createParticipantItem("ADDR1")
-        coEvery { createJointAccountParticipantItem("ADDR2", localAddresses) } returns createParticipantItem("ADDR2")
-        coEvery { createJointAccountParticipantItem("ADDR3", localAddresses) } returns createParticipantItem("ADDR3")
+        coEvery { createJointAccountParticipantItem("ADDR1") } returns createParticipantItem("ADDR1")
+        coEvery { createJointAccountParticipantItem("ADDR2") } returns createParticipantItem("ADDR2")
+        coEvery { createJointAccountParticipantItem("ADDR3") } returns createParticipantItem("ADDR3")
 
         val result = sut.createParticipantItems(DEFAULT_PARTICIPANTS)
 
         assertEquals(3, result.size)
-        coVerify(exactly = 3) { createJointAccountParticipantItem(any(), localAddresses) }
+        coVerify(exactly = 3) { createJointAccountParticipantItem(any()) }
     }
 
     // endregion

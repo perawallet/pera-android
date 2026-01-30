@@ -18,6 +18,7 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -32,11 +33,13 @@ internal class CreateJointAccountParticipantItemUseCaseTest {
     private val getAccountDisplayName: GetAccountDisplayName = mockk()
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview = mockk()
     private val contactRepository: ContactRepository = mockk()
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses = mockk()
 
     private val sut = CreateJointAccountParticipantItemUseCase(
         getAccountDisplayName = getAccountDisplayName,
         getAccountIconDrawablePreview = getAccountIconDrawablePreview,
-        contactRepository = contactRepository
+        contactRepository = contactRepository,
+        getLocalAccountsAddresses = getLocalAccountsAddresses
     )
 
     @Test
@@ -49,9 +52,10 @@ internal class CreateJointAccountParticipantItemUseCaseTest {
 
         coEvery { getAccountDisplayName(TEST_ADDRESS) } returns displayName
         coEvery { getAccountIconDrawablePreview(TEST_ADDRESS) } returns iconPreview
+        coEvery { getLocalAccountsAddresses() } returns listOf(TEST_ADDRESS)
         coEvery { contactRepository.getContactByAddress(TEST_ADDRESS) } returns null
 
-        val result = sut(TEST_ADDRESS, listOf(TEST_ADDRESS))
+        val result = sut(TEST_ADDRESS)
 
         assertTrue(result.isLocalAccount)
         assertFalse(result.isContact)
@@ -70,9 +74,10 @@ internal class CreateJointAccountParticipantItemUseCaseTest {
 
         coEvery { getAccountDisplayName(TEST_ADDRESS) } returns displayName
         coEvery { getAccountIconDrawablePreview(TEST_ADDRESS) } returns iconPreview
+        coEvery { getLocalAccountsAddresses() } returns emptyList()
         coEvery { contactRepository.getContactByAddress(TEST_ADDRESS) } returns contact
 
-        val result = sut(TEST_ADDRESS, emptyList())
+        val result = sut(TEST_ADDRESS)
 
         assertFalse(result.isLocalAccount)
         assertTrue(result.isContact)
@@ -91,9 +96,10 @@ internal class CreateJointAccountParticipantItemUseCaseTest {
 
         coEvery { getAccountDisplayName(TEST_ADDRESS) } returns displayName
         coEvery { getAccountIconDrawablePreview(TEST_ADDRESS) } returns iconPreview
+        coEvery { getLocalAccountsAddresses() } returns listOf(TEST_ADDRESS)
         coEvery { contactRepository.getContactByAddress(TEST_ADDRESS) } returns contact
 
-        val result = sut(TEST_ADDRESS, listOf(TEST_ADDRESS))
+        val result = sut(TEST_ADDRESS)
 
         assertTrue(result.isLocalAccount)
         assertFalse(result.isContact)
@@ -112,9 +118,10 @@ internal class CreateJointAccountParticipantItemUseCaseTest {
 
         coEvery { getAccountDisplayName(TEST_ADDRESS) } returns displayName
         coEvery { getAccountIconDrawablePreview(TEST_ADDRESS) } returns iconPreview
+        coEvery { getLocalAccountsAddresses() } returns emptyList()
         coEvery { contactRepository.getContactByAddress(TEST_ADDRESS) } returns contact
 
-        val result = sut(TEST_ADDRESS, emptyList())
+        val result = sut(TEST_ADDRESS)
 
         assertNull(result.imageUri)
     }

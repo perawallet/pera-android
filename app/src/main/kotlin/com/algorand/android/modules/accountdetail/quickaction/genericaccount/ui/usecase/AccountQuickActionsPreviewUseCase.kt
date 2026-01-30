@@ -19,7 +19,6 @@ import com.algorand.android.modules.accountdetail.quickaction.genericaccount.Acc
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.mapper.AccountQuickActionsPreviewMapper
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.model.AccountQuickActionsPreview
 import com.algorand.android.utils.Event
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 

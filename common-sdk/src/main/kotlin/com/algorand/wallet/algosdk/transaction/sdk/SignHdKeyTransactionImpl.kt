@@ -44,7 +44,7 @@ internal class SignHdKeyTransactionImpl @Inject constructor(
                 key.toUInt()
             )
 
-            val signedTxn = xHDWalletAPI.signAlgoTransaction(
+            val signedTxnSignature = xHDWalletAPI.signAlgoTransaction(
                 KeyContext.Address,
                 accountIndex,
                 changeIndex,
@@ -62,10 +62,38 @@ internal class SignHdKeyTransactionImpl @Inject constructor(
             )
 
             return if (tx.sender != pkAddress) {
-                Sdk.attachSignatureWithSigner(signedTxn, transactionByteArray, pkAddress.toString())
+                Sdk.attachSignatureWithSigner(signedTxnSignature, transactionByteArray, pkAddress.toString())
             } else {
-                Sdk.attachSignature(signedTxn, transactionByteArray)
+                Sdk.attachSignature(signedTxnSignature, transactionByteArray)
             }
+        } catch (e: Exception) {
+            peraExceptionLogger.logException(e)
+            null
+        }
+    }
+
+    override fun signTransactionReturnSignature(
+        transactionByteArray: ByteArray,
+        seed: ByteArray,
+        account: Int,
+        change: Int,
+        key: Int
+    ): ByteArray? {
+        return try {
+            val xHDWalletAPI = XHDWalletAPIAndroid(seed)
+            val (accountIndex, changeIndex, keyIndex) = listOf(
+                account.toUInt(),
+                change.toUInt(),
+                key.toUInt()
+            )
+
+            xHDWalletAPI.signAlgoTransaction(
+                KeyContext.Address,
+                accountIndex,
+                changeIndex,
+                keyIndex,
+                rawTransactionBytesToSign(transactionByteArray)
+            )
         } catch (e: Exception) {
             peraExceptionLogger.logException(e)
             null

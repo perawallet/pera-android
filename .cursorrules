@@ -1,0 +1,398 @@
+# Cursor Rules for Pera Wallet Android
+
+## Critical Rules - Always Follow
+
+### Verification Before Changes
+- **Don't assume, always verify** - Check existing code patterns, imports, and dependencies before making changes
+- **Verify class types before extending** - Check if classes are `final`, `open`, or `abstract`
+- **Verify constructor signatures before mocking** - Check actual parameters and types
+- **Verify access modifiers** - Check `public`, `internal`, `private` before using functions/classes
+- **Check for breaking changes** - Search for usages before modifying shared code
+- **Check existing patterns** - Look for similar files to understand conventions
+
+### Compilation & Quality
+- **Code must compile** - Always verify code compiles before submitting
+- **Never use @Suppress without approval** - Always ask user before adding any `@Suppress` annotation
+- **Run linting before compilation**:
+  1. `./gradlew :app:detektProdDebug --no-daemon 2>&1 | grep -E "(violation|error)"`
+  2. `./gradlew :app:ktlintCheck --no-daemon 2>&1 | grep -E "(error|warning|FAILED|BUILD SUCCESS)"`
+  3. `./gradlew :app:compileProdDebugKotlin --no-daemon 2>&1 | grep -E "(error:|FAILED|BUILD SUCCESS)"`
+- **Optimize imports** - Remove duplicates, organize by groups before compiling
+- **Run tests after changes**: `./gradlew :app:testProdDebugUnitTest`
+
+### When Adding Sealed Type Variants
+1. Search ALL usages first (`when` expressions, pattern matches)
+2. Update all occurrences at once
+3. Don't fix errors one by one
+
+### Common ktlint Violations
+- No blank lines before closing braces `}`
+- No multiple consecutive blank lines
+- Space after `//` in comments
+- No trailing whitespace
+- File name must match top-level class name
+- Files must end with exactly one newline
+
+## Refactoring Restrictions - Do NOT Change Without Request
+
+- **Do NOT change data class to sealed interface**
+- **Do NOT remove wrapper/delegation functions**
+- **Do NOT change filter+map to mapNotNull**
+- **Do NOT remove TODO placeholders** without implementing
+- **Do NOT move data classes or companion objects**
+- **Do NOT inject use cases directly when helper exists**
+- **Do NOT change existing class dependencies**
+- **Do NOT rename identifiers without request**
+- **Do NOT remove string resources**
+- **Do NOT simplify when expressions**
+
+## Architecture Rules
+
+### Module Boundaries (app ↔ common-sdk)
+- **common-sdk data layer is internal** - API services, mappers, request/response models
+- **common-sdk domain layer is public** - Repository interfaces and use cases
+- **App module uses only common-sdk domain layer** - Never import data layer directly
+
+### Layer Rules
+- **Data models (Request/Response) must be internal**
+- **Domain models do NOT use DTO suffix** - Use `JointAccount`, not `JointAccountDTO`
+- **Use Input suffix for input models** - `CreateJointAccountInput`
+- **Split interface and implementation into separate files**
+
+### Fragment/ViewModel State Management
+- **Never create state flags in Fragments** - State is lost on recreation. Move to ViewModel
+- **Logic depending on state goes in ViewModel** - Including deep link handling, initialization flags
+- **ViewModel calls stay in ViewModel** - Don't route events through Fragment back to ViewModel
+  ```kotlin
+  // BAD: Fragment routes event back to ViewModel
+  override fun onEvent(event: Event) {
+      viewModel.handleEvent(event)
+  }
+
+  // GOOD: Handle in Composable directly or use sealed ViewEvent
+  LaunchedEffect(event) { when(event) { ... } }
+  ```
+
+### ViewState/ViewEvent Pattern
+- **Use sealed interface ViewState** - Not data class with boolean flags
+- **Use sealed interface ViewEvent** - For one-time navigation/UI events
+- **Collect events in Fragment** - ViewEvents for navigation that requires Fragment context
+- **Collect state in Composable** - ViewState for UI rendering
+  ```kotlin
+  sealed interface MyViewState {
+      data object Loading : MyViewState
+      data object Empty : MyViewState
+      data class Content(val items: List<Item>) : MyViewState
+      data class Error(val message: String) : MyViewState
+  }
+
+  sealed interface MyViewEvent {
+      data class NavigateToDetail(val id: String) : MyViewEvent
+      data class ShowError(val message: String) : MyViewEvent
+  }
+  ```
+
+### UseCase Pattern
+- Interface (fun interface) + `{UseCaseName}UseCase` implementation
+- Use `operator fun invoke(...)` for functional interfaces
+- **Avoid unnecessary implementations** - If just delegating to repository, provide via DI lambda:
+  ```kotlin
+  @Provides
+  fun provideAddSignature(repo: Repository): AddSignature = AddSignature { id, input ->
+      repo.addSignature(id, input)
+  }
+  ```
+
+### Mapper Pattern
+- Internal mappers: `internal interface FooMapper` + `internal class FooMapperImpl`
+- **No DTO suffix on mappers** - Use `InboxSearchMapper`, not `InboxSearchDTOMapper`
+- Use `with` scope function for cleaner code
+
+### Cache vs Repository Naming
+- **In-memory caches are NOT repositories** - Use `InboxInMemoryCache`, not `InboxRepository`
+- **Use InMemoryCacheProvider** for in-memory caches, not custom `MutableStateFlow` implementations
+- **Use PersistentCacheProvider** for persistent storage, not SharedPreferences local sources
+  ```kotlin
+  // BAD: Custom SharedPreferences class
+  class LastOpenedTimeLocalSource @Inject constructor(sharedPref: SharedPreferences)
+
+  // GOOD: Use PersistentCacheProvider
+  @Provides
+  fun provideLastOpenedTimeCache(provider: PersistentCacheProvider): PersistentCache<String> =
+      provider.getPersistentCache(String::class.java, "last_opened_time")
+  ```
+- **Don't create unnecessary cache wrapper classes** - Use provider directly
+- **Repository** = data access with external sources (API, database)
+- **Cache** = in-memory or persistent storage only
+
+### DI Module Rules
+- **Use method references, not lambdas** - `RefreshCache(manager::refresh)` not `RefreshCache { manager.refresh() }`
+- **Don't use @Singleton if state is external** - If cache/state is passed in constructor, no need for @Singleton
+- **Keep providers in correct feature modules** - `InboxApiService` belongs in `InboxModule`, not `JointAccountModule`
+- **Remove injection names when only one implementation** - `@Named` unnecessary if single implementation exists
+
+### Database/Data Access
+- **Create targeted DB queries** - Don't fetch all records and filter in memory
+  ```kotlin
+  // BAD: Fetch all and filter
+  val allAccounts = getLocalAccounts()
+  val jointAccounts = allAccounts.filter { it is Joint }
+
+  // GOOD: Targeted query
+  val jointAccounts = getJointAccounts()
+  ```
+- **Use mapNotNull for filtering + mapping** - Reduces iteration count
+  ```kotlin
+  // BAD: filter + map (two iterations)
+  items.filter { it.value != null }.map { it.value!! }
+
+  // GOOD: mapNotNull (single iteration)
+  items.mapNotNull { it.value }
+  ```
+
+### Feature Ownership
+- **Methods belong to their feature** - `getInboxMessages` belongs in inbox feature, not joint account
+- **Don't mix feature concerns** - Each repository handles only its own feature's API calls
+- **Cross-feature dependencies use interfaces** - Features depend on each other via domain interfaces, not implementations
+
+## Code Quality
+
+### Use Existing Utility Classes
+- **TimeProvider** - For getting current time (testable)
+- **RelativeTimeDifference** - For calculating time differences (minutes, hours, days ago)
+- **Don't duplicate time formatting logic** - Check existing utilities first
+  ```kotlin
+  // BAD: Direct time calls
+  val now = System.currentTimeMillis()
+
+  // GOOD: Use TimeProvider
+  val now = timeProvider.currentTimeMillis()
+  ```
+
+### Functions
+- **Keep under 50 lines** - Split into smaller functions
+- **Names must match behavior** - `signTransactionReturnSignature` if returning signature only
+- **Self-documenting code** - Use descriptive names instead of comments
+- **Companion objects at bottom** - After all functions
+- **Private functions at end** - After public/internal functions
+- **Prevent multiple clicks** - Update state before async operations to prevent double execution
+  ```kotlin
+  // BAD: No state protection
+  fun onSubmit() {
+      viewModelScope.launch { submitData() }
+  }
+
+  // GOOD: Protect with state
+  fun onSubmit() {
+      if (_state.value is Loading) return
+      _state.value = Loading
+      viewModelScope.launch { submitData() }
+  }
+  ```
+
+### Formatting
+- **Lines under 150 characters**
+- **Single trailing newline** at end of files
+- **Use imports** - Never use fully qualified class names
+- **Remove unused imports** after changes
+
+## Error Handling
+
+### Go SDK
+- **Never return (nil, nil)** - Always return error for failure states
+- **Validate inputs early** - Return descriptive errors at function start
+- **Descriptive error messages** - "signed transaction bytes cannot be empty"
+
+### Kotlin
+- Use sealed classes for state representation
+- Handle loading, success, and error states explicitly
+
+## TODO Comments
+- **Don't leave TODO for code movement** - Either move it or create a tracking issue
+- **Reference task numbers** - `TODO(#123): description`
+
+## Testing
+
+### Unit Test Naming
+- Test classes: `internal class`
+- Pattern: `` `EXPECT {outcome} WHEN {condition}` ``
+- Examples: `EXPECT null WHEN no account exists`, `EXPECT error WHEN repository fails`
+
+### Unit Test Best Practices
+- **Mock ALL dependencies** - Don't test multiple classes at once
+  ```kotlin
+  // BAD: Using real mapper in test
+  val mapper = RealMapperImpl(anotherRealMapper)
+
+  // GOOD: Mock all dependencies
+  val mockMapper = mockk<MapperInterface>()
+  every { mockMapper.map(any()) } returns expectedResult
+  ```
+- **Inline initialization** - Use `@Before` only for dispatcher setup or resettable state
+- **Companion object for constants** - `const val TEST_ADDRESS = "ADDRESS_123"` in private companion object
+- **Use .copy() for variations** - Don't recreate objects for each test
+  ```kotlin
+  // BAD: Multiple similar test functions
+  @Test fun `test with null list`() { val dto = createDTO(list = null) }
+  @Test fun `test with empty list`() { val dto = createDTO(list = emptyList()) }
+
+  // GOOD: Use copy for variations
+  private fun createTestDTO() = TestDTO(...)
+  @Test fun `test variations`() {
+      val nullCase = createTestDTO().copy(list = null)
+      val emptyCase = createTestDTO().copy(list = emptyList())
+      // Assert both in single test if testing same behavior
+  }
+  ```
+- **Setup mocks BEFORE ViewModel creation** - init block runs during construction
+- **Test constants in private companion object** - Not as class-level properties
+
+## UI & Compose
+
+### Design Tokens
+- **Always use PeraTheme** - Never hardcode colors, typography, dimensions
+- Colors: `PeraTheme.colors.{category}.{name}`
+- Typography: `PeraTheme.typography.{size}.{weight}.{font}`
+
+### Component Naming
+- Prefix with `Pera` - `PeraPrimaryButton`, `PeraTextField`
+- Descriptive names - Not `PeraButton1`, `PeraButton2`
+
+### Compose Guidelines
+- Split large composables into smaller functions
+- Use `@PreviewLightDark` for previews
+- `Modifier` parameter first
+- Use `remember` for expensive computations
+- Provide content descriptions for accessibility
+- **Pass composables, not booleans** - For flexible shared components
+  ```kotlin
+  // BAD: Boolean limits flexibility
+  @Composable
+  fun PeraCard(showTag: Boolean = false)
+
+  // GOOD: Composable allows customization
+  @Composable
+  fun PeraCard(tag: @Composable (() -> Unit)? = null)
+  ```
+- **Use content slots for flexible layouts** - `centerContent`, `endContent` instead of specific text params
+
+### Resource Rules
+- **Icons theme-aware** - Use `@color/text_main`, not hardcoded hex
+- **Format placeholders in strings** - `"Transfer to %1$s"` for localization
+  - Different languages have different word orders
+  - Always use numbered placeholders: `%1$s`, `%2$d`
+- **Use string resources for all user-visible text** - Including relative times like "0m", "1h"
+- **Drawables**: `ic_` prefix for icons, `bg_` for backgrounds
+- **Use existing plurals** - Check `plurals.xml` before adding new strings (e.g., `min_ago`, `hours_ago`)
+
+## Preview Files
+- **Required for every new screen** - Place in `preview/` subdirectory
+- **Verify compilation** after creating
+- **Check existing patterns** first
+
+## Feature Creation Checklist
+1. Check existing patterns and components
+2. Create Screen composable (Compose)
+3. Create thin Fragment wrapper
+4. Create ViewModel with Hilt
+5. Create UseCases/Repositories as needed
+6. Create DI module
+7. Create preview file with `@PreviewLightDark`
+8. Create unit tests for data/domain layers
+9. Verify compilation and lint checks
+
+## Code Review Checklist
+- [ ] Code compiles without errors
+- [ ] Passes detekt and ktlint
+- [ ] Uses existing UI components and resources
+- [ ] No hardcoded colors/dimensions/typography
+- [ ] Functions under 50 lines
+- [ ] All imports added (no fully qualified names)
+- [ ] File ends with single newline
+- [ ] Preview files created with `@PreviewLightDark`
+- [ ] Unit tests for data/domain layers
+- [ ] Internal classes marked `internal`
+- [ ] Content descriptions for accessibility
+- [ ] In-memory caches use `InMemoryCacheProvider`, not custom StateFlow
+- [ ] No DTO suffix on mappers
+- [ ] Method references used in DI, not lambdas
+- [ ] Methods are in correct feature modules
+
+---
+
+## Reference: Project Structure
+
+### Modules
+- `app` - UI layer (Screens, Fragments, Navigation)
+- `common-sdk` - Business logic and data layer
+- `credentials` - Credential management
+- `test-utils` - Testing utilities
+
+### Feature Structure
+```
+{feature}/
+├── di/{Feature}UiModule.kt
+├── view/
+│   ├── {Feature}Screen.kt
+│   └── {Feature}Fragment.kt
+├── viewmodel/
+│   ├── {Feature}ViewModel.kt
+│   └── processors/
+├── domain/usecase/
+└── data/repository/
+```
+
+### Design System Files
+- Colors: `ui/compose/theme/Color.kt`, `PeraLightColor.kt`, `PeraDarkColor.kt`
+- Typography: `ui/compose/typography/PeraTypography*.kt`
+- Components: `ui/compose/widget/`
+
+### Key Specs
+| Component | Height | Corner Radius |
+|-----------|--------|---------------|
+| Primary Button | 52dp | 4dp |
+| Small Button | 40dp | 32dp |
+| TextField | 48dp+ | 8dp |
+| Card | Wrap | 8dp |
+
+### State Management
+- `StateDelegate` and `EventDelegate` for ViewModel state/events
+- `sealed interface ViewState { data object Idle; data class Content(...) }`
+- `collectAsStateWithLifecycle()` in Composables
+
+---
+
+## Common PR Feedback Summary
+
+These rules were derived from PR review feedback on PRs #510-519. Check before submitting:
+
+### Architecture
+- [ ] Data models in common-sdk are `internal`
+- [ ] Domain models don't use `DTO` suffix
+- [ ] UseCases that just call repository are provided via DI lambda
+- [ ] In-memory caches use `InMemoryCacheProvider`
+- [ ] Persistent storage uses `PersistentCacheProvider`, not SharedPreferences
+- [ ] Methods are in correct feature modules
+
+### ViewModel/Fragment
+- [ ] No state flags in Fragments (use ViewModel)
+- [ ] ViewState/ViewEvent pattern instead of Preview with flags
+- [ ] Multiple click prevention (update state before async)
+
+### Code Quality
+- [ ] Using existing utilities (TimeProvider, RelativeTimeDifference)
+- [ ] String resources for user-visible text (including relative times)
+- [ ] Formatted strings with numbered placeholders (`%1$s`)
+- [ ] Icons are theme-aware
+- [ ] Targeted DB queries instead of fetch-all-and-filter
+- [ ] mapNotNull instead of filter+map
+
+### Testing
+- [ ] ALL dependencies mocked
+- [ ] Test constants in private companion object
+- [ ] Using .copy() for test variations
+
+### DI
+- [ ] Method references, not lambdas
+- [ ] No unnecessary @Singleton
+- [ ] No @Named when single implementation exists

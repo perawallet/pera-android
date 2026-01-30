@@ -293,6 +293,30 @@
     </action>
 
     <action
+        android:id="@+id/action_global_editContactFragment"
+        app:destination="@id/editContactFragment">
+        <argument
+            android:name="contactName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="contactPublicKey"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="contactProfileImageUri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="contactDatabaseId"
+            android:defaultValue="-1"
+            app:argType="integer" />
+    </action>
+
+    <action
         android:id="@+id/action_global_receiveAccountSelectionFragment"
         app:destination="@id/receiveAccountSelectionFragment" />
 
@@ -1083,6 +1107,22 @@
                 app:argType="com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs" />
         </action>
         <action
+            android:id="@+id/action_accountDetailFragment_to_assetInboxAllAccountsNavigation"
+            app:destination="@id/assetInboxAllAccountsNavigation">
+            <argument
+                android:name="filterAccountAddress"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+        </action>
+        <action
+            android:id="@+id/action_accountDetailFragment_to_jointAccountDetailFragment"
+            app:destination="@id/jointAccountDetailFragment">
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
+        <action
             android:id="@+id/action_global_buySellActionsBottomSheet"
             app:destination="@id/buySellActionsBottomSheet" />
         <action
@@ -1690,6 +1730,7 @@
         android:id="@+id/overrideFeatureFlagsFragment"
         android:name="com.algorand.android.ui.settings.developeroptions.featureflags.view.OverrideFeatureFlagsFragment"
         android:label="OverrideFeatureFlagsFragment" />
+
     <fragment
         android:id="@+id/xoSwapFragment"
         android:name="com.algorand.android.ui.xoswap.view.XoSwapFragment"
@@ -1702,6 +1743,7 @@
             android:id="@+id/action_xoSwapFragment_to_publicWebViewFragment"
             app:destination="@id/publicWebViewFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/publicWebViewFragment"
         android:name="com.algorand.android.ui.webview.publicfragment.view.PublicWebViewFragment"
@@ -1710,4 +1752,102 @@
             android:name="navArgs"
             app:argType="com.algorand.android.ui.webview.publicfragment.model.PublicWebViewFragmentNavArgs" />
     </fragment>
+
+    <fragment
+        android:id="@+id/jointAccountDetailFragment"
+        android:name="com.algorand.android.modules.accountdetail.jointaccountdetail.ui.JointAccountDetailFragment"
+        android:label="JointAccountDetailFragment">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="threshold"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="participantAddresses"
+            android:defaultValue="@null"
+            app:argType="string[]"
+            app:nullable="true" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_to_jointAccountDetailFragment"
+        app:destination="@id/jointAccountDetailFragment">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="threshold"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="participantAddresses"
+            android:defaultValue="@null"
+            app:argType="string[]"
+            app:nullable="true" />
+    </action>
+
+    <fragment
+        android:id="@+id/jointAccountSignRequestFragment"
+        android:name="com.algorand.android.modules.addaccount.joint.transaction.ui.JointAccountSignRequestFragment"
+        android:label="JointAccountSignRequestFragment">
+        <argument
+            android:name="signRequestId"
+            app:argType="string" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_to_jointAccountSignRequestFragment"
+        app:destination="@id/jointAccountSignRequestFragment">
+        <argument
+            android:name="signRequestId"
+            app:argType="string" />
+    </action>
+
+    <fragment
+        android:id="@+id/nameJointAccountFragment"
+        android:name="com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.NameJointAccountFragment"
+        android:label="NameJointAccountFragment">
+        <argument
+            android:name="threshold"
+            app:argType="integer" />
+        <argument
+            android:name="participantAddresses"
+            app:argType="string[]"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_nameJointAccountFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_to_nameJointAccountFragment"
+        app:destination="@id/nameJointAccountFragment">
+        <argument
+            android:name="threshold"
+            app:argType="integer" />
+        <argument
+            android:name="participantAddresses"
+            app:argType="string[]"
+            app:nullable="true" />
+    </action>
+
+    <fragment
+        android:id="@+id/jointAccountInvitationDetailFragment"
+        android:name="com.algorand.android.modules.inbox.jointaccountinvitation.ui.JointAccountInvitationDetailFragment"
+        android:label="JointAccountInvitationDetailFragment">
+        <argument
+            android:name="invitationNavArgs"
+            app:argType="com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationDetailNavArgs" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_to_jointAccountInvitationDetailFragment"
+        app:destination="@id/jointAccountInvitationDetailFragment">
+        <argument
+            android:name="invitationNavArgs"
+            app:argType="com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationDetailNavArgs" />
+    </action>
+
 </navigation>

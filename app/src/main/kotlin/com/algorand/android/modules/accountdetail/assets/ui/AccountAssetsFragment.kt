@@ -105,9 +105,9 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
             listener?.onManageAssetsClick()
         }
 
-        override fun onAssetInboxClick() {
-            accountAssetsViewModel.logAssetInboxClick()
-            listener?.onAssetInboxClick()
+        override fun onInboxClick() {
+            accountAssetsViewModel.logInboxClick()
+            listener?.onInboxClick()
         }
 
         override fun onSendClick() {
@@ -155,6 +155,10 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
         override fun onFundClick() {
             listener?.onFundClick()
+        }
+
+        override fun onJointAccountBadgeClick() {
+            listener?.onJointAccountBadgeClick()
         }
     }
 
@@ -250,7 +254,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         fun onNFTLongClick(nftId: Long)
         fun onRemoveAsset(assetId: Long)
         fun onRemoveCollectible(assetId: Long)
-        fun onAssetInboxClick()
+        fun onInboxClick()
         fun onSendClick()
         fun onSwapClick()
         fun onMoreClick()
@@ -262,6 +266,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         fun onBackupNowClick()
         fun onBuySellClick()
         fun onFundClick()
+        fun onJointAccountBadgeClick()
     }
 
     companion object {

@@ -27,6 +27,7 @@ import com.algorand.wallet.deeplink.builder.DiscoverPathNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.EditContactNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.HomeNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.InternalBrowserNewDeepLinkBuilder
+import com.algorand.wallet.deeplink.builder.JointAccountImportNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.KeyRegNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.ReceiverAccountSelectionNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.RecoverAccountNewDeepLinkBuilder
@@ -61,6 +62,7 @@ internal class CreateNewDeepLinkImpl(
     private val stakingPathNewDeepLinkBuilder: StakingPathNewDeepLinkBuilder,
     private val accountDetailNewDeepLinkBuilder: AccountDetailNewDeepLinkBuilder,
     private val internalBrowserNewDeepLinkBuilder: InternalBrowserNewDeepLinkBuilder,
+    private val jointAccountImportNewDeepLinkBuilder: JointAccountImportNewDeepLinkBuilder,
     private val homeNewDeepLinkBuilder: HomeNewDeepLinkBuilder,
 ) : CreateNewDeepLink {
 
@@ -91,6 +93,7 @@ internal class CreateNewDeepLinkImpl(
             "staking-path" -> stakingPathNewDeepLinkBuilder.createDeepLink(payload)
             "account-detail" -> accountDetailNewDeepLinkBuilder.createDeepLink(payload)
             "internal-browser" -> internalBrowserNewDeepLinkBuilder.createDeepLink(payload)
+            "joint-account-import" -> jointAccountImportNewDeepLinkBuilder.createDeepLink(payload)
             "app", "", null -> homeNewDeepLinkBuilder.createDeepLink(payload)
             else -> null
         }

@@ -17,6 +17,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.algorand.android.customviews.TopToast
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseActivity : AppCompatActivity() {
 
     protected val activityTag: String = this::class.simpleName.orEmpty()

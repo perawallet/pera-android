@@ -19,6 +19,7 @@ import com.algorand.android.models.WalletConnectArbitraryDataSigner.Unsignable
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.wallet.account.core.domain.model.TransactionSigner.Algo25
 import com.algorand.wallet.account.core.domain.model.TransactionSigner.HdKey
+import com.algorand.wallet.account.core.domain.model.TransactionSigner.Joint
 import com.algorand.wallet.account.core.domain.model.TransactionSigner.LedgerBle
 import com.algorand.wallet.account.core.domain.model.TransactionSigner.SignerNotFound
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
@@ -33,9 +34,13 @@ internal class CreateWalletConnectArbitraryDataSignerUseCase @Inject constructor
         if (signerAddress.isBlank()) return DisplayOnly
 
         return when (val transactionSigner = getTransactionSigner(signerAddress)) {
-            is Algo25, is HdKey -> Signer(address = transactionSigner.address, isLedger = false)
+            is Algo25, is HdKey, is Joint -> Signer(address = transactionSigner.address, isLedger = false)
             is LedgerBle -> Unsignable(errorProvider.getUnableToSignError())
             is SignerNotFound -> Unsignable(errorProvider.getMissingSignerError())
+            is com.algorand.wallet.account.core.domain.model.TransactionSigner.Joint -> {
+                TODO("Handle Joint Account")
+                Unsignable(errorProvider.getUnableToSignError())
+            }
         }
     }
 }

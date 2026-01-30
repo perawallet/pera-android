@@ -16,6 +16,7 @@ import android.content.res.Resources
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
@@ -52,18 +53,34 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
     private val getCustomInfoOrNull: GetAccountCustomInfoOrNull,
     private val getAccountDetail: GetAccountDetail,
     private val resources: Resources,
-    private val getAccountNameService: GetAccountNameService
+    private val getAccountNameService: GetAccountNameService,
+    private val contactRepository: ContactRepository
 ) : GetAccountDisplayName {
 
     override suspend fun invoke(address: String): AccountDisplayName {
+        // First check if it's a local account with custom name
         val customAccountName = getCustomInfoOrNull(address)?.customName
-            ?: return getAccountDisplayNameWithAccountAddressOnly(address)
-        val nameService = getAccountNameService(address)
-        return AccountDisplayName(
-            accountAddress = address,
-            primaryDisplayName = getPrimaryName(address, customAccountName, nameService),
-            secondaryDisplayName = getSecondaryName(address, customAccountName, nameService)
-        )
+        if (customAccountName != null) {
+            val nameService = getAccountNameService(address)
+            return AccountDisplayName(
+                accountAddress = address,
+                primaryDisplayName = getPrimaryName(address, customAccountName, nameService),
+                secondaryDisplayName = getSecondaryName(address, customAccountName, nameService)
+            )
+        }
+
+        // Then check if it's a saved contact
+        val contact = contactRepository.getContactByAddress(address)
+        if (contact != null && contact.name.isNotBlank() && contact.name != address.toShortenedAddress()) {
+            return AccountDisplayName(
+                accountAddress = address,
+                primaryDisplayName = contact.name,
+                secondaryDisplayName = address.toShortenedAddress()
+            )
+        }
+
+        // Fall back to address-only display
+        return getAccountDisplayNameWithAccountAddressOnly(address)
     }
 
     override suspend fun invoke(address: String, name: String?, type: AccountType?): AccountDisplayName {
@@ -143,7 +160,7 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
         return AccountDisplayName(
             accountAddress = address,
             primaryDisplayName = address.toShortenedAddress(),
-            secondaryDisplayName = address.toShortenedAddress()
+            secondaryDisplayName = null
         )
     }
 }

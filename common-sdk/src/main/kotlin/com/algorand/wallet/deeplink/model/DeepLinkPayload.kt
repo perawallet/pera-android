@@ -44,6 +44,7 @@ internal data class DeepLinkPayload(
     val action: String? = null,
     val receiverAddress: String? = null,
     val lastPathSegment: String? = null,
+    val id: String? = null,
 )
 
 enum class NotificationGroupType {

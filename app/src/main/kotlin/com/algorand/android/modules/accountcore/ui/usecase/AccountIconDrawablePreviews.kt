@@ -61,6 +61,14 @@ internal object AccountIconDrawablePreviews {
         )
     }
 
+    fun getJointDrawable(): AccountIconDrawablePreview {
+        return AccountIconDrawablePreview(
+            backgroundColorResId = AccountIconResource.JOINT.backgroundColorResId,
+            iconTintResId = AccountIconResource.JOINT.iconTintResId,
+            iconResId = AccountIconResource.JOINT.iconResId
+        )
+    }
+
     fun getDefaultIconDrawablePreview(): AccountIconDrawablePreview {
         return AccountIconDrawablePreview(
             backgroundColorResId = R.color.layer_gray_lighter,

@@ -46,6 +46,20 @@ class TestObserver<T>(flow: Flow<T>, coroutineScope: CoroutineScope) {
         assertSequence(values.toList())
     }
 
+    fun assertError(expected: Throwable) {
+        assertEquals(expected, flowError)
+    }
+
+    fun assertError(predicate: (Throwable?) -> Boolean) {
+        assertTrue(predicate(flowError), "Error did not match predicate: $flowError")
+    }
+
+    fun assertNoError() {
+        assertTrue(flowError == null, "Expected no error but was: $flowError")
+    }
+
+    fun error(): Throwable? = flowError
+
     private fun assertSize(size: Int) {
         assertEquals(size, emittedValues.size)
     }
@@ -56,7 +70,10 @@ class TestObserver<T>(flow: Flow<T>, coroutineScope: CoroutineScope) {
         job.cancel()
     }
 
-    fun value(): T = getValues().last()
+    fun value(): T {
+        check(emittedValues.isNotEmpty()) { "No values have been emitted" }
+        return emittedValues.last()
+    }
 
     private fun assertSequence(values: List<T>) {
         for ((index, v) in values.withIndex()) {

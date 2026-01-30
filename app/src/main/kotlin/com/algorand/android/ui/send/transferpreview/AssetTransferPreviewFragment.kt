@@ -33,6 +33,7 @@ import com.algorand.android.models.TargetUser
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
@@ -159,15 +160,11 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
+        initSavedStateListener()
     }
 
     private fun setTransactionNote(note: String?, isEditable: Boolean) {
         transactionNote = Pair(note, isEditable)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
     }
 
     private fun initSavedStateListener() {
@@ -397,6 +394,12 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
                 titleResId = R.string.asset_transfer_completed
             )
         )
+    }
+
+    override fun onJointAccountSignRequestCreated(signRequestId: String) {
+        // Show pending signatures bottom sheet directly instead of navigating to full screen
+        val dialog = PendingSignaturesDialogFragment.newInstance(signRequestId)
+        dialog.show(childFragmentManager, PendingSignaturesDialogFragment.TAG)
     }
 
     companion object {

@@ -18,6 +18,7 @@ import com.algorand.android.modules.basewebview.ui.BaseWebViewViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BasePeraWebViewViewModel : BaseWebViewViewModel() {
 
     private val _lastErrorFlow: MutableStateFlow<WebViewError?> = MutableStateFlow(null)

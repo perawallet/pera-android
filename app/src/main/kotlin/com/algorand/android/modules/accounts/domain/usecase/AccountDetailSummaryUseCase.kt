@@ -47,6 +47,7 @@ class AccountDetailSummaryUseCase @Inject constructor(
             AccountType.Rekeyed -> R.string.rekeyed
             AccountType.RekeyedAuth -> R.string.rekeyed
             AccountType.HdKey -> R.string.hd_account
+            AccountType.Joint -> R.string.add_joint_account
         }
     }
 
@@ -56,6 +57,7 @@ class AccountDetailSummaryUseCase @Inject constructor(
             AccountType.Algo25 -> false
             AccountType.Rekeyed, AccountType.RekeyedAuth -> true
             AccountType.HdKey -> false
+            AccountType.Joint -> false
         }
     }
 }

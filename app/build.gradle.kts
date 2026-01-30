@@ -94,8 +94,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk { abiFilters += listOf("armeabi-v7a", "x86", "x86_64", "arm64-v8a") }
-
         // BuildConfig fields
         buildConfigField("String", "GitHash", "\"${gitHashProvider.get()}\"")
         buildConfigField("String", "APPLICATION_NAME", "\"pera\"")
@@ -138,6 +136,9 @@ android {
 
             manifestPlaceholders["enableCrashReporting"] = "true"
             manifestPlaceholders["enableFirebasePerformanceLogcat"] = "false"
+
+            // Release builds support all architectures
+            ndk { abiFilters += listOf("armeabi-v7a", "x86", "x86_64", "arm64-v8a") }
         }
 
         getByName("debug") {
@@ -147,9 +148,14 @@ android {
             applicationIdSuffix = ".debug"
 
             manifestPlaceholders["enableCrashReporting"] = "false"
-            manifestPlaceholders["enableFirebasePerformanceLogcat"] = "true"
+            manifestPlaceholders["enableFirebasePerformanceLogcat"] = "false"
 
             resValue("string", "app_name", "Pera (Dev)")
+
+            // Debug build optimizations - only arm64-v8a for faster builds
+            ndk { abiFilters += listOf("arm64-v8a") }
+            // Disable PNG crunching for faster builds
+            isCrunchPngs = false
         }
     }
 
@@ -324,6 +330,14 @@ ksp {
     arg("room.verifySchema", "false")
 }
 
+// Disable Firebase Performance instrumentation for debug builds (significant build time savings)
+android.buildTypes.all {
+    val isDebugBuild = name == "debug"
+    configure<com.google.firebase.perf.plugin.FirebasePerfExtension> {
+        setInstrumentationEnabled(!isDebugBuild)
+    }
+}
+
 dependencies {
 
     // Internal modules
@@ -369,6 +383,7 @@ dependencies {
     // DI: Hilt + Koin
     implementation(libs.dagger.hilt.android)
     implementation(libs.dagger.hilt.compose.navigation)
+    implementation(libs.androidx.compose.foundation.layout)
     ksp(libs.dagger.hilt.compiler)
     ksp(libs.androidx.hilt.compiler)
 

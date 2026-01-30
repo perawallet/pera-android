@@ -15,6 +15,7 @@ package com.algorand.android.utils
 
 import android.content.res.Resources
 import android.text.format.DateUtils
+import android.util.Log
 import com.algorand.android.R
 import com.algorand.android.models.DateRange
 import java.time.DayOfWeek
@@ -26,6 +27,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.TemporalAdjusters
+
+private const val DATE_UTILS_TAG = "DateUtils"
 
 const val MONTH_DAY_YEAR_PATTERN: String = "MMMM dd, yyyy"
 const val MONTH_DAY_YEAR_WITH_DOT_PATTERN: String = "MM.dd.yyyy"
@@ -90,8 +93,10 @@ fun Long.getTimeAsMinSecondPair(): Pair<Long, Long> {
 }
 
 fun getAlgorandMobileDateFormatter(): DateTimeFormatter {
+    // Handle both +0200 (without colon) and +02:00 (with colon) formats
     return DateTimeFormatterBuilder()
-        .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME).appendOffset("+HHMM", "0000")
+        .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        .appendPattern("[XXX][XX][X]") // Handles +02:00, +0200, +02 formats
         .toFormatter()
 }
 
@@ -102,7 +107,8 @@ fun String?.parseFormattedDate(dateTimeFormatter: DateTimeFormatter): ZonedDateT
         } else {
             OffsetDateTime.parse(this, dateTimeFormatter).toZonedDateTime()
         }
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        Log.e(DATE_UTILS_TAG, "Failed to parse date: '$this' with formatter pattern. Error: ${e.message}")
         null
     }
 }
@@ -130,7 +136,7 @@ fun getRelativeTimeDifference(resources: Resources, time: ZonedDateTime, timeDif
         }
 
         else -> {
-            time.format(DateTimeFormatter.ofPattern(MONTH_DAY_YEAR_PATTERN))
+            time.format(DateTimeFormatter.ofPattern(TXN_DATE_PATTERN))
         }
     }
 }

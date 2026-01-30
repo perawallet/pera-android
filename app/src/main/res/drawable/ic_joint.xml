@@ -1,0 +1,50 @@
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <group>
+        <clip-path
+            android:pathData="M0,0h16v16h-16z" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M1.333,12.667C1.333,11.194 2.527,10 4,10H6.667C8.139,10 9.333,11.194 9.333,12.667"
+            android:strokeWidth="1.5"
+            android:strokeColor="@color/text_main"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M6.983,4.017C7.895,4.928 7.895,6.406 6.983,7.317C6.072,8.228 4.595,8.228 3.683,7.317C2.772,6.406 2.772,4.928 3.683,4.017C4.595,3.106 6.072,3.106 6.983,4.017Z"
+            android:strokeWidth="1.5"
+            android:strokeColor="@color/text_main"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M10.667,9.333H12.667C13.771,9.333 14.667,10.229 14.667,11.333"
+            android:strokeWidth="1.5"
+            android:strokeColor="@color/text_main"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M12.845,4.488C13.496,5.139 13.496,6.194 12.845,6.845C12.194,7.496 11.139,7.496 10.488,6.845C9.837,6.194 9.837,5.139 10.488,4.488C11.139,3.837 12.194,3.837 12.845,4.488Z"
+            android:strokeWidth="1.5"
+            android:strokeColor="@color/text_main"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+    </group>
+</vector>

@@ -22,7 +22,6 @@ import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetail
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
 import com.algorand.android.ui.accountdetail.assets.tracker.AccountAssetsEventTracker
 import com.algorand.android.utils.getOrThrow
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import dagger.hilt.android.lifecycle.HiltViewModel

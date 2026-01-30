@@ -132,10 +132,6 @@ class AssetActivityFragment : BaseFragment(R.layout.fragment_asset_activity) {
         initObservers()
         initUi()
         handleLoadState()
-    }
-
-    override fun onResume() {
-        super.onResume()
         initSavedStateListener()
     }
 

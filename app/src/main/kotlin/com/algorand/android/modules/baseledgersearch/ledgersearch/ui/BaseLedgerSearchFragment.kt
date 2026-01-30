@@ -159,6 +159,7 @@ abstract class BaseLedgerSearchFragment :
         setupRecyclerView()
         setupLedgerBleOperationManager()
         initObservers()
+        initPairInstructionResultListener()
     }
 
     private fun configureToolbar() {
@@ -181,7 +182,6 @@ abstract class BaseLedgerSearchFragment :
         if (isBluetoothEnableRequestFailed.not() && isLocationPermissionRequestFailed.not()) {
             startBluetoothSearch()
         }
-        initPairInstructionResultListener()
     }
 
     override fun onPause() {

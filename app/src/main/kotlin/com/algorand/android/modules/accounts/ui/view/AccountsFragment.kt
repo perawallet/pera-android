@@ -313,7 +313,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     private val assetInboxCountCollector: suspend (Int?) -> Unit = { assetInboxCountNullable ->
         val assetInboxCount = assetInboxCountNullable ?: 0
         binding.assetInboxAllAccountsButton.apply {
-            text = resources.getQuantityString(R.plurals.asset_requests, assetInboxCount, assetInboxCount)
+            text = getString(R.string.inbox)
             isVisible = assetInboxCount > 0
         }
     }
@@ -377,6 +377,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         registerBottomNavBarFragmentDelegation(this)
         initObservers()
         initUi()
+        initSavedStateListener()
     }
 
     private fun initUi() {
@@ -409,7 +410,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     override fun onResume() {
         super.onResume()
         accountsViewModel.refreshCachedAlgoPrice()
-        initSavedStateListener()
     }
 
     private fun initSavedStateListener() {

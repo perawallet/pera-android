@@ -16,6 +16,7 @@ import com.algorand.android.modules.tracking.core.BaseEventTracker
 import com.algorand.android.usecase.RegistrationUseCase
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseOnboardingEvenTracker(
     peraEventTracker: PeraEventTracker,
     private val registrationUseCase: RegistrationUseCase

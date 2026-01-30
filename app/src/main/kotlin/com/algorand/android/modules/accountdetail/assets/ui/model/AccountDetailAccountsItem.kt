@@ -24,7 +24,8 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
         ASSETS_LIST_TITLE(1),
         SEARCH(2),
         QUICK_ACTIONS(3),
-        BACKUP_WARNING(5)
+        BACKUP_WARNING(5),
+        JOINT_ACCOUNT_BADGE(6)
     }
 
     val itemType: ItemType
@@ -107,6 +108,22 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
             return other is QuickActionItemContainer && this == other
+        }
+    }
+
+    data class JointAccountBadgeItem(
+        val participantCount: Int
+    ) : AccountDetailAccountsItem {
+
+        override val itemType: ItemType
+            get() = ItemType.JOINT_ACCOUNT_BADGE
+
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
+            return other is JointAccountBadgeItem
+        }
+
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
+            return other is JointAccountBadgeItem && participantCount == other.participantCount
         }
     }
 }

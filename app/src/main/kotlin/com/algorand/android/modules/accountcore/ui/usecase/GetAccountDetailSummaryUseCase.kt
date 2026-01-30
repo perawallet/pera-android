@@ -14,6 +14,7 @@ package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
+import com.algorand.android.modules.accountcore.ui.model.AccountIconClickAction
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.wallet.account.detail.domain.model.AccountType
@@ -34,7 +35,8 @@ internal class GetAccountDetailSummaryUseCase @Inject constructor(
             accountDisplayName = getAccountDisplayName(address),
             accountTypeResId = getAccountTypeResId(accountType),
             shouldDisplayAccountType = shouldDisplayAccountType(accountType),
-            accountType = accountType
+            accountType = accountType,
+            accountIconClickAction = getAccountIconClickAction(accountType)
         )
     }
 
@@ -46,16 +48,14 @@ internal class GetAccountDetailSummaryUseCase @Inject constructor(
                 accountDisplayName = getAccountDisplayName(this),
                 accountTypeResId = getAccountTypeResId(cachedInfo?.type),
                 shouldDisplayAccountType = shouldDisplayAccountType(cachedInfo?.type),
-                accountType = cachedInfo?.type
+                accountType = cachedInfo?.type,
+                accountIconClickAction = getAccountIconClickAction(cachedInfo?.type)
             )
         }
     }
 
     private fun shouldDisplayAccountType(type: AccountType?): Boolean {
-        return when (type) {
-            AccountType.LedgerBle, AccountType.NoAuth, AccountType.Algo25, AccountType.HdKey -> false
-            AccountType.Rekeyed, AccountType.RekeyedAuth, null -> true
-        }
+        return type == null || type == AccountType.Rekeyed || type == AccountType.RekeyedAuth
     }
 
     private fun getAccountTypeResId(type: AccountType?): Int {
@@ -66,6 +66,14 @@ internal class GetAccountDetailSummaryUseCase @Inject constructor(
             AccountType.Rekeyed, null -> R.string.no_auth
             AccountType.RekeyedAuth -> R.string.rekeyed
             AccountType.HdKey -> R.string.hd_account
+            AccountType.Joint -> R.string.joint_account
+        }
+    }
+
+    private fun getAccountIconClickAction(type: AccountType?): AccountIconClickAction {
+        return when (type) {
+            AccountType.Joint -> AccountIconClickAction.SHOW_JOINT_ACCOUNT_DETAIL
+            else -> AccountIconClickAction.SHOW_ACCOUNT_STATUS_DETAIL
         }
     }
 }

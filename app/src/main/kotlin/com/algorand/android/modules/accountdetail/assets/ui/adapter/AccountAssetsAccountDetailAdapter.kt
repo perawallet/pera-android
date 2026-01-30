@@ -24,6 +24,7 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailA
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.ACCOUNT_PORTFOLIO
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.ASSETS_LIST_TITLE
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.BACKUP_WARNING
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.JOINT_ACCOUNT_BADGE
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.QUICK_ACTIONS
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.SEARCH
 import com.algorand.android.utils.hideKeyboard
@@ -55,8 +56,8 @@ class AccountAssetsAccountDetailAdapter(
     }
 
     private val quickActionsViewHolderListener = object : AccountDetailQuickActionsListener {
-        override fun onAssetInboxClick() {
-            listener.onAssetInboxClick()
+        override fun onInboxClick() {
+            listener.onInboxClick()
         }
 
         override fun onSendClick() {
@@ -104,6 +105,12 @@ class AccountAssetsAccountDetailAdapter(
         }
     }
 
+    private val jointAccountBadgeListener = object : JointAccountBadgeViewHolder.Listener {
+        override fun onJointAccountBadgeClick() {
+            listener.onJointAccountBadgeClick()
+        }
+    }
+
     override fun getItemViewType(position: Int): Int {
         return getItem(position).itemType.viewType
     }
@@ -115,6 +122,7 @@ class AccountAssetsAccountDetailAdapter(
             ASSETS_LIST_TITLE.viewType -> createAssetTitleViewHolder(parent)
             QUICK_ACTIONS.viewType -> createQuickActionsViewHolder(parent)
             BACKUP_WARNING.viewType -> createBackupWarningViewHolder(parent)
+            JOINT_ACCOUNT_BADGE.viewType -> createJointAccountBadgeViewHolder(parent)
             else -> throw IllegalArgumentException("$logTag : Item View Type is Unknown.")
         }
     }
@@ -150,11 +158,15 @@ class AccountAssetsAccountDetailAdapter(
         return BackupWarningViewHolder.create(parent, backupWarningListener)
     }
 
+    private fun createJointAccountBadgeViewHolder(parent: ViewGroup): JointAccountBadgeViewHolder {
+        return JointAccountBadgeViewHolder.create(parent, jointAccountBadgeListener)
+    }
+
     interface Listener {
         fun onSearchQueryUpdated(query: String) {}
         fun onAddNewAssetClick() {}
         fun onManageAssetsClick()
-        fun onAssetInboxClick()
+        fun onInboxClick()
         fun onSendClick()
         fun onSwapClick()
         fun onMoreClick()
@@ -166,6 +178,7 @@ class AccountAssetsAccountDetailAdapter(
         fun onAccountValueClick()
         fun onChartTap()
         fun onFundClick()
+        fun onJointAccountBadgeClick() {}
     }
 
     companion object {

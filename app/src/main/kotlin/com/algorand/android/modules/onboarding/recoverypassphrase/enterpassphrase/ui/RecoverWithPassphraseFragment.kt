@@ -212,10 +212,6 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         loadData()
         initObservers()
         customizeToolbar()
-    }
-
-    override fun onStart() {
-        super.onStart()
         initSavedStateListener()
     }
 

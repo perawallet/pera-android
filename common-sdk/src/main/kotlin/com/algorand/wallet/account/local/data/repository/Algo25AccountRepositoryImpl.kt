@@ -91,4 +91,11 @@ internal class Algo25AccountRepositoryImpl @Inject constructor(
             encryptedSK?.let { aesPlatformManager.decryptByteArray(it) }
         }
     }
+
+    override suspend fun getAccountsByAddresses(addresses: List<String>): List<Algo25> {
+        return withContext(coroutineDispatcher) {
+            val entities = algo25Dao.getByAddresses(addresses)
+            entities.map { algo25Mapper(it) }
+        }
+    }
 }

@@ -38,7 +38,7 @@ class AddContactViewModel @Inject constructor(
 
     fun insertContactToDatabase(contact: User) {
         viewModelScope.launch {
-            contactDao.insertContact(contact)
+            contactDao.addContact(contact)
             _contactOperationFlow.emit(Event(OperationState.Create(contact)))
         }
     }

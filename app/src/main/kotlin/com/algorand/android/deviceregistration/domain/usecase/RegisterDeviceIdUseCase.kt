@@ -20,7 +20,9 @@ import com.algorand.android.utils.DataResource
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retry
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -32,7 +34,7 @@ class RegisterDeviceIdUseCase @Inject constructor(
     getLocalAccounts: GetLocalAccounts
 ) : BaseDeviceIdOperationUseCase(getLocalAccounts) {
 
-    fun registerDevice(token: String): Flow<DataResource<String>> = flow {
+    fun registerDevice(token: String): Flow<DataResource<String>> = flow<DataResource<String>> {
         val deviceRegistrationDTO = getDeviceRegistrationDTO(token)
         userDeviceIdRepository.registerDeviceId(deviceRegistrationDTO).collect {
             when (it) {
@@ -43,11 +45,15 @@ class RegisterDeviceIdUseCase @Inject constructor(
                 }
 
                 is Result.Error -> {
-                    delay(REGISTER_DEVICE_FAIL_DELAY)
-                    registerDevice(token)
+                    throw DeviceRegistrationException(it.exception)
                 }
             }
         }
+    }.retry(MAX_RETRY_COUNT) {
+        delay(REGISTER_DEVICE_FAIL_DELAY)
+        true
+    }.catch { e ->
+        emit(DataResource.Error.Local(e))
     }
 
     private suspend fun getDeviceRegistrationDTO(token: String): DeviceRegistrationDTO {
@@ -58,5 +64,11 @@ class RegisterDeviceIdUseCase @Inject constructor(
             platform = PLATFORM_NAME,
             locale = getLocaleLanguageCode()
         )
+    }
+
+    private class DeviceRegistrationException(cause: Throwable?) : Exception(cause)
+
+    companion object {
+        private const val MAX_RETRY_COUNT = 5L
     }
 }

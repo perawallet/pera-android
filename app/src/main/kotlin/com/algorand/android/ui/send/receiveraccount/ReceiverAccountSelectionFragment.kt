@@ -124,10 +124,6 @@ class ReceiverAccountSelectionFragment : TransactionSignBaseFragment(R.layout.fr
         super.onViewCreated(view, savedInstanceState)
         initObservers()
         initUi()
-    }
-
-    override fun onStart() {
-        super.onStart()
         initSavedStateListener()
     }
 

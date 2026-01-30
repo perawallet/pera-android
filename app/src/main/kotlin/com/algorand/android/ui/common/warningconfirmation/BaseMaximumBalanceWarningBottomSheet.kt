@@ -21,6 +21,7 @@ import com.algorand.android.databinding.BottomSheetMaximumBalanceWarningBinding
 import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseMaximumBalanceWarningBottomSheet : DaggerBaseBottomSheet(
     R.layout.bottom_sheet_maximum_balance_warning,
     fullPageNeeded = false,

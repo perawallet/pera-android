@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import java.util.concurrent.Executor
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class PeraExecutor(private val coroutineDispatcher: CoroutineDispatcher) : Executor {
     override fun execute(command: Runnable) {
         try {

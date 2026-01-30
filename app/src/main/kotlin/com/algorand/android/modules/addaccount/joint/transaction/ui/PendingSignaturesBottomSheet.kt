@@ -1,0 +1,526 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+@file:OptIn(ExperimentalMaterial3Api::class)
+
+package com.algorand.android.modules.addaccount.joint.transaction.ui
+
+import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.algorand.android.R
+import com.algorand.android.models.AccountIconResource
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.AccountIcon
+import com.algorand.android.ui.compose.widget.ContactIcon
+import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
+import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
+import com.algorand.android.utils.toShortenedAddress
+
+@Composable
+fun PendingSignaturesBottomSheet(
+    sheetState: SheetState,
+    transactionPreview: JointAccountTransactionPreview,
+    onDismiss: () -> Unit,
+    onCancel: () -> Unit,
+    onCloseForNow: () -> Unit,
+    onCloseCompleted: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = PeraTheme.colors.background.primary,
+        dragHandle = null // Drag indicator is inside PendingSignaturesContent
+    ) {
+        PendingSignaturesContent(
+            transactionPreview = transactionPreview,
+            onCancel = onCancel,
+            onCloseForNow = onCloseForNow,
+            onCloseCompleted = onCloseCompleted
+        )
+    }
+}
+
+@Composable
+fun PendingSignaturesContent(
+    transactionPreview: JointAccountTransactionPreview,
+    onCancel: () -> Unit,
+    onCloseForNow: () -> Unit,
+    onCloseCompleted: () -> Unit = onCloseForNow
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = PeraTheme.colors.background.primary,
+                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+            )
+            .padding(bottom = 16.dp)
+    ) {
+        PeraBottomSheetDragIndicator(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 12.dp, bottom = 8.dp)
+        )
+
+        TitleSection(title = stringResource(R.string.pending_signatures))
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        StatusBadgesSection(
+            signedCount = transactionPreview.signedCount,
+            requiredCount = transactionPreview.requiredSignatureCount,
+            timeRemaining = transactionPreview.timeRemaining,
+            transactionState = transactionPreview.transactionState
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AccountsSectionHeader(threshold = transactionPreview.requiredSignatureCount)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SignersListSection(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            signers = transactionPreview.signerAccounts
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        ActionButtonsSection(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            transactionState = transactionPreview.transactionState,
+            hasProposerAddress = transactionPreview.hasProposerAddress,
+            onCancel = onCancel,
+            onCloseForNow = onCloseForNow,
+            onCloseCompleted = onCloseCompleted
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun TitleSection(title: String) {
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = title,
+        style = PeraTheme.typography.body.regular.sansMedium,
+        color = PeraTheme.colors.text.main,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+private fun StatusBadgesSection(
+    signedCount: Int,
+    requiredCount: Int,
+    timeRemaining: String?,
+    transactionState: JointAccountTransactionState
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        when (transactionState) {
+            JointAccountTransactionState.Canceled -> {
+                ErrorBadge(message = stringResource(R.string.transaction_canceled))
+            }
+
+            JointAccountTransactionState.Completed -> {
+                SuccessBadge(message = stringResource(R.string.transaction_successfully_completed))
+            }
+
+            else -> {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SignedCountBadge(
+                        signedCount = signedCount,
+                        requiredCount = requiredCount
+                    )
+                    if (timeRemaining != null) {
+                        TimeRemainingBadge(timeRemaining = timeRemaining)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SignedCountBadge(
+    signedCount: Int,
+    requiredCount: Int
+) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(PeraTheme.colors.layer.grayLighter)
+            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(AccountIconResource.CONTACT.iconResId),
+            contentDescription = null,
+            tint = PeraTheme.colors.text.main
+        )
+        Text(
+            text = stringResource(R.string.of_signed, signedCount, requiredCount),
+            style = PeraTheme.typography.footnote.sansMedium,
+            color = PeraTheme.colors.text.main
+        )
+    }
+}
+
+@Composable
+private fun TimeRemainingBadge(timeRemaining: String) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(PeraTheme.colors.layer.grayLighter)
+            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(R.drawable.ic_clock),
+            contentDescription = null,
+            tint = PeraTheme.colors.text.main
+        )
+        Text(
+            text = stringResource(R.string.time_left, timeRemaining),
+            style = PeraTheme.typography.footnote.sansMedium,
+            color = PeraTheme.colors.text.main
+        )
+    }
+}
+
+@Composable
+private fun ErrorBadge(message: String) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(PeraTheme.colors.helper.negativeLighter)
+            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(R.drawable.ic_error),
+            contentDescription = null,
+            tint = PeraTheme.colors.helper.negative
+        )
+        Text(
+            text = message,
+            style = PeraTheme.typography.footnote.sansMedium,
+            color = PeraTheme.colors.helper.negative
+        )
+    }
+}
+
+@Composable
+private fun SuccessBadge(message: String) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(PeraTheme.colors.helper.positiveLighter)
+            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(R.drawable.ic_check),
+            contentDescription = null,
+            tint = PeraTheme.colors.helper.positive
+        )
+        Text(
+            text = message,
+            style = PeraTheme.typography.footnote.sansMedium,
+            color = PeraTheme.colors.helper.positive
+        )
+    }
+}
+
+@Composable
+private fun AccountsSectionHeader(threshold: Int) {
+    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+        Text(
+            text = stringResource(R.string.accounts),
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.text.main
+        )
+        Text(
+            text = stringResource(R.string.you_need_at_least_accounts_to_sign, threshold),
+            style = PeraTheme.typography.footnote.sans,
+            color = PeraTheme.colors.text.gray
+        )
+    }
+}
+
+@Composable
+private fun SignersListSection(
+    modifier: Modifier = Modifier,
+    signers: List<JointAccountSignerItem>
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        signers.forEach { signer ->
+            SignerItem(signer = signer)
+        }
+    }
+}
+
+@Composable
+private fun SignerItem(signer: JointAccountSignerItem) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .border(
+                width = 1.dp,
+                color = PeraTheme.colors.layer.gray,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .background(PeraTheme.colors.background.primary)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SignerIcon(
+                iconDrawablePreview = signer.accountIconDrawablePreview,
+                imageUri = signer.imageUri
+            )
+            SignerInfo(
+                displayName = signer.accountDisplayName,
+                signatureStatus = signer.signatureStatus
+            )
+        }
+
+        SignerStatusIcon(signatureStatus = signer.signatureStatus)
+    }
+}
+
+@Composable
+private fun SignerIcon(
+    iconDrawablePreview: AccountIconDrawablePreview,
+    imageUri: Uri?
+) {
+    if (imageUri != null) {
+        ContactIcon(imageUri = imageUri, size = 20.dp)
+    } else {
+        AccountIcon(
+            modifier = Modifier.size(20.dp),
+            iconDrawablePreview = iconDrawablePreview
+        )
+    }
+}
+
+@Composable
+private fun SignerInfo(
+    displayName: AccountDisplayName,
+    signatureStatus: JointAccountSignatureStatus
+) {
+    val primaryName = displayName.primaryDisplayName
+    val secondaryName = displayName.secondaryDisplayName
+        ?: displayName.accountAddress.toShortenedAddress()
+
+    Column {
+        Text(
+            text = primaryName,
+            style = PeraTheme.typography.body.regular.sans,
+            color = when (signatureStatus) {
+                JointAccountSignatureStatus.Rejected -> PeraTheme.colors.helper.negative
+                else -> PeraTheme.colors.text.main
+            }
+        )
+        if (primaryName != secondaryName) {
+            Text(
+                text = secondaryName,
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.grayLighter
+            )
+        }
+    }
+}
+
+@Composable
+private fun SignerStatusIcon(signatureStatus: JointAccountSignatureStatus) {
+    when (signatureStatus) {
+        JointAccountSignatureStatus.Signed -> {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(R.drawable.ic_check),
+                contentDescription = stringResource(R.string.signed),
+                tint = PeraTheme.colors.helper.positive
+            )
+        }
+
+        JointAccountSignatureStatus.Rejected -> {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(R.drawable.ic_close),
+                contentDescription = stringResource(R.string.rejected),
+                tint = PeraTheme.colors.helper.negative
+            )
+        }
+
+        JointAccountSignatureStatus.Pending -> {
+            PeraCircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                strokeWidth = 2.dp
+            )
+        }
+    }
+}
+
+@Composable
+private fun ActionButtonsSection(
+    modifier: Modifier = Modifier,
+    transactionState: JointAccountTransactionState,
+    hasProposerAddress: Boolean,
+    onCancel: () -> Unit,
+    onCloseForNow: () -> Unit,
+    onCloseCompleted: () -> Unit
+) {
+    val isCompleted = transactionState == JointAccountTransactionState.Completed ||
+            transactionState == JointAccountTransactionState.Canceled
+    val showSingleCloseButton = isCompleted || !hasProposerAddress
+
+    if (showSingleCloseButton) {
+        SingleCloseButton(
+            modifier = modifier,
+            onClick = if (isCompleted) onCloseCompleted else onCloseForNow
+        )
+    } else {
+        ProposerActionButtons(
+            modifier = modifier,
+            onCancel = onCancel,
+            onCloseForNow = onCloseForNow
+        )
+    }
+}
+
+@Composable
+private fun SingleCloseButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp),
+        onClick = onClick,
+        shape = RoundedCornerShape(4.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = PeraTheme.colors.layer.grayLighter,
+            contentColor = PeraTheme.colors.text.main
+        ),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.close),
+            style = PeraTheme.typography.body.regular.sansMedium
+        )
+    }
+}
+
+@Composable
+private fun ProposerActionButtons(
+    modifier: Modifier = Modifier,
+    onCancel: () -> Unit,
+    onCloseForNow: () -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Button(
+            modifier = Modifier
+                .weight(1f)
+                .height(52.dp),
+            onClick = onCancel,
+            shape = RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PeraTheme.colors.layer.grayLighter,
+                contentColor = PeraTheme.colors.text.main
+            ),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.cancel),
+                style = PeraTheme.typography.body.regular.sansMedium
+            )
+        }
+
+        Button(
+            modifier = Modifier
+                .weight(1f)
+                .height(52.dp),
+            onClick = onCloseForNow,
+            shape = RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PeraTheme.colors.button.primary.background,
+                contentColor = PeraTheme.colors.button.primary.text
+            ),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.close_for_now),
+                style = PeraTheme.typography.body.regular.sansMedium
+            )
+        }
+    }
+}

@@ -20,7 +20,10 @@ import com.algorand.android.utils.getXmlStyledString
 import java.math.BigInteger
 
 sealed class TransactionManagerResult {
-    data class Success(val signedTransactionDetail: SignedTransactionDetail) : TransactionManagerResult()
+    sealed class Success : TransactionManagerResult() {
+        data class SignedTransaction(val signedTransactionDetail: SignedTransactionDetail) : Success()
+        data class TransactionRequestSigned(val signRequestId: String) : Success()
+    }
 
     sealed class Error : TransactionManagerResult() {
 
@@ -69,11 +72,11 @@ sealed class TransactionManagerResult {
         }
     }
 
-    object LedgerOperationCanceled : TransactionManagerResult()
+    data object LedgerOperationCanceled : TransactionManagerResult()
 
-    object Loading : TransactionManagerResult()
+    data object Loading : TransactionManagerResult()
 
     data class LedgerWaitingForApproval(val bluetoothName: String?) : TransactionManagerResult()
 
-    object LedgerScanFailed : TransactionManagerResult()
+    data object LedgerScanFailed : TransactionManagerResult()
 }

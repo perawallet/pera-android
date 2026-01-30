@@ -14,6 +14,7 @@ package com.algorand.wallet.account.local.domain.usecase
 
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,6 +28,7 @@ internal class GetLocalAccountsAddressesUseCase @Inject constructor(
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
+    private val jointAccountRepository: JointAccountRepository,
     private val dispatcher: CoroutineDispatcher
 ) : GetLocalAccountsAddresses {
 
@@ -36,11 +38,13 @@ internal class GetLocalAccountsAddressesUseCase @Inject constructor(
             val deferredAlgo25Accounts = async { algo25AccountRepository.getAllAddresses() }
             val deferredLedgerBleAccounts = async { ledgerBleAccountRepository.getAllAddresses() }
             val deferredNoAuthAccounts = async { noAuthAccountRepository.getAllAddresses() }
+            val deferredJointAccounts = async { jointAccountRepository.getAllAddresses() }
             awaitAll(
                 deferredHdKeyAccountsAddresses,
                 deferredAlgo25Accounts,
                 deferredLedgerBleAccounts,
-                deferredNoAuthAccounts
+                deferredNoAuthAccounts,
+                deferredJointAccounts
             ).flatten()
         }
     }

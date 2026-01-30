@@ -36,6 +36,10 @@ internal fun interface SaveNoAuthAccount {
     suspend operator fun invoke(account: LocalAccount.NoAuth)
 }
 
+internal fun interface SaveJointAccount {
+    suspend operator fun invoke(account: LocalAccount.Joint)
+}
+
 fun interface DeleteLocalAccount {
     suspend operator fun invoke(address: String)
 }
@@ -66,6 +70,10 @@ fun interface GetLocalAccountCount {
 
 fun interface GetLocalAccounts {
     suspend operator fun invoke(): List<LocalAccount>
+}
+
+fun interface GetSignableAccountsByAddresses {
+    suspend operator fun invoke(addresses: List<String>): List<LocalAccount>
 }
 
 fun interface GetLocalAccountsAddresses {

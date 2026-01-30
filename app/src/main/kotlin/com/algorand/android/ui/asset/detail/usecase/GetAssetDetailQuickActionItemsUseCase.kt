@@ -33,11 +33,12 @@ internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
 ) : GetAssetDetailQuickActionItems {
 
     override suspend fun invoke(address: String, assetId: Long): List<AssetDetailQuickActionItem> {
-        val isWatchAccount = getAccountType(address) == AccountType.NoAuth
+        val accountType = getAccountType(address)
+        val isWatchAccount = accountType == AccountType.NoAuth
         if (isWatchAccount) return emptyList()
         val isAlgo = assetId == ALGO_ID
         return buildList {
-            if (isAssetOptedInByAccount(address, assetId)) {
+            if (isAssetOptedInByAccount(address, assetId) && accountType !is AccountType.Joint) {
                 add(SwapButton)
             }
 

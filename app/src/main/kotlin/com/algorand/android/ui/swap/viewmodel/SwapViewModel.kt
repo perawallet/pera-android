@@ -31,7 +31,6 @@ import com.algorand.android.ui.swap.view.SwapFragmentArgs
 import com.algorand.android.ui.swap.viewmodel.SwapViewModel.ViewState
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.isEqualTo
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail

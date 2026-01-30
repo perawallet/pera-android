@@ -155,6 +155,7 @@ class WalletConnectTransactionRequestFragment :
         transactionRequestViewModel.setupWalletConnectSignManager(viewLifecycleOwner.lifecycle)
         initObservers()
         initUi()
+        initSavedStateListener()
     }
 
     private fun initNavController() {
@@ -194,11 +195,6 @@ class WalletConnectTransactionRequestFragment :
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
     }
 
     private fun initSavedStateListener() {

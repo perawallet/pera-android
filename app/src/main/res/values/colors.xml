@@ -76,7 +76,7 @@
     <color name="blush_900">#772552</color>
     <color name="blush_800">#8E3B63</color>
     <color name="blush_700">#B15D7D</color>
-    <color name="blush_600">#D5859D</color>
+    <color name="blush_600">#F5B2C6</color>
     <color name="blush_500">#F8B7C4</color>
     <color name="blush_400">#FAC9CE</color>
     <color name="blush_300">#FCD5D5</color>
@@ -192,7 +192,7 @@
 
     <!-- Wallets -->
     <color name="wallet_1">@color/blush_600</color>
-    <color name="wallet_1_icon">#9B0C48</color>
+    <color name="wallet_1_icon">#9B1F69</color>
     <color name="wallet_2">@color/salmon_500</color>
     <color name="wallet_2_icon">#FFEAC2</color>
     <color name="wallet_3">@color/purple_500</color>
@@ -302,6 +302,9 @@
     <color name="wallet_connect_account_selection_border_color">@color/gray_100</color>
     <color name="wallet_connect_dapp_icon_background_color">@color/white</color>
     <color name="wallet_connect_dapp_icon_border_color">@color/gray_100</color>
+
+    <!-- Participant Count Badge -->
+    <color name="participant_count_badge_text_color">@color/wallet_1_icon</color>
 
     <color name="governance_banner_icon_color">@color/black</color>
 

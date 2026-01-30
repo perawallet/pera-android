@@ -20,7 +20,6 @@ import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.Algo25
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.HdKey
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import javax.inject.Inject
 
 class AccountOptionsPreviewUseCase @Inject constructor(

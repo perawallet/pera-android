@@ -111,10 +111,10 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
 
         collectLatestOnLifecycle(assetDetailV2ViewModel.viewEvent, viewEventCollector)
         collectLatestOnLifecycle(csvViewModel.viewEvent, csvViewEventCollector)
+        initSavedStateListener()
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun initSavedStateListener() {
         startSavedStateListener(R.id.assetDetailV2Fragment) {
             useSavedStateValue<DateFilter>(DateFilterListBottomSheet.DATE_FILTER_RESULT) { newDateFilter ->
                 transactionHistoryViewModel.setDateFilter(newDateFilter)

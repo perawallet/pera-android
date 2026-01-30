@@ -53,10 +53,10 @@ fun SendQuickActionButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun AssetInboxQuickActionButton(isSelected: Boolean, onClick: () -> Unit) {
+fun InboxQuickActionButton(isSelected: Boolean, onClick: () -> Unit) {
     SecondaryQuickActionButton(
         iconResId = R.drawable.ic_asset_inbox_quick_action,
-        text = stringResource(R.string.asset_inbox),
+        text = stringResource(R.string.inbox),
         showIndicator = isSelected,
         onClick = onClick
     )

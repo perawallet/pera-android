@@ -6,6 +6,7 @@
 
 # Build directory
 build/
+bin/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -45,3 +46,6 @@ render.experimental.xml
 
 # Claude
 .claude/
+
+# Backend Feedback
+BACKEND_FEEDBACK.md

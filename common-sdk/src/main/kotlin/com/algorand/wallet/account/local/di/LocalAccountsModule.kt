@@ -15,12 +15,15 @@ package com.algorand.wallet.account.local.di
 import android.content.Context
 import androidx.room.Room
 import com.algorand.wallet.account.local.data.database.AddressDatabase
+import com.algorand.wallet.account.local.data.database.AddressDatabase.Companion.MIGRATION_1_2
 import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapper
 import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapperImpl
 import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapper
 import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapperImpl
 import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
 import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapperImpl
+import com.algorand.wallet.account.local.data.mapper.entity.JointEntityMapper
+import com.algorand.wallet.account.local.data.mapper.entity.JointEntityMapperImpl
 import com.algorand.wallet.account.local.data.mapper.entity.LedgerBleEntityMapper
 import com.algorand.wallet.account.local.data.mapper.entity.LedgerBleEntityMapperImpl
 import com.algorand.wallet.account.local.data.mapper.entity.NoAuthEntityMapper
@@ -33,6 +36,8 @@ import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapperImpl
 import com.algorand.wallet.account.local.data.mapper.model.HdWalletSummaryMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdWalletSummaryMapperImpl
+import com.algorand.wallet.account.local.data.mapper.model.JointMapper
+import com.algorand.wallet.account.local.data.mapper.model.JointMapperImpl
 import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapper
 import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapperImpl
 import com.algorand.wallet.account.local.data.mapper.model.NoAuthMapper
@@ -41,12 +46,14 @@ import com.algorand.wallet.account.local.data.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.data.repository.DefaultAlgo25NoAuthRepository
 import com.algorand.wallet.account.local.data.repository.HdKeyAccountRepositoryImpl
 import com.algorand.wallet.account.local.data.repository.HdSeedRepositoryImpl
+import com.algorand.wallet.account.local.data.repository.JointAccountRepositoryImpl
 import com.algorand.wallet.account.local.data.repository.LedgerBleAccountRepositoryImpl
 import com.algorand.wallet.account.local.data.repository.NoAuthAccountRepositoryImpl
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.Algo25NoAuthRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccounts
@@ -80,6 +87,8 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
@@ -89,6 +98,7 @@ import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccountUs
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.SaveAlgo25Account
 import com.algorand.wallet.account.local.domain.usecase.SaveHdKeyAccount
+import com.algorand.wallet.account.local.domain.usecase.SaveJointAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.UpdateInvalidAlgo25AccountsToNoAuth
@@ -116,7 +126,7 @@ internal object LocalAccountsModule {
             context = context,
             klass = AddressDatabase::class.java,
             name = AddressDatabase.DATABASE_NAME
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
     }
 
     @Provides
@@ -142,6 +152,14 @@ internal object LocalAccountsModule {
     @Provides
     @Singleton
     fun provideNoAuthDao(addressDatabase: AddressDatabase) = addressDatabase.noAuthDao()
+
+    @Provides
+    @Singleton
+    fun provideJointDao(addressDatabase: AddressDatabase) = addressDatabase.jointDao()
+
+    @Provides
+    @Singleton
+    fun provideJointParticipantDao(addressDatabase: AddressDatabase) = addressDatabase.jointParticipantDao()
 
     @Provides
     fun provideHdSeedRepository(repository: HdSeedRepositoryImpl): HdSeedRepository = repository
@@ -171,6 +189,9 @@ internal object LocalAccountsModule {
     fun provideNoAuthAccountRepository(repository: NoAuthAccountRepositoryImpl): NoAuthAccountRepository = repository
 
     @Provides
+    fun provideJointAccountRepository(repository: JointAccountRepositoryImpl): JointAccountRepository = repository
+
+    @Provides
     fun provideHdKeyEntityMapper(impl: HdKeyEntityMapperImpl): HdKeyEntityMapper = impl
 
     @Provides
@@ -184,6 +205,9 @@ internal object LocalAccountsModule {
 
     @Provides
     fun provideNoAuthEntityMapper(impl: NoAuthEntityMapperImpl): NoAuthEntityMapper = impl
+
+    @Provides
+    fun provideJointEntityMapper(impl: JointEntityMapperImpl): JointEntityMapper = impl
 
     @Provides
     fun provideHdSeedMapper(impl: HdSeedMapperImpl): HdSeedMapper = impl
@@ -202,6 +226,9 @@ internal object LocalAccountsModule {
 
     @Provides
     fun provideNoAuthMapper(impl: NoAuthMapperImpl): NoAuthMapper = impl
+
+    @Provides
+    fun provideJointMapper(impl: JointMapperImpl): JointMapper = impl
 
     @Provides
     fun provideSaveHdKeyAccount(repository: HdKeyAccountRepository): SaveHdKeyAccount {
@@ -224,6 +251,11 @@ internal object LocalAccountsModule {
     }
 
     @Provides
+    fun provideSaveJointAccount(repository: JointAccountRepository): SaveJointAccount {
+        return SaveJointAccount(repository::addAccount)
+    }
+
+    @Provides
     fun provideGetAllLocalAccountAddressesAsFlow(
         useCase: GetAllLocalAccountAddressesAsFlowUseCase
     ): GetAllLocalAccountAddressesAsFlow = useCase
@@ -240,6 +272,11 @@ internal object LocalAccountsModule {
     fun provideGetLocalAccounts(
         useCase: GetLocalAccountsUseCase
     ): GetLocalAccounts = useCase
+
+    @Provides
+    fun provideGetSignableAccountsByAddresses(
+        useCase: GetSignableAccountsByAddressesUseCase
+    ): GetSignableAccountsByAddresses = useCase
 
     @Provides
     fun provideGetLocalAccountsFlow(useCase: GetLocalAccountsFlowUseCase): GetLocalAccountsFlow = useCase

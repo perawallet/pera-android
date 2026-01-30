@@ -85,6 +85,7 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.Swap -> handleSwapDeepLink(deepLink)
             is DeepLink.Home -> handleHomeDeepLink()
             is DeepLink.Fido -> handleFidoDeepLink(deepLink)
+            is DeepLink.JointAccountImport -> handleJointAccountImportDeepLink(deepLink)
         }
         if (isDeeplinkHandled) {
             listener?.onDeepLinkHandled()
@@ -251,6 +252,10 @@ class DeeplinkHandler @Inject constructor(
         }
     }
 
+    private fun handleJointAccountImportDeepLink(deepLink: DeepLink.JointAccountImport): Boolean {
+        return triggerListener { it.onJointAccountImportDeepLink(deepLink.address) }
+    }
+
     private fun triggerListener(action: (Listener) -> Boolean): Boolean {
         return listener?.run(action) ?: false
     }
@@ -300,5 +305,6 @@ class DeeplinkHandler @Inject constructor(
         fun onUndefinedDeepLink()
         fun onDeepLinkNotHandled(deepLink: DeepLink)
         fun onFidoDeepLink(uri: String): Boolean = false
+        fun onJointAccountImportDeepLink(address: String?): Boolean = false
     }
 }

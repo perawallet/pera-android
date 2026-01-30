@@ -18,7 +18,3 @@ import com.algorand.wallet.foundation.PeraResult
 fun interface GetCardFundAddresses {
     suspend operator fun invoke(): PeraResult<List<FundAddress>>
 }
-
-fun interface IsCountryWaitlistedForCards {
-    suspend operator fun invoke(): PeraResult<Boolean>
-}

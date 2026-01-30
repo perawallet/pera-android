@@ -84,7 +84,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
             addSignatureInput
         )
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
-            jointAccountApiService.addSignature(signRequestId, addSignatureInput.address, request)
+            jointAccountApiService.addSignature(signRequestId, listOf(request))
         }.mapToJointSignRequest()
     }
 

@@ -36,11 +36,10 @@ internal interface JointAccountApiService {
         @Body proposeSignRequestRequest: ProposeJointSignRequestRequest
     ): Response<JointSignRequestResponse>
 
-    @POST("v1/joint-accounts/sign-requests/{sign_request_id}/responses/{participant_address}/")
+    @POST("v1/joint-accounts/sign-requests/{sign_request_id}/responses/")
     suspend fun addSignature(
         @Path("sign_request_id") signRequestId: String,
-        @Path("participant_address") participantAddress: String,
-        @Body signRequestTransactionListResponseRequest: SignRequestTransactionListResponseRequest
+        @Body responses: List<SignRequestTransactionListResponseRequest>
     ): Response<JointSignRequestResponse>
 
     @POST("v1/joint-accounts/sign-requests/search/")

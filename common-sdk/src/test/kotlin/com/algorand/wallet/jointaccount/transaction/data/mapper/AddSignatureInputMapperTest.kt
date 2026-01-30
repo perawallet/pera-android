@@ -50,11 +50,12 @@ internal class AddSignatureInputMapperTest {
     }
 
     @Test
-    fun `EXPECT signatures and device id to be mapped correctly`() {
+    fun `EXPECT address signatures and device id to be mapped correctly`() {
         val input = createTestInput()
 
         val result = mapper.mapToSignRequestTransactionListResponseRequest(input)
 
+        assertEquals(TEST_ADDRESS, result.address)
         assertEquals(TEST_SIGNATURES, result.signatures)
         assertEquals(TEST_DEVICE_ID, result.deviceId)
     }

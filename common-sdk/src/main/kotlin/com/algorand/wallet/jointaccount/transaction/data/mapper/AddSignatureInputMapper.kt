@@ -22,6 +22,7 @@ internal class AddSignatureInputMapper @Inject constructor() {
         dto: AddSignatureInput
     ): SignRequestTransactionListResponseRequest {
         return SignRequestTransactionListResponseRequest(
+            address = dto.address,
             response = dto.response.value,
             signatures = dto.signatures,
             deviceId = dto.deviceId

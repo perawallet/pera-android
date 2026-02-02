@@ -74,6 +74,7 @@ import com.algorand.wallet.deeplink.parser.query.WalletConnectUrlQueryParser
 import com.algorand.wallet.deeplink.parser.query.WebImportQrCodeQueryParser
 import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import com.algorand.wallet.foundation.json.JsonSerializer
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -144,7 +145,8 @@ internal object DeepLinkModule {
 
     @Provides
     fun provideCreateNewDeepLink(
-        parseNewDeepLinkPayload: ParseNewDeepLinkPayload
+        parseNewDeepLinkPayload: ParseNewDeepLinkPayload,
+        isFeatureToggleEnabled: IsFeatureToggleEnabled
     ): CreateNewDeepLink {
         return CreateNewDeepLinkImpl(
             parseNewDeepLinkPayload = parseNewDeepLinkPayload,
@@ -158,7 +160,7 @@ internal object DeepLinkModule {
             assetInboxNewDeepLinkBuilder = AssetInboxNewDeepLinkBuilder(),
             assetDetailNewDeepLinkBuilder = AssetDetailNewDeepLinkBuilder(),
             swapNewDeepLinkBuilder = SwapNewDeepLinkBuilder(),
-            buyNewDeepLinkBuilder = BuyNewDeepLinkBuilder(),
+            buyNewDeepLinkBuilder = BuyNewDeepLinkBuilder(isFeatureToggleEnabled),
             sellNewDeepLinkBuilder = SellNewDeepLinkBuilder(),
             keyRegNewDeepLinkBuilder = KeyRegNewDeepLinkBuilder(),
             recoverAccountNewDeepLinkBuilder = RecoverAccountNewDeepLinkBuilder(),

@@ -14,48 +14,69 @@ package com.algorand.wallet.deeplink.builder
 
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNull
 import org.junit.Test
 
-class BuyNewDeepLinkBuilderTest {
+internal class BuyNewDeepLinkBuilderTest {
 
-    private val sut = BuyNewDeepLinkBuilder()
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled = mockk()
+    private val sut: BuyNewDeepLinkBuilder = BuyNewDeepLinkBuilder(isFeatureToggleEnabled)
 
     @Test
-    fun `EXPECT true WHEN deeplink requirements match`() {
-        val result = sut.createDeepLink(VALID_DEEP_LINK) != null
+    fun `EXPECT buy deeplink with empty address and path WHEN feature toggle is enabled`() {
+        every { isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key) } returns true
+        val deepLinkWithPath = VALID_DEEP_LINK.copy(path = "customPath")
 
-        assertTrue(result)
+        val result = sut.createDeepLink(deepLinkWithPath)
+
+        val expected = DeepLink.Buy(address = "", path = "customPath")
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT false WHEN deeplink requirements do not match`() {
-        val invalidDeepLink = VALID_DEEP_LINK.copy(accountAddress = null)
+    fun `EXPECT buy deeplink with empty address and null path WHEN feature toggle is enabled and no path`() {
+        every { isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key) } returns true
 
-        val result = sut.createDeepLink(invalidDeepLink) != null
+        val result = sut.createDeepLink(VALID_DEEP_LINK)
 
-        assertFalse(result)
+        val expected = DeepLink.Buy(address = "", path = null)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT buy deeplink`() {
+    fun `EXPECT buy deeplink with address and null path WHEN feature toggle is disabled and account address exists`() {
+        every { isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key) } returns false
+
         val result = sut.createDeepLink(VALID_DEEP_LINK)
 
         val expected = DeepLink.Buy(address = "accountAddress", path = null)
-
         assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT buy deeplink with path`() {
+    fun `EXPECT buy deeplink with address and null path WHEN feature toggle is disabled and path is ignored`() {
+        every { isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key) } returns false
         val deepLinkWithPath = VALID_DEEP_LINK.copy(path = "customPath")
+
         val result = sut.createDeepLink(deepLinkWithPath)
 
-        val expected = DeepLink.Buy(address = "accountAddress", path = "customPath")
-
+        val expected = DeepLink.Buy(address = "accountAddress", path = null)
         assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT null WHEN feature toggle is disabled and account address is null`() {
+        every { isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key) } returns false
+        val invalidDeepLink = VALID_DEEP_LINK.copy(accountAddress = null)
+
+        val result = sut.createDeepLink(invalidDeepLink)
+
+        assertNull(result)
     }
 
     private companion object {

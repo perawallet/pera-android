@@ -14,12 +14,18 @@ package com.algorand.wallet.deeplink.builder
 
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 
-internal class BuyNewDeepLinkBuilder : NewDeepLinkBuilder {
+internal class BuyNewDeepLinkBuilder(
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
+) : NewDeepLinkBuilder {
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink? {
-        return payload.accountAddress?.let { address ->
-            DeepLink.Buy(address, payload.path)
+        return if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
+            DeepLink.Buy("", payload.path)
+        } else {
+            payload.accountAddress?.let { address -> DeepLink.Buy(address, null) }
         }
     }
 }

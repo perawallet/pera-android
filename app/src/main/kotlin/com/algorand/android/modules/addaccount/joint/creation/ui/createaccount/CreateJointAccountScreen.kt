@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
 import com.algorand.android.modules.addaccount.joint.creation.ui.createaccount.viewmodel.CreateJointAccountViewModel
+import com.algorand.android.modules.addaccount.joint.creation.ui.disclaimer.JointAccountDisclaimerBottomSheet
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.ContactIcon
@@ -51,7 +52,6 @@ import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
-import com.algorand.android.utils.toShortenedAddress
 
 @Composable
 fun CreateJointAccountScreen(
@@ -59,26 +59,41 @@ fun CreateJointAccountScreen(
     listener: CreateJointAccountScreenListener
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
-    val selectedAccounts = viewState.selectedAccounts
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        ToolbarSection(listener = listener)
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-            ContentSection(
-                selectedAccounts = selectedAccounts,
-                viewModel = viewModel,
-                listener = listener
-            )
+
+    when (val state = viewState) {
+        is CreateJointAccountViewModel.ViewState.Content -> {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                ToolbarSection(listener = listener)
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    ContentSection(
+                        selectedAccounts = state.selectedAccounts,
+                        onEditClick = { index, address ->
+                            listener.onEditAccountClick(index, address)
+                        },
+                        onRemoveClick = { index -> viewModel.removeSelectedAccount(index) },
+                        onAddAccountClick = listener::onAddAccountClick
+                    )
+                }
+                ContinueButtonSection(
+                    isContinueEnabled = state.isContinueEnabled,
+                    onContinueClick = { viewModel.onContinueClick() }
+                )
+            }
+
+            if (state.showDisclaimer) {
+                JointAccountDisclaimerBottomSheet(
+                    onProceedClick = { viewModel.onDisclaimerProceed() },
+                    onGoBackClick = { viewModel.onDisclaimerGoBack() },
+                    onLearnMoreClick = listener::onLearnMoreClick
+                )
+            }
         }
-        ContinueButtonSection(
-            isContinueEnabled = viewState.isContinueEnabled,
-            onContinueClick = listener::onContinueClick
-        )
     }
 }
 
@@ -106,8 +121,9 @@ private fun ToolbarSection(listener: CreateJointAccountScreenListener) {
 @Composable
 private fun ContentSection(
     selectedAccounts: List<SelectedJointAccountItem>,
-    viewModel: CreateJointAccountViewModel,
-    listener: CreateJointAccountScreenListener
+    onEditClick: (Int, String) -> Unit,
+    onRemoveClick: (Int) -> Unit,
+    onAddAccountClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -120,11 +136,11 @@ private fun ContentSection(
         Spacer(modifier = Modifier.height(32.dp))
         AccountsSection(
             selectedAccounts = selectedAccounts,
-            viewModel = viewModel,
-            listener = listener
+            onEditClick = onEditClick,
+            onRemoveClick = onRemoveClick
         )
         Spacer(modifier = Modifier.height(8.dp))
-        AddAccountButtonSection(onAddAccountClick = listener::onAddAccountClick)
+        AddAccountButtonSection(onAddAccountClick = onAddAccountClick)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -140,8 +156,8 @@ private fun DescriptionSection() {
 @Composable
 private fun AccountsSection(
     selectedAccounts: List<SelectedJointAccountItem>,
-    viewModel: CreateJointAccountViewModel,
-    listener: CreateJointAccountScreenListener
+    onEditClick: (Int, String) -> Unit,
+    onRemoveClick: (Int) -> Unit
 ) {
     PeraTitleText(
         text = stringResource(R.string.accounts)
@@ -152,27 +168,14 @@ private fun AccountsSection(
         color = PeraTheme.colors.text.gray
     )
     Spacer(modifier = Modifier.height(16.dp))
-    selectedAccounts.forEach { account ->
+    selectedAccounts.forEachIndexed { index, account ->
+        val address = account.accountDisplayName.accountAddress
         SelectedAccountItem(
             account = account,
-            onEditClick = { handleContactEditClick(account, listener) },
-            onRemoveClick = { handleAccountRemoveClick(account, viewModel) }
+            onEditClick = { onEditClick(index, address) },
+            onRemoveClick = { onRemoveClick(index) }
         )
     }
-}
-
-private fun handleContactEditClick(
-    account: SelectedJointAccountItem,
-    listener: CreateJointAccountScreenListener
-) {
-    listener.onEditAccountClick(account.accountDisplayName.accountAddress)
-}
-
-private fun handleAccountRemoveClick(
-    account: SelectedJointAccountItem,
-    viewModel: CreateJointAccountViewModel,
-) {
-    viewModel.removeSelectedAccount(account.accountDisplayName.accountAddress)
 }
 
 @Composable
@@ -220,25 +223,23 @@ private fun SelectedAccountItem(
     onEditClick: () -> Unit,
     onRemoveClick: () -> Unit
 ) {
-    val displayName = account.accountDisplayName
     PeraAccountItem(
         modifier = Modifier.padding(vertical = 12.dp),
-        displayName = displayName.copy(
-            secondaryDisplayName = displayName.secondaryDisplayName
-                ?: displayName.accountAddress.toShortenedAddress()
-        ),
+        displayName = account.accountDisplayName,
         canCopyable = false,
         iconContent = {
             when {
                 account.isContact -> {
                     ContactIcon(imageUri = account.imageUri, size = 40.dp)
                 }
+
                 account.iconDrawablePreview != null -> {
                     AccountIcon(
                         modifier = Modifier.size(40.dp),
                         iconDrawablePreview = account.iconDrawablePreview
                     )
                 }
+
                 else -> ContactIcon(size = 40.dp)
             }
         },
@@ -269,6 +270,6 @@ private fun SelectedAccountItem(
 interface CreateJointAccountScreenListener {
     fun onBackClick()
     fun onAddAccountClick()
-    fun onEditAccountClick(address: String)
-    fun onContinueClick()
+    fun onEditAccountClick(index: Int, address: String)
+    fun onLearnMoreClick()
 }

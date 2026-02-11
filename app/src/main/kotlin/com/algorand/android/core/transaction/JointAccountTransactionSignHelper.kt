@@ -97,17 +97,13 @@ class JointAccountTransactionSignHelper @Inject constructor(
         rawTransactions: List<String>
     ) {
         val eligibleSigners = getSignableAccountsByAddresses(jointAccount.participantAddresses)
+        if (eligibleSigners.isEmpty()) return
 
-        for (signer in eligibleSigners) {
-            val result = signAndSubmitJointAccountSignature(
-                signRequestId = signRequestId,
-                participantAddress = signer.algoAddress,
-                rawTransactions = rawTransactions
-            )
-            if (result !is PeraResult.Success) {
-                // Failed to auto-sign for participant, continue with others
-            }
-        }
+        signAndSubmitJointAccountSignature(
+            signRequestId = signRequestId,
+            participantAddresses = eligibleSigners.map { it.algoAddress },
+            rawTransactions = rawTransactions
+        )
     }
 
     private fun prepareRawTransactionLists(transactionDataList: List<TransactionSignData>): List<List<String>>? {
@@ -139,9 +135,11 @@ class JointAccountTransactionSignHelper @Inject constructor(
             is LocalAccount.Algo25 -> {
                 localAccountSigningHelper.signWithAlgo25AccountReturnSignature(transactionBytes, signerAddress)
             }
+
             is LocalAccount.HdKey -> {
                 localAccountSigningHelper.signWithHdKeyAccountReturnSignature(transactionBytes, signerAccount)
             }
+
             else -> null
         }
     }

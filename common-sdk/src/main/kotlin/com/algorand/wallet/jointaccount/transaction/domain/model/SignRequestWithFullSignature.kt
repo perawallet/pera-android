@@ -21,7 +21,8 @@ data class SignRequestWithFullSignature(
     val proposerAddress: String?,
     val lastValidExpectedDatetime: String?,
     val transactionLists: List<TransactionListWithFullSignature>?,
-    val status: SignRequestStatus?
+    val status: SignRequestStatus?,
+    val failReasonDisplay: String? = null
 )
 
 data class TransactionListWithFullSignature(

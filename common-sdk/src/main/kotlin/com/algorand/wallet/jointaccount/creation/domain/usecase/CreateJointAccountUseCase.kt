@@ -17,11 +17,9 @@ import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccount
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import javax.inject.Inject
-import javax.inject.Named
 
 internal class CreateJointAccountUseCase @Inject constructor(
-    @param:Named(JointAccountRepository.INJECTION_NAME)
-    private val jointAccountRepository: JointAccountRepository
+    private val repository: JointAccountRepository
 ) : CreateJointAccount {
 
     override suspend fun invoke(
@@ -34,6 +32,6 @@ internal class CreateJointAccountUseCase @Inject constructor(
             threshold = threshold,
             version = version
         )
-        return jointAccountRepository.createJointAccount(input)
+        return repository.createJointAccount(input)
     }
 }

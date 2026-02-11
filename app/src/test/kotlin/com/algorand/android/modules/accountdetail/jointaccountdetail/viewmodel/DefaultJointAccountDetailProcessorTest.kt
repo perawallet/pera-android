@@ -27,6 +27,7 @@ import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount as JointAccountDto
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountDetail
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -41,6 +42,7 @@ import org.junit.Test
 internal class DefaultJointAccountDetailProcessorTest {
 
     private val getJointAccount: GetJointAccount = mockk()
+    private val getJointAccountDetail: GetJointAccountDetail = mockk()
     private val getAccountDisplayName: GetAccountDisplayName = mockk()
     private val contactRepository: ContactRepository = mockk()
     private val createJointAccountParticipantItem: CreateJointAccountParticipantItem = mockk()
@@ -50,6 +52,7 @@ internal class DefaultJointAccountDetailProcessorTest {
 
     private val sut = DefaultJointAccountDetailProcessor(
         getJointAccount = getJointAccount,
+        getJointAccountDetail = getJointAccountDetail,
         getAccountDisplayName = getAccountDisplayName,
         contactRepository = contactRepository,
         createJointAccountParticipantItem = createJointAccountParticipantItem,

@@ -29,7 +29,6 @@ import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewEvent
 import com.algorand.android.ui.compose.extensions.createComposeView
-import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
@@ -64,14 +63,12 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
         savedInstanceState: Bundle?
     ): View {
         return createComposeView {
-            PeraTheme {
-                JointAccountSignRequestScreen(
-                    viewModel = viewModel,
-                    listener = this,
-                    showPendingSignatures = shouldShowPendingSignatures.value,
-                    onPendingSignaturesShown = { shouldShowPendingSignatures.value = false }
-                )
-            }
+            JointAccountSignRequestScreen(
+                viewModel = viewModel,
+                listener = this,
+                showPendingSignatures = shouldShowPendingSignatures.value,
+                onPendingSignaturesShown = { shouldShowPendingSignatures.value = false }
+            )
         }
     }
 
@@ -96,6 +93,10 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
     private fun handleViewEvent(event: ViewEvent) {
         when (event) {
             is ViewEvent.NavigateBack -> navBack()
+            is ViewEvent.ShowSuccessAndNavigateBack -> {
+                showAlertSuccess(title = getString(event.messageResId))
+                navBack()
+            }
             is ViewEvent.ShowError -> showGlobalError(getString(event.messageResId))
             is ViewEvent.ShowPendingSignaturesBottomSheet,
             is ViewEvent.ShowPendingSignaturesDirectly -> {

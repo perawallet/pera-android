@@ -18,7 +18,6 @@
 
     <string name="cancel">Cancel</string>
     <string name="decline">Decline</string>
-    <string name="sign">Sign</string>
     <string name="share_via">Share via</string>
     <string name="ok">OK</string>
     <string name="next">Next</string>
@@ -240,7 +239,6 @@
     <string name="you_can_use_your_algo_or">You can use your ALGO or USDC balance to Buy gift card and mobile topups from thousands of brands worldwide!</string>
     <string name="confirm">Confirm</string>
     <string name="standard">Standard</string>
-    <string name="joint">Joint</string>
     <string name="watch">Watch</string>
     <string name="this_action_is_not_available">This action is not available for this account type</string>
     <string name="skip_for_now">Skip for now</string>
@@ -279,6 +277,7 @@
     <string name="dialpad_0">0</string>
     <string name="rejecting_requests">Rejecting Requests</string>
     <string name="this_feature_as_an_inbox">This is your unified inbox where you can manage all incoming requests. Here you can accept or reject asset transfer requests for assets or NFTs which you are not opted into already, respond to joint account invitations, and sign pending transactions for your joint accounts.</string>
+    <string name="this_feature_as_an_inbox_asset_only">This feature is an inbox for your account. Others can send you assets and NFTs, even if you have not explicitly opted in to receive them. From here, you can choose to accept or reject the asset transfer requests.</string>
     <string name="reject">Reject</string>
     <string name="ignore">Ignore</string>
     <string name="claim">Claim</string>
@@ -313,10 +312,7 @@
     <string name="invite_friends">Invite Friends</string>
     <string name="menu">Menu</string>
     <string name="simply_the_best_algorand">Simply the best Algorand wallet.</string>
-    <string name="you_are_all_set">You\'re all set!</string>
-    <string name="we_will_inform_this">We will inform this device via a push notification when we launch in your country.</string>
     <string name="go_to_cards">Go to Cards</string>
-    <string name="create_pera_card">Create Pera Card</string>
     <string name="once_you_enable_this">Once you enable this, you can confirm transaction request to rekey your account. This will give the control of your account to another address.</string>
     <string name="this_signature_includes">This signature includes rekey transaction, giving control over your accounts to another address. Please make sure that you understand the implications before proceeding.</string>
     <string name="you_pay">You pay</string>
@@ -425,6 +421,7 @@
     <string name="see_other_options">See other options</string>
     <string name="joint_account">Joint Account</string>
     <string name="joint_account_badge">Joint Account (%1$d)</string>
+    <string name="joint_account_default_name">Joint Account #%1$d</string>
     <string name="you_ve_been_invited_to_join_joint_account">You\'ve been invited to join a joint account %1$s</string>
     <string name="you_ve_been_invited">You\'ve been invited</string>
     <string name="view_invitation_details">View invitation details</string>
@@ -436,13 +433,8 @@
     <string name="creating_joint_account">Creating joint account…</string>
     <string name="joint_account_min_accounts_required">You need add at least two accounts</string>
     <string name="joint_account_validation_insufficient_participants">At least two participants are required to create a joint account</string>
-    <string name="joint_account_validation_too_many_participants">Maximum <annotation replacement="max_participants">%1$s</annotation> participants are allowed for a joint account</string>
-    <string name="joint_account_validation_invalid_threshold">Threshold must be between 1 and the number of participants</string>
-    <string name="joint_account_validation_duplicate_addresses">Duplicate addresses are not allowed. Please remove duplicate participants</string>
-    <string name="joint_account_validation_invalid_address">One or more addresses are invalid. Please check the addresses and try again</string>
     <string name="joint_account_feature_not_supported">This feature is not available for joint accounts yet</string>
     <string name="joint_accounts_are_not_supported">Swaps with joint accounts are not yet supported. Joint accounts require multi-signature approval which is not available in the swap flow.</string>
-    <string name="ledger_decline_not_supported">Declining with Ledger accounts is not supported. Ledger devices can only sign transactions, not decline requests. Please use a standard account to decline.</string>
     <string name="search_or_enter_wallet_address">Search or enter wallet address</string>
     <string name="selected_account">Selected account</string>
     <string name="you_are_about_to_remove_watch_account">You are about to remove a watch account. Are you sure you want to proceed with this choice?</string>
@@ -633,7 +625,6 @@
     <string name="the_transaction_cannot_be">The transaction cannot be completed because the amount will put your account below minimum required balance of <annotation replacement="min_balance">min_balance_placeholder</annotation> Algo.</string>
     <string name="transaction_request">Transaction Request</string>
     <string name="review_transaction">Review Transaction</string>
-    <string name="sign_txn_request">Sign txn request</string>
     <string name="raw_transaction">Raw Transaction</string>
     <string name="transaction_successfully_confirmed">Transaction successfully confirmed</string>
     <string name="sender">Sender</string>
@@ -671,6 +662,7 @@
     <string name="sender_account">Sender Account</string>
     <string name="transacting_fee">Transaction Fee</string>
     <string name="transfer_to">Transfer to %1$s</string>
+    <string name="transfer_to_styled">Transfer to <annotation type="bold">%1$s</annotation></string>
     <string name="confirm_transfer">Confirm transfer</string>
     <string name="no_transactions">No transactions</string>
     <string name="send_transaction">Send transaction</string>
@@ -1000,6 +992,9 @@
     <string name="rekey_to_ledger_account_lower_case">Rekey to Ledger account</string>
     <string name="rekey_to_standard_account">Rekey to Standard Account</string>
     <string name="rekey_to_standard_account_lower_case">Rekey to standard account</string>
+    <string name="rekey_to_joint_account">Rekey to Joint Account</string>
+    <string name="rekey_to_joint_account_lower_case">Rekey to joint account</string>
+    <string name="choose_the_joint_account_rekey">Choose the joint account you would like to rekey to. The joint account you select here will be responsible for signing all transactions for the source account.</string>
     <string name="rekey_your_account_to">Rekey your account to a different standard account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="summary_of_rekey">Summary of rekey</string>
     <string name="currently_rekeyed">Currently Rekeyed</string>
@@ -1012,6 +1007,7 @@
     <string name="rekeyed_to">Rekeyed to</string>
     <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions.</string>
     <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account.</string>
+    <string name="your_account_is_rekeyed_to_joint_account">Your account is rekeyed to another joint account. Transactions for this account will be authorized by the other account.</string>
     <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account.</string>
     <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device.</string>
     <string name="undo_rekey">Undo rekey</string>
@@ -1129,9 +1125,9 @@
     <!-- ============================================================ -->
 
     <string name="an_error_occurred">An Error Occurred</string>
+    <string name="joint_account_transaction_decode_failed">Failed to process the transaction</string>
+    <string name="joint_account_signing_failed">Failed to sign the transaction</string>
     <string name="sign_request_not_available">This sign request is no longer available. It may have expired or been cancelled.</string>
-    <string name="expired">Expired</string>
-    <string name="sign_request_expired">This sign request has expired and is no longer valid.</string>
     <string name="error">Error</string>
     <string name="key_not_valid">Key not valid, please make sure you have the right key.</string>
     <string name="scanned_qr_is_not_valid">Scanned QR is not valid.</string>
@@ -1269,13 +1265,20 @@
     <string name="to_sign_for_format"> to sign for %1$s</string>
     <string name="of_signed">%1$d of %2$d signed</string>
     <string name="time_left">≈ %1$s left</string>
-    <string name="sign_request_created">Sign request created</string>
-    <string name="sign_request_created_description">Your sign request has been created and is awaiting signatures from other participants.</string>
     <string name="you_need_at_least_accounts_to_sign">You need at least %1$d accounts to sign</string>
     <string name="close_for_now">Close for now</string>
     <string name="transaction_canceled">Transaction canceled.</string>
     <string name="transaction_successfully_completed">Transaction successfully completed.</string>
     <string name="signed">Signed</string>
     <string name="rejected">Rejected</string>
+    <string name="failed_transaction">Failed transaction</string>
+    <string name="signature_request_declined">Signature request declined</string>
 
+    <string name="joint_account_invitation_accepted">Joint account invitation accepted</string>
+    <string name="before_you_create_joint_account">Before You Create a Joint Account</string>
+    <string name="joint_account_disclaimer_1">Once you create a joint account, you cannot change the participants.</string>
+    <string name="joint_account_disclaimer_2">Once you create a joint account, rekeying any of the participating accounts may result in losing access.</string>
+    <string name="proceed">Proceed</string>
+    <string name="go_back_and_edit">Go Back and Edit</string>
+    <string name="invitation_ignored">Invitation ignored</string>
 </resources>

@@ -12,47 +12,86 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel
 
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.core.JointAccountConstants
-import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
+import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
+import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
+import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class NameJointAccountViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val createJointAccount: CreateJointAccount,
     private val getDefaultJointAccountName: GetDefaultJointAccountName,
-    private val processor: NameJointAccountProcessor
+    private val getAllAccountOrderIndexes: GetAllAccountOrderIndexes,
+    private val addJointAccount: AddJointAccount,
+    private val getJointAccount: GetJointAccount,
+    private val inboxCleanup: NameJointAccountInboxCleanup
 ) : ViewModel(),
     StateViewModel<NameJointAccountViewModel.ViewState> by stateDelegate,
     EventViewModel<NameJointAccountViewModel.ViewEvent> by eventDelegate {
 
+    private val threshold: Int = savedStateHandle.get<Int>(THRESHOLD_KEY) ?: 0
+    private val participantAddresses: List<String> =
+        savedStateHandle.get<Array<String>>(PARTICIPANT_ADDRESSES_KEY)?.toList().orEmpty()
+
     init {
-        stateDelegate.setDefaultState(ViewState.Idle)
+        stateDelegate.setDefaultState(ViewState.Idle())
+        loadDefaultJointAccountNumber()
     }
 
-    suspend fun getDefaultAccountName(): String = getDefaultJointAccountName()
+    private fun loadDefaultJointAccountNumber() {
+        viewModelScope.launch {
+            val number = getDefaultJointAccountName()
+            stateDelegate.updateState { currentState ->
+                when (currentState) {
+                    is ViewState.Idle -> currentState.copy(defaultJointAccountNumber = number)
+                    else -> currentState
+                }
+            }
+        }
+    }
 
-    fun createJointAccount(accountName: String, threshold: Int, participantAddresses: List<String>) {
+    fun onAccountNameChanged(accountName: String) {
+        stateDelegate.updateState { currentState ->
+            when (currentState) {
+                is ViewState.Idle -> currentState.copy(accountName = accountName)
+                is ViewState.Loading -> currentState.copy(accountName = accountName)
+                else -> currentState
+            }
+        }
+    }
+
+    fun onFinishClick() {
+        val currentState = state.value
+        if (currentState is ViewState.Loading) return
+
+        val accountName = (currentState as? ViewState.Idle)?.accountName ?: return
         val trimmedName = accountName.trim()
         if (!isValidAccountName(trimmedName)) {
-            stateDelegate.updateState { ViewState.Error(R.string.an_error_occurred) }
+            emitError(R.string.an_error_occurred)
             return
         }
 
+        stateDelegate.updateState { ViewState.Loading(accountName = trimmedName) }
         viewModelScope.launch {
-            stateDelegate.updateState { ViewState.Loading }
-
             createJointAccount(
                 participantAddresses = participantAddresses,
                 threshold = threshold,
@@ -61,17 +100,24 @@ class NameJointAccountViewModel @Inject constructor(
                 onSuccess = { jointAccountDTO ->
                     handleJointAccountCreationSuccess(
                         jointAccountAddress = jointAccountDTO.address,
-                        participantAddresses = participantAddresses,
-                        threshold = threshold,
                         version = jointAccountDTO.version ?: JointAccountConstants.CURRENT_VERSION,
                         accountName = trimmedName
                     )
                 },
                 onFailed = { exception, _ ->
-                    val errorResId = processor.mapExceptionToErrorResId(exception)
-                    stateDelegate.updateState { ViewState.Error(errorResId) }
+                    val errorResId = mapExceptionToErrorResId(exception)
+                    revertToIdle()
+                    emitError(errorResId)
                 }
             )
+        }
+    }
+
+    private fun mapExceptionToErrorResId(exception: Throwable?): Int {
+        return when (exception) {
+            is JointAccountValidationException -> R.string.joint_account_validation_insufficient_participants
+            is IOException -> R.string.the_internet_connection
+            else -> R.string.an_error_occurred
         }
     }
 
@@ -81,44 +127,98 @@ class NameJointAccountViewModel @Inject constructor(
 
     private suspend fun handleJointAccountCreationSuccess(
         jointAccountAddress: String?,
-        participantAddresses: List<String>,
-        threshold: Int,
         version: Int,
         accountName: String
     ) {
         if (jointAccountAddress == null) {
-            stateDelegate.updateState { ViewState.Error(R.string.an_error_occurred) }
+            revertToIdle()
+            emitError(R.string.an_error_occurred)
             return
         }
 
-        when (val result = processor.createLocalAccount(
-            jointAccountAddress = jointAccountAddress,
+        if (isAccountAlreadyExists(jointAccountAddress)) {
+            deleteInboxNotification(jointAccountAddress)
+            revertToIdle()
+            emitError(R.string.this_account_already_exists)
+            return
+        }
+
+        saveJointAccount(jointAccountAddress, version, accountName)
+    }
+
+    private suspend fun saveJointAccount(
+        jointAccountAddress: String,
+        version: Int,
+        accountName: String
+    ) {
+        val result = addJointAccount(
+            address = jointAccountAddress,
             participantAddresses = participantAddresses,
             threshold = threshold,
             version = version,
-            accountName = accountName
-        )) {
-            is NameJointAccountProcessor.CreateLocalAccountResult.Success -> {
-                stateDelegate.updateState { ViewState.Success }
-                eventDelegate.sendEvent(ViewEvent.AccountCreatedSuccessfully)
-            }
-            is NameJointAccountProcessor.CreateLocalAccountResult.AlreadyExists -> {
-                stateDelegate.updateState { ViewState.Error(R.string.this_account_already_exists) }
-            }
-            is NameJointAccountProcessor.CreateLocalAccountResult.Error -> {
-                stateDelegate.updateState { ViewState.Error(result.messageResId) }
-            }
+            customName = accountName.takeIf { it.isNotBlank() },
+            orderIndex = calculateNextOrderIndex()
+        )
+
+        if (result.isSuccess) {
+            deleteInboxNotification(jointAccountAddress)
+            stateDelegate.updateState { ViewState.Success }
+            eventDelegate.sendEvent(ViewEvent.AccountCreatedSuccessfully)
+        } else {
+            val exception = result.getExceptionOrNull()
+            Log.e(TAG, "Failed to save joint account: ${exception?.message}", exception)
+            revertToIdle()
+            emitError(R.string.an_error_occurred)
         }
     }
 
+    private suspend fun isAccountAlreadyExists(address: String): Boolean {
+        return getJointAccount(address) != null
+    }
+
+    private suspend fun calculateNextOrderIndex(): Int {
+        val orderIndexes = getAllAccountOrderIndexes()
+        return if (orderIndexes.isEmpty()) 0 else (orderIndexes.maxOfOrNull { it.index } ?: -1) + 1
+    }
+
+    private suspend fun deleteInboxNotification(jointAccountAddress: String) {
+        runCatching { inboxCleanup.getDeviceConfig().deviceId.toLongOrNull() }
+            .getOrNull()
+            ?.let { deviceIdLong ->
+                runCatching { inboxCleanup.deleteInboxJointInvitationNotification(deviceIdLong, jointAccountAddress) }
+                    .onFailure { Log.e(TAG, "Failed to delete inbox notification", it) }
+            }
+    }
+
+    private fun revertToIdle() {
+        stateDelegate.updateState { current ->
+            val accountName = (current as? ViewState.Loading)?.accountName.orEmpty()
+            ViewState.Idle(accountName = accountName)
+        }
+    }
+
+    private fun emitError(errorResId: Int) {
+        eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowError(errorResId))
+    }
+
     sealed interface ViewState {
-        data object Idle : ViewState
-        data object Loading : ViewState
+        data class Idle(
+            val defaultJointAccountNumber: Int? = null,
+            val accountName: String = ""
+        ) : ViewState
+
+        data class Loading(val accountName: String = "") : ViewState
         data object Success : ViewState
-        data class Error(val messageResId: Int) : ViewState
     }
 
     sealed interface ViewEvent {
         data object AccountCreatedSuccessfully : ViewEvent
+        data class ShowError(val messageResId: Int) : ViewEvent
+    }
+
+    companion object {
+        private const val TAG = "NameJointAccountVM"
+        private const val THRESHOLD_KEY = "threshold"
+        private const val PARTICIPANT_ADDRESSES_KEY = "participantAddresses"
     }
 }

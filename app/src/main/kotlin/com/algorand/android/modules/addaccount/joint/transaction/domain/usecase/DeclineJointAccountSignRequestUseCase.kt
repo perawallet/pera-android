@@ -35,6 +35,6 @@ internal class DeclineJointAccountSignRequestUseCase @Inject constructor(
             signatures = null,
             deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
         )
-        return addJointAccountSignature(signRequestId, declineRequest)
+        return addJointAccountSignature(signRequestId, listOf(declineRequest))
     }
 }

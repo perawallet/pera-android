@@ -14,15 +14,15 @@ package com.algorand.android.modules.addaccount.joint.transaction.viewmodel
 
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import javax.inject.Inject
 
 internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
     JointAccountTransactionProcessor {
 
     override fun validateConfirmTransaction(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signRequestId: String?
     ): JointAccountTransactionProcessor.ConfirmTransactionData? {
         val requestId = signRequestId ?: return null
@@ -41,16 +41,17 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
     }
 
     override fun createUpdatedPreviewAfterSigning(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signedAddresses: List<String>
-    ): JointAccountTransactionPreview {
+    ): JointAccountTransactionViewState {
         val newSignedCount = preview.signedCount + signedAddresses.size
         val isCompleted = isTransactionCompleted(newSignedCount, preview.requiredSignatureCount)
+        val updatedSigners = markSignersAsSigned(preview.signerAccounts, signedAddresses)
 
         return preview.copy(
             transactionState = getTransactionStateForCompletion(isCompleted),
             signedCount = newSignedCount,
-            signerAccounts = markSignersAsSigned(preview.signerAccounts, signedAddresses),
+            signerAccounts = if (isCompleted) hideProgressOnPendingSigners(updatedSigners) else updatedSigners,
             hasCurrentUserAlreadySigned = signedAddresses.isNotEmpty() || preview.hasCurrentUserAlreadySigned,
             unsignedLocalParticipantAddresses = emptyList()
         )
@@ -59,7 +60,7 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
     override fun createLedgerSignData(
         signRequestId: String,
         rawTransactions: List<String>,
-        preview: JointAccountTransactionPreview
+        preview: JointAccountTransactionViewState
     ): JointAccountTransactionProcessor.LedgerSignData? {
         val ledgerSigner = findFirstAvailableLedgerSigner(preview.signerAccounts) ?: return null
         val bluetoothAddress = ledgerSigner.ledgerBluetoothAddress ?: return null
@@ -74,23 +75,31 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         )
     }
 
-    override fun processLoadedPreview(preview: JointAccountTransactionPreview): JointAccountTransactionPreview {
+    override fun processLoadedPreview(preview: JointAccountTransactionViewState): JointAccountTransactionViewState {
         val isCompleted = isTransactionCompleted(preview.signedCount, preview.requiredSignatureCount)
-        return if (isCompleted) {
-            preview.copy(transactionState = JointAccountTransactionState.Completed)
-        } else {
-            preview
-        }
+        val isFailed = preview.transactionState is JointAccountTransactionState.Failed
+        val isFinalized = isFailed || isCompleted || preview.isExpired
+
+        if (!isFinalized) return preview
+
+        return preview.copy(
+            transactionState = when {
+                isFailed -> preview.transactionState
+                isCompleted -> JointAccountTransactionState.Completed
+                else -> preview.transactionState
+            },
+            signerAccounts = hideProgressOnPendingSigners(preview.signerAccounts)
+        )
     }
 
-    override fun findDeclineParticipantAddress(preview: JointAccountTransactionPreview): String? {
+    override fun findDeclineParticipantAddress(preview: JointAccountTransactionViewState): String? {
         return preview.unsignedLocalParticipantAddresses.firstOrNull()
             ?: preview.unsignedLedgerParticipantAddresses.firstOrNull()
     }
 
     override fun determinePostSigningAction(
         data: JointAccountTransactionProcessor.ConfirmTransactionData,
-        updatedPreview: JointAccountTransactionPreview,
+        updatedPreview: JointAccountTransactionViewState,
         signRequestId: String?
     ): JointAccountTransactionProcessor.PostSigningAction {
         val isCompleted = isTransactionCompleted(
@@ -108,7 +117,7 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
     }
 
     override fun determineLedgerSuccessAction(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signRequestId: String?
     ): JointAccountTransactionProcessor.PostSigningAction {
         val isCompleted = isTransactionCompleted(preview.signedCount, preview.requiredSignatureCount)
@@ -145,9 +154,9 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         rawTransactions: List<String>
     ): Boolean {
         return !isCompleted &&
-            hasUnsignedLedgerAccounts &&
-            signRequestId != null &&
-            rawTransactions.isNotEmpty()
+                hasUnsignedLedgerAccounts &&
+                signRequestId != null &&
+                rawTransactions.isNotEmpty()
     }
 
     private fun markSignersAsSigned(
@@ -157,6 +166,18 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         return signerAccounts.map { signer ->
             if (signedAddresses.contains(signer.accountAddress)) {
                 signer.copy(signatureStatus = JointAccountSignatureStatus.Signed)
+            } else {
+                signer
+            }
+        }
+    }
+
+    private fun hideProgressOnPendingSigners(
+        signerAccounts: List<JointAccountSignerItem>
+    ): List<JointAccountSignerItem> {
+        return signerAccounts.map { signer ->
+            if (signer.signatureStatus == JointAccountSignatureStatus.Pending) {
+                signer.copy(showProgress = false)
             } else {
                 signer
             }

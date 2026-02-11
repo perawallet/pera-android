@@ -63,8 +63,6 @@ import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,6 +71,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -404,7 +404,7 @@ class MainViewModel @Inject constructor(
         val accountType = getAccountType(accountAddress)
         val canSignTransaction = accountType?.canSignTransaction() == true
         return if (canSignTransaction) {
-            ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
+            ViewEvent.NavToInboxNavigation
         } else if (accountType != null) {
             ViewEvent.NavToAccountDetailFragment(accountAddress)
         } else {
@@ -415,7 +415,6 @@ class MainViewModel @Inject constructor(
     sealed interface ViewEvent {
         data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
         data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
-        data class NavToAssetInboxOneAccountNavigation(val address: String) : ViewEvent
         data class NavToAccountDetailFragment(val address: String) : ViewEvent
         data class NavToAssetDetailFragment(val address: String, val assetId: Long) : ViewEvent
         data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
@@ -425,6 +424,7 @@ class MainViewModel @Inject constructor(
         data class NavToKeyRegTransactionFragment(val transactionDetail: KeyRegTransactionDetail) : ViewEvent
         data class ShowKeyRegDeeplinkError(val address: String) : ViewEvent
 
+        data object NavToInboxNavigation : ViewEvent
         data object ShowMaxAccountLimitExceededError : ViewEvent
         data object ShowDeeplinkAccountNotFoundError : ViewEvent
         data object StartInAppReview : ViewEvent

@@ -115,7 +115,16 @@
     <fragment
         android:id="@+id/addJointAccountFragment"
         android:name="com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.AddJointAccountFragment"
-        android:label="AddJointAccountFragment" />
+        android:label="AddJointAccountFragment">
+        <action
+            android:id="@+id/action_addJointAccountFragment_to_addJointAccountQrScannerFragment"
+            app:destination="@id/addJointAccountQrScannerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addJointAccountQrScannerFragment"
+        android:name="com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.AddJointAccountQrScannerFragment"
+        android:label="AddJointAccountQrScannerFragment" />
 
     <fragment
         android:id="@+id/editAccountNameFragment"
@@ -124,6 +133,10 @@
         <argument
             android:name="accountAddress"
             app:argType="string" />
+        <argument
+            android:name="showRemoveButton"
+            android:defaultValue="true"
+            app:argType="boolean" />
     </fragment>
 
     <fragment

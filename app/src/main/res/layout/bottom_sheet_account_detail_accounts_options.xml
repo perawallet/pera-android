@@ -182,6 +182,16 @@
             app:icon="@drawable/ic_rekey"
             tools:visibility="visible" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rekeyToJointAccountButton"
+            style="@style/Button.Text.Options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rekey_to_joint_account"
+            android:visibility="gone"
+            app:icon="@drawable/ic_rekey"
+            tools:visibility="visible" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rescanRekeyedAccountsButton"
             android:layout_width="match_parent"

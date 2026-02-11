@@ -59,11 +59,13 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                 val accountOriginalState = when (accountLite.registrationType) {
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
+                    AccountRegistrationType.Joint -> R.string.joint_account
                     else -> R.string.standard
                 }
                 val accountAuthState = when (accountLite.cachedInfo.rekeyAuthRegistrationType) {
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
+                    AccountRegistrationType.Joint -> R.string.joint_account
                     else -> R.string.standard
                 }
                 val accountStateString = context.getString(R.string.rekeyed)
@@ -78,7 +80,18 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             }
 
             AccountType.HdKey -> context.getString(R.string.universal_wallet)
-            AccountType.Joint -> context.getString(R.string.joint_account)
+            AccountType.Joint -> {
+                val cachedInfo = accountLite.cachedInfo
+                if (cachedInfo?.isRekeyed == true &&
+                    cachedInfo.rekeyAuthRegistrationType == AccountRegistrationType.Joint
+                ) {
+                    val rekeyed = context.getString(R.string.rekeyed)
+                    val joint = context.getString(R.string.joint_account)
+                    context.getString(R.string.account_state_transition, rekeyed, joint, joint)
+                } else {
+                    context.getString(R.string.joint_account)
+                }
+            }
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString
@@ -97,13 +110,23 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     }
 
                     AccountRegistrationType.LedgerBle -> R.string.your_account_is_rekeyed_to_an_account_on
+                    AccountRegistrationType.Joint -> R.string.your_account_is_rekeyed_to_joint_account
                     else -> R.string.your_account_is_rekeyed_to_unknown
                 }
             }
 
             null -> R.string.your_account_is_rekeyed_to_an
             AccountType.HdKey -> R.string.your_account_is_a_hd_wallet_address
-            AccountType.Joint -> R.string.add_joint_account_desc
+            AccountType.Joint -> {
+                val cachedInfo = accountLite.cachedInfo
+                if (cachedInfo?.isRekeyed == true &&
+                    cachedInfo.rekeyAuthRegistrationType == AccountRegistrationType.Joint
+                ) {
+                    R.string.your_account_is_rekeyed_to_joint_account
+                } else {
+                    R.string.add_joint_account_desc
+                }
+            }
         }
         val hyperlinkUrl = when (accountLite.cachedInfo?.type) {
             AccountType.Algo25 -> ALGO25_ACCOUNT_SUPPORT_URL

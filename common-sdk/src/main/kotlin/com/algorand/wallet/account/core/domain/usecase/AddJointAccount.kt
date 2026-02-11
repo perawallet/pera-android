@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
+import com.algorand.wallet.foundation.PeraResult
+
 fun interface AddJointAccount {
     suspend operator fun invoke(
         address: String,
@@ -20,5 +22,5 @@ fun interface AddJointAccount {
         version: Int,
         customName: String?,
         orderIndex: Int
-    )
+    ): PeraResult<Unit>
 }

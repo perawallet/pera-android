@@ -41,6 +41,7 @@ import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
+import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ErrorType
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -57,8 +58,7 @@ import com.algorand.android.utils.toShortenedAddress
 @Composable
 fun JointAccountDetailScreen(
     viewState: ViewState,
-    accountAddress: String,
-    listener: JointAccountDetailListener
+    viewModel: JointAccountDetailViewModel
 ) {
     Column(
         modifier = Modifier
@@ -67,10 +67,10 @@ fun JointAccountDetailScreen(
     ) {
         ScreenHeader(
             viewState = viewState,
-            accountAddress = accountAddress,
-            listener = listener
+            accountAddress = viewModel.accountAddress,
+            viewModel = viewModel
         )
-        ScreenContent(viewState = viewState, listener = listener)
+        ScreenContent(viewState = viewState, viewModel = viewModel)
     }
 }
 
@@ -78,7 +78,7 @@ fun JointAccountDetailScreen(
 private fun ScreenHeader(
     viewState: ViewState,
     accountAddress: String,
-    listener: JointAccountDetailListener
+    viewModel: JointAccountDetailViewModel
 ) {
     val displayName = when (viewState) {
         is ViewState.Content -> viewState.accountDisplayName.ifBlank {
@@ -101,7 +101,7 @@ private fun ScreenHeader(
         startContainer = {
             PeraToolbarIcon(
                 iconResId = R.drawable.ic_left_arrow,
-                modifier = Modifier.clickableNoRipple(onClick = { listener.onBackClick() })
+                modifier = Modifier.clickableNoRipple(onClick = { viewModel.onBackClick() })
             )
         }
     )
@@ -110,11 +110,11 @@ private fun ScreenHeader(
 @Composable
 private fun ColumnScope.ScreenContent(
     viewState: ViewState,
-    listener: JointAccountDetailListener
+    viewModel: JointAccountDetailViewModel
 ) {
     when (viewState) {
         is ViewState.Loading -> LoadingState()
-        is ViewState.Content -> ContentState(contentState = viewState, listener = listener)
+        is ViewState.Content -> ContentState(contentState = viewState, viewModel = viewModel)
         is ViewState.Error -> ErrorState(errorType = viewState.type)
     }
 }
@@ -154,7 +154,7 @@ private fun ColumnScope.ErrorState(errorType: ErrorType) {
 @Composable
 private fun ColumnScope.ContentState(
     contentState: ViewState.Content,
-    listener: JointAccountDetailListener
+    viewModel: JointAccountDetailViewModel
 ) {
     Column(
         modifier = Modifier
@@ -166,16 +166,16 @@ private fun ColumnScope.ContentState(
         Spacer(modifier = Modifier.height(12.dp))
         InformationCard(numberOfAccounts = contentState.numberOfAccounts, threshold = contentState.threshold)
         Spacer(modifier = Modifier.height(32.dp))
-        AccountsSection(accounts = contentState.participants, listener = listener)
+        AccountsSection(accounts = contentState.participants, viewModel = viewModel)
         Spacer(modifier = Modifier.height(24.dp))
     }
     if (contentState.showActions) {
-        ActionFooter(listener = listener)
+        ActionFooter(viewModel = viewModel)
     }
 }
 
 @Composable
-private fun ActionFooter(listener: JointAccountDetailListener) {
+private fun ActionFooter(viewModel: JointAccountDetailViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,13 +186,13 @@ private fun ActionFooter(listener: JointAccountDetailListener) {
         PeraSecondaryButton(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.ignore),
-            onClick = { listener.onIgnoreClick() }
+            onClick = { viewModel.onIgnoreClick() }
         )
 
         PeraPrimaryButton(
             modifier = Modifier.weight(2f),
             text = stringResource(R.string.add_to_accounts),
-            onClick = { listener.onAddClick() }
+            onClick = { viewModel.onAddClick() }
         )
     }
 }
@@ -256,7 +256,11 @@ private fun ThresholdRow(threshold: Int) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp)
+        ) {
             Text(
                 text = stringResource(R.string.threshold),
                 style = PeraTheme.typography.body.regular.sans,
@@ -279,7 +283,7 @@ private fun ThresholdRow(threshold: Int) {
 @Composable
 private fun AccountsSection(
     accounts: List<JointAccountParticipantItem>,
-    listener: JointAccountDetailListener
+    viewModel: JointAccountDetailViewModel
 ) {
     Text(
         text = stringResource(R.string.accounts_with_count, accounts.size),
@@ -293,8 +297,8 @@ private fun AccountsSection(
         accounts.forEachIndexed { index, account ->
             ParticipantAccountItem(
                 account = account,
-                onEditClick = { listener.onEditAddressClick(account.address) },
-                onCopyAddressClick = { listener.onCopyAddressClick(account.address) }
+                onEditClick = { viewModel.onEditParticipantClick(account.address) },
+                onCopyAddressClick = { viewModel.onCopyAddressClick(account.address) }
             )
             if (index < accounts.size - 1) {
                 ParticipantDivider()
@@ -323,8 +327,7 @@ private fun ParticipantAccountItem(
     PeraAccountItem(
         modifier = Modifier
             .height(76.dp)
-            .background(color = PeraTheme.colors.background.primary)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .background(color = PeraTheme.colors.background.primary),
         displayName = AccountDisplayName(
             accountAddress = account.address,
             primaryDisplayName = account.displayName,
@@ -361,7 +364,7 @@ private fun ParticipantAccountItem(
                         .clickableNoRipple(onClick = onCopyAddressClick),
                     painter = painterResource(R.drawable.ic_copy),
                     contentDescription = stringResource(R.string.copy),
-                    tint = PeraTheme.colors.text.main
+                    tint = PeraTheme.colors.text.gray
                 )
             }
         }

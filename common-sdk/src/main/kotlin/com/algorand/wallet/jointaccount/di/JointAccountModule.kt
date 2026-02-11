@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.jointaccount.di
 
+import com.algorand.wallet.account.local.domain.repository.JointAccountPersistence
 import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
 import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotificationUseCase
 import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessages
@@ -26,6 +27,7 @@ import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryIm
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountDetail
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
@@ -36,10 +38,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
-import com.algorand.wallet.account.local.domain.repository.JointAccountRepository as LocalJointAccountRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -54,29 +55,27 @@ internal object JointAccountModule {
     }
 
     @Provides
-    @Singleton
-    @Named(JointAccountRepository.INJECTION_NAME)
     fun provideJointAccountRepository(
         repository: JointAccountRepositoryImpl
     ): JointAccountRepository = repository
 
     @Provides
     fun provideProposeJointSignRequest(
-        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+        repository: JointAccountRepository
     ): ProposeJointSignRequest = ProposeJointSignRequest(repository::proposeSignRequest)
 
     @Provides
     fun provideGetSignRequestWithSignatures(
-        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
+        repository: JointAccountRepository
     ): GetSignRequestWithSignatures = GetSignRequestWithSignatures { deviceId, signRequestId ->
         repository.getSignRequestWithSignatures(deviceId, signRequestId)
     }
 
     @Provides
     fun provideAddJointAccountSignature(
-        @Named(JointAccountRepository.INJECTION_NAME) repository: JointAccountRepository
-    ): AddJointAccountSignature = AddJointAccountSignature { signRequestId, addSignatureInput ->
-        repository.addSignature(signRequestId, addSignatureInput)
+        repository: JointAccountRepository
+    ): AddJointAccountSignature = AddJointAccountSignature { signRequestId, addSignatureInputs ->
+        repository.addSignatures(signRequestId, addSignatureInputs)
     }
 
     @Provides
@@ -96,13 +95,18 @@ internal object JointAccountModule {
 
     @Provides
     fun provideGetJointAccount(
-        repository: LocalJointAccountRepository
-    ): GetJointAccount = GetJointAccount(repository::getAccount)
+        persistence: JointAccountPersistence
+    ): GetJointAccount = GetJointAccount(persistence::getAccount)
+
+    @Provides
+    fun provideGetJointAccountDetail(
+        repository: JointAccountRepository
+    ): GetJointAccountDetail = GetJointAccountDetail(repository::getJointAccountDetail)
 
     @Provides
     fun provideGetJointAccountParticipantCount(
-        repository: LocalJointAccountRepository
-    ): GetJointAccountParticipantCount = GetJointAccountParticipantCount(repository::getParticipantCount)
+        persistence: JointAccountPersistence
+    ): GetJointAccountParticipantCount = GetJointAccountParticipantCount(persistence::getParticipantCount)
 
     @Provides
     fun provideCreateJointAccount(

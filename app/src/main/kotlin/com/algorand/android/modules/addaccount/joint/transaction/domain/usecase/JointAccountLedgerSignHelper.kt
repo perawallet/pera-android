@@ -228,7 +228,7 @@ class JointAccountLedgerSignHelper @Inject constructor(
 
             addJointAccountSignature(
                 signRequestId = request.signRequestId,
-                addSignatureInput = addSignatureInput
+                addSignatureInputs = listOf(addSignatureInput)
             ).use(
                 onSuccess = {
                     _signResultFlow.value = LedgerSignResult.Success

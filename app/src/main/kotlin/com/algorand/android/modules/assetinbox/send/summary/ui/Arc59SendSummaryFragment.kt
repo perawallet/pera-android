@@ -172,7 +172,7 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
 
     private fun initObservers() {
         collectLatestOnLifecycle(
-            flow = arc59SendSummaryViewModel.viewStateFlow,
+            flow = arc59SendSummaryViewModel.state,
             collection = viewStateCollector
         )
         collectLatestOnLifecycle(

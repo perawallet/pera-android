@@ -18,16 +18,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.DeclineJointAccountSignRequest
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionPreview
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewState
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
+import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,10 +40,11 @@ class JointAccountTransactionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
-    private val getJointAccountTransactionPreview: GetJointAccountTransactionPreview,
+    private val getJointAccountTransactionViewState: GetJointAccountTransactionViewState,
     private val declineJointAccountSignRequest: DeclineJointAccountSignRequest,
     private val signAndSubmitJointAccountSignature: SignAndSubmitJointAccountSignature,
     private val refreshInboxCache: RefreshInboxCache,
+    private val getInboxMessagesFlow: GetInboxMessagesFlow,
     private val processor: JointAccountTransactionProcessor
 ) : ViewModel(),
     StateViewModel<JointAccountTransactionViewModel.ViewState> by stateDelegate,
@@ -68,8 +73,16 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     fun onCancel() {
         stateDelegate.onState<ViewState.Content> { contentState ->
+            val updatedSigners = contentState.preview.signerAccounts.map { signer ->
+                if (signer.signatureStatus == JointAccountSignatureStatus.Pending) {
+                    signer.copy(showProgress = false)
+                } else {
+                    signer
+                }
+            }
             val updatedPreview = contentState.preview.copy(
-                transactionState = JointAccountTransactionState.Canceled
+                transactionState = JointAccountTransactionState.Canceled,
+                signerAccounts = updatedSigners
             )
             stateDelegate.updateState { ViewState.Content(updatedPreview) }
         }
@@ -111,10 +124,26 @@ class JointAccountTransactionViewModel @Inject constructor(
     private fun initializeViewModel() {
         if (!signRequestId.isNullOrBlank()) {
             loadTransactionPreview()
+            startInboxPollObserver()
         } else {
             Log.e(TAG, "signRequestId is null or blank")
             emitError(R.string.an_error_occurred)
             emitNavigateBack()
+        }
+    }
+
+    private fun startInboxPollObserver() {
+        viewModelScope.launch {
+            getInboxMessagesFlow().drop(1).collectLatest {
+                stateDelegate.onState<ViewState.Content> { content ->
+                    val state = content.preview.transactionState
+                    if (state != JointAccountTransactionState.Completed &&
+                        state != JointAccountTransactionState.Canceled
+                    ) {
+                        loadTransactionPreview(silentRefresh = true)
+                    }
+                }
+            }
         }
     }
 
@@ -133,29 +162,23 @@ class JointAccountTransactionViewModel @Inject constructor(
     ): List<String> {
         if (!data.hasUnsignedLocalAccounts) return emptyList()
 
-        val signedAddresses = mutableListOf<String>()
-        data.preview.unsignedLocalParticipantAddresses.forEach { participantAddress ->
-            signAndSubmitJointAccountSignature(
-                signRequestId = data.requestId,
-                participantAddress = participantAddress,
-                rawTransactions = data.preview.rawTransactions
-            ).use(
-                onSuccess = { signedAddresses.add(participantAddress) },
-                onFailed = { _, _ -> }
-            )
-        }
-        return signedAddresses
+        val result = signAndSubmitJointAccountSignature(
+            signRequestId = data.requestId,
+            participantAddresses = data.preview.unsignedLocalParticipantAddresses,
+            rawTransactions = data.preview.rawTransactions
+        )
+        return result.signedAddresses
     }
 
     private suspend fun executeDeclineRequest(
         requestId: String,
         participantAddress: String,
-        preview: JointAccountTransactionPreview
+        preview: JointAccountTransactionViewState
     ) {
         declineJointAccountSignRequest(requestId, participantAddress).use(
             onSuccess = {
                 refreshInboxCache()
-                emitNavigateBack()
+                eventDelegate.sendEvent(ViewEvent.ShowSuccessAndNavigateBack(R.string.signature_request_declined))
             },
             onFailed = { _, _ ->
                 stateDelegate.updateState { ViewState.Content(preview) }
@@ -164,20 +187,24 @@ class JointAccountTransactionViewModel @Inject constructor(
         )
     }
 
-    private fun loadTransactionPreview() {
+    private fun loadTransactionPreview(silentRefresh: Boolean = false) {
         viewModelScope.launch {
-            stateDelegate.updateState { ViewState.Loading }
-            getJointAccountTransactionPreview(signRequestId!!).use(
+            if (!silentRefresh) {
+                stateDelegate.updateState { ViewState.Loading }
+            }
+            getJointAccountTransactionViewState(signRequestId!!).use(
                 onSuccess = { preview ->
                     val updatedPreview = processor.processLoadedPreview(preview)
                     stateDelegate.updateState { ViewState.Content(updatedPreview) }
-                    if (updatedPreview.shouldShowPendingSignaturesDirectly) {
+                    if (!silentRefresh && updatedPreview.shouldShowPendingSignaturesDirectly) {
                         eventDelegate.sendEvent(ViewEvent.ShowPendingSignaturesDirectly)
                     }
                 },
                 onFailed = { exception, code ->
-                    Log.e(TAG, "Failed to load preview: code=$code, exception=$exception")
-                    stateDelegate.updateState { ViewState.Error(R.string.sign_request_not_available) }
+                    if (!silentRefresh) {
+                        Log.e(TAG, "Failed to load preview: code=$code, exception=$exception")
+                        stateDelegate.updateState { ViewState.Error(R.string.sign_request_not_available) }
+                    }
                 }
             )
         }
@@ -195,6 +222,7 @@ class JointAccountTransactionViewModel @Inject constructor(
             is JointAccountTransactionProcessor.PostSigningAction.TriggerLedgerSigning -> {
                 eventDelegate.sendEvent(ViewEvent.StartLedgerSigning(action.data))
             }
+
             is JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures -> {
                 eventDelegate.sendEvent(ViewEvent.ShowPendingSignaturesBottomSheet)
             }
@@ -211,12 +239,13 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     sealed interface ViewState {
         data object Loading : ViewState
-        data class Content(val preview: JointAccountTransactionPreview) : ViewState
+        data class Content(val preview: JointAccountTransactionViewState) : ViewState
         data class Error(val messageResId: Int) : ViewState
     }
 
     sealed interface ViewEvent {
         data object NavigateBack : ViewEvent
+        data class ShowSuccessAndNavigateBack(val messageResId: Int) : ViewEvent
         data class ShowError(val messageResId: Int) : ViewEvent
         data object ShowPendingSignaturesBottomSheet : ViewEvent
         data object ShowPendingSignaturesDirectly : ViewEvent

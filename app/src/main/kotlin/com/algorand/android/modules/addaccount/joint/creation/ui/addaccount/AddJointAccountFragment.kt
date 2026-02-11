@@ -17,16 +17,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
+import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.AddJointAccountQrScannerFragment.Companion.ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY
 import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.viewmodel.AddJointAccountViewModel
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.hideKeyboard
+import com.algorand.android.utils.setFragmentNavigationResult
+import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useSavedStateValue
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenListener {
@@ -46,6 +49,37 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
                 listener = this
             )
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObservers()
+        initSavedStateListener()
+    }
+
+    private fun initSavedStateListener() {
+        startSavedStateListener(R.id.addJointAccountFragment) {
+            useSavedStateValue<String>(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY) { address ->
+                viewModel.onSearchQueryUpdate(address)
+            }
+        }
+    }
+
+    private fun initObservers() {
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            flow = viewModel.viewEvent,
+            collection = { event ->
+                when (event) {
+                    is AddJointAccountViewModel.ViewEvent.NavigateBackWithSelectedAccount -> {
+                        setResultAndNavigateBack(event.account)
+                    }
+
+                    is AddJointAccountViewModel.ViewEvent.ShowError -> {
+                        showGlobalError(getString(R.string.an_error_occurred))
+                    }
+                }
+            }
+        )
     }
 
     override fun onStart() {
@@ -68,21 +102,20 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
     }
 
     override fun onExternalAddressSelected(address: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val selectedAccount = viewModel.createSelectedAccountFromExternalAddress(address)
-            if (selectedAccount != null) {
-                setResultAndNavigateBack(selectedAccount)
-            } else {
-                showGlobalError(getString(R.string.an_error_occurred))
-            }
-        }
+        viewModel.onExternalAddressSelected(address)
+    }
+
+    override fun onNfdSelected(address: String) {
+        viewModel.onNfdSelected(address)
+    }
+
+    override fun onQrScanClick() {
+        view?.hideKeyboard()
+        nav(AddJointAccountFragmentDirections.actionAddJointAccountFragmentToAddJointAccountQrScannerFragment())
     }
 
     private fun setResultAndNavigateBack(selectedAccount: SelectedJointAccountItem) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set(
-            RESULT_SELECTED_ACCOUNT,
-            selectedAccount
-        )
+        setFragmentNavigationResult(RESULT_SELECTED_ACCOUNT, selectedAccount)
         navBack()
     }
 

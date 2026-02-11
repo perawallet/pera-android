@@ -16,8 +16,8 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -223,6 +223,61 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
+    fun `EXPECT showProgress false on pending signers WHEN processLoadedPreview completes transaction`() {
+        val signerAccounts = listOf(
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Signed),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending)
+        )
+        val preview = createTestPreview(
+            signedCount = 2,
+            requiredSignatureCount = 2,
+            signerAccounts = signerAccounts,
+            transactionState = JointAccountTransactionState.PendingSignatures
+        )
+
+        val result = processor.processLoadedPreview(preview)
+
+        assertEquals(false, result.signerAccounts[1].showProgress)
+    }
+
+    @Test
+    fun `EXPECT showProgress false on pending signers WHEN all signatures collected after signing`() {
+        val signerAccounts = listOf(
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Signed),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending),
+            createTestSignerItem("ADDR3", JointAccountSignatureStatus.Pending)
+        )
+        val preview = createTestPreview(
+            signedCount = 1,
+            requiredSignatureCount = 2,
+            signerAccounts = signerAccounts
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR2"))
+
+        assertEquals(JointAccountTransactionState.Completed, result.transactionState)
+        assertEquals(false, result.signerAccounts[2].showProgress)
+    }
+
+    @Test
+    fun `EXPECT showProgress true on pending signers WHEN transaction not completed after signing`() {
+        val signerAccounts = listOf(
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Pending),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending)
+        )
+        val preview = createTestPreview(
+            signedCount = 0,
+            requiredSignatureCount = 3,
+            signerAccounts = signerAccounts
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR1"))
+
+        assertEquals(JointAccountTransactionState.PendingSignatures, result.transactionState)
+        assertEquals(true, result.signerAccounts[1].showProgress)
+    }
+
+    @Test
     fun `EXPECT same state WHEN processing loaded preview without enough signatures`() {
         val preview = createTestPreview(
             signedCount = 1,
@@ -286,8 +341,8 @@ internal class DefaultJointAccountTransactionProcessorTest {
         unsignedLedgerParticipantAddresses: List<String> = emptyList(),
         signerAccounts: List<JointAccountSignerItem> = emptyList(),
         transactionState: JointAccountTransactionState = JointAccountTransactionState.PendingSignatures
-    ): JointAccountTransactionPreview {
-        return JointAccountTransactionPreview(
+    ): JointAccountTransactionViewState {
+        return JointAccountTransactionViewState(
             jointAccountDisplayName = AccountDisplayName(
                 accountAddress = "JOINT_ADDR",
                 primaryDisplayName = "Joint Account",
@@ -328,6 +383,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
             accountIconDrawablePreview = createMockIconDrawablePreview(),
             imageUri = null,
             signatureStatus = status,
+            showProgress = status == JointAccountSignatureStatus.Pending,
             isLedgerAccount = isLedger,
             ledgerBluetoothAddress = ledgerBluetoothAddress,
             ledgerAccountIndex = ledgerAccountIndex

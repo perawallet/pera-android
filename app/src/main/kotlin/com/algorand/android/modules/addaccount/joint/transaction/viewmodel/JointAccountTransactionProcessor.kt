@@ -12,44 +12,44 @@
 
 package com.algorand.android.modules.addaccount.joint.transaction.viewmodel
 
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 
 interface JointAccountTransactionProcessor {
 
     fun validateConfirmTransaction(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signRequestId: String?
     ): ConfirmTransactionData?
 
     fun createUpdatedPreviewAfterSigning(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signedAddresses: List<String>
-    ): JointAccountTransactionPreview
+    ): JointAccountTransactionViewState
 
     fun createLedgerSignData(
         signRequestId: String,
         rawTransactions: List<String>,
-        preview: JointAccountTransactionPreview
+        preview: JointAccountTransactionViewState
     ): LedgerSignData?
 
-    fun processLoadedPreview(preview: JointAccountTransactionPreview): JointAccountTransactionPreview
+    fun processLoadedPreview(preview: JointAccountTransactionViewState): JointAccountTransactionViewState
 
-    fun findDeclineParticipantAddress(preview: JointAccountTransactionPreview): String?
+    fun findDeclineParticipantAddress(preview: JointAccountTransactionViewState): String?
 
     fun determinePostSigningAction(
         data: ConfirmTransactionData,
-        updatedPreview: JointAccountTransactionPreview,
+        updatedPreview: JointAccountTransactionViewState,
         signRequestId: String?
     ): PostSigningAction
 
     fun determineLedgerSuccessAction(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signRequestId: String?
     ): PostSigningAction
 
     data class ConfirmTransactionData(
         val requestId: String,
-        val preview: JointAccountTransactionPreview,
+        val preview: JointAccountTransactionViewState,
         val hasUnsignedLocalAccounts: Boolean,
         val hasUnsignedLedgerAccounts: Boolean
     )

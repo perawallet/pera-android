@@ -58,7 +58,7 @@ class ExportShareAccountFragment : DaggerBaseFragment(R.layout.fragment_export_s
     }
 
     private fun getExportUrl(): String {
-        return "perawallet://joint-account-import?address=${args.accountAddress}"
+        return "perawallet://app/joint-account-import/?address=${args.accountAddress}"
     }
 
     private fun onCopyUrlClick() {

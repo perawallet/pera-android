@@ -42,8 +42,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
-import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.modules.addaccount.joint.core.JointAccountConstants
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.button.PeraButtonState
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
@@ -54,7 +54,7 @@ fun SetThresholdScreen(
     numberOfAccounts: Int,
     listener: SetThresholdScreenListener
 ) {
-    var threshold by remember { mutableIntStateOf(minOf(JointAccountConstants.MIN_THRESHOLD, numberOfAccounts)) }
+    var threshold by remember { mutableIntStateOf(minOf(JointAccountConstants.DEFAULT_THRESHOLD, numberOfAccounts)) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -140,17 +140,23 @@ private fun NumberOfAccountsSection(numberOfAccounts: Int) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                painter = painterResource(R.drawable.ic_joint),
-                contentDescription = stringResource(R.string.joint_account),
-                tint = PeraTheme.colors.text.grayLighter
-            )
+            Box(
+                modifier = Modifier.size(40.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(R.drawable.ic_joint),
+                    contentDescription = stringResource(R.string.joint_account),
+                    tint = PeraTheme.colors.text.grayLighter
+                )
+            }
             Text(
                 text = numberOfAccounts.toString(),
                 style = PeraTheme.typography.title.small.sansMedium,
                 color = PeraTheme.colors.text.grayLighter
             )
+            Spacer(modifier = Modifier.size(40.dp))
         }
     }
 }

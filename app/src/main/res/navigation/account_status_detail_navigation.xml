@@ -21,6 +21,8 @@
 
     <include app:graph="@navigation/rekey_to_standard_account_navigation" />
 
+    <include app:graph="@navigation/rekey_to_joint_account_navigation" />
+
     <include app:graph="@navigation/rekey_undo_navigation" />
 
     <include app:graph="@navigation/rescan_rekeyed_account_selection_navigation" />
@@ -49,6 +51,15 @@
         <action
             android:id="@+id/action_accountStatusDetailBottomSheet_to_rekeyToStandardAccountNavigation"
             app:destination="@id/rekeyToStandardAccountNavigation"
+            app:popUpTo="@id/accountStatusDetailBottomSheet"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_accountStatusDetailBottomSheet_to_rekeyToJointAccountNavigation"
+            app:destination="@id/rekeyToJointAccountNavigation"
             app:popUpTo="@id/accountStatusDetailBottomSheet"
             app:popUpToInclusive="true">
             <argument

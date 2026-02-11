@@ -41,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource
@@ -48,8 +49,8 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.ContactIcon
@@ -60,7 +61,7 @@ import com.algorand.android.utils.toShortenedAddress
 @Composable
 fun PendingSignaturesBottomSheet(
     sheetState: SheetState,
-    transactionPreview: JointAccountTransactionPreview,
+    transactionPreview: JointAccountTransactionViewState,
     onDismiss: () -> Unit,
     onCancel: () -> Unit,
     onCloseForNow: () -> Unit,
@@ -83,7 +84,7 @@ fun PendingSignaturesBottomSheet(
 
 @Composable
 fun PendingSignaturesContent(
-    transactionPreview: JointAccountTransactionPreview,
+    transactionPreview: JointAccountTransactionViewState,
     onCancel: () -> Unit,
     onCloseForNow: () -> Unit,
     onCloseCompleted: () -> Unit = onCloseForNow
@@ -109,7 +110,7 @@ fun PendingSignaturesContent(
 
         StatusBadgesSection(
             signedCount = transactionPreview.signedCount,
-            requiredCount = transactionPreview.requiredSignatureCount,
+            totalParticipantCount = transactionPreview.signerAccounts.size,
             timeRemaining = transactionPreview.timeRemaining,
             transactionState = transactionPreview.transactionState
         )
@@ -154,12 +155,14 @@ private fun TitleSection(title: String) {
 @Composable
 private fun StatusBadgesSection(
     signedCount: Int,
-    requiredCount: Int,
+    totalParticipantCount: Int,
     timeRemaining: String?,
     transactionState: JointAccountTransactionState
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -172,11 +175,18 @@ private fun StatusBadgesSection(
                 SuccessBadge(message = stringResource(R.string.transaction_successfully_completed))
             }
 
+            is JointAccountTransactionState.Failed -> {
+                ErrorBadge(
+                    message = transactionState.failReasonDisplay
+                        ?: stringResource(R.string.failed_transaction)
+                )
+            }
+
             else -> {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     SignedCountBadge(
                         signedCount = signedCount,
-                        requiredCount = requiredCount
+                        totalCount = totalParticipantCount
                     )
                     if (timeRemaining != null) {
                         TimeRemainingBadge(timeRemaining = timeRemaining)
@@ -190,7 +200,7 @@ private fun StatusBadgesSection(
 @Composable
 private fun SignedCountBadge(
     signedCount: Int,
-    requiredCount: Int
+    totalCount: Int
 ) {
     Row(
         modifier = Modifier
@@ -207,7 +217,7 @@ private fun SignedCountBadge(
             tint = PeraTheme.colors.text.main
         )
         Text(
-            text = stringResource(R.string.of_signed, signedCount, requiredCount),
+            text = stringResource(R.string.of_signed, signedCount, totalCount),
             style = PeraTheme.typography.footnote.sansMedium,
             color = PeraTheme.colors.text.main
         )
@@ -257,7 +267,9 @@ private fun ErrorBadge(message: String) {
         Text(
             text = message,
             style = PeraTheme.typography.footnote.sansMedium,
-            color = PeraTheme.colors.helper.negative
+            color = PeraTheme.colors.helper.negative,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -341,7 +353,8 @@ private fun SignerItem(signer: JointAccountSignerItem) {
         ) {
             SignerIcon(
                 iconDrawablePreview = signer.accountIconDrawablePreview,
-                imageUri = signer.imageUri
+                imageUri = signer.imageUri,
+                isLocalAccount = signer.isLocalAccount
             )
             SignerInfo(
                 displayName = signer.accountDisplayName,
@@ -349,22 +362,23 @@ private fun SignerItem(signer: JointAccountSignerItem) {
             )
         }
 
-        SignerStatusIcon(signatureStatus = signer.signatureStatus)
+        SignerStatusIcon(signer = signer)
     }
 }
 
 @Composable
 private fun SignerIcon(
     iconDrawablePreview: AccountIconDrawablePreview,
-    imageUri: Uri?
+    imageUri: Uri?,
+    isLocalAccount: Boolean
 ) {
-    if (imageUri != null) {
-        ContactIcon(imageUri = imageUri, size = 20.dp)
-    } else {
+    if (isLocalAccount) {
         AccountIcon(
             modifier = Modifier.size(20.dp),
             iconDrawablePreview = iconDrawablePreview
         )
+    } else {
+        ContactIcon(imageUri = imageUri, size = 20.dp)
     }
 }
 
@@ -382,7 +396,7 @@ private fun SignerInfo(
             text = primaryName,
             style = PeraTheme.typography.body.regular.sans,
             color = when (signatureStatus) {
-                JointAccountSignatureStatus.Rejected -> PeraTheme.colors.helper.negative
+                JointAccountSignatureStatus.Declined -> PeraTheme.colors.helper.negative
                 else -> PeraTheme.colors.text.main
             }
         )
@@ -397,8 +411,8 @@ private fun SignerInfo(
 }
 
 @Composable
-private fun SignerStatusIcon(signatureStatus: JointAccountSignatureStatus) {
-    when (signatureStatus) {
+private fun SignerStatusIcon(signer: JointAccountSignerItem) {
+    when (signer.signatureStatus) {
         JointAccountSignatureStatus.Signed -> {
             Icon(
                 modifier = Modifier.size(20.dp),
@@ -408,20 +422,22 @@ private fun SignerStatusIcon(signatureStatus: JointAccountSignatureStatus) {
             )
         }
 
-        JointAccountSignatureStatus.Rejected -> {
+        JointAccountSignatureStatus.Declined -> {
             Icon(
                 modifier = Modifier.size(20.dp),
                 painter = painterResource(R.drawable.ic_close),
-                contentDescription = stringResource(R.string.rejected),
+                contentDescription = stringResource(R.string.decline),
                 tint = PeraTheme.colors.helper.negative
             )
         }
 
         JointAccountSignatureStatus.Pending -> {
-            PeraCircularProgressIndicator(
-                modifier = Modifier.size(20.dp),
-                strokeWidth = 2.dp
-            )
+            if (signer.showProgress) {
+                PeraCircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
+                )
+            }
         }
     }
 }
@@ -435,9 +451,11 @@ private fun ActionButtonsSection(
     onCloseForNow: () -> Unit,
     onCloseCompleted: () -> Unit
 ) {
-    val isCompleted = transactionState == JointAccountTransactionState.Completed ||
-            transactionState == JointAccountTransactionState.Canceled
-    val showSingleCloseButton = isCompleted || !hasProposerAddress
+    val isCompleted = transactionState == JointAccountTransactionState.Completed
+    val isFinalized = isCompleted ||
+            transactionState == JointAccountTransactionState.Canceled ||
+            transactionState is JointAccountTransactionState.Failed
+    val showSingleCloseButton = isFinalized || !hasProposerAddress
 
     if (showSingleCloseButton) {
         SingleCloseButton(

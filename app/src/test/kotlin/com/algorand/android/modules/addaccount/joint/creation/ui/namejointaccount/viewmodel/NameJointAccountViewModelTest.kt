@@ -12,18 +12,29 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewEvent
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewState
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
+import com.algorand.android.ui.device.model.DeviceConfig
+import com.algorand.android.ui.device.usecase.GetDeviceConfig
+import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
+import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
+import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -45,57 +56,82 @@ internal class NameJointAccountViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val createJointAccount: CreateJointAccount = mockk()
     private val getDefaultJointAccountName: GetDefaultJointAccountName = mockk()
-    private val processor: NameJointAccountProcessor = mockk()
+    private val getAllAccountOrderIndexes: GetAllAccountOrderIndexes = mockk()
+    private val addJointAccount: AddJointAccount = mockk()
+    private val getJointAccount: GetJointAccount = mockk()
+    private val getDeviceConfig: GetDeviceConfig = mockk()
+    private val deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification = mockk()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        mockkStatic(android.util.Log::class)
+        io.mockk.every { android.util.Log.e(any(), any(), any()) } returns 0
+        coEvery { getDefaultJointAccountName() } returns DEFAULT_JOINT_ACCOUNT_NUMBER
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        unmockkStatic(android.util.Log::class)
     }
 
     @Test
-    fun `EXPECT default account name WHEN getDefaultAccountName called`() = runTest {
-        coEvery { getDefaultJointAccountName() } returns TEST_DEFAULT_NAME
-
-        val viewModel = createViewModel()
-        val result = viewModel.getDefaultAccountName()
-
-        assertEquals(TEST_DEFAULT_NAME, result)
-    }
-
-    @Test
-    fun `EXPECT Error state WHEN account name is blank`() = runTest {
+    fun `EXPECT default joint account number in Idle state WHEN init completes`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
-        val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
-
-        viewModel.createJointAccount("   ", TEST_THRESHOLD, TEST_PARTICIPANTS)
+        createViewModelWithDelegates(stateDelegate, eventDelegate)
         advanceUntilIdle()
 
         val state = stateDelegate.state.value
-        assertTrue(state is ViewState.Error)
-        assertEquals(R.string.an_error_occurred, (state as ViewState.Error).messageResId)
+        assertTrue(state is ViewState.Idle)
+        assertEquals(DEFAULT_JOINT_ACCOUNT_NUMBER, (state as ViewState.Idle).defaultJointAccountNumber)
     }
 
     @Test
-    fun `EXPECT Success state WHEN createJointAccount completes successfully`() = runTest {
+    fun `EXPECT ShowError event WHEN account name is blank`() = runTest {
+        val stateDelegate = StateDelegate<ViewState>()
+        val eventDelegate = EventDelegate<ViewEvent>()
+        val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
+        val events = mutableListOf<ViewEvent>()
+        val job = launch { eventDelegate.viewEvent.toList(events) }
+        advanceUntilIdle()
+
+        viewModel.onAccountNameChanged("   ")
+        viewModel.onFinishClick()
+        advanceUntilIdle()
+        job.cancel()
+
+        val state = stateDelegate.state.value
+        assertTrue(state is ViewState.Idle)
+        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.an_error_occurred })
+    }
+
+    @Test
+    fun `EXPECT Success state WHEN joint account created successfully`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns PeraResult.Success(createJointAccount())
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+        } returns PeraResult.Success(createJointAccountDto())
+        coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
+        coEvery { getAllAccountOrderIndexes() } returns emptyList()
         coEvery {
-            processor.createLocalAccount(any(), any(), any(), any(), any())
-        } returns NameJointAccountProcessor.CreateLocalAccountResult.Success
+            addJointAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME, 0)
+        } returns PeraResult.Success(Unit)
+        coEvery { getDeviceConfig() } returns createDeviceConfig()
+        coEvery {
+            deleteInboxJointInvitationNotification(
+                TEST_DEVICE_ID,
+                TEST_JOINT_ADDRESS
+            )
+        } returns PeraResult.Success(Unit)
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
         advanceUntilIdle()
 
-        viewModel.createJointAccount(TEST_ACCOUNT_NAME, TEST_THRESHOLD, TEST_PARTICIPANTS)
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
         advanceUntilIdle()
 
         val state = stateDelegate.state.value
@@ -107,17 +143,27 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns PeraResult.Success(createJointAccount())
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+        } returns PeraResult.Success(createJointAccountDto())
+        coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
+        coEvery { getAllAccountOrderIndexes() } returns emptyList()
         coEvery {
-            processor.createLocalAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME)
-        } returns NameJointAccountProcessor.CreateLocalAccountResult.Success
+            addJointAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME, 0)
+        } returns PeraResult.Success(Unit)
+        coEvery { getDeviceConfig() } returns createDeviceConfig()
+        coEvery {
+            deleteInboxJointInvitationNotification(
+                TEST_DEVICE_ID,
+                TEST_JOINT_ADDRESS
+            )
+        } returns PeraResult.Success(Unit)
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
         val events = mutableListOf<ViewEvent>()
         val job = launch { eventDelegate.viewEvent.toList(events) }
 
-        viewModel.createJointAccount(TEST_ACCOUNT_NAME, TEST_THRESHOLD, TEST_PARTICIPANTS)
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
         advanceUntilIdle()
         job.cancel()
 
@@ -127,107 +173,181 @@ internal class NameJointAccountViewModelTest {
     }
 
     @Test
-    fun `EXPECT Error state WHEN createJointAccount API fails`() = runTest {
+    fun `EXPECT ShowError event WHEN createJointAccount API fails`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         val exception = Exception("Network error")
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
         } returns PeraResult.Error(exception)
-        coEvery { processor.mapExceptionToErrorResId(exception) } returns R.string.the_internet_connection
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
-
-        viewModel.createJointAccount(TEST_ACCOUNT_NAME, TEST_THRESHOLD, TEST_PARTICIPANTS)
+        val events = mutableListOf<ViewEvent>()
+        val job = launch { eventDelegate.viewEvent.toList(events) }
         advanceUntilIdle()
 
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
+        advanceUntilIdle()
+        job.cancel()
+
         val state = stateDelegate.state.value
-        assertTrue(state is ViewState.Error)
-        assertEquals(R.string.the_internet_connection, (state as ViewState.Error).messageResId)
+        assertTrue(state is ViewState.Idle)
+        assertTrue(events.any { it is ViewEvent.ShowError })
     }
 
     @Test
-    fun `EXPECT Error state WHEN joint account address is null`() = runTest {
+    fun `EXPECT ShowError event WHEN joint account address is null`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns PeraResult.Success(createJointAccount(address = null))
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+        } returns PeraResult.Success(createJointAccountDto(address = null))
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
-
-        viewModel.createJointAccount(TEST_ACCOUNT_NAME, TEST_THRESHOLD, TEST_PARTICIPANTS)
+        val events = mutableListOf<ViewEvent>()
+        val job = launch { eventDelegate.viewEvent.toList(events) }
         advanceUntilIdle()
 
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
+        advanceUntilIdle()
+        job.cancel()
+
         val state = stateDelegate.state.value
-        assertTrue(state is ViewState.Error)
-        assertEquals(R.string.an_error_occurred, (state as ViewState.Error).messageResId)
+        assertTrue(state is ViewState.Idle)
+        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.an_error_occurred })
     }
 
     @Test
-    fun `EXPECT Error state WHEN account already exists locally`() = runTest {
+    fun `EXPECT ShowError event WHEN account already exists locally`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns PeraResult.Success(createJointAccount())
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+        } returns PeraResult.Success(createJointAccountDto())
+        coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns createLocalAccountJoint()
+        coEvery { getDeviceConfig() } returns createDeviceConfig()
         coEvery {
-            processor.createLocalAccount(any(), any(), any(), any(), any())
-        } returns NameJointAccountProcessor.CreateLocalAccountResult.AlreadyExists
+            deleteInboxJointInvitationNotification(
+                TEST_DEVICE_ID,
+                TEST_JOINT_ADDRESS
+            )
+        } returns PeraResult.Success(Unit)
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
-
-        viewModel.createJointAccount(TEST_ACCOUNT_NAME, TEST_THRESHOLD, TEST_PARTICIPANTS)
+        val events = mutableListOf<ViewEvent>()
+        val job = launch { eventDelegate.viewEvent.toList(events) }
         advanceUntilIdle()
 
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
+        advanceUntilIdle()
+        job.cancel()
+
         val state = stateDelegate.state.value
-        assertTrue(state is ViewState.Error)
-        assertEquals(R.string.this_account_already_exists, (state as ViewState.Error).messageResId)
+        assertTrue(state is ViewState.Idle)
+        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.this_account_already_exists })
     }
 
     @Test
-    fun `EXPECT Error state WHEN local account creation fails`() = runTest {
+    fun `EXPECT ShowError event WHEN local account creation fails`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns PeraResult.Success(createJointAccount())
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+        } returns PeraResult.Success(createJointAccountDto())
+        coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
+        coEvery { getAllAccountOrderIndexes() } returns emptyList()
         coEvery {
-            processor.createLocalAccount(any(), any(), any(), any(), any())
-        } returns NameJointAccountProcessor.CreateLocalAccountResult.Error(R.string.an_error_occurred)
+            addJointAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME, 0)
+        } returns PeraResult.Error(Exception("DB error"))
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
-
-        viewModel.createJointAccount(TEST_ACCOUNT_NAME, TEST_THRESHOLD, TEST_PARTICIPANTS)
+        val events = mutableListOf<ViewEvent>()
+        val job = launch { eventDelegate.viewEvent.toList(events) }
         advanceUntilIdle()
 
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
+        advanceUntilIdle()
+        job.cancel()
+
         val state = stateDelegate.state.value
-        assertTrue(state is ViewState.Error)
+        assertTrue(state is ViewState.Idle)
+        assertTrue(events.any { it is ViewEvent.ShowError })
     }
 
     @Test
-    fun `EXPECT account name trimmed WHEN creating joint account`() = runTest {
+    fun `EXPECT correct order index WHEN creating joint account`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, any())
-        } returns PeraResult.Success(createJointAccount())
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+        } returns PeraResult.Success(createJointAccountDto())
+        coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
+        coEvery { getAllAccountOrderIndexes() } returns listOf(
+            AccountOrderIndex("ADDR1", 0),
+            AccountOrderIndex("ADDR2", 5),
+            AccountOrderIndex("ADDR3", 3)
+        )
         coEvery {
-            processor.createLocalAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME)
-        } returns NameJointAccountProcessor.CreateLocalAccountResult.Success
+            addJointAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME, 6)
+        } returns PeraResult.Success(Unit)
+        coEvery { getDeviceConfig() } returns createDeviceConfig()
+        coEvery {
+            deleteInboxJointInvitationNotification(
+                TEST_DEVICE_ID,
+                TEST_JOINT_ADDRESS
+            )
+        } returns PeraResult.Success(Unit)
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
+        advanceUntilIdle()
 
-        viewModel.createJointAccount("  $TEST_ACCOUNT_NAME  ", TEST_THRESHOLD, TEST_PARTICIPANTS)
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
         advanceUntilIdle()
 
         coVerify {
-            processor.createLocalAccount(any(), any(), any(), any(), TEST_ACCOUNT_NAME)
+            addJointAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME, 6)
         }
     }
 
     @Test
-    fun `EXPECT Idle state initially`() = runTest {
+    fun `EXPECT no state change WHEN onFinishClick called during Loading`() = runTest {
+        val stateDelegate = StateDelegate<ViewState>()
+        val eventDelegate = EventDelegate<ViewEvent>()
+        coEvery {
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+        } returns PeraResult.Success(createJointAccountDto())
+        coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
+        coEvery { getAllAccountOrderIndexes() } returns emptyList()
+        coEvery {
+            addJointAccount(TEST_JOINT_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_ACCOUNT_NAME, 0)
+        } returns PeraResult.Success(Unit)
+        coEvery { getDeviceConfig() } returns createDeviceConfig()
+        coEvery {
+            deleteInboxJointInvitationNotification(
+                TEST_DEVICE_ID,
+                TEST_JOINT_ADDRESS
+            )
+        } returns PeraResult.Success(Unit)
+
+        val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
+        advanceUntilIdle()
+
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
+        // Call again immediately — should be ignored because state is Loading
+        viewModel.onFinishClick()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION) }
+    }
+
+    @Test
+    fun `EXPECT Idle state with empty account name WHEN init completes`() = runTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
 
@@ -236,32 +356,33 @@ internal class NameJointAccountViewModelTest {
 
         val state = stateDelegate.state.value
         assertTrue(state is ViewState.Idle)
-    }
-
-    private fun createViewModel(): NameJointAccountViewModel {
-        return NameJointAccountViewModel(
-            stateDelegate = StateDelegate(),
-            eventDelegate = EventDelegate(),
-            createJointAccount = createJointAccount,
-            getDefaultJointAccountName = getDefaultJointAccountName,
-            processor = processor
-        )
+        assertEquals("", (state as ViewState.Idle).accountName)
     }
 
     private fun createViewModelWithDelegates(
         stateDelegate: StateDelegate<ViewState>,
         eventDelegate: EventDelegate<ViewEvent>
     ): NameJointAccountViewModel {
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "threshold" to TEST_THRESHOLD,
+                "participantAddresses" to TEST_PARTICIPANTS.toTypedArray()
+            )
+        )
         return NameJointAccountViewModel(
+            savedStateHandle = savedStateHandle,
             stateDelegate = stateDelegate,
             eventDelegate = eventDelegate,
             createJointAccount = createJointAccount,
             getDefaultJointAccountName = getDefaultJointAccountName,
-            processor = processor
+            getAllAccountOrderIndexes = getAllAccountOrderIndexes,
+            addJointAccount = addJointAccount,
+            getJointAccount = getJointAccount,
+            inboxCleanup = NameJointAccountInboxCleanup(getDeviceConfig, deleteInboxJointInvitationNotification)
         )
     }
 
-    private fun createJointAccount(
+    private fun createJointAccountDto(
         address: String? = TEST_JOINT_ADDRESS,
         version: Int = TEST_VERSION
     ): JointAccount {
@@ -274,12 +395,37 @@ internal class NameJointAccountViewModelTest {
         )
     }
 
+    private fun createLocalAccountJoint(): LocalAccount.Joint = LocalAccount.Joint(
+        algoAddress = TEST_JOINT_ADDRESS,
+        participantAddresses = TEST_PARTICIPANTS,
+        threshold = TEST_THRESHOLD,
+        version = TEST_VERSION
+    )
+
+    private fun createDeviceConfig(): DeviceConfig = DeviceConfig(
+        platform = "android",
+        appName = "pera",
+        appPackageName = "com.algorand.android",
+        appVersion = "1.0.0",
+        deviceId = TEST_DEVICE_ID_STRING,
+        deviceVersion = "1",
+        deviceOSVersion = "14",
+        deviceModel = "Pixel",
+        theme = mockk(),
+        node = mockk(),
+        currency = "USD",
+        region = "US",
+        language = "en"
+    )
+
     private companion object {
-        const val TEST_DEFAULT_NAME = "Joint Account 1"
         const val TEST_ACCOUNT_NAME = "My Joint Account"
         const val TEST_JOINT_ADDRESS = "JOINT_ADDRESS_123"
         const val TEST_THRESHOLD = 2
         const val TEST_VERSION = 1
+        const val DEFAULT_JOINT_ACCOUNT_NUMBER = 1
+        const val TEST_DEVICE_ID_STRING = "12345"
+        const val TEST_DEVICE_ID = 12345L
         val TEST_PARTICIPANTS = listOf("ADDR1", "ADDR2", "ADDR3")
     }
 }

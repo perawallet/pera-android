@@ -13,5 +13,5 @@
 package com.algorand.android.modules.addaccount.joint.creation.usecase
 
 fun interface GetDefaultJointAccountName {
-    suspend operator fun invoke(): String
+    suspend operator fun invoke(): Int
 }

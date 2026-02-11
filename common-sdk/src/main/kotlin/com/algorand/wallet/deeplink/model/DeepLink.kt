@@ -133,7 +133,7 @@ sealed interface DeepLink {
 
     /**
      * Example:
-     *  - perawallet://joint-account-import?address=JOINT_ACCOUNT_ADDRESS
+     *  - perawallet://app/joint-account-import/?address=JOINT_ACCOUNT_ADDRESS
      */
     data class JointAccountImport(val address: String?) : DeepLink
 

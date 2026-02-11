@@ -186,6 +186,7 @@ class AccountStatusDetailViewModel @Inject constructor(
             sealed interface AccountAction {
                 data object RekeyToStandard : AccountAction
                 data object RekeyToLedger : AccountAction
+                data object RekeyToJointAccount : AccountAction
                 data object RescanRekeyedAddresses : AccountAction
             }
         }

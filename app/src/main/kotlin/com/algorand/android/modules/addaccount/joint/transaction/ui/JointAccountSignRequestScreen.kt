@@ -48,14 +48,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -105,7 +102,7 @@ fun JointAccountSignRequestScreen(
                     preview = state.preview,
                     onHideSheet = { showBottomSheet = false },
                     onCancel = { viewModel.onCancel() },
-                    onCloseForNow = listener::onCloseClick,
+                    onCloseForNow = { showBottomSheet = false },
                     onCloseCompleted = listener::onNavigateToHome
                 )
             }
@@ -150,7 +147,7 @@ private fun ErrorState(messageResId: Int) {
 
 @Composable
 private fun TransactionContent(
-    preview: JointAccountTransactionPreview,
+    preview: JointAccountTransactionViewState,
     listener: JointAccountSignRequestScreenListener,
     onShowBottomSheet: () -> Unit,
     onConfirm: () -> Unit
@@ -191,7 +188,7 @@ private fun TransactionContent(
 private fun BottomSheetContent(
     scope: CoroutineScope,
     sheetState: SheetState,
-    preview: JointAccountTransactionPreview,
+    preview: JointAccountTransactionViewState,
     onHideSheet: () -> Unit,
     onCancel: () -> Unit,
     onCloseForNow: () -> Unit,
@@ -218,7 +215,7 @@ private fun BottomSheetContent(
 
 @Composable
 private fun ToolbarSection(
-    preview: JointAccountTransactionPreview,
+    preview: JointAccountTransactionViewState,
     listener: JointAccountSignRequestScreenListener
 ) {
     Column {
@@ -274,7 +271,6 @@ private fun JointAccountIconSection() {
 
 @Composable
 private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit) {
-    val transferTo = stringResource(R.string.transfer_to)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -283,16 +279,9 @@ private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit)
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = buildAnnotatedString {
-                withStyle(SpanStyle(color = PeraTheme.colors.text.gray)) { append(transferTo) }
-                withStyle(
-                    SpanStyle(
-                        color = PeraTheme.colors.text.main,
-                        fontWeight = PeraTheme.typography.body.regular.sansMedium.fontWeight
-                    )
-                ) { append(recipientAddress) }
-            },
-            style = PeraTheme.typography.body.regular.sans
+            text = stringResource(R.string.transfer_to_styled, recipientAddress),
+            style = PeraTheme.typography.body.regular.sans,
+            color = PeraTheme.colors.text.main
         )
         Spacer(modifier = Modifier.width(8.dp))
         IconButton(onClick = onCopyClick, modifier = Modifier.size(16.dp)) {
@@ -309,7 +298,7 @@ private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit)
 }
 
 @Composable
-private fun AmountSection(preview: JointAccountTransactionPreview) {
+private fun AmountSection(preview: JointAccountTransactionViewState) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = preview.amount,
@@ -329,7 +318,7 @@ private fun AmountSection(preview: JointAccountTransactionPreview) {
 @Composable
 private fun BottomSection(
     modifier: Modifier = Modifier,
-    preview: JointAccountTransactionPreview,
+    preview: JointAccountTransactionViewState,
     onShowTransactionDetailsClick: () -> Unit,
     onSlideToConfirm: () -> Unit,
     listener: JointAccountSignRequestScreenListener

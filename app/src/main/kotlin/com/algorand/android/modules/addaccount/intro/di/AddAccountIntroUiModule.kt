@@ -16,8 +16,6 @@ import com.algorand.android.modules.addaccount.intro.domain.usecase.CreateAlgo25
 import com.algorand.android.modules.addaccount.intro.domain.usecase.CreateAlgo25AccountUseCase
 import com.algorand.android.modules.addaccount.intro.domain.usecase.CreateHdKeyAccount
 import com.algorand.android.modules.addaccount.intro.domain.usecase.CreateHdKeyAccountUseCase
-import com.algorand.android.modules.addaccount.intro.domain.usecase.GetAddAccountIntroPreview
-import com.algorand.android.modules.addaccount.intro.domain.usecase.GetAddAccountIntroPreviewUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,11 +24,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AddAccountIntroUiModule {
-
-    @Provides
-    fun provideGetAddAccountIntroPreview(
-        impl: GetAddAccountIntroPreviewUseCase
-    ): GetAddAccountIntroPreview = impl
 
     @Provides
     fun provideCreateHdKeyAccount(

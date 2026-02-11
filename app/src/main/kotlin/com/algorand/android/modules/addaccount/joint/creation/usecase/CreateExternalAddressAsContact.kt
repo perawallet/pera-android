@@ -15,5 +15,5 @@ package com.algorand.android.modules.addaccount.joint.creation.usecase
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
 
 interface CreateExternalAddressAsContact {
-    suspend operator fun invoke(address: String, shortenedAddress: String? = null): SelectedJointAccountItem?
+    suspend operator fun invoke(address: String, displayName: String? = null): SelectedJointAccountItem?
 }

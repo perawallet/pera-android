@@ -15,7 +15,6 @@ package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 import android.util.Base64
 import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.util.Encoder
-import com.algorand.android.modules.addaccount.joint.transaction.domain.exception.JointAccountSigningException
 import com.algorand.android.utils.decodeBase64
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.local.domain.model.LocalAccount
@@ -31,12 +30,17 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResp
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import javax.inject.Inject
 
+data class SignAndSubmitResult(
+    val signedAddresses: List<String>,
+    val apiResult: PeraResult<JointSignRequest>?
+)
+
 fun interface SignAndSubmitJointAccountSignature {
     suspend operator fun invoke(
         signRequestId: String,
-        participantAddress: String,
+        participantAddresses: List<String>,
         rawTransactions: List<String>
-    ): PeraResult<JointSignRequest>
+    ): SignAndSubmitResult
 }
 
 internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
@@ -49,29 +53,44 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
 
     override suspend fun invoke(
         signRequestId: String,
-        participantAddress: String,
+        participantAddresses: List<String>,
         rawTransactions: List<String>
-    ): PeraResult<JointSignRequest> {
-        val signatures = mutableListOf<String?>()
+    ): SignAndSubmitResult {
+        val signatureInputs = mutableListOf<AddSignatureInput>()
+        val signedAddresses = mutableListOf<String>()
 
-        for (rawTransaction in rawTransactions) {
-            val transactionBytes = rawTransaction.decodeBase64()
-                ?: return PeraResult.Error(JointAccountSigningException.TransactionDecodeFailed)
-
-            val signatureBytes = signTransaction(transactionBytes, participantAddress)
-                ?: return PeraResult.Error(JointAccountSigningException.SigningFailed)
-
-            signatures.add(Base64.encodeToString(signatureBytes, Base64.NO_WRAP))
+        for (participantAddress in participantAddresses) {
+            val signatures = signAllTransactions(rawTransactions, participantAddress) ?: continue
+            signatureInputs.add(
+                AddSignatureInput(
+                    address = participantAddress,
+                    response = SignRequestResponseType.SIGNED,
+                    signatures = listOf(signatures),
+                    deviceId = null
+                )
+            )
+            signedAddresses.add(participantAddress)
         }
 
-        val addSignatureInput = AddSignatureInput(
-            address = participantAddress,
-            response = SignRequestResponseType.SIGNED,
-            signatures = listOf(signatures),
-            deviceId = null
-        )
+        if (signatureInputs.isEmpty()) {
+            return SignAndSubmitResult(signedAddresses = emptyList(), apiResult = null)
+        }
 
-        return addJointAccountSignature(signRequestId, addSignatureInput)
+        val apiResult = addJointAccountSignature(signRequestId, signatureInputs)
+        return SignAndSubmitResult(signedAddresses = signedAddresses, apiResult = apiResult)
+    }
+
+    private suspend fun signAllTransactions(
+        rawTransactions: List<String>,
+        participantAddress: String
+    ): List<String?>? {
+        val signatures = mutableListOf<String?>()
+        for (rawTransaction in rawTransactions) {
+            val transactionBytes = rawTransaction.decodeBase64() ?: return null
+            val signatureBytes = signTransaction(transactionBytes, participantAddress) ?: return null
+            signatures.add(Base64.encodeToString(signatureBytes, Base64.NO_WRAP))
+        }
+        return signatures
     }
 
     private suspend fun signTransaction(transactionBytes: ByteArray, signerAddress: String): ByteArray? {

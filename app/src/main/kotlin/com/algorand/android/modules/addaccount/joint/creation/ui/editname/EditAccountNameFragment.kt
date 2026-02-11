@@ -19,13 +19,13 @@ import android.view.ViewGroup
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.addaccount.joint.creation.ui.editname.viewmodel.EditAccountNameViewModel
 import com.algorand.android.modules.addaccount.joint.creation.ui.editname.viewmodel.EditAccountNameViewModel.ViewState
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.utils.setFragmentNavigationResult
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,6 +48,7 @@ class EditAccountNameFragment : DaggerBaseFragment(0), EditAccountNameScreenList
                 is ViewState.Content -> {
                     EditAccountNameScreen(
                         account = state.account,
+                        showRemoveButton = state.showRemoveButton,
                         listener = this
                     )
                 }
@@ -60,24 +61,17 @@ class EditAccountNameFragment : DaggerBaseFragment(0), EditAccountNameScreenList
     }
 
     override fun onDoneClick(name: String) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.apply {
-            set(RESULT_UPDATED_NAME, name)
-            set(RESULT_ADDRESS, args.accountAddress)
-        }
+        setFragmentNavigationResult(RESULT_UPDATED_NAME, name)
         navBack()
     }
 
     override fun onRemoveClick() {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set(
-            RESULT_REMOVED_ADDRESS,
-            args.accountAddress
-        )
+        setFragmentNavigationResult(RESULT_REMOVED_ADDRESS, args.accountAddress)
         navBack()
     }
 
     companion object {
         const val RESULT_UPDATED_NAME = "result_updated_name"
-        const val RESULT_ADDRESS = "result_address"
         const val RESULT_REMOVED_ADDRESS = "result_removed_address"
     }
 }

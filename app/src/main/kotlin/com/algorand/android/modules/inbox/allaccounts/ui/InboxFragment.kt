@@ -28,7 +28,6 @@ import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.Ass
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewEvent
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.ui.compose.extensions.createComposeView
-import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,12 +55,10 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
         savedInstanceState: Bundle?
     ): View {
         return createComposeView {
-            PeraTheme {
-                InboxScreen(
-                    viewModel = inboxViewModel,
-                    listener = this@InboxFragment
-                )
-            }
+            InboxScreen(
+                state = inboxViewModel.state,
+                listener = this@InboxFragment
+            )
         }
     }
 
@@ -90,6 +87,7 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
             is InboxViewEvent.NavigateToJointAccountInvitation -> {
                 navToJointAccountInvitationDetail(event.invitation)
             }
+
             is InboxViewEvent.NavigateToJointAccountDetail -> {
                 nav(
                     HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
@@ -97,6 +95,7 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
                     )
                 )
             }
+
             is InboxViewEvent.ShowError -> {
                 showGlobalError(event.message, tag = baseActivityTag)
             }
@@ -108,13 +107,12 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
     }
 
     override fun onInfoClick() {
-        navToAssetInboxInfoNavigation()
+        navToInboxInfoNavigation()
     }
 
-    private fun navToAssetInboxInfoNavigation() {
+    private fun navToInboxInfoNavigation() {
         nav(
-            InboxFragmentDirections
-                .actionInboxFragmentToAssetInboxInfoNavigation()
+            InboxFragmentDirections.actionInboxFragmentToInboxInfoNavigation()
         )
     }
 

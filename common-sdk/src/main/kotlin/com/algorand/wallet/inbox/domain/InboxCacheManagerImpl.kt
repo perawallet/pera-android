@@ -15,7 +15,6 @@ package com.algorand.wallet.inbox.domain
 import androidx.lifecycle.Lifecycle
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus.INITIALIZED
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
-import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.inbox.domain.model.InboxSearchInput
@@ -24,6 +23,7 @@ import com.algorand.wallet.inbox.domain.usecase.CacheInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.ClearInboxCache
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
@@ -33,7 +33,6 @@ internal class InboxCacheManagerImpl @Inject constructor(
     private val cacheInboxMessages: CacheInboxMessages,
     private val clearInboxCache: ClearInboxCache,
     private val getInboxValidAddresses: GetInboxValidAddresses,
-    private val getAllAccountInformationFlow: GetAllAccountInformationFlow,
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
     private val inboxApiRepository: InboxApiRepository
 ) : InboxCacheManager, LifecycleAwareCacheManager.CacheManagerListener {
@@ -61,9 +60,14 @@ internal class InboxCacheManagerImpl @Inject constructor(
     }
 
     private suspend fun runManagerJob() {
-        getAllAccountInformationFlow().collectLatest {
+        while (true) {
             updateInboxCache()
+            delay(INBOX_POLL_INTERVAL)
         }
+    }
+
+    private companion object {
+        const val INBOX_POLL_INTERVAL = 6000L
     }
 
     private suspend fun updateInboxCache() {

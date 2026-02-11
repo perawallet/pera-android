@@ -168,7 +168,6 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     private fun initSavedStateListener() {
-        // TODO use a better way to return the navigation results
         startSavedStateListener(R.id.assetTransferPreviewFragment) {
             useSavedStateValue<String>(AddNoteBottomSheet.ADD_NOTE_RESULT_KEY) {
                 assetTransferPreviewViewModel.onNoteUpdate(it)
@@ -397,7 +396,6 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     override fun onJointAccountSignRequestCreated(signRequestId: String) {
-        // Show pending signatures bottom sheet directly instead of navigating to full screen
         val dialog = PendingSignaturesDialogFragment.newInstance(signRequestId)
         dialog.show(childFragmentManager, PendingSignaturesDialogFragment.TAG)
     }

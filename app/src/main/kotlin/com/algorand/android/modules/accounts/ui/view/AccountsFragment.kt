@@ -404,7 +404,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.logNotificationClick()
             navigateToNotifications()
         }
-        binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
+        binding.assetInboxAllAccountsButton.setOnClickListener { navToInboxNavigation() }
     }
 
     override fun onResume() {
@@ -474,8 +474,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         nav(AccountsFragmentDirections.actionAccountsFragmentToNotificationCenterFragment())
     }
 
-    private fun navToAssetInboxAllAccountsNavigation() {
-        nav(AccountsFragmentDirections.actionAccountsFragmentToAssetInboxAllAccountsNavigation())
+    private fun navToInboxNavigation() {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToInboxNavigation())
     }
 
     private fun onArrangeListClick() {

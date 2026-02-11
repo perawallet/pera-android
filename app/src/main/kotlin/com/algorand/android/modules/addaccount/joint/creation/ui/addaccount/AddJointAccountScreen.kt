@@ -36,9 +36,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +55,7 @@ import com.algorand.android.ui.compose.widget.ContactIcon
 import com.algorand.android.ui.compose.widget.PeraAccountItem
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.compose.widget.PeraToolbarTitle
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.textfield.PeraSlimTextField
@@ -72,15 +70,8 @@ fun AddJointAccountScreen(
     val viewState by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    var localSearchQuery by remember { mutableStateOf("") }
-    var hasClipboardContent by remember { mutableStateOf(false) }
-
-    LaunchedEffect(viewState.searchQuery) {
-        localSearchQuery = viewState.searchQuery
-    }
-
     LaunchedEffect(Unit) {
-        hasClipboardContent = checkClipboardContent(context)
+        viewModel.setHasClipboardContent(checkClipboardContent(context))
     }
 
     Column(
@@ -90,32 +81,42 @@ fun AddJointAccountScreen(
     ) {
         ToolbarSection(onBackClick = listener::onBackClick)
 
-        SearchBarSection(
-            searchQuery = localSearchQuery,
-            onSearchQueryChange = {
-                localSearchQuery = it
-                viewModel.onSearchQueryUpdate(it)
-            },
-            hasClipboardContent = hasClipboardContent,
-            onPasteClick = {
-                val clipboardText = context.getTextFromClipboard()
-                if (!clipboardText.isNullOrBlank()) {
-                    localSearchQuery = clipboardText
-                    viewModel.onSearchQueryUpdate(clipboardText)
+        when (val state = viewState) {
+            is AddJointAccountViewModel.ViewState.Loading -> {
+                SearchBarSection(
+                    searchQuery = "",
+                    onSearchQueryChange = viewModel::onSearchQueryUpdate,
+                    hasClipboardContent = false,
+                    onPasteClick = { },
+                    onQrScanClick = listener::onQrScanClick
+                )
+                Box(modifier = Modifier.fillMaxSize())
+            }
+
+            is AddJointAccountViewModel.ViewState.Content -> {
+                SearchBarSection(
+                    searchQuery = state.searchQuery,
+                    onSearchQueryChange = viewModel::onSearchQueryUpdate,
+                    hasClipboardContent = state.hasClipboardContent,
+                    onPasteClick = {
+                        val clipboardText = context.getTextFromClipboard()
+                        if (!clipboardText.isNullOrBlank()) {
+                            viewModel.onSearchQueryUpdate(clipboardText)
+                        }
+                    },
+                    onQrScanClick = listener::onQrScanClick
+                )
+                when {
+                    state.showEmptyState -> EmptyStateSection()
+                    else -> AccountListSection(
+                        externalAddresses = state.externalAddresses,
+                        accounts = state.accounts,
+                        contacts = state.contacts,
+                        nfds = state.nfds,
+                        listener = listener
+                    )
                 }
             }
-        )
-
-        if (!viewState.hasResults && localSearchQuery.isNotEmpty()) {
-            EmptyStateSection()
-        } else {
-            AccountListSection(
-                externalAddresses = viewState.externalAddresses,
-                accounts = viewState.accounts,
-                contacts = viewState.contacts,
-                nfds = viewState.nfds,
-                listener = listener
-            )
         }
     }
 }
@@ -124,7 +125,9 @@ fun AddJointAccountScreen(
 private fun ToolbarSection(onBackClick: () -> Unit) {
     PeraToolbar(
         modifier = Modifier.padding(horizontal = 12.dp),
-        text = stringResource(R.string.add_account),
+        centerContainer = {
+            PeraToolbarTitle(text = stringResource(R.string.add_account))
+        },
         startContainer = {
             PeraToolbarIcon(
                 iconResId = R.drawable.ic_left_arrow,
@@ -139,7 +142,8 @@ private fun SearchBarSection(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     hasClipboardContent: Boolean,
-    onPasteClick: () -> Unit
+    onPasteClick: () -> Unit,
+    onQrScanClick: () -> Unit
 ) {
     PeraSlimTextField(
         modifier = Modifier
@@ -152,36 +156,37 @@ private fun SearchBarSection(
         hint = stringResource(R.string.type_new_address_or_search),
         onTextChanged = onSearchQueryChange,
         startIconContainer = {
-            SearchIcon()
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(R.drawable.ic_search),
+                tint = PeraTheme.colors.text.gray,
+                contentDescription = stringResource(R.string.search)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
         },
         endIconContainer = {
-            if (hasClipboardContent) {
-                ClipboardIcon(onClick = onPasteClick)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (hasClipboardContent) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable(onClick = onPasteClick),
+                        painter = painterResource(R.drawable.ic_clipboard),
+                        tint = PeraTheme.colors.text.gray,
+                        contentDescription = stringResource(R.string.paste_from_clipboard)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable(onClick = onQrScanClick),
+                    painter = painterResource(R.drawable.ic_qr_scan),
+                    tint = PeraTheme.colors.text.gray,
+                    contentDescription = stringResource(R.string.scan_qr_code)
+                )
             }
         }
-    )
-}
-
-@Composable
-private fun SearchIcon() {
-    Icon(
-        modifier = Modifier.size(24.dp),
-        painter = painterResource(R.drawable.ic_search),
-        tint = PeraTheme.colors.text.gray,
-        contentDescription = stringResource(R.string.search)
-    )
-    Spacer(modifier = Modifier.width(8.dp))
-}
-
-@Composable
-private fun ClipboardIcon(onClick: () -> Unit) {
-    Icon(
-        modifier = Modifier
-            .size(24.dp)
-            .clickable(onClick = onClick),
-        painter = painterResource(R.drawable.ic_clipboard),
-        tint = PeraTheme.colors.text.gray,
-        contentDescription = stringResource(R.string.paste_from_clipboard)
     )
 }
 
@@ -222,7 +227,7 @@ private fun AccountListSection(
             .padding(top = 16.dp)
     ) {
         externalAddressesSection(externalAddresses, listener::onExternalAddressSelected)
-        nfdsSection(nfds, listener::onAccountSelected)
+        nfdsSection(nfds, listener::onNfdSelected)
         accountsSection(accounts, listener::onAccountSelected)
         contactsSection(contacts, listener::onAccountSelected)
     }
@@ -250,28 +255,19 @@ private fun LazyListScope.nfdsSection(
     item { Spacer(modifier = Modifier.height(24.dp)) }
 }
 
-@Composable
-private fun AccountsSectionHeader() {
-    SectionHeader(text = stringResource(R.string.accounts))
-    Spacer(modifier = Modifier.height(12.dp))
-}
-
 private fun LazyListScope.accountsSection(
     items: List<JointAccountSelectionListItem.AccountItem>,
     onSelect: (String) -> Unit
 ) {
     if (items.isEmpty()) return
-    item { AccountsSectionHeader() }
+    item {
+        SectionHeader(text = stringResource(R.string.accounts))
+        Spacer(modifier = Modifier.height(12.dp))
+    }
     items(items = items, key = { "account_${it.address}" }) { item ->
         AccountSelectionItem(accountItem = item, onClick = { onSelect(item.address) })
     }
     item { Spacer(modifier = Modifier.height(24.dp)) }
-}
-
-@Composable
-private fun ContactsSectionHeader() {
-    SectionHeader(text = stringResource(R.string.contacts))
-    Spacer(modifier = Modifier.height(12.dp))
 }
 
 private fun LazyListScope.contactsSection(
@@ -279,7 +275,10 @@ private fun LazyListScope.contactsSection(
     onSelect: (String) -> Unit
 ) {
     if (items.isEmpty()) return
-    item { ContactsSectionHeader() }
+    item {
+        SectionHeader(text = stringResource(R.string.contacts))
+        Spacer(modifier = Modifier.height(12.dp))
+    }
     items(items = items, key = { "contact_${it.address}" }) { item ->
         ContactSelectionItem(contactItem = item, onClick = { onSelect(item.address) })
     }
@@ -450,4 +449,6 @@ interface AddJointAccountScreenListener {
     fun onBackClick()
     fun onAccountSelected(address: String)
     fun onExternalAddressSelected(address: String)
+    fun onNfdSelected(address: String)
+    fun onQrScanClick()
 }

@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,10 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,7 +38,6 @@ import com.algorand.android.ui.compose.widget.button.PeraButtonState
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
-import com.algorand.android.ui.compose.widget.text.PeraWarningText
 import com.algorand.android.ui.compose.widget.textfield.PeraTextField
 
 @Composable
@@ -49,18 +45,22 @@ fun NameJointAccountScreen(
     viewModel: NameJointAccountViewModel,
     listener: NameJointAccountScreenListener
 ) {
-    var accountName by remember { mutableStateOf("") }
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val currentState by viewModel.state.collectAsStateWithLifecycle()
+    val (defaultJointAccountNumber, accountName) = extractStateValues(currentState)
+    val defaultAccountName = defaultJointAccountNumber?.let {
+        stringResource(R.string.joint_account_default_name, it)
+    } ?: ""
+    val hasSetDefault = rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        accountName = viewModel.getDefaultAccountName()
+    LaunchedEffect(defaultAccountName) {
+        if (!hasSetDefault.value && accountName.isEmpty() && defaultAccountName.isNotEmpty()) {
+            hasSetDefault.value = true
+            viewModel.onAccountNameChanged(defaultAccountName)
+        }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         ToolbarSection(listener = listener)
-
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -74,16 +74,22 @@ fun NameJointAccountScreen(
             Spacer(modifier = Modifier.height(24.dp))
             AccountNameInputSection(
                 accountName = accountName,
-                onAccountNameChange = { accountName = it }
+                onAccountNameChange = viewModel::onAccountNameChanged
             )
-            ErrorMessageSection(viewState = viewState)
         }
-
         FinishButtonSection(
             accountName = accountName,
-            viewState = viewState,
-            onFinishClick = { listener.onFinishClick(accountName) }
+            viewState = currentState,
+            onFinishClick = viewModel::onFinishClick
         )
+    }
+}
+
+private fun extractStateValues(state: ViewState): Pair<Int?, String> {
+    return when (state) {
+        is ViewState.Idle -> state.defaultJointAccountNumber to state.accountName
+        is ViewState.Loading -> null to state.accountName
+        is ViewState.Success -> null to ""
     }
 }
 
@@ -132,18 +138,6 @@ private fun AccountNameInputSection(
 }
 
 @Composable
-private fun ErrorMessageSection(viewState: ViewState) {
-    val errorMessage = when (viewState) {
-        is ViewState.Error -> stringResource(viewState.messageResId)
-        else -> null
-    }
-    ErrorText(
-        error = errorMessage ?: "",
-        isVisible = errorMessage != null
-    )
-}
-
-@Composable
 private fun FinishButtonSection(
     accountName: String,
     viewState: ViewState,
@@ -152,7 +146,7 @@ private fun FinishButtonSection(
     val buttonState = when (viewState) {
         is ViewState.Loading -> PeraButtonState.PROGRESS
         is ViewState.Success -> PeraButtonState.PROGRESS
-        is ViewState.Idle, is ViewState.Error -> {
+        is ViewState.Idle -> {
             if (accountName.isNotBlank()) PeraButtonState.ENABLED else PeraButtonState.DISABLED
         }
     }
@@ -167,20 +161,6 @@ private fun FinishButtonSection(
     )
 }
 
-@Composable
-private fun ErrorText(error: String, isVisible: Boolean) {
-    val alphaAnimation = animateFloatAsState(if (isVisible) 1f else 0f, label = "errorAlpha")
-    if (isVisible && error.isNotBlank()) {
-        PeraWarningText(
-            modifier = Modifier
-                .padding(horizontal = 0.dp, vertical = 8.dp)
-                .alpha(alphaAnimation.value),
-            text = error
-        )
-    }
-}
-
 interface NameJointAccountScreenListener {
     fun onBackClick()
-    fun onFinishClick(accountName: String)
 }

@@ -33,6 +33,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewEvent
@@ -64,6 +65,14 @@ class PendingSignaturesDialogFragment : BottomSheetDialogFragment() {
                     when (event) {
                         is ViewEvent.ShowError -> {
                             Toast.makeText(requireContext(), event.messageResId, Toast.LENGTH_SHORT).show()
+                        }
+                        is ViewEvent.ShowSuccessAndNavigateBack -> {
+                            (activity as? MainActivity)?.showAlertSuccess(
+                                title = getString(event.messageResId),
+                                description = null,
+                                tag = TAG
+                            )
+                            dismiss()
                         }
                         is ViewEvent.NavigateBack -> dismiss()
                         else -> { /* Other events handled elsewhere */ }

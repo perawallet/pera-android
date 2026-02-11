@@ -21,10 +21,16 @@ import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponseRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 internal interface JointAccountApiService {
+
+    @GET("v1/joint-accounts/accounts/{account_address}/")
+    suspend fun getJointAccountDetail(
+        @Path("account_address") accountAddress: String
+    ): Response<JointAccountResponse>
 
     @POST("v1/joint-accounts/accounts/")
     suspend fun createJointAccount(

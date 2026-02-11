@@ -130,6 +130,13 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
         )
     }
 
+    override fun onRekeyToJointAccountClick() {
+        nav(
+            AccountStatusDetailBottomSheetDirections
+                .actionAccountStatusDetailBottomSheetToRekeyToJointAccountNavigation(args.accountAddress)
+        )
+    }
+
     override fun onRescanRekeyedAddressesClick() {
         viewModel.scanRekeyedAccounts(args.accountAddress)
     }

@@ -30,7 +30,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
 
     private val getInboxMessages: GetInboxMessages = mockk()
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled = mockk {
-        every { this@mockk(any()) } returns false
+        every { this@mockk(FeatureToggle.JOINT_ACCOUNT.key) } returns false
     }
 
     @Test

@@ -1,0 +1,47 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.account.local.domain.repository
+
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import kotlinx.coroutines.flow.Flow
+
+internal interface JointAccountPersistence {
+
+    fun getAllAsFlow(): Flow<List<LocalAccount.Joint>>
+
+    fun getAccountCountAsFlow(): Flow<Int>
+
+    suspend fun getAccountCount(): Int
+
+    suspend fun getAll(): List<LocalAccount.Joint>
+
+    suspend fun getAllAddresses(): List<String>
+
+    suspend fun getAccount(address: String): LocalAccount.Joint?
+
+    suspend fun addAccount(account: LocalAccount.Joint)
+
+    suspend fun deleteAccount(address: String)
+
+    suspend fun isAddressExists(address: String): Boolean
+
+    suspend fun deleteAllAccounts()
+
+    suspend fun getParticipantCount(jointAddress: String): Int
+
+    suspend fun getParticipantAddresses(jointAddress: String): List<String>
+
+    suspend fun getJointAddressesByParticipant(participantAddress: String): List<String>
+
+    suspend fun isParticipant(jointAddress: String, participantAddress: String): Boolean
+}

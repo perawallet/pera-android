@@ -25,14 +25,18 @@ import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDevi
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import com.algorand.wallet.utils.date.TimeProvider
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class JointAccountInvitationDetailViewModel @Inject constructor(
+    private val stateDelegate: StateDelegate<JointAccountInvitationDetailViewState>,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
@@ -40,19 +44,17 @@ class JointAccountInvitationDetailViewModel @Inject constructor(
     private val refreshInboxCache: RefreshInboxCache,
     private val timeProvider: TimeProvider,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : ViewModel(),
+    StateViewModel<JointAccountInvitationDetailViewState> by stateDelegate,
+    EventViewModel<JointAccountInvitationDetailViewModel.ViewEvent> by eventDelegate {
 
     private val navArgs: JointAccountInvitationDetailNavArgs =
         checkNotNull(savedStateHandle[INVITATION_NAV_ARGS_KEY])
 
     private val invitation = createInvitation()
 
-    private val _viewStateFlow = MutableStateFlow<JointAccountInvitationDetailViewState>(
-        JointAccountInvitationDetailViewState.Loading
-    )
-    val viewStateFlow: StateFlow<JointAccountInvitationDetailViewState> = _viewStateFlow.asStateFlow()
-
     init {
+        stateDelegate.setDefaultState(JointAccountInvitationDetailViewState.Loading)
         loadAccountDetails()
     }
 
@@ -79,25 +81,45 @@ class JointAccountInvitationDetailViewModel @Inject constructor(
             val icons = allAddresses.associateWith { address ->
                 getAccountIconDrawablePreview(address)
             }
-            _viewStateFlow.value = JointAccountInvitationDetailViewState.Content(
-                invitation = invitation,
-                accountDisplayNames = displayNames,
-                accountIcons = icons
-            )
+            stateDelegate.updateState {
+                JointAccountInvitationDetailViewState.Content(
+                    invitation = invitation,
+                    accountDisplayNames = displayNames,
+                    accountIcons = icons
+                )
+            }
         }
     }
 
-    suspend fun rejectInvitation(): Boolean {
-        return try {
+    fun onRejectClick() {
+        viewModelScope.launchIO {
             val deviceId = getSelectedNodeDeviceId()?.toLongOrNull()
             if (deviceId != null) {
                 inboxApiRepository.deleteJointInvitationNotification(deviceId, navArgs.accountAddress)
             }
             refreshInboxCache()
-            true
-        } catch (e: Exception) {
-            false
+            eventDelegate.sendEvent(ViewEvent.InvitationIgnored)
         }
+    }
+
+    fun onAcceptClick() {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(
+                ViewEvent.NavigateToNameJointAccount(
+                    threshold = navArgs.threshold,
+                    participantAddresses = navArgs.participantAddresses
+                )
+            )
+        }
+    }
+
+    sealed interface ViewEvent {
+        data object InvitationIgnored : ViewEvent
+        data object ShowError : ViewEvent
+        data class NavigateToNameJointAccount(
+            val threshold: Int,
+            val participantAddresses: List<String>
+        ) : ViewEvent
     }
 
     private companion object {

@@ -16,11 +16,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.algorand.android.LoginNavigationDirections
-import kotlinx.coroutines.launch
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -30,7 +27,7 @@ import com.algorand.android.models.Result
 import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel
 import com.algorand.android.modules.addaccount.joint.info.ui.JointAccountInfoDialogDelegate
 import com.algorand.android.modules.tracking.core.PeraClickEvent
-import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,15 +49,11 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return ComposeView(requireContext()).apply {
-            setContent {
-                PeraTheme {
-                    AddAccountIntroScreen(
-                        listener = this@AddAccountIntroFragment,
-                        viewModel = viewModel
-                    )
-                }
-            }
+        return createComposeView {
+            AddAccountIntroScreen(
+                listener = this@AddAccountIntroFragment,
+                viewModel = viewModel
+            )
         }
     }
 
@@ -74,13 +67,17 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
             viewModel.state,
             ::handleStateChange
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            viewModel.viewEvent,
+            ::handleViewEvent
+        )
     }
 
     private suspend fun handleStateChange(state: AddAccountIntroViewModel.ViewState) {
         when (state) {
-            is AddAccountIntroViewModel.ViewState.Idle -> Unit
+            is AddAccountIntroViewModel.ViewState.Loading -> Unit
             is AddAccountIntroViewModel.ViewState.Content -> {
-                configureToolbar(state.preview.isCloseButtonVisible, state.preview.isSkipButtonVisible)
+                configureToolbar(state.isCloseButtonVisible, state.isSkipButtonVisible)
                 (activity as? MainActivity)?.hideProgress()
             }
         }
@@ -125,21 +122,7 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
     }
 
     override fun onCreateAlgo25AccountClick() {
-        viewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_WALLET)
-        viewLifecycleOwner.lifecycleScope.launch {
-            when (val result = viewModel.createAlgo25Account()) {
-                is Result.Success -> {
-                    nav(
-                        AddAccountIntroFragmentDirections
-                            .actionRegisterIntroFragmentToCreateWalletNameRegistrationNavigation(result.data)
-                    )
-                }
-
-                is Result.Error -> {
-                    showGlobalError(getString(R.string.an_error_occurred))
-                }
-            }
-        }
+        viewModel.onCreateAlgo25AccountClicked()
     }
 
     override fun onCloseClick() {
@@ -166,8 +149,25 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
     }
 
     private fun onSkipClick() {
-        viewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_WELCOME_SKIP)
-        viewModel.setRegisterSkip()
-        nav(LoginNavigationDirections.actionGlobalToHomeNavigation())
+        viewModel.onSkipClicked()
+    }
+
+    private fun handleViewEvent(event: AddAccountIntroViewModel.ViewEvent) {
+        when (event) {
+            is AddAccountIntroViewModel.ViewEvent.NavigateToHome -> {
+                nav(LoginNavigationDirections.actionGlobalToHomeNavigation())
+            }
+
+            is AddAccountIntroViewModel.ViewEvent.NavigateToNameRegistration -> {
+                nav(
+                    AddAccountIntroFragmentDirections
+                        .actionRegisterIntroFragmentToCreateWalletNameRegistrationNavigation(event.accountCreation)
+                )
+            }
+
+            is AddAccountIntroViewModel.ViewEvent.ShowError -> {
+                showGlobalError(getString(R.string.an_error_occurred))
+            }
+        }
     }
 }

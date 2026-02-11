@@ -35,6 +35,7 @@ fun PreviewAccountStatusBottomSheetContentState(
         override fun onUndoRekeyClick() {}
         override fun onRekeyToLedgerClick() {}
         override fun onRekeyToStandardClick() {}
+        override fun onRekeyToJointAccountClick() {}
         override fun onRescanRekeyedAddressesClick() {}
         override fun onScanRegisteredAddressesClick() {}
         override fun onLearnMoreClick(url: String) {}

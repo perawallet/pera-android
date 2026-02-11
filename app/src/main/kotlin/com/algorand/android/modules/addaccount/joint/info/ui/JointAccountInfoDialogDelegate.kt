@@ -24,6 +24,7 @@ class JointAccountInfoDialogDelegate(private val onContinueClick: () -> Unit) {
     private var jointAccountInfoDialog: AlertDialog? = null
 
     fun show(context: Context) {
+        if (jointAccountInfoDialog?.isShowing == true) return
         val dialogView = createJointAccountInfoView(context)
         jointAccountInfoDialog = AlertDialog.Builder(context, R.style.FullScreenDialogStyle)
             .setView(dialogView)

@@ -12,10 +12,18 @@
 
 package com.algorand.android.modules.addaccount.joint.transaction.domain.exception
 
-sealed class JointAccountSigningException(message: String) : Exception(message) {
-    data object TransactionDecodeFailed : JointAccountSigningException("Failed to decode transaction")
-    data object SigningFailed : JointAccountSigningException("Failed to sign transaction")
-    data object AccountNotFound : JointAccountSigningException("Local account not found")
-    data object SecretKeyNotFound : JointAccountSigningException("Secret key not found for account")
-    data object UnsupportedAccountType : JointAccountSigningException("Account type does not support signing")
+import androidx.annotation.StringRes
+import com.algorand.android.R
+
+sealed class JointAccountSigningException(
+    @param:StringRes val errorResId: Int
+) : Exception() {
+
+    data object TransactionDecodeFailed : JointAccountSigningException(
+        R.string.joint_account_transaction_decode_failed
+    )
+
+    data object SigningFailed : JointAccountSigningException(
+        R.string.joint_account_signing_failed
+    )
 }

@@ -12,17 +12,14 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.usecase
 
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.account.core.domain.usecase.GetJointAccountCount
 import javax.inject.Inject
 
 internal class GetDefaultJointAccountNameUseCase @Inject constructor(
-    private val getLocalAccounts: GetLocalAccounts
+    private val getJointAccountCount: GetJointAccountCount
 ) : GetDefaultJointAccountName {
 
-    override suspend operator fun invoke(): String {
-        val localAccounts = getLocalAccounts()
-        val jointAccountCount = localAccounts.count { it is LocalAccount.Joint }
-        return "Joint Account #${jointAccountCount + 1}"
+    override suspend operator fun invoke(): Int {
+        return getJointAccountCount() + 1
     }
 }

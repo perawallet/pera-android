@@ -37,10 +37,6 @@ internal class CreateWalletConnectArbitraryDataSignerUseCase @Inject constructor
             is Algo25, is HdKey, is Joint -> Signer(address = transactionSigner.address, isLedger = false)
             is LedgerBle -> Unsignable(errorProvider.getUnableToSignError())
             is SignerNotFound -> Unsignable(errorProvider.getMissingSignerError())
-            is com.algorand.wallet.account.core.domain.model.TransactionSigner.Joint -> {
-                TODO("Handle Joint Account")
-                Unsignable(errorProvider.getUnableToSignError())
-            }
         }
     }
 }

@@ -17,6 +17,8 @@ import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepositor
 import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -29,6 +31,7 @@ internal class GetLocalAccountsAddressesUseCase @Inject constructor(
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
     private val jointAccountRepository: JointAccountRepository,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val dispatcher: CoroutineDispatcher
 ) : GetLocalAccountsAddresses {
 
@@ -38,7 +41,7 @@ internal class GetLocalAccountsAddressesUseCase @Inject constructor(
             val deferredAlgo25Accounts = async { algo25AccountRepository.getAllAddresses() }
             val deferredLedgerBleAccounts = async { ledgerBleAccountRepository.getAllAddresses() }
             val deferredNoAuthAccounts = async { noAuthAccountRepository.getAllAddresses() }
-            val deferredJointAccounts = async { jointAccountRepository.getAllAddresses() }
+            val deferredJointAccounts = async { getJointAccountAddressesIfEnabled() }
             awaitAll(
                 deferredHdKeyAccountsAddresses,
                 deferredAlgo25Accounts,
@@ -46,6 +49,14 @@ internal class GetLocalAccountsAddressesUseCase @Inject constructor(
                 deferredNoAuthAccounts,
                 deferredJointAccounts
             ).flatten()
+        }
+    }
+
+    private suspend fun getJointAccountAddressesIfEnabled(): List<String> {
+        return if (isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)) {
+            jointAccountRepository.getAllAddresses()
+        } else {
+            emptyList()
         }
     }
 }

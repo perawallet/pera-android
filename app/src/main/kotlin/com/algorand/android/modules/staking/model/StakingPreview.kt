@@ -13,10 +13,13 @@
 package com.algorand.android.modules.staking.model
 
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.utils.Event
 
 data class StakingPreview(
     val sendMessageEvent: Event<String>? = null,
     val errorEvent: Event<WebViewError>? = null,
-    val onPageFinished: Event<Unit>? = null
+    val onPageFinished: Event<Unit>? = null,
+    val openDappWebviewEvent: Event<DappInfo>? = null,
+    val openSystemBrowserEvent: Event<String>? = null
 )

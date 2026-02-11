@@ -20,4 +20,6 @@ sealed class JointAccountTransactionState {
     data object Canceled : JointAccountTransactionState()
 
     data object Completed : JointAccountTransactionState()
+
+    data class Failed(val failReasonDisplay: String?) : JointAccountTransactionState()
 }

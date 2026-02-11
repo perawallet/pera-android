@@ -44,8 +44,14 @@ internal class JointAccountRepositoryImpl @Inject constructor(
     private val jointSignRequestDTOMapper: JointSignRequestMapper,
     private val addSignatureInputMapper: AddSignatureInputMapper,
     private val searchSignRequestsInputMapper: SearchSignRequestsInputMapper,
-    private val peraApiErrorHandler: PeraRetrofitErrorHandler
+    private val peraApiErrorHandler: PeraRetrofitErrorHandler,
 ) : JointAccountRepository {
+
+    override suspend fun getJointAccountDetail(accountAddress: String): PeraResult<JointAccount> {
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.getJointAccountDetail(accountAddress)
+        }.mapToJointAccount()
+    }
 
     override suspend fun createJointAccount(
         createJointAccount: CreateJointAccountInput
@@ -76,15 +82,15 @@ internal class JointAccountRepositoryImpl @Inject constructor(
         }.mapToJointSignRequest()
     }
 
-    override suspend fun addSignature(
+    override suspend fun addSignatures(
         signRequestId: String,
-        addSignatureInput: AddSignatureInput
+        addSignatureInputs: List<AddSignatureInput>
     ): PeraResult<JointSignRequest> {
-        val request = addSignatureInputMapper.mapToSignRequestTransactionListResponseRequest(
-            addSignatureInput
-        )
+        val requests = addSignatureInputs.map { input ->
+            addSignatureInputMapper.mapToSignRequestTransactionListResponseRequest(input)
+        }
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
-            jointAccountApiService.addSignature(signRequestId, listOf(request))
+            jointAccountApiService.addSignature(signRequestId, requests)
         }.mapToJointSignRequest()
     }
 
@@ -153,7 +159,8 @@ internal class JointAccountRepositoryImpl @Inject constructor(
                     lastValidExpectedDatetime = transactionList.expectedExpireDatetime
                 )
             },
-            status = signRequest.status
+            status = signRequest.status,
+            failReasonDisplay = signRequest.failReasonDisplay
         )
     }
 }

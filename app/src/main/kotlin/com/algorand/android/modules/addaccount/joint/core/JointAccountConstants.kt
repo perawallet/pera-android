@@ -14,5 +14,6 @@ package com.algorand.android.modules.addaccount.joint.core
 
 object JointAccountConstants {
     const val CURRENT_VERSION = 1
-    const val MIN_THRESHOLD = 2
+    const val MIN_THRESHOLD = 1
+    const val DEFAULT_THRESHOLD = 2
 }

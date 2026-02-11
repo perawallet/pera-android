@@ -23,6 +23,7 @@ import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepositor
 import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,13 +43,17 @@ internal class GetAllLocalAccountAddressesAsFlowUseCaseTest {
     private val ledgerBleAccountRepository: LedgerBleAccountRepository = mockk()
     private val noAuthAccountRepository: NoAuthAccountRepository = mockk()
     private val jointAccountRepository: JointAccountRepository = mockk()
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled = mockk {
+        every { this@mockk.invoke(any()) } returns true
+    }
 
     private val sut = GetAllLocalAccountAddressesAsFlowUseCase(
         hdKeyAccountRepository,
         algo25AccountRepository,
         ledgerBleAccountRepository,
         noAuthAccountRepository,
-        jointAccountRepository
+        jointAccountRepository,
+        isFeatureToggleEnabled
     )
 
     @Test

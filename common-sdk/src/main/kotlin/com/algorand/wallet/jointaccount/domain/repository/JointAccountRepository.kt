@@ -20,7 +20,9 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignReque
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
-internal interface JointAccountRepository {
+interface JointAccountRepository {
+
+    suspend fun getJointAccountDetail(accountAddress: String): PeraResult<JointAccount>
 
     suspend fun createJointAccount(
         createJointAccount: CreateJointAccountInput
@@ -30,9 +32,9 @@ internal interface JointAccountRepository {
         createSignRequestInput: CreateSignRequestInput
     ): PeraResult<JointSignRequest>
 
-    suspend fun addSignature(
+    suspend fun addSignatures(
         signRequestId: String,
-        addSignatureInput: AddSignatureInput
+        addSignatureInputs: List<AddSignatureInput>
     ): PeraResult<JointSignRequest>
 
     suspend fun getSignRequestWithSignatures(

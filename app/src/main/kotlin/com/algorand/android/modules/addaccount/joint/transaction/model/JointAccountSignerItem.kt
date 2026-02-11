@@ -25,6 +25,8 @@ data class JointAccountSignerItem(
     val accountIconDrawablePreview: AccountIconDrawablePreview,
     val imageUri: Uri?, // For contacts
     val signatureStatus: JointAccountSignatureStatus,
+    val showProgress: Boolean = false,
+    val isLocalAccount: Boolean = false,
     val isLedgerAccount: Boolean = false,
     val ledgerBluetoothAddress: String? = null,
     val ledgerAccountIndex: Int? = null

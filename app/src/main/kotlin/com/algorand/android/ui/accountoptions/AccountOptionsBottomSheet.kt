@@ -75,7 +75,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             setupCopyButton(accountAddress)
             setupShowQrButton(accountAddress)
             setupUndoRekeyOptionButton(isUndoRekeyButtonVisible, authAccountDisplayName)
-            setupRekeyToOptions(canSignTransaction)
+            setupRekeyToOptions(canSignTransaction, isJointAccount)
             setupRescanRekeyedAccountsButton(registrationType)
             setupExportShareAccountButton(registrationType)
         }
@@ -133,14 +133,18 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         }
     }
 
-    private fun setupRekeyToOptions(canSignTransaction: Boolean) {
+    private fun setupRekeyToOptions(canSignTransaction: Boolean, isJointAccount: Boolean) {
         binding.rekeyToLedgerAccountButton.apply {
-            isVisible = canSignTransaction
+            isVisible = canSignTransaction && !isJointAccount
             setOnClickListener { navToRekeyToLedgerAccountFragment() }
         }
         binding.rekeyToStandardAccountButton.apply {
-            isVisible = canSignTransaction
+            isVisible = canSignTransaction && !isJointAccount
             setOnClickListener { navToRekeyToStandardAccountFragment() }
+        }
+        binding.rekeyToJointAccountButton.apply {
+            isVisible = canSignTransaction && isJointAccount
+            setOnClickListener { navToRekeyToJointAccountFragment() }
         }
         binding.rekeyDivider.isVisible = canSignTransaction
     }
@@ -207,6 +211,14 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     private fun navToRekeyToStandardAccountFragment() {
         nav(
             AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyToStandardAccountNavigation(
+                accountOptionsViewModel.accountAddress
+            )
+        )
+    }
+
+    private fun navToRekeyToJointAccountFragment() {
+        nav(
+            AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyToJointAccountNavigation(
                 accountOptionsViewModel.accountAddress
             )
         )

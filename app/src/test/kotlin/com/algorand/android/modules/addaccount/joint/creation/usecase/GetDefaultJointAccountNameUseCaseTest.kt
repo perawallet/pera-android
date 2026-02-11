@@ -12,8 +12,7 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.usecase
 
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.account.core.domain.usecase.GetJointAccountCount
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -22,70 +21,33 @@ import org.junit.Test
 
 internal class GetDefaultJointAccountNameUseCaseTest {
 
-    private val getLocalAccounts: GetLocalAccounts = mockk()
-    private val sut = GetDefaultJointAccountNameUseCase(getLocalAccounts)
+    private val getJointAccountCount: GetJointAccountCount = mockk()
+    private val sut = GetDefaultJointAccountNameUseCase(getJointAccountCount)
 
     @Test
-    fun `EXPECT Joint Account #1 WHEN no joint accounts exist`() = runTest {
-        coEvery { getLocalAccounts() } returns emptyList()
+    fun `EXPECT 1 WHEN no joint accounts exist`() = runTest {
+        coEvery { getJointAccountCount() } returns 0
 
         val result = sut()
 
-        assertEquals("Joint Account #1", result)
+        assertEquals(1, result)
     }
 
     @Test
-    fun `EXPECT Joint Account #2 WHEN one joint account exists`() = runTest {
-        coEvery { getLocalAccounts() } returns listOf(createJointAccount("ADDR1"))
+    fun `EXPECT 2 WHEN one joint account exists`() = runTest {
+        coEvery { getJointAccountCount() } returns 1
 
         val result = sut()
 
-        assertEquals("Joint Account #2", result)
+        assertEquals(2, result)
     }
 
     @Test
-    fun `EXPECT Joint Account #4 WHEN three joint accounts exist`() = runTest {
-        coEvery { getLocalAccounts() } returns listOf(
-            createJointAccount("ADDR1"),
-            createJointAccount("ADDR2"),
-            createJointAccount("ADDR3")
-        )
+    fun `EXPECT 4 WHEN three joint accounts exist`() = runTest {
+        coEvery { getJointAccountCount() } returns 3
 
         val result = sut()
 
-        assertEquals("Joint Account #4", result)
+        assertEquals(4, result)
     }
-
-    @Test
-    fun `EXPECT Joint Account #1 WHEN only non-joint accounts exist`() = runTest {
-        coEvery { getLocalAccounts() } returns listOf(
-            LocalAccount.Algo25(algoAddress = "ADDR1"),
-            LocalAccount.Algo25(algoAddress = "ADDR2")
-        )
-
-        val result = sut()
-
-        assertEquals("Joint Account #1", result)
-    }
-
-    @Test
-    fun `EXPECT Joint Account #3 WHEN mixed account types exist with two joint accounts`() = runTest {
-        coEvery { getLocalAccounts() } returns listOf(
-            LocalAccount.Algo25(algoAddress = "ADDR1"),
-            createJointAccount("ADDR2"),
-            LocalAccount.Algo25(algoAddress = "ADDR3"),
-            createJointAccount("ADDR4")
-        )
-
-        val result = sut()
-
-        assertEquals("Joint Account #3", result)
-    }
-
-    private fun createJointAccount(address: String) = LocalAccount.Joint(
-        algoAddress = address,
-        participantAddresses = listOf("PART1", "PART2"),
-        threshold = 2,
-        version = 1
-    )
 }

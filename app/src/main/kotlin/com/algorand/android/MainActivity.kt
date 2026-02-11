@@ -42,7 +42,6 @@ import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
@@ -94,9 +93,7 @@ class MainActivity :
                 )
             )
 
-            is MainViewModel.ViewEvent.NavToAssetInboxOneAccountNavigation -> navToAssetInboxOneAccountNavigation(
-                event.address
-            )
+            is MainViewModel.ViewEvent.NavToInboxNavigation -> navToInboxNavigation()
 
             is MainViewModel.ViewEvent.NavToAccountDetailFragment -> navToAccountDetailFragment(
                 event.address
@@ -598,13 +595,9 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))
     }
 
-    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
+    private fun navToInboxNavigation() {
         nav(
-            HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                AssetInboxOneAccountNavArgs(
-                    accountAddress
-                )
-            )
+            HomeNavigationDirections.actionGlobalInboxNavigation()
         )
     }
 

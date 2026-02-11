@@ -29,13 +29,10 @@ import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRende
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
-import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
@@ -46,6 +43,7 @@ import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class AccountPreviewProcessor @Inject constructor(
+    private val getTotalInboxCount: GetTotalInboxCount,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val portfolioItemProcessor: AccountsPreviewPortfolioItemProcessor,
     private val notificationStatusUseCase: NotificationStatusUseCase,
@@ -54,9 +52,7 @@ class AccountPreviewProcessor @Inject constructor(
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val bannerItemMapper: BaseAccountListItemBannerItemMapper,
-    private val getLocalAccounts: GetLocalAccounts,
     private val getAccountsCustomInfo: GetAccountsCustomInfo,
-    private val getAccountRegistrationType: GetAccountRegistrationType,
     private val getAccountType: GetAccountType,
     private val sortAccountsBySortingPreference: SortAccountsBySortingPreference,
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
@@ -69,10 +65,10 @@ class AccountPreviewProcessor @Inject constructor(
         localAccounts: List<LocalAccount>,
         accountLites: Map<String, AccountLite>,
         banner: Banner?,
-        assetInboxCount: Int,
         privacyMode: PrivacyMode,
         spotBanners: List<SpotBanner>
     ): AccountPreview {
+        val assetInboxCount = getTotalInboxCount()
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
@@ -119,13 +115,11 @@ class AccountPreviewProcessor @Inject constructor(
             }
     }
 
-    suspend fun createAccountErrorItemList(): List<BaseAccountListItem> {
-        val localAccounts = getLocalAccounts()
+    suspend fun createAccountErrorItemList(localAccounts: List<LocalAccount>): List<BaseAccountListItem> {
         val customInfos = getAccountsCustomInfo(localAccounts.map { it.algoAddress })
         val accountErrorItems = localAccounts
             .mapNotNull { localAccount ->
                 val accountType = getAccountType(localAccount.algoAddress) ?: return@mapNotNull null
-                val registrationType = getAccountRegistrationType(localAccount)
                 val customInfo = customInfos[localAccount.algoAddress]
                 val displayName = getAccountDisplayName(
                     address = localAccount.algoAddress,
@@ -136,7 +130,7 @@ class AccountPreviewProcessor @Inject constructor(
                     address = localAccount.algoAddress,
                     primaryDisplayName = displayName.primaryDisplayName,
                     secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
-                    accountIconDrawablePreview = getAccountIconDrawablePreviewByType(registrationType),
+                    accountIconDrawablePreview = getAccountIconDrawablePreviewByType(accountType),
                     canCopyable = accountType != AccountType.NoAuth
                 )
             }
@@ -186,13 +180,14 @@ class AccountPreviewProcessor @Inject constructor(
 
     private suspend fun getAccountErrorItem(accountLite: AccountLite): BaseAccountListItem.AccountErrorItem {
         val address = accountLite.address
+        val accountType = getAccountType(address) ?: AccountType.NoAuth
         val displayName = getAccountDisplayName(accountLite)
         return BaseAccountListItem.AccountErrorItem(
             address = address,
             primaryDisplayName = displayName.primaryDisplayName,
             secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
-            accountIconDrawablePreview = getAccountIconDrawablePreviewByType(accountLite.registrationType),
-            canCopyable = accountLite.registrationType != AccountRegistrationType.NoAuth
+            accountIconDrawablePreview = getAccountIconDrawablePreviewByType(accountType),
+            canCopyable = accountType != AccountType.NoAuth
         )
     }
 

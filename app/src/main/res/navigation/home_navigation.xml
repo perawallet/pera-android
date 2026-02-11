@@ -46,7 +46,7 @@
 
     <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
-    <include app:graph="@navigation/asset_inbox_all_accounts_navigation" />
+    <include app:graph="@navigation/inbox_navigation" />
 
     <include app:graph="@navigation/swap_v2_navigation" />
 
@@ -419,6 +419,10 @@
     </action>
 
     <action
+        android:id="@+id/action_global_inboxNavigation"
+        app:destination="@id/inboxNavigation" />
+
+    <action
         android:id="@+id/action_global_accountDetailFragment"
         app:destination="@id/accountDetailFragment" />
 
@@ -631,8 +635,8 @@
                 app:nullable="false" />
         </action>
         <action
-            android:id="@+id/action_accountsFragment_to_assetInboxAllAccountsNavigation"
-            app:destination="@id/assetInboxAllAccountsNavigation" />
+            android:id="@+id/action_accountsFragment_to_inboxNavigation"
+            app:destination="@id/inboxNavigation" />
         <action
             android:id="@+id/action_accountsFragment_to_CardsFragment"
             app:destination="@id/cardsFragment" />
@@ -1107,8 +1111,8 @@
                 app:argType="com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs" />
         </action>
         <action
-            android:id="@+id/action_accountDetailFragment_to_assetInboxAllAccountsNavigation"
-            app:destination="@id/assetInboxAllAccountsNavigation">
+            android:id="@+id/action_accountDetailFragment_to_inboxNavigation"
+            app:destination="@id/inboxNavigation">
             <argument
                 android:name="filterAccountAddress"
                 android:defaultValue="@null"
@@ -1769,6 +1773,22 @@
             android:defaultValue="@null"
             app:argType="string[]"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_jointAccountDetailFragment_to_editParticipantNameFragment"
+            app:destination="@id/editParticipantNameFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editParticipantNameFragment"
+        android:name="com.algorand.android.modules.addaccount.joint.creation.ui.editname.EditAccountNameFragment"
+        android:label="EditParticipantNameFragment">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="showRemoveButton"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 
     <action

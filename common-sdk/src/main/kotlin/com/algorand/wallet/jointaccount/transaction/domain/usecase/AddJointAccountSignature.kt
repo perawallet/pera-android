@@ -19,6 +19,6 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignReques
 fun interface AddJointAccountSignature {
     suspend operator fun invoke(
         signRequestId: String,
-        addSignatureInput: AddSignatureInput
+        addSignatureInputs: List<AddSignatureInput>
     ): PeraResult<JointSignRequest>
 }

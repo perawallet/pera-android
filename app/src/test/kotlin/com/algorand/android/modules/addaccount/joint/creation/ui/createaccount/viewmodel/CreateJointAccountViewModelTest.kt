@@ -15,7 +15,11 @@ package com.algorand.android.modules.addaccount.joint.creation.ui.createaccount.
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
+import com.algorand.wallet.foundation.cache.PersistentCache
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
+import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +55,7 @@ internal class CreateJointAccountViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertTrue(state.selectedAccounts.isEmpty())
     }
 
@@ -63,7 +67,7 @@ internal class CreateJointAccountViewModelTest {
         viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertFalse(state.isContinueEnabled)
     }
 
@@ -76,73 +80,66 @@ internal class CreateJointAccountViewModelTest {
         viewModel.addSelectedAccount(createSelectedAccount("ADDR2"))
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertTrue(state.isContinueEnabled)
     }
 
     @Test
-    fun `EXPECT true WHEN adding new account`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val result = viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `EXPECT false WHEN adding duplicate account`() = runTest {
+    fun `EXPECT account added to list WHEN addSelectedAccount called with new account`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
         advanceUntilIdle()
 
-        val result = viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `EXPECT account added to list WHEN addSelectedAccount succeeds`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertEquals(1, state.selectedAccounts.size)
         assertEquals("ADDR1", state.selectedAccounts[0].accountDisplayName.accountAddress)
     }
 
     @Test
-    fun `EXPECT account name updated WHEN updateAccountName called`() = runTest {
+    fun `EXPECT duplicate allowed WHEN adding same account twice`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
+        advanceUntilIdle()
+        viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
+        assertEquals(2, state.selectedAccounts.size)
+    }
+
+    @Test
+    fun `EXPECT account name updated WHEN updateAccountNameFromResult called`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         viewModel.addSelectedAccount(createSelectedAccount("ADDR1", "Original Name"))
         advanceUntilIdle()
 
-        viewModel.updateAccountName("ADDR1", "New Name")
+        viewModel.setEditingAccountIndex(0)
+        viewModel.updateAccountNameFromResult("New Name")
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertEquals("New Name", state.selectedAccounts[0].accountDisplayName.primaryDisplayName)
     }
 
     @Test
-    fun `EXPECT no update WHEN updateAccountName with blank name`() = runTest {
+    fun `EXPECT no update WHEN updateAccountNameFromResult with blank name`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         viewModel.addSelectedAccount(createSelectedAccount("ADDR1", "Original Name"))
         advanceUntilIdle()
 
-        viewModel.updateAccountName("ADDR1", "   ")
+        viewModel.setEditingAccountIndex(0)
+        viewModel.updateAccountNameFromResult("   ")
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertEquals("Original Name", state.selectedAccounts[0].accountDisplayName.primaryDisplayName)
     }
 
@@ -155,10 +152,10 @@ internal class CreateJointAccountViewModelTest {
         viewModel.addSelectedAccount(createSelectedAccount("ADDR2"))
         advanceUntilIdle()
 
-        viewModel.removeSelectedAccount("ADDR1")
+        viewModel.removeSelectedAccount(0)
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertEquals(1, state.selectedAccounts.size)
         assertEquals("ADDR2", state.selectedAccounts[0].accountDisplayName.accountAddress)
     }
@@ -201,27 +198,12 @@ internal class CreateJointAccountViewModelTest {
         viewModel.addSelectedAccount(createSelectedAccount("ADDR3"))
         advanceUntilIdle()
 
-        viewModel.removeSelectedAccount("ADDR2")
+        viewModel.removeSelectedAccount(1)
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertEquals(2, state.selectedAccounts.size)
         assertFalse(state.selectedAccounts.any { it.accountDisplayName.accountAddress == "ADDR2" })
-    }
-
-    @Test
-    fun `EXPECT no change WHEN removing non-existent account`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.addSelectedAccount(createSelectedAccount("ADDR1"))
-        advanceUntilIdle()
-
-        viewModel.removeSelectedAccount("NON_EXISTENT")
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertEquals(1, state.selectedAccounts.size)
     }
 
     @Test
@@ -234,14 +216,22 @@ internal class CreateJointAccountViewModelTest {
         }
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = viewModel.state.value as CreateJointAccountViewModel.ViewState.Content
         assertEquals(5, state.selectedAccounts.size)
         assertTrue(state.isContinueEnabled)
     }
 
     private fun createViewModel(): CreateJointAccountViewModel {
+        val mockPersistentCache = mockk<PersistentCache<Boolean>>(relaxed = true)
+        val mockPersistentCacheProvider = mockk<PersistentCacheProvider> {
+            every {
+                getPersistentCache<Boolean>(any(), any())
+            } returns mockPersistentCache
+        }
         return CreateJointAccountViewModel(
-            stateDelegate = StateDelegate()
+            stateDelegate = StateDelegate<CreateJointAccountViewModel.ViewState>(),
+            eventDelegate = EventDelegate<CreateJointAccountViewModel.ViewEvent>(),
+            persistentCacheProvider = mockPersistentCacheProvider
         )
     }
 

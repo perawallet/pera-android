@@ -330,6 +330,8 @@
     <string name="now">Now</string>
     <string name="developer_options">Developer Options</string>
     <string name="override_feature_flags">Override Feature Flags</string>
+    <string name="enable_all">Enable All</string>
+    <string name="disable_all">Disable All</string>
     <string name="overridden">Overridden</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>

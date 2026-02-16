@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -47,6 +48,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraSwitch
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.settings.developeroptions.featureflags.viewmodel.OverrideFeatureFlagsViewModel
 import com.algorand.android.ui.settings.developeroptions.featureflags.viewmodel.OverrideFeatureFlagsViewModel.ViewState.Content
@@ -73,8 +75,25 @@ fun OverrideFeatureFlagsScreen(
         when (val viewState = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             is Content -> {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    PeraSecondaryButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = { viewModel.enableAllFeatureFlags() },
+                        text = stringResource(R.string.enable_all)
+                    )
+                    PeraSecondaryButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = { viewModel.disableAllFeatureFlags() },
+                        text = stringResource(R.string.disable_all)
+                    )
+                }
                 LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(viewState.featureFlags) { featureFlag ->

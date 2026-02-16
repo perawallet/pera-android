@@ -206,7 +206,7 @@ internal class JointAccountTransactionViewModelTest {
                 primaryDisplayName = "Joint Account",
                 secondaryDisplayName = null
             ),
-            jointAccountIconPreview = mockk<AccountIconDrawablePreview>(),
+            jointAccountIconPreview = mockk<AccountIconDrawablePreview>(relaxed = true),
             recipientAddress = "RECIPIENT_ADDRESS",
             recipientShortAddress = "RECIP...ADDR",
             amount = "10.00 ALGO",

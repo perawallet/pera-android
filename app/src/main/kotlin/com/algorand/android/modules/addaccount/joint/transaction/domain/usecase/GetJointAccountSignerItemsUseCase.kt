@@ -18,8 +18,8 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.repository.ContactRepository
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
@@ -31,7 +31,8 @@ internal class GetJointAccountSignerItemsUseCase @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getLocalAccount: GetLocalAccount,
     private val contactRepository: ContactRepository,
-    private val getAccountType: GetAccountType
+    private val getAccountType: GetAccountType,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) : GetJointAccountSignerItems {
 
     override suspend operator fun invoke(
@@ -59,7 +60,14 @@ internal class GetJointAccountSignerItemsUseCase @Inject constructor(
         }
         val contact = contactRepository.getContactByAddress(address)
         val localAccount = getLocalAccount(address)
-        val isLedger = getAccountType(address) is AccountType.LedgerBle
+        val authAddress = getAccountRekeyAdminAddress(address)
+        val authAccount = authAddress?.let { getLocalAccount(it) }
+        val effectiveLedgerAccount = when {
+            localAccount is LocalAccount.LedgerBle -> localAccount
+            authAccount is LocalAccount.LedgerBle -> authAccount
+            else -> null
+        }
+        val isLedger = effectiveLedgerAccount != null
 
         return JointAccountSignerItem(
             accountAddress = address,
@@ -70,8 +78,9 @@ internal class GetJointAccountSignerItemsUseCase @Inject constructor(
             showProgress = status == JointAccountSignatureStatus.Pending,
             isLocalAccount = localAccount != null,
             isLedgerAccount = isLedger,
-            ledgerBluetoothAddress = (localAccount as? LocalAccount.LedgerBle)?.deviceMacAddress,
-            ledgerAccountIndex = (localAccount as? LocalAccount.LedgerBle)?.indexInLedger
+            ledgerBluetoothAddress = effectiveLedgerAccount?.deviceMacAddress,
+            ledgerAccountIndex = effectiveLedgerAccount?.indexInLedger,
+            accountAuthAddress = authAddress
         )
     }
 }

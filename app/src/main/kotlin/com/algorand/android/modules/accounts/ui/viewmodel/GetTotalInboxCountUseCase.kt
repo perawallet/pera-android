@@ -1,40 +1,34 @@
-/*
- * Copyright 2022-2025 Pera Wallet, LDA
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
- */
-
 package com.algorand.android.modules.accounts.ui.viewmodel
 
+import com.algorand.android.modules.accounts.ui.model.InboxButtonLabel
 import com.algorand.wallet.inbox.asset.domain.usecase.GetAssetInboxRequestCountFlow
-import com.algorand.wallet.inbox.domain.usecase.GetJointAccountInboxCountFlow
+import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 internal class GetTotalInboxCountUseCase @Inject constructor(
     private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
-    private val getJointAccountInboxCountFlow: GetJointAccountInboxCountFlow,
+    private val getInboxMessages: GetInboxMessages,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : GetTotalInboxCount {
 
-    override suspend fun invoke(): Int {
-        return if (isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)) {
-            combine(
-                getAssetInboxRequestCountFlow(),
-                getJointAccountInboxCountFlow()
-            ) { asaCount, jointCount -> asaCount + jointCount }
-                .first()
-        } else {
-            getAssetInboxRequestCountFlow().first()
+    override suspend fun invoke(): InboxButtonLabel? {
+        val isJointEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
+
+        if (isJointEnabled) {
+            val inboxMessages = getInboxMessages()
+            if (!inboxMessages?.jointAccountImportRequests.isNullOrEmpty()) {
+                return InboxButtonLabel.JointAccountRequest
+            }
+            if (!inboxMessages?.jointAccountSignRequests.isNullOrEmpty()) {
+                return InboxButtonLabel.SignTxnRequest
+            }
         }
+
+        val asaCount = getAssetInboxRequestCountFlow().first()
+        if (asaCount > 0) return InboxButtonLabel.Inbox
+        return null
     }
 }

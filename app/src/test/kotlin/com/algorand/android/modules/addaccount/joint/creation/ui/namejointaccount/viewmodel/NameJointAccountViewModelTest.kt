@@ -16,7 +16,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewEvent
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewState
-import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
+import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
 import com.algorand.android.ui.device.model.DeviceConfig
 import com.algorand.android.ui.device.usecase.GetDeviceConfig
 import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
@@ -55,7 +55,7 @@ internal class NameJointAccountViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val createJointAccount: CreateJointAccount = mockk()
-    private val getDefaultJointAccountName: GetDefaultJointAccountName = mockk()
+    private val getNextJointAccountNumber: GetNextJointAccountNumber = mockk()
     private val getAllAccountOrderIndexes: GetAllAccountOrderIndexes = mockk()
     private val addJointAccount: AddJointAccount = mockk()
     private val getJointAccount: GetJointAccount = mockk()
@@ -67,7 +67,7 @@ internal class NameJointAccountViewModelTest {
         Dispatchers.setMain(testDispatcher)
         mockkStatic(android.util.Log::class)
         io.mockk.every { android.util.Log.e(any(), any(), any()) } returns 0
-        coEvery { getDefaultJointAccountName() } returns DEFAULT_JOINT_ACCOUNT_NUMBER
+        coEvery { getNextJointAccountNumber() } returns DEFAULT_JOINT_ACCOUNT_NUMBER
     }
 
     @After
@@ -374,7 +374,7 @@ internal class NameJointAccountViewModelTest {
             stateDelegate = stateDelegate,
             eventDelegate = eventDelegate,
             createJointAccount = createJointAccount,
-            getDefaultJointAccountName = getDefaultJointAccountName,
+            getNextJointAccountNumber = getNextJointAccountNumber,
             getAllAccountOrderIndexes = getAllAccountOrderIndexes,
             addJointAccount = addJointAccount,
             getJointAccount = getJointAccount,

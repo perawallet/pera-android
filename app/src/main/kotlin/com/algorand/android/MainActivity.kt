@@ -41,7 +41,6 @@ import com.algorand.android.models.TransactionSignData
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
-import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
@@ -391,8 +390,7 @@ class MainActivity :
                 is TransactionManagerResult.Success.TransactionRequestSigned -> {
                     hideProgress()
                     hideLedgerLoadingDialog()
-                    PendingSignaturesDialogFragment.newInstance(result.signRequestId)
-                        .show(supportFragmentManager, PendingSignaturesDialogFragment.TAG)
+                    nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(result.signRequestId))
                 }
 
                 TransactionManagerResult.LedgerOperationCanceled -> {
@@ -596,9 +594,7 @@ class MainActivity :
     }
 
     private fun navToInboxNavigation() {
-        nav(
-            HomeNavigationDirections.actionGlobalInboxNavigation()
-        )
+        nav(HomeNavigationDirections.actionGlobalInboxNavigation())
     }
 
     private fun navToAccountDetailFragment(address: String) {

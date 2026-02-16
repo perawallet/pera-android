@@ -15,7 +15,6 @@ package com.algorand.android.core.transaction
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.utils.extensions.encodeBase64
-import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
@@ -37,7 +36,6 @@ class JointAccountTransactionSignHelper @Inject constructor(
     private val proposeJointSignRequest: ProposeJointSignRequest,
     private val signAndSubmitJointAccountSignature: SignAndSubmitJointAccountSignature,
     private val getJointAccountProposerAddress: GetJointAccountProposerAddress,
-    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) {
 
     suspend fun handleJointAccountTransaction(
@@ -59,7 +57,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
     ): PreparedJointAccountData? {
         val jointAccount = getLocalAccount(jointAccountAddress) as? LocalAccount.Joint ?: return null
         val proposerAddress = getJointAccountProposerAddress(jointAccount) ?: return null
-        val signerAddress = getAccountRekeyAdminAddress(proposerAddress) ?: proposerAddress
+        val signerAddress = proposerAddress
         val rawTransactionLists = prepareRawTransactionLists(transactionDataList) ?: return null
         val transactionSignatureLists = prepareTransactionSignatureLists(transactionDataList, signerAddress)
             ?: return null

@@ -30,7 +30,9 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.Sta
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
@@ -39,11 +41,11 @@ import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AssetDetailPreviewUseCase @Inject constructor(
@@ -52,6 +54,7 @@ class AssetDetailPreviewUseCase @Inject constructor(
     private val getSelectedAssetExchangeValueUseCase: GetSelectedAssetExchangeValueUseCase,
     private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
     private val getAccountType: GetAccountType,
+    private val getAccountRegistrationType: GetAccountRegistrationType,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow,
@@ -155,18 +158,20 @@ class AssetDetailPreviewUseCase @Inject constructor(
         assetId: Long,
         isQuickActionButtonsVisible: Boolean
     ): List<AssetDetailQuickActionItem> {
-        val isWatchAccount = getAccountType(address) == AccountType.NoAuth
+        val accountType = getAccountType(address)
+        val isWatchAccount = accountType == AccountType.NoAuth
         val safeIsQuickActionButtonsVisible = isQuickActionButtonsVisible && !isWatchAccount
         if (!safeIsQuickActionButtonsVisible) return emptyList()
 
+        val isJointAccount = getAccountRegistrationType(address) == AccountRegistrationType.Joint
         val quickActionItems = mutableListOf<AssetDetailQuickActionItem>()
 
         val isAlgo = assetId == ALGO_ID
         val isUserOptedInToAsa = assetHoldings.any { it.assetId == assetId }
-        if (isUserOptedInToAsa) {
+        if (isUserOptedInToAsa && !isJointAccount) {
             quickActionItems.add(SwapButton)
         }
-        if (isAlgo) {
+        if (isAlgo && !isJointAccount) {
             if (isXoSwapEnabled() && isStakingEnabled()) {
                 quickActionItems.add(StakeButton)
             } else {

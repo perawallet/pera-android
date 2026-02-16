@@ -50,8 +50,8 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     ): SignatureRequestInboxItem? {
         val requiredData = extractRequiredData(jointSignRequestDTO) ?: return null
 
-        val isFailed = jointSignRequestDTO.status == SignRequestStatus.FAILED
-        val isExpired = isSignRequestExpired(jointSignRequestDTO)
+        val statusLine =
+            mapStatusToStatusLine(jointSignRequestDTO.status, resources, jointSignRequestDTO.failReasonDisplay)
         val creationDateTime = getCreationDateTime(jointSignRequestDTO)
 
         return SignatureRequestInboxItem(
@@ -66,20 +66,20 @@ class SignatureRequestInboxItemMapper @Inject constructor(
             timeAgo = getTimeAgo(jointSignRequestDTO, resources, currentBlockNumber),
             signedCount = getSignedCount(jointSignRequestDTO),
             totalCount = requiredData.participantAddresses.size,
-            timeLeft = if (isExpired || isFailed) {
+            timeLeft = if (statusLine.isError) {
                 resources.getString(R.string.zero_minutes_short)
             } else {
                 getTimeLeft(jointSignRequestDTO, resources)
             },
             isRead = isRead(creationDateTime, lastOpenedTime),
-            isExpired = isExpired,
-            isFailed = isFailed,
+            statusLineText = statusLine.text,
+            statusLineIsError = statusLine.isError,
             failReasonDisplay = jointSignRequestDTO.failReasonDisplay,
             canUserSign = canUserSign(
                 jointSignRequestDTO,
                 requiredData.participantAddresses,
                 localAccountAddresses,
-                isExpired
+                statusLine.isError
             )
         )
     }
@@ -98,14 +98,44 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         }
     }
 
+    private fun mapStatusToStatusLine(
+        status: SignRequestStatus?,
+        resources: Resources,
+        failReasonDisplay: String?
+    ): StatusLineData {
+        return when (status) {
+            SignRequestStatus.FAILED -> StatusLineData(
+                text = failReasonDisplay?.takeIf { it.isNotBlank() }
+                    ?: resources.getString(R.string.failed_transaction),
+                isError = true
+            )
+
+            SignRequestStatus.EXPIRED -> StatusLineData(
+                text = resources.getString(R.string.expired_transaction),
+                isError = true
+            )
+
+            SignRequestStatus.DECLINED -> StatusLineData(
+                text = resources.getString(R.string.declined_transaction),
+                isError = true
+            )
+
+            else -> StatusLineData(
+                text = resources.getString(R.string.pending_transaction),
+                isError = false
+            )
+        }
+    }
+
+    private data class StatusLineData(val text: String, val isError: Boolean)
+
     private fun canUserSign(
         jointSignRequestDTO: JointSignRequest,
         participantAddresses: List<String>,
         localAccountAddresses: List<String>,
-        isExpired: Boolean
+        isBlockedByStatus: Boolean
     ): Boolean {
-        if (isExpired) return false
-        if (jointSignRequestDTO.status == SignRequestStatus.FAILED) return false
+        if (isBlockedByStatus) return false
 
         val localParticipants = participantAddresses.filter { it in localAccountAddresses }
         if (localParticipants.isEmpty()) return false
@@ -121,11 +151,6 @@ class SignatureRequestInboxItemMapper @Inject constructor(
             .orEmpty()
 
         return localParticipants.any { it !in respondedAddresses }
-    }
-
-    private fun isSignRequestExpired(dto: JointSignRequest): Boolean {
-        val expireDateTime = getExpireDateTime(dto) ?: return false
-        return timeProvider.getZonedDateTimeNow().isAfter(expireDateTime)
     }
 
     private fun getSignedCount(dto: JointSignRequest): Int {

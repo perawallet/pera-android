@@ -62,6 +62,8 @@ class JointAccountLedgerSignHelper @Inject constructor(
                         val transaction = JointAccountExternalTransaction(
                             transactionByteArray = rawTxBytes,
                             accountAddress = request.accountAddress,
+                            accountAuthAddress = request.accountAuthAddress,
+                            isRekeyedToAnotherAccount = request.isRekeyedToAnotherAccount
                         )
                         ledgerBleOperationManager.startLedgerOperation(
                             ExternalTransactionOperation(device, transaction),
@@ -123,7 +125,9 @@ class JointAccountLedgerSignHelper @Inject constructor(
         accountAddress: String,
         rawTransactionsBase64: List<String>,
         ledgerBluetoothAddress: String,
-        ledgerAccountIndex: Int
+        ledgerAccountIndex: Int,
+        accountAuthAddress: String? = null,
+        isRekeyedToAnotherAccount: Boolean = false
     ) {
         resetSigningState()
 
@@ -134,7 +138,8 @@ class JointAccountLedgerSignHelper @Inject constructor(
         }
 
         currentSignRequest = createSignRequest(
-            signRequestId, accountAddress, rawTransactions, ledgerBluetoothAddress, ledgerAccountIndex
+            signRequestId, accountAddress, rawTransactions, ledgerBluetoothAddress, ledgerAccountIndex,
+            accountAuthAddress, isRekeyedToAnotherAccount
         )
         _signResultFlow.value = LedgerSignResult.Scanning
 
@@ -158,14 +163,18 @@ class JointAccountLedgerSignHelper @Inject constructor(
         accountAddress: String,
         rawTransactions: List<ByteArray>,
         ledgerBluetoothAddress: String,
-        ledgerAccountIndex: Int
+        ledgerAccountIndex: Int,
+        accountAuthAddress: String?,
+        isRekeyedToAnotherAccount: Boolean
     ): SignRequest {
         return SignRequest(
             signRequestId = signRequestId,
             accountAddress = accountAddress,
             rawTransactions = rawTransactions,
             ledgerBluetoothAddress = ledgerBluetoothAddress,
-            ledgerAccountIndex = ledgerAccountIndex
+            ledgerAccountIndex = ledgerAccountIndex,
+            accountAuthAddress = accountAuthAddress,
+            isRekeyedToAnotherAccount = isRekeyedToAnotherAccount
         )
     }
 
@@ -279,7 +288,9 @@ class JointAccountLedgerSignHelper @Inject constructor(
         val accountAddress: String,
         val rawTransactions: List<ByteArray>,
         val ledgerBluetoothAddress: String,
-        val ledgerAccountIndex: Int
+        val ledgerAccountIndex: Int,
+        val accountAuthAddress: String? = null,
+        val isRekeyedToAnotherAccount: Boolean = false
     )
 
     /**
@@ -288,10 +299,9 @@ class JointAccountLedgerSignHelper @Inject constructor(
     private class JointAccountExternalTransaction(
         override val transactionByteArray: ByteArray,
         override val accountAddress: String,
-    ) : ExternalTransaction {
-        override val isRekeyedToAnotherAccount: Boolean = false
-        override val accountAuthAddress: String? = null
-    }
+        override val accountAuthAddress: String?,
+        override val isRekeyedToAnotherAccount: Boolean
+    ) : ExternalTransaction
 
     sealed class LedgerSignResult {
         data object Idle : LedgerSignResult()

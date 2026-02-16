@@ -61,13 +61,17 @@ internal class InboxCacheManagerImpl @Inject constructor(
 
     private suspend fun runManagerJob() {
         while (true) {
-            updateInboxCache()
-            delay(INBOX_POLL_INTERVAL)
+            try {
+                updateInboxCache()
+            } catch (_: Exception) {
+                // Continue polling on transient failures
+            }
+            delay(INBOX_POLL_INTERVAL_MS)
         }
     }
 
     private companion object {
-        const val INBOX_POLL_INTERVAL = 6000L
+        const val INBOX_POLL_INTERVAL_MS = 6_000L
     }
 
     private suspend fun updateInboxCache() {

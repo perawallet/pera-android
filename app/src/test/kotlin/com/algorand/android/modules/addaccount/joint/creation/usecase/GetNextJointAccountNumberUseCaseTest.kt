@@ -19,10 +19,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-internal class GetDefaultJointAccountNameUseCaseTest {
+internal class GetNextJointAccountNumberUseCaseTest {
 
     private val getJointAccountCount: GetJointAccountCount = mockk()
-    private val sut = GetDefaultJointAccountNameUseCase(getJointAccountCount)
+    private val sut = GetNextJointAccountNumberUseCase(getJointAccountCount)
 
     @Test
     fun `EXPECT 1 WHEN no joint accounts exist`() = runTest {

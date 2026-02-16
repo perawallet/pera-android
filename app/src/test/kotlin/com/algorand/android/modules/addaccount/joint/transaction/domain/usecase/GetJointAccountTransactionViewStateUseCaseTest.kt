@@ -13,13 +13,15 @@
 package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
 import android.content.res.Resources
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
+import com.algorand.android.ui.device.model.DeviceConfig
+import com.algorand.android.ui.device.usecase.GetDeviceConfig
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
@@ -30,6 +32,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStat
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
+import com.algorand.wallet.utils.date.TimeProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -37,6 +40,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.ZonedDateTime
 
 internal class GetJointAccountTransactionViewStateUseCaseTest {
 
@@ -44,11 +48,13 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
     private val parseTransactionMessagePack: ParseTransactionMessagePack = mockk()
     private val getAccountDisplayName: GetAccountDisplayName = mockk()
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview = mockk()
-    private val deviceIdUseCase: DeviceIdUseCase = mockk()
+    private val getDeviceConfig: GetDeviceConfig = mockk()
     private val getLocalAccountsAddresses: GetLocalAccountsAddresses = mockk()
     private val getLocalAccounts: GetLocalAccounts = mockk()
     private val getJointAccountSignerItems: GetJointAccountSignerItems = mockk()
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress = mockk()
     private val formatAlgoAsDisplayCurrency: FormatAlgoAsDisplayCurrency = mockk()
+    private val timeProvider: TimeProvider = mockk()
     private val resources: Resources = mockk()
 
     private val dependencies = GetJointAccountTransactionViewStateDependencies(
@@ -56,11 +62,13 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
         parseTransactionMessagePack = parseTransactionMessagePack,
         getAccountDisplayName = getAccountDisplayName,
         getAccountIconDrawablePreview = getAccountIconDrawablePreview,
-        deviceIdUseCase = deviceIdUseCase,
+        getDeviceConfig = getDeviceConfig,
         getLocalAccountsAddresses = getLocalAccountsAddresses,
         getLocalAccounts = getLocalAccounts,
         getJointAccountSignerItems = getJointAccountSignerItems,
-        formatAlgoAsDisplayCurrency = formatAlgoAsDisplayCurrency
+        getAccountRekeyAdminAddress = getAccountRekeyAdminAddress,
+        formatAlgoAsDisplayCurrency = formatAlgoAsDisplayCurrency,
+        timeProvider = timeProvider
     )
 
     private val sut = GetJointAccountTransactionViewStateUseCase(
@@ -69,8 +77,8 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
     )
 
     @Test
-    fun `EXPECT error WHEN device id is null`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns null
+    fun `EXPECT error WHEN device id is blank`() = runTest {
+        coEvery { getDeviceConfig() } returns createDeviceConfig("")
 
         val result = sut(TEST_SIGN_REQUEST_ID)
 
@@ -79,7 +87,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
     @Test
     fun `EXPECT error WHEN device id is not a valid number`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "invalid"
+        coEvery { getDeviceConfig() } returns createDeviceConfig("invalid")
 
         val result = sut(TEST_SIGN_REQUEST_ID)
 
@@ -88,7 +96,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
     @Test
     fun `EXPECT error WHEN getSignRequestWithSignatures fails`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "123"
+        coEvery { getDeviceConfig() } returns createDeviceConfig("123")
         coEvery {
             getSignRequestWithSignatures(
                 123L,
@@ -103,7 +111,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
     @Test
     fun `EXPECT error WHEN joint account is null`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "123"
+        coEvery { getDeviceConfig() } returns createDeviceConfig("123")
         coEvery { getSignRequestWithSignatures(123L, TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(
             createSignRequest(jointAccount = null)
         )
@@ -115,7 +123,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
     @Test
     fun `EXPECT error WHEN joint account address is null`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "123"
+        coEvery { getDeviceConfig() } returns createDeviceConfig("123")
         coEvery { getSignRequestWithSignatures(123L, TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(
             createSignRequest(
                 jointAccount = JointAccount(
@@ -135,7 +143,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
     @Test
     fun `EXPECT error WHEN transaction lists is null`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "123"
+        coEvery { getDeviceConfig() } returns createDeviceConfig("123")
         coEvery { getSignRequestWithSignatures(123L, TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(
             createSignRequest(transactionLists = null)
         )
@@ -147,7 +155,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
     @Test
     fun `EXPECT success WHEN valid sign request returned`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "123"
+        coEvery { getDeviceConfig() } returns createDeviceConfig("123")
         coEvery { getSignRequestWithSignatures(123L, TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(
             createValidSignRequest()
         )
@@ -157,12 +165,14 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
             createSignerItem()
         )
         coEvery { getJointAccountSignerItems.hasSigningCapableLocalAccount(TEST_PARTICIPANT_ADDRESS) } returns true
+        coEvery { getAccountRekeyAdminAddress(TEST_PARTICIPANT_ADDRESS) } returns null
         coEvery { getAccountDisplayName(TEST_JOINT_ADDRESS) } returns createAccountDisplayName()
         coEvery { getAccountIconDrawablePreview(TEST_JOINT_ADDRESS) } returns mockk<AccountIconDrawablePreview>()
         every { parseTransactionMessagePack(any()) } returns null
         every { formatAlgoAsDisplayCurrency(any()) } returns "$0.00"
         every { resources.getString(any()) } returns "0m"
         every { resources.getString(any(), any()) } returns "0m"
+        every { timeProvider.getZonedDateTimeNow() } returns ZonedDateTime.parse("2025-01-01T00:00:00Z")
 
         val result = sut(TEST_SIGN_REQUEST_ID)
 
@@ -173,7 +183,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
     @Test
     fun `EXPECT correct threshold WHEN valid sign request returned`() = runTest {
-        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns "123"
+        coEvery { getDeviceConfig() } returns createDeviceConfig("123")
         coEvery { getSignRequestWithSignatures(123L, TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(
             createValidSignRequest(threshold = 3)
         )
@@ -181,12 +191,14 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
         coEvery { getLocalAccounts() } returns listOf(createLocalAccount())
         coEvery { getJointAccountSignerItems(listOf(TEST_PARTICIPANT_ADDRESS), emptyList()) } returns emptyList()
         coEvery { getJointAccountSignerItems.hasSigningCapableLocalAccount(TEST_PARTICIPANT_ADDRESS) } returns false
+        coEvery { getAccountRekeyAdminAddress(TEST_PARTICIPANT_ADDRESS) } returns null
         coEvery { getAccountDisplayName(TEST_JOINT_ADDRESS) } returns createAccountDisplayName()
         coEvery { getAccountIconDrawablePreview(TEST_JOINT_ADDRESS) } returns mockk<AccountIconDrawablePreview>()
         every { parseTransactionMessagePack(any()) } returns null
         every { formatAlgoAsDisplayCurrency(any()) } returns "$0.00"
         every { resources.getString(any()) } returns "0m"
         every { resources.getString(any(), any()) } returns "0m"
+        every { timeProvider.getZonedDateTimeNow() } returns ZonedDateTime.parse("2025-01-01T00:00:00Z")
 
         val result = sut(TEST_SIGN_REQUEST_ID)
 
@@ -277,6 +289,12 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
             primaryDisplayName = "Joint Account",
             secondaryDisplayName = null
         )
+    }
+
+    private fun createDeviceConfig(deviceId: String): DeviceConfig {
+        return mockk {
+            every { this@mockk.deviceId } returns deviceId
+        }
     }
 
     private companion object {

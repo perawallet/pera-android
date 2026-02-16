@@ -24,7 +24,6 @@ import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDevi
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
-import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount as JointAccountDto
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountDetail
@@ -38,6 +37,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount as JointAccountDto
 
 internal class DefaultJointAccountDetailProcessorTest {
 
@@ -248,7 +248,12 @@ internal class DefaultJointAccountDetailProcessorTest {
     @Test
     fun `EXPECT deleteJointInvitationNotification called WHEN device id is valid`() = runTest {
         coEvery { getSelectedNodeDeviceId() } returns TEST_DEVICE_ID
-        coEvery { inboxApiRepository.deleteJointInvitationNotification(TEST_DEVICE_ID_LONG, TEST_ADDRESS) } returns PeraResult.Success(Unit)
+        coEvery {
+            inboxApiRepository.deleteJointInvitationNotification(
+                TEST_DEVICE_ID_LONG,
+                TEST_ADDRESS
+            )
+        } returns PeraResult.Success(Unit)
 
         sut.deleteInboxNotification(TEST_ADDRESS)
 

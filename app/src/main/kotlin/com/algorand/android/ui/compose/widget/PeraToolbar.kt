@@ -167,9 +167,11 @@ private fun ToolbarText(
             )
         }
     } else {
-        PeraToolbarTitle(
+        Text(
             modifier = modifier,
-            text = text
+            text = text,
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.text.main
         )
     }
 }

@@ -10,16 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.addaccount.joint.creation.usecase
+package com.algorand.android.modules.accounts.ui.model
 
-import com.algorand.wallet.account.core.domain.usecase.GetJointAccountCount
-import javax.inject.Inject
-
-internal class GetDefaultJointAccountNameUseCase @Inject constructor(
-    private val getJointAccountCount: GetJointAccountCount
-) : GetDefaultJointAccountName {
-
-    override suspend operator fun invoke(): Int {
-        return getJointAccountCount() + 1
-    }
+sealed interface InboxButtonLabel {
+    data object JointAccountRequest : InboxButtonLabel
+    data object SignTxnRequest : InboxButtonLabel
+    data object Inbox : InboxButtonLabel
 }

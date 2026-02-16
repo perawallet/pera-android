@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +31,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.model.JointAcco
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
-import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesBottomSheet
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesContent
 import com.algorand.android.ui.compose.preview.PeraPreviewLightDark
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
@@ -40,12 +39,10 @@ import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragInd
 @OptIn(ExperimentalMaterial3Api::class)
 @PeraPreviewLightDark
 @Composable
-fun PendingSignaturesBottomSheetPreview() {
+fun PendingSignaturesBottomSheetScreenPreview() {
     PeraTheme {
-        PendingSignaturesBottomSheet(
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        PendingSignaturesContent(
             transactionPreview = createMockPreviewPending(),
-            onDismiss = {},
             onCancel = {},
             onCloseForNow = {},
             onCloseCompleted = {}

@@ -29,8 +29,8 @@ data class SignatureRequestInboxItem(
     val totalCount: Int,
     val timeLeft: String?,
     val isRead: Boolean = true,
-    val isExpired: Boolean = false,
-    val isFailed: Boolean = false,
+    val statusLineText: String,
+    val statusLineIsError: Boolean = false,
     val failReasonDisplay: String? = null,
     val canUserSign: Boolean = true
 ) : Parcelable, RecyclerListItem {

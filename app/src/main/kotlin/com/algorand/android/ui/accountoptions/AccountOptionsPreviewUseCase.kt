@@ -18,9 +18,9 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.Algo25
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.HdKey
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import javax.inject.Inject
 
 class AccountOptionsPreviewUseCase @Inject constructor(
@@ -44,7 +44,7 @@ class AccountOptionsPreviewUseCase @Inject constructor(
                 isPassphraseButtonVisible = registrationType == Algo25 || registrationType == HdKey,
                 isUndoRekeyButtonVisible = isRekeyed && canSignTransaction,
                 canSignTransaction = canSignTransaction,
-                isJointAccount = accountType is AccountType.Joint,
+                isJointAccount = registrationType is AccountRegistrationType.Joint,
                 registrationType = registrationType
             )
         }

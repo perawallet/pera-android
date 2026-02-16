@@ -407,7 +407,6 @@
     <string name="based_on_your_account">Based on your account configuration, your minimum balance is %1$s. By hitting continue, your transaction amount will be updated to maintain the Algorand Blockchain\'s minimum required balance. You\'ll be able to preview this change in the next steps.</string>
     <string name="sorry_we_cant_show_account">Sorry, we can\'t show the details of this account. It looks like we are having issues for the calculation.\n\nPlease note that some asset values might not be available, therefore the total portfolio value should be considered an estimation.  </string>
     <string name="sorry_we_cant_show_portfolio">Sorry, we can\'t show the details of this portfolio. It looks like we are having issues for the calculation.\n\nPlease note that some asset values might not be available, therefore the total portfolio value should be considered an estimation.  </string>
-    <string name="add_an_account">Add an Account</string>
     <string name="add_account_desc">Add a new account to your existing Universal Wallet</string>
     <string name="add_joint_account">Add Joint Account</string>
     <string name="add_joint_account_desc">Create a new multi-sig account with enhanced security that requires multiple signers</string>
@@ -661,7 +660,6 @@
     <string name="approve_transaction">Approve Transaction</string>
     <string name="sender_account">Sender Account</string>
     <string name="transacting_fee">Transaction Fee</string>
-    <string name="transfer_to">Transfer to %1$s</string>
     <string name="transfer_to_styled">Transfer to <annotation type="bold">%1$s</annotation></string>
     <string name="confirm_transfer">Confirm transfer</string>
     <string name="no_transactions">No transactions</string>
@@ -785,6 +783,8 @@
     <string name="asset_transfer_requests">Asset Transfer Requests</string>
     <string name="asset_transfer_request">Asset Transfer Request</string>
     <string name="inbox">Inbox</string>
+    <string name="joint_account_request">Joint account request</string>
+    <string name="sign_txn_request">Sign txn request</string>
     <string name="no_pending_asset_transfer">No Pending Requests</string>
     <string name="when_you_have_an_asset">When you have requests or invitations, you can view them here. Tap on the info icon to learn more about this feature.</string>
     <string name="how_this_asset_transfer">How this asset transfer works?</string>
@@ -1228,6 +1228,7 @@
     <string name="no_passkeys_yet">No passkeys yet</string>
     <string name="remove_passkey">Remove Passkey</string>
     <string name="type_new_address_or_search">Type a new address or search</string>
+    <string name="add_joint_account_address_input">Address search input</string>
     <string name="no_accounts_found">No accounts found…</string>
     <string name="edit_address">Edit address</string>
     <string name="nickname_optional">Nickname (Optional)</string>
@@ -1260,9 +1261,7 @@
     <string name="pending_transaction">Pending transaction</string>
     <string name="unread">Unread</string>
     <string name="pending_signatures">Pending signatures</string>
-    <string name="signature_request">Signature request</string>
     <string name="signature_request_description">Signature request to sign for %1$s</string>
-    <string name="to_sign_for_format"> to sign for %1$s</string>
     <string name="of_signed">%1$d of %2$d signed</string>
     <string name="time_left">≈ %1$s left</string>
     <string name="you_need_at_least_accounts_to_sign">You need at least %1$d accounts to sign</string>
@@ -1270,8 +1269,9 @@
     <string name="transaction_canceled">Transaction canceled.</string>
     <string name="transaction_successfully_completed">Transaction successfully completed.</string>
     <string name="signed">Signed</string>
-    <string name="rejected">Rejected</string>
     <string name="failed_transaction">Failed transaction</string>
+    <string name="expired_transaction">Expired transaction</string>
+    <string name="declined_transaction">Declined transaction</string>
     <string name="signature_request_declined">Signature request declined</string>
 
     <string name="joint_account_invitation_accepted">Joint account invitation accepted</string>

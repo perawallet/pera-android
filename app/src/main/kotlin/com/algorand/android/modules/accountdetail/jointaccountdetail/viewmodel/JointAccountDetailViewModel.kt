@@ -26,6 +26,7 @@ import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 @HiltViewModel
@@ -63,7 +64,7 @@ class JointAccountDetailViewModel @Inject constructor(
         }
     }
 
-    private var editingParticipantAddress: String? = null
+    private val editingParticipantAddress = AtomicReference<String?>(null)
     private var actionJob: Job? = null
 
     fun onIgnoreClick() {
@@ -110,15 +111,14 @@ class JointAccountDetailViewModel @Inject constructor(
     }
 
     fun onEditParticipantClick(address: String) {
-        editingParticipantAddress = address
+        editingParticipantAddress.set(address)
         viewModelScope.launch {
             eventDelegate.sendEvent(ViewEvent.NavigateToEditAddress(address))
         }
     }
 
     fun onParticipantNameUpdated(newName: String) {
-        val address = editingParticipantAddress ?: return
-        editingParticipantAddress = null
+        val address = editingParticipantAddress.getAndSet(null) ?: return
         viewModelScope.launch {
             processor.updateContactName(address, newName)
             refreshParticipants()

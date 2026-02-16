@@ -32,6 +32,7 @@ import com.algorand.android.ui.compose.theme.ColorPalette
 import com.algorand.android.ui.compose.theme.PeraTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.time.ZonedDateTime
+import java.util.concurrent.TimeUnit
 
 @PeraPreviewLightDark
 @Composable
@@ -158,7 +159,8 @@ private fun getMockSignatureRequests(): List<SignatureRequestInboxItem> {
             totalCount = 2,
             timeLeft = "52m",
             isRead = false,
-            isExpired = false,
+            statusLineText = "Pending transaction",
+            statusLineIsError = false,
             canUserSign = true
         ),
         SignatureRequestInboxItem(
@@ -172,7 +174,8 @@ private fun getMockSignatureRequests(): List<SignatureRequestInboxItem> {
             totalCount = 3,
             timeLeft = "30m",
             isRead = true,
-            isExpired = false,
+            statusLineText = "Pending transaction",
+            statusLineIsError = false,
             canUserSign = false
         )
     )
@@ -187,8 +190,8 @@ private fun getMockJointAccountInvitations(): List<JointAccountInvitationInboxIt
             threshold = 2,
             participantAddresses = listOf("ADDR1", "ADDR2", "ADDR3"),
             isRead = false,
-            creationDateTime = ZonedDateTime.now().minusHours(1),
-            timeDifference = 3600000L // 1 hour in milliseconds
+            creationDateTime = ZonedDateTime.parse("2025-01-15T10:00:00Z"),
+            timeDifference = TimeUnit.HOURS.toMillis(1)
         )
     )
 }

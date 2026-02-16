@@ -23,6 +23,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -33,6 +34,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,6 +53,7 @@ class JointAccountTransactionViewModel @Inject constructor(
     EventViewModel<JointAccountTransactionViewModel.ViewEvent> by eventDelegate {
 
     private val signRequestId: String? = savedStateHandle.get<String>("signRequestId")
+    private val isSilentRefreshInProgress = AtomicBoolean(false)
 
     init {
         stateDelegate.setDefaultState(ViewState.Loading)
@@ -167,6 +170,21 @@ class JointAccountTransactionViewModel @Inject constructor(
             participantAddresses = data.preview.unsignedLocalParticipantAddresses,
             rawTransactions = data.preview.rawTransactions
         )
+        when (result.apiResult) {
+            null -> {
+                Log.e(TAG, "signLocalAccounts: apiResult is null")
+                emitError(R.string.an_error_occurred)
+                return emptyList()
+            }
+
+            is PeraResult.Error -> {
+                Log.e(TAG, "signLocalAccounts failed: ${result.apiResult}")
+                emitError(R.string.an_error_occurred)
+                return emptyList()
+            }
+
+            is PeraResult.Success -> Unit
+        }
         return result.signedAddresses
     }
 
@@ -189,24 +207,58 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     private fun loadTransactionPreview(silentRefresh: Boolean = false) {
         viewModelScope.launch {
-            if (!silentRefresh) {
-                stateDelegate.updateState { ViewState.Loading }
+            if (silentRefresh) {
+                silentRefreshPreview()
+            } else {
+                loadTransactionPreviewWithLoading()
             }
-            getJointAccountTransactionViewState(signRequestId!!).use(
+        }
+    }
+
+    private suspend fun loadTransactionPreviewWithLoading() {
+        val requestId = signRequestId
+        if (requestId.isNullOrBlank()) {
+            Log.e(TAG, "signRequestId is null or blank during preview load")
+            emitError(R.string.an_error_occurred)
+            emitNavigateBack()
+            return
+        }
+        stateDelegate.updateState { ViewState.Loading }
+        getJointAccountTransactionViewState(requestId).use(
+            onSuccess = { preview ->
+                val updatedPreview = processor.processLoadedPreview(preview)
+                stateDelegate.updateState { ViewState.Content(updatedPreview) }
+                if (updatedPreview.shouldShowPendingSignaturesDirectly) {
+                    eventDelegate.sendEvent(ViewEvent.ShowPendingSignaturesDirectly)
+                }
+            },
+            onFailed = { exception, code ->
+                Log.e(TAG, "Failed to load preview: code=$code, exception=$exception")
+                stateDelegate.updateState { ViewState.Error(R.string.sign_request_not_available) }
+            }
+        )
+    }
+
+    private suspend fun silentRefreshPreview() {
+        if (!isSilentRefreshInProgress.compareAndSet(false, true)) return
+        val requestId = signRequestId ?: run {
+            isSilentRefreshInProgress.set(false)
+            return
+        }
+        if (requestId.isBlank()) {
+            isSilentRefreshInProgress.set(false)
+            return
+        }
+        try {
+            getJointAccountTransactionViewState(requestId).use(
                 onSuccess = { preview ->
                     val updatedPreview = processor.processLoadedPreview(preview)
                     stateDelegate.updateState { ViewState.Content(updatedPreview) }
-                    if (!silentRefresh && updatedPreview.shouldShowPendingSignaturesDirectly) {
-                        eventDelegate.sendEvent(ViewEvent.ShowPendingSignaturesDirectly)
-                    }
                 },
-                onFailed = { exception, code ->
-                    if (!silentRefresh) {
-                        Log.e(TAG, "Failed to load preview: code=$code, exception=$exception")
-                        stateDelegate.updateState { ViewState.Error(R.string.sign_request_not_available) }
-                    }
-                }
+                onFailed = { _, _ -> }
             )
+        } finally {
+            isSilentRefreshInProgress.set(false)
         }
     }
 

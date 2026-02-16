@@ -30,6 +30,7 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -91,14 +92,23 @@ class JointAccountInvitationDetailViewModel @Inject constructor(
         }
     }
 
+    private var rejectJob: Job? = null
+
     fun onRejectClick() {
-        viewModelScope.launchIO {
-            val deviceId = getSelectedNodeDeviceId()?.toLongOrNull()
-            if (deviceId != null) {
+        if (rejectJob?.isActive == true) return
+        rejectJob = viewModelScope.launchIO {
+            try {
+                val deviceId = getSelectedNodeDeviceId()?.toLongOrNull()
+                if (deviceId == null) {
+                    eventDelegate.sendEvent(ViewEvent.ShowError)
+                    return@launchIO
+                }
                 inboxApiRepository.deleteJointInvitationNotification(deviceId, navArgs.accountAddress)
+                refreshInboxCache()
+                eventDelegate.sendEvent(ViewEvent.InvitationIgnored)
+            } catch (_: Exception) {
+                eventDelegate.sendEvent(ViewEvent.ShowError)
             }
-            refreshInboxCache()
-            eventDelegate.sendEvent(ViewEvent.InvitationIgnored)
         }
     }
 

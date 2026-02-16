@@ -10,8 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.addaccount.joint.creation.usecase
+package com.algorand.android.modules.inbox.allaccounts.domain.usecase
 
-fun interface GetDefaultJointAccountName {
-    suspend operator fun invoke(): Int
+import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewState
+import com.algorand.wallet.inbox.domain.model.InboxMessages
+
+fun interface GetInboxViewState {
+    suspend operator fun invoke(
+        inboxMessages: InboxMessages?,
+        filterAccountAddress: String?
+    ): InboxViewState
 }

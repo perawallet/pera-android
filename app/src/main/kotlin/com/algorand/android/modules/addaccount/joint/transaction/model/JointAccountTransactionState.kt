@@ -22,4 +22,8 @@ sealed class JointAccountTransactionState {
     data object Completed : JointAccountTransactionState()
 
     data class Failed(val failReasonDisplay: String?) : JointAccountTransactionState()
+
+    data object Expired : JointAccountTransactionState()
+
+    data object Declined : JointAccountTransactionState()
 }

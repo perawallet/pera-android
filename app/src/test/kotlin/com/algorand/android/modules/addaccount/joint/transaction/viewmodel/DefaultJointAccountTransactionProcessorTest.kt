@@ -108,6 +108,30 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
+    fun `EXPECT unsigned local list to keep not signed addresses`() {
+        val preview = createTestPreview(
+            unsignedLocalParticipantAddresses = listOf("ADDR1", "ADDR2")
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR1"))
+
+        assertEquals(listOf("ADDR2"), result.unsignedLocalParticipantAddresses)
+    }
+
+    @Test
+    fun `EXPECT unsigned local list unchanged WHEN signing fails`() {
+        val preview = createTestPreview(
+            signedCount = 0,
+            unsignedLocalParticipantAddresses = listOf("ADDR1", "ADDR2")
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, emptyList())
+
+        assertEquals(listOf("ADDR1", "ADDR2"), result.unsignedLocalParticipantAddresses)
+        assertEquals(0, result.signedCount)
+    }
+
+    @Test
     fun `EXPECT Completed state WHEN all signatures are collected`() {
         val signerAccounts = listOf(
             createTestSignerItem("ADDR1", JointAccountSignatureStatus.Pending)

@@ -72,11 +72,13 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
         val rekeyAdminAddress = rekeyAuthAddress ?: getAccountRekeyAdminAddress(address) ?: return getRekeyedDrawable()
         val rekeyAdminType = getAccountRegistrationType(rekeyAdminAddress)
         val backgroundColorResId = when (rekeyAdminType) {
-            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.backgroundColorResId
+            AccountRegistrationType.Algo25,
+            AccountRegistrationType.HdKey -> AccountIconResource.STANDARD.backgroundColorResId
             else -> AccountIconResource.REKEYED_AUTH.backgroundColorResId
         }
         val iconTintResId = when (rekeyAdminType) {
-            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.iconTintResId
+            AccountRegistrationType.Algo25,
+            AccountRegistrationType.HdKey -> AccountIconResource.STANDARD.iconTintResId
             else -> AccountIconResource.LEDGER.iconTintResId
         }
         return AccountIconDrawablePreview(

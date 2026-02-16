@@ -67,7 +67,6 @@ fun NameJointAccountScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
             TitleSection()
             Spacer(modifier = Modifier.height(16.dp))
             DescriptionSection()

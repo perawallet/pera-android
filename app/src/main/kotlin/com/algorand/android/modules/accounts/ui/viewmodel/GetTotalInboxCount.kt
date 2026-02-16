@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.accounts.ui.viewmodel
 
+import com.algorand.android.modules.accounts.ui.model.InboxButtonLabel
+
 interface GetTotalInboxCount {
-    suspend operator fun invoke(): Int
+    suspend operator fun invoke(): InboxButtonLabel?
 }

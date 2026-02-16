@@ -25,8 +25,8 @@ import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrency
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.rekey.rekeytojointaccount.accountselection.ui.mapper.RekeyToJointAccountSelectionPreviewMapper
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
-import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -41,7 +41,7 @@ internal class RekeyToJointAccountSelectionPreviewUseCaseTest {
 
     private val previewMapper = RekeyToJointAccountSelectionPreviewMapper()
     private val getSortedLocalAccounts: GetSortedLocalAccounts = mockk()
-    private val getAccountType: GetAccountType = mockk()
+    private val getAccountRegistrationType: GetAccountRegistrationType = mockk()
     private val getAccountDisplayName: GetAccountDisplayName = mockk()
     private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName = mockk()
     private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol = mockk()
@@ -53,7 +53,7 @@ internal class RekeyToJointAccountSelectionPreviewUseCaseTest {
     private val sut = RekeyToJointAccountSelectionPreviewUseCase(
         rekeyToJointAccountSelectionPreviewMapper = previewMapper,
         getSortedLocalAccounts = getSortedLocalAccounts,
-        getAccountType = getAccountType,
+        getAccountRegistrationType = getAccountRegistrationType,
         getAccountDisplayName = getAccountDisplayName,
         getPrimaryCurrencySymbolOrName = getPrimaryCurrencySymbolOrName,
         getSecondaryCurrencySymbol = getSecondaryCurrencySymbol,
@@ -81,10 +81,10 @@ internal class RekeyToJointAccountSelectionPreviewUseCaseTest {
             AccountOrderIndex(LEDGER_ADDRESS, 3)
         )
         coEvery { getSortedLocalAccounts() } returns accounts
-        coEvery { getAccountType(JOINT_ADDRESS_1) } returns AccountType.Joint
-        coEvery { getAccountType(STANDARD_ADDRESS) } returns AccountType.Algo25
-        coEvery { getAccountType(JOINT_ADDRESS_2) } returns AccountType.Joint
-        coEvery { getAccountType(LEDGER_ADDRESS) } returns AccountType.LedgerBle
+        coEvery { getAccountRegistrationType(JOINT_ADDRESS_1) } returns AccountRegistrationType.Joint
+        coEvery { getAccountRegistrationType(STANDARD_ADDRESS) } returns AccountRegistrationType.Algo25
+        coEvery { getAccountRegistrationType(JOINT_ADDRESS_2) } returns AccountRegistrationType.Joint
+        coEvery { getAccountRegistrationType(LEDGER_ADDRESS) } returns AccountRegistrationType.LedgerBle
 
         setupCurrencyMocks()
         setupAccountDetailMocks(JOINT_ADDRESS_1)
@@ -111,8 +111,8 @@ internal class RekeyToJointAccountSelectionPreviewUseCaseTest {
             AccountOrderIndex(JOINT_ADDRESS_2, 1)
         )
         coEvery { getSortedLocalAccounts() } returns accounts
-        coEvery { getAccountType(JOINT_ADDRESS_1) } returns AccountType.Joint
-        coEvery { getAccountType(JOINT_ADDRESS_2) } returns AccountType.Joint
+        coEvery { getAccountRegistrationType(JOINT_ADDRESS_1) } returns AccountRegistrationType.Joint
+        coEvery { getAccountRegistrationType(JOINT_ADDRESS_2) } returns AccountRegistrationType.Joint
 
         setupCurrencyMocks()
         setupAccountDetailMocks(JOINT_ADDRESS_2)
@@ -137,8 +137,8 @@ internal class RekeyToJointAccountSelectionPreviewUseCaseTest {
             AccountOrderIndex(LEDGER_ADDRESS, 1)
         )
         coEvery { getSortedLocalAccounts() } returns accounts
-        coEvery { getAccountType(STANDARD_ADDRESS) } returns AccountType.Algo25
-        coEvery { getAccountType(LEDGER_ADDRESS) } returns AccountType.LedgerBle
+        coEvery { getAccountRegistrationType(STANDARD_ADDRESS) } returns AccountRegistrationType.Algo25
+        coEvery { getAccountRegistrationType(LEDGER_ADDRESS) } returns AccountRegistrationType.LedgerBle
 
         val mockTitleItem = mockk<SingleAccountSelectionListItem.TitleItem>()
         val mockDescriptionItem = mockk<SingleAccountSelectionListItem.DescriptionItem>()
@@ -156,7 +156,7 @@ internal class RekeyToJointAccountSelectionPreviewUseCaseTest {
             AccountOrderIndex(JOINT_ADDRESS_1, 0)
         )
         coEvery { getSortedLocalAccounts() } returns accounts
-        coEvery { getAccountType(JOINT_ADDRESS_1) } returns AccountType.Joint
+        coEvery { getAccountRegistrationType(JOINT_ADDRESS_1) } returns AccountRegistrationType.Joint
 
         val mockTitleItem = mockk<SingleAccountSelectionListItem.TitleItem>()
         val mockDescriptionItem = mockk<SingleAccountSelectionListItem.DescriptionItem>()
@@ -175,8 +175,8 @@ internal class RekeyToJointAccountSelectionPreviewUseCaseTest {
             AccountOrderIndex(JOINT_ADDRESS_1, 1)
         )
         coEvery { getSortedLocalAccounts() } returns accounts
-        coEvery { getAccountType(HD_KEY_ADDRESS) } returns AccountType.HdKey
-        coEvery { getAccountType(JOINT_ADDRESS_1) } returns AccountType.Joint
+        coEvery { getAccountRegistrationType(HD_KEY_ADDRESS) } returns AccountRegistrationType.HdKey
+        coEvery { getAccountRegistrationType(JOINT_ADDRESS_1) } returns AccountRegistrationType.Joint
 
         setupCurrencyMocks()
         setupAccountDetailMocks(JOINT_ADDRESS_1)

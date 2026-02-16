@@ -92,4 +92,9 @@ class UndoRekeyConfirmationFragment : BaseRekeyConfirmationFragment() {
             undoRekeyConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
         }
     }
+
+    override fun onJointAccountSignRequestCreated(signRequestId: String) {
+        undoRekeyConfirmationViewModel.onTransactionSigningFailed()
+        super.onJointAccountSignRequestCreated(signRequestId)
+    }
 }

@@ -67,16 +67,12 @@ internal object JointAccountModule {
     @Provides
     fun provideGetSignRequestWithSignatures(
         repository: JointAccountRepository
-    ): GetSignRequestWithSignatures = GetSignRequestWithSignatures { deviceId, signRequestId ->
-        repository.getSignRequestWithSignatures(deviceId, signRequestId)
-    }
+    ): GetSignRequestWithSignatures = GetSignRequestWithSignatures(repository::getSignRequestWithSignatures)
 
     @Provides
     fun provideAddJointAccountSignature(
         repository: JointAccountRepository
-    ): AddJointAccountSignature = AddJointAccountSignature { signRequestId, addSignatureInputs ->
-        repository.addSignatures(signRequestId, addSignatureInputs)
-    }
+    ): AddJointAccountSignature = AddJointAccountSignature(repository::addSignatures)
 
     @Provides
     fun provideGetJointAccountProposerAddress(

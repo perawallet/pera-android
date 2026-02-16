@@ -42,7 +42,4 @@ interface JointAccountRepository {
         signRequestId: String
     ): PeraResult<SignRequestWithFullSignature>
 
-    companion object {
-        const val INJECTION_NAME: String = "jointAccountRepositoryInjectionName"
-    }
 }

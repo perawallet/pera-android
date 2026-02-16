@@ -94,4 +94,9 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
             rekeyToLedgerAccountConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
         }
     }
+
+    override fun onJointAccountSignRequestCreated(signRequestId: String) {
+        rekeyToLedgerAccountConfirmationViewModel.onTransactionSigningFailed()
+        super.onJointAccountSignRequestCreated(signRequestId)
+    }
 }

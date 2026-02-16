@@ -30,6 +30,7 @@ import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddressesUseCase
 import com.algorand.wallet.inbox.domain.usecase.GetJointAccountInboxCountFlow
+import com.algorand.wallet.inbox.domain.usecase.GetJointAccountInboxCountFlowUseCase
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddress
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddressUseCase
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
@@ -42,7 +43,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -151,14 +151,8 @@ internal object InboxModule {
 
     @Provides
     fun provideGetJointAccountInboxCountFlow(
-        repository: InboxRepository
-    ): GetJointAccountInboxCountFlow = GetJointAccountInboxCountFlow {
-        repository.getInboxMessagesFlow().map { inboxMessages ->
-            val signRequestCount = inboxMessages?.jointAccountSignRequests?.size ?: 0
-            val importRequestCount = inboxMessages?.jointAccountImportRequests?.size ?: 0
-            signRequestCount + importRequestCount
-        }
-    }
+        useCase: GetJointAccountInboxCountFlowUseCase
+    ): GetJointAccountInboxCountFlow = useCase
 
     @Provides
     fun provideSetInboxLastOpenedTime(

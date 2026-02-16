@@ -28,15 +28,15 @@ import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlg
 import com.algorand.android.modules.rekey.rekeytojointaccount.accountselection.ui.mapper.RekeyToJointAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytojointaccount.accountselection.ui.model.RekeyToJointAccountSelectionPreview
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class RekeyToJointAccountSelectionPreviewUseCase @Inject constructor(
     private val rekeyToJointAccountSelectionPreviewMapper: RekeyToJointAccountSelectionPreviewMapper,
     private val getSortedLocalAccounts: GetSortedLocalAccounts,
-    private val getAccountType: GetAccountType,
+    private val getAccountRegistrationType: GetAccountRegistrationType,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName,
     private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
@@ -116,8 +116,8 @@ class RekeyToJointAccountSelectionPreviewUseCase @Inject constructor(
         localAccountAddress: String,
         accountAddress: String
     ): Boolean {
-        val accountType = getAccountType(localAccountAddress)
-        val isJointAccount = accountType is AccountType.Joint
+        val registrationType = getAccountRegistrationType(localAccountAddress)
+        val isJointAccount = registrationType is AccountRegistrationType.Joint
         val isSameAddress = localAccountAddress == accountAddress
         return isJointAccount && !isSameAddress
     }

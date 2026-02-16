@@ -61,6 +61,8 @@ const val RECOVER_OR_IMPORT_ACCOUNT_SUPPORT_URL: String =
     "https://support.perawallet.app/en/article/recover-or-import-an-algorand-account-with-recovery-passphrase-11gdh1y/"
 const val SWAP_INFO_SUPPORT_URL: String =
     "https://support.perawallet.app/en/article/pera-swap-swapping-with-pera-1ep84ky/"
+const val JOINT_ACCOUNT_LEARN_MORE_URL: String =
+    "https://support.perawallet.app/en/article/introduction-to-joint-accounts-1j0dt2g/?bust=1770846667322"
 
 const val HTTPS_PROTOCOL: String = "https://"
 const val HTTP_PROTOCOL: String = "http://"
@@ -156,6 +158,10 @@ fun Context.openGroupTransactionInPeraExplorer(groupId: String?, networkSlug: St
 
 fun Context.openTinymanFaqPriceImpactUrl() {
     openUrl(TINYMAN_FAQ_PRICE_IMPACT_URL)
+}
+
+fun Context.openJointAccountLearnMoreUrl() {
+    openUrl(JOINT_ACCOUNT_LEARN_MORE_URL)
 }
 
 fun getPeraExplorerUrl(transactionId: String, networkSlug: String?): String {

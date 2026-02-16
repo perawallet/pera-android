@@ -35,6 +35,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -75,7 +76,17 @@ fun JointAccountSignRequestScreen(
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { targetValue ->
+            val state = viewState
+            if (state is ViewState.Content && state.preview.isFinalized) {
+                targetValue != SheetValue.Hidden
+            } else {
+                true
+            }
+        }
+    )
     var showBottomSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(showPendingSignatures) {
@@ -203,13 +214,17 @@ private fun BottomSheetContent(
         }
     }
 
-    PendingSignaturesBottomSheet(
+    PendingSignaturesModalBottomSheet(
         sheetState = sheetState,
         transactionPreview = preview,
-        onDismiss = { hideSheetAndExecute {} },
+        onDismiss = {
+            if (!preview.isFinalized) {
+                hideSheetAndExecute {}
+            }
+        },
         onCancel = { hideSheetAndExecute(onCancel) },
         onCloseForNow = { hideSheetAndExecute(onCloseForNow) },
-        onCloseCompleted = { hideSheetAndExecute(onCloseCompleted) }
+        onCloseCompleted = onCloseCompleted
     )
 }
 

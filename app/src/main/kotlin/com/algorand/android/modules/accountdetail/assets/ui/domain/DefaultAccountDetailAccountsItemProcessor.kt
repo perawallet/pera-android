@@ -28,6 +28,7 @@ import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRen
 import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoDisplayString
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddress
@@ -38,10 +39,10 @@ import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.math.BigDecimal
 import javax.inject.Inject
 
-@Suppress("LongParameterList")
 internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getPrivacyModeFlow: GetPrivacyModeFlow,
@@ -66,7 +67,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
                 ?.get(address)
             if (accountLite?.cachedInfo == null) return@combine emptyList()
             getAccountDetailAccountItems(query, accountLite, accountLite.cachedInfo, privacyMode)
-        }
+        }.distinctUntilChanged()
     }
 
     private suspend fun getAccountDetailAccountItems(
@@ -76,7 +77,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
         privacyMode: PrivacyMode
     ): List<AccountDetailAccountsItem> {
         return mutableListOf<AccountDetailAccountsItem>().apply {
-            if (cachedInfo.type is AccountType.Joint) {
+            if (accountLite.registrationType is AccountRegistrationType.Joint) {
                 val participantCount = getJointAccountParticipantCount(accountLite.address)
                 add(AccountDetailAccountsItem.JointAccountBadgeItem(participantCount))
             }
@@ -126,7 +127,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
 
     private suspend fun getAuthAccountQuickActionItem(accountLite: AccountLite): List<AccountDetailQuickActionItem> {
         return mutableListOf<AccountDetailQuickActionItem>().apply {
-            if (accountLite.cachedInfo?.type !is AccountType.Joint) {
+            if (accountLite.registrationType !is AccountRegistrationType.Joint) {
                 add(AccountDetailQuickActionItem.SwapButton)
             }
             if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {

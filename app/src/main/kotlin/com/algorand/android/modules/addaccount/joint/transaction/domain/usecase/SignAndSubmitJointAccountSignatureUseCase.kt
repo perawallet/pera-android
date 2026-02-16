@@ -77,7 +77,8 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
         }
 
         val apiResult = addJointAccountSignature(signRequestId, signatureInputs)
-        return SignAndSubmitResult(signedAddresses = signedAddresses, apiResult = apiResult)
+        val confirmedSignedAddresses = if (apiResult is PeraResult.Success) signedAddresses else emptyList()
+        return SignAndSubmitResult(signedAddresses = confirmedSignedAddresses, apiResult = apiResult)
     }
 
     private suspend fun signAllTransactions(

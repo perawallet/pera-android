@@ -20,6 +20,8 @@ import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetA
 import com.algorand.android.modules.addaccount.joint.creation.mapper.JointAccountSelectionListItemMapper
 import com.algorand.android.modules.addaccount.joint.creation.model.JointAccountSelectionListItem
 import com.algorand.android.utils.isValidAddress
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -48,12 +50,14 @@ internal class AddJointAccountSelectionUseCaseTest {
     private val getAccountSelectionContactItems: GetAccountSelectionContactItems = mockk()
     private val getAccountSelectionNameServiceItems: GetAccountSelectionNameServiceItems = mockk()
     private val jointAccountSelectionListItemMapper: JointAccountSelectionListItemMapper = mockk()
+    private val getAccountRegistrationType: GetAccountRegistrationType = mockk()
 
     private val sut = AddJointAccountSelectionUseCase(
         getAccountSelectionAccountItems = getAccountSelectionAccountItems,
         getAccountSelectionContactItems = getAccountSelectionContactItems,
         getAccountSelectionNameServiceItems = getAccountSelectionNameServiceItems,
-        jointAccountSelectionListItemMapper = jointAccountSelectionListItemMapper
+        jointAccountSelectionListItemMapper = jointAccountSelectionListItemMapper,
+        getAccountRegistrationType = getAccountRegistrationType
     )
 
     @Test
@@ -74,6 +78,7 @@ internal class AddJointAccountSelectionUseCaseTest {
             every { address } returns TEST_ADDRESS
             every { accountListItem.itemConfiguration.accountType } returns mockk(relaxed = true)
         }
+        coEvery { getAccountRegistrationType(TEST_ADDRESS) } returns AccountRegistrationType.Algo25
         val mappedItem = JointAccountSelectionListItem.AccountItem(
             address = TEST_ADDRESS,
             displayName = "Test Account",
@@ -149,6 +154,7 @@ internal class AddJointAccountSelectionUseCaseTest {
             every { address } returns VALID_ALGORAND_ADDRESS
             every { accountListItem.itemConfiguration.accountType } returns mockk(relaxed = true)
         }
+        coEvery { getAccountRegistrationType(VALID_ALGORAND_ADDRESS) } returns AccountRegistrationType.Algo25
         val mappedItem = JointAccountSelectionListItem.AccountItem(
             address = VALID_ALGORAND_ADDRESS,
             displayName = "Existing Account",

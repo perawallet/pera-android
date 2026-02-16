@@ -34,7 +34,6 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWith
 import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignature
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.time.ZonedDateTime
 
 internal class GetJointAccountTransactionViewStateUseCase(
     private val dependencies: GetJointAccountTransactionViewStateDependencies,
@@ -42,7 +41,7 @@ internal class GetJointAccountTransactionViewStateUseCase(
 ) : GetJointAccountTransactionViewState {
 
     override suspend operator fun invoke(signRequestId: String): PeraResult<JointAccountTransactionViewState> {
-        val deviceId = dependencies.deviceIdUseCase.getSelectedNodeDeviceId()?.toLongOrNull()
+        val deviceId = dependencies.getDeviceConfig().deviceId.toLongOrNull()
             ?: return PeraResult.Error(Exception("Device ID not available"))
 
         return when (val result = dependencies.getSignRequestWithSignatures(deviceId, signRequestId)) {
@@ -70,7 +69,8 @@ internal class GetJointAccountTransactionViewStateUseCase(
             buildViewState(
                 signRequest = signRequest,
                 jointAccountAddress = jointAccountAddress,
-                threshold = jointAccount.threshold ?: 0,
+                threshold = jointAccount.threshold
+                    ?: return PeraResult.Error(Exception("Joint account threshold is null")),
                 transactionData = transactionData,
                 participantData = participantData,
                 expirationData = expirationData,
@@ -102,12 +102,22 @@ internal class GetJointAccountTransactionViewStateUseCase(
         val unsignedLocal = localParticipants.mapNotNull { address ->
             if (address in respondedAddresses) return@mapNotNull null
             val account = accountsByAddress[address]
-            if (account is LocalAccount.Algo25 || account is LocalAccount.HdKey) address else null
+            if (account is LocalAccount.Algo25 || account is LocalAccount.HdKey) {
+                val rekeyAdmin = dependencies.getAccountRekeyAdminAddress(address)
+                val authAccount = rekeyAdmin?.let { allLocalAccounts.firstOrNull { it.algoAddress == rekeyAdmin } }
+                if (authAccount is LocalAccount.LedgerBle) null else address
+            } else null
         }
 
         val unsignedLedger = localParticipants.mapNotNull { address ->
             if (address in respondedAddresses) return@mapNotNull null
-            if (accountsByAddress[address] is LocalAccount.LedgerBle) address else null
+            val account = accountsByAddress[address]
+            if (account is LocalAccount.LedgerBle) return@mapNotNull address
+            if (account is LocalAccount.Algo25 || account is LocalAccount.HdKey) {
+                val rekeyAdmin = dependencies.getAccountRekeyAdminAddress(address)
+                val authAccount = rekeyAdmin?.let { allLocalAccounts.firstOrNull { it.algoAddress == rekeyAdmin } }
+                if (authAccount is LocalAccount.LedgerBle) address else null
+            } else null
         }
 
         val signedCount = participantAddresses.count { responseMap[it]?.type == SignRequestResponseType.SIGNED }
@@ -137,6 +147,15 @@ internal class GetJointAccountTransactionViewStateUseCase(
         return ExpirationData(isExpired, canBeSigned, timeRemaining)
     }
 
+    private fun isSignRequestExpiredByTime(signRequest: SignRequestWithFullSignature): Boolean {
+        val expireDatetime = signRequest.lastValidExpectedDatetime
+            ?: signRequest.transactionLists?.firstOrNull()?.lastValidExpectedDatetime
+            ?: return false
+
+        val expireDateTime = expireDatetime.parseFormattedDate(getAlgorandMobileDateFormatter()) ?: return false
+        return dependencies.timeProvider.getZonedDateTimeNow().isAfter(expireDateTime)
+    }
+
     private suspend fun buildViewState(
         signRequest: SignRequestWithFullSignature,
         jointAccountAddress: String,
@@ -154,11 +173,11 @@ internal class GetJointAccountTransactionViewStateUseCase(
                 participantData.localParticipants.isEmpty() ||
                 !hasUnsigned
 
-        val isFailed = signRequest.status == SignRequestStatus.FAILED
-        val transactionState = if (isFailed) {
-            JointAccountTransactionState.Failed(signRequest.failReasonDisplay)
-        } else {
-            JointAccountTransactionState.AwaitingConfirmation
+        val transactionState = when (signRequest.status) {
+            SignRequestStatus.FAILED -> JointAccountTransactionState.Failed(signRequest.failReasonDisplay)
+            SignRequestStatus.EXPIRED -> JointAccountTransactionState.Expired
+            SignRequestStatus.DECLINED -> JointAccountTransactionState.Declined
+            else -> JointAccountTransactionState.AwaitingConfirmation
         }
 
         return JointAccountTransactionViewState(
@@ -189,15 +208,6 @@ internal class GetJointAccountTransactionViewStateUseCase(
         )
     }
 
-    private fun isSignRequestExpiredByTime(signRequest: SignRequestWithFullSignature): Boolean {
-        val expireDatetime = signRequest.lastValidExpectedDatetime
-            ?: signRequest.transactionLists?.firstOrNull()?.lastValidExpectedDatetime
-            ?: return false
-
-        val expireDateTime = expireDatetime.parseFormattedDate(getAlgorandMobileDateFormatter())
-        return expireDateTime != null && ZonedDateTime.now().isAfter(expireDateTime)
-    }
-
     private fun calculateTimeRemaining(
         signRequest: SignRequestWithFullSignature,
         isExpired: Boolean
@@ -211,7 +221,8 @@ internal class GetJointAccountTransactionViewStateUseCase(
         val expireDateTime = expireDatetime.parseFormattedDate(getAlgorandMobileDateFormatter())
             ?: return null
 
-        val millis = expireDateTime.toInstant().toEpochMilli() - ZonedDateTime.now().toInstant().toEpochMilli()
+        val millis = expireDateTime.toInstant().toEpochMilli() -
+                dependencies.timeProvider.getZonedDateTimeNow().toInstant().toEpochMilli()
         return formatTimeLeft(millis)
     }
 

@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.createaccount.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
@@ -228,10 +229,12 @@ internal class CreateJointAccountViewModelTest {
                 getPersistentCache<Boolean>(any(), any())
             } returns mockPersistentCache
         }
+        val savedStateHandle = SavedStateHandle(emptyMap())
         return CreateJointAccountViewModel(
             stateDelegate = StateDelegate<CreateJointAccountViewModel.ViewState>(),
             eventDelegate = EventDelegate<CreateJointAccountViewModel.ViewEvent>(),
-            persistentCacheProvider = mockPersistentCacheProvider
+            persistentCacheProvider = mockPersistentCacheProvider,
+            savedStateHandle = savedStateHandle
         )
     }
 

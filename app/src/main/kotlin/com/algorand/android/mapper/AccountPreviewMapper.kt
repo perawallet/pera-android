@@ -15,6 +15,7 @@ package com.algorand.android.mapper
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.InboxButtonLabel
 import javax.inject.Inject
 
 class AccountPreviewMapper @Inject constructor(
@@ -65,7 +66,7 @@ class AccountPreviewMapper @Inject constructor(
         accountListItems: List<BaseAccountListItem>,
         portfolioValueItem: BasePortfolioValueItem?,
         hasNewNotification: Boolean,
-        assetInboxCount: Int
+        inboxButtonLabel: InboxButtonLabel?
     ): AccountPreview {
         return AccountPreview(
             isEmptyStateVisible = false,
@@ -76,7 +77,7 @@ class AccountPreviewMapper @Inject constructor(
             isMotionLayoutTransitionEnabled = true,
             isSuccessStateVisible = true,
             hasNewNotification = hasNewNotification,
-            assetInboxCount = assetInboxCount
+            inboxButtonLabel = inboxButtonLabel
         )
     }
 }

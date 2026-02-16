@@ -51,7 +51,7 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/assetInboxAllAccountsButton"
+            android:id="@id/inboxButton"
             app:visibilityMode="ignore">
             <Layout
                 android:layout_width="wrap_content"
@@ -116,28 +116,6 @@
             <Transform
                 android:scaleX="1"
                 android:scaleY="1" />
-        </ConstraintOverride>
-
-        <ConstraintOverride
-            android:id="@id/toolbarPrimaryPortfolioValue"
-            app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="0"
-                android:visibility="invisible" />
-            <Transform
-                android:scaleX="0"
-                android:scaleY="0" />
-        </ConstraintOverride>
-
-        <ConstraintOverride
-            android:id="@id/toolbarSecondaryPortfolioValue"
-            app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="0"
-                android:visibility="invisible" />
-            <Transform
-                android:scaleX="0"
-                android:scaleY="0" />
         </ConstraintOverride>
 
         <Constraint
@@ -225,14 +203,14 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/assetInboxAllAccountsButton"
+            android:id="@id/inboxButton"
             app:visibilityMode="ignore">
             <Layout
-                android:layout_width="32dp"
+                android:layout_width="wrap_content"
                 android:layout_height="28dp"
                 android:layout_marginStart="@dimen/spacing_large"
                 android:layout_marginTop="@dimen/spacing_small"
-                android:background="@drawable/bg_asset_inbox_rectangle"
+                android:background="@drawable/bg_asset_inbox_oval"
                 android:drawablePadding="6dp"
                 android:paddingHorizontal="@dimen/spacing_xsmall"
                 app:layout_constraintStart_toStartOf="parent"
@@ -281,6 +259,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8" />
         </ConstraintOverride>
+
         <ConstraintOverride
             android:id="@id/portfolioPercentageText"
             app:visibilityMode="ignore">
@@ -290,27 +269,6 @@
             <Transform
                 android:scaleX="0.8"
                 android:scaleY="0.8" />
-        </ConstraintOverride>
-        <ConstraintOverride
-            android:id="@id/toolbarPrimaryPortfolioValue"
-            app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="1"
-                android:visibility="visible" />
-            <Transform
-                android:scaleX="1"
-                android:scaleY="1" />
-        </ConstraintOverride>
-
-        <ConstraintOverride
-            android:id="@id/toolbarSecondaryPortfolioValue"
-            app:visibilityMode="ignore">
-            <PropertySet
-                android:alpha="1"
-                android:visibility="visible" />
-            <Transform
-                android:scaleX="1"
-                android:scaleY="1" />
         </ConstraintOverride>
 
         <Constraint

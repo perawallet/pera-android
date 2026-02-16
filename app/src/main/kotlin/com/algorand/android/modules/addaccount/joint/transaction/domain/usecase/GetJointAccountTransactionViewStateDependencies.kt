@@ -12,22 +12,26 @@
 
 package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.ui.device.usecase.GetDeviceConfig
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePack
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
+import com.algorand.wallet.utils.date.TimeProvider
 
 internal data class GetJointAccountTransactionViewStateDependencies(
     val getSignRequestWithSignatures: GetSignRequestWithSignatures,
     val parseTransactionMessagePack: ParseTransactionMessagePack,
     val getAccountDisplayName: GetAccountDisplayName,
     val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    val deviceIdUseCase: DeviceIdUseCase,
+    val getDeviceConfig: GetDeviceConfig,
     val getLocalAccountsAddresses: GetLocalAccountsAddresses,
     val getLocalAccounts: GetLocalAccounts,
     val getJointAccountSignerItems: GetJointAccountSignerItems,
-    val formatAlgoAsDisplayCurrency: FormatAlgoAsDisplayCurrency
+    val formatAlgoAsDisplayCurrency: FormatAlgoAsDisplayCurrency,
+    val timeProvider: TimeProvider,
+    val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 )

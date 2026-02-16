@@ -148,7 +148,10 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
         if (iconResId == null) {
             binding.titleEndIconImageView.hide()
         } else {
-            binding.titleEndIconImageView.setImageResource(iconResId)
+            binding.titleEndIconImageView.apply {
+                setImageResource(iconResId)
+                show()
+            }
         }
     }
 
@@ -156,7 +159,10 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
         if (iconDrawable == null) {
             binding.titleEndIconImageView.hide()
         } else {
-            binding.titleEndIconImageView.setImageDrawable(iconDrawable)
+            binding.titleEndIconImageView.apply {
+                setImageDrawable(iconDrawable)
+                show()
+            }
         }
     }
 

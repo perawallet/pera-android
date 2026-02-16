@@ -1825,6 +1825,23 @@
             app:argType="string" />
     </action>
 
+    <dialog
+        android:id="@+id/pendingSignaturesBottomSheet"
+        android:name="com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesBottomSheet"
+        android:label="PendingSignaturesBottomSheet">
+        <argument
+            android:name="signRequestId"
+            app:argType="string" />
+    </dialog>
+
+    <action
+        android:id="@+id/action_global_to_pendingSignaturesBottomSheet"
+        app:destination="@id/pendingSignaturesBottomSheet">
+        <argument
+            android:name="signRequestId"
+            app:argType="string" />
+    </action>
+
     <fragment
         android:id="@+id/nameJointAccountFragment"
         android:name="com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.NameJointAccountFragment"

@@ -29,6 +29,7 @@ import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRende
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
@@ -68,7 +69,7 @@ class AccountPreviewProcessor @Inject constructor(
         privacyMode: PrivacyMode,
         spotBanners: List<SpotBanner>
     ): AccountPreview {
-        val assetInboxCount = getTotalInboxCount()
+        val inboxButtonLabel = getTotalInboxCount()
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
@@ -97,7 +98,7 @@ class AccountPreviewProcessor @Inject constructor(
             accountListItems = accountList,
             portfolioValueItem = portfolio,
             hasNewNotification = notificationStatusUseCase.hasNewNotification(),
-            assetInboxCount = assetInboxCount
+            inboxButtonLabel = inboxButtonLabel
         )
     }
 
@@ -151,7 +152,7 @@ class AccountPreviewProcessor @Inject constructor(
         val displayName = getAccountDisplayName(accountLite)
         val primaryAmount = PeraAmount(cachedInfo.primaryAccountValue)
         val secondaryAmount = PeraAmount(cachedInfo.secondaryAccountValue)
-        val participantCount = if (cachedInfo.type == AccountType.Joint) {
+        val participantCount = if (accountLite.registrationType is AccountRegistrationType.Joint) {
             (getLocalAccount(address) as? LocalAccount.Joint)?.participantAddresses?.size?.takeIf { it > 0 }
         } else {
             null

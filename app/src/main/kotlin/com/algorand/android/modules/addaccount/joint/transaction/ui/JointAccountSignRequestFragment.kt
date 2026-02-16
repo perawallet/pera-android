@@ -97,20 +97,25 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
                 showAlertSuccess(title = getString(event.messageResId))
                 navBack()
             }
+
             is ViewEvent.ShowError -> showGlobalError(getString(event.messageResId))
             is ViewEvent.ShowPendingSignaturesBottomSheet,
             is ViewEvent.ShowPendingSignaturesDirectly -> {
                 shouldShowPendingSignatures.value = true
             }
+
             is ViewEvent.StartLedgerSigning -> {
                 ledgerSignHelper.signWithLedger(
                     signRequestId = event.data.signRequestId,
                     accountAddress = event.data.accountAddress,
                     rawTransactionsBase64 = event.data.rawTransactions,
                     ledgerBluetoothAddress = event.data.ledgerBluetoothAddress,
-                    ledgerAccountIndex = event.data.ledgerAccountIndex
+                    ledgerAccountIndex = event.data.ledgerAccountIndex,
+                    accountAuthAddress = event.data.accountAuthAddress,
+                    isRekeyedToAnotherAccount = event.data.isRekeyedToAnotherAccount
                 )
             }
+
             is ViewEvent.CopyAddress -> {
                 context?.copyToClipboard(event.address)
             }
@@ -130,6 +135,7 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
             is JointAccountLedgerSignHelper.LedgerSignResult.Scanning -> {
                 showLedgerLoading(getString(R.string.searching_for_ledger))
             }
+
             is JointAccountLedgerSignHelper.LedgerSignResult.WaitingForApproval -> {
                 showLedgerLoading(
                     result.bluetoothName ?: getString(R.string.ledger),
@@ -137,6 +143,7 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
                     result.totalTransactionCount
                 )
             }
+
             is JointAccountLedgerSignHelper.LedgerSignResult.Submitting -> Unit
             is JointAccountLedgerSignHelper.LedgerSignResult.Success -> {
                 hideLedgerLoading()
@@ -148,15 +155,18 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
                     Toast.LENGTH_SHORT
                 ).show()
             }
+
             is JointAccountLedgerSignHelper.LedgerSignResult.Error -> {
                 hideLedgerLoading()
                 ledgerSignHelper.resetState()
                 viewModel.onLedgerSignError(result.errorMessageResId)
             }
+
             is JointAccountLedgerSignHelper.LedgerSignResult.Cancelled -> {
                 hideLedgerLoading()
                 ledgerSignHelper.resetState()
             }
+
             is JointAccountLedgerSignHelper.LedgerSignResult.Idle -> Unit
         }
     }
@@ -190,7 +200,7 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
     }
 
     override fun onCloseClick() {
-        navBack()
+        navigateBackToInboxOrFallback()
     }
 
     override fun onCopyAddressClick() {
@@ -202,7 +212,12 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
     }
 
     override fun onNavigateToHome() {
-        findNavController().popBackStack(R.id.accountsFragment, false)
+        navigateBackToInboxOrFallback()
+    }
+
+    private fun navigateBackToInboxOrFallback() {
+        val popped = findNavController().popBackStack(R.id.inboxNavigation, false)
+        if (!popped) navBack()
     }
 
     override fun onDestroyView() {

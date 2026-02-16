@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.createaccount.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
@@ -29,7 +30,8 @@ import javax.inject.Inject
 class CreateJointAccountViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
-    persistentCacheProvider: PersistentCacheProvider
+    persistentCacheProvider: PersistentCacheProvider,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     StateViewModel<CreateJointAccountViewModel.ViewState> by stateDelegate,
     EventViewModel<CreateJointAccountViewModel.ViewEvent> by eventDelegate {
@@ -39,6 +41,17 @@ class CreateJointAccountViewModel @Inject constructor(
             Boolean::class.java,
             DISCLAIMER_SEEN_KEY
         )
+
+    private var editingAccountIndex: Int?
+        get() = savedStateHandle.get<Int>(EDITING_ACCOUNT_INDEX_KEY)
+        set(value) {
+            if (value != null) {
+                savedStateHandle[EDITING_ACCOUNT_INDEX_KEY] = value
+            } else {
+                savedStateHandle.remove<Int>(EDITING_ACCOUNT_INDEX_KEY)
+                Unit
+            }
+        }
 
     init {
         stateDelegate.setDefaultState(ViewState.Content())
@@ -50,8 +63,6 @@ class CreateJointAccountViewModel @Inject constructor(
             content.copy(selectedAccounts = content.selectedAccounts + account)
         }
     }
-
-    private var editingAccountIndex: Int? = null
 
     fun setEditingAccountIndex(index: Int) {
         editingAccountIndex = index
@@ -134,11 +145,11 @@ class CreateJointAccountViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data class ShowGlobalError(val errorResId: Int) : ViewEvent
         data object NavigateToSetThreshold : ViewEvent
     }
 
     companion object {
         private const val DISCLAIMER_SEEN_KEY = "joint_account_disclaimer_seen"
+        private const val EDITING_ACCOUNT_INDEX_KEY = "editingAccountIndex"
     }
 }

@@ -98,4 +98,9 @@ class RekeyToStandardAccountConfirmationFragment : BaseRekeyConfirmationFragment
             rekeyToStandardAccountConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
         }
     }
+
+    override fun onJointAccountSignRequestCreated(signRequestId: String) {
+        rekeyToStandardAccountConfirmationViewModel.onTransactionSigningFailed()
+        super.onJointAccountSignRequestCreated(signRequestId)
+    }
 }

@@ -25,7 +25,7 @@ import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.AddJ
 import com.algorand.android.modules.addaccount.joint.creation.ui.createaccount.viewmodel.CreateJointAccountViewModel
 import com.algorand.android.modules.addaccount.joint.creation.ui.editname.EditAccountNameFragment
 import com.algorand.android.ui.compose.extensions.createComposeView
-import com.algorand.android.utils.browser.openSupportCenterUrl
+import com.algorand.android.utils.browser.openJointAccountLearnMoreUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,10 +73,6 @@ class CreateJointAccountFragment : DaggerBaseFragment(0), CreateJointAccountScre
             flow = viewModel.viewEvent,
             collection = { event ->
                 when (event) {
-                    is CreateJointAccountViewModel.ViewEvent.ShowGlobalError -> {
-                        showGlobalError(getString(event.errorResId))
-                    }
-
                     is CreateJointAccountViewModel.ViewEvent.NavigateToSetThreshold -> {
                         navToSetThresholdFragment()
                     }
@@ -112,7 +108,7 @@ class CreateJointAccountFragment : DaggerBaseFragment(0), CreateJointAccountScre
     }
 
     override fun onLearnMoreClick() {
-        context?.openSupportCenterUrl()
+        context?.openJointAccountLearnMoreUrl()
     }
 
     private fun navToAddJointAccountFragment() {

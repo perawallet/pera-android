@@ -37,6 +37,7 @@ import com.algorand.android.models.ScreenState
 import com.algorand.android.models.TooltipConfig
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.InboxButtonLabel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowAccountAddressCopyTutorial
@@ -251,9 +252,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             with(binding) {
                 portfolioValueTitleTextView.isInvisible = !isVisible
                 primaryPortfolioValue.isInvisible = !isVisible
-                toolbarPrimaryPortfolioValue.isInvisible = !isVisible
                 secondaryPortfolioValue.isInvisible = !isVisible
-                toolbarSecondaryPortfolioValue.isInvisible = !isVisible
                 accountsRecyclerView.isInvisible = !isVisible
                 if (isVisible.not()) binding.accountsFragmentMotionLayout.transitionToState(R.id.start)
                 accountsFragmentMotionLayout.getTransition(R.id.accountsFragmentTransition).isEnabled = isVisible
@@ -310,11 +309,15 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    private val assetInboxCountCollector: suspend (Int?) -> Unit = { assetInboxCountNullable ->
-        val assetInboxCount = assetInboxCountNullable ?: 0
-        binding.assetInboxAllAccountsButton.apply {
-            text = getString(R.string.inbox)
-            isVisible = assetInboxCount > 0
+    private val inboxButtonLabelCollector: suspend (InboxButtonLabel?) -> Unit = { label ->
+        binding.inboxButton.apply {
+            visibility = if (label != null) View.VISIBLE else View.GONE
+            text = when (label) {
+                is InboxButtonLabel.JointAccountRequest -> getString(R.string.joint_account_request)
+                is InboxButtonLabel.SignTxnRequest -> getString(R.string.sign_txn_request)
+                is InboxButtonLabel.Inbox -> getString(R.string.inbox)
+                null -> null
+            }
         }
     }
 
@@ -360,8 +363,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 text = portfolioValues.getSecondaryAccountValue(context)
                 setOnClickListener { accountsViewModel.togglePrivacy() }
             }
-            toolbarPrimaryPortfolioValue.text = portfolioValues.getPrimaryAccountValue(root.context)
-            toolbarSecondaryPortfolioValue.text = portfolioValues.getSecondaryAccountValue(root.context)
             binding.portfolioDeltaText.isVisible = portfolioValues.privacyMode is Disabled
             binding.portfolioPercentageText.isVisible = portfolioValues.privacyMode is Disabled
             portfolioValueTitleTextView.apply {
@@ -404,7 +405,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.logNotificationClick()
             navigateToNotifications()
         }
-        binding.assetInboxAllAccountsButton.setOnClickListener { navToInboxNavigation() }
+        binding.inboxButton.setOnClickListener { navToInboxNavigation() }
     }
 
     override fun onResume() {
@@ -448,8 +449,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 notificationStateCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.assetInboxCount },
-                assetInboxCountCollector
+                accountPreviewFlow.map { it?.inboxButtonLabel },
+                inboxButtonLabelCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountsViewModel.viewEvent,

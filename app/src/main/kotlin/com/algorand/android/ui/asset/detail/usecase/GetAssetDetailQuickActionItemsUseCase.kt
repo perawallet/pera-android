@@ -18,7 +18,9 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.Rec
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SendButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.StakeButton
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -28,6 +30,7 @@ import javax.inject.Inject
 
 internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
     private val getAccountType: GetAccountType,
+    private val getAccountRegistrationType: GetAccountRegistrationType,
     private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : GetAssetDetailQuickActionItems {
@@ -36,13 +39,14 @@ internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
         val accountType = getAccountType(address)
         val isWatchAccount = accountType == AccountType.NoAuth
         if (isWatchAccount) return emptyList()
+        val isJointAccount = getAccountRegistrationType(address) == AccountRegistrationType.Joint
         val isAlgo = assetId == ALGO_ID
         return buildList {
-            if (isAssetOptedInByAccount(address, assetId) && accountType !is AccountType.Joint) {
+            if (isAssetOptedInByAccount(address, assetId) && !isJointAccount) {
                 add(SwapButton)
             }
 
-            if (isAlgo) {
+            if (isAlgo && !isJointAccount) {
                 if (isXoSwapEnabled() && isStakingEnabled()) {
                     add(StakeButton)
                 } else {

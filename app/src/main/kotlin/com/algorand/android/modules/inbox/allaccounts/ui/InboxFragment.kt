@@ -23,7 +23,6 @@ import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewEvent
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
@@ -34,7 +33,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
 
-    private val infoButton by lazy { IconButton(R.drawable.ic_info, onClick = ::onInfoClick) }
+    private val infoButton by lazy {
+        IconButton(
+            iconResId = R.drawable.ic_info,
+            iconTintResId = R.color.text_main,
+            onClick = ::onInfoClick
+        )
+    }
 
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.inbox,
@@ -129,8 +134,7 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
         if (canUserSign) {
             nav(HomeNavigationDirections.actionGlobalToJointAccountSignRequestFragment(signRequestId))
         } else {
-            PendingSignaturesDialogFragment.newInstance(signRequestId)
-                .show(childFragmentManager, PendingSignaturesDialogFragment.TAG)
+            nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(signRequestId))
         }
     }
 

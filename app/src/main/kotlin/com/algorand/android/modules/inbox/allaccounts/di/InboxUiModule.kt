@@ -12,14 +12,8 @@
 
 package com.algorand.android.modules.inbox.allaccounts.di
 
-import com.algorand.android.modules.inbox.allaccounts.ui.InboxViewModelDependencies
-import com.algorand.android.modules.inbox.allaccounts.ui.mapper.InboxViewStateMapper
-import com.algorand.wallet.inbox.domain.usecase.GetInboxLastOpenedTime
-import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
-import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
-import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
-import com.algorand.wallet.inbox.domain.usecase.SetInboxLastOpenedTime
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.android.modules.inbox.allaccounts.domain.usecase.GetInboxViewState
+import com.algorand.android.modules.inbox.allaccounts.domain.usecase.GetInboxViewStateUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,21 +24,5 @@ import dagger.hilt.components.SingletonComponent
 internal object InboxUiModule {
 
     @Provides
-    fun provideInboxViewModelDependencies(
-        inboxViewStateMapper: InboxViewStateMapper,
-        getInboxValidAddresses: GetInboxValidAddresses,
-        getInboxMessagesFlow: GetInboxMessagesFlow,
-        refreshInboxCache: RefreshInboxCache,
-        setInboxLastOpenedTime: SetInboxLastOpenedTime,
-        getInboxLastOpenedTime: GetInboxLastOpenedTime,
-        isFeatureToggleEnabled: IsFeatureToggleEnabled
-    ): InboxViewModelDependencies = InboxViewModelDependencies(
-        inboxViewStateMapper = inboxViewStateMapper,
-        getInboxValidAddresses = getInboxValidAddresses,
-        getInboxMessagesFlow = getInboxMessagesFlow,
-        refreshInboxCache = refreshInboxCache,
-        setInboxLastOpenedTime = setInboxLastOpenedTime,
-        getInboxLastOpenedTime = getInboxLastOpenedTime,
-        isFeatureToggleEnabled = isFeatureToggleEnabled
-    )
+    fun provideGetInboxViewState(useCase: GetInboxViewStateUseCase): GetInboxViewState = useCase
 }

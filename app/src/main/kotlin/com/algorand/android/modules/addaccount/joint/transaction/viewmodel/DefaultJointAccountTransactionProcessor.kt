@@ -44,16 +44,19 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         preview: JointAccountTransactionViewState,
         signedAddresses: List<String>
     ): JointAccountTransactionViewState {
-        val newSignedCount = preview.signedCount + signedAddresses.size
+        val confirmedSignedAddresses = signedAddresses.toSet()
+        val newSignedCount = preview.signedCount + confirmedSignedAddresses.size
         val isCompleted = isTransactionCompleted(newSignedCount, preview.requiredSignatureCount)
-        val updatedSigners = markSignersAsSigned(preview.signerAccounts, signedAddresses)
+        val updatedSigners = markSignersAsSigned(preview.signerAccounts, confirmedSignedAddresses)
+        val remainingUnsignedLocalAddresses = preview.unsignedLocalParticipantAddresses
+            .filterNot { it in confirmedSignedAddresses }
 
         return preview.copy(
             transactionState = getTransactionStateForCompletion(isCompleted),
             signedCount = newSignedCount,
             signerAccounts = if (isCompleted) hideProgressOnPendingSigners(updatedSigners) else updatedSigners,
-            hasCurrentUserAlreadySigned = signedAddresses.isNotEmpty() || preview.hasCurrentUserAlreadySigned,
-            unsignedLocalParticipantAddresses = emptyList()
+            hasCurrentUserAlreadySigned = confirmedSignedAddresses.isNotEmpty() || preview.hasCurrentUserAlreadySigned,
+            unsignedLocalParticipantAddresses = remainingUnsignedLocalAddresses
         )
     }
 
@@ -71,7 +74,9 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
             accountAddress = ledgerSigner.accountAddress,
             rawTransactions = rawTransactions,
             ledgerBluetoothAddress = bluetoothAddress,
-            ledgerAccountIndex = accountIndex
+            ledgerAccountIndex = accountIndex,
+            accountAuthAddress = ledgerSigner.accountAuthAddress,
+            isRekeyedToAnotherAccount = ledgerSigner.accountAuthAddress != null
         )
     }
 
@@ -161,10 +166,10 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
 
     private fun markSignersAsSigned(
         signerAccounts: List<JointAccountSignerItem>,
-        signedAddresses: List<String>
+        signedAddresses: Set<String>
     ): List<JointAccountSignerItem> {
         return signerAccounts.map { signer ->
-            if (signedAddresses.contains(signer.accountAddress)) {
+            if (signer.accountAddress in signedAddresses) {
                 signer.copy(signatureStatus = JointAccountSignatureStatus.Signed)
             } else {
                 signer

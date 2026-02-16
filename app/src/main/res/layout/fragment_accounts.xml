@@ -40,38 +40,8 @@
         tools:srcCompat="@drawable/ic_algo"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/toolbarPrimaryPortfolioValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Title.Large.Sans.Medium"
-        android:textSize="@dimen/text_size_13"
-        app:layout_constraintBottom_toTopOf="@id/toolbarSecondaryPortfolioValue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/toolbarLayout"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="¦107,114.72" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/toolbarSecondaryPortfolioValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Body.Sans"
-        android:textColor="@color/secondary_text_color"
-        android:textSize="@dimen/text_size_11"
-        app:layout_constraintBottom_toBottomOf="@id/toolbarLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarPrimaryPortfolioValue"
-        tools:text="$105,413.95" />
-
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/assetInboxAllAccountsButton"
+        android:id="@+id/inboxButton"
         style="?attr/toolbarNavigationButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
@@ -80,13 +50,14 @@
         android:layout_marginTop="@dimen/spacing_xxxsmall"
         android:background="@drawable/bg_asset_inbox_rectangle"
         android:drawableStart="@drawable/ic_asset_request"
+        android:drawableEnd="@drawable/ic_right_16dp"
         android:drawablePadding="6dp"
         android:maxLines="1"
         android:paddingHorizontal="@dimen/spacing_xsmall"
         android:textAppearance="@style/TextAppearance.Footnote.Mono.Medium"
-        android:textColor="@color/link_primary"
+        android:textColor="@color/button_square_icon"
         android:visibility="gone"
-        app:drawableTint="@color/link_primary"
+        app:drawableTint="@color/button_square_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem[1]"
@@ -98,7 +69,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/assetInboxAllAccountsButton" />
+        app:layout_constraintTop_toBottomOf="@id/inboxButton" />
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/jointAccountRequestBannerComposeView"

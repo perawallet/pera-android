@@ -22,14 +22,16 @@ import com.algorand.android.modules.addaccount.joint.creation.model.JointAccount
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.isValidNFTDomain
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import javax.inject.Inject
 
 class AddJointAccountSelectionUseCase @Inject constructor(
     private val getAccountSelectionAccountItems: GetAccountSelectionAccountItems,
     private val getAccountSelectionContactItems: GetAccountSelectionContactItems,
     private val getAccountSelectionNameServiceItems: GetAccountSelectionNameServiceItems,
-    private val jointAccountSelectionListItemMapper: JointAccountSelectionListItemMapper
+    private val jointAccountSelectionListItemMapper: JointAccountSelectionListItemMapper,
+    private val getAccountRegistrationType: GetAccountRegistrationType
 ) {
 
     suspend fun getAccountSelectionList(
@@ -67,8 +69,8 @@ class AddJointAccountSelectionUseCase @Inject constructor(
         )
         val filteredAccounts = accounts.mapNotNull { item ->
             val accountItem = item as? AccountItem ?: return@mapNotNull null
-            val accountType = accountItem.accountListItem.itemConfiguration.accountType
-            if (accountType is AccountType.Joint) return@mapNotNull null
+            val registrationType = getAccountRegistrationType(accountItem.address)
+            if (registrationType is AccountRegistrationType.Joint) return@mapNotNull null
             val displayName = accountItem.displayName
             val address = accountItem.address
             if (!displayName.contains(query, ignoreCase = true) &&

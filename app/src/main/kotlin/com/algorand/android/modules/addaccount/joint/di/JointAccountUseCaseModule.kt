@@ -13,13 +13,12 @@
 package com.algorand.android.modules.addaccount.joint.di
 
 import android.content.Context
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContactUseCase
-import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
-import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountNameUseCase
+import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
+import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumberUseCase
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.DeclineJointAccountSignRequest
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.DeclineJointAccountSignRequestUseCase
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.FormatAlgoAsDisplayCurrency
@@ -31,10 +30,13 @@ import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewStateUseCase
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignatureUseCase
+import com.algorand.android.ui.device.usecase.GetDeviceConfig
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePack
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
+import com.algorand.wallet.utils.date.TimeProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,9 +53,9 @@ internal object JointAccountUseCaseModule {
     ): SignAndSubmitJointAccountSignature = useCase
 
     @Provides
-    fun provideGetDefaultJointAccountName(
-        useCase: GetDefaultJointAccountNameUseCase
-    ): GetDefaultJointAccountName = useCase
+    fun provideGetNextJointAccountNumber(
+        useCase: GetNextJointAccountNumberUseCase
+    ): GetNextJointAccountNumber = useCase
 
     @Provides
     fun provideCreateExternalAddressAsContact(
@@ -71,21 +73,25 @@ internal object JointAccountUseCaseModule {
         parseTransactionMessagePack: ParseTransactionMessagePack,
         getAccountDisplayName: GetAccountDisplayName,
         getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-        deviceIdUseCase: DeviceIdUseCase,
+        getDeviceConfig: GetDeviceConfig,
         getLocalAccountsAddresses: GetLocalAccountsAddresses,
         getLocalAccounts: GetLocalAccounts,
         getJointAccountSignerItems: GetJointAccountSignerItems,
-        formatAlgoAsDisplayCurrency: FormatAlgoAsDisplayCurrency
+        formatAlgoAsDisplayCurrency: FormatAlgoAsDisplayCurrency,
+        timeProvider: TimeProvider,
+        getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
     ): GetJointAccountTransactionViewStateDependencies = GetJointAccountTransactionViewStateDependencies(
         getSignRequestWithSignatures = getSignRequestWithSignatures,
         parseTransactionMessagePack = parseTransactionMessagePack,
         getAccountDisplayName = getAccountDisplayName,
         getAccountIconDrawablePreview = getAccountIconDrawablePreview,
-        deviceIdUseCase = deviceIdUseCase,
+        getDeviceConfig = getDeviceConfig,
         getLocalAccountsAddresses = getLocalAccountsAddresses,
         getLocalAccounts = getLocalAccounts,
         getJointAccountSignerItems = getJointAccountSignerItems,
-        formatAlgoAsDisplayCurrency = formatAlgoAsDisplayCurrency
+        formatAlgoAsDisplayCurrency = formatAlgoAsDisplayCurrency,
+        timeProvider = timeProvider,
+        getAccountRekeyAdminAddress = getAccountRekeyAdminAddress
     )
 
     @Provides

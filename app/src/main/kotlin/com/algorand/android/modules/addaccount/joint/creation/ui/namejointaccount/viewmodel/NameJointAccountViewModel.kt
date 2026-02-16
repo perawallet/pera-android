@@ -19,7 +19,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.joint.core.JointAccountConstants
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
-import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
+import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
 import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
 import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
 import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
@@ -39,7 +39,7 @@ class NameJointAccountViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val createJointAccount: CreateJointAccount,
-    private val getDefaultJointAccountName: GetDefaultJointAccountName,
+    private val getNextJointAccountNumber: GetNextJointAccountNumber,
     private val getAllAccountOrderIndexes: GetAllAccountOrderIndexes,
     private val addJointAccount: AddJointAccount,
     private val getJointAccount: GetJointAccount,
@@ -59,7 +59,7 @@ class NameJointAccountViewModel @Inject constructor(
 
     private fun loadDefaultJointAccountNumber() {
         viewModelScope.launch {
-            val number = getDefaultJointAccountName()
+            val number = getNextJointAccountNumber()
             stateDelegate.updateState { currentState ->
                 when (currentState) {
                     is ViewState.Idle -> currentState.copy(defaultJointAccountNumber = number)
@@ -182,12 +182,12 @@ class NameJointAccountViewModel @Inject constructor(
     }
 
     private suspend fun deleteInboxNotification(jointAccountAddress: String) {
-        runCatching { inboxCleanup.getDeviceConfig().deviceId.toLongOrNull() }
-            .getOrNull()
-            ?.let { deviceIdLong ->
-                runCatching { inboxCleanup.deleteInboxJointInvitationNotification(deviceIdLong, jointAccountAddress) }
-                    .onFailure { Log.e(TAG, "Failed to delete inbox notification", it) }
-            }
+        try {
+            val deviceId = inboxCleanup.getDeviceConfig().deviceId.toLongOrNull() ?: return
+            inboxCleanup.deleteInboxJointInvitationNotification(deviceId, jointAccountAddress)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to delete inbox notification", e)
+        }
     }
 
     private fun revertToIdle() {

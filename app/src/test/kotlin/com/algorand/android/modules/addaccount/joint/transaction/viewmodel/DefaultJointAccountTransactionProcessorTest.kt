@@ -134,7 +134,8 @@ internal class DefaultJointAccountTransactionProcessorTest {
     @Test
     fun `EXPECT Completed state WHEN all signatures are collected`() {
         val signerAccounts = listOf(
-            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Pending)
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Signed),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending)
         )
         val preview = createTestPreview(
             signedCount = 1,
@@ -142,7 +143,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
             signerAccounts = signerAccounts
         )
 
-        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR1"))
+        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR2"))
 
         assertEquals(JointAccountTransactionState.Completed, result.transactionState)
     }
@@ -164,39 +165,39 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
-    fun `EXPECT first local address WHEN finding decline participant`() {
+    fun `EXPECT all addresses WHEN finding decline participants`() {
         val preview = createTestPreview(
             unsignedLocalParticipantAddresses = listOf("LOCAL_ADDR"),
             unsignedLedgerParticipantAddresses = listOf("LEDGER_ADDR")
         )
 
-        val result = processor.findDeclineParticipantAddress(preview)
+        val result = processor.findDeclineParticipantAddresses(preview)
 
-        assertEquals("LOCAL_ADDR", result)
+        assertEquals(listOf("LOCAL_ADDR", "LEDGER_ADDR"), result)
     }
 
     @Test
-    fun `EXPECT first ledger address WHEN no local addresses for decline`() {
+    fun `EXPECT ledger addresses WHEN no local addresses for decline`() {
         val preview = createTestPreview(
             unsignedLocalParticipantAddresses = emptyList(),
             unsignedLedgerParticipantAddresses = listOf("LEDGER_ADDR")
         )
 
-        val result = processor.findDeclineParticipantAddress(preview)
+        val result = processor.findDeclineParticipantAddresses(preview)
 
-        assertEquals("LEDGER_ADDR", result)
+        assertEquals(listOf("LEDGER_ADDR"), result)
     }
 
     @Test
-    fun `EXPECT null WHEN no addresses available for decline`() {
+    fun `EXPECT empty list WHEN no addresses available for decline`() {
         val preview = createTestPreview(
             unsignedLocalParticipantAddresses = emptyList(),
             unsignedLedgerParticipantAddresses = emptyList()
         )
 
-        val result = processor.findDeclineParticipantAddress(preview)
+        val result = processor.findDeclineParticipantAddresses(preview)
 
-        assertNull(result)
+        assertTrue(result.isEmpty())
     }
 
     @Test

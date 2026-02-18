@@ -390,7 +390,12 @@ class MainActivity :
                 is TransactionManagerResult.Success.TransactionRequestSigned -> {
                     hideProgress()
                     hideLedgerLoadingDialog()
-                    nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(result.signRequestId))
+                    nav(
+                        HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                            signRequestId = result.signRequestId,
+                            isDismissable = false
+                        )
+                    )
                 }
 
                 TransactionManagerResult.LedgerOperationCanceled -> {

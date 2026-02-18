@@ -21,6 +21,10 @@ import com.algorand.android.R
 import com.algorand.android.ledger.CustomScanCallback
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
+import com.algorand.algosdk.transaction.SignedTransaction
+import com.algorand.algosdk.util.Encoder
+import com.algorand.android.ledger.operations.ExternalTransaction
+import com.algorand.android.ledger.operations.ExternalTransactionOperation
 import com.algorand.android.ledger.operations.TransactionSignOperation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.Arc59TransactionData
@@ -80,6 +84,41 @@ class TransactionSignManager @Inject constructor(
     private var transactionParams: TransactionParams? = null
     var transactionDataList: List<TransactionSignData>? = null
 
+    private var pendingJointAccountLedgerSign: PendingJointAccountLedgerSign? = null
+    private var jointAccountLedgerSignedTransactions = mutableListOf<ByteArray>()
+    private var jointAccountLedgerCurrentIndex = 0
+
+    private val jointAccountLedgerScanCallback = object : CustomScanCallback() {
+        override fun onLedgerScanned(
+            device: BluetoothDevice,
+            currentTransactionIndex: Int?,
+            totalTransactionCount: Int?
+        ) {
+            ledgerBleSearchManager.stop()
+            pendingJointAccountLedgerSign?.let { pending ->
+                val rawTxBytes = pending.rawTransactionBytes.getOrNull(jointAccountLedgerCurrentIndex)
+                if (rawTxBytes != null) {
+                    val transaction = JointAccountLedgerTransaction(
+                        transactionByteArray = rawTxBytes,
+                        accountAddress = pending.proposal.proposerAddress,
+                        accountAuthAddress = null,
+                        isRekeyedToAnotherAccount = false
+                    )
+                    ledgerBleOperationManager.startLedgerOperation(
+                        ExternalTransactionOperation(device, transaction),
+                        jointAccountLedgerCurrentIndex,
+                        pending.rawTransactionBytes.size
+                    )
+                }
+            }
+        }
+
+        override fun onScanError(errorMessageResId: Int, titleResId: Int) {
+            clearPendingJointAccountLedgerSign()
+            setSignFailed(TransactionManagerResult.LedgerScanFailed)
+        }
+    }
+
     private val scanCallback = object : CustomScanCallback() {
         override fun onLedgerScanned(
             device: BluetoothDevice,
@@ -110,19 +149,37 @@ class TransactionSignManager @Inject constructor(
                     postResult(TransactionManagerResult.LedgerWaitingForApproval(bluetoothName))
                 }
 
-                is LedgerBleResult.SignedTransactionResult -> checkAndCacheSignedTransaction(transactionByteArray)
+                is LedgerBleResult.SignedTransactionResult -> {
+                    if (pendingJointAccountLedgerSign != null) {
+                        handleJointAccountLedgerSignResult(transactionByteArray)
+                    } else {
+                        checkAndCacheSignedTransaction(transactionByteArray)
+                    }
+                }
+
                 is LedgerBleResult.LedgerErrorResult -> {
+                    clearPendingJointAccountLedgerSign()
                     setSignFailed(TransactionManagerResult.Error.GlobalWarningError.Api(errorMessage))
                 }
 
-                is LedgerBleResult.AppErrorResult -> setSignFailed(Defined(AnnotatedString(errorMessageId), titleResId))
-                is LedgerBleResult.OperationCancelledResult -> setSignFailed(
-                    Defined(AnnotatedString(R.string.error_cancelled_message), R.string.error_cancelled_title)
-                )
+                is LedgerBleResult.AppErrorResult -> {
+                    clearPendingJointAccountLedgerSign()
+                    setSignFailed(Defined(AnnotatedString(errorMessageId), titleResId))
+                }
 
-                is LedgerBleResult.OnMissingBytes -> setSignFailed(
-                    Defined(AnnotatedString(R.string.error_sending_message), R.string.error_bluetooth_title)
-                )
+                is LedgerBleResult.OperationCancelledResult -> {
+                    clearPendingJointAccountLedgerSign()
+                    setSignFailed(
+                        Defined(AnnotatedString(R.string.error_cancelled_message), R.string.error_cancelled_title)
+                    )
+                }
+
+                is LedgerBleResult.OnMissingBytes -> {
+                    clearPendingJointAccountLedgerSign()
+                    setSignFailed(
+                        Defined(AnnotatedString(R.string.error_sending_message), R.string.error_bluetooth_title)
+                    )
+                }
 
                 else -> sendErrorLog("Unhandled else case in operationManagerCollectorAction")
             }
@@ -287,10 +344,117 @@ class TransactionSignManager @Inject constructor(
             is JointAccountTransactionSignHelper.JointSignResult.Success -> {
                 postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
             }
+
+            is JointAccountTransactionSignHelper.JointSignResult.NeedsLedgerSign -> {
+                startJointAccountLedgerSign(result.pendingProposal)
+            }
+
             is JointAccountTransactionSignHelper.JointSignResult.Error -> {
                 postJointAccountError()
             }
         }
+    }
+
+    private fun startJointAccountLedgerSign(
+        proposal: JointAccountTransactionSignHelper.PendingJointAccountProposal
+    ) {
+        val rawTransactionBytes = proposal.rawTransactionLists.flatten().map { base64 ->
+            runCatching { android.util.Base64.decode(base64, android.util.Base64.DEFAULT) }.getOrNull()
+        }
+
+        if (rawTransactionBytes.any { it == null }) {
+            postJointAccountError()
+            return
+        }
+
+        jointAccountLedgerCurrentIndex = 0
+        jointAccountLedgerSignedTransactions.clear()
+        pendingJointAccountLedgerSign = PendingJointAccountLedgerSign(
+            proposal = proposal,
+            rawTransactionBytes = rawTransactionBytes.filterNotNull()
+        )
+
+        val bluetoothAddress = proposal.ledgerAccount.deviceMacAddress
+        val currentConnectedDevice = ledgerBleOperationManager.connectedBluetoothDevice
+        if (currentConnectedDevice != null && currentConnectedDevice.address == bluetoothAddress) {
+            jointAccountLedgerScanCallback.onLedgerScanned(
+                currentConnectedDevice, 0, rawTransactionBytes.size
+            )
+        } else {
+            ledgerBleSearchManager.scan(
+                newScanCallback = jointAccountLedgerScanCallback,
+                filteredAddress = bluetoothAddress,
+                coroutineScope = currentScope
+            )
+        }
+    }
+
+    private suspend fun handleJointAccountLedgerSignResult(signedTransactionData: ByteArray) {
+        jointAccountLedgerSignedTransactions.add(signedTransactionData)
+        jointAccountLedgerCurrentIndex++
+
+        val pending = pendingJointAccountLedgerSign ?: run {
+            postJointAccountError()
+            return
+        }
+
+        if (jointAccountLedgerCurrentIndex < pending.rawTransactionBytes.size) {
+            val currentConnectedDevice = ledgerBleOperationManager.connectedBluetoothDevice
+            if (currentConnectedDevice != null) {
+                jointAccountLedgerScanCallback.onLedgerScanned(
+                    currentConnectedDevice,
+                    jointAccountLedgerCurrentIndex,
+                    pending.rawTransactionBytes.size
+                )
+            } else {
+                clearPendingJointAccountLedgerSign()
+                postJointAccountError()
+            }
+        } else {
+            completeJointAccountProposalAfterLedgerSign(pending)
+        }
+    }
+
+    private suspend fun completeJointAccountProposalAfterLedgerSign(
+        pending: PendingJointAccountLedgerSign
+    ) {
+        val signatureBase64List = jointAccountLedgerSignedTransactions.mapNotNull { signedTx ->
+            extractSignatureFromSignedTransaction(signedTx)?.let { Encoder.encodeToBase64(it) }
+        }
+
+        if (signatureBase64List.size != pending.rawTransactionBytes.size) {
+            clearPendingJointAccountLedgerSign()
+            postJointAccountError()
+            return
+        }
+
+        val result = jointAccountTransactionSignHelper.completeJointAccountProposal(
+            pendingProposal = pending.proposal,
+            signatureBase64List = signatureBase64List
+        )
+
+        clearPendingJointAccountLedgerSign()
+
+        when (result) {
+            is JointAccountTransactionSignHelper.JointSignResult.Success -> {
+                postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
+            }
+
+            else -> postJointAccountError()
+        }
+    }
+
+    private fun extractSignatureFromSignedTransaction(signedTx: ByteArray): ByteArray? {
+        return runCatching {
+            val signedTransaction = Encoder.decodeFromMsgPack(signedTx, SignedTransaction::class.java)
+            signedTransaction.sig?.bytes
+        }.getOrNull()
+    }
+
+    private fun clearPendingJointAccountLedgerSign() {
+        pendingJointAccountLedgerSign = null
+        jointAccountLedgerSignedTransactions.clear()
+        jointAccountLedgerCurrentIndex = 0
     }
 
     private fun postJointAccountError() {
@@ -590,6 +754,7 @@ class TransactionSignManager @Inject constructor(
         ledgerBleSearchManager.stop()
         transactionManagerResultLiveData.value = null
         transactionDataList = null
+        clearPendingJointAccountLedgerSign()
     }
 
     private suspend fun processTransactionDataList(
@@ -644,4 +809,16 @@ class TransactionSignManager @Inject constructor(
             }
         }.toBytesArray().assignGroupId()
     }
+
+    private data class PendingJointAccountLedgerSign(
+        val proposal: JointAccountTransactionSignHelper.PendingJointAccountProposal,
+        val rawTransactionBytes: List<ByteArray>
+    )
+
+    private class JointAccountLedgerTransaction(
+        override val transactionByteArray: ByteArray,
+        override val accountAddress: String,
+        override val accountAuthAddress: String?,
+        override val isRekeyedToAnotherAccount: Boolean
+    ) : ExternalTransaction
 }

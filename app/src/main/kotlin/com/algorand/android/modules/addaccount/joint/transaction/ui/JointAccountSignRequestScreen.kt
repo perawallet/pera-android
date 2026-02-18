@@ -10,8 +10,6 @@
  * limitations under the License
  */
 
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.algorand.android.modules.addaccount.joint.transaction.ui
 
 import androidx.compose.foundation.background
@@ -30,21 +28,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -64,37 +55,13 @@ import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfi
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirmButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun JointAccountSignRequestScreen(
     viewModel: JointAccountTransactionViewModel,
-    listener: JointAccountSignRequestScreenListener,
-    showPendingSignatures: Boolean = false,
-    onPendingSignaturesShown: () -> Unit = {}
+    listener: JointAccountSignRequestScreenListener
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { targetValue ->
-            val state = viewState
-            if (state is ViewState.Content && state.preview.isFinalized) {
-                targetValue != SheetValue.Hidden
-            } else {
-                true
-            }
-        }
-    )
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    LaunchedEffect(showPendingSignatures) {
-        if (showPendingSignatures) {
-            showBottomSheet = true
-            onPendingSignaturesShown()
-        }
-    }
 
     when (val state = viewState) {
         is ViewState.Loading -> LoadingState()
@@ -102,21 +69,9 @@ fun JointAccountSignRequestScreen(
             TransactionContent(
                 preview = state.preview,
                 listener = listener,
-                onShowBottomSheet = { showBottomSheet = true },
+                onShowTransactionDetails = listener::onShowTransactionDetailsClick,
                 onConfirm = { viewModel.onConfirmTransaction() }
             )
-
-            if (showBottomSheet) {
-                BottomSheetContent(
-                    scope = scope,
-                    sheetState = sheetState,
-                    preview = state.preview,
-                    onHideSheet = { showBottomSheet = false },
-                    onCancel = { viewModel.onCancel() },
-                    onCloseForNow = { showBottomSheet = false },
-                    onCloseCompleted = listener::onNavigateToHome
-                )
-            }
         }
 
         is ViewState.Error -> {
@@ -160,7 +115,7 @@ private fun ErrorState(messageResId: Int) {
 private fun TransactionContent(
     preview: JointAccountTransactionViewState,
     listener: JointAccountSignRequestScreenListener,
-    onShowBottomSheet: () -> Unit,
+    onShowTransactionDetails: () -> Unit,
     onConfirm: () -> Unit
 ) {
     Box(
@@ -188,44 +143,11 @@ private fun TransactionContent(
         BottomSection(
             modifier = Modifier.align(Alignment.BottomCenter),
             preview = preview,
-            onShowTransactionDetailsClick = onShowBottomSheet,
+            onShowTransactionDetailsClick = onShowTransactionDetails,
             onSlideToConfirm = onConfirm,
             listener = listener
         )
     }
-}
-
-@Composable
-private fun BottomSheetContent(
-    scope: CoroutineScope,
-    sheetState: SheetState,
-    preview: JointAccountTransactionViewState,
-    onHideSheet: () -> Unit,
-    onCancel: () -> Unit,
-    onCloseForNow: () -> Unit,
-    onCloseCompleted: () -> Unit
-) {
-    fun hideSheetAndExecute(action: () -> Unit) {
-        scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) {
-                onHideSheet()
-                action()
-            }
-        }
-    }
-
-    PendingSignaturesModalBottomSheet(
-        sheetState = sheetState,
-        transactionPreview = preview,
-        onDismiss = {
-            if (!preview.isFinalized) {
-                hideSheetAndExecute {}
-            }
-        },
-        onCancel = { hideSheetAndExecute(onCancel) },
-        onCloseForNow = { hideSheetAndExecute(onCloseForNow) },
-        onCloseCompleted = onCloseCompleted
-    )
 }
 
 @Composable
@@ -421,5 +343,6 @@ interface JointAccountSignRequestScreenListener {
     fun onCloseClick()
     fun onCopyAddressClick()
     fun onDeclineClick()
+    fun onShowTransactionDetailsClick()
     fun onNavigateToHome()
 }

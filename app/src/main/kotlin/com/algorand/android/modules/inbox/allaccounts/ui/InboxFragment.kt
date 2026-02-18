@@ -89,14 +89,12 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
 
     private fun handleViewEvent(event: InboxViewEvent) {
         when (event) {
-            is InboxViewEvent.NavigateToJointAccountInvitation -> {
-                navToJointAccountInvitationDetail(event.invitation)
-            }
-
             is InboxViewEvent.NavigateToJointAccountDetail -> {
                 nav(
                     HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
-                        accountAddress = event.accountAddress
+                        accountAddress = event.accountAddress,
+                        threshold = event.threshold,
+                        participantAddresses = event.participantAddresses.toTypedArray()
                     )
                 )
             }

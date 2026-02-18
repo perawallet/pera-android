@@ -285,6 +285,7 @@ private fun StatusLine(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
+            modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -299,7 +300,9 @@ private fun StatusLine(
             Text(
                 text = statusLineText,
                 style = PeraTheme.typography.footnote.sansMedium,
-                color = if (statusLineIsError) PeraTheme.colors.helper.negative else PeraTheme.colors.text.main
+                color = if (statusLineIsError) PeraTheme.colors.helper.negative else PeraTheme.colors.text.main,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
 

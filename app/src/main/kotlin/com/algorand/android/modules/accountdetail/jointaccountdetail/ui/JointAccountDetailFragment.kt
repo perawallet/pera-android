@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel
@@ -63,6 +64,10 @@ class JointAccountDetailFragment : DaggerBaseFragment(0) {
             flow = viewModel.viewEvent,
             collection = { event ->
                 when (event) {
+                    is ViewEvent.InvitationIgnored -> {
+                        showAlertSuccess(title = getString(R.string.invitation_ignored), tag = baseActivityTag)
+                        navBack()
+                    }
                     is ViewEvent.NavigateBack -> navBack()
                     is ViewEvent.NavigateToNameJointAccount -> navigateToNameJointAccount(event)
                     is ViewEvent.NavigateToEditAddress -> navigateToEditAddress(event)

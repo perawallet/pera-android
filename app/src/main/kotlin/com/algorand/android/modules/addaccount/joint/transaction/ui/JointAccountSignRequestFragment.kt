@@ -17,10 +17,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.runtime.mutableStateOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.fragment.findNavController
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -48,7 +47,6 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
     lateinit var ledgerSignHelper: JointAccountLedgerSignHelper
 
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
-    private val shouldShowPendingSignatures = mutableStateOf(false)
 
     private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener { shouldStopResources ->
         hideLedgerLoading()
@@ -65,9 +63,7 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
         return createComposeView {
             JointAccountSignRequestScreen(
                 viewModel = viewModel,
-                listener = this,
-                showPendingSignatures = shouldShowPendingSignatures.value,
-                onPendingSignaturesShown = { shouldShowPendingSignatures.value = false }
+                listener = this
             )
         }
     }
@@ -94,14 +90,13 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
         when (event) {
             is ViewEvent.NavigateBack -> navBack()
             is ViewEvent.ShowSuccessAndNavigateBack -> {
-                showAlertSuccess(title = getString(event.messageResId))
+                showAlertSuccess(title = getString(event.messageResId), tag = baseActivityTag)
                 navBack()
             }
 
             is ViewEvent.ShowError -> showGlobalError(getString(event.messageResId))
-            is ViewEvent.ShowPendingSignaturesBottomSheet,
-            is ViewEvent.ShowPendingSignaturesDirectly -> {
-                shouldShowPendingSignatures.value = true
+            is ViewEvent.ShowPendingSignaturesBottomSheet -> {
+                navToPendingSignaturesBottomSheet(event.signRequestId, event.isDismissable)
             }
 
             is ViewEvent.StartLedgerSigning -> {
@@ -200,7 +195,7 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
     }
 
     override fun onCloseClick() {
-        navigateBackToInboxOrFallback()
+        navBack()
     }
 
     override fun onCopyAddressClick() {
@@ -211,13 +206,16 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
         viewModel.declineSignRequest()
     }
 
-    override fun onNavigateToHome() {
-        navigateBackToInboxOrFallback()
+    override fun onShowTransactionDetailsClick() {
+        viewModel.onShowTransactionDetailsClick()
     }
 
-    private fun navigateBackToInboxOrFallback() {
-        val popped = findNavController().popBackStack(R.id.inboxNavigation, false)
-        if (!popped) navBack()
+    override fun onNavigateToHome() {
+        navBack()
+    }
+
+    private fun navToPendingSignaturesBottomSheet(signRequestId: String, isDismissable: Boolean) {
+        nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(signRequestId, isDismissable))
     }
 
     override fun onDestroyView() {

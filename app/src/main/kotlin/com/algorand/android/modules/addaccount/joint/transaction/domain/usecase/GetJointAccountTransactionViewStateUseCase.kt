@@ -15,6 +15,7 @@ package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 import android.content.res.Resources
 import android.text.format.DateUtils
 import com.algorand.android.R
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
@@ -25,10 +26,8 @@ import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.algosdk.transaction.model.RawTransactionType
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignature
@@ -85,48 +84,30 @@ internal class GetJointAccountTransactionViewStateUseCase(
         signRequest: SignRequestWithFullSignature
     ): ParticipantData {
         val responses = transactionLists.firstOrNull()?.responses.orEmpty()
-        val responseMap = responses.associateBy { it.address }
         val localAccountAddresses = dependencies.getLocalAccountsAddresses().toSet()
-        val allLocalAccounts = dependencies.getLocalAccounts()
-        val accountsByAddress = allLocalAccounts.associateBy { it.algoAddress }
 
         val localParticipants = participantAddresses.filter { it in localAccountAddresses }
-        val respondedAddresses = responses
+        val signerAccounts = dependencies.getJointAccountSignerItems(participantAddresses, responses)
+
+        val unsignedLocal = signerAccounts
             .filter {
-                it.type == SignRequestResponseType.SIGNED ||
-                        it.type == SignRequestResponseType.DECLINED
+                it.signatureStatus == JointAccountSignatureStatus.Pending &&
+                    it.isLocalAccount &&
+                    !it.isLedgerAccount
             }
-            .mapNotNull { it.address }
-            .toSet()
+            .map { it.accountAddress }
 
-        val unsignedLocal = localParticipants.mapNotNull { address ->
-            if (address in respondedAddresses) return@mapNotNull null
-            val account = accountsByAddress[address]
-            if (account is LocalAccount.Algo25 || account is LocalAccount.HdKey) {
-                val rekeyAdmin = dependencies.getAccountRekeyAdminAddress(address)
-                val authAccount = rekeyAdmin?.let { allLocalAccounts.firstOrNull { it.algoAddress == rekeyAdmin } }
-                if (authAccount is LocalAccount.LedgerBle) null else address
-            } else null
-        }
+        val unsignedLedger = signerAccounts
+            .filter { it.canSignWithLedger }
+            .map { it.accountAddress }
 
-        val unsignedLedger = localParticipants.mapNotNull { address ->
-            if (address in respondedAddresses) return@mapNotNull null
-            val account = accountsByAddress[address]
-            if (account is LocalAccount.LedgerBle) return@mapNotNull address
-            if (account is LocalAccount.Algo25 || account is LocalAccount.HdKey) {
-                val rekeyAdmin = dependencies.getAccountRekeyAdminAddress(address)
-                val authAccount = rekeyAdmin?.let { allLocalAccounts.firstOrNull { it.algoAddress == rekeyAdmin } }
-                if (authAccount is LocalAccount.LedgerBle) address else null
-            } else null
-        }
-
-        val signedCount = participantAddresses.count { responseMap[it]?.type == SignRequestResponseType.SIGNED }
+        val signedCount = signerAccounts.count { it.signatureStatus == JointAccountSignatureStatus.Signed }
         val hasProposer = signRequest.proposerAddress?.let {
             dependencies.getJointAccountSignerItems.hasSigningCapableLocalAccount(it)
         } ?: false
 
         return ParticipantData(
-            signerAccounts = dependencies.getJointAccountSignerItems(participantAddresses, responses),
+            signerAccounts = signerAccounts,
             signedCount = signedCount,
             localParticipants = localParticipants,
             unsignedLocal = unsignedLocal,
@@ -177,6 +158,7 @@ internal class GetJointAccountTransactionViewStateUseCase(
             SignRequestStatus.FAILED -> JointAccountTransactionState.Failed(signRequest.failReasonDisplay)
             SignRequestStatus.EXPIRED -> JointAccountTransactionState.Expired
             SignRequestStatus.DECLINED -> JointAccountTransactionState.Declined
+            SignRequestStatus.CONFIRMED -> JointAccountTransactionState.Completed
             else -> JointAccountTransactionState.AwaitingConfirmation
         }
 

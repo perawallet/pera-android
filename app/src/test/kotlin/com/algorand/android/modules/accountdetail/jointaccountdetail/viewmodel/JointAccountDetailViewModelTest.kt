@@ -209,7 +209,7 @@ internal class JointAccountDetailViewModelTest {
     // region onIgnoreClick Tests
 
     @Test
-    fun `EXPECT NavigateBack event WHEN onIgnoreClick called`() = runTest {
+    fun `EXPECT InvitationIgnored event WHEN onIgnoreClick called`() = runTest {
         val jointAccount = createJointAccount()
         setupLocalAccountMocks(jointAccount, showActions = false)
         coEvery { processor.deleteInboxNotification(TEST_ADDRESS) } returns Unit
@@ -225,7 +225,7 @@ internal class JointAccountDetailViewModelTest {
         job.cancel()
 
         coVerify { processor.deleteInboxNotification(TEST_ADDRESS) }
-        assertTrue(events.contains(ViewEvent.NavigateBack))
+        assertTrue(events.contains(ViewEvent.InvitationIgnored))
     }
 
     // endregion

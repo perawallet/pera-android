@@ -64,7 +64,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
                 requiredData.jointAccountAddress.toShortenedAddress()
             ),
             timeAgo = getTimeAgo(jointSignRequestDTO, resources, currentBlockNumber),
-            signedCount = getSignedCount(jointSignRequestDTO),
+            signedCount = getSignedCount(jointSignRequestDTO, requiredData.participantAddresses),
             totalCount = requiredData.participantAddresses.size,
             timeLeft = if (statusLine.isError) {
                 resources.getString(R.string.zero_minutes_short)
@@ -120,6 +120,11 @@ class SignatureRequestInboxItemMapper @Inject constructor(
                 isError = true
             )
 
+            SignRequestStatus.CONFIRMED -> StatusLineData(
+                text = resources.getString(R.string.transaction_successfully_completed),
+                isError = false
+            )
+
             else -> StatusLineData(
                 text = resources.getString(R.string.pending_transaction),
                 isError = false
@@ -153,13 +158,14 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         return localParticipants.any { it !in respondedAddresses }
     }
 
-    private fun getSignedCount(dto: JointSignRequest): Int {
-        val responseMap = dto.transactionLists
+    private fun getSignedCount(dto: JointSignRequest, participantAddresses: List<String>): Int {
+        val signedAddresses = dto.transactionLists
             ?.flatMap { it.responses.orEmpty() }
-            ?.filter { !it.address.isNullOrBlank() }
-            ?.associateBy { it.address }
+            ?.filter { it.response == SignRequestResponseType.SIGNED && !it.address.isNullOrBlank() }
+            ?.mapNotNull { it.address }
+            ?.toSet()
             .orEmpty()
-        return responseMap.values.count { it.response == SignRequestResponseType.SIGNED }
+        return participantAddresses.count { it in signedAddresses }
     }
 
     private fun getTimeAgo(

@@ -71,7 +71,7 @@ class JointAccountDetailViewModel @Inject constructor(
         if (actionJob?.isActive == true) return
         actionJob = viewModelScope.launch {
             processor.deleteInboxNotification(accountAddress)
-            eventDelegate.sendEvent(ViewEvent.NavigateBack)
+            eventDelegate.sendEvent(ViewEvent.InvitationIgnored)
         }
     }
 
@@ -230,6 +230,7 @@ class JointAccountDetailViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
+        data object InvitationIgnored : ViewEvent
         data object NavigateBack : ViewEvent
         data class NavigateToNameJointAccount(
             val threshold: Int,

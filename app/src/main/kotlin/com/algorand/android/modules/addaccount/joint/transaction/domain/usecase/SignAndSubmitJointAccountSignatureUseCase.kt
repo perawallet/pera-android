@@ -58,8 +58,9 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
     ): SignAndSubmitResult {
         val signatureInputs = mutableListOf<AddSignatureInput>()
         val signedAddresses = mutableListOf<String>()
+        val uniqueAddresses = participantAddresses.distinct()
 
-        for (participantAddress in participantAddresses) {
+        for (participantAddress in uniqueAddresses) {
             val signatures = signAllTransactions(rawTransactions, participantAddress) ?: continue
             signatureInputs.add(
                 AddSignatureInput(

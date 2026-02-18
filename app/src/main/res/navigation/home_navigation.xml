@@ -1832,6 +1832,10 @@
         <argument
             android:name="signRequestId"
             app:argType="string" />
+        <argument
+            android:name="isDismissable"
+            android:defaultValue="true"
+            app:argType="boolean" />
     </dialog>
 
     <action
@@ -1840,6 +1844,10 @@
         <argument
             android:name="signRequestId"
             app:argType="string" />
+        <argument
+            android:name="isDismissable"
+            android:defaultValue="true"
+            app:argType="boolean" />
     </action>
 
     <fragment
@@ -1868,23 +1876,6 @@
             android:name="participantAddresses"
             app:argType="string[]"
             app:nullable="true" />
-    </action>
-
-    <fragment
-        android:id="@+id/jointAccountInvitationDetailFragment"
-        android:name="com.algorand.android.modules.inbox.jointaccountinvitation.ui.JointAccountInvitationDetailFragment"
-        android:label="JointAccountInvitationDetailFragment">
-        <argument
-            android:name="invitationNavArgs"
-            app:argType="com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationDetailNavArgs" />
-    </fragment>
-
-    <action
-        android:id="@+id/action_global_to_jointAccountInvitationDetailFragment"
-        app:destination="@id/jointAccountInvitationDetailFragment">
-        <argument
-            android:name="invitationNavArgs"
-            app:argType="com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationDetailNavArgs" />
     </action>
 
 </navigation>

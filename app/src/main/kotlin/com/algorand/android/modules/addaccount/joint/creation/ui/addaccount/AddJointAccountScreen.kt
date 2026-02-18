@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -45,11 +44,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
-import com.algorand.android.models.AccountIconResource
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.addaccount.joint.creation.model.JointAccountSelectionListItem
 import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.viewmodel.AddJointAccountViewModel
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.AccountItemDisplayConfig
 import com.algorand.android.ui.compose.widget.ContactIcon
 import com.algorand.android.ui.compose.widget.PeraAccountItem
@@ -400,22 +399,10 @@ private fun ExternalAddressSelectionItem(
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(
-                    color = PeraTheme.colors.wallet.wallet1.background,
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(AccountIconResource.CONTACT.iconResId),
-                contentDescription = stringResource(R.string.address),
-                tint = PeraTheme.colors.wallet.wallet1.icon
-            )
-        }
+        AccountIcon(
+            modifier = Modifier.size(40.dp),
+            iconDrawablePreview = externalItem.iconDrawablePreview
+        )
 
         Spacer(modifier = Modifier.width(16.dp))
 

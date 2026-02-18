@@ -116,7 +116,13 @@ class InboxViewModel @Inject constructor(
         }
 
         if (invitation != null) {
-            eventDelegate.sendEvent(InboxViewEvent.NavigateToJointAccountInvitation(invitation))
+            eventDelegate.sendEvent(
+                InboxViewEvent.NavigateToJointAccountDetail(
+                    accountAddress = invitation.accountAddress,
+                    threshold = invitation.threshold,
+                    participantAddresses = invitation.participantAddresses
+                )
+            )
         } else {
             eventDelegate.sendEvent(InboxViewEvent.NavigateToJointAccountDetail(addressToOpen))
         }

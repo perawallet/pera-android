@@ -118,6 +118,28 @@
                 android:scaleY="1" />
         </ConstraintOverride>
 
+        <ConstraintOverride
+            android:id="@id/toolbarPrimaryPortfolioValue"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="0"
+                android:visibility="invisible" />
+            <Transform
+                android:scaleX="0"
+                android:scaleY="0" />
+        </ConstraintOverride>
+
+        <ConstraintOverride
+            android:id="@id/toolbarSecondaryPortfolioValue"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="0"
+                android:visibility="invisible" />
+            <Transform
+                android:scaleX="0"
+                android:scaleY="0" />
+        </ConstraintOverride>
+
         <Constraint
             android:id="@id/loadingProgressBar"
             app:visibilityMode="ignore">
@@ -269,6 +291,27 @@
             <Transform
                 android:scaleX="0.8"
                 android:scaleY="0.8" />
+        </ConstraintOverride>
+        <ConstraintOverride
+            android:id="@id/toolbarPrimaryPortfolioValue"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="1"
+                android:visibility="visible" />
+            <Transform
+                android:scaleX="1"
+                android:scaleY="1" />
+        </ConstraintOverride>
+
+        <ConstraintOverride
+            android:id="@id/toolbarSecondaryPortfolioValue"
+            app:visibilityMode="ignore">
+            <PropertySet
+                android:alpha="1"
+                android:visibility="visible" />
+            <Transform
+                android:scaleX="1"
+                android:scaleY="1" />
         </ConstraintOverride>
 
         <Constraint

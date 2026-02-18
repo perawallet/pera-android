@@ -42,8 +42,40 @@ class JointAccountTransactionSignHelper @Inject constructor(
         jointAccountAddress: String,
         transactionDataList: List<TransactionSignData>
     ): JointSignResult {
-        val preparedData = prepareJointAccountData(jointAccountAddress, transactionDataList)
+        val jointAccount = getLocalAccount(jointAccountAddress) as? LocalAccount.Joint
             ?: return JointSignResult.Error
+        val proposerAddress = getJointAccountProposerAddress(jointAccount)
+            ?: return JointSignResult.Error
+        val rawTransactionLists = prepareRawTransactionLists(transactionDataList)
+            ?: return JointSignResult.Error
+
+        val proposerAccount = getLocalAccount(proposerAddress) ?: return JointSignResult.Error
+
+        return if (proposerAccount is LocalAccount.LedgerBle) {
+            JointSignResult.NeedsLedgerSign(
+                PendingJointAccountProposal(
+                    jointAccount = jointAccount,
+                    proposerAddress = proposerAddress,
+                    rawTransactionLists = rawTransactionLists,
+                    ledgerAccount = proposerAccount
+                )
+            )
+        } else {
+            proposeWithLocalSignature(jointAccount, proposerAddress, rawTransactionLists, transactionDataList)
+        }
+    }
+
+    suspend fun completeJointAccountProposal(
+        pendingProposal: PendingJointAccountProposal,
+        signatureBase64List: List<String>
+    ): JointSignResult {
+        val transactionSignatureLists = listOf(signatureBase64List)
+        val preparedData = PreparedJointAccountData(
+            jointAccount = pendingProposal.jointAccount,
+            proposerAddress = pendingProposal.proposerAddress,
+            rawTransactionLists = pendingProposal.rawTransactionLists,
+            transactionSignatureLists = transactionSignatureLists
+        )
 
         val inputData = mapToCreateSignRequestInput(preparedData)
         val result = proposeJointSignRequest(inputData)
@@ -51,23 +83,26 @@ class JointAccountTransactionSignHelper @Inject constructor(
         return processProposalResult(result, preparedData)
     }
 
-    private suspend fun prepareJointAccountData(
-        jointAccountAddress: String,
+    private suspend fun proposeWithLocalSignature(
+        jointAccount: LocalAccount.Joint,
+        proposerAddress: String,
+        rawTransactionLists: List<List<String>>,
         transactionDataList: List<TransactionSignData>
-    ): PreparedJointAccountData? {
-        val jointAccount = getLocalAccount(jointAccountAddress) as? LocalAccount.Joint ?: return null
-        val proposerAddress = getJointAccountProposerAddress(jointAccount) ?: return null
-        val signerAddress = proposerAddress
-        val rawTransactionLists = prepareRawTransactionLists(transactionDataList) ?: return null
-        val transactionSignatureLists = prepareTransactionSignatureLists(transactionDataList, signerAddress)
-            ?: return null
+    ): JointSignResult {
+        val transactionSignatureLists = prepareTransactionSignatureLists(transactionDataList, proposerAddress)
+            ?: return JointSignResult.Error
 
-        return PreparedJointAccountData(
+        val preparedData = PreparedJointAccountData(
             jointAccount = jointAccount,
             proposerAddress = proposerAddress,
             rawTransactionLists = rawTransactionLists,
             transactionSignatureLists = transactionSignatureLists
         )
+
+        val inputData = mapToCreateSignRequestInput(preparedData)
+        val result = proposeJointSignRequest(inputData)
+
+        return processProposalResult(result, preparedData)
     }
 
     private suspend fun processProposalResult(
@@ -166,8 +201,16 @@ class JointAccountTransactionSignHelper @Inject constructor(
         val transactionSignatureLists: List<List<String?>>
     )
 
+    data class PendingJointAccountProposal(
+        val jointAccount: LocalAccount.Joint,
+        val proposerAddress: String,
+        val rawTransactionLists: List<List<String>>,
+        val ledgerAccount: LocalAccount.LedgerBle
+    )
+
     sealed interface JointSignResult {
         data class Success(val signRequestId: String) : JointSignResult
+        data class NeedsLedgerSign(val pendingProposal: PendingJointAccountProposal) : JointSignResult
         data object Error : JointSignResult
     }
 }

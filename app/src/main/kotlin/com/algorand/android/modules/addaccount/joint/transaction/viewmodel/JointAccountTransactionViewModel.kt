@@ -94,12 +94,12 @@ class JointAccountTransactionViewModel @Inject constructor(
     fun declineSignRequest() {
         stateDelegate.onState<ViewState.Content> { contentState ->
             val requestId = signRequestId ?: return@onState emitError(R.string.an_error_occurred)
-            val participantAddress = processor.findDeclineParticipantAddress(contentState.preview)
-                ?: return@onState emitError(R.string.an_error_occurred)
+            val participantAddresses = processor.findDeclineParticipantAddresses(contentState.preview)
+            if (participantAddresses.isEmpty()) return@onState emitError(R.string.an_error_occurred)
 
             viewModelScope.launch {
                 stateDelegate.updateState { ViewState.Loading }
-                executeDeclineRequest(requestId, participantAddress, contentState.preview)
+                executeDeclineRequest(requestId, participantAddresses, contentState.preview)
             }
         }
     }
@@ -107,7 +107,7 @@ class JointAccountTransactionViewModel @Inject constructor(
     fun onLedgerSignSuccess() {
         viewModelScope.launch {
             refreshInboxCache()
-            loadTransactionPreview()
+            silentRefreshPreview()
             handleLedgerSignSuccessAction()
         }
     }
@@ -121,6 +121,15 @@ class JointAccountTransactionViewModel @Inject constructor(
             viewModelScope.launch {
                 eventDelegate.sendEvent(ViewEvent.CopyAddress(contentState.preview.recipientAddress))
             }
+        }
+    }
+
+    fun onShowTransactionDetailsClick() {
+        val requestId = signRequestId ?: return
+        viewModelScope.launch {
+            eventDelegate.sendEvent(
+                ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = true)
+            )
         }
     }
 
@@ -158,6 +167,7 @@ class JointAccountTransactionViewModel @Inject constructor(
         stateDelegate.updateState { ViewState.Content(updatedPreview) }
 
         handlePostSigningAction(processor.determinePostSigningAction(data, updatedPreview, signRequestId))
+        loadTransactionPreview(silentRefresh = true)
     }
 
     private suspend fun signLocalAccounts(
@@ -190,10 +200,10 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     private suspend fun executeDeclineRequest(
         requestId: String,
-        participantAddress: String,
+        participantAddresses: List<String>,
         preview: JointAccountTransactionViewState
     ) {
-        declineJointAccountSignRequest(requestId, participantAddress).use(
+        declineJointAccountSignRequest(requestId, participantAddresses).use(
             onSuccess = {
                 refreshInboxCache()
                 eventDelegate.sendEvent(ViewEvent.ShowSuccessAndNavigateBack(R.string.signature_request_declined))
@@ -229,7 +239,9 @@ class JointAccountTransactionViewModel @Inject constructor(
                 val updatedPreview = processor.processLoadedPreview(preview)
                 stateDelegate.updateState { ViewState.Content(updatedPreview) }
                 if (updatedPreview.shouldShowPendingSignaturesDirectly) {
-                    eventDelegate.sendEvent(ViewEvent.ShowPendingSignaturesDirectly)
+                    eventDelegate.sendEvent(
+                        ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = false)
+                    )
                 }
             },
             onFailed = { exception, code ->
@@ -276,7 +288,10 @@ class JointAccountTransactionViewModel @Inject constructor(
             }
 
             is JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures -> {
-                eventDelegate.sendEvent(ViewEvent.ShowPendingSignaturesBottomSheet)
+                val requestId = signRequestId ?: return
+                eventDelegate.sendEvent(
+                    ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = false)
+                )
             }
         }
     }
@@ -299,8 +314,10 @@ class JointAccountTransactionViewModel @Inject constructor(
         data object NavigateBack : ViewEvent
         data class ShowSuccessAndNavigateBack(val messageResId: Int) : ViewEvent
         data class ShowError(val messageResId: Int) : ViewEvent
-        data object ShowPendingSignaturesBottomSheet : ViewEvent
-        data object ShowPendingSignaturesDirectly : ViewEvent
+        data class ShowPendingSignaturesBottomSheet(
+            val signRequestId: String,
+            val isDismissable: Boolean
+        ) : ViewEvent
         data class StartLedgerSigning(val data: JointAccountTransactionProcessor.LedgerSignData) : ViewEvent
         data class CopyAddress(val address: String) : ViewEvent
     }

@@ -194,8 +194,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onItemSelected(chartData: AccountsLineChartData) {
             with(binding) {
-                primaryPortfolioValue.text = chartData.primaryAmountRenderer.getDisplayValue()
-                secondaryPortfolioValue.text = chartData.secondaryAmountRenderer.getDisplayValue()
+                val primaryText = chartData.primaryAmountRenderer.getDisplayValue()
+                val secondaryText = chartData.secondaryAmountRenderer.getDisplayValue()
+                primaryPortfolioValue.text = primaryText
+                secondaryPortfolioValue.text = secondaryText
+                toolbarPrimaryPortfolioValue.text = primaryText
+                toolbarSecondaryPortfolioValue.text = secondaryText
                 chartSelectedItemDateTextView.text = formatDateToChartDateString(chartData.datetime)
                 portfolioDeltaText.hide()
                 portfolioPercentageText.hide()
@@ -205,8 +209,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onItemDeselected() {
             with(binding) {
                 val portfolioValueItem = accountsViewModel.getPortfolioValueItem()
-                primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
-                secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
+                val primaryText = portfolioValueItem?.getPrimaryAccountValue(requireContext()).orEmpty()
+                val secondaryText = portfolioValueItem?.getSecondaryAccountValue(requireContext()).orEmpty()
+                primaryPortfolioValue.text = primaryText
+                secondaryPortfolioValue.text = secondaryText
+                toolbarPrimaryPortfolioValue.text = primaryText
+                toolbarSecondaryPortfolioValue.text = secondaryText
                 chartSelectedItemDateTextView.text = " "
                 portfolioDeltaText.isVisible = portfolioValueItem?.privacyMode is Disabled
                 portfolioPercentageText.isVisible = portfolioValueItem?.privacyMode is Disabled
@@ -263,6 +271,15 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
+    private val toolbarPortfolioVisibilityCollector: suspend (Pair<Boolean?, Boolean>) -> Unit =
+        { (isSuccessVisible, isInboxVisible) ->
+            val shouldShowToolbarPortfolio = isSuccessVisible == true && !isInboxVisible
+            with(binding) {
+                toolbarPrimaryPortfolioValue.isInvisible = !shouldShowToolbarPortfolio
+                toolbarSecondaryPortfolioValue.isInvisible = !shouldShowToolbarPortfolio
+            }
+        }
+
     private fun showPrivacyTooltip(tutorialId: Int) {
         with(binding.primaryPortfolioValue) {
             postDelayed({
@@ -311,7 +328,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private val inboxButtonLabelCollector: suspend (InboxButtonLabel?) -> Unit = { label ->
         binding.inboxButton.apply {
-            visibility = if (label != null) View.VISIBLE else View.GONE
+            isVisible = label != null
             text = when (label) {
                 is InboxButtonLabel.JointAccountRequest -> getString(R.string.joint_account_request)
                 is InboxButtonLabel.SignTxnRequest -> getString(R.string.sign_txn_request)
@@ -363,6 +380,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 text = portfolioValues.getSecondaryAccountValue(context)
                 setOnClickListener { accountsViewModel.togglePrivacy() }
             }
+            toolbarPrimaryPortfolioValue.text = primaryPortfolioValue.text
+            toolbarSecondaryPortfolioValue.text = secondaryPortfolioValue.text
             binding.portfolioDeltaText.isVisible = portfolioValues.privacyMode is Disabled
             binding.portfolioPercentageText.isVisible = portfolioValues.privacyMode is Disabled
             portfolioValueTitleTextView.apply {
@@ -443,6 +462,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.isSuccessStateVisible }.distinctUntilChanged(),
                 successStateVisibilityCollector
+            )
+            viewLifecycleOwner.collectLatestOnLifecycle(
+                accountPreviewFlow.map { preview ->
+                    Pair(preview?.isSuccessStateVisible, preview?.inboxButtonLabel != null)
+                }.distinctUntilChanged(),
+                toolbarPortfolioVisibilityCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.hasNewNotification }.distinctUntilChanged(),

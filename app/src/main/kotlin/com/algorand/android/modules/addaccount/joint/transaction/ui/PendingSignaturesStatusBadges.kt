@@ -64,6 +64,14 @@ internal fun StatusBadgesSection(
                 )
             }
 
+            JointAccountTransactionState.Expired -> {
+                ErrorBadge(message = stringResource(R.string.expired_transaction))
+            }
+
+            JointAccountTransactionState.Declined -> {
+                ErrorBadge(message = stringResource(R.string.declined_transaction))
+            }
+
             else -> {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     SignedCountBadge(

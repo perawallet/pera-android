@@ -13,6 +13,7 @@
 package com.algorand.android.modules.addaccount.joint.creation.mapper
 
 import com.algorand.android.R
+import com.algorand.android.models.AccountIconResource
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.model.JointAccountSelectionListItem
@@ -75,9 +76,9 @@ class JointAccountSelectionListItemMapper @Inject constructor() {
 
     private fun getExternalAddressIconDrawablePreview(): AccountIconDrawablePreview {
         return AccountIconDrawablePreview(
-            backgroundColorResId = R.color.wallet_1,
-            iconTintResId = R.color.wallet_1_icon,
-            iconResId = R.drawable.ic_wallet
+            backgroundColorResId = AccountIconResource.JOINT.backgroundColorResId,
+            iconTintResId = AccountIconResource.JOINT.iconTintResId,
+            iconResId = AccountIconResource.JOINT.iconResId
         )
     }
 }

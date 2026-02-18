@@ -28,6 +28,7 @@ import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -186,12 +187,22 @@ class JointAccountLedgerSignHelper @Inject constructor(
         if (isAlreadyConnected) {
             scanCallback.onLedgerScanned(currentConnectedDevice!!, 0, transactionCount)
         } else {
-            ledgerBleSearchManager.scan(
-                newScanCallback = scanCallback,
-                filteredAddress = ledgerBluetoothAddress,
-                coroutineScope = currentScope
-            )
+            currentScope.launch {
+                if (currentConnectedDevice != null) {
+                    ledgerBleOperationManager.disconnectCurrentDevice()
+                    delay(DISCONNECT_BEFORE_RECONNECT_DELAY_MS)
+                }
+                ledgerBleSearchManager.scan(
+                    coroutineScope = currentScope,
+                    newScanCallback = scanCallback,
+                    filteredAddress = ledgerBluetoothAddress
+                )
+            }
         }
+    }
+
+    private companion object {
+        private const val DISCONNECT_BEFORE_RECONNECT_DELAY_MS = 500L
     }
 
     private fun handleSignedTransaction(signedTransactionData: ByteArray) {

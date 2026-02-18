@@ -45,16 +45,15 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         signedAddresses: List<String>
     ): JointAccountTransactionViewState {
         val confirmedSignedAddresses = signedAddresses.toSet()
-        val newSignedCount = preview.signedCount + confirmedSignedAddresses.size
-        val isCompleted = isTransactionCompleted(newSignedCount, preview.requiredSignatureCount)
         val updatedSigners = markSignersAsSigned(preview.signerAccounts, confirmedSignedAddresses)
+        val newSignedCount = updatedSigners.count { it.signatureStatus == JointAccountSignatureStatus.Signed }
         val remainingUnsignedLocalAddresses = preview.unsignedLocalParticipantAddresses
             .filterNot { it in confirmedSignedAddresses }
 
         return preview.copy(
-            transactionState = getTransactionStateForCompletion(isCompleted),
+            transactionState = JointAccountTransactionState.PendingSignatures,
             signedCount = newSignedCount,
-            signerAccounts = if (isCompleted) hideProgressOnPendingSigners(updatedSigners) else updatedSigners,
+            signerAccounts = updatedSigners,
             hasCurrentUserAlreadySigned = confirmedSignedAddresses.isNotEmpty() || preview.hasCurrentUserAlreadySigned,
             unsignedLocalParticipantAddresses = remainingUnsignedLocalAddresses
         )
@@ -81,25 +80,22 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
     }
 
     override fun processLoadedPreview(preview: JointAccountTransactionViewState): JointAccountTransactionViewState {
-        val isCompleted = isTransactionCompleted(preview.signedCount, preview.requiredSignatureCount)
-        val isFailed = preview.transactionState is JointAccountTransactionState.Failed
-        val isFinalized = isFailed || isCompleted || preview.isExpired
+        val isFinalized = preview.transactionState is JointAccountTransactionState.Failed ||
+            preview.transactionState == JointAccountTransactionState.Completed ||
+            preview.transactionState == JointAccountTransactionState.Canceled ||
+            preview.transactionState == JointAccountTransactionState.Expired ||
+            preview.transactionState == JointAccountTransactionState.Declined ||
+            preview.isExpired
 
         if (!isFinalized) return preview
 
         return preview.copy(
-            transactionState = when {
-                isFailed -> preview.transactionState
-                isCompleted -> JointAccountTransactionState.Completed
-                else -> preview.transactionState
-            },
             signerAccounts = hideProgressOnPendingSigners(preview.signerAccounts)
         )
     }
 
-    override fun findDeclineParticipantAddress(preview: JointAccountTransactionViewState): String? {
-        return preview.unsignedLocalParticipantAddresses.firstOrNull()
-            ?: preview.unsignedLedgerParticipantAddresses.firstOrNull()
+    override fun findDeclineParticipantAddresses(preview: JointAccountTransactionViewState): List<String> {
+        return preview.unsignedLocalParticipantAddresses + preview.unsignedLedgerParticipantAddresses
     }
 
     override fun determinePostSigningAction(
@@ -189,11 +185,4 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         }
     }
 
-    private fun getTransactionStateForCompletion(isCompleted: Boolean): JointAccountTransactionState {
-        return if (isCompleted) {
-            JointAccountTransactionState.Completed
-        } else {
-            JointAccountTransactionState.PendingSignatures
-        }
-    }
 }

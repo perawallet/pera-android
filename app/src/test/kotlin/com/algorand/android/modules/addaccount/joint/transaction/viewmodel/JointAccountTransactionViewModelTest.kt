@@ -141,11 +141,11 @@ internal class JointAccountTransactionViewModelTest {
         val preview = createTestPreview()
         coEvery { getJointAccountTransactionViewState(TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(preview)
         every { processor.processLoadedPreview(preview) } returns preview
-        every { processor.findDeclineParticipantAddress(preview) } returns TEST_PARTICIPANT_ADDRESS
+        every { processor.findDeclineParticipantAddresses(preview) } returns listOf(TEST_PARTICIPANT_ADDRESS)
         coEvery {
             declineJointAccountSignRequest(
                 TEST_SIGN_REQUEST_ID,
-                TEST_PARTICIPANT_ADDRESS
+                listOf(TEST_PARTICIPANT_ADDRESS)
             )
         } returns PeraResult.Success(mockk())
 
@@ -155,7 +155,7 @@ internal class JointAccountTransactionViewModelTest {
         viewModel.declineSignRequest()
         advanceUntilIdle()
 
-        coVerify { declineJointAccountSignRequest(TEST_SIGN_REQUEST_ID, TEST_PARTICIPANT_ADDRESS) }
+        coVerify { declineJointAccountSignRequest(TEST_SIGN_REQUEST_ID, listOf(TEST_PARTICIPANT_ADDRESS)) }
     }
 
     @Test

@@ -40,6 +40,36 @@
         tools:srcCompat="@drawable/ic_algo"
         tools:visibility="visible" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/toolbarPrimaryPortfolioValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.Title.Large.Sans.Medium"
+        android:textSize="@dimen/text_size_13"
+        app:layout_constraintBottom_toTopOf="@id/toolbarSecondaryPortfolioValue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toolbarLayout"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="¦107,114.72" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/toolbarSecondaryPortfolioValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.Body.Sans"
+        android:textColor="@color/secondary_text_color"
+        android:textSize="@dimen/text_size_11"
+        app:layout_constraintBottom_toBottomOf="@id/toolbarLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarPrimaryPortfolioValue"
+        tools:text="$105,413.95" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/inboxButton"
         style="?attr/toolbarNavigationButtonStyle"

@@ -39,9 +39,22 @@ internal class GetJointAccountSignerItemsUseCase @Inject constructor(
         participantAddresses: List<String>,
         responses: List<ParticipantSignature>
     ): List<JointAccountSignerItem> {
-        val responseMap = responses.associateBy { it.address }
+        // API returns at most one signed/declined response per account; mark all occurrences of that address
+        val signedAddresses = responses
+            .filter { it.type == SignRequestResponseType.SIGNED }
+            .map { it.address }
+            .toSet()
+        val declinedAddresses = responses
+            .filter { it.type == SignRequestResponseType.DECLINED }
+            .map { it.address }
+            .toSet()
         return participantAddresses.map { address ->
-            createSignerItem(address, responseMap[address])
+            val responseType = when {
+                address in signedAddresses -> SignRequestResponseType.SIGNED
+                address in declinedAddresses -> SignRequestResponseType.DECLINED
+                else -> null
+            }
+            createSignerItem(address, responseType)
         }
     }
 
@@ -51,9 +64,9 @@ internal class GetJointAccountSignerItemsUseCase @Inject constructor(
 
     private suspend fun createSignerItem(
         address: String,
-        response: ParticipantSignature?
+        responseType: SignRequestResponseType?
     ): JointAccountSignerItem {
-        val status = when (response?.type) {
+        val status = when (responseType) {
             SignRequestResponseType.SIGNED -> JointAccountSignatureStatus.Signed
             SignRequestResponseType.DECLINED -> JointAccountSignatureStatus.Declined
             else -> JointAccountSignatureStatus.Pending

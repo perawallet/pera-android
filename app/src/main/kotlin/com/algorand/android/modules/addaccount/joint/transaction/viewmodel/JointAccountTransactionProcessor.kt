@@ -34,7 +34,7 @@ interface JointAccountTransactionProcessor {
 
     fun processLoadedPreview(preview: JointAccountTransactionViewState): JointAccountTransactionViewState
 
-    fun findDeclineParticipantAddress(preview: JointAccountTransactionViewState): String?
+    fun findDeclineParticipantAddresses(preview: JointAccountTransactionViewState): List<String>
 
     fun determinePostSigningAction(
         data: ConfirmTransactionData,

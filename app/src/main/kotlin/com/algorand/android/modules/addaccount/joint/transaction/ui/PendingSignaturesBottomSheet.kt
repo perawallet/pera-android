@@ -52,7 +52,16 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupDismissBehavior()
         observeViewEvents()
+    }
+
+    private val isDismissable: Boolean
+        get() = arguments?.getBoolean(IS_DISMISSABLE_KEY, true) ?: true
+
+    private fun setupDismissBehavior() {
+        setDraggableEnabled(isDismissable)
+        isCancelable = isDismissable
     }
 
     private fun observeViewEvents() {
@@ -83,13 +92,17 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
     }
 
     private fun onCloseCompleted() {
+        popToInboxOrAccounts()
+    }
+
+    private fun popToInboxOrAccounts() {
         dismiss()
         activity?.let { activity ->
             val navController = androidx.navigation.Navigation.findNavController(
                 activity,
                 R.id.navigationHostFragment
             )
-            val poppedToInbox = navController.popBackStack(R.id.inboxNavigation, false)
+            val poppedToInbox = navController.popBackStack(R.id.inboxFragment, false)
             if (!poppedToInbox) {
                 navController.popBackStack(R.id.accountsFragment, false)
             }
@@ -97,7 +110,11 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
     }
 
     private fun onCloseForNow() {
-        dismiss()
+        if (isDismissable) {
+            dismiss()
+        } else {
+            popToInboxOrAccounts()
+        }
     }
 
     private fun onCancel() {
@@ -106,5 +123,6 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
 
     companion object {
         const val TAG = "PendingSignaturesBottomSheet"
+        private const val IS_DISMISSABLE_KEY = "isDismissable"
     }
 }

@@ -40,15 +40,4 @@ data class JointAccountTransactionViewState(
     val unsignedLedgerParticipantAddresses: List<String> = emptyList(),
     val hasProposerAddress: Boolean = false,
     val failReasonDisplay: String? = null
-) {
-
-    val isCompleted: Boolean
-        get() = transactionState == JointAccountTransactionState.Completed
-
-    val isFinalized: Boolean
-        get() = isCompleted ||
-                transactionState == JointAccountTransactionState.Canceled ||
-                transactionState is JointAccountTransactionState.Failed ||
-                transactionState == JointAccountTransactionState.Expired ||
-                transactionState == JointAccountTransactionState.Declined
-}
+)

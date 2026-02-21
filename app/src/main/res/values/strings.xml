@@ -296,7 +296,6 @@
     <string name="download_completed">Download completed: ID %1$d</string>
     <string name="you_dont_have_any">You don\'t have any authorized account matching with %1$s</string>
     <string name="recommended">Recommended</string>
-    <string name="create_legacy_algo25_account">Create Legacy Algo25 Account</string>
     <string name="already_imported">Already Imported</string>
     <string name="use_your_screen_lock">Use your screen lock</string>
     <string name="create_your_new_account">Create your new account under a Universal Wallet you already have</string>

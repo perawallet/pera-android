@@ -15,6 +15,7 @@ package com.algorand.android.modules.addaccount.joint.transaction.ui
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,7 +62,8 @@ fun PendingSignaturesBottomSheetScreen(
     viewModel: JointAccountTransactionViewModel,
     onCloseCompleted: () -> Unit,
     onCloseForNow: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onSignLedgerAccount: (JointAccountSignerItem) -> Unit = {}
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -75,7 +77,8 @@ fun PendingSignaturesBottomSheetScreen(
                 transactionPreview = state.preview,
                 onCancel = onCancel,
                 onCloseForNow = onCloseForNow,
-                onCloseCompleted = onCloseCompleted
+                onCloseCompleted = onCloseCompleted,
+                onSignLedgerAccount = onSignLedgerAccount
             )
         }
 
@@ -148,7 +151,8 @@ fun PendingSignaturesContent(
     transactionPreview: JointAccountTransactionViewState,
     onCancel: () -> Unit,
     onCloseForNow: () -> Unit,
-    onCloseCompleted: () -> Unit = onCloseForNow
+    onCloseCompleted: () -> Unit = onCloseForNow,
+    onSignLedgerAccount: (JointAccountSignerItem) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -184,7 +188,8 @@ fun PendingSignaturesContent(
 
         SignersListSection(
             modifier = Modifier.padding(horizontal = 24.dp),
-            signers = transactionPreview.signerAccounts
+            signers = transactionPreview.signerAccounts,
+            onSignLedgerAccount = onSignLedgerAccount
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -232,20 +237,27 @@ private fun AccountsSectionHeader(threshold: Int) {
 @Composable
 private fun SignersListSection(
     modifier: Modifier = Modifier,
-    signers: List<JointAccountSignerItem>
+    signers: List<JointAccountSignerItem>,
+    onSignLedgerAccount: (JointAccountSignerItem) -> Unit = {}
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         signers.forEach { signer ->
-            SignerItem(signer = signer)
+            SignerItem(
+                signer = signer,
+                onSignLedgerAccount = onSignLedgerAccount
+            )
         }
     }
 }
 
 @Composable
-private fun SignerItem(signer: JointAccountSignerItem) {
+private fun SignerItem(
+    signer: JointAccountSignerItem,
+    onSignLedgerAccount: (JointAccountSignerItem) -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -277,7 +289,10 @@ private fun SignerItem(signer: JointAccountSignerItem) {
             )
         }
 
-        SignerStatusIcon(signer = signer)
+        SignerStatusIcon(
+            signer = signer,
+            onSignLedgerAccount = onSignLedgerAccount
+        )
     }
 }
 
@@ -326,7 +341,10 @@ private fun SignerInfo(
 }
 
 @Composable
-private fun SignerStatusIcon(signer: JointAccountSignerItem) {
+private fun SignerStatusIcon(
+    signer: JointAccountSignerItem,
+    onSignLedgerAccount: (JointAccountSignerItem) -> Unit = {}
+) {
     when (signer.signatureStatus) {
         JointAccountSignatureStatus.Signed -> {
             Icon(
@@ -347,13 +365,34 @@ private fun SignerStatusIcon(signer: JointAccountSignerItem) {
         }
 
         JointAccountSignatureStatus.Pending -> {
-            if (signer.showProgress) {
+            if (signer.canSignWithLedger) {
+                LedgerSignButton(onClick = { onSignLedgerAccount(signer) })
+            } else if (signer.showProgress) {
                 PeraCircularProgressIndicator(
                     modifier = Modifier.size(20.dp),
                     strokeWidth = 2.dp
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun LedgerSignButton(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .height(40.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(PeraTheme.colors.button.primary.background)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.sign),
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.button.primary.text
+        )
     }
 }
 

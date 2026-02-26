@@ -21,6 +21,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewState
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import com.algorand.wallet.foundation.PeraResult
@@ -108,12 +109,36 @@ class JointAccountTransactionViewModel @Inject constructor(
         viewModelScope.launch {
             refreshInboxCache()
             silentRefreshPreview()
-            handleLedgerSignSuccessAction()
         }
     }
 
     fun onLedgerSignError(errorMessageResId: Int) {
         emitError(errorMessageResId)
+    }
+
+    fun onSignLedgerAccount(signer: JointAccountSignerItem) {
+        if (!signer.canSignWithLedger) return
+        val requestId = signRequestId ?: return
+        val bluetoothAddress = signer.ledgerBluetoothAddress ?: return
+        val accountIndex = signer.ledgerAccountIndex ?: return
+
+        stateDelegate.onState<ViewState.Content> { contentState ->
+            val preview = contentState.preview
+            if (preview.rawTransactions.isEmpty()) return@onState
+
+            val ledgerData = JointAccountTransactionProcessor.LedgerSignData(
+                signRequestId = requestId,
+                accountAddress = signer.accountAddress,
+                rawTransactions = preview.rawTransactions,
+                ledgerBluetoothAddress = bluetoothAddress,
+                ledgerAccountIndex = accountIndex,
+                accountAuthAddress = signer.accountAuthAddress,
+                isRekeyedToAnotherAccount = signer.accountAuthAddress != null
+            )
+            viewModelScope.launch {
+                eventDelegate.sendEvent(ViewEvent.StartLedgerSigning(ledgerData))
+            }
+        }
     }
 
     fun onCopyAddressClick() {
@@ -271,13 +296,6 @@ class JointAccountTransactionViewModel @Inject constructor(
             )
         } finally {
             isSilentRefreshInProgress.set(false)
-        }
-    }
-
-    private fun handleLedgerSignSuccessAction() {
-        stateDelegate.onState<ViewState.Content> { contentState ->
-            val action = processor.determineLedgerSuccessAction(contentState.preview, signRequestId)
-            viewModelScope.launch { handlePostSigningAction(action) }
         }
     }
 

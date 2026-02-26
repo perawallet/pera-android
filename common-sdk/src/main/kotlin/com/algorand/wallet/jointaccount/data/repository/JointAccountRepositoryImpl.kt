@@ -16,9 +16,13 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
 import com.algorand.wallet.foundation.network.utils.requestWithPeraApiErrorHandler
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.IsJointAccountMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountResponse
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
 import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
+import com.algorand.wallet.jointaccount.creation.domain.model.IsJointAccountResult
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
@@ -39,6 +43,7 @@ import javax.inject.Inject
 internal class JointAccountRepositoryImpl @Inject constructor(
     private val jointAccountApiService: JointAccountApiService,
     private val createJointAccountDTOMapper: CreateJointAccountDTOMapper,
+    private val isJointAccountMapper: IsJointAccountMapper,
     private val jointAccountDTOMapper: JointAccountDTOMapper,
     private val createSignRequestInputMapper: CreateSignRequestInputMapper,
     private val jointSignRequestDTOMapper: JointSignRequestMapper,
@@ -60,6 +65,24 @@ internal class JointAccountRepositoryImpl @Inject constructor(
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             jointAccountApiService.createJointAccount(request)
         }.mapToJointAccount()
+    }
+
+    override suspend fun checkIsJointAccount(addresses: List<String>): PeraResult<List<IsJointAccountResult>> {
+        if (addresses.isEmpty()) return PeraResult.Success(emptyList())
+        val request = IsJointAccountRequest(accountAddresses = addresses)
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.checkIsJointAccount(request)
+        }.mapToIsJointAccountResults()
+    }
+
+    private fun PeraResult<List<IsJointAccountResponse>>.mapToIsJointAccountResults(): PeraResult<List<IsJointAccountResult>> {
+        return when (this) {
+            is PeraResult.Success -> {
+                val results = data.mapNotNull { isJointAccountMapper.mapToIsJointAccountResult(it) }
+                PeraResult.Success(results)
+            }
+            is PeraResult.Error -> this
+        }
     }
 
     private fun PeraResult<JointAccountResponse>.mapToJointAccount(): PeraResult<JointAccount> {

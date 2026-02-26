@@ -112,6 +112,7 @@ fun AddJointAccountScreen(
                         accounts = state.accounts,
                         contacts = state.contacts,
                         nfds = state.nfds,
+                        isCheckingJointAccount = state.isCheckingJointAccount,
                         listener = listener
                     )
                 }
@@ -217,18 +218,22 @@ private fun AccountListSection(
     accounts: List<JointAccountSelectionListItem.AccountItem>,
     contacts: List<JointAccountSelectionListItem.ContactItem>,
     nfds: List<JointAccountSelectionListItem.NfdItem>,
+    isCheckingJointAccount: Boolean,
     listener: AddJointAccountScreenListener
 ) {
+    val onExternalAddressSelected = if (isCheckingJointAccount) { _: String -> } else listener::onExternalAddressSelected
+    val onNfdSelected = if (isCheckingJointAccount) { _: String -> } else listener::onNfdSelected
+    val onAccountSelected = if (isCheckingJointAccount) { _: String -> } else listener::onAccountSelected
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp)
             .padding(top = 16.dp)
     ) {
-        externalAddressesSection(externalAddresses, listener::onExternalAddressSelected)
-        nfdsSection(nfds, listener::onNfdSelected)
-        accountsSection(accounts, listener::onAccountSelected)
-        contactsSection(contacts, listener::onAccountSelected)
+        externalAddressesSection(externalAddresses, onExternalAddressSelected)
+        nfdsSection(nfds, onNfdSelected)
+        accountsSection(accounts, onAccountSelected)
+        contactsSection(contacts, onAccountSelected)
     }
 }
 

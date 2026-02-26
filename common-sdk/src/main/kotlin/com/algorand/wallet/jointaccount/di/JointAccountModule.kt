@@ -19,8 +19,11 @@ import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.FetchInboxMessagesUseCase
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapperImpl
+import com.algorand.wallet.jointaccount.creation.data.mapper.IsJointAccountMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.IsJointAccountMapperImpl
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapperImpl
+import com.algorand.wallet.jointaccount.domain.usecase.CheckIsJointAccount
 import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
 import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccountUseCase
 import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryImpl
@@ -83,6 +86,16 @@ internal object JointAccountModule {
     fun provideCreateJointAccountDTOMapper(
         impl: CreateJointAccountDTOMapperImpl
     ): CreateJointAccountDTOMapper = impl
+
+    @Provides
+    fun provideIsJointAccountMapper(
+        impl: IsJointAccountMapperImpl
+    ): IsJointAccountMapper = impl
+
+    @Provides
+    fun provideCheckIsJointAccount(
+        repository: JointAccountRepository
+    ): CheckIsJointAccount = CheckIsJointAccount(repository::checkIsJointAccount)
 
     @Provides
     fun provideJointAccountDTOMapper(

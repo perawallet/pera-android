@@ -14,6 +14,7 @@ package com.algorand.wallet.jointaccount.domain.repository
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
+import com.algorand.wallet.jointaccount.creation.domain.model.IsJointAccountResult
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
@@ -42,4 +43,5 @@ interface JointAccountRepository {
         signRequestId: String
     ): PeraResult<SignRequestWithFullSignature>
 
+    suspend fun checkIsJointAccount(addresses: List<String>): PeraResult<List<IsJointAccountResult>>
 }

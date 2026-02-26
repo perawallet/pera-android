@@ -433,6 +433,7 @@
     <string name="joint_account_min_accounts_required">You need add at least two accounts</string>
     <string name="joint_account_validation_insufficient_participants">At least two participants are required to create a joint account</string>
     <string name="joint_account_feature_not_supported">This feature is not available for joint accounts yet</string>
+    <string name="joint_accounts_cannot_be_added">Joint accounts cannot be added to a new joint account</string>
     <string name="joint_accounts_are_not_supported">Swaps with joint accounts are not yet supported. Joint accounts require multi-signature approval which is not available in the swap flow.</string>
     <string name="search_or_enter_wallet_address">Search or enter wallet address</string>
     <string name="selected_account">Selected account</string>
@@ -1273,6 +1274,7 @@
     <string name="expired_transaction">Expired transaction</string>
     <string name="declined_transaction">Declined transaction</string>
     <string name="signature_request_declined">Signature request declined</string>
+    <string name="signature_request_cancelled">Signature request cancelled</string>
 
     <string name="joint_account_invitation_accepted">Joint account invitation accepted</string>
     <string name="before_you_create_joint_account">Before You Create a Joint Account</string>

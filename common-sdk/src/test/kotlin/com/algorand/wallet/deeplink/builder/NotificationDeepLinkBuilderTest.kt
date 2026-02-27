@@ -47,7 +47,23 @@ class NotificationDeepLinkBuilderTest {
         val expected = DeepLink.Notification(
             address = "address",
             assetId = 1234,
-            notificationGroupType = NotificationGroupType.TRANSACTIONS
+            notificationGroupType = NotificationGroupType.TRANSACTIONS,
+            transactionId = "transactionId"
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT notification deep link WHEN requirements meet except transactionId`() {
+        val deeplinkWithoutTxnId = VALID_DEEP_LINK.copy(transactionId = null)
+
+        val result = sut.createDeepLink(deeplinkWithoutTxnId)
+
+        val expected = DeepLink.Notification(
+            address = "address",
+            assetId = 1234,
+            notificationGroupType = NotificationGroupType.TRANSACTIONS,
+            transactionId = null
         )
         assertEquals(expected, result)
     }
@@ -57,6 +73,7 @@ class NotificationDeepLinkBuilderTest {
             accountAddress = "address",
             assetId = 1234,
             notificationGroupType = NotificationGroupType.TRANSACTIONS,
+            transactionId = "transactionId",
             rawDeepLinkUri = ""
         )
     }

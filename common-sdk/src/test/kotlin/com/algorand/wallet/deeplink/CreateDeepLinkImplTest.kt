@@ -180,7 +180,7 @@ class CreateDeepLinkImplTest {
 
     @Test
     fun `EXPECT notification deep link`() {
-        val deepLink = DeepLink.Notification("address", 1234, NotificationGroupType.TRANSACTIONS)
+        val deepLink = DeepLink.Notification("address", 1234, NotificationGroupType.TRANSACTIONS, "transactionId")
         every { notificationGroupDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
         every { notificationGroupDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
         every { parseDeepLinkPayload("notificationGroupDeepLink") } returns DEEP_LINK_PAYLOAD

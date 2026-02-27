@@ -172,7 +172,8 @@ class MainViewModel @Inject constructor(
     fun handleNotificationDeepLink(
         accountAddress: String,
         assetId: Long,
-        notificationGroupType: NotificationGroupType
+        notificationGroupType: NotificationGroupType,
+        transactionId: String?
     ) {
         viewModelScope.launch {
             if (!isThereAnyAccountWithAddress(accountAddress)) {
@@ -181,7 +182,13 @@ class MainViewModel @Inject constructor(
             }
 
             val viewEvent = when (notificationGroupType) {
-                TRANSACTIONS -> ViewEvent.HandleAssetTransactionDeepLink(accountAddress, assetId)
+                TRANSACTIONS -> {
+                    if (transactionId != null) {
+                        ViewEvent.HandleTransactionDetailDeepLink(accountAddress, transactionId)
+                    } else {
+                        ViewEvent.HandleAssetTransactionDeepLink(accountAddress, assetId)
+                    }
+                }
                 OPT_IN -> ViewEvent.HandleAssetOptInRequestDeepLink(accountAddress, assetId)
                 ASSET_INBOX -> getAssetInboxDeepLinkEvent(accountAddress)
             }
@@ -414,6 +421,7 @@ class MainViewModel @Inject constructor(
 
     sealed interface ViewEvent {
         data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
+        data class HandleTransactionDetailDeepLink(val address: String, val transactionId: String) : ViewEvent
         data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
         data class NavToAssetInboxOneAccountNavigation(val address: String) : ViewEvent
         data class NavToAccountDetailFragment(val address: String) : ViewEvent

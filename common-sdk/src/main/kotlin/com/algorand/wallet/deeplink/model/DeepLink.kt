@@ -74,7 +74,8 @@ sealed interface DeepLink {
     data class Notification(
         val address: String,
         val assetId: Long,
-        val notificationGroupType: NotificationGroupType
+        val notificationGroupType: NotificationGroupType,
+        val transactionId: String?,
     ) : DeepLink
 
     data class AssetInbox(

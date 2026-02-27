@@ -38,7 +38,8 @@ internal class NotificationDeepLinkBuilder : DeepLinkBuilder {
         return DeepLink.Notification(
             address = payload.accountAddress.orEmpty(),
             assetId = payload.assetId ?: ALGO_ID,
-            notificationGroupType = payload.notificationGroupType ?: NotificationGroupType.TRANSACTIONS
+            notificationGroupType = payload.notificationGroupType ?: NotificationGroupType.TRANSACTIONS,
+            transactionId = payload.transactionId
         )
     }
 }

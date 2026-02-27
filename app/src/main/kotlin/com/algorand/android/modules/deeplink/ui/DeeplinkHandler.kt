@@ -24,9 +24,9 @@ import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
 import com.algorand.wallet.deeplink.parser.CreateNewDeepLink
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
 class DeeplinkHandler @Inject constructor(
@@ -177,7 +177,8 @@ class DeeplinkHandler @Inject constructor(
             it.onNotificationDeepLink(
                 accountAddress = deepLink.address,
                 assetId = deepLink.assetId,
-                notificationGroupType = deepLink.notificationGroupType
+                notificationGroupType = deepLink.notificationGroupType,
+                transactionId = deepLink.transactionId
             )
         }
     }
@@ -280,7 +281,8 @@ class DeeplinkHandler @Inject constructor(
         fun onNotificationDeepLink(
             accountAddress: String,
             assetId: Long,
-            notificationGroupType: NotificationGroupType
+            notificationGroupType: NotificationGroupType,
+            transactionId: String?
         ): Boolean = false
 
         fun onDiscoverBrowserDeepLink(webUrl: String): Boolean = false

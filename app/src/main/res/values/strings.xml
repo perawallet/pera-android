@@ -36,6 +36,7 @@
     <string name="status">Status</string>
     <string name="unnamed">Unnamed</string>
     <string name="approve">Approve</string>
+    <string name="sign">Sign</string>
     <string name="you_need_at_least">You need at least %1$s Algo to opt-in to this asset</string>
     <string name="connect">Connect</string>
     <string name="please_ensure">Please ensure that location services are enabled.</string>

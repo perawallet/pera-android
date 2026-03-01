@@ -31,6 +31,7 @@ import com.algorand.wallet.jointaccount.transaction.data.mapper.CreateSignReques
 import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestMapper
 import com.algorand.wallet.jointaccount.transaction.data.mapper.SearchSignRequestsInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
+import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsResponse
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
@@ -137,24 +138,30 @@ internal class JointAccountRepositoryImpl @Inject constructor(
             signRequestId = signRequestId
         )
         val request = searchSignRequestsInputMapper.mapToSearchSignRequestsRequest(searchInput)
-        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+        val result = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             jointAccountApiService.searchSignRequests(request)
-        }.let { result ->
-            when (result) {
-                is PeraResult.Success -> {
-                    val signRequests = result.data.results?.mapNotNull { response ->
-                        jointSignRequestDTOMapper.mapToJointSignRequest(response)
-                    } ?: emptyList()
-                    val signRequest = signRequests.firstOrNull { it.id == signRequestId }
-                    if (signRequest != null) {
-                        PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
-                    } else {
-                        PeraResult.Error(Exception("Sign request not found"))
-                    }
-                }
+        }
+        return mapSearchResultToSignRequestWithFullSignature(result, signRequestId)
+    }
 
-                is PeraResult.Error -> result
+    private fun mapSearchResultToSignRequestWithFullSignature(
+        result: PeraResult<SearchSignRequestsResponse>,
+        signRequestId: String
+    ): PeraResult<SignRequestWithFullSignature> {
+        return when (result) {
+            is PeraResult.Success -> {
+                val signRequests = result.data.results?.mapNotNull { response ->
+                    jointSignRequestDTOMapper.mapToJointSignRequest(response)
+                } ?: emptyList()
+                val signRequest = signRequests.firstOrNull { it.id == signRequestId }
+                if (signRequest != null) {
+                    PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
+                } else {
+                    PeraResult.Error(Exception("Sign request not found"))
+                }
             }
+
+            is PeraResult.Error -> result
         }
     }
 

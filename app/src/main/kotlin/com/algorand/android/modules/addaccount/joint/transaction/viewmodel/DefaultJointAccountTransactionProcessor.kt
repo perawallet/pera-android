@@ -120,17 +120,6 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         updatedPreview: JointAccountTransactionViewState,
         signRequestId: String?
     ): JointAccountTransactionProcessor.PostSigningAction {
-        val isCompleted = isTransactionCompleted(
-            updatedPreview.signedCount,
-            updatedPreview.requiredSignatureCount
-        )
-
-        if (!isCompleted && data.hasUnsignedLedgerAccounts && signRequestId != null) {
-            val ledgerData = createLedgerSignData(signRequestId, data.preview.rawTransactions, updatedPreview)
-            if (ledgerData != null) {
-                return JointAccountTransactionProcessor.PostSigningAction.TriggerLedgerSigning(ledgerData)
-            }
-        }
         return JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures
     }
 
@@ -138,20 +127,6 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         preview: JointAccountTransactionViewState,
         signRequestId: String?
     ): JointAccountTransactionProcessor.PostSigningAction {
-        val isCompleted = isTransactionCompleted(preview.signedCount, preview.requiredSignatureCount)
-        val shouldTrigger = shouldTriggerLedgerSigning(
-            isCompleted = isCompleted,
-            hasUnsignedLedgerAccounts = preview.unsignedLedgerParticipantAddresses.isNotEmpty(),
-            signRequestId = signRequestId,
-            rawTransactions = preview.rawTransactions
-        )
-
-        if (shouldTrigger && signRequestId != null) {
-            val ledgerData = createLedgerSignData(signRequestId, preview.rawTransactions, preview)
-            if (ledgerData != null) {
-                return JointAccountTransactionProcessor.PostSigningAction.TriggerLedgerSigning(ledgerData)
-            }
-        }
         return JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures
     }
 
@@ -163,18 +138,6 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
 
     private fun isTransactionCompleted(signedCount: Int, requiredSignatureCount: Int): Boolean {
         return signedCount >= requiredSignatureCount
-    }
-
-    private fun shouldTriggerLedgerSigning(
-        isCompleted: Boolean,
-        hasUnsignedLedgerAccounts: Boolean,
-        signRequestId: String?,
-        rawTransactions: List<String>
-    ): Boolean {
-        return !isCompleted &&
-                hasUnsignedLedgerAccounts &&
-                signRequestId != null &&
-                rawTransactions.isNotEmpty()
     }
 
     private fun markSignersAsSigned(

@@ -16,7 +16,6 @@ import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.algosdk.account.Account
 import com.algorand.wallet.algosdk.domain.model.Algo25Account
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
-import java.security.NoSuchAlgorithmException
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
@@ -37,8 +36,8 @@ internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
 
     override fun getMnemonicFromAlgo25SecretKey(secretKey: ByteArray): String? {
         return try {
-            Account(secretKey).toMnemonic()
-        } catch (_: NoSuchAlgorithmException) {
+            Sdk.mnemonicFromPrivateKey(secretKey)
+        } catch (_: Exception) {
             null
         }
     }

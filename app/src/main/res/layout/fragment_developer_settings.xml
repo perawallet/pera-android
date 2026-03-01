@@ -35,14 +35,6 @@
         app:settingTitle="@string/algorand_dispenser" />
 
     <com.algorand.android.customviews.SettingsListItem
-        android:id="@+id/createLegacyAlgo25ListItem"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:endViewLayoutResource="@layout/layout_right_arrow"
-        app:settingIcon="@drawable/ic_wallet"
-        app:settingTitle="@string/create_legacy_algo25_account" />
-
-    <com.algorand.android.customviews.SettingsListItem
         android:id="@+id/developerOptionsListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

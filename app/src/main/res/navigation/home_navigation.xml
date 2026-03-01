@@ -874,14 +874,6 @@
             android:id="@+id/action_developerSettingsFragment_to_developerOptionsFragment"
             app:destination="@id/developerOptionsFragment" />
         <action
-            android:id="@+id/action_developerSettingsFragment_to_createAccountNameRegistrationNavigation"
-            app:destination="@id/createAccountNameRegistrationNavigation">
-            <argument
-                android:name="accountCreation"
-                app:argType="com.algorand.android.models.AccountCreation"
-                app:nullable="true" />
-        </action>
-        <action
             android:id="@+id/action_developerSettingsFragment_to_discoverDappNavigation"
             app:destination="@id/discoverDappNavigation">
             <argument

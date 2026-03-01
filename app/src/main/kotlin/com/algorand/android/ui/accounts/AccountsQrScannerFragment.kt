@@ -184,10 +184,11 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
     override fun onNotificationDeepLink(
         accountAddress: String,
         assetId: Long,
-        notificationGroupType: NotificationGroupType
+        notificationGroupType: NotificationGroupType,
+        transactionId: String?,
     ): Boolean {
         return true.also {
-            mainActivity?.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
+            mainActivity?.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType, transactionId)
         }
     }
 

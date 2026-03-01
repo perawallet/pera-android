@@ -24,6 +24,8 @@
 
     <include app:graph="@navigation/asset_detail_navigation" />
 
+    <include app:graph="@navigation/transaction_detail_navigation"/>
+
     <include app:graph="@navigation/account_options_navigation" />
 
     <include app:graph="@navigation/asset_addition_navigation" />
@@ -178,6 +180,20 @@
         <argument
             android:name="accountAddress"
             app:argType="string" />
+    </action>
+
+    <action
+        android:id="@+id/action_global_transactionDetailNavigation"
+        app:destination="@id/transactionDetailNavigation">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="transactionId"
+            app:argType="string" />
+        <argument
+            android:name="entryPoint"
+            app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
     </action>
 
     <action

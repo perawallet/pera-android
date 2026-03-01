@@ -45,6 +45,7 @@ import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
+import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transaction.refactor.ui.AssetOperationViewModel
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
@@ -126,6 +127,9 @@ class MainActivity :
                 event.address,
                 event.assetId
             )
+            is MainViewModel.ViewEvent.HandleTransactionDetailDeepLink -> {
+                navToTransactionDetailNavigation(event.address, event.transactionId)
+            }
         }
     }
 
@@ -247,9 +251,10 @@ class MainActivity :
         override fun onNotificationDeepLink(
             accountAddress: String,
             assetId: Long,
-            notificationGroupType: NotificationGroupType
+            notificationGroupType: NotificationGroupType,
+            transactionId: String?
         ): Boolean {
-            handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
+            handleNotificationDeepLink(accountAddress, assetId, notificationGroupType, transactionId)
             return true
         }
 
@@ -496,9 +501,10 @@ class MainActivity :
     fun handleNotificationDeepLink(
         accountAddress: String,
         assetId: Long,
-        notificationGroupType: NotificationGroupType
+        notificationGroupType: NotificationGroupType,
+        transactionId: String?
     ) {
-        mainViewModel.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
+        mainViewModel.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType, transactionId)
     }
 
     fun handleWalletConnectUrl(walletConnectUrl: String) {
@@ -682,6 +688,16 @@ class MainActivity :
             HomeNavigationDirections.actionGlobalAssetDetailNavigation(
                 assetId = assetId,
                 accountAddress = accountAddress
+            )
+        )
+    }
+
+    private fun navToTransactionDetailNavigation(address: String, transactionId: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalTransactionDetailNavigation(
+                address,
+                transactionId,
+                TransactionDetailEntryPoint.STANDARD_TRANSACTION
             )
         )
     }

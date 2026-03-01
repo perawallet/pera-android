@@ -19,6 +19,7 @@ import com.algorand.android.modules.addaccount.joint.creation.model.JointAccount
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
 import com.algorand.android.modules.addaccount.joint.creation.usecase.AddJointAccountSelectionUseCase
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
+import com.algorand.wallet.jointaccount.domain.usecase.CheckIsJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -39,7 +40,8 @@ class AddJointAccountViewModel @Inject constructor(
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val addJointAccountSelectionUseCase: AddJointAccountSelectionUseCase,
     private val createExternalAddressAsContact: CreateExternalAddressAsContact,
-    private val selectedJointAccountMapper: SelectedJointAccountMapper
+    private val selectedJointAccountMapper: SelectedJointAccountMapper,
+    private val checkIsJointAccount: CheckIsJointAccount
 ) : ViewModel(),
     StateViewModel<AddJointAccountViewModel.ViewState> by stateDelegate,
     EventViewModel<AddJointAccountViewModel.ViewEvent> by eventDelegate {
@@ -105,24 +107,91 @@ class AddJointAccountViewModel @Inject constructor(
         return selectedJointAccountMapper.mapFromSelectionList(address, content.accountList)
     }
 
-    fun onExternalAddressSelected(address: String) {
-        viewModelScope.launch {
-            val selectedAccount = createSelectedAccountFromExternalAddress(address)
-            if (selectedAccount != null) {
-                eventDelegate.sendEvent(ViewEvent.NavigateBackWithSelectedAccount(selectedAccount))
-            } else {
+    fun onAccountSelected(address: String) {
+        val selectedAccount = createSelectedAccountFromItem(address)
+        if (selectedAccount == null) {
+            viewModelScope.launch {
                 eventDelegate.sendEvent(ViewEvent.ShowError)
             }
+            return
+        }
+        viewModelScope.launch {
+            setCheckingJointAccount(true)
+            checkIsJointAccount(listOf(address)).use(
+                onSuccess = { results ->
+                    val isJointAccount = results.any { it.isJointAccount }
+                    setCheckingJointAccount(false)
+                    if (isJointAccount) {
+                        eventDelegate.sendEvent(ViewEvent.ShowJointAccountError)
+                    } else {
+                        eventDelegate.sendEvent(ViewEvent.NavigateBackWithSelectedAccount(selectedAccount))
+                    }
+                },
+                onFailed = { _, _ ->
+                    setCheckingJointAccount(false)
+                    eventDelegate.sendEvent(ViewEvent.ShowError)
+                }
+            )
+        }
+    }
+
+    fun onExternalAddressSelected(address: String) {
+        viewModelScope.launch {
+            setCheckingJointAccount(true)
+            checkIsJointAccount(listOf(address)).use(
+                onSuccess = { results ->
+                    val isJointAccount = results.any { it.isJointAccount }
+                    setCheckingJointAccount(false)
+                    if (isJointAccount) {
+                        eventDelegate.sendEvent(ViewEvent.ShowJointAccountError)
+                    } else {
+                        val selectedAccount = createSelectedAccountFromExternalAddress(address)
+                        if (selectedAccount != null) {
+                            eventDelegate.sendEvent(ViewEvent.NavigateBackWithSelectedAccount(selectedAccount))
+                        } else {
+                            eventDelegate.sendEvent(ViewEvent.ShowError)
+                        }
+                    }
+                },
+                onFailed = { _, _ ->
+                    setCheckingJointAccount(false)
+                    eventDelegate.sendEvent(ViewEvent.ShowError)
+                }
+            )
         }
     }
 
     fun onNfdSelected(address: String) {
         viewModelScope.launch {
-            val selectedAccount = createSelectedAccountFromNfd(address)
-            if (selectedAccount != null) {
-                eventDelegate.sendEvent(ViewEvent.NavigateBackWithSelectedAccount(selectedAccount))
-            } else {
-                eventDelegate.sendEvent(ViewEvent.ShowError)
+            setCheckingJointAccount(true)
+            checkIsJointAccount(listOf(address)).use(
+                onSuccess = { results ->
+                    val isJointAccount = results.any { it.isJointAccount }
+                    setCheckingJointAccount(false)
+                    if (isJointAccount) {
+                        eventDelegate.sendEvent(ViewEvent.ShowJointAccountError)
+                    } else {
+                        val selectedAccount = createSelectedAccountFromNfd(address)
+                        if (selectedAccount != null) {
+                            eventDelegate.sendEvent(ViewEvent.NavigateBackWithSelectedAccount(selectedAccount))
+                        } else {
+                            eventDelegate.sendEvent(ViewEvent.ShowError)
+                        }
+                    }
+                },
+                onFailed = { _, _ ->
+                    setCheckingJointAccount(false)
+                    eventDelegate.sendEvent(ViewEvent.ShowError)
+                }
+            )
+        }
+    }
+
+    private fun setCheckingJointAccount(isChecking: Boolean) {
+        stateDelegate.updateState { currentState ->
+            when (currentState) {
+                is ViewState.Loading -> currentState
+                is ViewState.Content -> currentState.copy(isCheckingJointAccount = isChecking)
             }
         }
     }
@@ -149,7 +218,8 @@ class AddJointAccountViewModel @Inject constructor(
             val contacts: List<JointAccountSelectionListItem.ContactItem> = emptyList(),
             val nfds: List<JointAccountSelectionListItem.NfdItem> = emptyList(),
             val hasClipboardContent: Boolean = false,
-            val showEmptyState: Boolean = false
+            val showEmptyState: Boolean = false,
+            val isCheckingJointAccount: Boolean = false
         ) : ViewState {
             val hasResults: Boolean get() = accountList.isNotEmpty()
 
@@ -166,6 +236,7 @@ class AddJointAccountViewModel @Inject constructor(
     sealed interface ViewEvent {
         data class NavigateBackWithSelectedAccount(val account: SelectedJointAccountItem) : ViewEvent
         data object ShowError : ViewEvent
+        data object ShowJointAccountError : ViewEvent
     }
 
     companion object {

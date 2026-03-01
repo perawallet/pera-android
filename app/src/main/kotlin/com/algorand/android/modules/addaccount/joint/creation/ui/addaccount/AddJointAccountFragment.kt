@@ -77,6 +77,10 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
                     is AddJointAccountViewModel.ViewEvent.ShowError -> {
                         showGlobalError(getString(R.string.an_error_occurred))
                     }
+
+                    is AddJointAccountViewModel.ViewEvent.ShowJointAccountError -> {
+                        showGlobalError(getString(R.string.joint_accounts_cannot_be_added))
+                    }
                 }
             }
         )
@@ -93,12 +97,7 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
     }
 
     override fun onAccountSelected(address: String) {
-        val selectedAccount = viewModel.createSelectedAccountFromItem(address)
-        if (selectedAccount != null) {
-            setResultAndNavigateBack(selectedAccount)
-        } else {
-            showGlobalError(getString(R.string.an_error_occurred))
-        }
+        viewModel.onAccountSelected(address)
     }
 
     override fun onExternalAddressSelected(address: String) {

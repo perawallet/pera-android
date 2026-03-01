@@ -13,6 +13,8 @@
 package com.algorand.wallet.jointaccount.data.service
 
 import com.algorand.wallet.jointaccount.creation.data.model.CreateJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountResponse
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.ProposeJointSignRequestRequest
@@ -36,6 +38,11 @@ internal interface JointAccountApiService {
     suspend fun createJointAccount(
         @Body createJointAccountRequest: CreateJointAccountRequest
     ): Response<JointAccountResponse>
+
+    @POST("v1/joint-accounts/is-joint-account/")
+    suspend fun checkIsJointAccount(
+        @Body request: IsJointAccountRequest
+    ): Response<List<IsJointAccountResponse>>
 
     @POST("v1/joint-accounts/sign-requests/")
     suspend fun proposeSignRequest(

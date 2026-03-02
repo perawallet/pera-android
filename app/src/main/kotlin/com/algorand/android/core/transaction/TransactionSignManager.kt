@@ -317,6 +317,7 @@ class TransactionSignManager @Inject constructor(
                     proposal = result.pendingProposal,
                     scanCallback = jointAccountLedgerScanCallback,
                     coroutineScope = currentScope,
+                    operationManager = ledgerBleOperationManager,
                     onError = ::postJointAccountError
                 )
             }

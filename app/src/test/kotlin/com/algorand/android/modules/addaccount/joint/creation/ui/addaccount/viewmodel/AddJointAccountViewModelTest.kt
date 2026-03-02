@@ -22,6 +22,7 @@ import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.view
 import com.algorand.android.modules.addaccount.joint.creation.usecase.AddJointAccountSelectionUseCase
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
 import com.algorand.test.test
+import com.algorand.wallet.jointaccount.domain.usecase.CheckIsJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import io.mockk.coEvery
@@ -50,6 +51,7 @@ internal class AddJointAccountViewModelTest {
     private val addJointAccountSelectionUseCase: AddJointAccountSelectionUseCase = mockk()
     private val createExternalAddressAsContact: CreateExternalAddressAsContact = mockk()
     private val selectedJointAccountMapper: SelectedJointAccountMapper = mockk()
+    private val checkIsJointAccount: CheckIsJointAccount = mockk()
 
     @Before
     fun setup() {
@@ -249,7 +251,8 @@ internal class AddJointAccountViewModelTest {
             eventDelegate = EventDelegate<AddJointAccountViewModel.ViewEvent>(),
             addJointAccountSelectionUseCase = addJointAccountSelectionUseCase,
             createExternalAddressAsContact = createExternalAddressAsContact,
-            selectedJointAccountMapper = selectedJointAccountMapper
+            selectedJointAccountMapper = selectedJointAccountMapper,
+            checkIsJointAccount = checkIsJointAccount
         )
     }
 

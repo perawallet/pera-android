@@ -22,6 +22,7 @@ import com.algorand.android.ledger.operations.ExternalTransaction
 import com.algorand.android.ledger.operations.ExternalTransactionOperation
 import com.algorand.android.models.TransactionManagerResult
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class JointAccountLedgerSignDelegate @Inject constructor(
@@ -33,6 +34,8 @@ class JointAccountLedgerSignDelegate @Inject constructor(
     private var pendingSign: PendingJointAccountLedgerSign? = null
     private var signedTransactions = mutableListOf<ByteArray>()
     private var currentIndex = 0
+    private var currentCoroutineScope: CoroutineScope? = null
+    private var setupOperationManager: LedgerBleOperationManager? = null
 
     val hasPendingSign: Boolean get() = pendingSign != null
 
@@ -45,20 +48,23 @@ class JointAccountLedgerSignDelegate @Inject constructor(
             totalTransactionCount: Int?
         ) {
             ledgerBleSearchManager.stop()
-            pendingSign?.let { pending ->
-                val rawTxBytes = pending.rawTransactionBytes.getOrNull(currentIndex)
-                if (rawTxBytes != null) {
-                    val transaction = JointAccountLedgerTransaction(
-                        transactionByteArray = rawTxBytes,
-                        accountAddress = pending.proposal.proposerAddress,
-                        accountAuthAddress = null,
-                        isRekeyedToAnotherAccount = false
-                    )
-                    ledgerBleOperationManager.startLedgerOperation(
-                        ExternalTransactionOperation(device, transaction),
-                        currentIndex,
-                        pending.rawTransactionBytes.size
-                    )
+            val operationManager = setupOperationManager ?: return
+            currentCoroutineScope?.launch {
+                pendingSign?.let { pending ->
+                    val rawTxBytes = pending.rawTransactionBytes.getOrNull(currentIndex)
+                    if (rawTxBytes != null) {
+                        val transaction = JointAccountLedgerTransaction(
+                            transactionByteArray = rawTxBytes,
+                            accountAddress = pending.proposal.proposerAddress,
+                            accountAuthAddress = null,
+                            isRekeyedToAnotherAccount = false
+                        )
+                        operationManager.startLedgerOperation(
+                            ExternalTransactionOperation(device, transaction),
+                            currentIndex,
+                            pending.rawTransactionBytes.size
+                        )
+                    }
                 }
             }
         }
@@ -73,8 +79,12 @@ class JointAccountLedgerSignDelegate @Inject constructor(
         proposal: JointAccountTransactionSignHelper.PendingJointAccountProposal,
         scanCallback: CustomScanCallback,
         coroutineScope: CoroutineScope,
+        operationManager: LedgerBleOperationManager,
         onError: () -> Unit
     ) {
+        currentCoroutineScope = coroutineScope
+        setupOperationManager = operationManager
+
         val rawTransactionBytes = proposal.rawTransactionLists.flatten().map { base64 ->
             runCatching { android.util.Base64.decode(base64, android.util.Base64.DEFAULT) }.getOrNull()
         }
@@ -139,6 +149,8 @@ class JointAccountLedgerSignDelegate @Inject constructor(
         pendingSign = null
         signedTransactions.clear()
         currentIndex = 0
+        currentCoroutineScope = null
+        setupOperationManager = null
     }
 
     private suspend fun completeProposalAfterLedgerSign(

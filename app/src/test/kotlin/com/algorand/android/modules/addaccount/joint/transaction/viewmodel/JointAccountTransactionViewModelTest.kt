@@ -89,7 +89,7 @@ internal class JointAccountTransactionViewModelTest {
         val eventDelegate = EventDelegate<JointAccountTransactionViewModel.ViewEvent>()
         val preview = createTestPreview()
         coEvery { getJointAccountTransactionViewState(TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(preview)
-        every { processor.processLoadedPreview(preview) } returns preview
+        every { processor.processLoadedPreview(any()) } answers { firstArg() }
 
         createViewModel(stateDelegate, eventDelegate)
         advanceUntilIdle()
@@ -118,7 +118,7 @@ internal class JointAccountTransactionViewModelTest {
         val eventDelegate = EventDelegate<JointAccountTransactionViewModel.ViewEvent>()
         val preview = createTestPreview()
         coEvery { getJointAccountTransactionViewState(TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(preview)
-        every { processor.processLoadedPreview(preview) } returns preview
+        every { processor.processLoadedPreview(any()) } answers { firstArg() }
 
         val viewModel = createViewModel(stateDelegate, eventDelegate)
         advanceUntilIdle()
@@ -140,7 +140,7 @@ internal class JointAccountTransactionViewModelTest {
         val eventDelegate = EventDelegate<JointAccountTransactionViewModel.ViewEvent>()
         val preview = createTestPreview()
         coEvery { getJointAccountTransactionViewState(TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(preview)
-        every { processor.processLoadedPreview(preview) } returns preview
+        every { processor.processLoadedPreview(any()) } answers { firstArg() }
         every { processor.findDeclineParticipantAddresses(preview) } returns listOf(TEST_PARTICIPANT_ADDRESS)
         coEvery {
             declineJointAccountSignRequest(
@@ -164,13 +164,7 @@ internal class JointAccountTransactionViewModelTest {
         val eventDelegate = EventDelegate<JointAccountTransactionViewModel.ViewEvent>()
         val preview = createTestPreview()
         coEvery { getJointAccountTransactionViewState(TEST_SIGN_REQUEST_ID) } returns PeraResult.Success(preview)
-        every { processor.processLoadedPreview(preview) } returns preview
-        every {
-            processor.determineLedgerSuccessAction(
-                preview,
-                TEST_SIGN_REQUEST_ID
-            )
-        } returns JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures
+        every { processor.processLoadedPreview(any()) } answers { firstArg() }
 
         val viewModel = createViewModel(stateDelegate, eventDelegate)
         advanceUntilIdle()

@@ -42,11 +42,6 @@ interface JointAccountTransactionProcessor {
         signRequestId: String?
     ): PostSigningAction
 
-    fun determineLedgerSuccessAction(
-        preview: JointAccountTransactionViewState,
-        signRequestId: String?
-    ): PostSigningAction
-
     data class ConfirmTransactionData(
         val requestId: String,
         val preview: JointAccountTransactionViewState,

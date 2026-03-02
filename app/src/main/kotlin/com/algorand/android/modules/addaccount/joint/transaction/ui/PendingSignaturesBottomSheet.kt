@@ -33,8 +33,8 @@ import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.showWithStateCheck
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
@@ -61,8 +61,8 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
         return createComposeView {
             PendingSignaturesBottomSheetScreen(
                 viewModel = viewModel,
+                onClose = ::onClose,
                 onCloseCompleted = ::onCloseCompleted,
-                onCloseForNow = ::onCloseForNow,
                 onCancel = ::onCancel,
                 onSignLedgerAccount = ::onSignLedgerAccount
             )
@@ -211,30 +211,24 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
         ledgerLoadingDialog = null
     }
 
-    private fun onCloseCompleted() {
-        popToInboxOrAccounts()
-    }
-
-    private fun popToInboxOrAccounts() {
-        dismiss()
-        activity?.let { activity ->
-            val navController = androidx.navigation.Navigation.findNavController(
-                activity,
-                R.id.navigationHostFragment
-            )
-            val poppedToInbox = navController.popBackStack(R.id.inboxFragment, false)
-            if (!poppedToInbox) {
-                navController.popBackStack(R.id.accountsFragment, false)
-            }
-        }
-    }
-
-    private fun onCloseForNow() {
+    private fun onClose() {
         if (isDismissable) {
             dismiss()
         } else {
-            popToInboxOrAccounts()
+            navigateToAccounts(showConfetti = false)
         }
+    }
+
+    private fun onCloseCompleted() {
+        navigateToAccounts(showConfetti = false)
+    }
+
+    private fun navigateToAccounts(showConfetti: Boolean) {
+        nav(
+            PendingSignaturesBottomSheetDirections.actionPendingSignaturesBottomSheetToHomeNavigation(
+                showConfetti = showConfetti
+            )
+        )
     }
 
     private fun onCancel() {

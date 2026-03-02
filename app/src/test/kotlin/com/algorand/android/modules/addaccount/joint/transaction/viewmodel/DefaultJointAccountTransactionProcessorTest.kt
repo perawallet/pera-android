@@ -201,6 +201,20 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
+    fun `EXPECT all local participants WHEN proposer cancels transaction`() {
+        val preview = createTestPreview(
+            allLocalParticipantAddresses = listOf("PROPOSER_ADDR"),
+            unsignedLocalParticipantAddresses = emptyList(),
+            unsignedLedgerParticipantAddresses = emptyList(),
+            hasProposerAddress = true
+        )
+
+        val result = processor.findDeclineParticipantAddresses(preview)
+
+        assertEquals(listOf("PROPOSER_ADDR"), result)
+    }
+
+    @Test
     fun `EXPECT LedgerSignData WHEN ledger signer available`() {
         val signerAccounts = listOf(
             createTestSignerItem(
@@ -331,7 +345,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
-    fun `EXPECT TriggerLedgerSigning WHEN ledger accounts available and not completed`() {
+    fun `EXPECT ShowPendingSignatures WHEN ledger accounts available and not completed`() {
         val signerAccounts = listOf(
             createTestSignerItem(
                 address = "LEDGER_ADDR",
@@ -355,17 +369,19 @@ internal class DefaultJointAccountTransactionProcessorTest {
 
         val result = processor.determinePostSigningAction(data, preview, "request_id")
 
-        assertTrue(result is JointAccountTransactionProcessor.PostSigningAction.TriggerLedgerSigning)
+        assertTrue(result is JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures)
     }
 
     private fun createTestPreview(
         rawTransactions: List<String> = listOf("raw_tx_1"),
         signedCount: Int = 1,
         requiredSignatureCount: Int = 2,
+        allLocalParticipantAddresses: List<String> = emptyList(),
         unsignedLocalParticipantAddresses: List<String> = listOf("ADDR1"),
         unsignedLedgerParticipantAddresses: List<String> = emptyList(),
         signerAccounts: List<JointAccountSignerItem> = emptyList(),
-        transactionState: JointAccountTransactionState = JointAccountTransactionState.PendingSignatures
+        transactionState: JointAccountTransactionState = JointAccountTransactionState.PendingSignatures,
+        hasProposerAddress: Boolean = false
     ): JointAccountTransactionViewState {
         return JointAccountTransactionViewState(
             jointAccountDisplayName = AccountDisplayName(
@@ -386,8 +402,10 @@ internal class DefaultJointAccountTransactionProcessorTest {
             hasCurrentUserAlreadySigned = false,
             shouldShowPendingSignaturesDirectly = false,
             rawTransactions = rawTransactions,
+            allLocalParticipantAddresses = allLocalParticipantAddresses,
             unsignedLocalParticipantAddresses = unsignedLocalParticipantAddresses,
-            unsignedLedgerParticipantAddresses = unsignedLedgerParticipantAddresses
+            unsignedLedgerParticipantAddresses = unsignedLedgerParticipantAddresses,
+            hasProposerAddress = hasProposerAddress
         )
     }
 

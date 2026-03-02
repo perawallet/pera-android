@@ -1844,6 +1844,15 @@
             android:name="isDismissable"
             android:defaultValue="true"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_pendingSignaturesBottomSheet_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/homeNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                app:argType="boolean" />
+        </action>
     </dialog>
 
     <action
@@ -1871,7 +1880,14 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_nameJointAccountFragment_to_homeNavigation"
-            app:destination="@id/homeNavigation" />
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/homeNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
     </fragment>
 
     <action

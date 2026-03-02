@@ -102,9 +102,7 @@ internal class GetJointAccountTransactionViewStateUseCase(
             .map { it.accountAddress }
 
         val signedCount = signerAccounts.count { it.signatureStatus == JointAccountSignatureStatus.Signed }
-        val hasProposer = signRequest.proposerAddress?.let {
-            dependencies.getJointAccountSignerItems.hasSigningCapableLocalAccount(it)
-        } ?: false
+        val hasProposer = checkHasProposer(signRequest.proposerAddress, signerAccounts)
 
         return ParticipantData(
             signerAccounts = signerAccounts,
@@ -115,6 +113,18 @@ internal class GetJointAccountTransactionViewStateUseCase(
             hasProposer = hasProposer,
             currentUserAddress = localParticipants.firstOrNull()
         )
+    }
+
+    private suspend fun checkHasProposer(
+        proposerAddress: String?,
+        signerAccounts: List<JointAccountSignerItem>
+    ): Boolean {
+        if (proposerAddress != null) {
+            return dependencies.getJointAccountSignerItems.hasSigningCapableLocalAccount(proposerAddress)
+        }
+        return signerAccounts.any {
+            it.isLocalAccount && it.signatureStatus == JointAccountSignatureStatus.Signed
+        }
     }
 
     private fun buildExpirationData(signRequest: SignRequestWithFullSignature): ExpirationData {

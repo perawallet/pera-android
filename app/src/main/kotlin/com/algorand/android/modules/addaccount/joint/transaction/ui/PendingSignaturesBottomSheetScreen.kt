@@ -60,8 +60,8 @@ import com.algorand.android.utils.toShortenedAddress
 @Composable
 fun PendingSignaturesBottomSheetScreen(
     viewModel: JointAccountTransactionViewModel,
+    onClose: () -> Unit,
     onCloseCompleted: () -> Unit,
-    onCloseForNow: () -> Unit,
     onCancel: () -> Unit,
     onSignLedgerAccount: (JointAccountSignerItem) -> Unit = {}
 ) {
@@ -76,7 +76,7 @@ fun PendingSignaturesBottomSheetScreen(
             PendingSignaturesContent(
                 transactionPreview = state.preview,
                 onCancel = onCancel,
-                onCloseForNow = onCloseForNow,
+                onClose = onClose,
                 onCloseCompleted = onCloseCompleted,
                 onSignLedgerAccount = onSignLedgerAccount
             )
@@ -85,7 +85,7 @@ fun PendingSignaturesBottomSheetScreen(
         is ViewState.Error -> {
             ErrorContent(
                 message = stringResource(state.messageResId),
-                onClose = onCloseForNow
+                onClose = onClose
             )
         }
     }
@@ -150,8 +150,8 @@ private fun ErrorContent(
 fun PendingSignaturesContent(
     transactionPreview: JointAccountTransactionViewState,
     onCancel: () -> Unit,
-    onCloseForNow: () -> Unit,
-    onCloseCompleted: () -> Unit = onCloseForNow,
+    onClose: () -> Unit,
+    onCloseCompleted: () -> Unit,
     onSignLedgerAccount: (JointAccountSignerItem) -> Unit = {}
 ) {
     Column(
@@ -199,7 +199,7 @@ fun PendingSignaturesContent(
             transactionState = transactionPreview.transactionState,
             hasProposerAddress = transactionPreview.hasProposerAddress,
             onCancel = onCancel,
-            onCloseForNow = onCloseForNow,
+            onClose = onClose,
             onCloseCompleted = onCloseCompleted
         )
 
@@ -402,27 +402,23 @@ private fun ActionButtonsSection(
     transactionState: JointAccountTransactionState,
     hasProposerAddress: Boolean,
     onCancel: () -> Unit,
-    onCloseForNow: () -> Unit,
+    onClose: () -> Unit,
     onCloseCompleted: () -> Unit
 ) {
     val isCompleted = transactionState == JointAccountTransactionState.Completed
-    val isFinalized = isCompleted ||
-            transactionState == JointAccountTransactionState.Canceled ||
-            transactionState is JointAccountTransactionState.Failed ||
-            transactionState == JointAccountTransactionState.Expired ||
-            transactionState == JointAccountTransactionState.Declined
+    val isFinalized = transactionState.isFinalized()
     val showSingleCloseButton = isFinalized || !hasProposerAddress
 
     if (showSingleCloseButton) {
         SingleCloseButton(
             modifier = modifier,
-            onClick = if (isCompleted) onCloseCompleted else onCloseForNow
+            onClick = if (isCompleted) onCloseCompleted else onClose
         )
     } else {
         ProposerActionButtons(
             modifier = modifier,
             onCancel = onCancel,
-            onCloseForNow = onCloseForNow
+            onClose = onClose
         )
     }
 }
@@ -455,7 +451,7 @@ private fun SingleCloseButton(
 private fun ProposerActionButtons(
     modifier: Modifier = Modifier,
     onCancel: () -> Unit,
-    onCloseForNow: () -> Unit
+    onClose: () -> Unit
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -483,7 +479,7 @@ private fun ProposerActionButtons(
             modifier = Modifier
                 .weight(1f)
                 .height(52.dp),
-            onClick = onCloseForNow,
+            onClick = onClose,
             shape = RoundedCornerShape(4.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = PeraTheme.colors.button.primary.background,

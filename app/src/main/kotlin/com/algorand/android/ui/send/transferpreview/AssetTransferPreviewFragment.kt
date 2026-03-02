@@ -395,7 +395,7 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     override fun onJointAccountSignRequestCreated(signRequestId: String) {
-        nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(signRequestId))
+        nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(signRequestId, isDismissable = false))
     }
 
     companion object {

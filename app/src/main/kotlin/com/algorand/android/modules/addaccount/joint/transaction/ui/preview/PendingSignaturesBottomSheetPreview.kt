@@ -44,8 +44,8 @@ fun PendingSignaturesBottomSheetScreenPreview() {
         PendingSignaturesContent(
             transactionPreview = createMockPreviewPending(),
             onCancel = {},
-            onCloseForNow = {},
-            onCloseCompleted = {}
+            onClose = {},
+            onCloseCompleted = {},
         )
     }
 }

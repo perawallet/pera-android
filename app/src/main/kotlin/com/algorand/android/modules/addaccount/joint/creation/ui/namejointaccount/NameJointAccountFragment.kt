@@ -118,6 +118,6 @@ class NameJointAccountFragment : DaggerBaseFragment(0), NameJointAccountScreenLi
     }
 
     private fun popBackToAccounts() {
-        nav(NameJointAccountFragmentDirections.actionNameJointAccountFragmentToHomeNavigation())
+        nav(NameJointAccountFragmentDirections.actionNameJointAccountFragmentToHomeNavigation(showConfetti = true))
     }
 }

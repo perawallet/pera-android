@@ -97,12 +97,7 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
             preview
         }
 
-        val isFinalized = effectivePreview.transactionState is JointAccountTransactionState.Failed ||
-                effectivePreview.transactionState == JointAccountTransactionState.Completed ||
-                effectivePreview.transactionState == JointAccountTransactionState.Canceled ||
-                effectivePreview.transactionState == JointAccountTransactionState.Expired ||
-                effectivePreview.transactionState == JointAccountTransactionState.Declined ||
-                effectivePreview.isExpired
+        val isFinalized = effectivePreview.transactionState.isFinalized() || effectivePreview.isExpired
 
         if (!isFinalized) return effectivePreview
 
@@ -112,19 +107,15 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
     }
 
     override fun findDeclineParticipantAddresses(preview: JointAccountTransactionViewState): List<String> {
+        if (preview.hasProposerAddress) {
+            return preview.allLocalParticipantAddresses
+        }
         return preview.unsignedLocalParticipantAddresses + preview.unsignedLedgerParticipantAddresses
     }
 
     override fun determinePostSigningAction(
         data: JointAccountTransactionProcessor.ConfirmTransactionData,
         updatedPreview: JointAccountTransactionViewState,
-        signRequestId: String?
-    ): JointAccountTransactionProcessor.PostSigningAction {
-        return JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures
-    }
-
-    override fun determineLedgerSuccessAction(
-        preview: JointAccountTransactionViewState,
         signRequestId: String?
     ): JointAccountTransactionProcessor.PostSigningAction {
         return JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures

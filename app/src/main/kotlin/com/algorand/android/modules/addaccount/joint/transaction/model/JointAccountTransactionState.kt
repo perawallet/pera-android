@@ -26,4 +26,12 @@ sealed class JointAccountTransactionState {
     data object Expired : JointAccountTransactionState()
 
     data object Declined : JointAccountTransactionState()
+
+    fun isFinalized(): Boolean {
+        return this is Completed ||
+            this is Canceled ||
+            this is Failed ||
+            this is Expired ||
+            this is Declined
+    }
 }

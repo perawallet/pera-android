@@ -221,7 +221,8 @@ private fun AccountListSection(
     isCheckingJointAccount: Boolean,
     listener: AddJointAccountScreenListener
 ) {
-    val onExternalAddressSelected = if (isCheckingJointAccount) { _: String -> } else listener::onExternalAddressSelected
+    val onExternalAddressSelected: (String) -> Unit =
+        if (isCheckingJointAccount) { _ -> } else listener::onExternalAddressSelected
     val onNfdSelected = if (isCheckingJointAccount) { _: String -> } else listener::onNfdSelected
     val onAccountSelected = if (isCheckingJointAccount) { _: String -> } else listener::onAccountSelected
     LazyColumn(

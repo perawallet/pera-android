@@ -228,10 +228,27 @@ class JointAccountTransactionViewModel @Inject constructor(
         participantAddresses: List<String>,
         preview: JointAccountTransactionViewState
     ) {
+        val declinedAddressSet = participantAddresses.toSet()
         declineJointAccountSignRequest(requestId, participantAddresses).use(
             onSuccess = {
                 refreshInboxCache()
-                eventDelegate.sendEvent(ViewEvent.ShowSuccessAndNavigateBack(R.string.signature_request_declined))
+                val updatedSigners = preview.signerAccounts.map { signer ->
+                    if (signer.accountAddress in declinedAddressSet) {
+                        signer.copy(signatureStatus = JointAccountSignatureStatus.Declined)
+                    } else {
+                        signer
+                    }
+                }
+                val canceledPreview = processor.processLoadedPreview(
+                    preview.copy(
+                        transactionState = JointAccountTransactionState.Canceled,
+                        signerAccounts = updatedSigners
+                    )
+                )
+                stateDelegate.updateState { ViewState.Content(canceledPreview) }
+                eventDelegate.sendEvent(
+                    ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = false)
+                )
             },
             onFailed = { _, _ ->
                 stateDelegate.updateState { ViewState.Content(preview) }
@@ -277,15 +294,8 @@ class JointAccountTransactionViewModel @Inject constructor(
     }
 
     private suspend fun silentRefreshPreview() {
+        val requestId = signRequestId ?: return
         if (!isSilentRefreshInProgress.compareAndSet(false, true)) return
-        val requestId = signRequestId ?: run {
-            isSilentRefreshInProgress.set(false)
-            return
-        }
-        if (requestId.isBlank()) {
-            isSilentRefreshInProgress.set(false)
-            return
-        }
         try {
             getJointAccountTransactionViewState(requestId).use(
                 onSuccess = { preview ->

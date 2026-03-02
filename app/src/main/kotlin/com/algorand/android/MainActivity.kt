@@ -127,6 +127,7 @@ class MainActivity :
                 event.address,
                 event.assetId
             )
+
             is MainViewModel.ViewEvent.HandleTransactionDetailDeepLink -> {
                 navToTransactionDetailNavigation(event.address, event.transactionId)
             }
@@ -397,8 +398,7 @@ class MainActivity :
                     hideLedgerLoadingDialog()
                     nav(
                         HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
-                            signRequestId = result.signRequestId,
-                            isDismissable = false
+                            signRequestId = result.signRequestId
                         )
                     )
                 }

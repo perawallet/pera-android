@@ -40,5 +40,6 @@ data class JointAccountSignerItem(
         get() = isLedgerAccount &&
                 ledgerBluetoothAddress != null &&
                 ledgerAccountIndex != null &&
-                signatureStatus == JointAccountSignatureStatus.Pending
+                signatureStatus == JointAccountSignatureStatus.Pending &&
+                showProgress
 }

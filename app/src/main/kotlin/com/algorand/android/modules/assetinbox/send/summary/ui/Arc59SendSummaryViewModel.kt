@@ -56,8 +56,8 @@ class Arc59SendSummaryViewModel @Inject constructor(
 
     fun createTransactionData() {
         viewModelScope.launchIO {
-            arc59SendSummaryPreviewUseCase.createArc59SendTransactionData(args, state.value).collectLatest {
-                stateDelegate.updateState { it }
+            arc59SendSummaryPreviewUseCase.createArc59SendTransactionData(args, state.value).collectLatest { preview ->
+                stateDelegate.updateState { preview }
             }
         }
     }
@@ -67,8 +67,8 @@ class Arc59SendSummaryViewModel @Inject constructor(
             arc59SendSummaryPreviewUseCase.sendSignedTransaction(
                 state.value,
                 signedTransactions
-            ).collectLatest {
-                stateDelegate.updateState { it }
+            ).collectLatest { preview ->
+                stateDelegate.updateState { preview }
             }
         }
     }

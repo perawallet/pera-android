@@ -438,5 +438,5 @@
 -dontwarn io.vertx.core.net.impl.HAProxyMessageCompletionHandler
 -dontwarn io.vertx.core.http.impl.HttpServerWorker
 
--keep,includedescriptorclasses class net.sqlcipher.** { *; }
--keep,includedescriptorclasses interface net.sqlcipher.** { *; }
+-keep,includedescriptorclasses class net.zetetic.database.sqlcipher.** { *; }
+-keep,includedescriptorclasses interface net.zetetic.database.sqlcipher.** { *; }

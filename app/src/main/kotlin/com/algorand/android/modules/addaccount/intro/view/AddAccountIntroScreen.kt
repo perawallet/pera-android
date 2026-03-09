@@ -58,6 +58,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.GroupChoiceNewBadge
 import com.algorand.android.ui.compose.widget.GroupChoiceWidget
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.icon.rememberSafePainterResource
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
@@ -188,11 +189,13 @@ private fun Header(onCloseClick: () -> Unit) {
             )
         }
 
-        PeraIcon(
-            painter = painterResource(R.drawable.pera_icon_3d),
-            contentDescription = stringResource(id = R.string.add_an_account_title),
-            contentScale = ContentScale.FillWidth
-        )
+        rememberSafePainterResource(R.drawable.pera_icon_3d)?.let { painter ->
+            PeraIcon(
+                painter = painter,
+                contentDescription = stringResource(id = R.string.add_an_account_title),
+                contentScale = ContentScale.FillWidth
+            )
+        }
     }
 }
 

@@ -40,8 +40,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.algorand.android.ui.compose.widget.icon.rememberSafePainterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -103,19 +103,21 @@ fun SwapScreenIntroductionState(modifier: Modifier = Modifier, listener: SwapScr
 
 @Composable
 private fun ImageContainer() {
-    Image(
-        modifier = Modifier
-            .background(
-                brush = Brush.radialGradient(
-                    colors = listOf(Color(0xFF18181B), Color(0xFF242427), Color(0xFF18181B)),
-                    radius = 1f
+    rememberSafePainterResource(R.drawable.swap_introduction)?.let { painter ->
+        Image(
+            modifier = Modifier
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0xFF18181B), Color(0xFF242427), Color(0xFF18181B)),
+                        radius = 1f
+                    )
                 )
-            )
-            .fillMaxWidth()
-            .aspectRatio(1.5f),
-        painter = painterResource(R.drawable.swap_introduction),
-        contentDescription = null
-    )
+                .fillMaxWidth()
+                .aspectRatio(1.5f),
+            painter = painter,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable

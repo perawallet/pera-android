@@ -12,16 +12,24 @@
 
 package com.algorand.android.encryption.domain.usecase
 
+import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
 import com.algorand.wallet.foundation.PeraResult
+import com.google.crypto.tink.Aead
+import com.google.crypto.tink.KeyTemplates
+import com.google.crypto.tink.RegistryConfiguration
+import com.google.crypto.tink.aead.AeadConfig
+import com.google.crypto.tink.integration.android.AndroidKeysetManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.inject.Inject
 
 internal class AndroidEncryptionManagerImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context,
     private val getStrongBoxUsedCheck: GetStrongBoxUsedCheck,
     private val saveStrongBoxUsedCheck: SaveStrongBoxUsedCheck,
 ) : AndroidEncryptionManager {
@@ -101,6 +109,42 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
         }
     }
 
+    override fun getOrRecoverAead(): Aead {
+        AeadConfig.register()
+        return try {
+            buildAead()
+        } catch (e: Exception) {
+            Log.e(TAG, "Keystore key is invalid, clearing and re-creating", e)
+            clearCorruptedKeystoreData()
+            buildAead()
+        }
+    }
+
+    private fun buildAead(): Aead {
+        return AndroidKeysetManager.Builder()
+            .withSharedPref(context, TINK_KEYSET_HANDLE, TINK_ENCRYPTED_PREF_NAME)
+            .withKeyTemplate(KeyTemplates.get(TINK_KEY_TEMPLATE))
+            .withMasterKeyUri(TINK_KEYSTORE_URI)
+            .build()
+            .keysetHandle
+            .getPrimitive(RegistryConfiguration.get(), Aead::class.java)
+    }
+
+    private fun clearCorruptedKeystoreData() {
+        try {
+            val keyStore = getKeyStore()
+            if (keyStore.containsAlias(TINK_KEYSTORE_ALIAS)) {
+                keyStore.deleteEntry(TINK_KEYSTORE_ALIAS)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to delete corrupted keystore entry", e)
+        }
+        context.getSharedPreferences(TINK_ENCRYPTED_PREF_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .clear()
+            .apply()
+    }
+
     private fun getKeyStore(): KeyStore {
         return KeyStore.getInstance(ANDROID_KEYSTORE).apply {
             load(null)
@@ -165,6 +209,11 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
         const val STRONG_BOX_ALIAS = "${KEY_ALIAS}_strongbox"
         const val STRONG_BOX_TEST_ALIAS = "StrongBoxTest"
         const val ENCRYPTION_KEY_SIZE_IN_BITS = 256
+        const val TINK_KEYSTORE_ALIAS = "algorand_keystore_key"
+        const val TINK_KEYSTORE_URI = "android-keystore://$TINK_KEYSTORE_ALIAS"
+        const val TINK_KEYSET_HANDLE = "ALGORAND_KEYSET"
+        const val TINK_ENCRYPTED_PREF_NAME = "ALGORAND_ENCR_ACCOUNTS"
+        const val TINK_KEY_TEMPLATE = "AES256_GCM"
         val TAG: String = AndroidEncryptionManager::class.java.simpleName
     }
 }

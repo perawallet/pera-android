@@ -33,21 +33,14 @@ import com.algorand.android.database.NodeDao
 import com.algorand.android.database.NotificationFilterDao
 import com.algorand.android.database.WalletConnectDao
 import com.algorand.android.database.WalletConnectTypeConverters
+import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.ledger.LedgerBleConnectionManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.modules.tracking.core.PeraReferrerInstallClientImpl
 import com.algorand.android.notification.PeraNotificationManager
-import com.algorand.android.utils.ALGORAND_KEYSTORE_URI
-import com.algorand.android.utils.ENCRYPTED_SHARED_PREF_NAME
-import com.algorand.android.utils.KEYSET_HANDLE
-import com.algorand.android.utils.KEY_TEMPLATE_AES256_GCM
 import com.algorand.android.utils.preference.SETTINGS
 import com.algorand.wallet.analytics.domain.service.PeraReferrerInstallClient
 import com.google.crypto.tink.Aead
-import com.google.crypto.tink.KeyTemplates
-import com.google.crypto.tink.KeysetHandle
-import com.google.crypto.tink.aead.AeadConfig
-import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -86,17 +79,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun getEncryptionAead(@ApplicationContext appContext: Context): Aead {
-        AeadConfig.register()
-
-        val algorandKeysetHandle: KeysetHandle = AndroidKeysetManager.Builder()
-            .withSharedPref(appContext, KEYSET_HANDLE, ENCRYPTED_SHARED_PREF_NAME)
-            .withKeyTemplate(KeyTemplates.get(KEY_TEMPLATE_AES256_GCM))
-            .withMasterKeyUri(ALGORAND_KEYSTORE_URI)
-            .build()
-            .keysetHandle
-
-        return algorandKeysetHandle.getPrimitive(Aead::class.java)
+    fun getEncryptionAead(androidEncryptionManager: AndroidEncryptionManager): Aead {
+        return androidEncryptionManager.getOrRecoverAead()
     }
 
     @Singleton

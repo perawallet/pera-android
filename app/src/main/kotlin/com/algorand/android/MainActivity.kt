@@ -539,8 +539,11 @@ class MainActivity :
     }
 
     fun isBasePeraWebViewFragmentActive(): Boolean {
-        val navHostFragment = supportFragmentManager.findFragmentById(binding.navigationHostFragment.id)
-        val currentFragment = (navHostFragment as NavHostFragment).childFragmentManager.fragments.first()
+        val navHostFragment = supportFragmentManager.findFragmentById(
+            binding.navigationHostFragment.id
+        ) as? NavHostFragment ?: return false
+        
+        val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return false
         return currentFragment is BasePeraWebViewFragment || currentFragment is XoSwapFragment
     }
 

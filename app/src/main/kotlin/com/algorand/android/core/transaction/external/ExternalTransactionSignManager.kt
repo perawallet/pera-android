@@ -14,6 +14,7 @@ package com.algorand.android.core.transaction.external
 
 import android.bluetooth.BluetoothDevice
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import com.algorand.android.R
@@ -52,6 +53,7 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.TransactionListWithFullSignature
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -292,43 +294,84 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     }
 
     private fun signJointAccountTransaction() {
-        val currentItem = externalTransactionQueuingHelper.currentItem ?: return
+        val currentItem = externalTransactionQueuingHelper.currentItem
+        if (currentItem == null) {
+            Log.e(TAG, "signJoint: currentItem is null")
+            return
+        }
         val jointAccountAddress = currentItem.accountAddress
-        val txList = transaction ?: return
-        val rawBytesList = txList.mapNotNull { it.transactionByteArray }
-        if (rawBytesList.size != txList.size) return postJointSyncError()
-
+        val txList = transaction
+        if (txList == null) {
+            Log.e(TAG, "signJoint: transaction list is null")
+            return
+        }
+        Log.d(TAG, "signJoint: address=$jointAccountAddress, txCount=${txList.size}")
+        val rawBytesGroups = buildRawBytesGroups(txList)
+        if (rawBytesGroups == null) {
+            Log.e(TAG, "signJoint: buildRawBytesGroups returned null")
+            return postJointSyncError()
+        }
+        Log.d(TAG, "signJoint: groups=${rawBytesGroups.size}, sizes=${rawBytesGroups.map { it.size }}")
         currentScope.launch {
-            val result = jointAccountTransactionSignHelper.handleSyncJointAccountTransactionWithRawBytes(
-                jointAccountAddress = jointAccountAddress,
-                rawTransactionBytesList = rawBytesList
-            )
+            val result = jointAccountTransactionSignHelper
+                .handleSyncJointAccountTransactionWithRawByteGroups(
+                    jointAccountAddress = jointAccountAddress,
+                    rawTransactionBytesGroups = rawBytesGroups
+                )
+            Log.d(TAG, "signJoint: helperResult=$result")
             when (result) {
                 is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
-                    val arbitrarySign = signArbitraryDataForSyncRequest(
-                        result.signRequestId,
-                        result.proposerAddress
-                    ) ?: return@launch postJointSyncError()
-                    val signRequestId = result.signRequestId
-                    startSyncSignForegroundService(
-                        signRequestId = signRequestId,
-                        proposerAddress = result.proposerAddress,
-                        arbitraryDataSignOfId = arbitrarySign
-                    )
-                    val jointAccount = getLocalAccount(jointAccountAddress)
-                    val threshold = (jointAccount as? LocalAccount.Joint)?.threshold ?: 0
-                    postResult(
-                        ExternalTransactionSignResult.WaitingForJointSignatures(
-                            signRequestId = signRequestId,
-                            signedCount = 1,
-                            threshold = threshold
-                        )
-                    )
-                    collectSyncSignResultAndComplete(signRequestId, txList)
+                    handleSyncPendingResult(result, jointAccountAddress, txList)
                 }
 
-                else -> postJointSyncError()
+                else -> {
+                    Log.e(TAG, "signJoint: unexpected result=$result")
+                    postJointSyncError()
+                }
             }
+        }
+    }
+
+    private suspend fun handleSyncPendingResult(
+        result: JointAccountTransactionSignHelper.JointSignResult.SyncPending,
+        jointAccountAddress: String,
+        txList: List<TRANSACTION>
+    ) {
+        Log.d(TAG, "syncPending: id=${result.signRequestId}")
+        val arbitrarySign = signArbitraryDataForSyncRequest(
+            result.signRequestId,
+            result.proposerAddress
+        )
+        if (arbitrarySign == null) {
+            Log.e(TAG, "syncPending: arbitrarySign is null")
+            return postJointSyncError()
+        }
+        val signRequestId = result.signRequestId
+        startSyncSignForegroundService(
+            signRequestId = signRequestId,
+            proposerAddress = result.proposerAddress,
+            arbitraryDataSignOfId = arbitrarySign
+        )
+        val jointAccount = getLocalAccount(jointAccountAddress)
+        val threshold = (jointAccount as? LocalAccount.Joint)?.threshold ?: 0
+        postResult(
+            ExternalTransactionSignResult.WaitingForJointSignatures(
+                signRequestId = signRequestId,
+                signedCount = 1,
+                threshold = threshold
+            )
+        )
+        collectSyncSignResultAndComplete(signRequestId, txList)
+    }
+
+    protected open fun buildRawBytesGroups(txList: List<TRANSACTION>): List<List<ByteArray>>? {
+        val grouped = txList.groupBy { it.groupIndex }
+        val sortedKeys = grouped.keys.sorted()
+        return sortedKeys.map { key ->
+            val groupTxns = grouped[key] ?: return null
+            val rawBytes = groupTxns.mapNotNull { it.transactionByteArray }
+            if (rawBytes.size != groupTxns.size) return null
+            rawBytes
         }
     }
 
@@ -364,12 +407,16 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         result: SyncSignResultHolder.SyncSignResult,
         txList: List<TRANSACTION>
     ) {
+        Log.d(TAG, "handleSyncSignResult: result=$result")
         when (result) {
             is SyncSignResultHolder.SyncSignResult.SignaturesReady ->
                 assembleAndPostSuccess(result.signRequest, txList)
             is SyncSignResultHolder.SyncSignResult.Failed,
             is SyncSignResultHolder.SyncSignResult.Expired,
-            is SyncSignResultHolder.SyncSignResult.Declined -> postJointSyncError()
+            is SyncSignResultHolder.SyncSignResult.Declined -> {
+                Log.e(TAG, "handleSyncSignResult: failed/expired/declined")
+                postJointSyncError()
+            }
         }
     }
 
@@ -377,39 +424,86 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         signRequest: SignRequestWithFullSignature,
         txList: List<TRANSACTION>
     ) {
-        val firstList = signRequest.transactionLists?.firstOrNull()
-        val rawTransactions = firstList?.rawTransactions
-        val responses = firstList?.responses
+        val transactionLists = signRequest.transactionLists
         val jointAccount = signRequest.jointAccount
-        if (!hasRequiredDataForAssemble(rawTransactions, responses, jointAccount)) {
+        Log.d(TAG, "assemble: groups=${transactionLists?.size}, unsignedTx=${txList.size}")
+        if (transactionLists.isNullOrEmpty() || !hasRequiredJointAccountData(jointAccount)) {
+            Log.e(TAG, "assemble: FAIL validation, jointNull=${jointAccount == null}")
             postJointSyncError()
             return
         }
         val account = jointAccount!!
+        val allSignedBytes = assembleAllGroups(transactionLists, account) ?: return
+        Log.d(TAG, "assemble: totalSigned=${allSignedBytes.size}, expected=${txList.size}")
+        if (allSignedBytes.size != txList.size) {
+            Log.e(TAG, "assemble: SIZE MISMATCH ${allSignedBytes.size} vs ${txList.size}")
+            postJointSyncError()
+            return
+        }
+        externalTransactionQueuingHelper.clearCachedData()
+        onJointSignedTransactionsAssembled(txList, allSignedBytes)
+        Log.d(TAG, "assemble: SUCCESS")
+        _signResultFlow.value = ExternalTransactionSignResult.Success(
+            txList,
+            allSignedBytes.map { it as ByteArray? }
+        )
+    }
+
+    private fun assembleAllGroups(
+        transactionLists: List<TransactionListWithFullSignature>,
+        account: JointAccount
+    ): MutableList<ByteArray>? {
         val participantAddresses = account.participantAddresses!!
         val version = account.version!!
         val threshold = account.threshold!!
-        when (val assembleResult = multisigTransactionAssembler.assemble(
-            rawTransactionsBase64 = rawTransactions!!,
-            participantAddresses = participantAddresses,
-            version = version,
-            threshold = threshold,
-            responses = responses!!
-        )) {
-            is PeraResult.Success -> {
-                val signedBytes = assembleResult.data.map { it as ByteArray? }
-                _signResultFlow.value = ExternalTransactionSignResult.Success(txList, signedBytes)
+        val allSignedBytes = mutableListOf<ByteArray>()
+        for ((gIdx, entry) in transactionLists.withIndex()) {
+            val rawTxns = entry.rawTransactions
+            val responses = entry.responses
+            Log.d(TAG, "assembleGroup[$gIdx]: rawTxns=${rawTxns?.size}, responses=${responses?.size}")
+            if (rawTxns == null || responses == null) {
+                Log.e(TAG, "assembleGroup[$gIdx]: null data")
+                postJointSyncError()
+                return null
             }
-            is PeraResult.Error -> postJointSyncError()
+            logGroupResponses(gIdx, responses)
+            when (val r = multisigTransactionAssembler.assemble(
+                rawTransactionsBase64 = rawTxns,
+                participantAddresses = participantAddresses,
+                version = version,
+                threshold = threshold,
+                responses = responses
+            )) {
+                is PeraResult.Success -> {
+                    Log.d(TAG, "assembleGroup[$gIdx]: ok=${r.data.size}")
+                    allSignedBytes.addAll(r.data)
+                }
+
+                is PeraResult.Error -> {
+                    Log.e(TAG, "assembleGroup[$gIdx]: FAIL", r.exception)
+                    postJointSyncError()
+                    return null
+                }
+            }
+        }
+        return allSignedBytes
+    }
+
+    private fun logGroupResponses(
+        groupIdx: Int,
+        responses: List<ParticipantSignature>
+    ) {
+        for ((rIdx, resp) in responses.withIndex()) {
+            Log.d(
+                TAG,
+                "resp[$groupIdx][$rIdx] addr=${resp.address.take(ADDR_LOG_LEN)}, " +
+                    "sigs=${resp.signatures.map { it != null }}"
+            )
         }
     }
 
-    private fun hasRequiredDataForAssemble(
-        rawTransactions: List<String>?,
-        responses: List<ParticipantSignature>?,
-        jointAccount: JointAccount?
-    ): Boolean {
-        if (rawTransactions == null || responses == null || jointAccount == null) return false
+    private fun hasRequiredJointAccountData(jointAccount: JointAccount?): Boolean {
+        if (jointAccount == null) return false
         return jointAccount.participantAddresses != null &&
                 jointAccount.version != null &&
                 jointAccount.threshold != null
@@ -430,6 +524,11 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     protected open fun onTransactionSigned(transaction: ExternalTransaction, signedTransaction: ByteArray?) {
         externalTransactionQueuingHelper.cacheDequeuedItem(signedTransaction)
     }
+
+    protected open fun onJointSignedTransactionsAssembled(
+        transactions: List<TRANSACTION>,
+        signedBytesList: List<ByteArray>
+    ) = Unit
 
     private fun postResult(transactionSignResult: ExternalTransactionSignResult) {
         _signResultFlow.value = transactionSignResult
@@ -453,5 +552,11 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         this.stopAllResources()
         currentScope.coroutineContext.cancelChildren()
         ledgerBleOperationManager.manualStopAllProcess()
+    }
+
+    companion object {
+        private const val TAG = "JOINT_SIGN_DEBUG"
+        private const val ADDR_LOG_LEN = 8
+        private const val SIG_PREVIEW_LEN = 10
     }
 }

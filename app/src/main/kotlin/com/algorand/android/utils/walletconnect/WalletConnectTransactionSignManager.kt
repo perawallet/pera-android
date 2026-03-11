@@ -54,7 +54,6 @@ import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
-import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.collect
@@ -204,13 +203,16 @@ class WalletConnectTransactionSignManager @Inject constructor(
     private suspend fun BaseWalletConnectTransaction.handleJointTransactionSigning() {
         val wcTx = transaction ?: return cacheNullDequeuedItem()
         val jointAddress = (transactionSigner as? TransactionSigner.Joint)?.address ?: return cacheNullDequeuedItem()
-        val allTxs = wcTx.transactionList.flatten()
-        val rawBytesList = allTxs.mapNotNull { it.decodedTransaction }
-        if (rawBytesList.size != allTxs.size) return cacheNullDequeuedItem()
+        val rawBytesGroups = wcTx.transactionList.map { group ->
+            val rawBytes = group.mapNotNull { it.decodedTransaction }
+            if (rawBytes.size != group.size) return cacheNullDequeuedItem()
+            rawBytes
+        }
+        if (rawBytesGroups.isEmpty()) return cacheNullDequeuedItem()
 
-        val result = jointAccountTransactionSignHelper.handleSyncJointAccountTransactionWithRawBytes(
+        val result = jointAccountTransactionSignHelper.handleSyncJointAccountTransactionWithRawByteGroups(
             jointAccountAddress = jointAddress,
-            rawTransactionBytesList = rawBytesList
+            rawTransactionBytesGroups = rawBytesGroups
         )
         when (result) {
             is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
@@ -281,11 +283,9 @@ class WalletConnectTransactionSignManager @Inject constructor(
     }
 
     private fun processSignaturesReadyAndCache(signRequest: SignRequestWithFullSignature) {
-        val firstList = signRequest.transactionLists?.firstOrNull()
-        val rawTransactions = firstList?.rawTransactions
-        val responses = firstList?.responses
+        val transactionLists = signRequest.transactionLists
         val jointAccount = signRequest.jointAccount
-        if (!hasRequiredDataForAssemble(rawTransactions, responses, jointAccount)) {
+        if (transactionLists.isNullOrEmpty() || !hasRequiredJointAccountData(jointAccount)) {
             cacheNullDequeuedItem()
             return
         }
@@ -293,24 +293,32 @@ class WalletConnectTransactionSignManager @Inject constructor(
         val participantAddresses = account.participantAddresses!!
         val version = account.version!!
         val threshold = account.threshold!!
-        when (val assembleResult = multisigTransactionAssembler.assemble(
-            rawTransactionsBase64 = rawTransactions!!,
-            participantAddresses = participantAddresses,
-            version = version,
-            threshold = threshold,
-            responses = responses!!
-        )) {
-            is PeraResult.Success -> assembleResult.data.forEach { signHelper.cacheDequeuedItem(it) }
-            is PeraResult.Error -> cacheNullDequeuedItem()
+
+        for (txListEntry in transactionLists) {
+            val rawTransactions = txListEntry.rawTransactions
+            val responses = txListEntry.responses
+            if (rawTransactions == null || responses == null) {
+                cacheNullDequeuedItem()
+                return
+            }
+            when (val assembleResult = multisigTransactionAssembler.assemble(
+                rawTransactionsBase64 = rawTransactions,
+                participantAddresses = participantAddresses,
+                version = version,
+                threshold = threshold,
+                responses = responses
+            )) {
+                is PeraResult.Success -> assembleResult.data.forEach { signHelper.cacheDequeuedItem(it) }
+                is PeraResult.Error -> {
+                    cacheNullDequeuedItem()
+                    return
+                }
+            }
         }
     }
 
-    private fun hasRequiredDataForAssemble(
-        rawTransactions: List<String>?,
-        responses: List<ParticipantSignature>?,
-        jointAccount: JointAccount?
-    ): Boolean {
-        if (rawTransactions == null || responses == null || jointAccount == null) return false
+    private fun hasRequiredJointAccountData(jointAccount: JointAccount?): Boolean {
+        if (jointAccount == null) return false
         return jointAccount.participantAddresses != null &&
             jointAccount.version != null &&
             jointAccount.threshold != null

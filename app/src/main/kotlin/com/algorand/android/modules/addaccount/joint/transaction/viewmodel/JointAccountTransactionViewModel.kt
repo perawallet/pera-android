@@ -203,7 +203,7 @@ class JointAccountTransactionViewModel @Inject constructor(
         val result = signAndSubmitJointAccountSignature(
             signRequestId = data.requestId,
             participantAddresses = data.preview.unsignedLocalParticipantAddresses,
-            rawTransactions = data.preview.rawTransactions
+            rawTransactionGroups = listOf(data.preview.rawTransactions)
         )
         when (result.apiResult) {
             null -> {

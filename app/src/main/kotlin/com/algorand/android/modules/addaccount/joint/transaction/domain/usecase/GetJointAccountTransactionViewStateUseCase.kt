@@ -169,6 +169,7 @@ internal class GetJointAccountTransactionViewStateUseCase(
             SignRequestStatus.EXPIRED -> JointAccountTransactionState.Expired
             SignRequestStatus.DECLINED -> JointAccountTransactionState.Declined
             SignRequestStatus.CONFIRMED -> JointAccountTransactionState.Completed
+            SignRequestStatus.READY -> JointAccountTransactionState.ReadyToSubmit
             else -> JointAccountTransactionState.AwaitingConfirmation
         }
 

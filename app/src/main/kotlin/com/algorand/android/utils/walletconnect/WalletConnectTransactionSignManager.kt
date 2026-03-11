@@ -17,6 +17,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
+import android.content.Intent
+import com.algorand.android.core.transaction.JointAccountTransactionSignHelper
+import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
+import com.algorand.android.core.transaction.sync.JointAccountSyncSignForegroundService
+import com.algorand.android.core.transaction.sync.SyncSignResultHolder
 import com.algorand.android.ledger.CustomScanCallback
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
@@ -47,7 +52,14 @@ import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
+import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -59,8 +71,16 @@ class WalletConnectTransactionSignManager @Inject constructor(
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val getHdSeed: GetHdSeed,
     private val getLocalAccount: GetLocalAccount,
-    private val signHdKeyTransaction: SignHdKeyTransaction
+    private val signHdKeyTransaction: SignHdKeyTransaction,
+    private val syncSignDependencies: JointAccountSyncSignDependencies
 ) : LifecycleScopedCoroutineOwner() {
+
+    private val jointAccountTransactionSignHelper get() = syncSignDependencies.jointAccountTransactionSignHelper
+    private val signArbitraryDataForSyncRequest get() = syncSignDependencies.signArbitraryDataForSyncRequest
+    private val syncSignRequestPollingManager get() = syncSignDependencies.syncSignRequestPollingManager
+    private val multisigTransactionAssembler get() = syncSignDependencies.multisigTransactionAssembler
+    private val applicationContext get() = syncSignDependencies.applicationContext
+    private val syncSignResultHolder get() = syncSignDependencies.syncSignResultHolder
 
     val signResultLiveData: LiveData<WalletConnectSignResult>
         get() = _signResultLiveData
@@ -176,8 +196,124 @@ class WalletConnectTransactionSignManager @Inject constructor(
                 totalTransactionCount = totalTransactionCount
             )
 
+            is TransactionSigner.Joint -> handleJointTransactionSigning()
             else -> cacheNullDequeuedItem()
         }
+    }
+
+    private suspend fun BaseWalletConnectTransaction.handleJointTransactionSigning() {
+        val wcTx = transaction ?: return cacheNullDequeuedItem()
+        val jointAddress = (transactionSigner as? TransactionSigner.Joint)?.address ?: return cacheNullDequeuedItem()
+        val allTxs = wcTx.transactionList.flatten()
+        val rawBytesList = allTxs.mapNotNull { it.decodedTransaction }
+        if (rawBytesList.size != allTxs.size) return cacheNullDequeuedItem()
+
+        val result = jointAccountTransactionSignHelper.handleSyncJointAccountTransactionWithRawBytes(
+            jointAccountAddress = jointAddress,
+            rawTransactionBytesList = rawBytesList
+        )
+        when (result) {
+            is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
+                val arbitrarySign = signArbitraryDataForSyncRequest(
+                    result.signRequestId,
+                    result.proposerAddress
+                ) ?: return cacheNullDequeuedItem()
+                val signRequestId = result.signRequestId
+                startSyncSignForegroundService(
+                    signRequestId = signRequestId,
+                    proposerAddress = result.proposerAddress,
+                    arbitraryDataSignOfId = arbitrarySign
+                )
+                val threshold = (getLocalAccount(jointAddress) as? LocalAccount.Joint)?.threshold ?: 2
+                postResult(
+                    WalletConnectSignResult.WaitingForJointSignatures(
+                        signRequestId = signRequestId,
+                        signedCount = 1,
+                        threshold = threshold
+                    )
+                )
+                collectSyncSignResultAndComplete(signRequestId)
+            }
+
+            else -> cacheNullDequeuedItem()
+        }
+    }
+
+    private fun startSyncSignForegroundService(
+        signRequestId: String,
+        proposerAddress: String,
+        arbitraryDataSignOfId: String
+    ) {
+        val intent = Intent(applicationContext, JointAccountSyncSignForegroundService::class.java).apply {
+            putExtra(JointAccountSyncSignForegroundService.EXTRA_SIGN_REQUEST_ID, signRequestId)
+            putExtra(JointAccountSyncSignForegroundService.EXTRA_PROPOSER_ADDRESS, proposerAddress)
+            putExtra(
+                JointAccountSyncSignForegroundService.EXTRA_ARBITRARY_DATA_SIGN_OF_ID,
+                arbitraryDataSignOfId
+            )
+        }
+        applicationContext.startForegroundService(intent)
+    }
+
+    private suspend fun collectSyncSignResultAndComplete(signRequestId: String) {
+        syncSignResultHolder.events
+            .filter { it.signRequestId == signRequestId }
+            .take(1)
+            .collect { event ->
+                syncSignResultHolder.consumeResult(signRequestId)
+                handleSyncSignResult(event.result)
+            }
+    }
+
+    private fun handleSyncSignResult(result: SyncSignResultHolder.SyncSignResult) {
+        when (result) {
+            is SyncSignResultHolder.SyncSignResult.SignaturesReady ->
+                processSignaturesReadyAndCache(result.signRequest)
+            is SyncSignResultHolder.SyncSignResult.Failed,
+            is SyncSignResultHolder.SyncSignResult.Expired,
+            is SyncSignResultHolder.SyncSignResult.Declined -> postDeclinedOrFailedResult()
+        }
+    }
+
+    private fun postDeclinedOrFailedResult() {
+        signHelper.clearCachedData()
+        _signResultLiveData.postValue(WalletConnectSignResult.JointSignRequestRejected())
+    }
+
+    private fun processSignaturesReadyAndCache(signRequest: SignRequestWithFullSignature) {
+        val firstList = signRequest.transactionLists?.firstOrNull()
+        val rawTransactions = firstList?.rawTransactions
+        val responses = firstList?.responses
+        val jointAccount = signRequest.jointAccount
+        if (!hasRequiredDataForAssemble(rawTransactions, responses, jointAccount)) {
+            cacheNullDequeuedItem()
+            return
+        }
+        val account = jointAccount!!
+        val participantAddresses = account.participantAddresses!!
+        val version = account.version!!
+        val threshold = account.threshold!!
+        when (val assembleResult = multisigTransactionAssembler.assemble(
+            rawTransactionsBase64 = rawTransactions!!,
+            participantAddresses = participantAddresses,
+            version = version,
+            threshold = threshold,
+            responses = responses!!
+        )) {
+            is PeraResult.Success -> assembleResult.data.forEach { signHelper.cacheDequeuedItem(it) }
+            is PeraResult.Error -> cacheNullDequeuedItem()
+        }
+    }
+
+    private fun hasRequiredDataForAssemble(
+        rawTransactions: List<String>?,
+        responses: List<ParticipantSignature>?,
+        jointAccount: JointAccount?
+    ): Boolean {
+        if (rawTransactions == null || responses == null || jointAccount == null) return false
+        return jointAccount.participantAddresses != null &&
+            jointAccount.version != null &&
+            jointAccount.threshold != null
     }
 
     private suspend fun BaseWalletConnectTransaction.handleAlgo25TransactionSigning() {
@@ -283,6 +419,7 @@ class WalletConnectTransactionSignManager @Inject constructor(
     }
 
     override fun stopAllResources() {
+        syncSignRequestPollingManager.stopPolling()
         ledgerBleSearchManager.stop()
         signHelper.clearCachedData()
         transaction = null

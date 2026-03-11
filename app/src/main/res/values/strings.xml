@@ -1264,6 +1264,10 @@
     <string name="pending_transaction">Pending transaction</string>
     <string name="unread">Unread</string>
     <string name="pending_signatures">Pending signatures</string>
+    <string name="sync_sign_notification_channel_name">Joint account signing</string>
+    <string name="sync_sign_notification_waiting">Waiting for co-signers… %1$d/%2$d signed</string>
+    <string name="sync_sign_notification_ready">Transaction ready — tap to open</string>
+    <string name="sync_sign_notification_failed">Sign request failed or expired</string>
     <string name="signature_request_description">Signature request to sign for %1$s</string>
     <string name="of_signed">%1$d of %2$d signed</string>
     <string name="time_left">≈ %1$s left</string>
@@ -1271,6 +1275,7 @@
     <string name="close_for_now">Close for now</string>
     <string name="transaction_canceled">Transaction canceled.</string>
     <string name="transaction_successfully_completed">Transaction successfully completed.</string>
+    <string name="submitting_transaction">Submitting transaction…</string>
     <string name="signed">Signed</string>
     <string name="failed_transaction">Failed transaction</string>
     <string name="expired_transaction">Expired transaction</string>

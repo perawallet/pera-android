@@ -31,6 +31,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayLedgerNotFoundDialog
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.HideLedgerWaitingForApprovalDialog
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToLedgerWaitingForApprovalDialog
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToPendingSignatures
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToSwapScreen
 import com.algorand.android.utils.browser.openTinymanFaqPriceImpactUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -59,6 +60,14 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
             is NavigateToSwapScreen -> {
                 displaySuccessAlert(viewEvent)
                 navigateToSwapScreen()
+            }
+            is NavigateToPendingSignatures -> {
+                nav(
+                    HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                        viewEvent.signRequestId,
+                        isDismissable = false
+                    )
+                )
             }
         }
     }

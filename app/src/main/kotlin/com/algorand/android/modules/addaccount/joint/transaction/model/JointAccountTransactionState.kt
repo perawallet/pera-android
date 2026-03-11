@@ -17,6 +17,8 @@ sealed class JointAccountTransactionState {
 
     data object PendingSignatures : JointAccountTransactionState()
 
+    data object ReadyToSubmit : JointAccountTransactionState()
+
     data object Canceled : JointAccountTransactionState()
 
     data object Completed : JointAccountTransactionState()

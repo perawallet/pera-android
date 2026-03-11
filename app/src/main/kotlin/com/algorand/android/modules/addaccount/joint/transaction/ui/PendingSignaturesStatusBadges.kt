@@ -72,6 +72,10 @@ internal fun StatusBadgesSection(
                 ErrorBadge(message = stringResource(R.string.declined_transaction))
             }
 
+            JointAccountTransactionState.ReadyToSubmit -> {
+                SubmittingBadge(message = stringResource(R.string.submitting_transaction))
+            }
+
             else -> {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     SignedCountBadge(
@@ -132,6 +136,24 @@ private fun TimeRemainingBadge(timeRemaining: String) {
         )
         Text(
             text = stringResource(R.string.time_left, timeRemaining),
+            style = PeraTheme.typography.footnote.sansMedium,
+            color = PeraTheme.colors.text.main
+        )
+    }
+}
+
+@Composable
+private fun SubmittingBadge(message: String) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(PeraTheme.colors.layer.grayLighter)
+            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = message,
             style = PeraTheme.typography.footnote.sansMedium,
             color = PeraTheme.colors.text.main
         )

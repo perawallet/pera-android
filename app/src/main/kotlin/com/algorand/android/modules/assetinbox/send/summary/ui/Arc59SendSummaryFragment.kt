@@ -79,6 +79,14 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
             is Error -> showTransactionSignResultError(it)
             LedgerScanFailed -> showLedgerNotFoundDialog()
             is LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
+            is ExternalTransactionSignResult.WaitingForJointSignatures -> {
+                nav(
+                    HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                        it.signRequestId,
+                        isDismissable = false
+                    )
+                )
+            }
             Loading -> showLoading()
             NotInitialized -> Unit
             is TransactionCancelled -> showTransactionCancelledError(it)

@@ -13,6 +13,13 @@
 package com.algorand.android.modules.addaccount.joint.di
 
 import android.content.Context
+import com.algorand.android.core.transaction.JointAccountTransactionSignHelper
+import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
+import com.algorand.android.core.transaction.sync.SignArbitraryDataForSyncRequest
+import com.algorand.android.core.transaction.sync.SignArbitraryDataForSyncRequestUseCase
+import com.algorand.android.core.transaction.sync.SyncSignResultHolder
+import com.algorand.android.core.transaction.sync.SyncSignRequestPollingManager
+import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
@@ -51,6 +58,28 @@ internal object JointAccountUseCaseModule {
     fun provideSignAndSubmitJointAccountSignature(
         useCase: SignAndSubmitJointAccountSignatureUseCase
     ): SignAndSubmitJointAccountSignature = useCase
+
+    @Provides
+    fun provideSignArbitraryDataForSyncRequest(
+        useCase: SignArbitraryDataForSyncRequestUseCase
+    ): SignArbitraryDataForSyncRequest = useCase
+
+    @Provides
+    fun provideJointAccountSyncSignDependencies(
+        jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
+        signArbitraryDataForSyncRequest: SignArbitraryDataForSyncRequest,
+        syncSignRequestPollingManager: SyncSignRequestPollingManager,
+        multisigTransactionAssembler: MultisigTransactionAssembler,
+        @ApplicationContext applicationContext: Context,
+        syncSignResultHolder: SyncSignResultHolder
+    ): JointAccountSyncSignDependencies = JointAccountSyncSignDependencies(
+        jointAccountTransactionSignHelper = jointAccountTransactionSignHelper,
+        signArbitraryDataForSyncRequest = signArbitraryDataForSyncRequest,
+        syncSignRequestPollingManager = syncSignRequestPollingManager,
+        multisigTransactionAssembler = multisigTransactionAssembler,
+        applicationContext = applicationContext,
+        syncSignResultHolder = syncSignResultHolder
+    )
 
     @Provides
     fun provideGetNextJointAccountNumber(

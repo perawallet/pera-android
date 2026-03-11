@@ -85,6 +85,14 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
             is ExternalTransactionSignResult.Error -> showTransactionSignResultError(it)
             ExternalTransactionSignResult.LedgerScanFailed -> showLedgerNotFoundDialog()
             is ExternalTransactionSignResult.LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
+            is ExternalTransactionSignResult.WaitingForJointSignatures -> {
+                nav(
+                    HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                        it.signRequestId,
+                        isDismissable = false
+                    )
+                )
+            }
             ExternalTransactionSignResult.Loading -> showLoading()
             ExternalTransactionSignResult.NotInitialized -> Unit
             is ExternalTransactionSignResult.TransactionCancelled -> showTransactionCancelledError(it)

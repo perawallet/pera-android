@@ -28,6 +28,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointS
 import javax.inject.Inject
 
 private const val JOINT_SIGN_REQUEST_TYPE_ASYNC = "async"
+private const val JOINT_SIGN_REQUEST_TYPE_SYNC = "sync"
 
 class JointAccountTransactionSignHelper @Inject constructor(
     private val getLocalAccount: GetLocalAccount,
@@ -63,6 +64,88 @@ class JointAccountTransactionSignHelper @Inject constructor(
         } else {
             proposeWithLocalSignature(jointAccount, proposerAddress, rawTransactionLists, transactionDataList)
         }
+    }
+
+    suspend fun handleSyncJointAccountTransaction(
+        jointAccountAddress: String,
+        transactionDataList: List<TransactionSignData>
+    ): JointSignResult {
+        val jointAccount = getLocalAccount(jointAccountAddress) as? LocalAccount.Joint
+            ?: return JointSignResult.Error
+        val proposerAddress = getJointAccountProposerAddress(jointAccount)
+            ?: return JointSignResult.Error
+        val rawTransactionLists = prepareRawTransactionLists(transactionDataList)
+            ?: return JointSignResult.Error
+
+        val proposerAccount = getLocalAccount(proposerAddress) ?: return JointSignResult.Error
+
+        return if (proposerAccount is LocalAccount.LedgerBle) {
+            JointSignResult.Error
+        } else {
+            proposeSyncWithLocalSignature(jointAccount, proposerAddress, rawTransactionLists, transactionDataList)
+        }
+    }
+
+    suspend fun handleSyncJointAccountTransactionWithRawBytes(
+        jointAccountAddress: String,
+        rawTransactionBytesList: List<ByteArray>
+    ): JointSignResult {
+        val outcome = runSyncWithRawBytes(jointAccountAddress, rawTransactionBytesList)
+        return outcome ?: JointSignResult.Error
+    }
+
+    private suspend fun runSyncWithRawBytes(
+        jointAccountAddress: String,
+        rawTransactionBytesList: List<ByteArray>
+    ): JointSignResult? {
+        val prepared = prepareSyncRequestWithRawBytes(jointAccountAddress, rawTransactionBytesList) ?: return null
+        val result = proposeJointSignRequest(mapToCreateSignRequestInputSync(prepared.data))
+        if (result !is PeraResult.Success) return null
+        val signRequestId = (result.data as? JointSignRequest)?.id?.takeIf { it.isNotBlank() } ?: return null
+        autoSignWithLocalAccounts(
+            signRequestId = signRequestId,
+            jointAccount = prepared.data.jointAccount,
+            rawTransactions = prepared.data.rawTransactionLists.flatten()
+        )
+        return JointSignResult.SyncPending(
+            signRequestId = signRequestId,
+            proposerAddress = prepared.data.proposerAddress
+        )
+    }
+
+    private data class PreparedSyncRequest(val data: PreparedJointAccountData)
+
+    private suspend fun prepareSyncRequestWithRawBytes(
+        jointAccountAddress: String,
+        rawTransactionBytesList: List<ByteArray>
+    ): PreparedSyncRequest? {
+        val jointAccount = getLocalAccount(jointAccountAddress) as? LocalAccount.Joint
+        val proposerAddress = jointAccount?.let { getJointAccountProposerAddress(it) }
+        if (rawTransactionBytesList.isEmpty() || jointAccount == null || proposerAddress == null) return null
+        val encodedList = rawTransactionBytesList.mapNotNull { it.encodeBase64() }
+        if (encodedList.size != rawTransactionBytesList.size) return null
+        val rawTransactionLists = listOf(encodedList)
+        val transactionSignatureLists = buildSignatureListForRawTransactions(rawTransactionBytesList, proposerAddress)
+            ?: return null
+        val preparedData = PreparedJointAccountData(
+            jointAccount = jointAccount,
+            proposerAddress = proposerAddress,
+            rawTransactionLists = rawTransactionLists,
+            transactionSignatureLists = transactionSignatureLists
+        )
+        return PreparedSyncRequest(preparedData)
+    }
+
+    private suspend fun buildSignatureListForRawTransactions(
+        rawTransactionBytesList: List<ByteArray>,
+        signerAddress: String
+    ): List<List<String?>>? {
+        val signatures = mutableListOf<String?>()
+        for (txBytes in rawTransactionBytesList) {
+            val sigBytes = getTransactionSignatureBytes(txBytes, signerAddress) ?: return null
+            signatures.add(sigBytes.encodeBase64())
+        }
+        return listOf(signatures)
     }
 
     suspend fun completeJointAccountProposal(
@@ -103,6 +186,40 @@ class JointAccountTransactionSignHelper @Inject constructor(
         val result = proposeJointSignRequest(inputData)
 
         return processProposalResult(result, preparedData)
+    }
+
+    private suspend fun proposeSyncWithLocalSignature(
+        jointAccount: LocalAccount.Joint,
+        proposerAddress: String,
+        rawTransactionLists: List<List<String>>,
+        transactionDataList: List<TransactionSignData>
+    ): JointSignResult {
+        val transactionSignatureLists = prepareTransactionSignatureLists(transactionDataList, proposerAddress)
+            ?: return JointSignResult.Error
+
+        val preparedData = PreparedJointAccountData(
+            jointAccount = jointAccount,
+            proposerAddress = proposerAddress,
+            rawTransactionLists = rawTransactionLists,
+            transactionSignatureLists = transactionSignatureLists
+        )
+
+        val inputData = mapToCreateSignRequestInputSync(preparedData)
+        val result = proposeJointSignRequest(inputData)
+
+        if (result !is PeraResult.Success) {
+            return JointSignResult.Error
+        }
+
+        val signRequestId = (result.data as? JointSignRequest)?.id
+            ?.takeIf { it.isNotBlank() } ?: return JointSignResult.Error
+
+        autoSignWithLocalAccounts(
+            signRequestId = signRequestId,
+            jointAccount = jointAccount,
+            rawTransactions = rawTransactionLists.flatten()
+        )
+        return JointSignResult.SyncPending(signRequestId = signRequestId, proposerAddress = proposerAddress)
     }
 
     private suspend fun processProposalResult(
@@ -194,6 +311,23 @@ class JointAccountTransactionSignHelper @Inject constructor(
         }
     }
 
+    private fun mapToCreateSignRequestInputSync(data: PreparedJointAccountData): CreateSignRequestInput {
+        return with(data) {
+            val defaultResponse = ProposeJointSignRequestResponseInput(
+                address = data.proposerAddress,
+                responseType = ProposeJointSignRequestResult.SIGNED,
+                signatures = data.transactionSignatureLists
+            )
+            CreateSignRequestInput(
+                jointAccountAddress = jointAccount.algoAddress,
+                proposerAddress = proposerAddress,
+                type = JOINT_SIGN_REQUEST_TYPE_SYNC,
+                rawTransactionLists = rawTransactionLists,
+                responses = listOf(defaultResponse)
+            )
+        }
+    }
+
     private data class PreparedJointAccountData(
         val jointAccount: LocalAccount.Joint,
         val proposerAddress: String,
@@ -210,6 +344,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
 
     sealed interface JointSignResult {
         data class Success(val signRequestId: String) : JointSignResult
+        data class SyncPending(val signRequestId: String, val proposerAddress: String) : JointSignResult
         data class NeedsLedgerSign(val pendingProposal: PendingJointAccountProposal) : JointSignResult
         data object Error : JointSignResult
     }

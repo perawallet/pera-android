@@ -350,6 +350,12 @@ class WalletConnectTransactionRequestFragment :
             }
 
             is WalletConnectSignResult.LedgerScanFailed -> showLedgerNotFoundDialog()
+
+            is WalletConnectSignResult.WaitingForJointSignatures -> showPendingSignatures(result)
+            is WalletConnectSignResult.JointSignRequestRejected -> {
+                showSigningError(result.error)
+                rejectRequest()
+            }
             else -> {
                 sendErrorLog("Unhandled else case in WalletConnectTransactionRequestFragment.handleSignResult")
             }
@@ -391,6 +397,15 @@ class WalletConnectTransactionRequestFragment :
 
     private fun showLoading() {
         binding.progressBar.root.show()
+    }
+
+    private fun showPendingSignatures(result: WalletConnectSignResult.WaitingForJointSignatures) {
+        nav(
+            HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                result.signRequestId,
+                isDismissable = false
+            )
+        )
     }
 
     private fun showSigningError(error: WalletConnectSignResult.Error) {

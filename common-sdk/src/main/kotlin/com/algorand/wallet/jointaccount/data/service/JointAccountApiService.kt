@@ -16,6 +16,7 @@ import com.algorand.wallet.jointaccount.creation.data.model.CreateJointAccountRe
 import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountRequest
 import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountResponse
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
+import com.algorand.wallet.jointaccount.transaction.data.model.GetSignRequestWithSignaturesRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.ProposeJointSignRequestRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsRequest
@@ -59,4 +60,10 @@ internal interface JointAccountApiService {
     suspend fun searchSignRequests(
         @Body searchSignRequestsRequest: SearchSignRequestsRequest
     ): Response<SearchSignRequestsResponse>
+
+    @POST("v1/joint-accounts/sign-requests/{sign_request_id}/with-signatures/")
+    suspend fun getSignRequestWithSignatures(
+        @Path("sign_request_id") signRequestId: String,
+        @Body request: GetSignRequestWithSignaturesRequest
+    ): Response<JointSignRequestResponse>
 }

@@ -62,4 +62,14 @@ sealed class WalletConnectSignResult {
 
     object LedgerScanFailed : WalletConnectSignResult()
     object CanBeSigned : WalletConnectSignResult()
+
+    data class WaitingForJointSignatures(
+        val signRequestId: String,
+        val signedCount: Int,
+        val threshold: Int
+    ) : WalletConnectSignResult()
+
+    data class JointSignRequestRejected(
+        val error: Error = Defined(AnnotatedString(R.string.declined_transaction), R.string.error_default_title)
+    ) : WalletConnectSignResult()
 }

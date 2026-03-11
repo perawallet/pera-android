@@ -125,6 +125,11 @@ class SignatureRequestInboxItemMapper @Inject constructor(
                 isError = false
             )
 
+            SignRequestStatus.READY, SignRequestStatus.SUBMITTING -> StatusLineData(
+                text = resources.getString(R.string.submitting_transaction),
+                isError = false
+            )
+
             else -> StatusLineData(
                 text = resources.getString(R.string.pending_transaction),
                 isError = false

@@ -116,6 +116,14 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
                 is Error -> showTransactionSignResultError(it)
                 LedgerScanFailed -> showLedgerNotFoundDialog()
                 is LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
+                is ExternalTransactionSignResult.WaitingForJointSignatures -> {
+                    nav(
+                        HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                            it.signRequestId,
+                            isDismissable = false
+                        )
+                    )
+                }
                 Loading -> showLoader()
                 NotInitialized -> Unit
                 is TransactionCancelled -> showTransactionCancelledError(it)

@@ -28,9 +28,9 @@ import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
-import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class WalletConnectArbitraryDataSignManager @Inject constructor(
     private val walletConnectSignValidator: WalletConnectSignValidator,
@@ -125,7 +125,7 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
         this.arbitraryData = arbitraryData
         with(arbitraryData) {
             when (val result = walletConnectSignValidator.canArbitraryDataBeSigned(this)) {
-                is WalletConnectSignResult.CanBeSigned -> {
+                is WalletConnectSignResult.Success -> {
                     signHelper.initItemsToBeEnqueued(arbitraryDataList)
                 }
 

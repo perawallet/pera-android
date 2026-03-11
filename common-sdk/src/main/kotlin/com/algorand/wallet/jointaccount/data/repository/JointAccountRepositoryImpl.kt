@@ -30,6 +30,7 @@ import com.algorand.wallet.jointaccount.transaction.data.mapper.AddSignatureInpu
 import com.algorand.wallet.jointaccount.transaction.data.mapper.CreateSignRequestInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestMapper
 import com.algorand.wallet.jointaccount.transaction.data.mapper.SearchSignRequestsInputMapper
+import com.algorand.wallet.jointaccount.transaction.data.model.GetSignRequestWithSignaturesRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsResponse
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
@@ -142,6 +143,31 @@ internal class JointAccountRepositoryImpl @Inject constructor(
             jointAccountApiService.searchSignRequests(request)
         }
         return mapSearchResultToSignRequestWithFullSignature(result, signRequestId)
+    }
+
+    override suspend fun getSignRequestWithFullSignatures(
+        signRequestId: String,
+        proposerAddress: String,
+        arbitraryDataSignOfId: String
+    ): PeraResult<SignRequestWithFullSignature> {
+        val request = GetSignRequestWithSignaturesRequest(
+            proposerAddress = proposerAddress,
+            arbitraryDataSignOfId = arbitraryDataSignOfId
+        )
+        val result = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.getSignRequestWithSignatures(signRequestId, request)
+        }
+        return when (result) {
+            is PeraResult.Success -> {
+                val signRequest = jointSignRequestDTOMapper.mapToJointSignRequest(result.data)
+                if (signRequest != null) {
+                    PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
+                } else {
+                    PeraResult.Error(Exception("Failed to map sign request"))
+                }
+            }
+            is PeraResult.Error -> result
+        }
     }
 
     private fun mapSearchResultToSignRequestWithFullSignature(

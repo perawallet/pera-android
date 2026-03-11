@@ -407,7 +407,8 @@ private fun ActionButtonsSection(
 ) {
     val isCompleted = transactionState == JointAccountTransactionState.Completed
     val isFinalized = transactionState.isFinalized()
-    val showSingleCloseButton = isFinalized || !hasProposerAddress
+    val isReadyToSubmit = transactionState == JointAccountTransactionState.ReadyToSubmit
+    val showSingleCloseButton = isFinalized || !hasProposerAddress || isReadyToSubmit
 
     if (showSingleCloseButton) {
         SingleCloseButton(

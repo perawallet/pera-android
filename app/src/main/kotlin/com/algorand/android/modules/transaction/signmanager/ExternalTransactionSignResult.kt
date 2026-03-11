@@ -63,4 +63,10 @@ sealed class ExternalTransactionSignResult {
 
     object LedgerScanFailed : ExternalTransactionSignResult()
     object NotInitialized : ExternalTransactionSignResult()
+
+    data class WaitingForJointSignatures(
+        val signRequestId: String,
+        val signedCount: Int,
+        val threshold: Int
+    ) : ExternalTransactionSignResult()
 }

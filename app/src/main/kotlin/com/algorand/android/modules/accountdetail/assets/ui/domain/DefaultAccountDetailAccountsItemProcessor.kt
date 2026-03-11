@@ -127,9 +127,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
 
     private suspend fun getAuthAccountQuickActionItem(accountLite: AccountLite): List<AccountDetailQuickActionItem> {
         return mutableListOf<AccountDetailQuickActionItem>().apply {
-            if (accountLite.registrationType !is AccountRegistrationType.Joint) {
-                add(AccountDetailQuickActionItem.SwapButton)
-            }
+            add(AccountDetailQuickActionItem.SwapButton)
             if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
                 add(AccountDetailQuickActionItem.FundButton)
             } else {

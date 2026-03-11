@@ -14,6 +14,7 @@ package com.algorand.android.modules.assetinbox.detail.receivedetail.ui
 
 import com.algorand.android.R
 import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
+import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
@@ -39,7 +40,8 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     getAlgo25SecretKey: GetAlgo25SecretKey,
     getHdSeed: GetHdSeed,
     getLocalAccount: GetLocalAccount,
-    signHdKeyTransaction: SignHdKeyTransaction
+    signHdKeyTransaction: SignHdKeyTransaction,
+    syncSignDependencies: JointAccountSyncSignDependencies
 ) : ExternalTransactionSignManager<BaseArc59ClaimRejectTransaction>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
@@ -48,7 +50,8 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     getAlgo25SecretKey,
     getHdSeed,
     getLocalAccount,
-    signHdKeyTransaction
+    signHdKeyTransaction,
+    syncSignDependencies
 ) {
 
     val arc59ClaimRejectTransactionSignResultFlow: Flow<ExternalTransactionSignResult> =

@@ -45,7 +45,6 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
 import com.algorand.android.ui.swap.domain.usecase.CreateSwapV2QuoteTransactions
-import com.algorand.android.ui.swap.domain.usecase.IsJointAccountInAddresses
 import com.algorand.android.ui.swap.tracking.SwapConfirmationEventTracker
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.USER_CANCELLED
@@ -74,7 +73,6 @@ class SwapConfirmationViewModel @Inject constructor(
     private val setSwapStatusFailed: SetSwapStatusFailed,
     private val createSwapV2QuoteTransactions: CreateSwapV2QuoteTransactions,
     private val swapConfirmationEventTracker: SwapConfirmationEventTracker,
-    private val isJointAccountInAddresses: IsJointAccountInAddresses,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -121,16 +119,6 @@ class SwapConfirmationViewModel @Inject constructor(
     }
 
     private suspend fun signTransactions(transactions: SwapQuoteTransactions) {
-        val accountAddresses = transactions.transactions
-            .flatMap { it.getTransactionsThatNeedsToBeSigned() }
-            .map { it.accountAddress }
-            .distinct()
-
-        if (isJointAccountInAddresses(accountAddresses)) {
-            displayError(Local(AnnotatedString(R.string.joint_accounts_are_not_supported)))
-            return
-        }
-
         swapTransactionSignManager.signSwapQuoteTransaction(transactions.transactions)
         swapTransactionSignManager.swapTransactionSignResultFlow.collectLatest { result ->
             when (result) {
@@ -162,6 +150,12 @@ class SwapConfirmationViewModel @Inject constructor(
                     val error = (result.error as? ExternalTransactionSignResult.Error.Defined)?.description
                     val errorType = if (error != null) Local(error) else Generic
                     displayError(errorType)
+                }
+
+                is ExternalTransactionSignResult.WaitingForJointSignatures -> {
+                    eventDelegate.sendEvent(
+                        ViewEvent.NavigateToPendingSignatures(result.signRequestId)
+                    )
                 }
 
                 ExternalTransactionSignResult.NotInitialized -> Unit
@@ -299,6 +293,7 @@ class SwapConfirmationViewModel @Inject constructor(
                 data class Local(val description: AnnotatedString, val title: AnnotatedString? = null) : ErrorType
             }
         }
+        data class NavigateToPendingSignatures(val signRequestId: String) : ViewEvent
     }
 
     private companion object {

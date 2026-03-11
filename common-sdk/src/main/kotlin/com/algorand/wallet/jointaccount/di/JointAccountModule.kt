@@ -23,19 +23,21 @@ import com.algorand.wallet.jointaccount.creation.data.mapper.IsJointAccountMappe
 import com.algorand.wallet.jointaccount.creation.data.mapper.IsJointAccountMapperImpl
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapperImpl
-import com.algorand.wallet.jointaccount.domain.usecase.CheckIsJointAccount
 import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccount
 import com.algorand.wallet.jointaccount.creation.domain.usecase.CreateJointAccountUseCase
 import com.algorand.wallet.jointaccount.data.repository.JointAccountRepositoryImpl
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
+import com.algorand.wallet.jointaccount.domain.usecase.CheckIsJointAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountDetail
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddressUseCase
+import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
+import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSyncSignRequestWithSignatures
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
 import dagger.Module
 import dagger.Provides
@@ -71,6 +73,15 @@ internal object JointAccountModule {
     fun provideGetSignRequestWithSignatures(
         repository: JointAccountRepository
     ): GetSignRequestWithSignatures = GetSignRequestWithSignatures(repository::getSignRequestWithSignatures)
+
+    @Provides
+    fun provideGetSyncSignRequestWithSignatures(
+        repository: JointAccountRepository
+    ): GetSyncSignRequestWithSignatures = GetSyncSignRequestWithSignatures(repository::getSignRequestWithFullSignatures)
+
+    @Provides
+    @Singleton
+    fun provideMultisigTransactionAssembler(): MultisigTransactionAssembler = MultisigTransactionAssembler()
 
     @Provides
     fun provideAddJointAccountSignature(

@@ -13,6 +13,7 @@
 package com.algorand.android.modules.swap.confirmswap.domain
 
 import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
+import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.ledger.operations.ExternalTransaction
@@ -38,7 +39,8 @@ class SwapTransactionSignManager @Inject constructor(
     getAlgo25SecretKey: GetAlgo25SecretKey,
     getHdSeed: GetHdSeed,
     getLocalAccount: GetLocalAccount,
-    signHdKeyTransaction: SignHdKeyTransaction
+    signHdKeyTransaction: SignHdKeyTransaction,
+    syncSignDependencies: JointAccountSyncSignDependencies
 ) : ExternalTransactionSignManager<UnsignedSwapSingleTransactionData>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
@@ -47,7 +49,8 @@ class SwapTransactionSignManager @Inject constructor(
     getAlgo25SecretKey,
     getHdSeed,
     getLocalAccount,
-    signHdKeyTransaction
+    signHdKeyTransaction,
+    syncSignDependencies
 ) {
 
     val swapTransactionSignResultFlow: Flow<ExternalTransactionSignResult> = signResultFlow.map {

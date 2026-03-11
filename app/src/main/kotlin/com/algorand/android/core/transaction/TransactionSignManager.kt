@@ -322,6 +322,10 @@ class TransactionSignManager @Inject constructor(
                 )
             }
 
+            is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
+                postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
+            }
+
             is JointAccountTransactionSignHelper.JointSignResult.Error -> {
                 postJointAccountError()
             }

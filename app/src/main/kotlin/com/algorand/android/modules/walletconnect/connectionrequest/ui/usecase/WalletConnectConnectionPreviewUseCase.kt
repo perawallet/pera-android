@@ -31,7 +31,6 @@ import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.Wal
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBlockchain
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
 import com.algorand.android.utils.Event
-import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
@@ -104,8 +103,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
     private fun createSortedAccountList(): Collection<AccountLite> {
         return getAccountLiteCacheData()?.accountLites
             ?.filter {
-                it.value.cachedInfo?.type?.canSignTransaction() == true &&
-                        it.value.registrationType !is AccountRegistrationType.Joint
+                it.value.cachedInfo?.type?.canSignTransaction() == true
             }
             ?.values
             .orEmpty()

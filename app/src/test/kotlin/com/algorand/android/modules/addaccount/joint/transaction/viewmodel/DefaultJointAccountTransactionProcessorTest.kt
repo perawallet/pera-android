@@ -317,6 +317,19 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
+    fun `EXPECT Completed state WHEN processing loaded preview with AwaitingConfirmation and enough signatures`() {
+        val preview = createTestPreview(
+            signedCount = 2,
+            requiredSignatureCount = 2,
+            transactionState = JointAccountTransactionState.AwaitingConfirmation
+        )
+
+        val result = processor.processLoadedPreview(preview)
+
+        assertEquals(JointAccountTransactionState.Completed, result.transactionState)
+    }
+
+    @Test
     fun `EXPECT same state WHEN processing loaded preview without enough signatures`() {
         val preview = createTestPreview(
             signedCount = 1,

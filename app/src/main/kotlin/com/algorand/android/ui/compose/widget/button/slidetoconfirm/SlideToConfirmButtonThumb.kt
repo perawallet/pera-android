@@ -81,10 +81,12 @@ fun BoxWithConstraintsScope.SlideToConfirmButtonThumb(
                         onDragStart = { springAnimationStiffness = Spring.StiffnessHigh },
                         onDragEnd = {
                             springAnimationStiffness = Spring.StiffnessLow
-                            if (dragOffset >= endThreshold) {
+                            dragOffset = if (dragOffset < endThreshold) {
+                                0f
+                            } else {
                                 onConfirmed()
+                                endOffset
                             }
-                            dragOffset = 0f
                         },
                         onDragCancel = {
                             springAnimationStiffness = Spring.StiffnessLow

@@ -48,7 +48,7 @@ class MenuFragment : BaseFragment(0), MenuScreenListener,
             MenuScreen(
                 isXoSwapEnabled = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key),
                 isStakeEnabled = isFeatureToggleEnabled(FeatureToggle.STAKING.key),
-                isCardsEnabled = isFeatureToggleEnabled(FeatureToggle.CARDS_IMMERSIVE.key),
+                isCardsEnabled = isFeatureToggleEnabled(FeatureToggle.CARDS_IMMERSVE.key),
                 menuNftViewModel = menuNftViewModel,
                 menuCardViewModel = cardsViewModel,
                 listener = this

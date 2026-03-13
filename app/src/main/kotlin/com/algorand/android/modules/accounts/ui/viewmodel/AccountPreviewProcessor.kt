@@ -77,8 +77,11 @@ class AccountPreviewProcessor @Inject constructor(
 
         insertQuickActionsItem(accountList)
 
+        val isCardsEnabled = isFeatureToggleEnabled(FeatureToggle.CARDS_IMMERSIVE.key)
         bannerItemMapper.map(banner)?.let { bannerItem ->
-            accountList.add(bannerItem)
+            if (isCardsEnabled || bannerItem.type != BaseAccountListItem.BannerItem.BannerType.Card) {
+                accountList.add(bannerItem)
+            }
         }
 
         if (spotBanners.isNotEmpty()) {

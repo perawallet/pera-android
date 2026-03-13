@@ -89,7 +89,7 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
     override fun processLoadedPreview(preview: JointAccountTransactionViewState): JointAccountTransactionViewState {
         val isCompletedBySignatureCount = isTransactionCompleted(preview.signedCount, preview.requiredSignatureCount)
         val shouldComplete = isCompletedBySignatureCount &&
-                preview.transactionState == JointAccountTransactionState.PendingSignatures
+                !preview.transactionState.isFinalized()
 
         val effectivePreview = if (shouldComplete) {
             preview.copy(transactionState = JointAccountTransactionState.Completed)

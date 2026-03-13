@@ -24,6 +24,8 @@ import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
 import com.algorand.wallet.deeplink.parser.CreateNewDeepLink
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,7 +34,8 @@ import kotlinx.coroutines.withContext
 class DeeplinkHandler @Inject constructor(
     private val isAssetOptedInByAnyLocalAccount: IsAssetOptedInByAnyLocalAccount,
     private val createDeepLink: CreateDeepLink,
-    private val createNewDeepLink: CreateNewDeepLink
+    private val createNewDeepLink: CreateNewDeepLink,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) {
 
     private var listener: Listener? = null
@@ -130,6 +133,7 @@ class DeeplinkHandler @Inject constructor(
     }
 
     private fun handleCardsDeepLink(deepLink: DeepLink.Cards): Boolean {
+        if (!isFeatureToggleEnabled(FeatureToggle.CARDS_IMMERSIVE.key)) return false
         return triggerListener { it.onCardsDeepLink(deepLink.path); true }
     }
 

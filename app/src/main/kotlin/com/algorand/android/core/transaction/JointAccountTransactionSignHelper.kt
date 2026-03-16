@@ -26,6 +26,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignReques
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResponseInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResult
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
+import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import javax.inject.Inject
 
 private const val JOINT_SIGN_REQUEST_TYPE_ASYNC = "async"
@@ -38,6 +39,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
     private val proposeJointSignRequest: ProposeJointSignRequest,
     private val signAndSubmitJointAccountSignature: SignAndSubmitJointAccountSignature,
     private val getJointAccountProposerAddress: GetJointAccountProposerAddress,
+    private val refreshInboxCache: RefreshInboxCache
 ) {
 
     suspend fun handleJointAccountTransaction(
@@ -303,6 +305,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
             jointAccount = preparedData.jointAccount,
             rawTransactionGroups = preparedData.rawTransactionLists
         )
+        refreshInboxCache()
         return JointSignResult.Success(signRequestId)
     }
 

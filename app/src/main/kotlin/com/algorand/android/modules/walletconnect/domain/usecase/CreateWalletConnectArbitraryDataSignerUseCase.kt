@@ -17,26 +17,24 @@ import com.algorand.android.models.WalletConnectArbitraryDataSigner.DisplayOnly
 import com.algorand.android.models.WalletConnectArbitraryDataSigner.Signer
 import com.algorand.android.models.WalletConnectArbitraryDataSigner.Unsignable
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
-import com.algorand.wallet.account.core.domain.model.TransactionSigner.Algo25
-import com.algorand.wallet.account.core.domain.model.TransactionSigner.HdKey
-import com.algorand.wallet.account.core.domain.model.TransactionSigner.Joint
-import com.algorand.wallet.account.core.domain.model.TransactionSigner.LedgerBle
-import com.algorand.wallet.account.core.domain.model.TransactionSigner.SignerNotFound
-import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import javax.inject.Inject
 
 internal class CreateWalletConnectArbitraryDataSignerUseCase @Inject constructor(
-    private val getTransactionSigner: GetTransactionSigner,
+    private val getLocalAccount: GetLocalAccount,
     private val errorProvider: WalletConnectErrorProvider,
 ) : CreateWalletConnectArbitraryDataSigner {
 
     override suspend fun invoke(signerAddress: String): WalletConnectArbitraryDataSigner {
         if (signerAddress.isBlank()) return DisplayOnly
 
-        return when (val transactionSigner = getTransactionSigner(signerAddress)) {
-            is Algo25, is HdKey, is Joint -> Signer(address = transactionSigner.address, isLedger = false)
-            is LedgerBle -> Unsignable(errorProvider.getUnableToSignError())
-            is SignerNotFound -> Unsignable(errorProvider.getMissingSignerError())
+        return when (getLocalAccount(signerAddress)) {
+            is LocalAccount.Algo25, is LocalAccount.HdKey ->
+                Signer(address = signerAddress, isLedger = false)
+            is LocalAccount.LedgerBle -> Unsignable(errorProvider.getUnableToSignError())
+            is LocalAccount.Joint -> Unsignable(errorProvider.getMultisigTransactionError())
+            is LocalAccount.NoAuth, null -> Unsignable(errorProvider.getMissingSignerError())
         }
     }
 }

@@ -162,6 +162,7 @@ class JointAccountTransactionViewModel @Inject constructor(
         if (!signRequestId.isNullOrBlank()) {
             loadTransactionPreview()
             startInboxPollObserver()
+            viewModelScope.launch { refreshInboxCache() }
         } else {
             Log.e(TAG, "signRequestId is null or blank")
             emitError(R.string.an_error_occurred)
@@ -300,7 +301,11 @@ class JointAccountTransactionViewModel @Inject constructor(
             getJointAccountTransactionViewState(requestId).use(
                 onSuccess = { preview ->
                     val updatedPreview = processor.processLoadedPreview(preview)
-                    stateDelegate.updateState { ViewState.Content(updatedPreview) }
+                    stateDelegate.onState<ViewState.Content> { currentContent ->
+                        val currentState = currentContent.preview.transactionState
+                        if (currentState.isFinalized() && !updatedPreview.transactionState.isFinalized()) return@onState
+                        stateDelegate.updateState { ViewState.Content(updatedPreview) }
+                    }
                 },
                 onFailed = { _, _ -> }
             )

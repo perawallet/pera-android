@@ -62,7 +62,7 @@ class FirebaseTokenManager @Inject constructor(
 
     private val firebasePushTokenCollector: suspend (value: CacheResult<String>?) -> Unit = {
         if (it?.data.isNullOrBlank().not()) {
-            registerFirebasePushToken(it?.data.orEmpty())
+            registerFirebasePushToken(it.data.orEmpty())
         }
     }
 

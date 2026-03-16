@@ -55,6 +55,7 @@ import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
+import com.algorand.android.utils.browser.openSupportCenterUrl
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
@@ -133,10 +134,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
             accountsViewModel.logBannerClick(bannerType)
-            when (bannerType) {
-                BannerType.Staking -> navToStakingFragment()
-                BannerType.Card -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
-                else -> nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
+            when {
+                bannerType == BannerType.Staking && url.isBlank() -> navToStakingFragment()
+                bannerType == BannerType.Card && url.isBlank() -> navToCardsFragment()
+                else -> navToBannerFragment(url)
             }
         }
 
@@ -184,11 +185,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onSpotBannerBannerClick(spotBanner: SpotBanner.Generic) {
             accountsViewModel.logSpotBannerClick(spotBanner.text)
-            val url = spotBanner.url ?: return
-            if (spotBanner.isExternalButtonUrl) {
-                context?.openUrl(url)
-            } else {
-                (activity as MainActivity).handleDeepLink(url)
+            val url = spotBanner.url
+            when {
+                url.isNullOrBlank() -> context?.openSupportCenterUrl()
+                spotBanner.isExternalButtonUrl -> context?.openUrl(url)
+                else -> (activity as? MainActivity)?.handleDeepLink(url) ?: context?.openUrl(url)
             }
         }
 
@@ -553,6 +554,14 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         } else {
             (activity as? MainActivity)?.navToStakingFragment()
         }
+    }
+
+    private fun navToBannerFragment(url: String) {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
+    }
+
+    private fun navToCardsFragment() {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
     }
 
     companion object {

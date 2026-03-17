@@ -12,23 +12,25 @@
 
 package com.algorand.android.notification.tracking
 
+import com.algorand.android.modules.tracking.core.BaseEventTracker
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import javax.inject.Inject
 
 internal class DefaultNotificationClickEventTracker @Inject constructor(
-    private val eventTracker: PeraEventTracker
-) : NotificationClickEventTracker {
+    eventTracker: PeraEventTracker
+) : BaseEventTracker(eventTracker), NotificationClickEventTracker {
 
-    override suspend fun log(url: String) {
-        eventTracker.logEvent(EVENT_NAME, mapOf(NOTIFICATION_ID_KEY to url))
+    override suspend fun logPushNotificationClick(notificationType: String) {
+        logEvent(PUSH_EVENT_NAME, mapOf(NOTIFICATION_TYPE_KEY to notificationType))
     }
 
-    override suspend fun log(notificationId: Long) {
-        eventTracker.logEvent(EVENT_NAME, mapOf(NOTIFICATION_ID_KEY to notificationId))
+    override suspend fun logNotificationCenterClick(notificationType: String) {
+        logEvent(NOTIFICATION_CENTER_EVENT_NAME, mapOf(NOTIFICATION_TYPE_KEY to notificationType))
     }
 
     private companion object {
-        const val EVENT_NAME = "notification_open"
-        const val NOTIFICATION_ID_KEY = "notification_id"
+        const val PUSH_EVENT_NAME = "notification_open"
+        const val NOTIFICATION_CENTER_EVENT_NAME = "notificationscr_open"
+        const val NOTIFICATION_TYPE_KEY = "notification_type"
     }
 }

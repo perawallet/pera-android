@@ -39,6 +39,7 @@ import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.notification.PeraFirebaseMessagingService.Companion.EXTRA_NOTIFICATION_CLICK
+import com.algorand.android.notification.PeraFirebaseMessagingService.Companion.EXTRA_NOTIFICATION_TYPE
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.notification.tracking.NotificationClickEventTracker
 import com.algorand.android.repository.NodeRepository
@@ -332,8 +333,11 @@ class MainViewModel @Inject constructor(
 
             else -> pendingIntent.getStringExtra(DEEPLINK_KEY)?.let { deeplink ->
                 if (pendingIntent.getBooleanExtra(EXTRA_NOTIFICATION_CLICK, false)) {
-                    notificationClickEventTracker.log(deeplink)
+                    pendingIntent.getStringExtra(EXTRA_NOTIFICATION_TYPE)?.let { notificationType ->
+                        notificationClickEventTracker.logPushNotificationClick(notificationType)
+                    }
                     pendingIntent.removeExtra(EXTRA_NOTIFICATION_CLICK)
+                    pendingIntent.removeExtra(EXTRA_NOTIFICATION_TYPE)
                 }
                 handleDeepLink(deeplink)
                 true

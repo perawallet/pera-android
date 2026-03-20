@@ -25,8 +25,8 @@ class SwapAmountInput(val locale: Locale) {
     private val inputRegex = Regex("^\\d*([.,]?\\d*)$")
 
     fun setInput(input: String) {
-        val amountAsBigDecimal = getInputAsBigDecimal(input)
         val normalizedInput = getNormalizedInput(input) ?: return
+        val amountAsBigDecimal = getInputAsBigDecimal(normalizedInput)
         amountInputFlow.value = Input(normalizedInput, amountAsBigDecimal)
     }
 
@@ -48,7 +48,7 @@ class SwapAmountInput(val locale: Locale) {
     private fun getFormatter(): NumberFormat = NumberFormat.getInstance(Locale.getDefault())
 
     private fun getNormalizedInput(input: String): String? {
-        val normalizedInput = input.replace(symbols.groupingSeparator, symbols.decimalSeparator)
+        val normalizedInput = input.replace('.', symbols.decimalSeparator).replace(',', symbols.decimalSeparator)
         return if (inputRegex.matches(normalizedInput)) normalizedInput else null
     }
 

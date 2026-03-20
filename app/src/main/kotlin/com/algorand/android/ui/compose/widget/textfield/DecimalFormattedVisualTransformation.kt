@@ -46,9 +46,41 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
             "$formattedInteger${decimalSeparator.takeIf { original.contains(it) }.orEmpty()}"
         }
 
+        val integerPartLength = integerPart.length
+        val formattedIntegerLength = formattedInteger.length
+        val groupingSeparator = symbols.groupingSeparator
+
         val offsetMapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int = result.length
-            override fun transformedToOriginal(offset: Int): Int = original.length
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset <= 0) return 0
+                if (offset >= original.length) return result.length
+                if (offset < integerPartLength) {
+                    var digitsSeen = 0
+                    for (i in formattedInteger.indices) {
+                        if (formattedInteger[i] != groupingSeparator) {
+                            if (digitsSeen == offset) return i
+                            digitsSeen++
+                        }
+                    }
+                    return formattedIntegerLength
+                }
+                return formattedIntegerLength + (offset - integerPartLength)
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset <= 0) return 0
+                if (offset >= result.length) return original.length
+                if (offset <= formattedIntegerLength) {
+                    var separatorCount = 0
+                    for (i in 0 until offset) {
+                        if (formattedInteger[i] == groupingSeparator) {
+                            separatorCount++
+                        }
+                    }
+                    return offset - separatorCount
+                }
+                return integerPartLength + (offset - formattedIntegerLength)
+            }
         }
 
         return TransformedText(AnnotatedString(result), offsetMapping)

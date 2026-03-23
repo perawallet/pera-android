@@ -31,6 +31,8 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.dagger.hilt.android)
 
     ksp(libs.dagger.hilt.compiler)

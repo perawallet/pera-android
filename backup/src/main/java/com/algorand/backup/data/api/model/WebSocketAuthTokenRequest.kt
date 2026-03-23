@@ -10,13 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.backup.data.service
+package com.algorand.backup.data.api.model
 
-import com.algorand.backup.domain.model.BackupId
-import com.algorand.backup.domain.model.DerivedKeyMaterial
-import com.algorand.backup.domain.model.KeyDerivationInput
+import com.google.gson.annotations.SerializedName
 
-internal interface BackupKeyDerivationManager {
-    fun deriveKeys(input: KeyDerivationInput): DerivedKeyMaterial
-    fun deriveBackupId(mnemonic: String): BackupId
-}
+internal data class WebSocketAuthTokenRequest(
+    @SerializedName("token") val token: String
+)

@@ -38,10 +38,10 @@ internal class SwapSentAmountValidationRule @Inject constructor(
             .toBigInteger()
         
         return if (quote.isAssetInAlgo) {
-            val totalFee = quote.fee.totalFee
+            val peraFeeInAlgo = quote.fee.peraFeeAmountInAlgo
                 .movePointRight(quote.assetInDetail.fractionDecimals)
                 .toBigInteger()
-            baseAmount.add(totalFee)
+            baseAmount.add(peraFeeInAlgo)
         } else {
             baseAmount
         }

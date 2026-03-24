@@ -94,6 +94,7 @@ class NotificationDataSource(
                     creationDateTime = creationZonedDateTime,
                     timeDifference = timeDifference,
                     message = notificationItem.message ?: "",
+                    notificationType = notificationItem.notificationType,
                     notificationIconDrawableProvider = NotificationIconDrawableProvider.create(
                         isFailed = isFailed,
                         logoUri = notificationItem.icon?.prismUrl

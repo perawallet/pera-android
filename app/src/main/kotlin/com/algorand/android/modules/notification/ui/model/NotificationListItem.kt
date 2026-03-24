@@ -22,5 +22,6 @@ data class NotificationListItem(
     val timeDifference: Long,
     val creationDateTime: ZonedDateTime,
     val message: String,
+    val notificationType: String?,
     val notificationIconDrawableProvider: NotificationIconDrawableProvider
 )

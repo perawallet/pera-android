@@ -28,6 +28,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":common-sdk"))
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)

@@ -13,14 +13,23 @@
 package com.algorand.backup.data.repository
 
 import com.algorand.backup.data.api.model.BatchReadRequest
+import com.algorand.backup.data.api.model.BatchUpsertItemRequest
+import com.algorand.backup.data.api.model.BatchUpsertRequest
+import com.algorand.backup.data.api.model.UpsertItemRequest
 import com.algorand.backup.data.mapper.DeltaEntryResponseMapper
 import com.algorand.backup.data.mapper.ManifestResponseMapper
 import com.algorand.backup.data.service.BackupApiService
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
+import com.algorand.backup.domain.model.BatchUpsertItemResult
 import com.algorand.backup.domain.model.DeltaEntry
+import com.algorand.backup.domain.model.DeviceId
+import com.algorand.backup.domain.model.ItemHash
 import com.algorand.backup.domain.model.Manifest
+import com.algorand.backup.domain.model.UpsertItemResult
+import com.algorand.backup.domain.model.BatchUpsertInput
 import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
@@ -102,6 +111,84 @@ internal class DefaultBackupRepository @Inject constructor(
             }
         } catch (exception: Exception) {
             PeraResult.Error(exception)
+        }
+    }
+
+    override suspend fun upsertItem(
+        backupId: BackupId,
+        key: BackupItemKey,
+        expectedVersion: Int,
+        status: BackupItemStatus,
+        deviceId: DeviceId,
+        payload: String
+    ): PeraResult<UpsertItemResult> {
+        return try {
+            val request = UpsertItemRequest(
+                expectedVersion = expectedVersion,
+                status = status.name,
+                deviceId = deviceId.value,
+                payload = payload
+            )
+            val response = backupApiService.upsertItem(backupId.value, key.value, request)
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                val result = parseUpsertResponse(body.newVersion, body.seq, body.currentVersion, body.currentHash)
+                PeraResult.Success(result)
+            } else {
+                PeraResult.Error(IllegalStateException("Upsert item failed"), response.code())
+            }
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
+    override suspend fun batchUpsertItems(
+        backupId: BackupId,
+        deviceId: DeviceId,
+        items: List<BatchUpsertInput>
+    ): PeraResult<List<BatchUpsertItemResult>> {
+        return try {
+            val request = BatchUpsertRequest(
+                deviceId = deviceId.value,
+                items = items.map { input ->
+                    BatchUpsertItemRequest(
+                        key = input.key.value,
+                        expectedVersion = input.expectedVersion,
+                        status = input.status.name,
+                        payload = input.payload
+                    )
+                }
+            )
+            val response = backupApiService.batchUpsertItems(backupId.value, request)
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                val results = body.results?.mapNotNull { item ->
+                    val key = item.key ?: return@mapNotNull null
+                    val result = parseUpsertResponse(item.newVersion, item.seq, item.currentVersion, item.currentHash)
+                    BatchUpsertItemResult(key = BackupItemKey(key), result = result)
+                }.orEmpty()
+                PeraResult.Success(results)
+            } else {
+                PeraResult.Error(IllegalStateException("Batch upsert failed"), response.code())
+            }
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
+
+    private fun parseUpsertResponse(
+        newVersion: Int?,
+        seq: Long?,
+        currentVersion: Int?,
+        currentHash: String?
+    ): UpsertItemResult {
+        return if (newVersion != null && seq != null) {
+            UpsertItemResult.Success(newVersion = newVersion, seq = seq)
+        } else {
+            UpsertItemResult.Conflict(
+                currentVersion = currentVersion ?: 0,
+                currentHash = currentHash?.let { ItemHash(it) }
+            )
         }
     }
 

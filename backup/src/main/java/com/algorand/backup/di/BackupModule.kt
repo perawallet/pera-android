@@ -19,15 +19,25 @@ import com.algorand.backup.data.model.SyncStateCacheModel
 import com.algorand.backup.data.repository.DefaultBackupRepository
 import com.algorand.backup.data.repository.DefaultSyncStateRepository
 import com.algorand.backup.data.service.BackupApiService
+import com.algorand.backup.data.service.BackupAuthInterceptor
 import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.backup.domain.repository.SyncStateRepository
+import com.algorand.backup.domain.usecase.DeleteBackupItem
+import com.algorand.backup.domain.usecase.DeleteBackupItemUseCase
+import com.algorand.backup.domain.usecase.PullBackupSync
+import com.algorand.backup.domain.usecase.PullBackupSyncUseCase
+import com.algorand.backup.domain.usecase.PushBackupSync
+import com.algorand.backup.domain.usecase.PushBackupSyncUseCase
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.util.concurrent.TimeUnit
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import javax.inject.Named
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -35,11 +45,36 @@ import javax.inject.Singleton
 internal object BackupModule {
 
     private const val SYNC_STATE_CACHE_KEY = "backup_sync_state"
+    private const val TIMEOUT_SECONDS = 60L
+
+    // TODO: Replace with actual backup service base URL
+    private const val BACKUP_BASE_URL = "https://backup.placeholder.perawallet.app/"
 
     @Provides
     @Singleton
-    fun provideBackupApiService(@Named("backupRetrofitInterface") retrofit: Retrofit): BackupApiService {
-        return retrofit.create(BackupApiService::class.java)
+    fun provideBackupHttpClient(
+        backupAuthInterceptor: BackupAuthInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(backupAuthInterceptor)
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBackupApiService(
+        backupHttpClient: OkHttpClient,
+        gson: Gson
+    ): BackupApiService {
+        return Retrofit.Builder()
+            .baseUrl(BACKUP_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(backupHttpClient)
+            .build()
+            .create(BackupApiService::class.java)
     }
 
     @Provides
@@ -66,4 +101,13 @@ internal object BackupModule {
             mapper = mapper
         )
     }
+
+    @Provides
+    fun providePullBackupSync(useCase: PullBackupSyncUseCase): PullBackupSync = useCase
+
+    @Provides
+    fun providePushBackupSync(useCase: PushBackupSyncUseCase): PushBackupSync = useCase
+
+    @Provides
+    fun provideDeleteBackupItem(useCase: DeleteBackupItemUseCase): DeleteBackupItem = useCase
 }

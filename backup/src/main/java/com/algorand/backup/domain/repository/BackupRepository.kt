@@ -14,9 +14,14 @@ package com.algorand.backup.domain.repository
 
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
+import com.algorand.backup.domain.model.BatchUpsertInput
+import com.algorand.backup.domain.model.BatchUpsertItemResult
 import com.algorand.backup.domain.model.DeltaEntry
+import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.Manifest
+import com.algorand.backup.domain.model.UpsertItemResult
 import com.algorand.wallet.foundation.PeraResult
 
 internal interface BackupRepository {
@@ -35,6 +40,21 @@ internal interface BackupRepository {
         backupId: BackupId,
         keys: List<BackupItemKey>
     ): PeraResult<Map<BackupItemKey, String>>
+
+    suspend fun upsertItem(
+        backupId: BackupId,
+        key: BackupItemKey,
+        expectedVersion: Int,
+        status: BackupItemStatus,
+        deviceId: DeviceId,
+        payload: String
+    ): PeraResult<UpsertItemResult>
+
+    suspend fun batchUpsertItems(
+        backupId: BackupId,
+        deviceId: DeviceId,
+        items: List<BatchUpsertInput>
+    ): PeraResult<List<BatchUpsertItemResult>>
 
     suspend fun deleteItem(backupId: BackupId, key: BackupItemKey): PeraResult<Long>
 }

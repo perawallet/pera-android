@@ -12,15 +12,22 @@
 
 package com.algorand.backup.di
 
+import com.algorand.backup.data.mapper.DeltaEntryResponseMapper
+import com.algorand.backup.data.mapper.ManifestResponseMapper
 import com.algorand.backup.data.mapper.SyncStateCacheMapper
 import com.algorand.backup.data.model.SyncStateCacheModel
+import com.algorand.backup.data.repository.DefaultBackupRepository
 import com.algorand.backup.data.repository.DefaultSyncStateRepository
+import com.algorand.backup.data.service.BackupApiService
+import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -29,8 +36,24 @@ internal object BackupModule {
 
     private const val SYNC_STATE_CACHE_KEY = "backup_sync_state"
 
-    @Singleton
     @Provides
+    @Singleton
+    fun provideBackupApiService(@Named("backupRetrofitInterface") retrofit: Retrofit): BackupApiService {
+        return retrofit.create(BackupApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBackupRepository(
+        backupApiService: BackupApiService,
+        manifestMapper: ManifestResponseMapper,
+        deltaMapper: DeltaEntryResponseMapper
+    ): BackupRepository {
+        return DefaultBackupRepository(backupApiService, manifestMapper, deltaMapper)
+    }
+
+    @Provides
+    @Singleton
     fun provideSyncStateRepository(
         cacheProvider: PersistentCacheProvider,
         mapper: SyncStateCacheMapper

@@ -12,9 +12,6 @@
 
 package com.algorand.backup.domain.security
 
-internal interface BackupEncryptionManager {
-    fun importKey(encryptionKey: ByteArray)
-    fun encrypt(plaintext: ByteArray, itemKey: String): ByteArray
-    fun decrypt(ciphertext: ByteArray, itemKey: String): ByteArray
-    fun deleteKey()
+internal interface HkdfKeyManager {
+    fun deriveChildKey(masterKey: ByteArray, info: ByteArray): ByteArray
 }

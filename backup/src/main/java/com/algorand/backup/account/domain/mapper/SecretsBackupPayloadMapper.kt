@@ -15,6 +15,6 @@ package com.algorand.backup.account.domain.mapper
 import com.algorand.backup.account.domain.model.SecretsBackupPayload
 
 internal interface SecretsBackupPayloadMapper {
-    fun decrypt(ciphertext: String): List<SecretsBackupPayload>?
-    fun encrypt(payloads: List<SecretsBackupPayload>): String
+    fun decrypt(ciphertext: ByteArray, itemKey: String): List<SecretsBackupPayload>?
+    fun encrypt(payloads: List<SecretsBackupPayload>, itemKey: String): ByteArray
 }

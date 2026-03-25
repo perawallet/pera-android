@@ -12,11 +12,9 @@
 
 package com.algorand.backup.domain.security
 
-import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.KeyDerivationInput
 
 internal interface BackupKeyDerivationManager {
     fun deriveKeys(input: KeyDerivationInput): DerivedKeyMaterial
-    fun deriveBackupId(mnemonic: String): BackupId
 }

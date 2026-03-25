@@ -12,23 +12,33 @@
 
 package com.algorand.backup.domain.hashing
 
+import com.algorand.backup.domain.model.BackupGlobalHash
+import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.ItemHash
+import com.algorand.backup.domain.model.ManifestItem
 import java.security.MessageDigest
 import javax.inject.Inject
 
 internal class MessageDigestHashGenerator @Inject constructor() : BackupHashGenerator {
 
-    override fun generateHash(items: List<Any>): String {
-        return generateHash(items.joinToString(separator = "|"))
+    override fun generateItemHash(encryptedBytes: ByteArray): ItemHash {
+        val hash = sha256(encryptedBytes)
+        return ItemHash("sha256:$hash")
     }
 
-    override fun generateHash(item: Any): String {
-        return generate(item.toString())
+    override fun generateGlobalHash(items: Map<BackupItemKey, ManifestItem>): BackupGlobalHash {
+        val concatenation = items.keys
+            .sortedBy { it.value }
+            .joinToString("") { key ->
+                val item = items[key]!!
+                "${key.value}|${item.type.name}|${item.version}|${item.status.name}|${item.hash.value}"
+            }
+        val hash = sha256(concatenation.toByteArray(Charsets.UTF_8))
+        return BackupGlobalHash("sha256:$hash")
     }
 
-    private fun generate(input: String): String {
-        val bytes = MessageDigest
-            .getInstance("SHA-256")
-            .digest(input.toByteArray(Charsets.UTF_8))
+    private fun sha256(input: ByteArray): String {
+        val bytes = MessageDigest.getInstance("SHA-256").digest(input)
         return bytes.joinToString("") { "%02x".format(it) }
     }
 }

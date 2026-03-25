@@ -12,9 +12,8 @@
 
 package com.algorand.backup.domain.security
 
-internal interface BackupEncryptionManager {
-    fun importKey(encryptionKey: ByteArray)
-    fun encrypt(plaintext: ByteArray, itemKey: String): ByteArray
-    fun decrypt(ciphertext: ByteArray, itemKey: String): ByteArray
-    fun deleteKey()
+import com.algorand.backup.domain.model.BackupId
+
+internal interface BackupIdManager {
+    fun createBackupId(publicKey: ByteArray): BackupId
 }

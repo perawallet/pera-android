@@ -12,9 +12,8 @@
 
 package com.algorand.backup.domain.security
 
-internal interface BackupEncryptionManager {
-    fun importKey(encryptionKey: ByteArray)
-    fun encrypt(plaintext: ByteArray, itemKey: String): ByteArray
-    fun decrypt(ciphertext: ByteArray, itemKey: String): ByteArray
-    fun deleteKey()
+import com.algorand.backup.domain.model.Argon2idConfig
+
+internal interface ArgonKeyManager {
+    fun deriveMasterKey(password: ByteArray, salt: ByteArray, config: Argon2idConfig): ByteArray
 }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -88,11 +89,15 @@ private fun RowScope.AssetInAmountContent(
     val isCurrencySymbolVisible by remember(assetInAmount.rawInput, swapDetails.useLocalCurrency) {
         mutableStateOf(assetInAmount.rawInput.isNotBlank() && swapDetails.useLocalCurrency)
     }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
+    val externalText = assetInAmount.rawInput
+    if (textFieldValue.text != externalText) {
+        textFieldValue = TextFieldValue(externalText, TextRange(externalText.length))
+    }
     Column(
         modifier = Modifier
             .clickableNoRipple { focusRequester.requestFocus() }
             .weight(1f)) {
-        val textFieldValue = TextFieldValue(assetInAmount.rawInput, TextRange(assetInAmount.rawInput.length))
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (isCurrencySymbolVisible) {
                 Text(
@@ -101,8 +106,9 @@ private fun RowScope.AssetInAmountContent(
                     color = PeraTheme.colors.text.main,
                 )
             }
-            AssetInAmountInputTextField(viewState, focusRequester, textFieldValue) {
-                widgetViewModel.setAmountInput(it.text)
+            AssetInAmountInputTextField(viewState, focusRequester, textFieldValue) { newValue ->
+                textFieldValue = newValue
+                widgetViewModel.setAmountInput(newValue.text)
             }
         }
         SecondaryAmountText(viewState)

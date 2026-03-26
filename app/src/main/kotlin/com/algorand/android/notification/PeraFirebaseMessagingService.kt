@@ -23,6 +23,8 @@ import app.perawallet.walletconnectv2.Core
 import app.perawallet.walletconnectv2.push.notifications.PushMessagingService
 import com.algorand.android.R
 import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
+import com.algorand.android.notification.data.model.NotificationMetadataDto
+import com.algorand.android.notification.domain.mapper.NotificationMetadataMapper
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.notification.domain.model.NotificationWCData
 import com.algorand.android.ui.splash.LauncherActivity
@@ -52,6 +54,9 @@ class PeraFirebaseMessagingService : PushMessagingService() {
 
     @Inject
     lateinit var gson: Gson
+
+    @Inject
+    lateinit var notificationMetadataMapper: NotificationMetadataMapper
 
     override fun onNewToken(token: String) {
         firebasePushTokenUseCase.setPushToken(token)
@@ -111,6 +116,7 @@ class PeraFirebaseMessagingService : PushMessagingService() {
             LauncherActivity
                 .newIntentWithDeeplink(context = this, deeplink = notificationData.url)
                 .putExtra(EXTRA_NOTIFICATION_CLICK, true)
+                .putExtra(EXTRA_NOTIFICATION_TYPE, notificationData.notificationType)
         } else {
             LauncherActivity.newIntent(context = this)
         }.apply { action = System.currentTimeMillis().toString() }
@@ -155,9 +161,8 @@ class PeraFirebaseMessagingService : PushMessagingService() {
 
     private fun parseCustomData(customDataJson: String?, alertMessage: String?): NotificationMetadata {
         return try {
-            gson.fromJson(customDataJson, NotificationMetadata::class.java).apply {
-                this.alertMessage = alertMessage
-            }
+            val dto = gson.fromJson(customDataJson, NotificationMetadataDto::class.java)
+            notificationMetadataMapper.map(dto = dto, alertMessage = alertMessage)
         } catch (exception: Exception) {
             recordException(exception)
             NotificationMetadata()
@@ -185,5 +190,6 @@ class PeraFirebaseMessagingService : PushMessagingService() {
         private const val CUSTOM = "custom"
         private const val BLOB = "blob"
         const val EXTRA_NOTIFICATION_CLICK = "extraNotificationClick"
+        const val EXTRA_NOTIFICATION_TYPE = "extraNotificationType"
     }
 }

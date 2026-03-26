@@ -13,6 +13,6 @@
 package com.algorand.android.notification.tracking
 
 interface NotificationClickEventTracker {
-    suspend fun log(url: String)
-    suspend fun log(notificationId: Long)
+    suspend fun logPushNotificationClick(notificationType: String)
+    suspend fun logNotificationCenterClick(notificationType: String)
 }

@@ -10,11 +10,11 @@
  *  limitations under the License
  */
 
-package com.algorand.android.notification.domain.model
+package com.algorand.android.notification.domain.mapper
 
-data class NotificationMetadata(
-    val url: String? = null,
-    val title: String? = null,
-    var alertMessage: String? = null,
-    val notificationType: String? = null
-)
+import com.algorand.android.notification.data.model.NotificationMetadataDto
+import com.algorand.android.notification.domain.model.NotificationMetadata
+
+interface NotificationMetadataMapper {
+    fun map(dto: NotificationMetadataDto, alertMessage: String?): NotificationMetadata
+}

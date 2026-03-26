@@ -10,11 +10,17 @@
  *  limitations under the License
  */
 
-package com.algorand.android.notification.domain.model
+package com.algorand.android.notification.data.model
 
-data class NotificationMetadata(
+import com.google.gson.annotations.SerializedName
+
+data class NotificationMetadataDto(
+    @SerializedName("url")
     val url: String? = null,
+    @SerializedName("title")
     val title: String? = null,
-    var alertMessage: String? = null,
+    @SerializedName("message")
+    val message: String? = null,
+    @SerializedName("notification_type")
     val notificationType: String? = null
 )

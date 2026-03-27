@@ -34,5 +34,8 @@ data class NotificationResponse(
     val isUnread: Boolean?,
 
     @SerializedName("icon")
-    val icon: NotificationIconResponse?
+    val icon: NotificationIconResponse?,
+
+    @SerializedName("type")
+    val notificationType: String?
 )

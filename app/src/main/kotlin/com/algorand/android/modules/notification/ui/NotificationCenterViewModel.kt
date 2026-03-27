@@ -86,7 +86,9 @@ class NotificationCenterViewModel @Inject constructor(
     fun onNotificationClickEvent(notificationListItem: NotificationListItem) {
         viewModelScope.launch {
             notificationCenterPreviewUseCase.onNotificationClickEvent(notificationListItem).collect {
-                notificationClickEventTracker.log(notificationListItem.id)
+                notificationListItem.notificationType?.let { type ->
+                    notificationClickEventTracker.logNotificationCenterClick(type)
+                }
                 _notificationCenterPreviewFlow.emit(it)
             }
         }

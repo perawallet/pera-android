@@ -12,8 +12,10 @@
 
 package com.algorand.android.notification.di
 
-import com.algorand.android.notification.tracking.NotificationClickEventTracker
+import com.algorand.android.notification.domain.mapper.DefaultNotificationMetadataMapper
+import com.algorand.android.notification.domain.mapper.NotificationMetadataMapper
 import com.algorand.android.notification.tracking.DefaultNotificationClickEventTracker
+import com.algorand.android.notification.tracking.NotificationClickEventTracker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,4 +29,9 @@ internal object NotificationModule {
     fun provideNotificationClickEventTracker(
         tracker: DefaultNotificationClickEventTracker
     ): NotificationClickEventTracker = tracker
+
+    @Provides
+    fun provideNotificationMetadataMapper(
+        mapper: DefaultNotificationMetadataMapper
+    ): NotificationMetadataMapper = mapper
 }

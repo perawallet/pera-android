@@ -17,7 +17,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteResponse
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapType
-import java.math.BigDecimal
+import com.algorand.wallet.utils.orZero
 import javax.inject.Inject
 
 internal class DefaultSwapQuoteMapper @Inject constructor(
@@ -43,9 +43,16 @@ internal class DefaultSwapQuoteMapper @Inject constructor(
     }
 
     private fun mapSwapFee(response: SwapQuoteResponse): SwapQuoteV2.SwapFee {
-        val peraFee = response.peraFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS) ?: BigDecimal.ZERO
-        val exchangeFee = response.exchangeFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS) ?: BigDecimal.ZERO
-        val totalFee = peraFee + exchangeFee
-        return SwapQuoteV2.SwapFee(peraFee, exchangeFee, totalFee)
+        val peraFeeAssetDetail = assetDetailMapper(response.peraFeeAssetDetail)
+        val (type, peraFeeAmountInAlgo) = if (peraFeeAssetDetail != null) {
+            val amount = response.peraFeeAmountInFeeAsset
+                ?.toBigDecimal()?.movePointLeft(peraFeeAssetDetail.fractionDecimals).orZero()
+            val amountInAlgo = response.peraFeeAmountInMicroAlgo?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS).orZero()
+            SwapQuoteV2.SwapFee.PeraFeeType.Asset(amount, peraFeeAssetDetail) to amountInAlgo
+        } else {
+            val amount = response.peraFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS).orZero()
+            SwapQuoteV2.SwapFee.PeraFeeType.Algo to amount
+        }
+        return SwapQuoteV2.SwapFee(peraFeeAmountInAlgo, type)
     }
 }

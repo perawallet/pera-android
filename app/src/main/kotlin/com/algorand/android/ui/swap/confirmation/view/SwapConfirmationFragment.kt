@@ -106,10 +106,6 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
         nav(SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapPriceImpactInfoBottomSheet())
     }
 
-    override fun onExchangeFeeInfoClick() {
-        nav(SwapConfirmationFragmentDirections.actionSwapConfirmationFragmentToSwapExchangeFeeInfoBottomSheet())
-    }
-
     override fun onTinymanFaqPriceImpactUrlClick() {
         context?.openTinymanFaqPriceImpactUrl()
     }

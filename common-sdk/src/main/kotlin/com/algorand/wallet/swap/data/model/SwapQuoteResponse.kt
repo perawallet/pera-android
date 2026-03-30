@@ -51,6 +51,12 @@ internal data class SwapQuoteResponse(
     val priceImpact: String?,
     @SerializedName("pera_fee_amount")
     val peraFeeAmount: BigInteger?,
+    @SerializedName("pera_fee_asset")
+    val peraFeeAssetDetail: SwapQuoteAssetDetailResponse?,
+    @SerializedName("pera_fee_amount_in_fee_asset")
+    val peraFeeAmountInFeeAsset: BigInteger?,
+    @SerializedName("pera_fee_amount_in_microalgo")
+    val peraFeeAmountInMicroAlgo: BigInteger?,
     @SerializedName("exchange_fee_amount")
     val exchangeFeeAmount: BigInteger?
 )

@@ -339,9 +339,8 @@ class SwapSentAmountValidationRuleTest {
                 amountWithSlippage = amount
             ),
             fee = SwapQuoteV2.SwapFee(
-                peraFeeAmount = fee,
-                exchangeFeeAmount = BigDecimal.ZERO,
-                totalFee = fee
+                peraFeeAmountInAlgo = fee,
+                type = SwapQuoteV2.SwapFee.PeraFeeType.Algo
             )
         )
     }
@@ -365,9 +364,8 @@ class SwapSentAmountValidationRuleTest {
                 amountWithSlippage = amount
             ),
             fee = SwapQuoteV2.SwapFee(
-                peraFeeAmount = fee,
-                exchangeFeeAmount = BigDecimal.ZERO,
-                totalFee = fee
+                peraFeeAmountInAlgo = fee,
+                type = SwapQuoteV2.SwapFee.PeraFeeType.Algo
             )
         )
     }

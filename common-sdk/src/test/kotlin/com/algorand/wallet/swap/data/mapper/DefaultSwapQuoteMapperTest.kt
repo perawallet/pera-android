@@ -32,6 +32,7 @@ class DefaultSwapQuoteMapperTest {
     private val assetDetailMapper: SwapAssetDetailMapper = mockk {
         every { invoke(response = ASSET_IN_DETAIL_RESPONSE) } returns ASSET_IN_DETAIL
         every { invoke(response = ASSET_OUT_DETAIL_RESPONSE) } returns ASSET_OUT_DETAIL
+        every { invoke(response = PERA_FEE_ASSET_DETAIL_RESPONSE) } returns PERA_FEE_ASSET_DETAIL
     }
     private val assetAmountMapper: SwapAssetAmountMapper = mockk {
         every { mapAssetInAmount(response = VALID_RESPONSE) } returns ASSET_IN_AMOUNT
@@ -133,10 +134,14 @@ class DefaultSwapQuoteMapperTest {
             priceImpact = null,
             slippage = null,
             peraFeeAmount = null,
+            peraFeeAssetDetail = null,
+            peraFeeAmountInFeeAsset = null,
+            peraFeeAmountInMicroAlgo = null,
             exchangeFeeAmount = null
         )
         every { assetAmountMapper.mapAssetInAmount(response) } returns ASSET_IN_AMOUNT
         every { assetAmountMapper.mapAssetOutAmount(response) } returns ASSET_OUT_AMOUNT
+        every { assetDetailMapper(null) } returns null
 
         val result = sut(response, QUOTE_PROVIDERS)
 
@@ -144,9 +149,41 @@ class DefaultSwapQuoteMapperTest {
             priceImpact = 0f,
             slippage = 0f,
             fee = SwapQuoteV2.SwapFee(
-                peraFeeAmount = BigDecimal.ZERO,
-                exchangeFeeAmount = BigDecimal.ZERO,
-                totalFee = BigDecimal.ZERO
+                peraFeeAmountInAlgo = BigDecimal.ZERO,
+                type = SwapQuoteV2.SwapFee.PeraFeeType.Algo
+            )
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT asset pera fee WHEN fee asset detail exists`() {
+        val feeAssetResponse = peraFixture<SwapQuoteAssetDetailResponse>().copy(fractionDecimals = 3)
+        val feeAsset = peraFixture<SwapQuoteV2.AssetDetail>().copy(fractionDecimals = 3)
+        val response = VALID_RESPONSE.copy(
+            priceImpact = null,
+            slippage = null,
+            peraFeeAmount = null,
+            peraFeeAssetDetail = feeAssetResponse,
+            peraFeeAmountInFeeAsset = BigInteger.valueOf(123_456L),
+            peraFeeAmountInMicroAlgo = BigInteger.valueOf(34_456L),
+            exchangeFeeAmount = null
+        )
+        every { assetAmountMapper.mapAssetInAmount(response) } returns ASSET_IN_AMOUNT
+        every { assetAmountMapper.mapAssetOutAmount(response) } returns ASSET_OUT_AMOUNT
+        every { assetDetailMapper(feeAssetResponse) } returns feeAsset
+
+        val result = sut(response, QUOTE_PROVIDERS)
+
+        val expected = VALID_QUOTE.copy(
+            priceImpact = 0f,
+            slippage = 0f,
+            fee = SwapQuoteV2.SwapFee(
+                peraFeeAmountInAlgo = BigDecimal("0.034456"),
+                type = SwapQuoteV2.SwapFee.PeraFeeType.Asset(
+                    amount = BigDecimal("123.456"),
+                    assetDetail = feeAsset
+                )
             )
         )
         assertEquals(expected, result)
@@ -178,8 +215,10 @@ class DefaultSwapQuoteMapperTest {
 
         val ASSET_IN_DETAIL_RESPONSE = peraFixture<SwapQuoteAssetDetailResponse>()
         val ASSET_OUT_DETAIL_RESPONSE = peraFixture<SwapQuoteAssetDetailResponse>()
+        val PERA_FEE_ASSET_DETAIL_RESPONSE = peraFixture<SwapQuoteAssetDetailResponse>()
         val ASSET_IN_DETAIL = peraFixture<SwapQuoteV2.AssetDetail>()
         val ASSET_OUT_DETAIL = peraFixture<SwapQuoteV2.AssetDetail>()
+        val PERA_FEE_ASSET_DETAIL = peraFixture<SwapQuoteV2.AssetDetail>().copy(fractionDecimals = 6)
 
         val QUOTE_PROVIDER_RESPONSE = peraFixture<String>()
         val QUOTE_PROVIDER = peraFixture<SwapQuoteProvider>().copy(name = QUOTE_PROVIDER_RESPONSE)
@@ -206,6 +245,9 @@ class DefaultSwapQuoteMapperTest {
             price = "1.0",
             priceImpact = "0.05",
             peraFeeAmount = BigInteger.valueOf(1000),
+            peraFeeAssetDetail = PERA_FEE_ASSET_DETAIL_RESPONSE,
+            peraFeeAmountInFeeAsset = BigInteger.valueOf(1000),
+            peraFeeAmountInMicroAlgo = BigInteger.valueOf(1000),
             exchangeFeeAmount = BigInteger.valueOf(2000)
         )
 
@@ -222,9 +264,11 @@ class DefaultSwapQuoteMapperTest {
             priceImpact = 0.05f,
             slippage = 0.01f,
             fee = SwapQuoteV2.SwapFee(
-                peraFeeAmount = BigDecimal("0.001000"),
-                exchangeFeeAmount = BigDecimal("0.002000"),
-                totalFee = BigDecimal("0.003000")
+                peraFeeAmountInAlgo = BigDecimal("0.001000"),
+                type = SwapQuoteV2.SwapFee.PeraFeeType.Asset(
+                    amount = BigDecimal("0.001000"),
+                    assetDetail = PERA_FEE_ASSET_DETAIL
+                )
             )
         )
     }

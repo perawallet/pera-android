@@ -255,7 +255,6 @@ class SwapConfirmationViewModel @Inject constructor(
             val priceImpact: SwapPriceImpact,
             val assetInDetail: AssetDetail,
             val assetOutDetail: AssetDetail,
-            val exchangeFee: AmountRenderer,
             val peraFee: AmountRenderer,
             val minReceivedAssetAmount: AmountRenderer,
             val assetInToOutPriceRatio: PriceRatio,

@@ -80,8 +80,6 @@ fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirm
         QuoteRowSeparator()
         MinimumReceived(content.minReceivedAssetAmount)
         QuoteRowSeparator()
-        ExchangeFee(content.exchangeFee, listener::onExchangeFeeInfoClick)
-        QuoteRowSeparator()
         PeraFee(content.peraFee)
         QuoteRowSeparator()
         PriceImpactWarning(content.priceImpact.warningStatus, listener::onTinymanFaqPriceImpactUrlClick)
@@ -91,7 +89,6 @@ fun SwapConfirmationQuoteDetailContainer(content: Content, listener: SwapConfirm
 interface SwapConfirmationQuoteDetailContainerListener {
     fun onSlippageToleranceInfoClick()
     fun onPriceImpactInfoClick()
-    fun onExchangeFeeInfoClick()
     fun onTinymanFaqPriceImpactUrlClick()
 }
 
@@ -193,18 +190,6 @@ private fun MinimumReceived(minReceivedAssetAmount: AmountRenderer) {
     QuoteDetailRow(
         labelContent = { QuoteDetailLabel(textResId = R.string.minimum_received) },
         valueContent = { QuoteDetailValue(text = minReceivedAssetAmount.getDisplayValue()) }
-    )
-}
-
-@Composable
-private fun ExchangeFee(exchangeFee: AmountRenderer, onInfoClick: () -> Unit) {
-    QuoteDetailRow(
-        labelContent = {
-            QuoteDetailLabel(textResId = R.string.exchange_fee)
-            Spacer(modifier = Modifier.width(6.dp))
-            InfoIcon(onClick = onInfoClick)
-        },
-        valueContent = { QuoteDetailValue(text = exchangeFee.getDisplayValue()) }
     )
 }
 

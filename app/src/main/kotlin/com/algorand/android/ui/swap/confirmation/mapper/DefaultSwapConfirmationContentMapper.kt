@@ -21,7 +21,7 @@ import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.DecimalConfig
 import com.algorand.android.ui.common.amount.PeraAmount
-import com.algorand.android.ui.common.amount.PlainFormattedAmount
+import com.algorand.android.ui.common.amount.PlainFormattedAmount.AlgoPlainFormattedAmount
 import com.algorand.android.ui.common.amount.PlainFormattedAmount.SimplePlainFormattedAmount
 import com.algorand.android.ui.common.amount.SimpleFormattedAmount
 import com.algorand.android.ui.compose.widget.asset.icon.mapper.AssetIconDrawableMapper
@@ -53,8 +53,7 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
             priceImpact = priceImpactWarningStatusMapper(quote.priceImpact),
             assetInDetail = getAssetDetail(quote.assetInDetail, quote.assetInAmount),
             assetOutDetail = getAssetDetail(quote.assetOutDetail, quote.assetOutAmount),
-            exchangeFee = getFeeRenderer(quote.fee.exchangeFeeAmount),
-            peraFee = getFeeRenderer(quote.fee.peraFeeAmount),
+            peraFee = getPeraFeeRenderer(quote.fee),
             minReceivedAssetAmount = getAmountRenderer(quote.assetOutAmount.amountWithSlippage, quote.assetOutDetail),
             assetInToOutPriceRatio = getAssetInToOutPriceRatio(quote),
             assetOutToInPriceRatio = getAssetOutToInPriceRatio(quote),
@@ -137,10 +136,15 @@ internal class DefaultSwapConfirmationContentMapper @Inject constructor(
         }
     }
 
-    private fun getFeeRenderer(fee: BigDecimal): AmountRenderer {
-        val feeAmount = PeraAmount(fee)
-        val formattedAmount = PlainFormattedAmount.AlgoPlainFormattedAmount(feeAmount)
-        return AmountRenderer(formattedAmount, Plain, prefix = Currency.ALGO.symbol)
+    private fun getPeraFeeRenderer(fee: SwapQuoteV2.SwapFee): AmountRenderer {
+        return when (val type = fee.type) {
+            is SwapQuoteV2.SwapFee.PeraFeeType.Algo -> AmountRenderer(
+                formattedAmount = AlgoPlainFormattedAmount(PeraAmount(fee.peraFeeAmountInAlgo)),
+                type = Plain,
+                prefix = Currency.ALGO.symbol
+            )
+            is SwapQuoteV2.SwapFee.PeraFeeType.Asset -> getAmountRenderer(type.amount, type.assetDetail)
+        }
     }
 
     private companion object {

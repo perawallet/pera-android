@@ -77,7 +77,10 @@ class GetSwapQuoteDetailsUseCaseTest {
         runTest {
             val accountBalance = BigInteger.valueOf(4_664_000) // 4 ALGO + 0.664 ALGO fee padding
             val quote = QUOTE.copy(
-                fee = QUOTE.fee.copy(peraFeeAmount = BigDecimal.ONE),
+                fee = SwapQuoteV2.SwapFee(
+                    peraFeeAmountInAlgo = BigDecimal.ONE,
+                    type = SwapQuoteV2.SwapFee.PeraFeeType.Algo
+                ),
                 assetInDetail = QUOTE.assetInDetail.copy(assetId = ALGO_ID, fractionDecimals = ALGO_DECIMALS),
                 assetInAmount = QUOTE.assetInAmount.copy(amount = BigDecimal.valueOf(2))
             )

@@ -55,7 +55,7 @@ internal class GetSwapQuoteDetailsUseCase @Inject constructor(
                 isAssetInAlgo -> assetInAmount.amount.add(minRequiredBalance)
                 isAssetOutAlgo -> minRequiredBalance.minus(assetOutAmount.amountWithSlippage)
                 else -> minRequiredBalance
-            }.add(fee.peraFeeAmount).add(getSwapFeePadding())
+            }.add(fee.peraFeeAmountInAlgo).add(getSwapFeePadding())
             return requiredBalance <= userAlgoBalance
         }
     }

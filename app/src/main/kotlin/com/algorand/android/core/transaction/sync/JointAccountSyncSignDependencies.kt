@@ -18,7 +18,7 @@ import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDevi
 import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.MarkSignRequestsConfirmed
 
-data class JointAccountSyncSignDependencies(
+class JointAccountSyncSignDependencies(
     val jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
     val signArbitraryDataForSyncRequest: SignArbitraryDataForSyncRequest,
     val syncSignRequestPollingManager: SyncSignRequestPollingManager,

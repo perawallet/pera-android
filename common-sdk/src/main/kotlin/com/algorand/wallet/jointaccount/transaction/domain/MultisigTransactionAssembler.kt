@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.jointaccount.transaction.domain
 
-import android.util.Base64
+import java.util.Base64
 import com.algorand.algosdk.crypto.Address
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
@@ -173,7 +173,7 @@ class MultisigTransactionAssembler @Inject constructor() {
     }
 
     private fun decodeBase64(str: String): ByteArray? {
-        return runCatching { Base64.decode(str, Base64.NO_WRAP) }.getOrNull()
+        return runCatching { Base64.getDecoder().decode(str) }.getOrNull()
             ?.takeIf { it.isNotEmpty() && !it.all { byte -> byte == 0.toByte() } }
     }
 }

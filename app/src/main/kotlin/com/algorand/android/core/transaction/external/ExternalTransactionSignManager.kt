@@ -176,17 +176,13 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     open fun signTransaction(transaction: List<TRANSACTION>) {
         postResult(ExternalTransactionSignResult.Loading)
         this.transaction = transaction
-        val firstAddress = transaction.firstOrNull()?.accountAddress
-        if (firstAddress != null) {
-            currentScope.launch {
-                if (getTransactionSigner(firstAddress) is TransactionSigner.Joint) {
-                    signJointAccountTransaction()
-                } else {
-                    externalTransactionQueuingHelper.initItemsToBeEnqueued(transaction)
-                }
+        currentScope.launch {
+            val firstAddress = transaction.firstOrNull()?.accountAddress
+            if (firstAddress != null && getTransactionSigner(firstAddress) is TransactionSigner.Joint) {
+                signJointAccountTransaction()
+            } else {
+                externalTransactionQueuingHelper.initItemsToBeEnqueued(transaction)
             }
-        } else {
-            externalTransactionQueuingHelper.initItemsToBeEnqueued(transaction)
         }
     }
 

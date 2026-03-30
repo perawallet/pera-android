@@ -48,6 +48,18 @@ internal class InboxCacheManagerImpl @Inject constructor(
     private val triggeredSignRequestIds: MutableSet<String> =
         Collections.newSetFromMap(ConcurrentHashMap())
 
+    private fun trackTriggeredSignRequest(requestId: String) {
+        if (triggeredSignRequestIds.size >= MAX_TRACKED_SIGN_REQUESTS) {
+            triggeredSignRequestIds.iterator().let { iter ->
+                if (iter.hasNext()) {
+                    iter.next()
+                    iter.remove()
+                }
+            }
+        }
+        triggeredSignRequestIds.add(requestId)
+    }
+
     override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {
         initialize()
     }
@@ -118,7 +130,7 @@ internal class InboxCacheManagerImpl @Inject constructor(
             }
             .forEach { request ->
                 val requestId = request.id ?: return@forEach
-                triggeredSignRequestIds.add(requestId)
+                trackTriggeredSignRequest(requestId)
                 syncSignPollingTrigger.onPendingSyncSignRequestDetected(
                     deviceId = deviceId,
                     signRequestId = requestId,
@@ -145,5 +157,6 @@ internal class InboxCacheManagerImpl @Inject constructor(
 
     private companion object {
         const val INBOX_POLL_INTERVAL_MS = 6_000L
+        const val MAX_TRACKED_SIGN_REQUESTS = 500
     }
 }

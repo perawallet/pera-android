@@ -18,16 +18,12 @@ import android.content.pm.ServiceInfo
 import android.os.IBinder
 import androidx.core.app.ServiceCompat
 import com.algorand.android.core.transaction.external.SwapServiceMetadata
-import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.WalletConnectSignResult
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectVersionIdentifier
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
-import com.algorand.android.usecase.SendSignedTransactionUseCase
-import com.algorand.android.utils.DataResource
-import com.algorand.android.utils.flatten
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.logger.PeraErrorLogger
 import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
@@ -35,11 +31,6 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStat
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSyncSignRequestWithSignatures
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.MarkSignRequestsConfirmed
-import com.algorand.wallet.swap.domain.model.SignedSwapTransaction
-import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
-import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
-import com.algorand.wallet.swap.domain.usecase.SetSwapStatusFailed
-import com.algorand.wallet.transaction.domain.model.SignedTransaction
 import com.algorand.wallet.utils.date.TimeProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -49,7 +40,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -81,13 +71,7 @@ class JointAccountSyncSignForegroundService : Service() {
     lateinit var markSignRequestsConfirmed: MarkSignRequestsConfirmed
 
     @Inject
-    lateinit var sendSignedTransactionUseCase: SendSignedTransactionUseCase
-
-    @Inject
-    lateinit var sendSwapTransactions: SendSwapTransactions
-
-    @Inject
-    lateinit var setSwapStatusFailed: SetSwapStatusFailed
+    internal lateinit var algodSubmitter: SyncSignAlgodSubmitter
 
     @Inject
     lateinit var errorLogger: PeraErrorLogger
@@ -182,24 +166,49 @@ class JointAccountSyncSignForegroundService : Service() {
     }
 
     private suspend fun runPollingLoop(session: SyncSignSession) {
+        val startTimeMs = timeProvider.getCurrentTimeMillis()
+        var consecutiveErrors = 0
         while (serviceScope.isActive) {
+            val elapsedMs = timeProvider.getCurrentTimeMillis() - startTimeMs
+            if (elapsedMs >= MAX_POLLING_DURATION_MS) {
+                errorLogger.logError(
+                    "SyncSign: Polling timed out after ${elapsedMs}ms for signRequestId=${session.signRequestId}"
+                )
+                rejectWalletConnectRequestIfNeeded(session)
+                syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Expired)
+                dismissSession(session)
+                return
+            }
             val result = getSyncSignRequestWithSignatures(
                 deviceId = session.deviceId,
                 signRequestId = session.signRequestId
             )
             val shouldStop = when (result) {
-                is PeraResult.Success -> handleSuccessResult(session, result.data)
-                is PeraResult.Error -> handleErrorResult(session, result)
+                is PeraResult.Success -> {
+                    consecutiveErrors = 0
+                    handleSuccessResult(session, result.data)
+                }
+
+                is PeraResult.Error -> {
+                    consecutiveErrors++
+                    handleErrorResult(session, result, consecutiveErrors)
+                }
             }
             if (shouldStop) return
             delay(SyncSignRequestPollingManager.SYNC_POLL_INTERVAL_MS)
         }
     }
 
-    private suspend fun handleErrorResult(session: SyncSignSession, result: PeraResult.Error): Boolean {
+    private suspend fun handleErrorResult(
+        session: SyncSignSession,
+        result: PeraResult.Error,
+        consecutiveErrors: Int
+    ): Boolean {
+        if (consecutiveErrors < MAX_CONSECUTIVE_ERRORS) return false
         errorLogger.logError(
             IllegalStateException(
-                "SyncSign: Polling failed for signRequestId=${session.signRequestId}",
+                "SyncSign: Polling failed after $consecutiveErrors consecutive errors " +
+                    "for signRequestId=${session.signRequestId}",
                 result.exception
             )
         )
@@ -372,7 +381,7 @@ class JointAccountSyncSignForegroundService : Service() {
         signRequest: SignRequestWithFullSignature,
         assembledGroups: List<List<ByteArray>>
     ): Boolean {
-        val txnId = submitAssembledTransactionsToAlgod(session, assembledGroups)
+        val txnId = algodSubmitter.submit(session, assembledGroups)
         if (txnId.isNullOrBlank()) {
             errorLogger.logError(
                 "SyncSign: Algod submission returned empty txnId for signRequestId=${session.signRequestId}"
@@ -390,100 +399,6 @@ class JointAccountSyncSignForegroundService : Service() {
             )
         )
         return true
-    }
-
-    private suspend fun submitAssembledTransactionsToAlgod(
-        session: SyncSignSession,
-        assembledGroups: List<List<ByteArray>>
-    ): String? = withContext(Dispatchers.IO) {
-        when (session.algodSubmissionKind) {
-            JointSyncAlgodSubmissionKind.NONE -> return@withContext null
-            JointSyncAlgodSubmissionKind.SWAP -> submitSwapToAlgod(session, assembledGroups)
-            JointSyncAlgodSubmissionKind.ARC59_SEND,
-            JointSyncAlgodSubmissionKind.ARC59_CLAIM -> submitArc59ToAlgod(session, assembledGroups)
-        }
-    }
-
-    private suspend fun submitSwapToAlgod(
-        session: SyncSignSession,
-        assembledGroups: List<List<ByteArray>>
-    ): String? {
-        if (session.swapId == SwapServiceMetadata.INVALID_SWAP_ID) return null
-        val flattenedPerGroup = assembledGroups.map { it.flatten() }
-        val signedSwapTxns = buildSignedSwapTransactions(session.swapTxnTypes, flattenedPerGroup)
-        if (signedSwapTxns == null) {
-            errorLogger.logError("SyncSign: Swap txn type/count mismatch")
-            setSwapStatusFailed(session.swapId, SwapStatusFailureReason.OTHER)
-            return null
-        }
-        return when (val result = sendSwapTransactions(session.swapId, signedSwapTxns)) {
-            is PeraResult.Success -> result.data.firstOrNull()?.value
-            is PeraResult.Error -> {
-                errorLogger.logError(
-                    IllegalStateException(
-                        "SyncSign: Swap send failed for swapId=${session.swapId}",
-                        result.exception
-                    )
-                )
-                setSwapStatusFailed(session.swapId, SwapStatusFailureReason.OTHER)
-                null
-            }
-        }
-    }
-
-    private suspend fun submitArc59ToAlgod(
-        session: SyncSignSession,
-        assembledGroups: List<List<ByteArray>>
-    ): String? {
-        val flattened = assembledGroups.flatMap { it }.flatten()
-        val detail: SignedTransactionDetail = when (session.algodSubmissionKind) {
-            JointSyncAlgodSubmissionKind.ARC59_SEND -> SignedTransactionDetail.Arc59Send(flattened)
-            JointSyncAlgodSubmissionKind.ARC59_CLAIM -> SignedTransactionDetail.Arc59ClaimOrReject(flattened)
-            else -> return null
-        }
-        var txnId: String? = null
-        sendSignedTransactionUseCase.sendSignedTransaction(detail).collect { resource ->
-            when (resource) {
-                is DataResource.Success -> {
-                    txnId = resource.data.takeIf { it.isNotBlank() }
-                }
-                is DataResource.Error -> {
-                    val ex = resource.exception
-                        ?: IllegalStateException("SyncSign: ARC59 send failed for ${session.signRequestId}")
-                    errorLogger.logError(ex)
-                    txnId = null
-                }
-                else -> Unit
-            }
-        }
-        return txnId
-    }
-
-    private fun buildSignedSwapTransactions(
-        types: List<String>,
-        allSignedBytes: List<ByteArray>
-    ): List<SignedSwapTransaction>? {
-        if (types.size != allSignedBytes.size) return null
-        val out = mutableListOf<SignedSwapTransaction>()
-        for (i in types.indices) {
-            val type = parseSwapTxnType(types[i]) ?: return null
-            out.add(
-                SignedSwapTransaction(
-                    signedTransaction = SignedTransaction(allSignedBytes[i]),
-                    type = type
-                )
-            )
-        }
-        return out
-    }
-
-    private fun parseSwapTxnType(name: String): SignedSwapTransaction.Type? {
-        return when (name) {
-            SwapServiceMetadata.TXN_TYPE_OPTIN -> SignedSwapTransaction.Type.OptIn
-            SwapServiceMetadata.TXN_TYPE_SWAP -> SignedSwapTransaction.Type.Swap
-            SwapServiceMetadata.TXN_TYPE_PERA_FEE -> SignedSwapTransaction.Type.PeraFee
-            else -> null
-        }
     }
 
     private fun dismissSession(session: SyncSignSession) {
@@ -523,6 +438,8 @@ class JointAccountSyncSignForegroundService : Service() {
     companion object {
         private const val NOTIFICATION_ID_BASE = 9001
         private const val MAX_NOTIFICATION_RANGE = 1000
+        private const val MAX_CONSECUTIVE_ERRORS = 3
+        private const val MAX_POLLING_DURATION_MS = 10 * 60 * 1000L
         const val EXTRA_SIGN_REQUEST_ID = "sign_request_id"
         const val EXTRA_DEVICE_ID = "device_id"
         const val EXTRA_JOINT_ACCOUNT_ADDRESS = "joint_account_address"

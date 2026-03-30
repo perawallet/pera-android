@@ -22,7 +22,6 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountProposerAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
-import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResponseInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResult
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestType
@@ -165,7 +164,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
         val result = proposeJointSignRequest(inputData)
         if (result !is PeraResult.Success) return JointSignResult.Error
 
-        val signRequestId = (result.data as? JointSignRequest)?.id
+        val signRequestId = result.data.id
             ?.takeIf { it.isNotBlank() } ?: return JointSignResult.Error
 
         autoSignWithLocalAccounts(
@@ -197,7 +196,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
         val result = proposeJointSignRequest(inputData)
         if (result !is PeraResult.Success) return JointSignResult.Error
 
-        val signRequestId = (result.data as? JointSignRequest)?.id
+        val signRequestId = result.data.id
             ?.takeIf { it.isNotBlank() } ?: return JointSignResult.Error
 
         autoSignWithLocalAccounts(

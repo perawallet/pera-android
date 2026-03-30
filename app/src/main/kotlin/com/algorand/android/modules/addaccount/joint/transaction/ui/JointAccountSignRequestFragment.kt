@@ -18,13 +18,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewEvent
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.listenToNavigationResult
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,6 +54,7 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
+        initPendingSignaturesResultListener()
     }
 
     private fun initObservers() {
@@ -58,6 +62,21 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
             flow = viewModel.viewEvent,
             collection = ::handleViewEvent
         )
+    }
+
+    private fun initPendingSignaturesResultListener() {
+        listenToNavigationResult<PendingSignaturesDismissResult>(
+            PendingSignaturesBottomSheet.DISMISS_RESULT_KEY
+        ) { result ->
+            when (result) {
+                PendingSignaturesDismissResult.COMPLETED,
+                PendingSignaturesDismissResult.CANCELED -> navBack()
+
+                PendingSignaturesDismissResult.DISMISSED -> {
+                    if (viewModel.shouldNavigateHomeOnDismiss()) navigateToHome()
+                }
+            }
+        }
     }
 
     private fun handleViewEvent(event: ViewEvent) {
@@ -70,7 +89,7 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
 
             is ViewEvent.ShowError -> showGlobalError(getString(event.messageResId))
             is ViewEvent.ShowPendingSignaturesBottomSheet -> {
-                navToPendingSignaturesBottomSheet(event.signRequestId, event.isDismissable)
+                navToPendingSignaturesBottomSheet(event.signRequestId)
             }
 
             is ViewEvent.StartLedgerSigning -> {
@@ -100,10 +119,18 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
     }
 
     override fun onNavigateToHome() {
-        navBack()
+        navigateToHome()
     }
 
-    private fun navToPendingSignaturesBottomSheet(signRequestId: String, isDismissable: Boolean) {
-        nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(signRequestId, isDismissable))
+    private fun navigateToHome() {
+        nav(MainNavigationDirections.actionGlobalMainNavigation())
+    }
+
+    private fun navToPendingSignaturesBottomSheet(signRequestId: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                signRequestId = signRequestId
+            )
+        )
     }
 }

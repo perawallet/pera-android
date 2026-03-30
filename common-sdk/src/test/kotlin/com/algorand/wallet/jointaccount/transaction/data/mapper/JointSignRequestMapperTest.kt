@@ -20,6 +20,7 @@ import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransa
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponseItem
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestType
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -84,7 +85,7 @@ internal class JointSignRequestMapperTest {
         val result = mapper.mapToJointSignRequest(response)
 
         assertEquals(TEST_PROPOSER_ADDRESS, result?.proposerAddress)
-        assertEquals(TEST_TYPE, result?.type)
+        assertEquals(SignRequestType.fromValue(TEST_TYPE), result?.type)
     }
 
     @Test
@@ -285,7 +286,7 @@ internal class JointSignRequestMapperTest {
     private companion object {
         const val TEST_ID = "123"
         const val TEST_PROPOSER_ADDRESS = "PROPOSER"
-        const val TEST_TYPE = "payment"
+        const val TEST_TYPE = "sync"
         const val TEST_STATUS_PENDING = "pending"
         const val TEST_STATUS_READY = "ready"
         const val TEST_STATUS_CONFIRMED = "confirmed"

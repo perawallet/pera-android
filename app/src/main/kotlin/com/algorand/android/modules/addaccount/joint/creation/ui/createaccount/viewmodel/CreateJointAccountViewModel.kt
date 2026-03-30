@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
+import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.foundation.cache.PersistentCache
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -24,12 +25,14 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateJointAccountViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
+    private val contactRepository: ContactRepository,
     persistentCacheProvider: PersistentCacheProvider,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
@@ -71,14 +74,24 @@ class CreateJointAccountViewModel @Inject constructor(
     fun updateAccountNameFromResult(name: String) {
         val index = editingAccountIndex ?: return
         if (name.isBlank()) return
+        var addressToUpdate: String? = null
         stateDelegate.updateState { currentState ->
             val content = currentState as? ViewState.Content ?: return@updateState currentState
             if (index !in content.selectedAccounts.indices) return@updateState currentState
             val updatedList = content.selectedAccounts.toMutableList()
             val item = updatedList[index]
+            if (item.isContact) {
+                addressToUpdate = item.accountDisplayName.accountAddress
+            }
             val updatedDisplayName = item.accountDisplayName.copy(primaryDisplayName = name)
             updatedList[index] = item.copy(accountDisplayName = updatedDisplayName)
             content.copy(selectedAccounts = updatedList)
+        }
+        addressToUpdate?.let { address ->
+            viewModelScope.launch {
+                val contact = contactRepository.getContactByAddress(address) ?: return@launch
+                contactRepository.updateContact(contact.copy(name = name))
+            }
         }
         editingAccountIndex = null
     }

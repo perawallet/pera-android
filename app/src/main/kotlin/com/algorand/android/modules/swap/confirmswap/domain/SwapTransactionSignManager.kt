@@ -12,9 +12,10 @@
 
 package com.algorand.android.modules.swap.confirmswap.domain
 
-import android.util.Log
 import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
+import com.algorand.android.core.transaction.external.SwapServiceMetadata
 import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
+import com.algorand.android.core.transaction.sync.JointSyncAlgodSubmissionKind
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.ledger.operations.ExternalTransaction
@@ -59,7 +60,11 @@ class SwapTransactionSignManager @Inject constructor(
         when (it) {
             is ExternalTransactionSignResult.Success<*> -> {
                 swapQuoteTransaction?.run {
-                    ExternalTransactionSignResult.Success(this)
+                    ExternalTransactionSignResult.Success(
+                        signedTransaction = this,
+                        signedTransactionsByteArray = it.signedTransactionsByteArray,
+                        algodTransactionIdIfAlreadySubmitted = it.algodTransactionIdIfAlreadySubmitted
+                    )
                 } ?: it
             }
 
@@ -68,17 +73,12 @@ class SwapTransactionSignManager @Inject constructor(
     }
 
     private var swapQuoteTransaction: List<SwapQuoteTransaction>? = null
+    private var pendingSwapIdForSyncService: Long = SwapServiceMetadata.INVALID_SWAP_ID
 
-    fun signSwapQuoteTransaction(swapQuoteTransaction: List<SwapQuoteTransaction>) {
+    fun signSwapQuoteTransaction(swapQuoteTransaction: List<SwapQuoteTransaction>, swapId: Long) {
         this.swapQuoteTransaction = swapQuoteTransaction
+        this.pendingSwapIdForSyncService = swapId
         val unsignedTransactionList = swapQuoteTransaction.map { it.getTransactionsThatNeedsToBeSigned() }.flatten()
-        Log.d(
-            TAG,
-            "signSwapQuote: groups=${swapQuoteTransaction.size}, " +
-                "totalUnsigned=${unsignedTransactionList.size}, " +
-                "allTxnCounts=${swapQuoteTransaction.map { it.unsignedTransactions.size }}, " +
-                "needSignCounts=${swapQuoteTransaction.map { it.getTransactionsThatNeedsToBeSigned().size }}"
-        )
         signTransaction(unsignedTransactionList)
     }
 
@@ -92,48 +92,28 @@ class SwapTransactionSignManager @Inject constructor(
     ): List<List<ByteArray>>? {
         val quoteTransactions = swapQuoteTransaction
         if (quoteTransactions == null) {
-            Log.e(TAG, "buildRawBytesGroups: swapQuoteTransaction is null")
             return null
         }
-        Log.d(TAG, "buildRawBytesGroups: quoteGroups=${quoteTransactions.size}")
         val result = mutableListOf<List<ByteArray>>()
-        for ((gIdx, group) in quoteTransactions.withIndex()) {
+        for (group in quoteTransactions) {
             val allTxns = group.unsignedTransactions
-            Log.d(
-                TAG,
-                "buildRawBytesGroups: group[$gIdx] allTxns=${allTxns.size}, " +
-                    "hasMsgPack=${allTxns.map { it.transactionMsgPack != null }}"
-            )
             val allRawBytes = mutableListOf<ByteArray>()
-            for ((tIdx, txData) in allTxns.withIndex()) {
+            for (txData in allTxns) {
                 val bytes = txData.transactionMsgPack?.decodeBase64()
                 if (bytes == null) {
-                    Log.e(TAG, "buildRawBytesGroups: FAIL group[$gIdx] txn[$tIdx] decode null")
                     return null
                 }
                 allRawBytes.add(bytes)
             }
             if (allRawBytes.isEmpty()) {
-                Log.e(TAG, "buildRawBytesGroups: group[$gIdx] empty after decode")
                 continue
             }
             result.add(allRawBytes)
         }
         if (result.isEmpty()) {
-            Log.e(TAG, "buildRawBytesGroups: no groups produced")
             return null
         }
-        Log.d(TAG, "buildRawBytesGroups: result groups=${result.map { it.size }}")
         return result
-    }
-
-    override fun onJointSignedTransactionsAssembled(
-        transactions: List<UnsignedSwapSingleTransactionData>,
-        signedBytesList: List<ByteArray>
-    ) {
-        transactions.forEachIndexed { index, transaction ->
-            insertSignedSwapTransaction(transaction, signedBytesList[index])
-        }
     }
 
     private fun insertSignedSwapTransaction(transaction: ExternalTransaction, signedTransaction: ByteArray?) {
@@ -150,7 +130,21 @@ class SwapTransactionSignManager @Inject constructor(
         }
     }
 
-    companion object {
-        private const val TAG = "JOINT_SIGN_DEBUG"
+    override fun jointSyncAlgodSubmissionKind(): JointSyncAlgodSubmissionKind =
+        JointSyncAlgodSubmissionKind.SWAP
+
+    override fun getSwapMetadataForService(): SwapServiceMetadata? {
+        val swapId = pendingSwapIdForSyncService
+        val quotes = swapQuoteTransaction ?: return null
+        if (swapId == SwapServiceMetadata.INVALID_SWAP_ID) return null
+        val types = quotes.map { quote ->
+            when (quote) {
+                is SwapQuoteTransaction.OptInTransaction -> SwapServiceMetadata.TXN_TYPE_OPTIN
+                is SwapQuoteTransaction.SwapTransaction -> SwapServiceMetadata.TXN_TYPE_SWAP
+                is SwapQuoteTransaction.PeraFeeTransaction -> SwapServiceMetadata.TXN_TYPE_PERA_FEE
+                is SwapQuoteTransaction.InvalidTransaction -> return null
+            }
+        }
+        return SwapServiceMetadata(swapId = swapId, txnTypes = types)
     }
 }

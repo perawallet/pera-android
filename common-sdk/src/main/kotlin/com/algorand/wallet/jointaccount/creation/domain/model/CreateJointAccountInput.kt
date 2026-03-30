@@ -15,5 +15,6 @@ package com.algorand.wallet.jointaccount.creation.domain.model
 data class CreateJointAccountInput(
     val participantAddresses: List<String>,
     val threshold: Int,
-    val version: Int
+    val version: Int,
+    val deviceId: String
 )

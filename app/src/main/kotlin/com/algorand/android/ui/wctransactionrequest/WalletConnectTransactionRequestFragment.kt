@@ -50,6 +50,8 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.TransactionRequestAction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSignResult
+import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesBottomSheet
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.ui.common.walletconnect.WalletConnectAppPreviewCardView
 import com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionRequestFragmentDirections.Companion.actionWalletConnectTransactionRequestFragmentToSecurityNavigation
@@ -60,6 +62,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.isBluetoothEnabled
+import com.algorand.android.utils.listenToNavigationResult
 import com.algorand.android.utils.navigateBackSafe
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.sendErrorLog
@@ -143,7 +146,9 @@ class WalletConnectTransactionRequestFragment :
     private val navBackEventCollector: suspend (
         Event<Unit>?
     ) -> Unit = { event ->
-        event?.consume()?.let { navBack() }
+        event?.consume()?.let {
+            nav(WalletConnectTransactionRequestNavigationDirections.actionWalletConnectTransactionRequestNavigationPop())
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -350,12 +355,26 @@ class WalletConnectTransactionRequestFragment :
             }
 
             is WalletConnectSignResult.LedgerScanFailed -> showLedgerNotFoundDialog()
-
-            is WalletConnectSignResult.WaitingForJointSignatures -> showPendingSignatures(result)
-            is WalletConnectSignResult.JointSignRequestRejected -> {
-                showSigningError(result.error)
-                rejectRequest()
+            is WalletConnectSignResult.WaitingForJointSignatures -> {
+                hideLoading()
+                val isInAppBrowser = transactionRequestViewModel.isInAppBrowserSession
+                listenToNavigationResult<PendingSignaturesDismissResult>(
+                    PendingSignaturesBottomSheet.DISMISS_RESULT_KEY
+                ) { dismissResult ->
+                    when (dismissResult) {
+                        PendingSignaturesDismissResult.CANCELED -> rejectRequest()
+                        PendingSignaturesDismissResult.COMPLETED,
+                        PendingSignaturesDismissResult.DISMISSED -> navBack()
+                    }
+                }
+                nav(
+                    HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                        signRequestId = result.signRequestId,
+                        hideCloseForNow = isInAppBrowser
+                    )
+                )
             }
+
             else -> {
                 sendErrorLog("Unhandled else case in WalletConnectTransactionRequestFragment.handleSignResult")
             }
@@ -397,15 +416,6 @@ class WalletConnectTransactionRequestFragment :
 
     private fun showLoading() {
         binding.progressBar.root.show()
-    }
-
-    private fun showPendingSignatures(result: WalletConnectSignResult.WaitingForJointSignatures) {
-        nav(
-            HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
-                result.signRequestId,
-                isDismissable = false
-            )
-        )
     }
 
     private fun showSigningError(error: WalletConnectSignResult.Error) {

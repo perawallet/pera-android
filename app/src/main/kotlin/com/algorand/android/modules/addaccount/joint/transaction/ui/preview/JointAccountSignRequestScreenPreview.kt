@@ -172,12 +172,10 @@ private fun TransferToSectionPreview() {
             style = PeraTheme.typography.body.regular.sans,
             color = PeraTheme.colors.text.main
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(onClick = {}, modifier = Modifier.size(16.dp)) {
+        Spacer(modifier = Modifier.width(4.dp))
+        IconButton(onClick = {}) {
             Icon(
-                modifier = Modifier
-                    .size(16.dp)
-                    .padding(1.dp),
+                modifier = Modifier.size(16.dp),
                 painter = painterResource(R.drawable.ic_copy),
                 contentDescription = stringResource(R.string.copy),
                 tint = PeraTheme.colors.text.gray

@@ -13,8 +13,8 @@
 package com.algorand.android.core.transaction.sync
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSyncSignRequestWithSignatures
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -35,18 +35,16 @@ class SyncSignRequestPollingManager @Inject constructor(
 
     fun startPolling(
         scope: CoroutineScope,
-        signRequestId: String,
-        proposerAddress: String,
-        arbitraryDataSignOfId: String
+        deviceId: String,
+        signRequestId: String
     ) {
         stopPolling()
         _stateFlow.value = SyncSignRequestPollingState.Polling
         pollingJob = scope.launch {
             while (true) {
                 val result = getSyncSignRequestWithSignatures(
-                    signRequestId = signRequestId,
-                    proposerAddress = proposerAddress,
-                    arbitraryDataSignOfId = arbitraryDataSignOfId
+                    deviceId = deviceId,
+                    signRequestId = signRequestId
                 )
                 if (processPollResult(result)) return@launch
                 delay(SYNC_POLL_INTERVAL_MS)
@@ -72,16 +70,19 @@ class SyncSignRequestPollingManager @Inject constructor(
                 stopPolling()
                 true
             }
+
             SignRequestStatus.DECLINED -> {
                 _stateFlow.value = SyncSignRequestPollingState.Declined
                 stopPolling()
                 true
             }
+
             SignRequestStatus.EXPIRED -> {
                 _stateFlow.value = SyncSignRequestPollingState.Expired
                 stopPolling()
                 true
             }
+
             SignRequestStatus.FAILED -> {
                 _stateFlow.value = SyncSignRequestPollingState.Failed(
                     SyncSignRequestFailReason.Unknown(signRequest.failReasonDisplay)
@@ -89,9 +90,16 @@ class SyncSignRequestPollingManager @Inject constructor(
                 stopPolling()
                 true
             }
-            SignRequestStatus.CONFIRMED,
+
+            SignRequestStatus.CONFIRMED -> {
+                _stateFlow.value = SyncSignRequestPollingState.SignaturesReady(signRequest)
+                stopPolling()
+                true
+            }
+
             SignRequestStatus.PENDING,
             SignRequestStatus.SUBMITTING -> false
+
             null -> {
                 _stateFlow.value = SyncSignRequestPollingState.Failed(
                     SyncSignRequestFailReason.SignRequestNotFound
@@ -115,7 +123,7 @@ class SyncSignRequestPollingManager @Inject constructor(
         _stateFlow.value = SyncSignRequestPollingState.Idle
     }
 
-    private companion object {
+    companion object {
         const val SYNC_POLL_INTERVAL_MS = 3_000L
     }
 }

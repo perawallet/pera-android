@@ -12,7 +12,6 @@
 
 package com.algorand.android.core
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
@@ -31,7 +30,6 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
 
     fun logEvent(eventName: String) {
         if (eventTracker == null) {
-            Log.e("PeraEventTracker", "Event tracker not initialized. Event '$eventName' not logged.")
             return
         }
 
@@ -42,7 +40,6 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
 
     fun logEvent(eventName: String, params: Map<String, Any>) {
         if (eventTracker == null) {
-            Log.e("PeraEventTracker", "Event tracker not initialized. Event '$eventName' with params not logged.")
             return
         }
 

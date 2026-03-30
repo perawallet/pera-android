@@ -17,8 +17,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWith
 
 fun interface GetSyncSignRequestWithSignatures {
     suspend operator fun invoke(
-        signRequestId: String,
-        proposerAddress: String,
-        arbitraryDataSignOfId: String
+        deviceId: String,
+        signRequestId: String
     ): PeraResult<SignRequestWithFullSignature>
 }

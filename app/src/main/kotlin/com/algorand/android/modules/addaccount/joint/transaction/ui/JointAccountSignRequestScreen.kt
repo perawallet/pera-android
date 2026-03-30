@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.addaccount.joint.transaction.ui
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,10 +42,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewState
@@ -51,6 +60,9 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.compose.widget.VerificationTierIcon
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirm
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirmButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
@@ -131,14 +143,26 @@ private fun TransactionContent(
         ) {
             ToolbarSection(preview = preview, listener = listener)
             Spacer(modifier = Modifier.height(48.dp))
-            JointAccountIconSection()
-            Spacer(modifier = Modifier.height(24.dp))
-            TransferToSection(
-                recipientAddress = preview.recipientShortAddress,
-                onCopyClick = listener::onCopyAddressClick
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            AmountSection(preview = preview)
+            when (val center = preview.centerPreview) {
+                is JointAccountSignRequestCenterPreview.Transfer -> {
+                    JointAccountIconSection()
+                    Spacer(modifier = Modifier.height(24.dp))
+                    TransferToSection(
+                        recipientAddress = center.recipientShortAddress,
+                        onCopyClick = listener::onCopyAddressClick
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    AmountSection(amount = center.amount, convertedAmount = center.convertedAmount)
+                }
+
+                is JointAccountSignRequestCenterPreview.AssetAction -> {
+                    AssetActionCenterSection(
+                        center = center,
+                        showCopy = preview.addressForClipboard.isNotBlank(),
+                        onCopyClick = listener::onCopyAddressClick
+                    )
+                }
+            }
         }
         BottomSection(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -148,6 +172,39 @@ private fun TransactionContent(
             listener = listener
         )
     }
+}
+
+@Composable
+private fun AssetActionCenterSection(
+    center: JointAccountSignRequestCenterPreview.AssetAction,
+    showCopy: Boolean,
+    onCopyClick: () -> Unit
+) {
+    val (iconRes, prefixRes) = when (center.type) {
+        JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_IN ->
+            R.drawable.ic_buy_sell to R.string.joint_sign_request_opt_in_from
+
+        JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_OUT ->
+            R.drawable.ic_buy_sell to R.string.joint_sign_request_opt_out_from
+    }
+    AssetActionIconSection(iconRes = iconRes, contentDescription = stringResource(prefixRes))
+    Spacer(modifier = Modifier.height(24.dp))
+    if (center.shortAddress.isNotBlank()) {
+        OptRequestFromSection(
+            prefixResId = prefixRes,
+            shortAddress = center.shortAddress,
+            showCopy = showCopy,
+            onCopyClick = onCopyClick
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+    }
+    AssetDetailsSection(
+        assetIcon = center.assetIcon,
+        assetName = center.assetName,
+        assetUnitName = center.assetUnitName,
+        assetIdText = center.assetIdText,
+        verificationTier = center.verificationTier
+    )
 }
 
 @Composable
@@ -199,8 +256,138 @@ private fun JointAccountIconSection() {
             Icon(
                 modifier = Modifier.size(48.dp),
                 painter = painterResource(R.drawable.ic_joint),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.joint_account),
                 tint = PeraTheme.colors.text.gray
+            )
+        }
+    }
+}
+
+@Composable
+private fun AssetActionIconSection(@DrawableRes iconRes: Int, contentDescription: String?) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            modifier = Modifier.size(80.dp),
+            painter = painterResource(iconRes),
+            contentDescription = contentDescription,
+            tint = PeraTheme.colors.text.gray
+        )
+    }
+}
+
+@Composable
+private fun OptRequestFromSection(
+    @StringRes prefixResId: Int,
+    shortAddress: String,
+    showCopy: Boolean,
+    onCopyClick: () -> Unit
+) {
+    val prefix = stringResource(prefixResId)
+    val grayColor = PeraTheme.colors.text.gray
+    val mainColor = PeraTheme.colors.text.main
+    val styledText = remember(prefix, shortAddress, grayColor, mainColor) {
+        buildAnnotatedString {
+            withStyle(SpanStyle(color = grayColor)) {
+                append(prefix)
+                append(" ")
+            }
+            withStyle(SpanStyle(color = mainColor, fontWeight = FontWeight.Medium)) {
+                append(shortAddress)
+            }
+        }
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = styledText,
+            style = PeraTheme.typography.body.regular.sans,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (showCopy) {
+            Spacer(modifier = Modifier.width(4.dp))
+            IconButton(onClick = onCopyClick) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    painter = painterResource(R.drawable.ic_copy),
+                    contentDescription = stringResource(R.string.copy),
+                    tint = PeraTheme.colors.text.gray
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AssetDetailsSection(
+    assetIcon: AssetIconDrawable,
+    assetName: String,
+    assetUnitName: String,
+    assetIdText: String,
+    verificationTier: VerificationTierConfiguration
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            AssetIcon(
+                modifier = Modifier.size(32.dp),
+                drawable = assetIcon,
+                shape = CircleShape
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = assetName,
+                style = PeraTheme.typography.title.regular.sansMedium,
+                color = PeraTheme.colors.text.main,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = assetUnitName,
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (verificationTier.drawableResId != null) {
+                Spacer(modifier = Modifier.width(4.dp))
+                VerificationTierIcon(
+                    modifier = Modifier.size(16.dp),
+                    verificationTier = verificationTier
+                )
+            }
+            Text(
+                text = " \u00B7 ",
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray
+            )
+            Text(
+                text = assetIdText,
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -220,12 +407,10 @@ private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit)
             style = PeraTheme.typography.body.regular.sans,
             color = PeraTheme.colors.text.main
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(onClick = onCopyClick, modifier = Modifier.size(16.dp)) {
+        Spacer(modifier = Modifier.width(4.dp))
+        IconButton(onClick = onCopyClick) {
             Icon(
-                modifier = Modifier
-                    .size(16.dp)
-                    .padding(1.dp),
+                modifier = Modifier.size(16.dp),
                 painter = painterResource(R.drawable.ic_copy),
                 contentDescription = stringResource(R.string.copy),
                 tint = PeraTheme.colors.text.gray
@@ -235,16 +420,16 @@ private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit)
 }
 
 @Composable
-private fun AmountSection(preview: JointAccountTransactionViewState) {
+private fun AmountSection(amount: String, convertedAmount: String) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = preview.amount,
+            text = amount,
             style = PeraTheme.typography.title.regular.sansMedium,
             color = PeraTheme.colors.text.main
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = preview.convertedAmount,
+            text = convertedAmount,
             style = PeraTheme.typography.body.regular.sans,
             color = PeraTheme.colors.text.main,
             textAlign = TextAlign.Center

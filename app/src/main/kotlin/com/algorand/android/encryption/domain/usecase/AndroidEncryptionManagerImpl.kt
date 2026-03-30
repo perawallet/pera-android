@@ -15,7 +15,6 @@ package com.algorand.android.encryption.domain.usecase
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.util.Log
 import com.algorand.wallet.foundation.PeraResult
 import com.google.crypto.tink.Aead
 import com.google.crypto.tink.KeyTemplates
@@ -57,8 +56,8 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
             try {
                 // Clean up the test key if it was created
                 cleanUpStrongBoxTestAlias()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error cleaning up test key", e)
+            } catch (_: Exception) {
+                // Cleanup failure is non-critical; test alias may not exist
             }
         }
     }
@@ -90,7 +89,6 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
             val keyStore = getKeyStore()
             val originalKeyExists = keyStore.containsAlias(KEY_ALIAS)
             if (!originalKeyExists) {
-                Log.d(TAG, "No key to migrate to StrongBox")
                 return PeraResult.Success(false)
             }
 
@@ -104,7 +102,6 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
 
             return PeraResult.Success(false)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to migrate to StrongBox", e)
             return PeraResult.Error(e)
         }
     }
@@ -114,7 +111,6 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
         return try {
             buildAead()
         } catch (e: Exception) {
-            Log.e(TAG, "Keystore key is invalid, clearing and re-creating", e)
             clearCorruptedKeystoreData()
             buildAead()
         }
@@ -136,8 +132,8 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
             if (keyStore.containsAlias(TINK_KEYSTORE_ALIAS)) {
                 keyStore.deleteEntry(TINK_KEYSTORE_ALIAS)
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to delete corrupted keystore entry", e)
+        } catch (_: Exception) {
+            // Keystore entry may already be deleted or corrupted beyond recovery
         }
         context.getSharedPreferences(TINK_ENCRYPTED_PREF_NAME, Context.MODE_PRIVATE)
             .edit()
@@ -165,13 +161,10 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
                 // Try to create StrongBox-backed key first
                 createKey(keyGenerator, STRONG_BOX_ALIAS, useStrongBox = true)
                 saveStrongBoxUsedCheck.invoke(true)
-                Log.d(TAG, "StrongBox key generated successfully")
             } catch (e: java.security.ProviderException) {
                 // Fall back to software-backed key
-                Log.d(TAG, "StrongBox not available, falling back to software-backed key", e)
                 createKey(keyGenerator, KEY_ALIAS, useStrongBox = false)
                 saveStrongBoxUsedCheck.invoke(false)
-                Log.d(TAG, "Software-backed key generated successfully")
             }
         }
     }
@@ -214,6 +207,5 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
         const val TINK_KEYSET_HANDLE = "ALGORAND_KEYSET"
         const val TINK_ENCRYPTED_PREF_NAME = "ALGORAND_ENCR_ACCOUNTS"
         const val TINK_KEY_TEMPLATE = "AES256_GCM"
-        val TAG: String = AndroidEncryptionManager::class.java.simpleName
     }
 }

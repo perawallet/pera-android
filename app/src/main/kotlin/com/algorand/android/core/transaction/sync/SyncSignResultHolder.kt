@@ -35,7 +35,11 @@ class SyncSignResultHolder @Inject constructor() {
     fun consumeResult(signRequestId: String): SyncSignResult? = pendingResults.remove(signRequestId)
 
     sealed interface SyncSignResult {
-        data class SignaturesReady(val signRequest: SignRequestWithFullSignature) : SyncSignResult
+        data class SignaturesReady(
+            val signRequest: SignRequestWithFullSignature,
+            val assembledTransactionBytes: List<ByteArray> = emptyList(),
+            val algodTransactionIdIfAlreadySubmitted: String? = null
+        ) : SyncSignResult
         data object Failed : SyncSignResult
         data object Expired : SyncSignResult
         data object Declined : SyncSignResult

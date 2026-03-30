@@ -80,9 +80,8 @@ class JointAccountDetailViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Content> { contentState ->
             if (contentState.threshold > 0 && contentState.participants.isNotEmpty()) {
                 actionJob = viewModelScope.launch {
-                    processor.deleteInboxNotification(accountAddress)
-
                     if (processor.isJointAccountExists(accountAddress)) {
+                        processor.deleteInboxNotification(accountAddress)
                         eventDelegate.sendEvent(ViewEvent.NavigateBack)
                     } else {
                         val participantAddresses = contentState.participants.map { it.address }

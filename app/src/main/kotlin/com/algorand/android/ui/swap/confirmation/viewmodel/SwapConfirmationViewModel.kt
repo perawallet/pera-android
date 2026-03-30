@@ -119,7 +119,7 @@ class SwapConfirmationViewModel @Inject constructor(
     }
 
     private suspend fun signTransactions(transactions: SwapQuoteTransactions) {
-        swapTransactionSignManager.signSwapQuoteTransaction(transactions.transactions)
+        swapTransactionSignManager.signSwapQuoteTransaction(transactions.transactions, transactions.swapId)
         swapTransactionSignManager.swapTransactionSignResultFlow.collectLatest { result ->
             when (result) {
                 is Success<*> -> sendSignTransactions(transactions, result)
@@ -171,6 +171,12 @@ class SwapConfirmationViewModel @Inject constructor(
     private suspend fun sendSignTransactions(transactions: SwapQuoteTransactions, result: Success<*>) {
         stateDelegate.onState<ViewState.Content> { content ->
             eventDelegate.sendEvent(ViewEvent.HideLedgerWaitingForApprovalDialog)
+            val alreadySubmittedId = result.algodTransactionIdIfAlreadySubmitted
+            if (!alreadySubmittedId.isNullOrBlank()) {
+                setLastUsedSwapAddress(content.accountDisplayName.accountAddress)
+                updateUiToSendingSuccessState(content)
+                return@onState
+            }
             val signedTransactions = signedSwapTransactionMapper(result)
             if (signedTransactions == null) {
                 updateUiToSendingErrorState()

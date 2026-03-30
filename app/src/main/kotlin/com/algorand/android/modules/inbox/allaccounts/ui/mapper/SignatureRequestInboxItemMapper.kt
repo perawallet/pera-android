@@ -16,12 +16,12 @@ import android.content.res.Resources
 import android.text.format.DateUtils
 import com.algorand.android.R
 import com.algorand.android.models.Result
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequestInboxItem
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
-import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
@@ -31,6 +31,7 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class SignatureRequestInboxItemMapper @Inject constructor(
+    private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getTransactionParams: GetTransactionParams,
     private val timeProvider: TimeProvider,
@@ -53,15 +54,16 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         val statusLine =
             mapStatusToStatusLine(jointSignRequestDTO.status, resources, jointSignRequestDTO.failReasonDisplay)
         val creationDateTime = getCreationDateTime(jointSignRequestDTO)
+        val displayName = getAccountDisplayName(requiredData.jointAccountAddress).primaryDisplayName
 
         return SignatureRequestInboxItem(
             signRequestId = requiredData.signRequestId,
             jointAccountAddress = requiredData.jointAccountAddress,
-            jointAccountAddressShortened = requiredData.jointAccountAddress.toShortenedAddress(),
+            jointAccountAddressShortened = displayName,
             accountIconDrawablePreview = getAccountIconDrawablePreview(requiredData.jointAccountAddress),
             description = resources.getString(
                 R.string.signature_request_description,
-                requiredData.jointAccountAddress.toShortenedAddress()
+                displayName
             ),
             timeAgo = getTimeAgo(jointSignRequestDTO, resources, currentBlockNumber),
             signedCount = getSignedCount(jointSignRequestDTO, requiredData.participantAddresses),

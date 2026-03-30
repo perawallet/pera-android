@@ -18,6 +18,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -41,6 +42,7 @@ import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.navigateToPendingSignaturesBottomSheet
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -75,18 +77,24 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
     private val externalTransactionSignManagerCollector: suspend (ExternalTransactionSignResult) -> Unit = {
         if (it !is Loading) hideLoading()
         when (it) {
-            is Success<*> -> sendSignedTransactions(it.signedTransaction)
+            is Success<*> -> {
+                val preSubmittedTxnId = it.algodTransactionIdIfAlreadySubmitted
+                if (!preSubmittedTxnId.isNullOrBlank()) {
+                    arc59SendSummaryViewModel.onAlgodSubmitAlreadyCompleted(preSubmittedTxnId)
+                } else {
+                    sendSignedTransactions(it.signedTransaction)
+                }
+            }
+
             is Error -> showTransactionSignResultError(it)
             LedgerScanFailed -> showLedgerNotFoundDialog()
             is LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
             is ExternalTransactionSignResult.WaitingForJointSignatures -> {
-                nav(
-                    HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
-                        it.signRequestId,
-                        isDismissable = false
-                    )
-                )
+                navigateToPendingSignaturesBottomSheet(it.signRequestId) { _ ->
+                    nav(MainNavigationDirections.actionGlobalMainNavigation())
+                }
             }
+
             Loading -> showLoading()
             NotInitialized -> Unit
             is TransactionCancelled -> showTransactionCancelledError(it)

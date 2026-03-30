@@ -20,5 +20,7 @@ internal data class CreateJointAccountRequest(
     @SerializedName("threshold")
     val threshold: Int,
     @SerializedName("version")
-    val version: Int
+    val version: Int,
+    @SerializedName("device_id")
+    val deviceId: String
 )

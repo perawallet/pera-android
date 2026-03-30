@@ -256,7 +256,7 @@ internal class JointAccountDetailViewModelTest {
         advanceUntilIdle()
         job.cancel()
 
-        coVerify { processor.deleteInboxNotification(TEST_ADDRESS) }
+        coVerify(exactly = 0) { processor.deleteInboxNotification(any()) }
         coVerify { processor.isJointAccountExists(TEST_ADDRESS) }
 
         val navEvent = events.filterIsInstance<ViewEvent.NavigateToNameJointAccount>().firstOrNull()
@@ -288,6 +288,7 @@ internal class JointAccountDetailViewModelTest {
         advanceUntilIdle()
         job.cancel()
 
+        coVerify(exactly = 1) { processor.deleteInboxNotification(TEST_ADDRESS) }
         assertTrue(events.contains(ViewEvent.NavigateBack))
     }
 

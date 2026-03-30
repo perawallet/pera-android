@@ -22,16 +22,24 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.MainActivity
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.LedgerLoadingDialog
+import com.algorand.android.models.ConfirmationBottomSheetParameters
+import com.algorand.android.models.ConfirmationBottomSheetResult
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.JointAccountLedgerSignHelper
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
+import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewEvent
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.utils.BaseDoubleButtonBottomSheet.Companion.RESULT_KEY
 import com.algorand.android.utils.extensions.collectOnLifecycle
+import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.showWithStateCheck
+import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useSavedStateValue
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -71,22 +79,30 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initCancelConfirmationResultListener()
         setupDismissBehavior()
         ledgerSignHelper.setup(viewLifecycleOwner.lifecycle)
         observeViewEvents()
         observeLedgerSignResult()
     }
 
+    private fun initCancelConfirmationResultListener() {
+        startSavedStateListener(R.id.pendingSignaturesBottomSheet) {
+            useSavedStateValue<ConfirmationBottomSheetResult>(RESULT_KEY) { result ->
+                if (result.confirmationIdentifier == CANCEL_TRANSACTION_REQUEST_CONFIRMATION_ID && result.isAccepted) {
+                    viewModel.declineSignRequest()
+                }
+            }
+        }
+    }
+
     private fun onSignLedgerAccount(signer: JointAccountSignerItem) {
         viewModel.onSignLedgerAccount(signer)
     }
 
-    private val isDismissable: Boolean
-        get() = arguments?.getBoolean(IS_DISMISSABLE_KEY, true) ?: true
-
     private fun setupDismissBehavior() {
-        setDraggableEnabled(isDismissable)
-        isCancelable = isDismissable
+        setDraggableEnabled(false)
+        isCancelable = false
     }
 
     private fun observeViewEvents() {
@@ -108,10 +124,10 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
                                 description = null,
                                 tag = TAG
                             )
-                            dismiss()
+                            dismissWithResult(PendingSignaturesDismissResult.CANCELED)
                         }
 
-                        is ViewEvent.NavigateBack -> dismiss()
+                        is ViewEvent.NavigateBack -> dismissWithResult(PendingSignaturesDismissResult.DISMISSED)
 
                         is ViewEvent.StartLedgerSigning -> {
                             ledgerSignHelper.signWithLedger(
@@ -125,8 +141,8 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
                             )
                         }
 
-                        else -> { /* Other events handled elsewhere */
-                        }
+                        is ViewEvent.ShowPendingSignaturesBottomSheet -> Unit
+                        is ViewEvent.CopyAddress -> Unit
                     }
                 }
             }
@@ -212,27 +228,31 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
     }
 
     private fun onClose() {
-        if (isDismissable) {
-            dismiss()
-        } else {
-            navigateToAccounts(showConfetti = false)
-        }
+        dismissWithResult(PendingSignaturesDismissResult.DISMISSED)
     }
 
     private fun onCloseCompleted() {
-        navigateToAccounts(showConfetti = false)
-    }
-
-    private fun navigateToAccounts(showConfetti: Boolean) {
-        nav(
-            PendingSignaturesBottomSheetDirections.actionPendingSignaturesBottomSheetToHomeNavigation(
-                showConfetti = showConfetti
-            )
-        )
+        dismissWithResult(viewModel.getPendingSignaturesCloseDismissResult())
     }
 
     private fun onCancel() {
-        viewModel.declineSignRequest()
+        showCancelConfirmationDialog()
+    }
+
+    private fun showCancelConfirmationDialog() {
+        val parameters = ConfirmationBottomSheetParameters(
+            confirmationIdentifier = CANCEL_TRANSACTION_REQUEST_CONFIRMATION_ID,
+            titleResId = R.string.cancel_transaction_request,
+            descriptionText = getString(R.string.cancel_transaction_request_description),
+            confirmButtonTextResId = R.string.yes_cancel,
+            rejectButtonTextResId = R.string.keep_waiting
+        )
+        nav(MainNavigationDirections.actionGlobalConfirmationBottomSheet(parameters))
+    }
+
+    private fun dismissWithResult(result: PendingSignaturesDismissResult) {
+        setNavigationResult(DISMISS_RESULT_KEY, result)
+        navBack()
     }
 
     override fun onDestroyView() {
@@ -242,7 +262,8 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
 
     companion object {
         const val TAG = "PendingSignaturesBottomSheet"
-        private const val IS_DISMISSABLE_KEY = "isDismissable"
+        const val DISMISS_RESULT_KEY = "pending_signatures_dismiss_result"
+        private const val CANCEL_TRANSACTION_REQUEST_CONFIRMATION_ID = 8792L
         private const val LEDGER_LOADING_TAG = "ledger_loading"
     }
 }

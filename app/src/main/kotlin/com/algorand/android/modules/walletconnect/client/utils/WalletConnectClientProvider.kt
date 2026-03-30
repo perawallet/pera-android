@@ -39,8 +39,8 @@ class WalletConnectClientProvider @Inject constructor(
 
     fun getClientForSessionConnectionUrl(url: String): WalletConnectClient? {
         return when {
-            walletConnectV1Client.isValidSessionUrl(url) -> walletConnectV1Client
             walletConnectV2Client.isValidSessionUrl(url) -> walletConnectV2Client
+            walletConnectV1Client.isValidSessionUrl(url) -> walletConnectV1Client
             else -> null
         }
     }

@@ -22,6 +22,7 @@ import com.algorand.android.models.Node
 import com.algorand.android.modules.firebase.token.mapper.FirebaseTokenResultMapper
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.modules.firebase.token.usecase.ApplyNodeChangesUseCase
+import com.algorand.android.modules.firebase.token.usecase.SyncJointAccountsOnNetworkSwitch
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.launchIO
@@ -50,8 +51,12 @@ class FirebaseTokenManager @Inject constructor(
     private val applyNodeChangesUseCase: ApplyNodeChangesUseCase,
     private val firebaseTokenResultMapper: FirebaseTokenResultMapper,
     private val getAccountsDetailsFlow: GetAccountsDetailsFlow,
-    private val initializeAllBanners: InitializeAllBanners
+    private val initializeAllBanners: InitializeAllBanners,
+    private val syncJointAccountsOnNetworkSwitch: SyncJointAccountsOnNetworkSwitch
 ) : DefaultLifecycleObserver {
+
+    @Volatile
+    private var pendingJointAccountSyncAfterNetworkSwitch: Boolean = false
 
     private val _firebaseTokenResultEventFlow = MutableStateFlow<FirebaseTokenResult>(FirebaseTokenResult.TokenLoading)
     val firebaseTokenResultFlow: StateFlow<FirebaseTokenResult> get() = _firebaseTokenResultEventFlow
@@ -70,7 +75,12 @@ class FirebaseTokenManager @Inject constructor(
         if (it is DataResource.Success) {
             onPushTokenUpdated()
             initializeAllBanners(deviceId = it.data)
+            if (pendingJointAccountSyncAfterNetworkSwitch) {
+                pendingJointAccountSyncAfterNetworkSwitch = false
+                coroutineScope?.let { syncJointAccountsOnNetworkSwitch(it) }
+            }
         } else {
+            pendingJointAccountSyncAfterNetworkSwitch = false
             _firebaseTokenResultEventFlow.emit(firebaseTokenResultMapper.mapToTokenLoaded())
             onPushTokenFailed()
         }
@@ -90,6 +100,7 @@ class FirebaseTokenManager @Inject constructor(
         refreshFirebasePushTokenJob?.cancel()
         refreshFirebasePushTokenJob = coroutineScope?.launchIO {
             try {
+                pendingJointAccountSyncAfterNetworkSwitch = previousNode != null
                 _firebaseTokenResultEventFlow.emit(firebaseTokenResultMapper.mapToTokenLoading())
                 if (previousNode != null) {
                     deletePreviousNodePushToken(previousNode)
@@ -99,6 +110,7 @@ class FirebaseTokenManager @Inject constructor(
                 }
             } catch (_: Exception) {
                 // TODO: Re-active last activated node in case of failure
+                pendingJointAccountSyncAfterNetworkSwitch = false
                 _firebaseTokenResultEventFlow.emit(firebaseTokenResultMapper.mapToTokenLoaded())
             }
         }

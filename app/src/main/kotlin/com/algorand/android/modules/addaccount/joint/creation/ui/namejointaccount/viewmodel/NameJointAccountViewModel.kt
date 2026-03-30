@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
+import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.addaccount.joint.core.JointAccountConstants
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
@@ -43,7 +43,8 @@ class NameJointAccountViewModel @Inject constructor(
     private val getAllAccountOrderIndexes: GetAllAccountOrderIndexes,
     private val addJointAccount: AddJointAccount,
     private val getJointAccount: GetJointAccount,
-    private val inboxCleanup: NameJointAccountInboxCleanup
+    private val inboxCleanup: NameJointAccountInboxCleanup,
+    private val deviceIdUseCase: DeviceIdUseCase
 ) : ViewModel(),
     StateViewModel<NameJointAccountViewModel.ViewState> by stateDelegate,
     EventViewModel<NameJointAccountViewModel.ViewEvent> by eventDelegate {
@@ -90,12 +91,19 @@ class NameJointAccountViewModel @Inject constructor(
             return
         }
 
+        val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
+        if (deviceId.isNullOrBlank()) {
+            emitError(R.string.an_error_occurred)
+            return
+        }
+
         stateDelegate.updateState { ViewState.Loading(accountName = trimmedName) }
         viewModelScope.launch {
             createJointAccount(
                 participantAddresses = participantAddresses,
                 threshold = threshold,
-                version = JointAccountConstants.CURRENT_VERSION
+                version = JointAccountConstants.CURRENT_VERSION,
+                deviceId = deviceId
             ).use(
                 onSuccess = { jointAccountDTO ->
                     handleJointAccountCreationSuccess(
@@ -165,8 +173,6 @@ class NameJointAccountViewModel @Inject constructor(
             stateDelegate.updateState { ViewState.Success }
             eventDelegate.sendEvent(ViewEvent.AccountCreatedSuccessfully)
         } else {
-            val exception = result.getExceptionOrNull()
-            Log.e(TAG, "Failed to save joint account: ${exception?.message}", exception)
             revertToIdle()
             emitError(R.string.an_error_occurred)
         }
@@ -185,8 +191,8 @@ class NameJointAccountViewModel @Inject constructor(
         try {
             val deviceId = inboxCleanup.getDeviceConfig().deviceId.toLongOrNull() ?: return
             inboxCleanup.deleteInboxJointInvitationNotification(deviceId, jointAccountAddress)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to delete inbox notification", e)
+        } catch (_: Exception) {
+            // Best-effort cleanup; inbox notification removal is non-critical
         }
     }
 
@@ -217,7 +223,6 @@ class NameJointAccountViewModel @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "NameJointAccountVM"
         private const val THRESHOLD_KEY = "threshold"
         private const val PARTICIPANT_ADDRESSES_KEY = "participantAddresses"
     }

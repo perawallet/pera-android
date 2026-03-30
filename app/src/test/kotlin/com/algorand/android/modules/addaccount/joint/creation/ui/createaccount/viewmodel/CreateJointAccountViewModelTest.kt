@@ -16,6 +16,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
+import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.foundation.cache.PersistentCache
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -233,6 +234,7 @@ internal class CreateJointAccountViewModelTest {
         return CreateJointAccountViewModel(
             stateDelegate = StateDelegate<CreateJointAccountViewModel.ViewState>(),
             eventDelegate = EventDelegate<CreateJointAccountViewModel.ViewEvent>(),
+            contactRepository = mockk<ContactRepository>(relaxed = true),
             persistentCacheProvider = mockPersistentCacheProvider,
             savedStateHandle = savedStateHandle
         )

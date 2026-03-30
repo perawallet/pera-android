@@ -14,13 +14,17 @@ package com.algorand.android.core.transaction.sync
 
 import android.content.Context
 import com.algorand.android.core.transaction.JointAccountTransactionSignHelper
+import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
+import com.algorand.wallet.jointaccount.transaction.domain.usecase.MarkSignRequestsConfirmed
 
 data class JointAccountSyncSignDependencies(
     val jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
     val signArbitraryDataForSyncRequest: SignArbitraryDataForSyncRequest,
     val syncSignRequestPollingManager: SyncSignRequestPollingManager,
     val multisigTransactionAssembler: MultisigTransactionAssembler,
+    val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
     val applicationContext: Context,
-    val syncSignResultHolder: SyncSignResultHolder
+    val syncSignResultHolder: SyncSignResultHolder,
+    val markSignRequestsConfirmed: MarkSignRequestsConfirmed
 )

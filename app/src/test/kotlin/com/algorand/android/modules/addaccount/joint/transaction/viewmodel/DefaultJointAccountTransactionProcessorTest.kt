@@ -17,6 +17,7 @@ import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePrev
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -403,6 +404,12 @@ internal class DefaultJointAccountTransactionProcessorTest {
                 secondaryDisplayName = null
             ),
             jointAccountIconPreview = createMockIconDrawablePreview(),
+            centerPreview = JointAccountSignRequestCenterPreview.Transfer(
+                recipientShortAddress = "RECIP...ADDR",
+                amount = "10.00",
+                convertedAmount = "$100.00"
+            ),
+            addressForClipboard = "RECIPIENT_ADDR",
             recipientAddress = "RECIPIENT_ADDR",
             recipientShortAddress = "RECIP...ADDR",
             amount = "10.00",

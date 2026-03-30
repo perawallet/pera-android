@@ -14,6 +14,7 @@ package com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccou
 
 import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.R
+import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewEvent
 import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountViewModel.ViewState
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
@@ -32,9 +33,8 @@ import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -61,19 +61,18 @@ internal class NameJointAccountViewModelTest {
     private val getJointAccount: GetJointAccount = mockk()
     private val getDeviceConfig: GetDeviceConfig = mockk()
     private val deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification = mockk()
+    private val deviceIdUseCase: DeviceIdUseCase = mockk()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        mockkStatic(android.util.Log::class)
-        io.mockk.every { android.util.Log.e(any(), any(), any()) } returns 0
         coEvery { getNextJointAccountNumber() } returns DEFAULT_JOINT_ACCOUNT_NUMBER
+        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns TEST_DEVICE_ID_STRING
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-        unmockkStatic(android.util.Log::class)
     }
 
     @Test
@@ -86,6 +85,25 @@ internal class NameJointAccountViewModelTest {
         val state = stateDelegate.state.value
         assertTrue(state is ViewState.Idle)
         assertEquals(DEFAULT_JOINT_ACCOUNT_NUMBER, (state as ViewState.Idle).defaultJointAccountNumber)
+    }
+
+    @Test
+    fun `EXPECT ShowError event WHEN device id is not available`() = runTest {
+        every { deviceIdUseCase.getSelectedNodeDeviceId() } returns null
+        val stateDelegate = StateDelegate<ViewState>()
+        val eventDelegate = EventDelegate<ViewEvent>()
+        val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
+        val events = mutableListOf<ViewEvent>()
+        val job = launch { eventDelegate.viewEvent.toList(events) }
+        advanceUntilIdle()
+
+        viewModel.onAccountNameChanged(TEST_ACCOUNT_NAME)
+        viewModel.onFinishClick()
+        advanceUntilIdle()
+        job.cancel()
+
+        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.an_error_occurred })
+        coVerify(exactly = 0) { createJointAccount(any(), any(), any(), any()) }
     }
 
     @Test
@@ -112,7 +130,7 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Success(createJointAccountDto())
         coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
         coEvery { getAllAccountOrderIndexes() } returns emptyList()
@@ -143,7 +161,7 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Success(createJointAccountDto())
         coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
         coEvery { getAllAccountOrderIndexes() } returns emptyList()
@@ -178,7 +196,7 @@ internal class NameJointAccountViewModelTest {
         val eventDelegate = EventDelegate<ViewEvent>()
         val exception = Exception("Network error")
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Error(exception)
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
@@ -201,7 +219,7 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Success(createJointAccountDto(address = null))
 
         val viewModel = createViewModelWithDelegates(stateDelegate, eventDelegate)
@@ -224,7 +242,7 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Success(createJointAccountDto())
         coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns createLocalAccountJoint()
         coEvery { getDeviceConfig() } returns createDeviceConfig()
@@ -255,7 +273,7 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Success(createJointAccountDto())
         coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
         coEvery { getAllAccountOrderIndexes() } returns emptyList()
@@ -283,7 +301,7 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Success(createJointAccountDto())
         coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
         coEvery { getAllAccountOrderIndexes() } returns listOf(
@@ -319,7 +337,7 @@ internal class NameJointAccountViewModelTest {
         val stateDelegate = StateDelegate<ViewState>()
         val eventDelegate = EventDelegate<ViewEvent>()
         coEvery {
-            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION)
+            createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_DEVICE_ID_STRING)
         } returns PeraResult.Success(createJointAccountDto())
         coEvery { getJointAccount(TEST_JOINT_ADDRESS) } returns null
         coEvery { getAllAccountOrderIndexes() } returns emptyList()
@@ -343,7 +361,14 @@ internal class NameJointAccountViewModelTest {
         viewModel.onFinishClick()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { createJointAccount(TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION) }
+        coVerify(exactly = 1) {
+            createJointAccount(
+                TEST_PARTICIPANTS,
+                TEST_THRESHOLD,
+                TEST_VERSION,
+                TEST_DEVICE_ID_STRING
+            )
+        }
     }
 
     @Test
@@ -378,7 +403,8 @@ internal class NameJointAccountViewModelTest {
             getAllAccountOrderIndexes = getAllAccountOrderIndexes,
             addJointAccount = addJointAccount,
             getJointAccount = getJointAccount,
-            inboxCleanup = NameJointAccountInboxCleanup(getDeviceConfig, deleteInboxJointInvitationNotification)
+            inboxCleanup = NameJointAccountInboxCleanup(getDeviceConfig, deleteInboxJointInvitationNotification),
+            deviceIdUseCase = deviceIdUseCase
         )
     }
 

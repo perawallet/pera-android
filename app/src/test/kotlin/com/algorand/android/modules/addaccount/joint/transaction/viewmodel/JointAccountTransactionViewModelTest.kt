@@ -19,6 +19,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewState
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
@@ -29,8 +30,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -58,15 +57,11 @@ internal class JointAccountTransactionViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        mockkStatic(android.util.Log::class)
-        every { android.util.Log.e(any(), any()) } returns 0
-        every { android.util.Log.e(any(), any(), any()) } returns 0
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-        unmockkStatic(android.util.Log::class)
     }
 
     @Test
@@ -201,6 +196,12 @@ internal class JointAccountTransactionViewModelTest {
                 secondaryDisplayName = null
             ),
             jointAccountIconPreview = mockk<AccountIconDrawablePreview>(relaxed = true),
+            centerPreview = JointAccountSignRequestCenterPreview.Transfer(
+                recipientShortAddress = "RECIP...ADDR",
+                amount = "10.00 ALGO",
+                convertedAmount = "$10.00"
+            ),
+            addressForClipboard = "RECIPIENT_ADDRESS",
             recipientAddress = "RECIPIENT_ADDRESS",
             recipientShortAddress = "RECIP...ADDR",
             amount = "10.00 ALGO",

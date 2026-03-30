@@ -24,7 +24,7 @@
 
     <include app:graph="@navigation/asset_detail_navigation" />
 
-    <include app:graph="@navigation/transaction_detail_navigation"/>
+    <include app:graph="@navigation/transaction_detail_navigation" />
 
     <include app:graph="@navigation/account_options_navigation" />
 
@@ -1722,6 +1722,13 @@
                 android:name="entryPoint"
                 app:argType="com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint" />
         </action>
+        <action
+            android:id="@+id/action_assetDetailV2Fragment_to_accountStatusDetailNavigation"
+            app:destination="@id/accountStatusDetailNavigation">
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <fragment
@@ -1841,18 +1848,9 @@
             android:name="signRequestId"
             app:argType="string" />
         <argument
-            android:name="isDismissable"
-            android:defaultValue="true"
+            android:name="hideCloseForNow"
+            android:defaultValue="false"
             app:argType="boolean" />
-        <action
-            android:id="@+id/action_pendingSignaturesBottomSheet_to_homeNavigation"
-            app:destination="@id/homeNavigation"
-            app:popUpTo="@id/homeNavigation"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="showConfetti"
-                app:argType="boolean" />
-        </action>
     </dialog>
 
     <action
@@ -1862,8 +1860,8 @@
             android:name="signRequestId"
             app:argType="string" />
         <argument
-            android:name="isDismissable"
-            android:defaultValue="true"
+            android:name="hideCloseForNow"
+            android:defaultValue="false"
             app:argType="boolean" />
     </action>
 

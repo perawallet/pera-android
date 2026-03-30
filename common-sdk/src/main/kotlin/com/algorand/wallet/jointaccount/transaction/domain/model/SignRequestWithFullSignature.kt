@@ -15,8 +15,8 @@ package com.algorand.wallet.jointaccount.transaction.domain.model
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 
 data class SignRequestWithFullSignature(
-    val id: Long?,
-    val type: String?,
+    val id: String?,
+    val type: SignRequestType?,
     val jointAccount: JointAccount?,
     val proposerAddress: String?,
     val lastValidExpectedDatetime: String?,

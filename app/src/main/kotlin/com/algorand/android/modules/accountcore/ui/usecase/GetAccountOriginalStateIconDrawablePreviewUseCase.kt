@@ -13,29 +13,41 @@
 package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.models.AccountIconResource
 import com.algorand.android.models.AccountIconResource.HD
 import com.algorand.android.models.AccountIconResource.JOINT
 import com.algorand.android.models.AccountIconResource.LEDGER
 import com.algorand.android.models.AccountIconResource.STANDARD
 import com.algorand.android.models.AccountIconResource.WATCH
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 
 internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constructor(
-    private val getAccountType: GetAccountType
+    private val getAccountType: GetAccountType,
+    private val getAccountRegistrationType: GetAccountRegistrationType
 ) : GetAccountOriginalStateIconDrawablePreview {
 
     override suspend fun invoke(address: String): AccountIconDrawablePreview {
         val accountType = getAccountType(address)
-        return invoke(accountType)
+        val registrationType = getAccountRegistrationType(address)
+        return invoke(accountType, registrationType)
     }
 
     override suspend fun invoke(accountType: AccountType?): AccountIconDrawablePreview {
-        val accountIconResId = getAccountIconResId(accountType)
-        val accountIconTintResId = getAccountIconTintResId(accountType)
-        val accountIconBackgroundColorResId = getAccountIconBackgroundColorResId(accountType)
+        return invoke(accountType, null)
+    }
+
+    override fun invoke(
+        accountType: AccountType?,
+        registrationType: AccountRegistrationType?
+    ): AccountIconDrawablePreview {
+        val accountIconResId = getAccountIconResId(accountType, registrationType)
+        val accountIconTintResId = getAccountIconTintResId(accountType, registrationType)
+        val accountIconBackgroundColorResId = getAccountIconBackgroundColorResId(accountType, registrationType)
         return AccountIconDrawablePreview(
             backgroundColorResId = accountIconBackgroundColorResId,
             iconResId = accountIconResId,
@@ -43,7 +55,10 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
         )
     }
 
-    private fun getAccountIconBackgroundColorResId(accountType: AccountType?): Int {
+    private fun getAccountIconBackgroundColorResId(
+        accountType: AccountType?,
+        registrationType: AccountRegistrationType?
+    ): Int {
         return when (accountType) {
             AccountType.LedgerBle -> LEDGER.backgroundColorResId
             AccountType.NoAuth -> WATCH.backgroundColorResId
@@ -51,16 +66,20 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.HdKey -> HD.backgroundColorResId
             AccountType.Joint -> JOINT.backgroundColorResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
-                if (accountType?.canSignTransaction() == true) {
-                    STANDARD.backgroundColorResId
-                } else {
-                    R.color.layer_gray_lighter
-                }
+                getRekeyedIconResource(registrationType)?.backgroundColorResId
+                    ?: if (accountType?.canSignTransaction() == true) {
+                        STANDARD.backgroundColorResId
+                    } else {
+                        R.color.layer_gray_lighter
+                    }
             }
         }
     }
 
-    private fun getAccountIconTintResId(accountType: AccountType?): Int {
+    private fun getAccountIconTintResId(
+        accountType: AccountType?,
+        registrationType: AccountRegistrationType?
+    ): Int {
         return when (accountType) {
             AccountType.LedgerBle -> LEDGER.iconTintResId
             AccountType.NoAuth -> WATCH.iconTintResId
@@ -68,12 +87,20 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.HdKey -> HD.iconTintResId
             AccountType.Joint -> JOINT.iconTintResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
-                if (accountType?.canSignTransaction() == true) STANDARD.iconTintResId else R.color.text_gray_lighter
+                getRekeyedIconResource(registrationType)?.iconTintResId
+                    ?: if (accountType?.canSignTransaction() == true) {
+                        STANDARD.iconTintResId
+                    } else {
+                        R.color.text_gray_lighter
+                    }
             }
         }
     }
 
-    private fun getAccountIconResId(accountType: AccountType?): Int {
+    private fun getAccountIconResId(
+        accountType: AccountType?,
+        registrationType: AccountRegistrationType?
+    ): Int {
         return when (accountType) {
             AccountType.LedgerBle -> LEDGER.iconResId
             AccountType.NoAuth -> WATCH.iconResId
@@ -81,8 +108,24 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.HdKey -> HD.iconResId
             AccountType.Joint -> JOINT.iconResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
-                if (accountType?.canSignTransaction() == true) STANDARD.iconResId else R.drawable.ic_question
+                getRekeyedIconResource(registrationType)?.iconResId
+                    ?: if (accountType?.canSignTransaction() == true) {
+                        STANDARD.iconResId
+                    } else {
+                        R.drawable.ic_question
+                    }
             }
+        }
+    }
+
+    private fun getRekeyedIconResource(
+        registrationType: AccountRegistrationType?
+    ): AccountIconResource? {
+        return when (registrationType) {
+            AccountRegistrationType.Joint -> JOINT
+            AccountRegistrationType.LedgerBle -> LEDGER
+            AccountRegistrationType.HdKey -> HD
+            else -> null
         }
     }
 }

@@ -36,6 +36,7 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.utils.browser.openTinymanFaqPriceImpactUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.navigateToPendingSignaturesBottomSheet
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,13 +62,9 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
                 displaySuccessAlert(viewEvent)
                 navigateToSwapScreen()
             }
+
             is NavigateToPendingSignatures -> {
-                nav(
-                    HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
-                        viewEvent.signRequestId,
-                        isDismissable = false
-                    )
-                )
+                navigateToPendingSignaturesBottomSheet(viewEvent.signRequestId) { _ -> navBack() }
             }
         }
     }

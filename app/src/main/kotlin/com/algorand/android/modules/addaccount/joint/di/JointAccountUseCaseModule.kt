@@ -13,15 +13,6 @@
 package com.algorand.android.modules.addaccount.joint.di
 
 import android.content.Context
-import com.algorand.android.core.transaction.JointAccountTransactionSignHelper
-import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
-import com.algorand.android.core.transaction.sync.SignArbitraryDataForSyncRequest
-import com.algorand.android.core.transaction.sync.SignArbitraryDataForSyncRequestUseCase
-import com.algorand.android.core.transaction.sync.SyncSignResultHolder
-import com.algorand.android.core.transaction.sync.SyncSignRequestPollingManager
-import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContactUseCase
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
@@ -37,13 +28,6 @@ import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewStateUseCase
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignatureUseCase
-import com.algorand.android.ui.device.usecase.GetDeviceConfig
-import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
-import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePack
-import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
-import com.algorand.wallet.utils.date.TimeProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,28 +44,6 @@ internal object JointAccountUseCaseModule {
     ): SignAndSubmitJointAccountSignature = useCase
 
     @Provides
-    fun provideSignArbitraryDataForSyncRequest(
-        useCase: SignArbitraryDataForSyncRequestUseCase
-    ): SignArbitraryDataForSyncRequest = useCase
-
-    @Provides
-    fun provideJointAccountSyncSignDependencies(
-        jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
-        signArbitraryDataForSyncRequest: SignArbitraryDataForSyncRequest,
-        syncSignRequestPollingManager: SyncSignRequestPollingManager,
-        multisigTransactionAssembler: MultisigTransactionAssembler,
-        @ApplicationContext applicationContext: Context,
-        syncSignResultHolder: SyncSignResultHolder
-    ): JointAccountSyncSignDependencies = JointAccountSyncSignDependencies(
-        jointAccountTransactionSignHelper = jointAccountTransactionSignHelper,
-        signArbitraryDataForSyncRequest = signArbitraryDataForSyncRequest,
-        syncSignRequestPollingManager = syncSignRequestPollingManager,
-        multisigTransactionAssembler = multisigTransactionAssembler,
-        applicationContext = applicationContext,
-        syncSignResultHolder = syncSignResultHolder
-    )
-
-    @Provides
     fun provideGetNextJointAccountNumber(
         useCase: GetNextJointAccountNumberUseCase
     ): GetNextJointAccountNumber = useCase
@@ -95,33 +57,6 @@ internal object JointAccountUseCaseModule {
     fun provideDeclineJointAccountSignRequest(
         useCase: DeclineJointAccountSignRequestUseCase
     ): DeclineJointAccountSignRequest = useCase
-
-    @Provides
-    fun provideGetJointAccountTransactionViewStateDependencies(
-        getSignRequestWithSignatures: GetSignRequestWithSignatures,
-        parseTransactionMessagePack: ParseTransactionMessagePack,
-        getAccountDisplayName: GetAccountDisplayName,
-        getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-        getDeviceConfig: GetDeviceConfig,
-        getLocalAccountsAddresses: GetLocalAccountsAddresses,
-        getLocalAccounts: GetLocalAccounts,
-        getJointAccountSignerItems: GetJointAccountSignerItems,
-        formatAlgoAsDisplayCurrency: FormatAlgoAsDisplayCurrency,
-        timeProvider: TimeProvider,
-        getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
-    ): GetJointAccountTransactionViewStateDependencies = GetJointAccountTransactionViewStateDependencies(
-        getSignRequestWithSignatures = getSignRequestWithSignatures,
-        parseTransactionMessagePack = parseTransactionMessagePack,
-        getAccountDisplayName = getAccountDisplayName,
-        getAccountIconDrawablePreview = getAccountIconDrawablePreview,
-        getDeviceConfig = getDeviceConfig,
-        getLocalAccountsAddresses = getLocalAccountsAddresses,
-        getLocalAccounts = getLocalAccounts,
-        getJointAccountSignerItems = getJointAccountSignerItems,
-        formatAlgoAsDisplayCurrency = formatAlgoAsDisplayCurrency,
-        timeProvider = timeProvider,
-        getAccountRekeyAdminAddress = getAccountRekeyAdminAddress
-    )
 
     @Provides
     fun provideGetJointAccountTransactionViewState(

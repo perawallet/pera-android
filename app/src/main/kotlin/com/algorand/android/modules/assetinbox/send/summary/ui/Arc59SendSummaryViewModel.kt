@@ -19,6 +19,7 @@ import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSu
 import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryPreview
 import com.algorand.android.modules.assetinbox.send.summary.ui.usecase.Arc59SendSummaryPreviewUseCase
 import com.algorand.android.modules.assetinbox.send.warning.ui.model.Arc59SendSummaryWarningNavArgs
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.ASSET_INBOX_SUPPORT_URL
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
@@ -69,6 +70,18 @@ class Arc59SendSummaryViewModel @Inject constructor(
                 signedTransactions
             ).collectLatest { preview ->
                 stateDelegate.updateState { preview }
+            }
+        }
+    }
+
+    fun onAlgodSubmitAlreadyCompleted(transactionId: String) {
+        viewModelScope.launchIO {
+            stateDelegate.updateState { current ->
+                current.copy(
+                    isLoading = false,
+                    showError = null,
+                    onTxnSendSuccessfully = Event(transactionId)
+                )
             }
         }
     }

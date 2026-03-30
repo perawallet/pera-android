@@ -30,6 +30,16 @@ class AddJointAccountQrScannerFragment : BaseQrScannerFragment(R.id.addJointAcco
         return navBackWithResult(address)
     }
 
+    override fun onJointAccountImportDeepLink(address: String?): Boolean {
+        return if (address != null) {
+            true.also {
+                mainActivity?.navToJointAccountImportDeepLink(address)
+            }
+        } else {
+            false
+        }
+    }
+
     private fun navBackWithResult(address: String): Boolean {
         setNavigationResult(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY, address)
         return true.also { navBack() }

@@ -27,6 +27,7 @@ import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59E
 import com.algorand.android.usecase.ReceiverAccountSelectionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -166,6 +167,9 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         viewModelScope.launch {
             val accountLite = getAccountLite(assetTransaction.senderAddress)
             val accountLiteCachedInfo = accountLite?.cachedInfo ?: return@launch
+            val signer = getTransactionSigner(assetTransaction.senderAddress)
+            val isReceiverOptedIn = isAssetOptedInByAccount(targetUser.publicKey, assetTransaction.assetId)
+            val isArc59 = !isReceiverOptedIn && signer !is TransactionSigner.Joint
             val txnData = TransactionSignData.Send(
                 senderAccountAddress = assetTransaction.senderAddress,
                 senderAccountName = accountLite.customName,
@@ -176,8 +180,8 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
                 assetId = assetTransaction.assetId,
                 note = note,
                 targetUser = targetUser,
-                isArc59Transaction = !isAssetOptedInByAccount(targetUser.publicKey, assetTransaction.assetId),
-                signer = getTransactionSigner(assetTransaction.senderAddress)
+                isArc59Transaction = isArc59,
+                signer = signer
             )
             _sendTransactionDataFlow.emit(Event(txnData))
         }

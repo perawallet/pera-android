@@ -15,10 +15,13 @@ package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 import android.content.res.Resources
 import android.text.format.DateUtils
 import com.algorand.android.R
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.decodeBase64
 import com.algorand.android.utils.formatAsAlgoAmount
@@ -26,6 +29,7 @@ import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.algosdk.transaction.model.RawTransaction
 import com.algorand.wallet.algosdk.transaction.model.RawTransactionType
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
@@ -60,7 +64,7 @@ internal class GetJointAccountTransactionViewStateUseCase(
             ?: return PeraResult.Error(Exception("Transaction lists is null"))
         val participantAddresses = jointAccount.participantAddresses.orEmpty()
 
-        val transactionData = extractTransactionData(transactionLists)
+        val transactionExtraction = extractTransactionExtraction(transactionLists)
         val participantData = buildParticipantData(participantAddresses, transactionLists, signRequest)
         val expirationData = buildExpirationData(signRequest)
 
@@ -70,7 +74,9 @@ internal class GetJointAccountTransactionViewStateUseCase(
                 jointAccountAddress = jointAccountAddress,
                 threshold = jointAccount.threshold
                     ?: return PeraResult.Error(Exception("Joint account threshold is null")),
-                transactionData = transactionData,
+                transactionData = transactionExtraction.transactionData,
+                detectedAssetAction = transactionExtraction.detectedAssetAction,
+                isRekeyTransaction = transactionExtraction.isRekeyTransaction,
                 participantData = participantData,
                 expirationData = expirationData,
                 rawTransactions = transactionLists.firstOrNull()?.rawTransactions.orEmpty()
@@ -152,6 +158,8 @@ internal class GetJointAccountTransactionViewStateUseCase(
         jointAccountAddress: String,
         threshold: Int,
         transactionData: TransactionData,
+        detectedAssetAction: DetectedAssetAction?,
+        isRekeyTransaction: Boolean,
         participantData: ParticipantData,
         expirationData: ExpirationData,
         rawTransactions: List<String>
@@ -164,18 +172,19 @@ internal class GetJointAccountTransactionViewStateUseCase(
                 participantData.localParticipants.isEmpty() ||
                 !hasUnsigned
 
-        val transactionState = when (signRequest.status) {
-            SignRequestStatus.FAILED -> JointAccountTransactionState.Failed(signRequest.failReasonDisplay)
-            SignRequestStatus.EXPIRED -> JointAccountTransactionState.Expired
-            SignRequestStatus.DECLINED -> JointAccountTransactionState.Declined
-            SignRequestStatus.CONFIRMED -> JointAccountTransactionState.Completed
-            SignRequestStatus.READY -> JointAccountTransactionState.ReadyToSubmit
-            else -> JointAccountTransactionState.AwaitingConfirmation
-        }
+        val (centerPreview, addressForClipboard) = buildCenterPreview(
+            transactionData = transactionData,
+            detectedAssetAction = detectedAssetAction,
+            jointAccountAddress = jointAccountAddress
+        )
+
+        val transactionState = mapSignRequestStatusToTransactionState(signRequest)
 
         return JointAccountTransactionViewState(
             jointAccountDisplayName = dependencies.getAccountDisplayName(jointAccountAddress),
             jointAccountIconPreview = dependencies.getAccountIconDrawablePreview(jointAccountAddress),
+            centerPreview = centerPreview,
+            addressForClipboard = addressForClipboard,
             recipientAddress = transactionData.recipientAddress,
             recipientShortAddress = transactionData.recipientAddress.toShortenedAddress(),
             amount = transactionData.amountFormatted.formatAsAlgoAmount(),
@@ -186,7 +195,7 @@ internal class GetJointAccountTransactionViewStateUseCase(
             signedCount = participantData.signedCount,
             requiredSignatureCount = threshold,
             timeRemaining = expirationData.timeRemaining,
-            transactionId = signRequest.id?.toString(),
+            transactionId = signRequest.id,
             jointAccountAddress = jointAccountAddress,
             currentUserParticipantAddress = participantData.currentUserAddress,
             isExpired = expirationData.isExpired,
@@ -197,8 +206,24 @@ internal class GetJointAccountTransactionViewStateUseCase(
             unsignedLocalParticipantAddresses = participantData.unsignedLocal,
             unsignedLedgerParticipantAddresses = participantData.unsignedLedger,
             hasProposerAddress = participantData.hasProposer,
+            isRekeyTransaction = isRekeyTransaction,
             failReasonDisplay = signRequest.failReasonDisplay
         )
+    }
+
+    private fun mapSignRequestStatusToTransactionState(
+        signRequest: SignRequestWithFullSignature
+    ): JointAccountTransactionState {
+        return when (signRequest.status) {
+            SignRequestStatus.FAILED -> JointAccountTransactionState.Failed(signRequest.failReasonDisplay)
+            SignRequestStatus.EXPIRED -> JointAccountTransactionState.Expired
+            SignRequestStatus.DECLINED -> JointAccountTransactionState.Declined
+            SignRequestStatus.CONFIRMED -> JointAccountTransactionState.Completed
+            SignRequestStatus.READY -> JointAccountTransactionState.ReadyToSubmit
+            SignRequestStatus.SUBMITTING -> JointAccountTransactionState.PendingSignatures
+            SignRequestStatus.PENDING,
+            null -> JointAccountTransactionState.AwaitingConfirmation
+        }
     }
 
     private fun calculateTimeRemaining(
@@ -235,17 +260,112 @@ internal class GetJointAccountTransactionViewStateUseCase(
         else -> resources.getString(R.string.days_short, (millis / DateUtils.DAY_IN_MILLIS).toInt())
     }
 
-    private fun extractTransactionData(
+    private suspend fun buildCenterPreview(
+        transactionData: TransactionData,
+        detectedAssetAction: DetectedAssetAction?,
+        jointAccountAddress: String
+    ): Pair<JointAccountSignRequestCenterPreview, String> {
+        if (detectedAssetAction == null) {
+            val center = JointAccountSignRequestCenterPreview.Transfer(
+                recipientShortAddress = transactionData.recipientAddress.toShortenedAddress(),
+                amount = transactionData.amountFormatted.formatAsAlgoAmount(),
+                convertedAmount = transactionData.convertedAmount
+            )
+            return Pair(center, transactionData.recipientAddress)
+        }
+
+        val assetId = detectedAssetAction.assetId
+        val content = loadAssetDisplayContent(assetId)
+        val center = JointAccountSignRequestCenterPreview.AssetAction(
+            type = detectedAssetAction.type,
+            shortAddress = jointAccountAddress.toShortenedAddress(),
+            assetIcon = content.icon,
+            assetName = content.assetName,
+            assetUnitName = content.unitName,
+            assetIdText = assetId.toString(),
+            verificationTier = content.tierConfiguration
+        )
+        return Pair(center, jointAccountAddress)
+    }
+
+    private suspend fun loadAssetDisplayContent(assetId: Long): AssetDisplayContent {
+        val unnamed = resources.getString(R.string.unnamed)
+        val decider = dependencies.verificationTierConfigurationDecider
+        return when (val fetchResult = dependencies.fetchAsset(assetId)) {
+            is PeraResult.Success -> {
+                val asset = fetchResult.data
+                AssetDisplayContent(
+                    assetName = asset.fullName ?: asset.shortName ?: unnamed,
+                    unitName = asset.shortName ?: unnamed,
+                    tierConfiguration = decider.decideVerificationTierConfiguration(asset.verificationTier),
+                    icon = if (asset.isAlgo) {
+                        AssetIconDrawable.AlgoDrawable
+                    } else {
+                        AssetIconDrawable.AssetDrawable(
+                            url = asset.logoUri.orEmpty(),
+                            unitName = asset.shortName
+                        )
+                    }
+                )
+            }
+
+            is PeraResult.Error -> {
+                AssetDisplayContent(
+                    assetName = unnamed,
+                    unitName = assetId.toString(),
+                    tierConfiguration = decider.decideVerificationTierConfiguration(null),
+                    icon = AssetIconDrawable.AssetDrawable(url = "", unitName = assetId.toString())
+                )
+            }
+        }
+    }
+
+    private fun detectAssetAction(transaction: RawTransaction): DetectedAssetAction? {
+        if (transaction.transactionType != RawTransactionType.ASSET_TRANSACTION) return null
+        val assetId = transaction.assetId?.takeIf { it > 0L } ?: return null
+
+        val hasCloseTo = !transaction.assetCloseToAddress?.decodedAddress.isNullOrBlank()
+        if (hasCloseTo) {
+            return DetectedAssetAction(
+                JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_OUT,
+                assetId
+            )
+        }
+
+        val amount = transaction.assetAmount ?: BigInteger.ZERO
+        val sender = transaction.senderAddress?.decodedAddress
+        val receiver = transaction.assetReceiverAddress?.decodedAddress
+        val isOptIn = sender != null && receiver != null &&
+            amount == BigInteger.ZERO && sender == receiver
+
+        return if (isOptIn) {
+            DetectedAssetAction(JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_IN, assetId)
+        } else {
+            null
+        }
+    }
+
+    private fun extractTransactionExtraction(
         transactionLists: List<TransactionListWithFullSignature>
-    ): TransactionData {
+    ): TransactionExtraction {
         var totalAmount = BigInteger.ZERO
         var recipientAddress = ""
         var totalFee = 0L
+        var detectedAction: DetectedAssetAction? = null
+        var isRekeyTransaction = false
 
         transactionLists.forEach { list ->
             list.rawTransactions?.forEach { raw ->
                 val bytes = raw.decodeBase64() ?: return@forEach
                 val transaction = dependencies.parseTransactionMessagePack(bytes) ?: return@forEach
+
+                if (detectedAction == null) {
+                    detectedAction = detectAssetAction(transaction)
+                }
+
+                if (transaction.rekeyAddress != null) {
+                    isRekeyTransaction = true
+                }
 
                 when (transaction.transactionType) {
                     RawTransactionType.PAY_TRANSACTION -> {
@@ -273,11 +393,15 @@ internal class GetJointAccountTransactionViewStateUseCase(
         val amountDecimal = totalAmount.toBigDecimal().movePointLeft(ALGO_DECIMALS)
         val feeDecimal = BigDecimal.valueOf(totalFee, ALGO_DECIMALS)
 
-        return TransactionData(
-            recipientAddress = recipientAddress,
-            amountFormatted = amountDecimal.formatAsAlgoString(),
-            feeFormatted = feeDecimal.formatAsAlgoString(),
-            convertedAmount = calculateConvertedAmount(amountDecimal)
+        return TransactionExtraction(
+            transactionData = TransactionData(
+                recipientAddress = recipientAddress,
+                amountFormatted = amountDecimal.formatAsAlgoString(),
+                feeFormatted = feeDecimal.formatAsAlgoString(),
+                convertedAmount = calculateConvertedAmount(amountDecimal)
+            ),
+            detectedAssetAction = detectedAction,
+            isRekeyTransaction = isRekeyTransaction
         )
     }
 
@@ -285,11 +409,29 @@ internal class GetJointAccountTransactionViewStateUseCase(
         return dependencies.formatAlgoAsDisplayCurrency(algoAmount)
     }
 
+    private data class DetectedAssetAction(
+        val type: JointAccountSignRequestCenterPreview.AssetAction.Type,
+        val assetId: Long
+    )
+
+    private data class TransactionExtraction(
+        val transactionData: TransactionData,
+        val detectedAssetAction: DetectedAssetAction?,
+        val isRekeyTransaction: Boolean
+    )
+
     private data class TransactionData(
         val recipientAddress: String,
         val amountFormatted: String,
         val feeFormatted: String,
         val convertedAmount: String
+    )
+
+    private data class AssetDisplayContent(
+        val assetName: String,
+        val unitName: String,
+        val tierConfiguration: VerificationTierConfiguration,
+        val icon: AssetIconDrawable
     )
 
     private data class ParticipantData(

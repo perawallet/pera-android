@@ -13,7 +13,6 @@
 package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
 import android.util.Base64
-import android.util.Log
 import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.util.Encoder
 import com.algorand.android.utils.decodeBase64
@@ -57,12 +56,6 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
         participantAddresses: List<String>,
         rawTransactionGroups: List<List<String>>
     ): SignAndSubmitResult {
-        Log.d(
-            TAG,
-            "invoke: signReqId=$signRequestId, " +
-                "participants=${participantAddresses.map { it.take(ADDR_LOG_LEN) }}, " +
-                "groups=${rawTransactionGroups.map { it.size }}"
-        )
         val signatureInputs = mutableListOf<AddSignatureInput>()
         val signedAddresses = mutableListOf<String>()
         val uniqueAddresses = participantAddresses.distinct()
@@ -70,14 +63,8 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
         for (participantAddress in uniqueAddresses) {
             val groupedSignatures = signAllTransactionGroups(rawTransactionGroups, participantAddress)
             if (groupedSignatures == null) {
-                Log.e(TAG, "invoke: signAllGroups null for ${participantAddress.take(ADDR_LOG_LEN)}")
                 continue
             }
-            Log.d(
-                TAG,
-                "invoke: participant=${participantAddress.take(ADDR_LOG_LEN)}, " +
-                    "sigGroups=${groupedSignatures.map { g -> g.map { it != null } }}"
-            )
             signatureInputs.add(
                 AddSignatureInput(
                     address = participantAddress,
@@ -90,13 +77,10 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
         }
 
         if (signatureInputs.isEmpty()) {
-            Log.e(TAG, "invoke: no signature inputs, returning empty")
             return SignAndSubmitResult(signedAddresses = emptyList(), apiResult = null)
         }
 
-        Log.d(TAG, "invoke: submitting ${signatureInputs.size} signatures")
         val apiResult = addJointAccountSignature(signRequestId, signatureInputs)
-        Log.d(TAG, "invoke: apiResult=$apiResult")
         val confirmedSignedAddresses = if (apiResult is PeraResult.Success) signedAddresses else emptyList()
         return SignAndSubmitResult(signedAddresses = confirmedSignedAddresses, apiResult = apiResult)
     }
@@ -166,10 +150,5 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
             val signedTransaction = Encoder.decodeFromMsgPack(signedTransactionBytes, SignedTransaction::class.java)
             signedTransaction.sig?.bytes?.takeIf { it.isNotEmpty() }
         }.getOrNull()
-    }
-
-    companion object {
-        private const val TAG = "JOINT_SIGN_DEBUG"
-        private const val ADDR_LOG_LEN = 8
     }
 }

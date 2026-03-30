@@ -38,6 +38,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAs
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSignRequestWithSignatures
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.GetSyncSignRequestWithSignatures
+import com.algorand.wallet.jointaccount.transaction.domain.usecase.MarkSignRequestsConfirmed
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
 import dagger.Module
 import dagger.Provides
@@ -80,13 +81,17 @@ internal object JointAccountModule {
     ): GetSyncSignRequestWithSignatures = GetSyncSignRequestWithSignatures(repository::getSignRequestWithFullSignatures)
 
     @Provides
-    @Singleton
     fun provideMultisigTransactionAssembler(): MultisigTransactionAssembler = MultisigTransactionAssembler()
 
     @Provides
     fun provideAddJointAccountSignature(
         repository: JointAccountRepository
     ): AddJointAccountSignature = AddJointAccountSignature(repository::addSignatures)
+
+    @Provides
+    fun provideMarkSignRequestsConfirmed(
+        repository: JointAccountRepository
+    ): MarkSignRequestsConfirmed = MarkSignRequestsConfirmed(repository::markSignRequestsConfirmed)
 
     @Provides
     fun provideGetJointAccountProposerAddress(

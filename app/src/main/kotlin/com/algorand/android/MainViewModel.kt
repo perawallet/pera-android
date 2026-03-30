@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
+import com.algorand.android.MainActivity.Companion.SIGN_REQUEST_ID_INTENT_KEY
 import com.algorand.android.MainActivity.Companion.WC_ARBITRARY_DATA_ID_INTENT_KEY
 import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
 import com.algorand.android.core.BaseViewModel
@@ -319,6 +320,7 @@ class MainViewModel @Inject constructor(
     private suspend fun handlePendingIntentWithExtras(pendingIntent: Intent): Boolean {
         val transactionId = pendingIntent.getLongExtra(WC_TRANSACTION_ID_INTENT_KEY, -1L)
         val arbitraryDataId = pendingIntent.getLongExtra(WC_ARBITRARY_DATA_ID_INTENT_KEY, -1L)
+        val signRequestId = pendingIntent.getStringExtra(SIGN_REQUEST_ID_INTENT_KEY)
 
         return when {
             transactionId != -1L -> {
@@ -328,6 +330,11 @@ class MainViewModel @Inject constructor(
 
             arbitraryDataId != -1L -> {
                 eventDelegate.sendEvent(ViewEvent.NavToWalletConnectArbitraryDataRequestNavigation(arbitraryDataId))
+                true
+            }
+
+            signRequestId != null -> {
+                eventDelegate.sendEvent(ViewEvent.NavToJointAccountSignRequest(signRequestId))
                 true
             }
 
@@ -432,6 +439,7 @@ class MainViewModel @Inject constructor(
         data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
         data class NavToWalletConnectTransactionRequestNavigation(val wcRequestId: Long) : ViewEvent
         data class NavToWalletConnectArbitraryDataRequestNavigation(val wcRequestId: Long) : ViewEvent
+        data class NavToJointAccountSignRequest(val signRequestId: String) : ViewEvent
         data class NavToRecoverWithPassphraseNavigation(val mnemonic: String) : ViewEvent
         data class NavToKeyRegTransactionFragment(val transactionDetail: KeyRegTransactionDetail) : ViewEvent
         data class ShowKeyRegDeeplinkError(val address: String) : ViewEvent

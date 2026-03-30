@@ -19,7 +19,6 @@ import android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.util.Log
-import com.algorand.android.BuildConfig
 import com.algorand.android.R
 import com.algorand.android.utils.getAccountIndexAsByteArray
 import com.algorand.android.utils.recordException
@@ -92,9 +91,6 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
 
     override fun log(priority: Int, message: String) {
         super.log(priority, message)
-        if (BuildConfig.DEBUG) {
-            Log.println(priority, TAG, message)
-        }
     }
 
     inner class ReceivedDataHandler : DataReceivedCallback {
@@ -438,7 +434,5 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
             byteArrayOf(0x69, 0x86.toByte())
         )
         private val NEXT_PAGE_CODE = byteArrayOf(0x90.toByte(), 0x00.toByte())
-
-        private const val TAG = "LedgerBleManager"
     }
 }

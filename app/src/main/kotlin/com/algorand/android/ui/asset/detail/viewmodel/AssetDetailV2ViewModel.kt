@@ -27,6 +27,7 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.Vie
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailV2ViewModel.ViewState.Content
 import com.algorand.android.usecase.NetworkSlugUseCase
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.usecase.FetchAsset
@@ -113,6 +114,11 @@ class AssetDetailV2ViewModel @Inject constructor(
         }
     }
 
+    fun isJointAccount(): Boolean {
+        val state = stateDelegate.state.value
+        return state is Content && state.isJointAccount
+    }
+
     fun getActiveNodeSlug(): String? = networkSlugUseCase.getActiveNodeSlug()
 
     private fun loadViewState(address: String, assetId: Long) {
@@ -122,7 +128,13 @@ class AssetDetailV2ViewModel @Inject constructor(
             val viewState = if (asset == null) {
                 ViewState.Error(address, assetId)
             } else {
-                Content(asset, address, getAccountDisplayName(address), getAccountIconDrawablePreview(address))
+                Content(
+                    asset = asset,
+                    address = address,
+                    accountDisplayName = getAccountDisplayName(address),
+                    accountIconDrawable = getAccountIconDrawablePreview(address),
+                    isJointAccount = getAccountType(address) is AccountType.Joint
+                )
             }
             stateDelegate.updateState { viewState }
         }
@@ -136,7 +148,8 @@ class AssetDetailV2ViewModel @Inject constructor(
             val asset: Asset,
             val address: String,
             val accountDisplayName: AccountDisplayName,
-            val accountIconDrawable: AccountIconDrawablePreview
+            val accountIconDrawable: AccountIconDrawablePreview,
+            val isJointAccount: Boolean
         ) : ViewState
     }
 

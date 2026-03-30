@@ -38,6 +38,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.navigateToPendingSignaturesBottomSheet
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
@@ -81,18 +82,24 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
     private val externalTransactionSignManagerCollector: suspend (ExternalTransactionSignResult) -> Unit = {
         if (it !is ExternalTransactionSignResult.Loading) hideLoading()
         when (it) {
-            is ExternalTransactionSignResult.Success<*> -> sendSignedTransactions(it.signedTransaction)
+            is ExternalTransactionSignResult.Success<*> -> {
+                val preSubmittedTxnId = it.algodTransactionIdIfAlreadySubmitted
+                if (!preSubmittedTxnId.isNullOrBlank()) {
+                    viewModel.onAlgodSubmitAlreadyCompleted(preSubmittedTxnId)
+                } else {
+                    sendSignedTransactions(it.signedTransaction)
+                }
+            }
+
             is ExternalTransactionSignResult.Error -> showTransactionSignResultError(it)
             ExternalTransactionSignResult.LedgerScanFailed -> showLedgerNotFoundDialog()
             is ExternalTransactionSignResult.LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
             is ExternalTransactionSignResult.WaitingForJointSignatures -> {
-                nav(
-                    HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
-                        it.signRequestId,
-                        isDismissable = false
-                    )
-                )
+                navigateToPendingSignaturesBottomSheet(it.signRequestId) { _ ->
+                    nav(MainNavigationDirections.actionGlobalMainNavigation())
+                }
             }
+
             ExternalTransactionSignResult.Loading -> showLoading()
             ExternalTransactionSignResult.NotInitialized -> Unit
             is ExternalTransactionSignResult.TransactionCancelled -> showTransactionCancelledError(it)

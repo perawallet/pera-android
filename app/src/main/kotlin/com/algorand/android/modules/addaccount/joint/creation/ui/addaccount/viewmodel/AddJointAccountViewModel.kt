@@ -20,6 +20,7 @@ import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJoin
 import com.algorand.android.modules.addaccount.joint.creation.usecase.AddJointAccountSelectionUseCase
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
 import com.algorand.wallet.jointaccount.domain.usecase.CheckIsJointAccount
+import com.algorand.android.utils.isValidAddress
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -90,11 +91,12 @@ class AddJointAccountViewModel @Inject constructor(
         searchQueryFlow.value = ""
     }
 
-    fun setHasClipboardContent(hasContent: Boolean) {
+    fun updateClipboardAddress(copiedText: String?) {
+        val validAddress = copiedText?.takeIf { it.isValidAddress() }
         stateDelegate.updateState { currentState ->
             when (currentState) {
-                is ViewState.Loading -> ViewState.Content(hasClipboardContent = hasContent)
-                is ViewState.Content -> currentState.copy(hasClipboardContent = hasContent)
+                is ViewState.Loading -> ViewState.Content(clipboardAddress = validAddress)
+                is ViewState.Content -> currentState.copy(clipboardAddress = validAddress)
             }
         }
     }
@@ -217,7 +219,7 @@ class AddJointAccountViewModel @Inject constructor(
             val accounts: List<JointAccountSelectionListItem.AccountItem> = emptyList(),
             val contacts: List<JointAccountSelectionListItem.ContactItem> = emptyList(),
             val nfds: List<JointAccountSelectionListItem.NfdItem> = emptyList(),
-            val hasClipboardContent: Boolean = false,
+            val clipboardAddress: String? = null,
             val showEmptyState: Boolean = false,
             val isCheckingJointAccount: Boolean = false
         ) : ViewState {

@@ -15,8 +15,8 @@ package com.algorand.wallet.jointaccount.transaction.data.model
 import com.google.gson.annotations.SerializedName
 
 internal data class GetSignRequestWithSignaturesRequest(
-    @SerializedName("proposer_address")
-    val proposerAddress: String,
-    @SerializedName("arbitrary_data_sign_of_id")
-    val arbitraryDataSignOfId: String
+    @SerializedName("device_id")
+    val deviceId: String,
+    @SerializedName("proposed_sign_request_ids")
+    val proposedSignRequestIds: List<String>
 )

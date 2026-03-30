@@ -12,10 +12,12 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.addaccount
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -25,6 +27,7 @@ import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.AddJ
 import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.viewmodel.AddJointAccountViewModel
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.getTextFromClipboard
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.startSavedStateListener
@@ -37,6 +40,10 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
     private val viewModel: AddJointAccountViewModel by viewModels()
 
     override val fragmentConfiguration = FragmentConfiguration()
+
+    private val windowFocusChangeListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
+        if (hasFocus) updateClipboardAddress()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,6 +93,21 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            view?.viewTreeObserver?.addOnWindowFocusChangeListener(windowFocusChangeListener)
+        }
+        updateClipboardAddress()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            view?.viewTreeObserver?.removeOnWindowFocusChangeListener(windowFocusChangeListener)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         viewModel.resetSearchQuery()
@@ -111,6 +133,14 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
     override fun onQrScanClick() {
         view?.hideKeyboard()
         nav(AddJointAccountFragmentDirections.actionAddJointAccountFragmentToAddJointAccountQrScannerFragment())
+    }
+
+    override fun onPasteFromClipboardClick(address: String) {
+        viewModel.onSearchQueryUpdate(address)
+    }
+
+    private fun updateClipboardAddress() {
+        viewModel.updateClipboardAddress(context?.getTextFromClipboard())
     }
 
     private fun setResultAndNavigateBack(selectedAccount: SelectedJointAccountItem) {

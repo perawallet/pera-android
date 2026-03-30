@@ -18,6 +18,8 @@ import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePrev
 data class JointAccountTransactionViewState(
     val jointAccountDisplayName: AccountDisplayName,
     val jointAccountIconPreview: AccountIconDrawablePreview,
+    val centerPreview: JointAccountSignRequestCenterPreview,
+    val addressForClipboard: String,
     val recipientAddress: String,
     val recipientShortAddress: String,
     val amount: String,
@@ -39,5 +41,6 @@ data class JointAccountTransactionViewState(
     val unsignedLocalParticipantAddresses: List<String> = emptyList(),
     val unsignedLedgerParticipantAddresses: List<String> = emptyList(),
     val hasProposerAddress: Boolean = false,
+    val isRekeyTransaction: Boolean = false,
     val failReasonDisplay: String? = null
 )

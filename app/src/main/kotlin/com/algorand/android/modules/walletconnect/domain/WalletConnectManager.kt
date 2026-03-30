@@ -54,6 +54,7 @@ import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
+import com.algorand.wallet.logger.PeraErrorLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -86,7 +87,8 @@ class WalletConnectManager @Inject constructor(
     private val walletConnectMethodDecider: WalletConnectMethodDecider,
     private val getPreselectedAccountAddresses: GetWalletConnectRequestPreselectedAccountAddresses,
     private val clearWalletConnectPreselectedAddressCache: ClearWalletConnectPreselectedAddressCache,
-    private val cacheWalletConnectPreselectedAccountAddresses: CacheWalletConnectRequestPreselectedAccountAddresses
+    private val cacheWalletConnectPreselectedAccountAddresses: CacheWalletConnectRequestPreselectedAccountAddresses,
+    private val errorLogger: PeraErrorLogger
 ) : DefaultLifecycleObserver {
 
     val sessionResultFlow: SharedFlow<Event<Resource<WalletConnectSessionProposal>>>
@@ -279,6 +281,23 @@ class WalletConnectManager @Inject constructor(
             errorResponse = errorResponse
         )
         _walletConnectRequestLiveData.postValue(null)
+    }
+
+    suspend fun silentRejectRequest(
+        sessionIdentifier: WalletConnectSessionIdentifier,
+        requestId: Long,
+        errorResponse: WalletConnectError
+    ) {
+        try {
+            walletConnectClientManager.rejectRequest(
+                sessionId = sessionIdentifier.sessionIdentifier,
+                requestId = requestId,
+                versionIdentifier = sessionIdentifier.versionIdentifier,
+                errorResponse = errorResponse
+            )
+        } catch (e: Exception) {
+            errorLogger.logError(e)
+        }
     }
 
     suspend fun processWalletConnectSignResult(walletConnectSignResult: WalletConnectSignResult) {

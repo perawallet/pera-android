@@ -30,9 +30,7 @@ import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.Sta
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.Event
-import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
@@ -54,7 +52,6 @@ class AssetDetailPreviewUseCase @Inject constructor(
     private val getSelectedAssetExchangeValueUseCase: GetSelectedAssetExchangeValueUseCase,
     private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
     private val getAccountType: GetAccountType,
-    private val getAccountRegistrationType: GetAccountRegistrationType,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow,
@@ -163,15 +160,14 @@ class AssetDetailPreviewUseCase @Inject constructor(
         val safeIsQuickActionButtonsVisible = isQuickActionButtonsVisible && !isWatchAccount
         if (!safeIsQuickActionButtonsVisible) return emptyList()
 
-        val isJointAccount = getAccountRegistrationType(address) == AccountRegistrationType.Joint
         val quickActionItems = mutableListOf<AssetDetailQuickActionItem>()
 
         val isAlgo = assetId == ALGO_ID
         val isUserOptedInToAsa = assetHoldings.any { it.assetId == assetId }
-        if (isUserOptedInToAsa && !isJointAccount) {
+        if (isUserOptedInToAsa) {
             quickActionItems.add(SwapButton)
         }
-        if (isAlgo && !isJointAccount) {
+        if (isAlgo) {
             if (isXoSwapEnabled() && isStakingEnabled()) {
                 quickActionItems.add(StakeButton)
             } else {

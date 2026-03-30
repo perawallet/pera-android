@@ -31,8 +31,12 @@ import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import com.algorand.android.CoreMainActivity
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.R
+import com.algorand.android.core.BaseFragment
+import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesBottomSheet
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -144,6 +148,18 @@ fun <T> Fragment.setFragmentNavigationResult(key: String, value: T) {
         requestKey = key,
         result = bundleOf(key to value)
     )
+}
+
+fun BaseFragment.navigateToPendingSignaturesBottomSheet(
+    signRequestId: String,
+    onDismiss: (PendingSignaturesDismissResult) -> Unit
+) {
+    listenToNavigationResult<PendingSignaturesDismissResult>(
+        PendingSignaturesBottomSheet.DISMISS_RESULT_KEY
+    ) { result ->
+        onDismiss(result)
+    }
+    nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(signRequestId = signRequestId))
 }
 
 fun <T> Fragment.useFragmentResultListenerValue(key: String, result: (T) -> Unit) {

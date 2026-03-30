@@ -44,10 +44,11 @@ interface JointAccountRepository {
     ): PeraResult<SignRequestWithFullSignature>
 
     suspend fun getSignRequestWithFullSignatures(
-        signRequestId: String,
-        proposerAddress: String,
-        arbitraryDataSignOfId: String
+        deviceId: String,
+        signRequestId: String
     ): PeraResult<SignRequestWithFullSignature>
+
+    suspend fun markSignRequestsConfirmed(deviceId: String, signRequestIds: List<String>): PeraResult<Unit>
 
     suspend fun checkIsJointAccount(addresses: List<String>): PeraResult<List<IsJointAccountResult>>
 }

@@ -74,11 +74,7 @@ class RekeyToJointAccountConfirmationPreviewUseCase @Inject constructor(
     ): RekeyToJointAccountConfirmationPreview {
         val accountLite = getAccountLite(accountAddress)
         val isAccountRekeyed = accountLite?.cachedInfo?.isRekeyed == true
-        val displayName = getAccountDisplayName(
-            accountAddress,
-            accountLite?.customName,
-            accountLite?.cachedInfo?.type
-        )
+        val displayName = getAccountDisplayName(accountAddress)
 
         val authAccountDisplayName = getAccountDisplayName(authAccountAddress)
 

@@ -126,6 +126,14 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
         navBack()
     }
 
+    override fun onAccountIconClick() {
+        if (assetDetailV2ViewModel.isJointAccount()) {
+            navToJointAccountDetail(arg.accountAddress)
+        } else {
+            navToAccountStatusDetail(arg.accountAddress)
+        }
+    }
+
     override fun onUrlClick(url: String) {
         context?.openUrl(url)
     }
@@ -181,6 +189,16 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
                 )
             )
         }
+    }
+
+    private fun navToAccountStatusDetail(address: String) {
+        nav(
+            AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToAccountStatusDetailNavigation(address)
+        )
+    }
+
+    private fun navToJointAccountDetail(address: String) {
+        nav(HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(accountAddress = address))
     }
 
     private fun navToShowQRBottomSheet(address: String) {

@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.addaccount.joint.transaction.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,6 +23,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.model.JointAcco
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
+import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
@@ -54,6 +54,7 @@ class JointAccountTransactionViewModel @Inject constructor(
     EventViewModel<JointAccountTransactionViewModel.ViewEvent> by eventDelegate {
 
     private val signRequestId: String? = savedStateHandle.get<String>("signRequestId")
+    val hideCloseForNow: Boolean = savedStateHandle.get<Boolean>("hideCloseForNow") ?: false
     private val isSilentRefreshInProgress = AtomicBoolean(false)
 
     init {
@@ -141,10 +142,30 @@ class JointAccountTransactionViewModel @Inject constructor(
         }
     }
 
+    fun shouldNavigateHomeOnDismiss(): Boolean {
+        val content = stateDelegate.state.value as? ViewState.Content ?: return false
+        return content.preview.hasCurrentUserAlreadySigned && content.preview.isRekeyTransaction
+    }
+
+    fun getPendingSignaturesCloseDismissResult(): PendingSignaturesDismissResult {
+        val content = stateDelegate.state.value as? ViewState.Content
+            ?: return PendingSignaturesDismissResult.DISMISSED
+        val currentState = content.preview.transactionState
+        val isSuccessful = currentState is JointAccountTransactionState.Completed ||
+            currentState is JointAccountTransactionState.ReadyToSubmit
+        return if (isSuccessful) {
+            PendingSignaturesDismissResult.COMPLETED
+        } else {
+            PendingSignaturesDismissResult.CANCELED
+        }
+    }
+
     fun onCopyAddressClick() {
         stateDelegate.onState<ViewState.Content> { contentState ->
+            val address = contentState.preview.addressForClipboard
+            if (address.isBlank()) return@onState
             viewModelScope.launch {
-                eventDelegate.sendEvent(ViewEvent.CopyAddress(contentState.preview.recipientAddress))
+                eventDelegate.sendEvent(ViewEvent.CopyAddress(address))
             }
         }
     }
@@ -153,7 +174,7 @@ class JointAccountTransactionViewModel @Inject constructor(
         val requestId = signRequestId ?: return
         viewModelScope.launch {
             eventDelegate.sendEvent(
-                ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = true)
+                ViewEvent.ShowPendingSignaturesBottomSheet(requestId)
             )
         }
     }
@@ -164,7 +185,6 @@ class JointAccountTransactionViewModel @Inject constructor(
             startInboxPollObserver()
             viewModelScope.launch { refreshInboxCache() }
         } else {
-            Log.e(TAG, "signRequestId is null or blank")
             emitError(R.string.an_error_occurred)
             emitNavigateBack()
         }
@@ -174,10 +194,7 @@ class JointAccountTransactionViewModel @Inject constructor(
         viewModelScope.launch {
             getInboxMessagesFlow().drop(1).collectLatest {
                 stateDelegate.onState<ViewState.Content> { content ->
-                    val state = content.preview.transactionState
-                    if (state != JointAccountTransactionState.Completed &&
-                        state != JointAccountTransactionState.Canceled
-                    ) {
+                    if (!content.preview.transactionState.isFinalized()) {
                         loadTransactionPreview(silentRefresh = true)
                     }
                 }
@@ -208,13 +225,11 @@ class JointAccountTransactionViewModel @Inject constructor(
         )
         when (result.apiResult) {
             null -> {
-                Log.e(TAG, "signLocalAccounts: apiResult is null")
                 emitError(R.string.an_error_occurred)
                 return emptyList()
             }
 
             is PeraResult.Error -> {
-                Log.e(TAG, "signLocalAccounts failed: ${result.apiResult}")
                 emitError(R.string.an_error_occurred)
                 return emptyList()
             }
@@ -248,7 +263,7 @@ class JointAccountTransactionViewModel @Inject constructor(
                 )
                 stateDelegate.updateState { ViewState.Content(canceledPreview) }
                 eventDelegate.sendEvent(
-                    ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = false)
+                    ViewEvent.ShowPendingSignaturesBottomSheet(requestId)
                 )
             },
             onFailed = { _, _ ->
@@ -271,7 +286,6 @@ class JointAccountTransactionViewModel @Inject constructor(
     private suspend fun loadTransactionPreviewWithLoading() {
         val requestId = signRequestId
         if (requestId.isNullOrBlank()) {
-            Log.e(TAG, "signRequestId is null or blank during preview load")
             emitError(R.string.an_error_occurred)
             emitNavigateBack()
             return
@@ -283,12 +297,11 @@ class JointAccountTransactionViewModel @Inject constructor(
                 stateDelegate.updateState { ViewState.Content(updatedPreview) }
                 if (updatedPreview.shouldShowPendingSignaturesDirectly) {
                     eventDelegate.sendEvent(
-                        ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = false)
+                        ViewEvent.ShowPendingSignaturesBottomSheet(requestId)
                     )
                 }
             },
-            onFailed = { exception, code ->
-                Log.e(TAG, "Failed to load preview: code=$code, exception=$exception")
+            onFailed = { _, _ ->
                 stateDelegate.updateState { ViewState.Error(R.string.sign_request_not_available) }
             }
         )
@@ -323,7 +336,7 @@ class JointAccountTransactionViewModel @Inject constructor(
             is JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures -> {
                 val requestId = signRequestId ?: return
                 eventDelegate.sendEvent(
-                    ViewEvent.ShowPendingSignaturesBottomSheet(requestId, isDismissable = false)
+                    ViewEvent.ShowPendingSignaturesBottomSheet(requestId)
                 )
             }
         }
@@ -348,14 +361,10 @@ class JointAccountTransactionViewModel @Inject constructor(
         data class ShowSuccessAndNavigateBack(val messageResId: Int) : ViewEvent
         data class ShowError(val messageResId: Int) : ViewEvent
         data class ShowPendingSignaturesBottomSheet(
-            val signRequestId: String,
-            val isDismissable: Boolean
+            val signRequestId: String
         ) : ViewEvent
+
         data class StartLedgerSigning(val data: JointAccountTransactionProcessor.LedgerSignData) : ViewEvent
         data class CopyAddress(val address: String) : ViewEvent
-    }
-
-    companion object {
-        private const val TAG = "JointAccountTxVM"
     }
 }

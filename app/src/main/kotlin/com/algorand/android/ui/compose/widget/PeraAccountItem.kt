@@ -123,7 +123,8 @@ fun PeraAccountItem(
 @Composable
 fun AccountIcon(
     modifier: Modifier,
-    iconDrawablePreview: AccountIconDrawablePreview
+    iconDrawablePreview: AccountIconDrawablePreview,
+    contentDescription: String? = null
 ) {
     Image(
         modifier = modifier,
@@ -132,7 +133,7 @@ fun AccountIcon(
             accountIconDrawablePreview = iconDrawablePreview,
             sizeResId = R.dimen.spacing_xxxxlarge
         ).toBitmap().asImageBitmap(),
-        contentDescription = null
+        contentDescription = contentDescription
     )
 }
 

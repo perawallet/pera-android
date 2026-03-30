@@ -15,7 +15,7 @@ package com.algorand.wallet.jointaccount.transaction.domain.model
 data class CreateSignRequestInput(
     val jointAccountAddress: String,
     val proposerAddress: String,
-    val type: String,
+    val type: SignRequestType,
     val rawTransactionLists: List<List<String>>,
     val responses: List<ProposeJointSignRequestResponseInput>
 )

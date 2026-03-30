@@ -26,6 +26,7 @@ import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSu
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -44,6 +45,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
     private val createArc59Transactions: CreateArc59Transactions,
     private val arc59TransactionPayloadMapper: Arc59TransactionPayloadMapper,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getAccountMinBalance: GetAccountMinBalance,
     private val getAsset: GetAsset
 ) {
 
@@ -98,10 +100,11 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         }
     }
 
-    private suspend fun hasAccountEnoughAlgo(address: String, minimumBalance: BigInteger): Boolean {
+    private suspend fun hasAccountEnoughAlgo(address: String, requiredFee: BigInteger): Boolean {
         val accountAlgoAssetData = getAccountBaseOwnedAssetData(address, ALGO_ID)
-        val safeAlgoAsset = accountAlgoAssetData?.amount ?: BigInteger.ZERO
-        return safeAlgoAsset isGreaterThan minimumBalance
+        val algoBalance = accountAlgoAssetData?.amount ?: BigInteger.ZERO
+        val senderMinBalance = getAccountMinBalance(address)
+        return algoBalance isGreaterThan (requiredFee + senderMinBalance)
     }
 
     private fun Arc59SendSummaryPreview.getArc59SendTransactionDataPreview(

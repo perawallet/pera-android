@@ -27,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:primaryButtonIcon="@drawable/ic_customize"
-        app:primaryButtonText="@string/manage"
+        app:primaryButtonIconOnly="true"
         app:secondaryButtonIcon="@drawable/ic_plus"
         app:secondaryButtonText="@string/add_asset"
         app:title="@string/assets" />

@@ -25,12 +25,14 @@ internal class CreateJointAccountUseCase @Inject constructor(
     override suspend fun invoke(
         participantAddresses: List<String>,
         threshold: Int,
-        version: Int
+        version: Int,
+        deviceId: String
     ): PeraResult<JointAccount> {
         val input = CreateJointAccountInput(
             participantAddresses = participantAddresses,
             threshold = threshold,
-            version = version
+            version = version,
+            deviceId = deviceId
         )
         return repository.createJointAccount(input)
     }

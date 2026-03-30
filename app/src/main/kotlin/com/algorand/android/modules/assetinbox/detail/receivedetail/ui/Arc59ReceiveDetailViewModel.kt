@@ -18,6 +18,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.domain.Arc59ReceiveDetailPreviewUseCase
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailPreview
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
@@ -72,6 +73,18 @@ class Arc59ReceiveDetailViewModel @Inject constructor(
                 arc59ReceiveDetailPreviewUseCase
                     .sendSignedTransaction(signedTransactions, currentPreview)
                     .collectLatest { _previewFlow.value = it }
+            }
+        }
+    }
+
+    fun onAlgodSubmitAlreadyCompleted(transactionId: String) {
+        viewModelScope.launchIO {
+            _previewFlow.value?.let { current ->
+                _previewFlow.value = current.copy(
+                    isLoading = false,
+                    showError = null,
+                    onTransactionSendSuccessfully = Event(transactionId)
+                )
             }
         }
     }

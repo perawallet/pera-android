@@ -13,7 +13,6 @@
 package com.algorand.android.modules.walletconnect.client.v2.utils
 
 import android.app.Application
-import android.util.Log
 import app.perawallet.walletconnectv2.Core
 import app.perawallet.walletconnectv2.CoreClient
 import app.perawallet.walletconnectv2.relay.ConnectionType
@@ -23,11 +22,13 @@ import app.perawallet.walletconnectv2.web3.wallet.client.Web3Wallet
 import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
 import com.algorand.android.modules.walletconnect.client.v2.domain.WalletConnectV2SignClient
 import com.algorand.android.utils.walletconnect.peermeta.WalletConnectPeraPeerMeta
+import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
 
 class InitializeWalletConnectV2ClientUseCase @Inject constructor(
     private val signClient: WalletConnectV2SignClient,
-    private val firebasePushTokenUseCase: FirebasePushTokenUseCase
+    private val firebasePushTokenUseCase: FirebasePushTokenUseCase,
+    private val errorLogger: PeraErrorLogger
 ) {
 
     operator fun invoke(application: Application) {
@@ -43,7 +44,7 @@ class InitializeWalletConnectV2ClientUseCase @Inject constructor(
             application = application,
             metaData = getPeraWalletAppMetaData()
         ) { error ->
-            logError(CoreClient::class.simpleName, error.throwable)
+            errorLogger.logError(error.throwable)
         }
     }
 
@@ -51,22 +52,26 @@ class InitializeWalletConnectV2ClientUseCase @Inject constructor(
         val initParams = Wallet.Params.Init(core = CoreClient)
 
         Web3Wallet.initialize(initParams) { error ->
-            logError(Web3Wallet::class.simpleName, error.throwable)
+            errorLogger.logError(error.throwable)
         }
 
         val firebaseAccessToken = firebasePushTokenUseCase.getPushTokenOrNull()?.data.orEmpty()
         val enableEncrypted = false
 
-        Web3Wallet.registerDeviceToken(
-            firebaseAccessToken = firebaseAccessToken,
-            enableEncrypted = enableEncrypted,
-            onSuccess = {
-                // No need to do anything here
-            },
-            onError = { error: Wallet.Model.Error ->
-                // No need to do anything here
-            }
-        )
+        try {
+            Web3Wallet.registerDeviceToken(
+                firebaseAccessToken = firebaseAccessToken,
+                enableEncrypted = enableEncrypted,
+                onSuccess = {
+                    // No need to do anything here
+                },
+                onError = { error: Wallet.Model.Error ->
+                    errorLogger.logError(error.throwable)
+                }
+            )
+        } catch (e: Exception) {
+            errorLogger.logError(e)
+        }
     }
 
     private fun initializeSignClient() {
@@ -92,14 +97,8 @@ class InitializeWalletConnectV2ClientUseCase @Inject constructor(
             .build()
     }
 
-    private fun logError(className: String?, throwable: Throwable) {
-        Log.e(logTag, "$className - ${throwable.printStackTrace()}")
-    }
-
     companion object {
         // TODO Change project id when it is decided
         private const val PROJECT_ID = "d98a4285aff59c9cd463bdd8b7415465"
-
-        private val logTag = InitializeWalletConnectV2ClientUseCase::class.simpleName
     }
 }

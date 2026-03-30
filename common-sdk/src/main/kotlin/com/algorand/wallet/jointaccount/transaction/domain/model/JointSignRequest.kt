@@ -18,7 +18,7 @@ data class JointSignRequest(
     val id: String?,
     val jointAccount: JointAccount?,
     val proposerAddress: String?,
-    val type: String?,
+    val type: SignRequestType?,
     val rawTransactionLists: List<List<String>>?,
     val transactionLists: List<JointSignRequestTransactionList>?,
     val expectedExpireDatetime: String?,

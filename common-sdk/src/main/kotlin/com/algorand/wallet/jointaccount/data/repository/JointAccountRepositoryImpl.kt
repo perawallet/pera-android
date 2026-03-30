@@ -32,6 +32,7 @@ import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.data.mapper.SearchSignRequestsInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.model.GetSignRequestWithSignaturesRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
+import com.algorand.wallet.jointaccount.transaction.data.model.MarkSignRequestsConfirmedRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsResponse
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
@@ -48,7 +49,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
     private val isJointAccountMapper: IsJointAccountMapper,
     private val jointAccountDTOMapper: JointAccountDTOMapper,
     private val createSignRequestInputMapper: CreateSignRequestInputMapper,
-    private val jointSignRequestDTOMapper: JointSignRequestMapper,
+    private val jointSignRequestMapper: JointSignRequestMapper,
     private val addSignatureInputMapper: AddSignatureInputMapper,
     private val searchSignRequestsInputMapper: SearchSignRequestsInputMapper,
     private val peraApiErrorHandler: PeraRetrofitErrorHandler,
@@ -122,11 +123,25 @@ internal class JointAccountRepositoryImpl @Inject constructor(
     private fun PeraResult<JointSignRequestResponse>.mapToJointSignRequest(): PeraResult<JointSignRequest> {
         return when (this) {
             is PeraResult.Success -> {
-                val dto = jointSignRequestDTOMapper.mapToJointSignRequest(data)
+                val dto = jointSignRequestMapper.mapToJointSignRequest(data)
                 if (dto != null) PeraResult.Success(dto) else PeraResult.Error(Exception("Failed to map sign request"))
             }
 
             is PeraResult.Error -> this
+        }
+    }
+
+    override suspend fun markSignRequestsConfirmed(
+        deviceId: String,
+        signRequestIds: List<String>
+    ): PeraResult<Unit> {
+        if (signRequestIds.isEmpty()) return PeraResult.Success(Unit)
+        val request = MarkSignRequestsConfirmedRequest(
+            deviceId = deviceId,
+            proposedSignRequestIds = signRequestIds
+        )
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.markSignRequestsConfirmed(request)
         }
     }
 
@@ -146,24 +161,25 @@ internal class JointAccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSignRequestWithFullSignatures(
-        signRequestId: String,
-        proposerAddress: String,
-        arbitraryDataSignOfId: String
+        deviceId: String,
+        signRequestId: String
     ): PeraResult<SignRequestWithFullSignature> {
         val request = GetSignRequestWithSignaturesRequest(
-            proposerAddress = proposerAddress,
-            arbitraryDataSignOfId = arbitraryDataSignOfId
+            deviceId = deviceId,
+            proposedSignRequestIds = listOf(signRequestId)
         )
         val result = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
-            jointAccountApiService.getSignRequestWithSignatures(signRequestId, request)
+            jointAccountApiService.getSignRequestWithSignatures(request)
         }
         return when (result) {
             is PeraResult.Success -> {
-                val signRequest = jointSignRequestDTOMapper.mapToJointSignRequest(result.data)
+                val signRequest = result.data
+                    .mapNotNull { jointSignRequestMapper.mapToJointSignRequest(it) }
+                    .firstOrNull { it.id == signRequestId }
                 if (signRequest != null) {
                     PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
                 } else {
-                    PeraResult.Error(Exception("Failed to map sign request"))
+                    PeraResult.Error(Exception("Sign request not found"))
                 }
             }
             is PeraResult.Error -> result
@@ -177,7 +193,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
         return when (result) {
             is PeraResult.Success -> {
                 val signRequests = result.data.results?.mapNotNull { response ->
-                    jointSignRequestDTOMapper.mapToJointSignRequest(response)
+                    jointSignRequestMapper.mapToJointSignRequest(response)
                 } ?: emptyList()
                 val signRequest = signRequests.firstOrNull { it.id == signRequestId }
                 if (signRequest != null) {
@@ -193,7 +209,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
 
     private fun mapToSignRequestWithFullSignature(signRequest: JointSignRequest): SignRequestWithFullSignature {
         return SignRequestWithFullSignature(
-            id = signRequest.id?.toLongOrNull(),
+            id = signRequest.id,
             type = signRequest.type,
             jointAccount = signRequest.jointAccount,
             proposerAddress = signRequest.proposerAddress,

@@ -22,7 +22,8 @@ sealed class ExternalTransactionSignResult {
 
     data class Success<T>(
         val signedTransaction: List<T>,
-        val signedTransactionsByteArray: List<ByteArray?>? = null
+        val signedTransactionsByteArray: List<ByteArray?>? = null,
+        val algodTransactionIdIfAlreadySubmitted: String? = null
     ) : ExternalTransactionSignResult()
 
     sealed class Error(@param:StringRes val titleResId: Int) : ExternalTransactionSignResult() {

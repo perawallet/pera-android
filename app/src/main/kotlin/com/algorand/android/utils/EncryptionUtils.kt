@@ -25,8 +25,7 @@ fun Aead.encryptString(value: String?): String? {
         } else {
             Base64.encodeToString(encrypt(value.toByteArray(Charsets.UTF_8), null), Base64.DEFAULT)
         }
-    } catch (exception: Exception) {
-        exception.printStackTrace()
+    } catch (_: Exception) {
         null
     }
 }
@@ -38,8 +37,7 @@ fun Aead.decryptString(value: String?): String? {
         } else {
             String(decrypt(Base64.decode(value, Base64.DEFAULT), null), Charsets.UTF_8)
         }
-    } catch (exception: Exception) {
-        exception.printStackTrace()
+    } catch (_: Exception) {
         null
     }
 }

@@ -280,12 +280,10 @@ private fun StatusLine(
     statusLineIsError: Boolean
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f, fill = false),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -301,26 +299,25 @@ private fun StatusLine(
                 text = statusLineText,
                 style = PeraTheme.typography.footnote.sansMedium,
                 color = if (statusLineIsError) PeraTheme.colors.helper.negative else PeraTheme.colors.text.main,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
-
+        Spacer(modifier = Modifier.width(8.dp))
         Box(
             modifier = Modifier
                 .size(2.dp)
                 .background(
-                    color = PeraTheme.colors.layer.grayLighter,
+                    color = PeraTheme.colors.text.grayLighter,
                     shape = CircleShape
                 )
         )
-
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = timeAgo,
             style = PeraTheme.typography.footnote.sans,
             color = PeraTheme.colors.text.grayLighter,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            maxLines = 1
         )
     }
 }

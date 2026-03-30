@@ -55,7 +55,6 @@ import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.ContactIcon
 import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
-import com.algorand.android.utils.toShortenedAddress
 
 @Composable
 fun PendingSignaturesBottomSheetScreen(
@@ -75,6 +74,7 @@ fun PendingSignaturesBottomSheetScreen(
         is ViewState.Content -> {
             PendingSignaturesContent(
                 transactionPreview = state.preview,
+                hideCloseForNow = viewModel.hideCloseForNow,
                 onCancel = onCancel,
                 onClose = onClose,
                 onCloseCompleted = onCloseCompleted,
@@ -149,6 +149,7 @@ private fun ErrorContent(
 @Composable
 fun PendingSignaturesContent(
     transactionPreview: JointAccountTransactionViewState,
+    hideCloseForNow: Boolean = false,
     onCancel: () -> Unit,
     onClose: () -> Unit,
     onCloseCompleted: () -> Unit,
@@ -198,6 +199,7 @@ fun PendingSignaturesContent(
             modifier = Modifier.padding(horizontal = 24.dp),
             transactionState = transactionPreview.transactionState,
             hasProposerAddress = transactionPreview.hasProposerAddress,
+            hideCloseForNow = hideCloseForNow,
             onCancel = onCancel,
             onClose = onClose,
             onCloseCompleted = onCloseCompleted
@@ -319,7 +321,6 @@ private fun SignerInfo(
 ) {
     val primaryName = displayName.primaryDisplayName
     val secondaryName = displayName.secondaryDisplayName
-        ?: displayName.accountAddress.toShortenedAddress()
 
     Column {
         Text(
@@ -330,7 +331,7 @@ private fun SignerInfo(
                 else -> PeraTheme.colors.text.main
             }
         )
-        if (primaryName != secondaryName) {
+        if (secondaryName != null && primaryName != secondaryName) {
             Text(
                 text = secondaryName,
                 style = PeraTheme.typography.footnote.sans,
@@ -401,11 +402,11 @@ private fun ActionButtonsSection(
     modifier: Modifier = Modifier,
     transactionState: JointAccountTransactionState,
     hasProposerAddress: Boolean,
+    hideCloseForNow: Boolean,
     onCancel: () -> Unit,
     onClose: () -> Unit,
     onCloseCompleted: () -> Unit
 ) {
-    val isCompleted = transactionState == JointAccountTransactionState.Completed
     val isFinalized = transactionState.isFinalized()
     val isReadyToSubmit = transactionState == JointAccountTransactionState.ReadyToSubmit
     val showSingleCloseButton = isFinalized || !hasProposerAddress || isReadyToSubmit
@@ -413,7 +414,12 @@ private fun ActionButtonsSection(
     if (showSingleCloseButton) {
         SingleCloseButton(
             modifier = modifier,
-            onClick = if (isCompleted) onCloseCompleted else onClose
+            onClick = if (isFinalized) onCloseCompleted else onClose
+        )
+    } else if (hideCloseForNow) {
+        SingleCancelButton(
+            modifier = modifier,
+            onClick = onCancel
         )
     } else {
         ProposerActionButtons(
@@ -443,6 +449,30 @@ private fun SingleCloseButton(
     ) {
         Text(
             text = stringResource(R.string.close),
+            style = PeraTheme.typography.body.regular.sansMedium
+        )
+    }
+}
+
+@Composable
+private fun SingleCancelButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp),
+        onClick = onClick,
+        shape = RoundedCornerShape(4.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = PeraTheme.colors.layer.grayLighter,
+            contentColor = PeraTheme.colors.text.main
+        ),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.cancel),
             style = PeraTheme.typography.body.regular.sansMedium
         )
     }

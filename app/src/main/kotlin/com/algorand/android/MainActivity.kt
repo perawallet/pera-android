@@ -111,6 +111,9 @@ class MainActivity :
             is MainViewModel.ViewEvent.NavToWalletConnectTransactionRequestNavigation ->
                 navToWalletConnectTransactionRequestNavigation(event.wcRequestId)
 
+            is MainViewModel.ViewEvent.NavToJointAccountSignRequest ->
+                navToJointAccountSignRequest(event.signRequestId)
+
             is MainViewModel.ViewEvent.ShowLockSuggestion -> showLockSuggestion()
 
             is MainViewModel.ViewEvent.StartInAppReview -> startInAppReview()
@@ -354,6 +357,11 @@ class MainActivity :
                 false
             }
         }
+
+        override fun onSignRequestDeepLink(signRequestId: String): Boolean {
+            navToJointAccountSignRequest(signRequestId)
+            return true
+        }
     }
 
     private val transactionManagerResultObserver = Observer<Event<TransactionManagerResult>?> {
@@ -585,11 +593,19 @@ class MainActivity :
         }
     }
 
-    private fun navToJointAccountImportDeepLink(address: String) {
+    internal fun navToJointAccountImportDeepLink(address: String) {
         navToHome()
         nav(
             HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
                 accountAddress = address
+            )
+        )
+    }
+
+    private fun navToJointAccountSignRequest(signRequestId: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                signRequestId = signRequestId
             )
         )
     }
@@ -993,5 +1009,6 @@ class MainActivity :
         const val DEEPLINK_AND_NAVIGATION_INTENT: String = "deeplinkNavIntent"
         const val WC_TRANSACTION_ID_INTENT_KEY: String = "wcTransactionId"
         const val WC_ARBITRARY_DATA_ID_INTENT_KEY: String = "wcArbitraryDataId"
+        const val SIGN_REQUEST_ID_INTENT_KEY: String = "signRequestId"
     }
 }

@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.SendAlgoNavigationDirections
 import com.algorand.android.core.transaction.TransactionSignBaseFragment
@@ -44,6 +45,7 @@ import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.navigateToPendingSignaturesBottomSheet
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.toAlgoDisplayValue
@@ -395,7 +397,11 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     override fun onJointAccountSignRequestCreated(signRequestId: String) {
-        nav(HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(signRequestId, isDismissable = false))
+        navigateToPendingSignaturesBottomSheet(signRequestId) { _ -> navigateToHome() }
+    }
+
+    private fun navigateToHome() {
+        nav(MainNavigationDirections.actionGlobalMainNavigation())
     }
 
     companion object {

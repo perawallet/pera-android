@@ -15,6 +15,7 @@ package com.algorand.android.modules.assetinbox.detail.receivedetail.ui
 import com.algorand.android.R
 import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
 import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
+import com.algorand.android.core.transaction.sync.JointSyncAlgodSubmissionKind
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
@@ -22,6 +23,7 @@ import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.BaseArc59ClaimRejectTransaction
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Success
 import com.algorand.android.utils.flatten
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
@@ -54,12 +56,26 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     syncSignDependencies
 ) {
 
+    override fun jointSyncAlgodSubmissionKind(): JointSyncAlgodSubmissionKind =
+        JointSyncAlgodSubmissionKind.ARC59_CLAIM
+
     val arc59ClaimRejectTransactionSignResultFlow: Flow<ExternalTransactionSignResult> =
         signResultFlow.map { externalTransactionSignResult ->
             when (externalTransactionSignResult) {
-                is ExternalTransactionSignResult.Success<*> -> mapSignedTransactions(
-                    externalTransactionSignResult.signedTransactionsByteArray
-                )
+                is ExternalTransactionSignResult.Success<*> -> {
+                    val preSubmitted = externalTransactionSignResult.algodTransactionIdIfAlreadySubmitted
+                    if (!preSubmitted.isNullOrBlank()) {
+                        Success<SignedTransactionDetail>(
+                            signedTransaction = emptyList(),
+                            signedTransactionsByteArray = null,
+                            algodTransactionIdIfAlreadySubmitted = preSubmitted
+                        )
+                    } else {
+                        mapSignedTransactions(
+                            externalTransactionSignResult.signedTransactionsByteArray
+                        )
+                    }
+                }
 
                 else -> externalTransactionSignResult
             }

@@ -311,13 +311,23 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 }
 
                 override fun onAnimationCancel(animation: Animator) {
-                    // Nothing to do
+                    isVisible = false
+                    removeAnimatorListener(this)
                 }
 
                 override fun onAnimationRepeat(animation: Animator) {
                     // Nothing to do
                 }
             })
+        }
+    }
+
+    private fun clearConfettiView() {
+        with(binding.confettiAnimationLottieView) {
+            removeAllAnimatorListeners()
+            cancelAnimation()
+            progress = 0F
+            isVisible = false
         }
     }
 
@@ -430,6 +440,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     override fun onResume() {
         super.onResume()
+        clearConfettiView()
         accountsViewModel.refreshCachedAlgoPrice()
     }
 

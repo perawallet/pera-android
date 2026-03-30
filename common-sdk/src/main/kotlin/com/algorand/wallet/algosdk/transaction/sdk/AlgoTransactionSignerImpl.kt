@@ -13,15 +13,18 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import app.perawallet.gomobilesdk.sdk.Sdk
+import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
 
-internal class AlgoTransactionSignerImpl @Inject constructor() : AlgoTransactionSigner {
+internal class AlgoTransactionSignerImpl @Inject constructor(
+    private val errorLogger: PeraErrorLogger
+) : AlgoTransactionSigner {
 
     override fun signWithSecretKey(secretKey: ByteArray, transaction: ByteArray): ByteArray? {
         return try {
             Sdk.signTransaction(secretKey, transaction)
-        } catch (exception: Exception) {
-            exception.printStackTrace()
+        } catch (e: Exception) {
+            errorLogger.logError(e)
             null
         }
     }
@@ -29,8 +32,8 @@ internal class AlgoTransactionSignerImpl @Inject constructor() : AlgoTransaction
     override fun attachSignature(signature: ByteArray, transaction: ByteArray?): ByteArray? {
         return try {
             Sdk.attachSignature(signature, transaction)
-        } catch (exception: Exception) {
-            exception.printStackTrace()
+        } catch (e: Exception) {
+            errorLogger.logError(e)
             null
         }
     }
@@ -42,8 +45,8 @@ internal class AlgoTransactionSignerImpl @Inject constructor() : AlgoTransaction
     ): ByteArray? {
         return try {
             Sdk.attachSignatureWithSigner(signature, transaction, address)
-        } catch (exception: Exception) {
-            exception.printStackTrace()
+        } catch (e: Exception) {
+            errorLogger.logError(e)
             null
         }
     }

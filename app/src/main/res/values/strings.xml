@@ -461,7 +461,7 @@
     <string name="pera_wallet_provides_an_easy">Pera Wallet provides an easy and fast way to swap assets. Swapping allows an ASA to be exchanged with another one using a smart contract, at market fees.</string>
     <string name="minimum_balance">Minimum Balance</string>
     <string name="account_does_not_have">Account doesn\'t have enough balance for this transaction.</string>
-    <string name="this_account_doesn_t">This account doesn\'t have enough balance for this transaction.</string>
+    <string name="this_account_doesn_t">This account doesn\'t have enough ALGO balance for this transaction.</string>
     <string name="algo_balance_is_too_low">Algo balance is too low. The minimum balance should be <annotation replacement="algo_icon">ALGO_ICON_PLACEHOLDER</annotation> <annotation replacement="min_balance">MIN_BALANCE_PLACEHOLDER</annotation></string>
     <string name="min_balance">Min Balance %1$s</string>
     <string name="minimum_balance_is_the_minimum">Minimum balance is the minimum amount of Algo you have to keep in an account. It increases every time the account is opted in to a smart contract, ASA or NFT.</string>
@@ -639,6 +639,7 @@
     <string name="this_transaction_fee_is_higher">This transaction fee is higher than the usual fee of 0.001 Algo.</string>
     <string name="this_transaction_will_be">This transaction will be submitted in the future. Once confirmed, the connected application can send these transactions out at their discretion. Please make sure you review the transactions carefully as this process is irreversible.</string>
     <string name="you_can_not_send_your">You cannot send your max balance to yourself. Please select a different amount or recipient and try again.</string>
+    <string name="receiver_not_opted_in_joint_account">The receiver hasn\'t opted in to this asset. Please ask the receiver to opt in first and then try again.</string>
     <string name="transaction_count_group_id_formatted"><annotation replacement="transaction_count">transaction_count_placeholder</annotation> Txns · Group ID: <annotation replacement="group_id">group_id_placeholder</annotation></string>
     <string name="invalid_input_group_transaction">Invalid Input: Group transaction does not need to be signed by Wallet user. </string>
     <string name="your_transaction_is_being_processed">Your transaction is being processed</string>
@@ -664,6 +665,8 @@
     <string name="sender_account">Sender Account</string>
     <string name="transacting_fee">Transaction Fee</string>
     <string name="transfer_to_styled">Transfer to <annotation type="bold">%1$s</annotation></string>
+    <string name="joint_sign_request_opt_in_from">Opt-in Request from</string>
+    <string name="joint_sign_request_opt_out_from">Opt-out Request from</string>
     <string name="confirm_transfer">Confirm transfer</string>
     <string name="no_transactions">No transactions</string>
     <string name="send_transaction">Send transaction</string>
@@ -1268,6 +1271,7 @@
     <string name="sync_sign_notification_waiting">Waiting for co-signers… %1$d/%2$d signed</string>
     <string name="sync_sign_notification_ready">Transaction ready — tap to open</string>
     <string name="sync_sign_notification_failed">Sign request failed or expired</string>
+    <string name="sync_sign_notification_dot_separated">%1$s · %2$s</string>
     <string name="signature_request_description">Signature request to sign for %1$s</string>
     <string name="of_signed">%1$d of %2$d signed</string>
     <string name="time_left">≈ %1$s left</string>
@@ -1290,4 +1294,8 @@
     <string name="proceed">Proceed</string>
     <string name="go_back_and_edit">Go Back and Edit</string>
     <string name="invitation_ignored">Invitation ignored</string>
+    <string name="cancel_transaction_request">Cancel Transaction Request</string>
+    <string name="cancel_transaction_request_description">The transaction request will be cancelled. Are you sure?</string>
+    <string name="yes_cancel">Yes, Cancel</string>
+    <string name="keep_waiting">Keep Waiting</string>
 </resources>

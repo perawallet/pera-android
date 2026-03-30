@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.walletconnect.client.v1.session
 
-import android.util.Log
 import app.perawallet.walletconnectv1.Session
 import app.perawallet.walletconnectv1.Session.Config
 import app.perawallet.walletconnectv1.impls.WCSession
@@ -46,7 +45,6 @@ class WalletConnectV1SessionCachedData(
     }
 
     override fun onMethodCall(call: Session.MethodCall) {
-        Log.e(logTag, "onMethodCall -> $call")
         when (call) {
             is Session.MethodCall.SessionRequest -> callback?.onSessionRequest(this, call.id, call, call.chainId)
             is Session.MethodCall.SessionUpdate -> callback?.onSessionUpdate(this, call)
@@ -58,7 +56,6 @@ class WalletConnectV1SessionCachedData(
     }
 
     override fun onStatus(status: Session.Status) {
-        Log.e(logTag, "onStatus -> $status")
         when (status) {
             is Session.Status.Connected -> callback?.onSessionConnected(this, status.clientId)
             is Session.Status.Disconnected -> callback?.onSessionDisconnected(this, status.isSessionDeletionNeeded)
@@ -69,8 +66,6 @@ class WalletConnectV1SessionCachedData(
     }
 
     companion object {
-
-        private val logTag = WalletConnectV1SessionCachedData::class.java.simpleName
 
         const val INITIAL_RETRY_COUNT: Int = 1
         private const val MAX_SESSION_RETRY_COUNT = 10

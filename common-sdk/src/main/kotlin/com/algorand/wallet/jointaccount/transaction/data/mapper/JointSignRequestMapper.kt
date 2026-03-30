@@ -21,6 +21,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignReques
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionListItem
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestType
 import javax.inject.Inject
 
 internal class JointSignRequestMapper @Inject constructor(
@@ -33,7 +34,7 @@ internal class JointSignRequestMapper @Inject constructor(
                 id = it.id,
                 jointAccount = jointAccountDTOMapper.mapToJointAccountDTO(it.jointAccount),
                 proposerAddress = it.proposerAddress,
-                type = it.type,
+                type = SignRequestType.fromValue(it.type),
                 rawTransactionLists = it.rawTransactionLists,
                 transactionLists = it.transactionLists?.map { transactionList ->
                     mapToJointSignRequestTransactionList(transactionList)

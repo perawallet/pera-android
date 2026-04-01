@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountCreationEventTracker
 import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.foundation.cache.PersistentCache
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
@@ -33,6 +34,7 @@ class CreateJointAccountViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val contactRepository: ContactRepository,
+    private val jointAccountCreationEventTracker: JointAccountCreationEventTracker,
     persistentCacheProvider: PersistentCacheProvider,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
@@ -103,6 +105,7 @@ class CreateJointAccountViewModel @Inject constructor(
     }
 
     fun removeSelectedAccount(index: Int) {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountRemoveAddressPress() }
         stateDelegate.updateState { currentState ->
             val content = currentState as? ViewState.Content ?: return@updateState currentState
             val updatedList = content.selectedAccounts.toMutableList().apply {
@@ -112,7 +115,16 @@ class CreateJointAccountViewModel @Inject constructor(
         }
     }
 
+    fun logAddAccountClick() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountAddAccountPress() }
+    }
+
+    fun logEditAccountClick() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountEditAccountPress() }
+    }
+
     fun onContinueClick() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountAddAccountContinuePress() }
         val hasSeenDisclaimer = disclaimerSeenCache.get() == true
         if (hasSeenDisclaimer) {
             eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToSetThreshold)
@@ -125,6 +137,7 @@ class CreateJointAccountViewModel @Inject constructor(
     }
 
     fun onDisclaimerProceed() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountInfoScreenProceedPress() }
         disclaimerSeenCache.put(true)
         stateDelegate.updateState { currentState ->
             val content = currentState as? ViewState.Content ?: return@updateState currentState
@@ -134,6 +147,7 @@ class CreateJointAccountViewModel @Inject constructor(
     }
 
     fun onDisclaimerGoBack() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountInfoScreenGoBackPress() }
         stateDelegate.updateState { currentState ->
             val content = currentState as? ViewState.Content ?: return@updateState currentState
             content.copy(showDisclaimer = false)
@@ -161,8 +175,8 @@ class CreateJointAccountViewModel @Inject constructor(
         data object NavigateToSetThreshold : ViewEvent
     }
 
-    companion object {
-        private const val DISCLAIMER_SEEN_KEY = "joint_account_disclaimer_seen"
-        private const val EDITING_ACCOUNT_INDEX_KEY = "editingAccountIndex"
+    private companion object {
+        const val DISCLAIMER_SEEN_KEY = "joint_account_disclaimer_seen"
+        const val EDITING_ACCOUNT_INDEX_KEY = "editingAccountIndex"
     }
 }

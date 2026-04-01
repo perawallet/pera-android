@@ -19,7 +19,10 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 
-class JointAccountInfoDialogDelegate(private val onContinueClick: () -> Unit) {
+class JointAccountInfoDialogDelegate(
+    private val onContinueClick: () -> Unit,
+    private val onGoBackClick: (() -> Unit)? = null
+) {
 
     private var jointAccountInfoDialog: AlertDialog? = null
 
@@ -51,7 +54,10 @@ class JointAccountInfoDialogDelegate(private val onContinueClick: () -> Unit) {
                             dismiss()
                             onContinueClick()
                         },
-                        onDismiss = ::dismiss
+                        onDismiss = {
+                            dismiss()
+                            onGoBackClick?.invoke()
+                        }
                     )
                 }
             }

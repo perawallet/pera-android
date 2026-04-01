@@ -17,6 +17,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.R
@@ -26,7 +28,9 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.Result
 import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel
 import com.algorand.android.modules.addaccount.joint.info.ui.JointAccountInfoDialogDelegate
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountCreationEventTracker
 import com.algorand.android.modules.tracking.core.PeraClickEvent
+import javax.inject.Inject
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,13 +38,27 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenListener {
 
+    private companion object {
+        const val CREATE_ACC_ADD_NEW_ACCOUNT_PRESS = "createacc_addNewAccount_press"
+        const val CREATE_ACC_ADD_NEW_WALLET_PRESS = "createacc_addNewWallet_press"
+        const val CREATE_ACC_WATCH_ACCOUNT_PRESS = "createacc_watchAccount_press"
+        const val CREATE_ACC_IMPORT_ACCOUNT_PRESS = "createacc_importAccount_press"
+        const val CREATE_ACC_ADD_25_ACCOUNT_PRESS = "createacc_add25Account_press"
+    }
+
     private val viewModel: AddAccountIntroViewModel by viewModels()
+
+    @Inject
+    lateinit var jointAccountCreationEventTracker: JointAccountCreationEventTracker
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     private val jointAccountInfoDialogDelegate by lazy {
         JointAccountInfoDialogDelegate(
-            onContinueClick = ::navToJointAccountFlow
+            onContinueClick = ::navToJointAccountFlow,
+            onGoBackClick = {
+                lifecycleScope.launch { jointAccountCreationEventTracker.logOnbJointAccountInfoScreenGoBackPress() }
+            }
         )
     }
 
@@ -85,6 +103,7 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
 
     override fun onAddAccountClick() {
         viewModel.logOnboardingWelcomeAccountCreateClickEvent()
+        viewModel.logEvent(CREATE_ACC_ADD_NEW_ACCOUNT_PRESS)
         nav(
             AddAccountIntroFragmentDirections.actionRegisterIntroFragmentToHdWalletSelectionFragment()
         )
@@ -97,16 +116,19 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
 
     override fun onImportAccountClick() {
         viewModel.logOnboardingWelcomeAccountRecoverClickEvent()
+        viewModel.logEvent(CREATE_ACC_IMPORT_ACCOUNT_PRESS)
         nav(AddAccountIntroFragmentDirections.actionRegisterIntroFragmentToRecoveryTypeSelectionNavigation())
     }
 
     override fun onWatchAddressClick() {
         viewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_WELCOME_WATCH)
+        viewModel.logEvent(CREATE_ACC_WATCH_ACCOUNT_PRESS)
         nav(AddAccountIntroFragmentDirections.actionRegisterIntroFragmentToWatchAccountInfoFragment())
     }
 
     override fun onCreateUniversalWalletClick() {
         viewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_WALLET)
+        viewModel.logEvent(CREATE_ACC_ADD_NEW_WALLET_PRESS)
         when (val result = viewModel.createHdKeyAccount()) {
             is Result.Success -> {
                 nav(
@@ -122,6 +144,7 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
     }
 
     override fun onCreateAlgo25AccountClick() {
+        viewModel.logEvent(CREATE_ACC_ADD_25_ACCOUNT_PRESS)
         viewModel.onCreateAlgo25AccountClicked()
     }
 
@@ -142,6 +165,7 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
 
     private fun navToJointAccountFlow() {
         viewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_WALLET)
+        lifecycleScope.launch { jointAccountCreationEventTracker.logOnbJointAccountWelcomePress() }
         nav(
             AddAccountIntroFragmentDirections
                 .actionRegisterIntroFragmentToCreateJointAccountFragment()

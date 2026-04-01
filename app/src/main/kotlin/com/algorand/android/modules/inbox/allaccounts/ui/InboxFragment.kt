@@ -129,6 +129,7 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
     }
 
     override fun onSignatureRequestClick(signRequestId: String, canUserSign: Boolean) {
+        inboxViewModel.logPendingTxClick()
         if (canUserSign) {
             nav(HomeNavigationDirections.actionGlobalToJointAccountSignRequestFragment(signRequestId))
         } else {
@@ -137,6 +138,7 @@ class InboxFragment : TransactionSignBaseFragment(0), InboxScreenListener {
     }
 
     override fun onJointAccountInvitationClick(invitation: JointAccountInvitationInboxItem) {
+        inboxViewModel.logInviteClick()
         navToJointAccountInvitationDetail(invitation)
     }
 

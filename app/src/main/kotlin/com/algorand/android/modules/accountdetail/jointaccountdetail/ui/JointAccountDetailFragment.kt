@@ -36,7 +36,9 @@ class JointAccountDetailFragment : DaggerBaseFragment(0) {
 
     private val viewModel: JointAccountDetailViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration = FragmentConfiguration(
+        firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,5 +99,9 @@ class JointAccountDetailFragment : DaggerBaseFragment(0) {
             JointAccountDetailFragmentDirections
                 .actionJointAccountDetailFragmentToEditParticipantNameFragment(event.address)
         )
+    }
+
+    companion object {
+        private const val FIREBASE_EVENT_SCREEN_ID = "accountscr_jointAccount_detail_press"
     }
 }

@@ -35,8 +35,12 @@ import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountOptionsEventTracker
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
@@ -48,6 +52,9 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     private val binding by viewBinding(BottomSheetAccountDetailAccountsOptionsBinding::bind)
 
     private val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
+
+    @Inject
+    lateinit var jointAccountOptionsEventTracker: JointAccountOptionsEventTracker
 
     private val fetchingRekeyedAccountsDialogDelegate by lazy {
         FetchingRekeyedAccountsDialogDelegate(accountOptionsViewModel::stopFetchingRekeyedAccounts)
@@ -186,6 +193,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun onExportShareAccountClick() {
+        lifecycleScope.launch { jointAccountOptionsEventTracker.logAccountScrTapmenuMoreJointAccountExportTap() }
         nav(
             AccountOptionsBottomSheetDirections
                 .actionAccountOptionsBottomSheetToExportShareAccountNavigation(
@@ -217,6 +225,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun navToRekeyToJointAccountFragment() {
+        lifecycleScope.launch { jointAccountOptionsEventTracker.logAccountScrTapmenuMoreRekeyJointTap() }
         nav(
             AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyToJointAccountNavigation(
                 accountOptionsViewModel.accountAddress

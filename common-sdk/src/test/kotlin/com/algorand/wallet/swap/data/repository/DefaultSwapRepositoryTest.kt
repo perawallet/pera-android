@@ -153,11 +153,29 @@ class DefaultSwapRepositoryTest {
 
     @Test
     fun `EXPECT Pera fee WHEN api call returns valid fee`(): TestResult = runTest {
-        coEvery { swapApiService.getPeraFee(SWAP_PERA_FEE_REQUEST_BODY) } returns SwapPeraFeeResponse(BigInteger.ONE)
+        coEvery { swapApiService.getPeraFee(SWAP_PERA_FEE_REQUEST_BODY) } returns SwapPeraFeeResponse(
+            peraFeeAmount = BigInteger.ONE,
+            peraFeeAssetDetail = null,
+            peraFeeAmountInFeeAsset = null
+        )
 
         val result = sut.getPeraFee(PERA_FEE_ASSET_ID, PERA_FEE_AMOUNT)
 
         val expected = SwapPeraFee(BigInteger.ONE)
+        assertEquals(PeraResult.Success(expected), result)
+    }
+
+    @Test
+    fun `EXPECT pera_fee_amount_in_fee_asset WHEN api call returns fee in fee asset`(): TestResult = runTest {
+        coEvery { swapApiService.getPeraFee(SWAP_PERA_FEE_REQUEST_BODY) } returns SwapPeraFeeResponse(
+            peraFeeAmount = BigInteger.ONE,
+            peraFeeAssetDetail = null,
+            peraFeeAmountInFeeAsset = BigInteger.TEN
+        )
+
+        val result = sut.getPeraFee(PERA_FEE_ASSET_ID, PERA_FEE_AMOUNT)
+
+        val expected = SwapPeraFee(BigInteger.TEN)
         assertEquals(PeraResult.Success(expected), result)
     }
 

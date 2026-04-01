@@ -99,10 +99,12 @@ class CreateJointAccountFragment : DaggerBaseFragment(0), CreateJointAccountScre
     }
 
     override fun onAddAccountClick() {
+        viewModel.logAddAccountClick()
         navToAddJointAccountFragment()
     }
 
     override fun onEditAccountClick(index: Int, address: String) {
+        viewModel.logEditAccountClick()
         viewModel.setEditingAccountIndex(index)
         navToEditAccountNameFragment(address)
     }

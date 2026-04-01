@@ -20,6 +20,7 @@ import com.algorand.android.modules.inbox.allaccounts.domain.usecase.GetInboxVie
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewEvent
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewState
 import com.algorand.android.utils.launchIO
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountInboxEventTracker
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
 import com.algorand.wallet.inbox.domain.usecase.SetInboxLastOpenedTime
@@ -45,6 +46,7 @@ class InboxViewModel @Inject constructor(
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val stateDelegate: StateDelegate<InboxViewState>,
     private val eventDelegate: EventDelegate<InboxViewEvent>,
+    private val jointAccountInboxEventTracker: JointAccountInboxEventTracker,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     StateViewModel<InboxViewState> by stateDelegate,
@@ -125,6 +127,18 @@ class InboxViewModel @Inject constructor(
             )
         } else {
             eventDelegate.sendEvent(InboxViewEvent.NavigateToJointAccountDetail(addressToOpen))
+        }
+    }
+
+    fun logInviteClick() {
+        viewModelScope.launchIO {
+            jointAccountInboxEventTracker.logInboxJointAccountInvitePress()
+        }
+    }
+
+    fun logPendingTxClick() {
+        viewModelScope.launchIO {
+            jointAccountInboxEventTracker.logInboxJointAccountPendingTxPress()
         }
     }
 

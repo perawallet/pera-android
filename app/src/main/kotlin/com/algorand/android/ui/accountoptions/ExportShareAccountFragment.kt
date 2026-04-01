@@ -23,7 +23,11 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.getQrCodeBitmap
 import com.algorand.android.utils.openTextShareBottomMenuChooser
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountOptionsEventTracker
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 
 @AndroidEntryPoint
 class ExportShareAccountFragment : DaggerBaseFragment(R.layout.fragment_export_share_account) {
@@ -46,6 +50,9 @@ class ExportShareAccountFragment : DaggerBaseFragment(R.layout.fragment_export_s
 
     private val args: ExportShareAccountFragmentArgs by navArgs()
 
+    @Inject
+    lateinit var jointAccountOptionsEventTracker: JointAccountOptionsEventTracker
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getAppToolbar()?.changeTitle(getString(R.string.export_share_account))
@@ -62,10 +69,12 @@ class ExportShareAccountFragment : DaggerBaseFragment(R.layout.fragment_export_s
     }
 
     private fun onCopyUrlClick() {
+        lifecycleScope.launch { jointAccountOptionsEventTracker.logAccountScrTapmenuMoreJointAccountExportCopyTap() }
         onAccountAddressCopied(getExportUrl())
     }
 
     private fun onShareUrlClick() {
+        lifecycleScope.launch { jointAccountOptionsEventTracker.logAccountScrTapmenuMoreJointAccountExportShareTap() }
         val exportUrl = getExportUrl()
         requireContext().openTextShareBottomMenuChooser(
             text = exportUrl,

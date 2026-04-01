@@ -59,7 +59,8 @@ class RekeyLedgerSearchFragment : BaseLedgerSearchFragment() {
                     isRekeyed = it.isRekeyed(),
                     address = it.address,
                     assetHoldingIds = it.getAssetHoldingIds(),
-                    authAddress = it.rekeyAdminAddress
+                    authAddress = it.rekeyAdminAddress,
+                    isCreated = it.isCreated()
                 )
             }
         )

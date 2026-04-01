@@ -40,6 +40,7 @@ import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountTransactionEventTracker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,6 +52,9 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
 
     @Inject
     lateinit var ledgerSignHelper: JointAccountLedgerSignHelper
+
+    @Inject
+    lateinit var jointAccountTransactionEventTracker: JointAccountTransactionEventTracker
 
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
 
@@ -228,14 +232,17 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
     }
 
     private fun onClose() {
+        lifecycleScope.launch { jointAccountTransactionEventTracker.logJointAccountCloseForNowPress() }
         dismissWithResult(PendingSignaturesDismissResult.DISMISSED)
     }
 
     private fun onCloseCompleted() {
+        lifecycleScope.launch { jointAccountTransactionEventTracker.logInboxJointAccountPendingTxClosePress() }
         dismissWithResult(viewModel.getPendingSignaturesCloseDismissResult())
     }
 
     private fun onCancel() {
+        lifecycleScope.launch { jointAccountTransactionEventTracker.logJointAccountCancelTxPress() }
         showCancelConfirmationDialog()
     }
 

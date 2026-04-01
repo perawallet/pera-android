@@ -241,7 +241,7 @@ class AddJointAccountViewModel @Inject constructor(
         data object ShowJointAccountError : ViewEvent
     }
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY_MS = 300L
+    private companion object {
+        const val SEARCH_DEBOUNCE_DELAY_MS = 300L
     }
 }

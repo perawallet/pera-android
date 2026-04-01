@@ -28,6 +28,7 @@ data class RekeyLedgerAccountSelectionNavArgs(
         val isRekeyed: Boolean,
         val address: String,
         val assetHoldingIds: List<Long>,
-        val authAddress: String?
+        val authAddress: String?,
+        val isCreated: Boolean
     ) : Parcelable
 }

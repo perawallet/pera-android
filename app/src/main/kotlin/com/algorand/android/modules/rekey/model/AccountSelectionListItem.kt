@@ -58,7 +58,8 @@ sealed class AccountSelectionListItem : RecyclerListItem, Parcelable {
         val accountIconDrawablePreview: AccountIconDrawablePreview,
         var isSelected: Boolean = false,
         @param:DrawableRes val selectorDrawableRes: Int,
-        val selectedLedgerAccount: SelectedLedgerAccount
+        val selectedLedgerAccount: SelectedLedgerAccount,
+        val isInfoButtonVisible: Boolean = true
     ) : AccountSelectionListItem() {
 
         override val itemType: ItemType

@@ -125,7 +125,7 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
         this.arbitraryData = arbitraryData
         with(arbitraryData) {
             when (val result = walletConnectSignValidator.canArbitraryDataBeSigned(this)) {
-                is WalletConnectSignResult.Success -> {
+                is WalletConnectSignResult.CanBeSigned -> {
                     signHelper.initItemsToBeEnqueued(arbitraryDataList)
                 }
 

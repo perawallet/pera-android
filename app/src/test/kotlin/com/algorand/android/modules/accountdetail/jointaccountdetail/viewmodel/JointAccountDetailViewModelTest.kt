@@ -18,6 +18,7 @@ import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.J
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ViewEvent
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ViewState
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountDetailEventTracker
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -47,6 +48,7 @@ internal class JointAccountDetailViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val getJointAccount: GetJointAccount = mockk()
     private val processor: JointAccountDetailProcessor = mockk()
+    private val jointAccountDetailEventTracker: JointAccountDetailEventTracker = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -393,7 +395,8 @@ internal class JointAccountDetailViewModelTest {
             stateDelegate = StateDelegate(),
             eventDelegate = EventDelegate(),
             getJointAccount = getJointAccount,
-            processor = processor
+            processor = processor,
+            jointAccountDetailEventTracker = jointAccountDetailEventTracker
         )
     }
 
@@ -406,7 +409,8 @@ internal class JointAccountDetailViewModelTest {
             stateDelegate = StateDelegate(),
             eventDelegate = eventDelegate,
             getJointAccount = getJointAccount,
-            processor = processor
+            processor = processor,
+            jointAccountDetailEventTracker = jointAccountDetailEventTracker
         )
     }
 

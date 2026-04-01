@@ -182,10 +182,10 @@ private fun AssetActionCenterSection(
 ) {
     val (iconRes, prefixRes) = when (center.type) {
         JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_IN ->
-            R.drawable.ic_buy_sell to R.string.joint_sign_request_opt_in_from
+            R.drawable.ic_buy_sell_small to R.string.joint_sign_request_opt_in_from
 
         JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_OUT ->
-            R.drawable.ic_buy_sell to R.string.joint_sign_request_opt_out_from
+            R.drawable.ic_buy_sell_small to R.string.joint_sign_request_opt_out_from
     }
     AssetActionIconSection(iconRes = iconRes, contentDescription = stringResource(prefixRes))
     Spacer(modifier = Modifier.height(24.dp))
@@ -269,12 +269,19 @@ private fun AssetActionIconSection(@DrawableRes iconRes: Int, contentDescription
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        Icon(
-            modifier = Modifier.size(80.dp),
-            painter = painterResource(iconRes),
-            contentDescription = contentDescription,
-            tint = PeraTheme.colors.text.gray
-        )
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .background(color = PeraTheme.colors.layer.grayLighter, shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                painter = painterResource(iconRes),
+                contentDescription = contentDescription,
+                tint = PeraTheme.colors.text.gray
+            )
+        }
     }
 }
 

@@ -27,14 +27,16 @@ class LedgerAccountSelectionAccountItemMapper @Inject constructor() {
         accountDisplayName: AccountDisplayName,
         accountIconDrawablePreview: AccountIconDrawablePreview,
         @DrawableRes selectorDrawableRes: Int,
-        selectedLedgerAccount: SelectedLedgerAccount
+        selectedLedgerAccount: SelectedLedgerAccount,
+        isInfoButtonVisible: Boolean = true
     ): AccountSelectionListItem.AccountItem {
         return AccountSelectionListItem.AccountItem(
             selectorDrawableRes = selectorDrawableRes,
             accountDisplayName = accountDisplayName,
             accountIconDrawablePreview = accountIconDrawablePreview,
             address = address,
-            selectedLedgerAccount = selectedLedgerAccount
+            selectedLedgerAccount = selectedLedgerAccount,
+            isInfoButtonVisible = isInfoButtonVisible
         )
     }
 }

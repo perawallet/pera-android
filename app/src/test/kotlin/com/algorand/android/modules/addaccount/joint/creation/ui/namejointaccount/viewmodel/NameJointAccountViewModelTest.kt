@@ -21,6 +21,7 @@ import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJoi
 import com.algorand.android.ui.device.model.DeviceConfig
 import com.algorand.android.ui.device.usecase.GetDeviceConfig
 import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountCreationEventTracker
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
 import com.algorand.wallet.account.local.domain.model.LocalAccount
@@ -62,6 +63,7 @@ internal class NameJointAccountViewModelTest {
     private val getDeviceConfig: GetDeviceConfig = mockk()
     private val deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification = mockk()
     private val deviceIdUseCase: DeviceIdUseCase = mockk()
+    private val jointAccountCreationEventTracker: JointAccountCreationEventTracker = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -404,7 +406,8 @@ internal class NameJointAccountViewModelTest {
             addJointAccount = addJointAccount,
             getJointAccount = getJointAccount,
             inboxCleanup = NameJointAccountInboxCleanup(getDeviceConfig, deleteInboxJointInvitationNotification),
-            deviceIdUseCase = deviceIdUseCase
+            deviceIdUseCase = deviceIdUseCase,
+            jointAccountCreationEventTracker = jointAccountCreationEventTracker
         )
     }
 

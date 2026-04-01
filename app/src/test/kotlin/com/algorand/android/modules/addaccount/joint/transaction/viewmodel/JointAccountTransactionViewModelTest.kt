@@ -21,6 +21,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountTransactionEventTracker
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
@@ -53,6 +54,7 @@ internal class JointAccountTransactionViewModelTest {
     private val refreshInboxCache: RefreshInboxCache = mockk(relaxed = true)
     private val getInboxMessagesFlow: GetInboxMessagesFlow = mockk(relaxed = true)
     private val processor: JointAccountTransactionProcessor = mockk()
+    private val jointAccountTransactionEventTracker: JointAccountTransactionEventTracker = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -184,7 +186,8 @@ internal class JointAccountTransactionViewModelTest {
             signAndSubmitJointAccountSignature = signAndSubmitJointAccountSignature,
             refreshInboxCache = refreshInboxCache,
             getInboxMessagesFlow = getInboxMessagesFlow,
-            processor = processor
+            processor = processor,
+            jointAccountTransactionEventTracker = jointAccountTransactionEventTracker
         )
     }
 

@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountDetailEventTracker
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -35,7 +36,8 @@ class JointAccountDetailViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val getJointAccount: GetJointAccount,
-    private val processor: JointAccountDetailProcessor
+    private val processor: JointAccountDetailProcessor,
+    private val jointAccountDetailEventTracker: JointAccountDetailEventTracker
 ) : ViewModel(),
     StateViewModel<JointAccountDetailViewModel.ViewState> by stateDelegate,
     EventViewModel<JointAccountDetailViewModel.ViewEvent> by eventDelegate {
@@ -70,6 +72,7 @@ class JointAccountDetailViewModel @Inject constructor(
     fun onIgnoreClick() {
         if (actionJob?.isActive == true) return
         actionJob = viewModelScope.launch {
+            jointAccountDetailEventTracker.logInboxJointAccountInviteIgnorePress()
             processor.deleteInboxNotification(accountAddress)
             eventDelegate.sendEvent(ViewEvent.InvitationIgnored)
         }
@@ -80,6 +83,7 @@ class JointAccountDetailViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Content> { contentState ->
             if (contentState.threshold > 0 && contentState.participants.isNotEmpty()) {
                 actionJob = viewModelScope.launch {
+                    jointAccountDetailEventTracker.logInboxJointAccountInviteAddPress()
                     if (processor.isJointAccountExists(accountAddress)) {
                         processor.deleteInboxNotification(accountAddress)
                         eventDelegate.sendEvent(ViewEvent.NavigateBack)
@@ -112,6 +116,7 @@ class JointAccountDetailViewModel @Inject constructor(
     fun onEditParticipantClick(address: String) {
         editingParticipantAddress.set(address)
         viewModelScope.launch {
+            jointAccountDetailEventTracker.logInboxJointAccountNameAccountPress()
             eventDelegate.sendEvent(ViewEvent.NavigateToEditAddress(address))
         }
     }

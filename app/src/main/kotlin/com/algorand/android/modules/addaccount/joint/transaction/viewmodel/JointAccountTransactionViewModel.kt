@@ -23,6 +23,7 @@ import com.algorand.android.modules.addaccount.joint.transaction.model.JointAcco
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountTransactionEventTracker
 import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
@@ -48,7 +49,8 @@ class JointAccountTransactionViewModel @Inject constructor(
     private val signAndSubmitJointAccountSignature: SignAndSubmitJointAccountSignature,
     private val refreshInboxCache: RefreshInboxCache,
     private val getInboxMessagesFlow: GetInboxMessagesFlow,
-    private val processor: JointAccountTransactionProcessor
+    private val processor: JointAccountTransactionProcessor,
+    private val jointAccountTransactionEventTracker: JointAccountTransactionEventTracker
 ) : ViewModel(),
     StateViewModel<JointAccountTransactionViewModel.ViewState> by stateDelegate,
     EventViewModel<JointAccountTransactionViewModel.ViewEvent> by eventDelegate {
@@ -70,6 +72,7 @@ class JointAccountTransactionViewModel @Inject constructor(
                 return@onState
             }
             viewModelScope.launch {
+                jointAccountTransactionEventTracker.logJointAccountConfirmTxSlide()
                 stateDelegate.updateState { ViewState.Loading }
                 processConfirmTransaction(validationResult)
             }
@@ -77,6 +80,9 @@ class JointAccountTransactionViewModel @Inject constructor(
     }
 
     fun onCancel() {
+        viewModelScope.launch {
+            jointAccountTransactionEventTracker.logJointAccountCancelPendingTxPress()
+        }
         stateDelegate.onState<ViewState.Content> { contentState ->
             val updatedSigners = contentState.preview.signerAccounts.map { signer ->
                 if (signer.signatureStatus == JointAccountSignatureStatus.Pending) {
@@ -100,6 +106,7 @@ class JointAccountTransactionViewModel @Inject constructor(
             if (participantAddresses.isEmpty()) return@onState emitError(R.string.an_error_occurred)
 
             viewModelScope.launch {
+                jointAccountTransactionEventTracker.logJointAccountDeclinePendingTxPress()
                 stateDelegate.updateState { ViewState.Loading }
                 executeDeclineRequest(requestId, participantAddresses, contentState.preview)
             }
@@ -119,6 +126,9 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     fun onSignLedgerAccount(signer: JointAccountSignerItem) {
         if (!signer.canSignWithLedger) return
+        viewModelScope.launch {
+            jointAccountTransactionEventTracker.logJointAccountSignTxPress()
+        }
         val requestId = signRequestId ?: return
         val bluetoothAddress = signer.ledgerBluetoothAddress ?: return
         val accountIndex = signer.ledgerAccountIndex ?: return

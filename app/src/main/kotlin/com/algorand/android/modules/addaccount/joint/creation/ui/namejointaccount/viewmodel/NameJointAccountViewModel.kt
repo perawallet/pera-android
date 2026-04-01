@@ -18,6 +18,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.modules.addaccount.joint.core.JointAccountConstants
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountCreationEventTracker
 import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
 import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
@@ -44,7 +45,8 @@ class NameJointAccountViewModel @Inject constructor(
     private val addJointAccount: AddJointAccount,
     private val getJointAccount: GetJointAccount,
     private val inboxCleanup: NameJointAccountInboxCleanup,
-    private val deviceIdUseCase: DeviceIdUseCase
+    private val deviceIdUseCase: DeviceIdUseCase,
+    private val jointAccountCreationEventTracker: JointAccountCreationEventTracker
 ) : ViewModel(),
     StateViewModel<NameJointAccountViewModel.ViewState> by stateDelegate,
     EventViewModel<NameJointAccountViewModel.ViewEvent> by eventDelegate {
@@ -97,6 +99,7 @@ class NameJointAccountViewModel @Inject constructor(
             return
         }
 
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountNameAccountPress() }
         stateDelegate.updateState { ViewState.Loading(accountName = trimmedName) }
         viewModelScope.launch {
             createJointAccount(

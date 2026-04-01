@@ -70,7 +70,13 @@ class JointAccountSignRequestFragment : DaggerBaseFragment(0),
         ) { result ->
             when (result) {
                 PendingSignaturesDismissResult.COMPLETED,
-                PendingSignaturesDismissResult.CANCELED -> navBack()
+                PendingSignaturesDismissResult.CANCELED -> {
+                    if (viewModel.shouldNavigateHomeOnDismiss()) {
+                        navigateToHome()
+                    } else {
+                        navBack()
+                    }
+                }
 
                 PendingSignaturesDismissResult.DISMISSED -> {
                     if (viewModel.shouldNavigateHomeOnDismiss()) navigateToHome()

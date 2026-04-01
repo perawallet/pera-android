@@ -188,10 +188,12 @@ class LedgerBleOperationManager @Inject constructor(
                                 }
                                 sendPublicKeyRequest()
                             } else {
-                                // all the accounts are fetched.
+                                // First non-created index: always include it so the list has the next free slot (min 2 rows
+                                // when index 0 is empty: show 0 and 1).
                                 postResult(
                                     when (this) {
                                         is AccountFetchAllOperation -> {
+                                            accounts.add(fetchedAccountInformation)
                                             LedgerBleResult.AccountResult(accounts, device)
                                         }
 

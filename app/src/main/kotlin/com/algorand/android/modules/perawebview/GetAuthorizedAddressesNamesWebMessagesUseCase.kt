@@ -32,7 +32,7 @@ class GetAuthorizedAddressesNamesWebMessagesUseCase @Inject constructor(
     }
 
     private suspend fun getAddressNameMap(): List<Map<String, String>> {
-        val localAccounts = getAccountsDetails().filter { it.accountType?.canSignArbData() == true }
+        val localAccounts = getAccountsDetails().filter { it.accountType?.canSignTransaction() == true }
         val sortedAddressAlgoBalanceMap = localAccounts.map {
             it to getAccountAlgoBalance(it.address)
         }.sortedByDescending { (_, algoBalance) -> algoBalance }

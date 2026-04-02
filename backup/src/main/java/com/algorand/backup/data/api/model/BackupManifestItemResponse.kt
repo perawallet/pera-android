@@ -14,9 +14,10 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class UpsertItemRequest(
-    @SerializedName("expected_ver") val expectedVersion: Int,
-    @SerializedName("status") val status: String,
-    @SerializedName("deviceId") val deviceId: String,
-    @SerializedName("payload") val payload: String
+internal data class BackupManifestItemResponse(
+    @SerializedName("type") val type: String?,
+    @SerializedName("ver") val version: Int?,
+    @SerializedName("status") val status: String?,
+    @SerializedName("hash") val hash: String?,
+    @SerializedName("last_seq") val lastSeq: Long?
 )

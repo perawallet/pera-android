@@ -12,15 +12,10 @@
 
 package com.algorand.backup.domain.model
 
-sealed interface UpsertItemResult {
-
-    data class Success(
-        val newVersion: Int,
-        val seq: Long
-    ) : UpsertItemResult
-
-    data class Conflict(
-        val currentVersion: Int,
-        val currentHash: ItemHash?
-    ) : UpsertItemResult
-}
+data class BackupBatchUpsertInput(
+    val key: BackupItemKey,
+    val type: BackupItemType,
+    val expectedVersion: Int,
+    val status: BackupItemStatus,
+    val payload: String
+)

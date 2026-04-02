@@ -14,10 +14,11 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class ManifestResponse(
-    @SerializedName("backupId") val backupId: String?,
-    @SerializedName("backup_global_hash") val backupGlobalHash: String?,
-    @SerializedName("global_version") val globalVersion: Int?,
-    @SerializedName("last_seq") val lastSeq: Long?,
-    @SerializedName("items") val items: Map<String, ManifestItemResponse>?
+internal data class BackupBatchUpsertItemResponse(
+    @SerializedName("key") val key: String?,
+    @SerializedName("result") val result: String?,
+    @SerializedName("new_ver") val newVersion: Int?,
+    @SerializedName("seq") val seq: Long?,
+    @SerializedName("current_ver") val currentVersion: Int?,
+    @SerializedName("current_hash") val currentHash: String?
 )

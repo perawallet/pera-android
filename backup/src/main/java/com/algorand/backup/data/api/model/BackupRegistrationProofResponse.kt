@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.model
+package com.algorand.backup.data.api.model
 
-data class BatchUpsertItemResult(
-    val key: BackupItemKey,
-    val result: UpsertItemResult
+import com.google.gson.annotations.SerializedName
+
+internal data class BackupRegistrationProofResponse(
+    @SerializedName("backup_id") val backupId: String?,
+    @SerializedName("device_id") val deviceId: String?
 )

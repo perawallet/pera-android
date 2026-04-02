@@ -14,9 +14,6 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class RegistrationProofRequest(
-    @SerializedName("backup_id") val backupId: String,
-    @SerializedName("public_key") val publicKey: String,
-    @SerializedName("nonce") val nonce: String,
-    @SerializedName("signature") val signature: String
+internal data class BackupBatchReadRequest(
+    @SerializedName("keys") val keys: List<String>
 )

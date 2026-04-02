@@ -10,10 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.backup.data.api.model
+package com.algorand.backup.domain.model
 
-import com.google.gson.annotations.SerializedName
+sealed interface BackupUpsertItemResult {
 
-internal data class BatchReadResponse(
-    @SerializedName("items") val items: List<BatchReadItemResponse>?
-)
+    data class Success(
+        val newVersion: Int,
+        val seq: Long
+    ) : BackupUpsertItemResult
+
+    data class Conflict(
+        val currentVersion: Int,
+        val currentHash: ItemHash?
+    ) : BackupUpsertItemResult
+}

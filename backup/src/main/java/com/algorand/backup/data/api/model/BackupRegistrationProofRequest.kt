@@ -14,9 +14,10 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class BatchUpsertItemRequest(
-    @SerializedName("key") val key: String,
-    @SerializedName("expected_ver") val expectedVersion: Int,
-    @SerializedName("status") val status: String,
-    @SerializedName("payload") val payload: String
+internal data class BackupRegistrationProofRequest(
+    @SerializedName("backup_id") val backupId: String,
+    @SerializedName("device_id") val deviceId: String,
+    @SerializedName("public_key") val publicKey: String,
+    @SerializedName("nonce") val nonce: String,
+    @SerializedName("signature") val signature: String
 )

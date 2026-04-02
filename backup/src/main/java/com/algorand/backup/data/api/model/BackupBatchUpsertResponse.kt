@@ -14,12 +14,6 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class DeltaEntryResponse(
-    @SerializedName("seq") val seq: Long?,
-    @SerializedName("key") val key: String?,
-    @SerializedName("type") val type: String?,
-    @SerializedName("ver") val version: Int?,
-    @SerializedName("status") val status: String?,
-    @SerializedName("op") val operation: String?,
-    @SerializedName("hash") val hash: String?
+internal data class BackupBatchUpsertResponse(
+    @SerializedName("results") val results: List<BackupBatchUpsertItemResponse>?
 )

@@ -14,7 +14,6 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class RegistrationProofResponse(
-    @SerializedName("backup_id") val backupId: String?,
-    @SerializedName("device_id") val deviceId: String?
+internal data class BackupBatchReadResponse(
+    @SerializedName("items") val items: List<BackupBatchReadItemResponse>?
 )

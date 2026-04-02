@@ -10,11 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.model
+package com.algorand.backup.data.api.model
 
-data class BatchUpsertInput(
-    val key: BackupItemKey,
-    val expectedVersion: Int,
-    val status: BackupItemStatus,
-    val payload: String
+import com.google.gson.annotations.SerializedName
+
+internal data class BackupManifestResponse(
+    @SerializedName("backup_id") val backupId: String?,
+    @SerializedName("backup_global_hash") val backupGlobalHash: String?,
+    @SerializedName("global_version") val globalVersion: Int?,
+    @SerializedName("last_seq") val lastSeq: Long?,
+    @SerializedName("items") val items: Map<String, BackupManifestItemResponse>?
 )

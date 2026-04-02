@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.backup.data.api.model
+package com.algorand.backup.domain.model
 
-import com.google.gson.annotations.SerializedName
-
-internal data class DeleteItemResponse(
-    @SerializedName("seq") val seq: Long?
+data class BackupBatchUpsertItemResult(
+    val key: BackupItemKey,
+    val result: BackupUpsertItemResult
 )

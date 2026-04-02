@@ -14,10 +14,12 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class ManifestItemResponse(
+internal data class BackupDeltaEntryResponse(
+    @SerializedName("seq") val seq: Long?,
+    @SerializedName("key") val key: String?,
     @SerializedName("type") val type: String?,
     @SerializedName("ver") val version: Int?,
     @SerializedName("status") val status: String?,
-    @SerializedName("hash") val hash: String?,
-    @SerializedName("last_seq") val lastSeq: Long?
+    @SerializedName("op") val operation: String?,
+    @SerializedName("hash") val hash: String?
 )

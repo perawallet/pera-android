@@ -115,7 +115,7 @@ private fun createMockPreviewPending(): JointAccountTransactionViewState {
     return JointAccountTransactionViewState(
         jointAccountDisplayName = AccountDisplayName(
             accountAddress = "HZQ73CXUPMVKRB4LNGJAGVZQCFPQDCCPSDZZE",
-            primaryDisplayName = "Joint Account #1",
+            primaryDisplayName = "Shared Account #1",
             secondaryDisplayName = "HZQ7...DZZE"
         ),
         jointAccountIconPreview = jointIcon,

@@ -128,7 +128,7 @@ private fun ToolbarSectionPreview() {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Joint Account #1",
+                text = "Shared Account #1",
                 style = PeraTheme.typography.footnote.sans,
                 color = PeraTheme.colors.text.gray
             )

@@ -277,7 +277,7 @@
     <string name="dialpad_period">.</string>
     <string name="dialpad_0">0</string>
     <string name="rejecting_requests">Rejecting Requests</string>
-    <string name="this_feature_as_an_inbox">This is your unified inbox where you can manage all incoming requests. Here you can accept or reject asset transfer requests for assets or NFTs which you are not opted into already, respond to joint account invitations, and sign pending transactions for your joint accounts.</string>
+    <string name="this_feature_as_an_inbox">This is your unified inbox where you can manage all incoming requests. Here you can accept or reject asset transfer requests for assets or NFTs which you are not opted into already, respond to shared account invitations, and sign pending transactions for your shared accounts.</string>
     <string name="this_feature_as_an_inbox_asset_only">This feature is an inbox for your account. Others can send you assets and NFTs, even if you have not explicitly opted in to receive them. From here, you can choose to accept or reject the asset transfer requests.</string>
     <string name="reject">Reject</string>
     <string name="ignore">Ignore</string>
@@ -410,7 +410,7 @@
     <string name="sorry_we_cant_show_account">Sorry, we can\'t show the details of this account. It looks like we are having issues for the calculation.\n\nPlease note that some asset values might not be available, therefore the total portfolio value should be considered an estimation.  </string>
     <string name="sorry_we_cant_show_portfolio">Sorry, we can\'t show the details of this portfolio. It looks like we are having issues for the calculation.\n\nPlease note that some asset values might not be available, therefore the total portfolio value should be considered an estimation.  </string>
     <string name="add_account_desc">Add a new account to your existing Universal Wallet</string>
-    <string name="add_joint_account">Add Joint Account</string>
+    <string name="add_joint_account">Add Shared Account</string>
     <string name="add_joint_account_desc">Create a new multi-sig account with enhanced security that requires multiple signers</string>
     <string name="add_account">Add Account</string>
     <string name="import_account">Import Account</string>
@@ -420,23 +420,23 @@
     <string name="create_algo25_account_desc">Legacy format that is specific to Algorand</string>
     <string name="add_an_account_title">Add an\naccount</string>
     <string name="see_other_options">See other options</string>
-    <string name="joint_account">Joint Account</string>
-    <string name="joint_account_badge">Joint Account (%1$d)</string>
-    <string name="joint_account_default_name">Joint Account #%1$d</string>
-    <string name="you_ve_been_invited_to_join_joint_account">You\'ve been invited to join a joint account %1$s</string>
+    <string name="joint_account">Shared Account</string>
+    <string name="joint_account_badge">Shared Account (%1$d)</string>
+    <string name="joint_account_default_name">Shared Account #%1$d</string>
+    <string name="you_ve_been_invited_to_join_joint_account">You\'ve been invited to join a shared account %1$s</string>
     <string name="you_ve_been_invited">You\'ve been invited</string>
     <string name="view_invitation_details">View invitation details</string>
     <string name="joint_account_info_1">Enhanced security by requiring multiple approvals. Great for shared or high-value accounts.</string>
     <string name="joint_account_info_2">Assign signers and required approvals per transaction.</string>
     <string name="joint_account_info_3">Monitor activity and signer actions securely.</string>
-    <string name="create_joint_account">Create Joint Account</string>
-    <string name="create_joint_account_description">Choose the accounts that will jointly manage and sign transactions for this account.</string>
-    <string name="creating_joint_account">Creating joint account…</string>
+    <string name="create_joint_account">Create Shared Account</string>
+    <string name="create_joint_account_description">Choose the accounts that will manage and sign transactions for this account.</string>
+    <string name="creating_joint_account">Creating shared account…</string>
     <string name="joint_account_min_accounts_required">You need add at least two accounts</string>
-    <string name="joint_account_validation_insufficient_participants">At least two participants are required to create a joint account</string>
-    <string name="joint_account_feature_not_supported">This feature is not available for joint accounts yet</string>
-    <string name="joint_accounts_cannot_be_added">Joint accounts cannot be added to a new joint account</string>
-    <string name="joint_accounts_are_not_supported">Swaps with joint accounts are not yet supported. Joint accounts require multi-signature approval which is not available in the swap flow.</string>
+    <string name="joint_account_validation_insufficient_participants">At least two participants are required to create a shared account</string>
+    <string name="joint_account_feature_not_supported">This feature is not available for shared accounts yet</string>
+    <string name="joint_accounts_cannot_be_added">Shared accounts cannot be added to a new shared account</string>
+    <string name="joint_accounts_are_not_supported">Swaps with shared accounts are not yet supported. Shared accounts require multi-signature approval which is not available in the swap flow.</string>
     <string name="search_or_enter_wallet_address">Search or enter wallet address</string>
     <string name="selected_account">Selected account</string>
     <string name="you_are_about_to_remove_watch_account">You are about to remove a watch account. Are you sure you want to proceed with this choice?</string>
@@ -789,7 +789,7 @@
     <string name="asset_transfer_requests">Asset Transfer Requests</string>
     <string name="asset_transfer_request">Asset Transfer Request</string>
     <string name="inbox">Inbox</string>
-    <string name="joint_account_request">Joint account request</string>
+    <string name="joint_account_request">Shared account request</string>
     <string name="sign_txn_request">Sign txn request</string>
     <string name="no_pending_asset_transfer">No Pending Requests</string>
     <string name="when_you_have_an_asset">When you have requests or invitations, you can view them here. Tap on the info icon to learn more about this feature.</string>
@@ -998,9 +998,9 @@
     <string name="rekey_to_ledger_account_lower_case">Rekey to Ledger account</string>
     <string name="rekey_to_standard_account">Rekey to Standard Account</string>
     <string name="rekey_to_standard_account_lower_case">Rekey to standard account</string>
-    <string name="rekey_to_joint_account">Rekey to Joint Account</string>
-    <string name="rekey_to_joint_account_lower_case">Rekey to joint account</string>
-    <string name="choose_the_joint_account_rekey">Choose the joint account you would like to rekey to. The joint account you select here will be responsible for signing all transactions for the source account.</string>
+    <string name="rekey_to_joint_account">Rekey to Shared Account</string>
+    <string name="rekey_to_joint_account_lower_case">Rekey to shared account</string>
+    <string name="choose_the_joint_account_rekey">Choose the shared account you would like to rekey to. The shared account you select here will be responsible for signing all transactions for the source account.</string>
     <string name="rekey_your_account_to">Rekey your account to a different standard account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="summary_of_rekey">Summary of rekey</string>
     <string name="currently_rekeyed">Currently Rekeyed</string>
@@ -1013,7 +1013,7 @@
     <string name="rekeyed_to">Rekeyed to</string>
     <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions.</string>
     <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account.</string>
-    <string name="your_account_is_rekeyed_to_joint_account">Your account is rekeyed to another joint account. Transactions for this account will be authorized by the other account.</string>
+    <string name="your_account_is_rekeyed_to_joint_account">Your account is rekeyed to another shared account. Transactions for this account will be authorized by the other account.</string>
     <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account.</string>
     <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device.</string>
     <string name="undo_rekey">Undo rekey</string>
@@ -1267,7 +1267,7 @@
     <string name="pending_transaction">Pending transaction</string>
     <string name="unread">Unread</string>
     <string name="pending_signatures">Pending signatures</string>
-    <string name="sync_sign_notification_channel_name">Joint account signing</string>
+    <string name="sync_sign_notification_channel_name">Shared account signing</string>
     <string name="sync_sign_notification_waiting">Waiting for co-signers… %1$d/%2$d signed</string>
     <string name="sync_sign_notification_ready">Transaction ready — tap to open</string>
     <string name="sync_sign_notification_failed">Sign request failed or expired</string>
@@ -1287,10 +1287,10 @@
     <string name="signature_request_declined">Signature request declined</string>
     <string name="signature_request_cancelled">Signature request cancelled</string>
 
-    <string name="joint_account_invitation_accepted">Joint account invitation accepted</string>
-    <string name="before_you_create_joint_account">Before You Create a Joint Account</string>
-    <string name="joint_account_disclaimer_1">Once you create a joint account, you cannot change the participants.</string>
-    <string name="joint_account_disclaimer_2">Once you create a joint account, rekeying any of the participating accounts may result in losing access.</string>
+    <string name="joint_account_invitation_accepted">Shared account invitation accepted</string>
+    <string name="before_you_create_joint_account">Before You Create a Shared Account</string>
+    <string name="joint_account_disclaimer_1">Once you create a shared account, you cannot change the participants.</string>
+    <string name="joint_account_disclaimer_2">Once you create a shared account, rekeying any of the participating accounts may result in losing access.</string>
     <string name="proceed">Proceed</string>
     <string name="go_back_and_edit">Go Back and Edit</string>
     <string name="invitation_ignored">Invitation ignored</string>

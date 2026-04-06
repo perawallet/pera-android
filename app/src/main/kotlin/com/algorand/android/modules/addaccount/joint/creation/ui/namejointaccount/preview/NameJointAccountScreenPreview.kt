@@ -46,7 +46,7 @@ fun NameJointAccountScreenPreview() {
     PeraTheme {
         NameJointAccountScreenPreviewContent(
             accountName = "",
-            defaultAccountName = "Joint Account 1",
+            defaultAccountName = "Shared Account 1",
             errorMessage = null,
             buttonState = PeraButtonState.DISABLED
         )
@@ -59,7 +59,7 @@ fun NameJointAccountScreenWithNamePreview() {
     PeraTheme {
         NameJointAccountScreenPreviewContent(
             accountName = "My Joint Account",
-            defaultAccountName = "Joint Account 1",
+            defaultAccountName = "Shared Account 1",
             errorMessage = null,
             buttonState = PeraButtonState.ENABLED
         )
@@ -72,7 +72,7 @@ fun NameJointAccountScreenErrorPreview() {
     PeraTheme {
         NameJointAccountScreenPreviewContent(
             accountName = "My Account",
-            defaultAccountName = "Joint Account 1",
+            defaultAccountName = "Shared Account 1",
             errorMessage = "An error occurred",
             buttonState = PeraButtonState.ENABLED
         )

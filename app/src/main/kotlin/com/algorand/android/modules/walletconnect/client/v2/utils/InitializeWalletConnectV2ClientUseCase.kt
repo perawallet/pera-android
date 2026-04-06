@@ -31,10 +31,10 @@ class InitializeWalletConnectV2ClientUseCase @Inject constructor(
     private val errorLogger: PeraErrorLogger
 ) {
 
-    operator fun invoke(application: Application) {
+    operator fun invoke(application: Application, onSignClientInitialized: () -> Unit = {}) {
         initializeCoreClient(application)
         registerFirebasePushToken()
-        initializeSignClient()
+        initializeSignClient(onSignClientInitialized)
     }
 
     private fun initializeCoreClient(application: Application) {
@@ -74,9 +74,9 @@ class InitializeWalletConnectV2ClientUseCase @Inject constructor(
         }
     }
 
-    private fun initializeSignClient() {
+    private fun initializeSignClient(onSuccess: () -> Unit = {}) {
         val initParams = Sign.Params.Init(core = CoreClient)
-        signClient.initialize(initParams)
+        signClient.initialize(initParams, onSuccess)
     }
 
     private fun getPeraWalletAppMetaData(): Core.Model.AppMetaData {

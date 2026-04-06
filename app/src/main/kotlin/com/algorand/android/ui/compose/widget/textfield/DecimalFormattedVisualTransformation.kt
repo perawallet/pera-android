@@ -64,7 +64,7 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
                     }
                     return formattedIntegerLength
                 }
-                return formattedIntegerLength + (offset - integerPartLength)
+                return (formattedIntegerLength + (offset - integerPartLength)).coerceAtMost(result.length)
             }
 
             override fun transformedToOriginal(offset: Int): Int {

@@ -38,9 +38,9 @@ class WalletConnectV2SignClient @Inject constructor(
         SignClient.setWalletDelegate(delegate)
     }
 
-    fun initialize(initParams: Sign.Params.Init) {
+    fun initialize(initParams: Sign.Params.Init, onSuccess: () -> Unit = {}) {
         try {
-            SignClient.initialize(initParams) { error ->
+            SignClient.initialize(initParams, onSuccess = onSuccess) { error ->
                 errorLogger.logError(error.throwable)
             }
         } catch (e: Exception) {

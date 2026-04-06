@@ -121,9 +121,10 @@ class WalletConnectClientV2Impl(
     }
 
     override suspend fun initializeClient(application: Application) {
-        initializeClientUseCase(application)
         walletDelegate.setListener(walletDelegateListener)
-        signClient.setWalletDelegate(walletDelegate)
+        initializeClientUseCase(application) {
+            signClient.setWalletDelegate(walletDelegate)
+        }
     }
 
     override fun setListener(listener: WalletConnectClientListener) {

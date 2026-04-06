@@ -101,11 +101,11 @@ class AssetTransferPreviewViewModel @Inject constructor(
                 }
                 return
             }
-            signedTransactionDetailCopy =
-                (signedArc59Transactions.last() as SignedTransactionDetail.Send).copy(
-                    signedTransactionData = signedArc59Transactions.map { it.signedTransactionData }
-                        .flatten()
-                )
+            val sendDetail = signedArc59Transactions.filterIsInstance<SignedTransactionDetail.Send>().firstOrNull()
+                ?: return
+            signedTransactionDetailCopy = sendDetail.copy(
+                signedTransactionData = signedArc59Transactions.map { it.signedTransactionData }.flatten()
+            )
         }
         if (sendAlgoJob?.isActive == true) {
             return

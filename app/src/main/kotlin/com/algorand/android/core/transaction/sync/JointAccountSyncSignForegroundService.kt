@@ -76,7 +76,7 @@ class JointAccountSyncSignForegroundService : Service() {
     @Inject
     lateinit var errorLogger: PeraErrorLogger
 
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val activeSessions = ConcurrentHashMap<String, SyncSignSession>()
     private var isForegroundStarted = false
     private var foregroundNotificationSessionId: String? = null

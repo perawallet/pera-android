@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.security
+package com.algorand.backup.domain.model
 
-internal interface BackupEncryptionManager {
-    fun importKey(encryptionKey: ByteArray)
-    fun encrypt(plaintext: ByteArray, itemKey: String): ByteArray
-    fun decrypt(ciphertext: ByteArray, itemKey: String): ByteArray
-    fun deleteKey()
-}
+internal class AesGcmEncryptionResult(
+    val iv: ByteArray,
+    val ciphertext: ByteArray
+)

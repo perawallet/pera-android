@@ -12,8 +12,8 @@
 
 package com.algorand.backup.data.mapper
 
-import com.algorand.backup.data.api.model.ManifestItemResponse
-import com.algorand.backup.data.api.model.ManifestResponse
+import com.algorand.backup.data.api.model.BackupManifestItemResponse
+import com.algorand.backup.data.api.model.BackupManifestResponse
 import com.algorand.backup.domain.model.BackupGlobalHash
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 internal class ManifestResponseMapper @Inject constructor() {
 
-    fun toDomainModel(response: ManifestResponse): Manifest? {
+    fun toDomainModel(response: BackupManifestResponse): Manifest? {
         return Manifest(
             backupId = BackupId(response.backupId ?: return null),
             backupGlobalHash = BackupGlobalHash(response.backupGlobalHash ?: return null),
@@ -38,7 +38,7 @@ internal class ManifestResponseMapper @Inject constructor() {
         )
     }
 
-    private fun toManifestItem(response: ManifestItemResponse): ManifestItem? {
+    private fun toManifestItem(response: BackupManifestItemResponse): ManifestItem? {
         return ManifestItem(
             type = BackupItemType.valueOf(response.type ?: return null),
             version = response.version ?: return null,

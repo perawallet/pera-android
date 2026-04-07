@@ -12,7 +12,7 @@
 
 package com.algorand.backup.data.mapper
 
-import com.algorand.backup.data.api.model.DeltaEntryResponse
+import com.algorand.backup.data.api.model.BackupDeltaEntryResponse
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 internal class DeltaEntryResponseMapper @Inject constructor() {
 
-    fun toDomainModel(response: DeltaEntryResponse): DeltaEntry? {
+    fun toDomainModel(response: BackupDeltaEntryResponse): DeltaEntry? {
         return DeltaEntry(
             seq = response.seq ?: return null,
             key = BackupItemKey(response.key ?: return null),

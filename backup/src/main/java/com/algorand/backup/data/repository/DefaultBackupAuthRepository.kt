@@ -15,7 +15,7 @@ package com.algorand.backup.data.repository
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import com.algorand.backup.data.model.BackupAuthCredentialsCacheModel
+import com.algorand.backup.data.model.BackupAuthCredentialsCacheData
 import com.algorand.backup.domain.model.AesGcmEncryptionResult
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.DeviceId
@@ -27,7 +27,7 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCache
 
 internal class DefaultBackupAuthRepository(
-    private val persistentCache: PersistentCache<BackupAuthCredentialsCacheModel>,
+    private val persistentCache: PersistentCache<BackupAuthCredentialsCacheData>,
     private val peraAndroidKeyStore: PeraAndroidKeyStore,
     private val peraCipher: PeraCipher
 ) : BackupAuthRepository {
@@ -100,8 +100,8 @@ internal class DefaultBackupAuthRepository(
         backupId: BackupId,
         deviceId: DeviceId,
         encryptionResult: AesGcmEncryptionResult
-    ): BackupAuthCredentialsCacheModel {
-        return BackupAuthCredentialsCacheModel(
+    ): BackupAuthCredentialsCacheData {
+        return BackupAuthCredentialsCacheData(
             backupId = backupId.value,
             deviceId = deviceId.value,
             wrappedPrivateKey = Base64.encodeToString(encryptionResult.ciphertext, Base64.NO_WRAP),

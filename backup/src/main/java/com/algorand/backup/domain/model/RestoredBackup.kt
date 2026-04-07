@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.security
+package com.algorand.backup.domain.model
 
-import com.algorand.backup.domain.model.DerivedKeyMaterial
-import com.algorand.backup.domain.model.KeyDerivationInput
-
-internal interface BackupKeyDerivationManager {
-    fun deriveKeys(input: KeyDerivationInput): DerivedKeyMaterial
-}
+data class RestoredBackup(
+    val backupId: BackupId,
+    val syncState: SyncState
+)

@@ -12,17 +12,17 @@
 
 package com.algorand.backup.data.service
 
-import com.algorand.backup.data.api.model.BatchReadRequest
-import com.algorand.backup.data.api.model.BatchReadResponse
-import com.algorand.backup.data.api.model.BatchUpsertRequest
-import com.algorand.backup.data.api.model.BatchUpsertResponse
-import com.algorand.backup.data.api.model.DeleteItemResponse
-import com.algorand.backup.data.api.model.DeltaEntryResponse
-import com.algorand.backup.data.api.model.ManifestResponse
-import com.algorand.backup.data.api.model.RegistrationProofRequest
-import com.algorand.backup.data.api.model.RegistrationProofResponse
-import com.algorand.backup.data.api.model.UpsertItemRequest
-import com.algorand.backup.data.api.model.UpsertItemResponse
+import com.algorand.backup.data.api.model.BackupBatchReadRequest
+import com.algorand.backup.data.api.model.BackupBatchReadResponse
+import com.algorand.backup.data.api.model.BackupBatchUpsertRequest
+import com.algorand.backup.data.api.model.BackupBatchUpsertResponse
+import com.algorand.backup.data.api.model.BackupDeleteItemResponse
+import com.algorand.backup.data.api.model.BackupDeltaEntryResponse
+import com.algorand.backup.data.api.model.BackupManifestResponse
+import com.algorand.backup.data.api.model.BackupRegistrationProofRequest
+import com.algorand.backup.data.api.model.BackupRegistrationProofResponse
+import com.algorand.backup.data.api.model.BackupUpsertItemRequest
+import com.algorand.backup.data.api.model.BackupUpsertItemResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -36,20 +36,20 @@ internal interface BackupApiService {
 
     @POST("backup/register")
     suspend fun register(
-        @Body request: RegistrationProofRequest
-    ): Response<RegistrationProofResponse>
+        @Body request: BackupRegistrationProofRequest
+    ): Response<BackupRegistrationProofResponse>
 
     @GET("backup/{backupId}/manifest")
     suspend fun getManifest(
         @Path("backupId") backupId: String
-    ): Response<ManifestResponse>
+    ): Response<BackupManifestResponse>
 
     @GET("backup/{backupId}/delta")
     suspend fun getDeltas(
         @Path("backupId") backupId: String,
         @Query("from_seq") fromSeq: Long,
         @Query("types") types: String? = null
-    ): Response<List<DeltaEntryResponse>>
+    ): Response<List<BackupDeltaEntryResponse>>
 
     @GET("backup/{backupId}/{key}")
     suspend fun getItem(
@@ -60,25 +60,25 @@ internal interface BackupApiService {
     @POST("backup/{backupId}/items/read")
     suspend fun batchReadItems(
         @Path("backupId") backupId: String,
-        @Body request: BatchReadRequest
-    ): Response<BatchReadResponse>
+        @Body request: BackupBatchReadRequest
+    ): Response<BackupBatchReadResponse>
 
     @PUT("backup/{backupId}/{key}")
     suspend fun upsertItem(
         @Path("backupId") backupId: String,
         @Path("key", encoded = true) key: String,
-        @Body request: UpsertItemRequest
-    ): Response<UpsertItemResponse>
+        @Body request: BackupUpsertItemRequest
+    ): Response<BackupUpsertItemResponse>
 
     @POST("backup/{backupId}/items/upsert")
     suspend fun batchUpsertItems(
         @Path("backupId") backupId: String,
-        @Body request: BatchUpsertRequest
-    ): Response<BatchUpsertResponse>
+        @Body request: BackupBatchUpsertRequest
+    ): Response<BackupBatchUpsertResponse>
 
     @DELETE("backup/{backupId}/{key}")
     suspend fun deleteItem(
         @Path("backupId") backupId: String,
         @Path("key", encoded = true) key: String
-    ): Response<DeleteItemResponse>
+    ): Response<BackupDeleteItemResponse>
 }

@@ -17,4 +17,13 @@ data class Argon2idConfig(
     val memoryCost: Int,
     val parallelism: Int,
     val outputLength: Int
-)
+) {
+    companion object {
+        val DEFAULT = Argon2idConfig(
+            timeCost = 4,
+            memoryCost = 16384,
+            parallelism = 4,
+            outputLength = 32
+        )
+    }
+}

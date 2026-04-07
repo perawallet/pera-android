@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.security
+package com.algorand.backup.domain.model
 
-import com.algorand.backup.domain.model.BackupId
-
-internal interface BackupIdManager {
-    fun createBackupId(publicKey: ByteArray): BackupId
-}
+data class CreatedBackup(
+    val backupId: BackupId,
+    val salt: ByteArray,
+    val argon2idConfig: Argon2idConfig
+)

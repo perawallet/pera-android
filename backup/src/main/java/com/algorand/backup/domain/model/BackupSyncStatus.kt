@@ -12,10 +12,10 @@
 
 package com.algorand.backup.domain.model
 
-data class RegistrationProof(
-    val backupId: BackupId,
-    val deviceId: DeviceId,
-    val publicKey: String,
-    val nonce: String,
-    val signature: String
-)
+sealed interface BackupSyncStatus {
+    data object Idle : BackupSyncStatus
+    data object Syncing : BackupSyncStatus
+    data object UpToDate : BackupSyncStatus
+    data object HasLocalChanges : BackupSyncStatus
+    data class Error(val exception: Exception?) : BackupSyncStatus
+}

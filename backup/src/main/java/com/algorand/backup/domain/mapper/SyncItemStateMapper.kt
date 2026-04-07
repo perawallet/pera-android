@@ -14,10 +14,23 @@ package com.algorand.backup.domain.mapper
 
 import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.DeltaEntry
+import com.algorand.backup.domain.model.ManifestItem
 import com.algorand.backup.domain.model.SyncItemState
 import javax.inject.Inject
 
 internal class SyncItemStateMapper @Inject constructor() {
+
+    fun mapFromManifestItem(manifestItem: ManifestItem): SyncItemState {
+        return SyncItemState(
+            type = manifestItem.type,
+            knownVersion = manifestItem.version,
+            baseVersion = manifestItem.version,
+            isDirty = false,
+            status = BackupItemStatus.ACTIVE,
+            lastRemoteHash = null,
+            pendingDelete = false
+        )
+    }
 
     fun mapFromUpsertDelta(delta: DeltaEntry, existingItem: SyncItemState?): SyncItemState {
         return SyncItemState(
@@ -51,6 +64,15 @@ internal class SyncItemStateMapper @Inject constructor() {
             baseVersion = existingItem.knownVersion,
             isDirty = false,
             status = BackupItemStatus.IGNORED,
+            pendingDelete = false
+        )
+    }
+
+    fun mapForReactivate(existingItem: SyncItemState): SyncItemState {
+        return existingItem.copy(
+            baseVersion = existingItem.knownVersion,
+            isDirty = true,
+            status = BackupItemStatus.ACTIVE,
             pendingDelete = false
         )
     }

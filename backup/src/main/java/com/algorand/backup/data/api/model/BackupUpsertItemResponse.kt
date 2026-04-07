@@ -14,7 +14,7 @@ package com.algorand.backup.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class UpsertItemResponse(
+internal data class BackupUpsertItemResponse(
     @SerializedName("new_ver") val newVersion: Int?,
     @SerializedName("seq") val seq: Long?,
     @SerializedName("current_ver") val currentVersion: Int?,

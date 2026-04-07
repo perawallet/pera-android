@@ -10,8 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.security
+package com.algorand.backup.data.model
 
-internal interface HkdfKeyManager {
-    fun deriveChildKey(masterKey: ByteArray, info: ByteArray): ByteArray
-}
+import com.google.gson.annotations.SerializedName
+
+internal data class BackupAuthCredentialsCacheData(
+    @SerializedName("backup_id") val backupId: String,
+    @SerializedName("device_id") val deviceId: String,
+    @SerializedName("wrapped_private_key") val wrappedPrivateKey: String,
+    @SerializedName("wrapping_iv") val wrappingIv: String
+)

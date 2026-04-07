@@ -16,15 +16,18 @@ import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
-import com.algorand.backup.domain.model.BatchUpsertInput
-import com.algorand.backup.domain.model.BatchUpsertItemResult
+import com.algorand.backup.domain.model.BackupBatchUpsertInput
+import com.algorand.backup.domain.model.BackupBatchUpsertItemResult
 import com.algorand.backup.domain.model.DeltaEntry
+import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.Manifest
-import com.algorand.backup.domain.model.UpsertItemResult
+import com.algorand.backup.domain.model.BackupUpsertItemResult
 import com.algorand.wallet.foundation.PeraResult
 
 internal interface BackupRepository {
+
+    suspend fun register(keyMaterial: DerivedKeyMaterial, deviceId: DeviceId): PeraResult<Unit>
 
     suspend fun getManifest(backupId: BackupId): PeraResult<Manifest>
 
@@ -44,17 +47,18 @@ internal interface BackupRepository {
     suspend fun upsertItem(
         backupId: BackupId,
         key: BackupItemKey,
+        type: BackupItemType,
         expectedVersion: Int,
         status: BackupItemStatus,
         deviceId: DeviceId,
         payload: String
-    ): PeraResult<UpsertItemResult>
+    ): PeraResult<BackupUpsertItemResult>
 
     suspend fun batchUpsertItems(
         backupId: BackupId,
         deviceId: DeviceId,
-        items: List<BatchUpsertInput>
-    ): PeraResult<List<BatchUpsertItemResult>>
+        items: List<BackupBatchUpsertInput>
+    ): PeraResult<List<BackupBatchUpsertItemResult>>
 
     suspend fun deleteItem(backupId: BackupId, key: BackupItemKey): PeraResult<Long>
 }

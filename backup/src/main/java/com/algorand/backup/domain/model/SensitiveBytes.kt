@@ -12,16 +12,23 @@
 
 package com.algorand.backup.domain.model
 
-class DerivedKeyMaterial(
-    val backupId: BackupId,
-    val encryptionKey: SensitiveBytes,
-    val authPrivateKey: SensitiveBytes,
-    val authPublicKey: SensitiveBytes
-) : AutoCloseable {
+class SensitiveBytes(private val bytes: ByteArray) : AutoCloseable {
 
+    /**
+     * Returns the raw bytes. Use this only within a short-lived scope.
+     */
+    fun reveal(): ByteArray = bytes
+
+    /**
+     * Overwrites the underlying array with zeros to remove it from the heap.
+     */
     override fun close() {
-        encryptionKey.close()
-        authPrivateKey.close()
-        authPublicKey.close()
+        bytes.fill(0)
     }
+
+    override fun toString(): String = "SensitiveBytes[REDACTED]"
+
+    override fun hashCode(): Int = System.identityHashCode(this)
+
+    override fun equals(other: Any?): Boolean = this === other
 }

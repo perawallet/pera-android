@@ -12,8 +12,12 @@
 
 package com.algorand.backup.domain.security
 
-import com.algorand.backup.domain.model.Argon2idConfig
+import com.algorand.backup.domain.model.AesGcmEncryptionResult
+import javax.crypto.SecretKey
 
-internal interface ArgonKeyManager {
-    fun deriveMasterKey(password: ByteArray, salt: ByteArray, config: Argon2idConfig): ByteArray
+internal interface PeraCipher {
+
+    fun encrypt(key: SecretKey, plaintext: ByteArray, aad: ByteArray? = null): AesGcmEncryptionResult
+
+    fun decrypt(key: SecretKey, ciphertext: ByteArray, iv: ByteArray, aad: ByteArray? = null): ByteArray
 }

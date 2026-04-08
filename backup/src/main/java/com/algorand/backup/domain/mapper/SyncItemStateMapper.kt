@@ -13,12 +13,25 @@
 package com.algorand.backup.domain.mapper
 
 import com.algorand.backup.domain.model.BackupItemStatus
+import com.algorand.backup.domain.model.BackupItemType
 import com.algorand.backup.domain.model.DeltaEntry
 import com.algorand.backup.domain.model.ManifestItem
 import com.algorand.backup.domain.model.SyncItemState
 import javax.inject.Inject
 
 internal class SyncItemStateMapper @Inject constructor() {
+
+    fun mapNewDirtyItem(type: BackupItemType): SyncItemState {
+        return SyncItemState(
+            type = type,
+            knownVersion = 0,
+            baseVersion = 0,
+            isDirty = true,
+            status = BackupItemStatus.ACTIVE,
+            lastRemoteHash = null,
+            pendingDelete = false
+        )
+    }
 
     fun mapFromManifestItem(manifestItem: ManifestItem): SyncItemState {
         return SyncItemState(

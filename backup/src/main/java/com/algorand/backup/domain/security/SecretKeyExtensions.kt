@@ -10,18 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.backup.data.service
+package com.algorand.backup.domain.security
 
-import com.algorand.backup.data.api.model.RegistrationProofRequest
-import com.algorand.backup.data.api.model.RegistrationProofResponse
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.POST
+import javax.crypto.SecretKey
+import javax.security.auth.DestroyFailedException
 
-internal interface BackupAuthService {
-
-    @POST("backup/register")
-    suspend fun register(
-        @Body request: RegistrationProofRequest
-    ): Response<RegistrationProofResponse>
+fun SecretKey.safeDestroy() {
+    try {
+        if (!isDestroyed) destroy()
+    } catch (_: DestroyFailedException) {
+        // Android Keystore-backed keys don't support destroy()
+    }
 }

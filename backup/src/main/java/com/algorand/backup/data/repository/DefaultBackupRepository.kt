@@ -12,50 +12,63 @@
 
 package com.algorand.backup.data.repository
 
-import com.algorand.backup.data.api.model.BatchReadRequest
-import com.algorand.backup.data.api.model.BatchUpsertItemRequest
-import com.algorand.backup.data.api.model.BatchUpsertRequest
-import com.algorand.backup.data.api.model.UpsertItemRequest
+import com.algorand.backup.data.api.model.BackupBatchReadRequest
+import com.algorand.backup.data.api.model.BackupDeleteItemResponse
+import com.algorand.backup.data.mapper.BackupBatchUpsertRequestMapper
+import com.algorand.backup.data.mapper.BackupRegistrationProofRequestMapper
+import com.algorand.backup.data.mapper.BackupUpsertItemRequestMapper
 import com.algorand.backup.data.mapper.DeltaEntryResponseMapper
 import com.algorand.backup.data.mapper.ManifestResponseMapper
 import com.algorand.backup.data.service.BackupApiService
+import com.algorand.backup.domain.model.BackupBatchUpsertInput
+import com.algorand.backup.domain.model.BackupBatchUpsertItemResult
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
-import com.algorand.backup.domain.model.BatchUpsertItemResult
+import com.algorand.backup.domain.model.BackupUpsertItemResult
 import com.algorand.backup.domain.model.DeltaEntry
+import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.ItemHash
 import com.algorand.backup.domain.model.Manifest
-import com.algorand.backup.domain.model.UpsertItemResult
-import com.algorand.backup.domain.model.BatchUpsertInput
 import com.algorand.backup.domain.repository.BackupRepository
+import com.algorand.backup.domain.security.BackupRequestSigner
+import com.algorand.backup.domain.security.NonceGenerator
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
 
 internal class DefaultBackupRepository @Inject constructor(
     private val backupApiService: BackupApiService,
     private val manifestMapper: ManifestResponseMapper,
-    private val deltaMapper: DeltaEntryResponseMapper
+    private val deltaMapper: DeltaEntryResponseMapper,
+    private val batchUpsertRequestMapper: BackupBatchUpsertRequestMapper,
+    private val registrationProofRequestMapper: BackupRegistrationProofRequestMapper,
+    private val upsertItemRequestMapper: BackupUpsertItemRequestMapper,
+    private val requestSigner: BackupRequestSigner,
+    private val nonceGenerator: NonceGenerator
 ) : BackupRepository {
 
+    override suspend fun register(keyMaterial: DerivedKeyMaterial, deviceId: DeviceId): PeraResult<Unit> {
+        val proof = requestSigner.createRegistrationProof(
+            authPrivateKey = keyMaterial.authPrivateKey,
+            authPublicKey = keyMaterial.authPublicKey,
+            backupId = keyMaterial.backupId,
+            deviceId = deviceId,
+            nonce = nonceGenerator.generate()
+        )
+        val proofRequest = registrationProofRequestMapper.toRequest(proof)
+        return request {
+            backupApiService.register(proofRequest)
+        }.map { }
+    }
+
     override suspend fun getManifest(backupId: BackupId): PeraResult<Manifest> {
-        return try {
-            val response = backupApiService.getManifest(backupId.value)
-            val body = response.body()
-            if (response.isSuccessful && body != null) {
-                val manifest = manifestMapper.toDomainModel(body)
-                if (manifest != null) {
-                    PeraResult.Success(manifest)
-                } else {
-                    PeraResult.Error(IllegalStateException("Failed to parse manifest"))
-                }
-            } else {
-                PeraResult.Error(IllegalStateException("Manifest request failed"), response.code())
-            }
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
+        return request {
+            backupApiService.getManifest(backupId.value)
+        }.map { response ->
+            manifestMapper.toDomainModel(response) ?: throw IllegalStateException("Failed to parse manifest")
         }
     }
 
@@ -64,32 +77,18 @@ internal class DefaultBackupRepository @Inject constructor(
         fromSeq: Long,
         types: List<BackupItemType>?
     ): PeraResult<List<DeltaEntry>> {
-        return try {
-            val typesQuery = types?.joinToString(",") { it.name }
-            val response = backupApiService.getDeltas(backupId.value, fromSeq, typesQuery)
-            val body = response.body()
-            if (response.isSuccessful && body != null) {
-                val deltas = body.mapNotNull { deltaMapper.toDomainModel(it) }
-                PeraResult.Success(deltas)
-            } else {
-                PeraResult.Error(IllegalStateException("Delta request failed"), response.code())
-            }
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
+        val typesQuery = types?.joinToString(",") { it.name }
+        return request {
+
+            backupApiService.getDeltas(backupId.value, fromSeq, typesQuery)
+        }.map { response ->
+            response.mapNotNull { deltaMapper.toDomainModel(it) }
         }
     }
 
     override suspend fun getItem(backupId: BackupId, key: BackupItemKey): PeraResult<String> {
-        return try {
-            val response = backupApiService.getItem(backupId.value, key.value)
-            val body = response.body()
-            if (response.isSuccessful && body != null) {
-                PeraResult.Success(body)
-            } else {
-                PeraResult.Error(IllegalStateException("Get item failed"), response.code())
-            }
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
+        return request {
+            backupApiService.getItem(backupId.value, key.value)
         }
     }
 
@@ -97,82 +96,47 @@ internal class DefaultBackupRepository @Inject constructor(
         backupId: BackupId,
         keys: List<BackupItemKey>
     ): PeraResult<Map<BackupItemKey, String>> {
-        return try {
-            val request = BatchReadRequest(keys.map { it.value })
-            val response = backupApiService.batchReadItems(backupId.value, request)
-            val body = response.body()
-            if (response.isSuccessful && body != null) {
-                val items = body.items
-                    ?.filter { it.payload != null && it.key != null }
-                    ?.associate { BackupItemKey(it.key!!) to it.payload!! }.orEmpty()
-                PeraResult.Success(items)
-            } else {
-                PeraResult.Error(IllegalStateException("Batch read failed"), response.code())
-            }
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
+        val batchReadRequest = BackupBatchReadRequest(keys.map { it.value })
+        return request {
+            backupApiService.batchReadItems(backupId.value, batchReadRequest)
+        }.map { response ->
+            response.items
+                ?.filter { it.payload != null && it.key != null }
+                ?.associate { BackupItemKey(it.key!!) to it.payload!! }.orEmpty()
         }
     }
 
     override suspend fun upsertItem(
         backupId: BackupId,
         key: BackupItemKey,
+        type: BackupItemType,
         expectedVersion: Int,
         status: BackupItemStatus,
         deviceId: DeviceId,
         payload: String
-    ): PeraResult<UpsertItemResult> {
-        return try {
-            val request = UpsertItemRequest(
-                expectedVersion = expectedVersion,
-                status = status.name,
-                deviceId = deviceId.value,
-                payload = payload
-            )
-            val response = backupApiService.upsertItem(backupId.value, key.value, request)
-            val body = response.body()
-            if (response.isSuccessful && body != null) {
-                val result = parseUpsertResponse(body.newVersion, body.seq, body.currentVersion, body.currentHash)
-                PeraResult.Success(result)
-            } else {
-                PeraResult.Error(IllegalStateException("Upsert item failed"), response.code())
-            }
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
+    ): PeraResult<BackupUpsertItemResult> {
+        val upsertRequest = upsertItemRequestMapper.toRequest(type, expectedVersion, status, deviceId, payload)
+        return request {
+            backupApiService.upsertItem(backupId.value, key.value, upsertRequest)
+        }.map { response ->
+            parseUpsertResponse(response.newVersion, response.seq, response.currentVersion, response.currentHash)
         }
     }
 
     override suspend fun batchUpsertItems(
         backupId: BackupId,
         deviceId: DeviceId,
-        items: List<BatchUpsertInput>
-    ): PeraResult<List<BatchUpsertItemResult>> {
-        return try {
-            val request = BatchUpsertRequest(
-                deviceId = deviceId.value,
-                items = items.map { input ->
-                    BatchUpsertItemRequest(
-                        key = input.key.value,
-                        expectedVersion = input.expectedVersion,
-                        status = input.status.name,
-                        payload = input.payload
-                    )
-                }
-            )
-            val response = backupApiService.batchUpsertItems(backupId.value, request)
-            val body = response.body()
-            if (response.isSuccessful && body != null) {
-                val results = body.results?.mapNotNull { item ->
-                    val key = item.key ?: return@mapNotNull null
-                    val result = parseUpsertResponse(item.newVersion, item.seq, item.currentVersion, item.currentHash)
-                    BatchUpsertItemResult(key = BackupItemKey(key), result = result)
-                }.orEmpty()
-                PeraResult.Success(results)
-            } else {
-                PeraResult.Error(IllegalStateException("Batch upsert failed"), response.code())
-            }
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
+        items: List<BackupBatchUpsertInput>
+    ): PeraResult<List<BackupBatchUpsertItemResult>> {
+        val batchRequest = batchUpsertRequestMapper.toRequest(deviceId, items)
+        return request {
+            backupApiService.batchUpsertItems(backupId.value, batchRequest)
+        }.map { response ->
+            response.results?.mapNotNull { item ->
+                val key = item.key ?: return@mapNotNull null
+                val result = parseUpsertResponse(item.newVersion, item.seq, item.currentVersion, item.currentHash)
+                BackupBatchUpsertItemResult(key = BackupItemKey(key), result = result)
+            }.orEmpty()
         }
     }
 
@@ -181,11 +145,11 @@ internal class DefaultBackupRepository @Inject constructor(
         seq: Long?,
         currentVersion: Int?,
         currentHash: String?
-    ): UpsertItemResult {
+    ): BackupUpsertItemResult {
         return if (newVersion != null && seq != null) {
-            UpsertItemResult.Success(newVersion = newVersion, seq = seq)
+            BackupUpsertItemResult.Success(newVersion = newVersion, seq = seq)
         } else {
-            UpsertItemResult.Conflict(
+            BackupUpsertItemResult.Conflict(
                 currentVersion = currentVersion ?: 0,
                 currentHash = currentHash?.let { ItemHash(it) }
             )
@@ -193,16 +157,21 @@ internal class DefaultBackupRepository @Inject constructor(
     }
 
     override suspend fun deleteItem(backupId: BackupId, key: BackupItemKey): PeraResult<Long> {
-        return try {
-            val response = backupApiService.deleteItem(backupId.value, key.value)
-            val body = response.body()
-            if (response.isSuccessful && body?.seq != null) {
-                PeraResult.Success(body.seq)
-            } else {
-                PeraResult.Error(IllegalStateException("Delete item failed"), response.code())
+        return request(
+            onFailed = { response ->
+                if (response.code() == HTTP_NOT_FOUND) {
+                    PeraResult.Success(BackupDeleteItemResponse(seq = ALREADY_DELETED_SEQ))
+                } else {
+                    PeraResult.Error(Exception(response.errorBody().toString()), response.code())
+                }
             }
-        } catch (exception: Exception) {
-            PeraResult.Error(exception)
-        }
+        ) {
+            backupApiService.deleteItem(backupId.value, key.value)
+        }.map { it.seq ?: ALREADY_DELETED_SEQ }
+    }
+
+    private companion object {
+        const val HTTP_NOT_FOUND = 404
+        const val ALREADY_DELETED_SEQ = -1L
     }
 }

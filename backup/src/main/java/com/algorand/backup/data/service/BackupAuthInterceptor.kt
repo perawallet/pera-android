@@ -12,9 +12,7 @@
 
 package com.algorand.backup.data.service
 
-import android.util.Log
 import com.algorand.backup.domain.model.SignedRequest
-import com.algorand.backup.domain.repository.BackupAuthRepository
 import com.algorand.backup.domain.security.BackupRequestSigner
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
@@ -24,31 +22,14 @@ import okhttp3.Request
 import okhttp3.Response
 
 @Singleton
-internal class BackupAuthInterceptor @Inject constructor(
-    private val backupAuthRepository: BackupAuthRepository,
-    private val requestSigner: BackupRequestSigner
-) : Interceptor {
+internal class BackupAuthInterceptor @Inject constructor(private val requestSigner: BackupRequestSigner) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        if (!backupAuthRepository.hasCredentials()) {
-            return chain.proceed(originalRequest)
-        }
-
-        val backupId = backupAuthRepository.getBackupId() ?: return chain.proceed(originalRequest)
-        val deviceId = backupAuthRepository.getDeviceId() ?: return chain.proceed(originalRequest)
-
-        val signedRequestResult = backupAuthRepository.usePrivateKey { authPrivateKey ->
-            requestSigner.signHttpRequest(originalRequest, authPrivateKey, backupId, deviceId)
-        }
-
-        val signedRequest = when (signedRequestResult) {
-            is PeraResult.Success -> signedRequestResult.data
-            is PeraResult.Error -> {
-                Log.e(LOG_TAG, "Failed to sign request: ${signedRequestResult.exception.message}")
-                return chain.proceed(originalRequest)
-            }
+        val signedRequest = when (val result = requestSigner.signHttpRequest(originalRequest)) {
+            is PeraResult.Success -> result.data
+            is PeraResult.Error -> return chain.proceed(originalRequest)
         }
 
         val authenticatedRequest = createAuthenticatedRequest(originalRequest, signedRequest)
@@ -65,7 +46,6 @@ internal class BackupAuthInterceptor @Inject constructor(
     }
 
     companion object {
-        private const val LOG_TAG = "BackupAuthInterceptor"
         private const val HEADER_BACKUP_ID = "X-Backup-Id"
         private const val HEADER_DEVICE_ID = "X-Device-Id"
         private const val HEADER_NONCE = "X-Nonce"

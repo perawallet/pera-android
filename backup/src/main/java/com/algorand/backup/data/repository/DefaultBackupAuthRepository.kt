@@ -23,6 +23,7 @@ import com.algorand.backup.domain.model.SensitiveBytes
 import com.algorand.backup.domain.repository.BackupAuthRepository
 import com.algorand.backup.domain.security.PeraAndroidKeyStore
 import com.algorand.backup.domain.security.PeraCipher
+import com.algorand.backup.domain.security.safeDestroy
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCache
 
@@ -47,7 +48,7 @@ internal class DefaultBackupAuthRepository(
             val encryptionResult = peraCipher.encrypt(wrappingKey, authPrivateKey.reveal())
             val cacheModel = mapToBackupAuthCredentialsCacheModel(backupId, deviceId, encryptionResult)
             persistentCache.put(cacheModel)
-            if (!wrappingKey.isDestroyed) wrappingKey.destroy()
+            wrappingKey.safeDestroy()
             PeraResult.Success(Unit)
         } catch (e: Exception) {
             PeraResult.Error(e)
@@ -69,7 +70,7 @@ internal class DefaultBackupAuthRepository(
         } catch (e: Exception) {
             PeraResult.Error(e)
         } finally {
-            if (!wrappingKey.isDestroyed) wrappingKey.destroy()
+            wrappingKey.safeDestroy()
         }
     }
 

@@ -15,6 +15,6 @@ package com.algorand.backup.account.domain.mapper
 import com.algorand.backup.account.domain.model.AddressBackupPayload
 
 internal interface AddressBackupPayloadMapper {
-    fun decrypt(ciphertext: ByteArray, itemKey: String): List<AddressBackupPayload>?
-    fun encrypt(payloads: List<AddressBackupPayload>, itemKey: String): ByteArray
+    fun serialize(payload: AddressBackupPayload): ByteArray
+    fun deserialize(bytes: ByteArray): AddressBackupPayload?
 }

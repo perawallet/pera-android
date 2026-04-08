@@ -16,93 +16,71 @@ import com.algorand.backup.account.domain.model.Algo25SecretsData
 import com.algorand.backup.account.domain.model.BackupAccountWrapper
 import com.algorand.backup.account.domain.model.HdSeedSecretsData
 import com.algorand.backup.account.domain.model.SecretsBackupPayload
-import com.algorand.backup.domain.security.BackupEncryptionManager
-import com.algorand.wallet.logger.PeraErrorLogger
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 
 internal class DefaultSecretsBackupPayloadMapper @Inject constructor(
-    private val gson: Gson,
-    private val backupEncryptionManager: BackupEncryptionManager,
-    private val errorLogger: PeraErrorLogger
+    private val gson: Gson
 ) : SecretsBackupPayloadMapper {
 
-    override fun decrypt(ciphertext: String): List<SecretsBackupPayload>? {
+    override fun serialize(payload: SecretsBackupPayload): ByteArray {
+        val wrapper = when (payload) {
+            is SecretsBackupPayload.HdSeed -> wrapHdSeed(payload)
+            is SecretsBackupPayload.Algo25 -> wrapAlgo25(payload)
+        }
+        return gson.toJson(wrapper).toByteArray(Charsets.UTF_8)
+    }
+
+    override fun deserialize(bytes: ByteArray): SecretsBackupPayload? {
         return try {
-            val decryptedText = backupEncryptionManager.decrypt(ciphertext)
-            val wrappedItems = gson.fromJson(decryptedText, Array<BackupAccountWrapper>::class.java).toList()
-            wrappedItems.mapNotNull { wrapper ->
-                mapSecretsBackupPayload(wrapper)
-            }
-        } catch (exception: Exception) {
-            errorLogger.logError(exception)
+            val wrapper = gson.fromJson(String(bytes, Charsets.UTF_8), BackupAccountWrapper::class.java)
+            mapToPayload(wrapper)
+        } catch (e: Exception) {
             null
         }
     }
 
-    override fun encrypt(payloads: List<SecretsBackupPayload>): String {
-        val wrappedPayload = payloads.map { payload ->
-            when (payload) {
-                is SecretsBackupPayload.Algo25 -> wrapAlgo25(payload)
-                is SecretsBackupPayload.HdSeed -> wrapHdSeed(payload)
-            }
-        }
-        val json = gson.toJson(wrappedPayload)
-        return backupEncryptionManager.encrypt(json)
-    }
-
-    private fun mapSecretsBackupPayload(wrapper: BackupAccountWrapper): SecretsBackupPayload? {
+    private fun mapToPayload(wrapper: BackupAccountWrapper): SecretsBackupPayload? {
         return when (wrapper.type) {
             HD_SEED_TYPE -> mapHdSeed(wrapper.data)
             ALGO_25_TYPE -> mapAlgo25(wrapper.data)
-            else -> {
-                errorLogger.logError("$logTag: Unsupported backup secret type: ${wrapper.type}")
-                null
-            }
+            else -> null
         }
     }
 
-    private fun wrapHdSeed(hdSeed: SecretsBackupPayload.HdSeed): BackupAccountWrapper {
-        val hdSeedData = HdSeedSecretsData(
-            firstDerivedAddress = hdSeed.address,
-            entropy = hdSeed.entropy,
-            seed = hdSeed.seed
-        )
-        return BackupAccountWrapper(
-            type = HD_SEED_TYPE,
-            data = Base64.encode(gson.toJson(hdSeedData).toByteArray())
-        )
-    }
+    private fun wrapHdSeed(payload: SecretsBackupPayload.HdSeed) = BackupAccountWrapper(
+        type = HD_SEED_TYPE,
+        data = encodeData(HdSeedSecretsData(payload.address, payload.entropy, payload.seed))
+    )
 
-    private fun wrapAlgo25(algo25: SecretsBackupPayload.Algo25): BackupAccountWrapper {
-        val algo25Data = Algo25SecretsData(algoAddress = algo25.address, mnemonic = algo25.mnemonic)
-        return BackupAccountWrapper(
-            type = ALGO_25_TYPE,
-            data = Base64.encode(gson.toJson(algo25Data).toByteArray())
-        )
-    }
+    private fun wrapAlgo25(payload: SecretsBackupPayload.Algo25) = BackupAccountWrapper(
+        type = ALGO_25_TYPE,
+        data = encodeData(Algo25SecretsData(payload.address, payload.mnemonic))
+    )
 
     private fun mapHdSeed(data: String): SecretsBackupPayload.HdSeed? {
-        return tryMap<HdSeedSecretsData>(data)?.run {
-            SecretsBackupPayload.HdSeed(entropy = entropy, seed = seed, address = firstDerivedAddress)
+        return decodeData<HdSeedSecretsData>(data)?.let {
+            SecretsBackupPayload.HdSeed(it.firstDerivedAddress, it.seed, it.entropy)
         }
     }
 
     private fun mapAlgo25(data: String): SecretsBackupPayload.Algo25? {
-        return tryMap<Algo25SecretsData>(data)?.run {
-            SecretsBackupPayload.Algo25(address = algoAddress, mnemonic = mnemonic)
+        return decodeData<Algo25SecretsData>(data)?.let {
+            SecretsBackupPayload.Algo25(it.algoAddress, it.mnemonic)
         }
     }
 
-    private inline fun <reified T> tryMap(data: String): T? {
+    private fun <T> encodeData(data: T): String {
+        return Base64.encode(gson.toJson(data).toByteArray())
+    }
+
+    private inline fun <reified T> decodeData(data: String): T? {
         return try {
-            val base64decoded = String(Base64.decode(data))
-            val type = object : TypeToken<T>() {}.type
-            gson.fromJson<T>(base64decoded, type)
-        } catch (exception: Exception) {
-            errorLogger.logError(exception)
+            val decoded = String(Base64.decode(data))
+            gson.fromJson(decoded, object : TypeToken<T>() {}.type)
+        } catch (e: Exception) {
             null
         }
     }
@@ -110,7 +88,5 @@ internal class DefaultSecretsBackupPayloadMapper @Inject constructor(
     private companion object {
         const val HD_SEED_TYPE = "hd_seed"
         const val ALGO_25_TYPE = "algo_25"
-
-        val logTag: String = DefaultSecretsBackupPayloadMapper::class.java.simpleName
     }
 }

@@ -13,6 +13,7 @@
 package com.algorand.wallet.transaction.history.data.mapper
 
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
+import com.algorand.wallet.transaction.history.data.model.TransactionHistoryBalanceImpactListItemResponse
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryDetailResponse
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryInterpretedMeaning
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryItemResponse
@@ -89,7 +90,11 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
         return when (response.txType) {
             PAY_TRANSACTION -> paymentTypeMapper(address, response)
             ASSET_TRANSACTION -> assetTransferTypeMapper(address, response)
-            APP_TRANSACTION -> mapAppCallTxn(response.applicationId, response.innerTransactionCount)
+            APP_TRANSACTION -> mapAppCallTxn(
+                response.applicationId,
+                response.innerTransactionCount,
+                response.balanceImpacts
+            )
             ASSET_CONFIGURATION -> Type.AssetConfiguration(response.asset?.id ?: return null)
             KEYREG_TRANSACTION -> Type.KeyRegistration
             HEARTBEAT_TRANSACTION -> Type.Heartbeat
@@ -97,10 +102,17 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
         }
     }
 
-    private fun mapAppCallTxn(appId: Long?, innerTxnCount: Int?): Type? {
+    private fun mapAppCallTxn(
+        appId: Long?,
+        innerTxnCount: Int?,
+        balanceImpacts: TransactionHistoryBalanceImpactListItemResponse? = null
+    ): Type? {
         return Type.ApplicationCall(
             applicationId = appId ?: return null,
-            txnCount = innerTxnCount ?: DEFAULT_INNER_TXN_COUNT
+            txnCount = innerTxnCount ?: DEFAULT_INNER_TXN_COUNT,
+            formattedAmount = balanceImpacts?.amountDisplay,
+            assetId = balanceImpacts?.assetId,
+            assetUnitName = balanceImpacts?.assetUnitName
         )
     }
 

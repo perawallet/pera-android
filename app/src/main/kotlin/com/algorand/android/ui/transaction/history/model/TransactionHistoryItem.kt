@@ -53,7 +53,8 @@ sealed interface TransactionHistoryItem {
         val id: String,
         val appId: String,
         val txnCount: Int,
-        val formattedFee: String
+        val formattedFee: String,
+        val formattedBalanceImpact: String?
     ) : TransactionHistoryItem
 
     data class AssetConfiguration(val id: String, val formattedFee: String) : TransactionHistoryItem

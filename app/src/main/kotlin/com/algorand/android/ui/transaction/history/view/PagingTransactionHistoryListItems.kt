@@ -256,7 +256,7 @@ private fun ApplicationCallItem(item: ApplicationCall, onClick: () -> Unit) {
             PrimaryText(stringResource(R.string.app_call))
             if (item.txnCount > 0) {
                 Text(
-                    text = pluralStringResource(R.plurals.count_inner_transactions, item.txnCount, item.txnCount),
+                    text = pluralStringResource(R.plurals.count_inner_txns, item.txnCount, item.txnCount),
                     style = PeraTheme.typography.footnote.sans,
                     color = PeraTheme.colors.text.grayLighter
                 )

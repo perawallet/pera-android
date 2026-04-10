@@ -245,7 +245,7 @@ private fun ApplicationCallItem(item: ApplicationCall, onClick: () -> Unit) {
             .padding(vertical = 16.dp, horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TxnIcon(R.drawable.ic_buy_sell_small)
+        TxnIcon(R.drawable.ic_app_call)
         Column(
             modifier = Modifier
                 .weight(1f)

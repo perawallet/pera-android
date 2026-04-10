@@ -138,9 +138,14 @@ internal class DefaultTransactionHistoryItemMapper @Inject constructor() : Trans
     }
 
     private fun formatBalanceImpact(applicationCall: ApplicationCall): String? {
-        val amount = applicationCall.formattedAmount ?: return null
-        val unitName = applicationCall.assetUnitName
-        return if (unitName != null) "$amount $unitName" else amount
+        val amount = applicationCall.amount ?: return null
+        val absoluteAmount = amount.abs().toPlainString()
+        val sign = if (amount < BigDecimal.ZERO) "-" else ""
+        return if (applicationCall.assetId == ALGO_ID) {
+            "$sign${Currency.ALGO.symbol}$absoluteAmount"
+        } else {
+            "$sign$absoluteAmount ${applicationCall.assetUnitName.orEmpty()}"
+        }
     }
 
     private fun BigDecimal.formatAsFee(): String {

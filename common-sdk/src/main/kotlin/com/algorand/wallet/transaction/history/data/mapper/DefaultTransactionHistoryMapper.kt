@@ -105,14 +105,16 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
     private fun mapAppCallTxn(
         appId: Long?,
         innerTxnCount: Int?,
-        balanceImpacts: TransactionHistoryBalanceImpactListItemResponse? = null
+        balanceImpacts: List<TransactionHistoryBalanceImpactListItemResponse>? = null
     ): Type? {
+        val firstImpact = balanceImpacts?.firstOrNull()
         return Type.ApplicationCall(
             applicationId = appId ?: return null,
             txnCount = innerTxnCount ?: DEFAULT_INNER_TXN_COUNT,
-            formattedAmount = balanceImpacts?.amountDisplay,
-            assetId = balanceImpacts?.assetId,
-            assetUnitName = balanceImpacts?.assetUnitName
+            amount = firstImpact?.amount.formatToBigDecimal(firstImpact?.fractionDecimals),
+            formattedAmount = firstImpact?.amountDisplay,
+            assetId = firstImpact?.assetId,
+            assetUnitName = firstImpact?.assetUnitName
         )
     }
 

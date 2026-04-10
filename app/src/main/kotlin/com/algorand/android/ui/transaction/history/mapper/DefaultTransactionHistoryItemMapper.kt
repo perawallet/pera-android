@@ -131,8 +131,16 @@ internal class DefaultTransactionHistoryItemMapper @Inject constructor() : Trans
             id = transactionHistory.id,
             appId = applicationCall.applicationId.toString(),
             txnCount = applicationCall.txnCount,
-            formattedFee = transactionHistory.fee.formatAsFee()
+            formattedFee = transactionHistory.fee.formatAsFee(),
+            balanceImpactAmount = applicationCall.amount,
+            formattedBalanceImpact = formatBalanceImpact(applicationCall)
         )
+    }
+
+    private fun formatBalanceImpact(applicationCall: ApplicationCall): String? {
+        val amount = applicationCall.formattedAmount ?: return null
+        val unitName = applicationCall.assetUnitName
+        return if (unitName != null) "$amount $unitName" else amount
     }
 
     private fun BigDecimal.formatAsFee(): String {

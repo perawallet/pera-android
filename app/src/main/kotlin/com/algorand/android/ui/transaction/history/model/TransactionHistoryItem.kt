@@ -54,6 +54,7 @@ sealed interface TransactionHistoryItem {
         val appId: String,
         val txnCount: Int,
         val formattedFee: String,
+        val balanceImpactAmount: BigDecimal?,
         val formattedBalanceImpact: String?
     ) : TransactionHistoryItem
 

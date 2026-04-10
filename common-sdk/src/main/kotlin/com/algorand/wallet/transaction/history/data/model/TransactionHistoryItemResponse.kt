@@ -46,5 +46,5 @@ internal data class TransactionHistoryItemResponse(
     @SerializedName("inner_transaction_count")
     val innerTransactionCount: Int?,
     @SerializedName("balance_impacts")
-    val balanceImpacts: TransactionHistoryBalanceImpactListItemResponse?
+    val balanceImpacts: List<TransactionHistoryBalanceImpactListItemResponse>?
 )

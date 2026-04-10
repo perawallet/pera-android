@@ -253,14 +253,16 @@ private fun ApplicationCallItem(item: ApplicationCall, onClick: () -> Unit) {
             verticalArrangement = Arrangement.Center
         ) {
             PrimaryText(stringResource(R.string.app_call))
-            SecondaryText(stringResource(R.string.formatted_application_id, item.appId))
             if (item.txnCount > 0) {
                 Text(
                     text = pluralStringResource(R.plurals.count_inner_transactions, item.txnCount, item.txnCount),
                     style = PeraTheme.typography.footnote.sans,
-                    color = PeraTheme.colors.link.primary
+                    color = PeraTheme.colors.text.grayLighter
                 )
             }
+        }
+        if (item.formattedBalanceImpact != null) {
+            AmountText(item.formattedBalanceImpact, item.balanceImpactColor())
         }
     }
 }
@@ -407,6 +409,16 @@ private fun SecondaryText(text: String) {
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
     )
+}
+
+@Composable
+private fun ApplicationCall.balanceImpactColor(): Color {
+    val amount = balanceImpactAmount ?: return PeraTheme.colors.text.main
+    return when {
+        amount < ZERO -> PeraTheme.colors.helper.negative
+        amount > ZERO -> PeraTheme.colors.helper.positive
+        else -> PeraTheme.colors.text.main
+    }
 }
 
 @Composable

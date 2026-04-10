@@ -69,6 +69,7 @@ data class TransactionHistory(
         data class ApplicationCall(
             val applicationId: Long,
             val txnCount: Int,
+            val amount: BigDecimal?,
             val formattedAmount: String?,
             val assetId: Long?,
             val assetUnitName: String?

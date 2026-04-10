@@ -26,7 +26,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSig
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResult
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestType
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.ProposeJointSignRequest
-import com.algorand.wallet.logger.PeraErrorLogger
+import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePack
 import javax.inject.Inject
 
 class JointAccountTransactionSignHelper @Inject constructor(
@@ -37,7 +37,7 @@ class JointAccountTransactionSignHelper @Inject constructor(
     private val signAndSubmitJointAccountSignature: SignAndSubmitJointAccountSignature,
     private val getJointAccountProposerAddress: GetJointAccountProposerAddress,
     private val refreshInboxCache: RefreshInboxCache,
-    private val errorLogger: PeraErrorLogger
+    private val parseTransactionMessagePack: ParseTransactionMessagePack
 ) {
 
     suspend fun handleJointAccountTransaction(
@@ -78,24 +78,11 @@ class JointAccountTransactionSignHelper @Inject constructor(
         jointAccountAddress: String,
         rawTransactionBytesGroups: List<List<ByteArray>>
     ): JointSignResult? {
-        val prepared = prepareSyncRequest(jointAccountAddress, rawTransactionBytesGroups)
-        if (prepared == null) {
-            errorLogger.logError(IllegalStateException("SyncSign: prepareSyncRequest failed for $jointAccountAddress"))
-            return null
-        }
+        val prepared = prepareSyncRequest(jointAccountAddress, rawTransactionBytesGroups) ?: return null
         val input = mapToCreateSignRequestInput(prepared, SignRequestType.SYNC)
         val result = proposeJointSignRequest(input)
-        if (result !is PeraResult.Success) {
-            val exception = (result as? PeraResult.Error)?.exception
-                ?: IllegalStateException("SyncSign: proposeJointSignRequest failed for $jointAccountAddress")
-            errorLogger.logError(exception)
-            return null
-        }
-        val signRequestId = result.data.id?.takeIf { it.isNotBlank() }
-        if (signRequestId == null) {
-            errorLogger.logError(IllegalStateException("SyncSign: signRequestId is null for $jointAccountAddress"))
-            return null
-        }
+        if (result !is PeraResult.Success) return null
+        val signRequestId = result.data.id?.takeIf { it.isNotBlank() } ?: return null
         autoSignWithLocalAccounts(
             signRequestId = signRequestId,
             jointAccount = prepared.jointAccount,
@@ -115,7 +102,9 @@ class JointAccountTransactionSignHelper @Inject constructor(
         val proposerAddress = getJointAccountProposerAddress(jointAccount) ?: return null
         if (rawTransactionBytesGroups.isEmpty()) return null
 
-        val encodedGroups = encodeAndSignGroups(rawTransactionBytesGroups, proposerAddress) ?: return null
+        val encodedGroups = encodeAndSignGroups(
+            rawTransactionBytesGroups, proposerAddress, jointAccountAddress
+        ) ?: return null
         return PreparedJointAccountData(
             jointAccount = jointAccount,
             proposerAddress = proposerAddress,
@@ -126,7 +115,8 @@ class JointAccountTransactionSignHelper @Inject constructor(
 
     private suspend fun encodeAndSignGroups(
         rawTransactionBytesGroups: List<List<ByteArray>>,
-        proposerAddress: String
+        proposerAddress: String,
+        jointAccountAddress: String
     ): Pair<List<List<String>>, List<List<String?>>>? {
         val rawTransactionLists = mutableListOf<List<String>>()
         val transactionSignatureLists = mutableListOf<List<String?>>()
@@ -135,17 +125,25 @@ class JointAccountTransactionSignHelper @Inject constructor(
             val encodedGroup = group.mapNotNull { it.encodeBase64() }
             if (encodedGroup.size != group.size) return null
             rawTransactionLists.add(encodedGroup)
-            transactionSignatureLists.add(buildSignatureListForGroup(group, proposerAddress))
+            transactionSignatureLists.add(
+                buildSignatureListForGroup(group, proposerAddress, jointAccountAddress)
+            )
         }
         return Pair(rawTransactionLists, transactionSignatureLists)
     }
 
     private suspend fun buildSignatureListForGroup(
         rawTransactionBytesList: List<ByteArray>,
-        signerAddress: String
+        signerAddress: String,
+        jointAccountAddress: String
     ): List<String?> {
         return rawTransactionBytesList.map { txBytes ->
-            getTransactionSignatureBytes(txBytes, signerAddress)?.encodeBase64()
+            val senderAddress = parseTransactionMessagePack(txBytes)?.senderAddress?.decodedAddress
+            if (senderAddress != jointAccountAddress) {
+                null
+            } else {
+                getTransactionSignatureBytes(txBytes, signerAddress)?.encodeBase64()
+            }
         }
     }
 
@@ -182,8 +180,9 @@ class JointAccountTransactionSignHelper @Inject constructor(
         rawTransactionLists: List<List<String>>,
         transactionDataList: List<TransactionSignData>
     ): JointSignResult {
-        val transactionSignatureLists = prepareTransactionSignatureLists(transactionDataList, proposerAddress)
-            ?: return JointSignResult.Error
+        val transactionSignatureLists = prepareTransactionSignatureLists(
+            transactionDataList, proposerAddress, jointAccount.algoAddress
+        ) ?: return JointSignResult.Error
 
         val preparedData = PreparedJointAccountData(
             jointAccount = jointAccount,
@@ -219,7 +218,8 @@ class JointAccountTransactionSignHelper @Inject constructor(
         signAndSubmitJointAccountSignature(
             signRequestId = signRequestId,
             participantAddresses = eligibleSigners.map { it.algoAddress },
-            rawTransactionGroups = rawTransactionGroups
+            rawTransactionGroups = rawTransactionGroups,
+            jointAccountAddress = jointAccount.algoAddress
         )
     }
 
@@ -232,11 +232,17 @@ class JointAccountTransactionSignHelper @Inject constructor(
 
     private suspend fun prepareTransactionSignatureLists(
         transactionDataList: List<TransactionSignData>,
-        signerAddress: String
+        signerAddress: String,
+        jointAccountAddress: String
     ): List<List<String?>>? {
         val signatures = transactionDataList.map { transactionData ->
             val transactionBytes = transactionData.transactionByteArray ?: return null
-            getTransactionSignatureBytes(transactionBytes, signerAddress)?.encodeBase64()
+            val senderAddress = parseTransactionMessagePack(transactionBytes)?.senderAddress?.decodedAddress
+            if (senderAddress != jointAccountAddress) {
+                null
+            } else {
+                getTransactionSignatureBytes(transactionBytes, signerAddress)?.encodeBase64()
+            }
         }
         return signatures.takeIf { it.isNotEmpty() }?.let { listOf(it) }
     }

@@ -15,5 +15,10 @@ package com.algorand.android.modules.accounts.ui.viewmodel
 import com.algorand.android.modules.accounts.ui.model.InboxButtonLabel
 
 interface GetTotalInboxCount {
-    suspend operator fun invoke(): InboxButtonLabel?
+    suspend operator fun invoke(): InboxResult
+
+    data class InboxResult(
+        val label: InboxButtonLabel? = null,
+        val hasUnseenItems: Boolean = false
+    )
 }

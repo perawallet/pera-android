@@ -23,5 +23,7 @@ internal data class SyncSignSession(
     val notificationId: Int,
     val algodSubmissionKind: JointSyncAlgodSubmissionKind,
     val swapId: Long,
-    val swapTxnTypes: List<String>
+    val swapTxnTypes: List<String>,
+    val swapPreSignedBytesPerGroup: List<List<ByteArray?>> = emptyList(),
+    val swapUnsignedCountPerGroup: List<Int> = emptyList()
 )

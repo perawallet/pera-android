@@ -301,23 +301,25 @@ class WalletConnectManager @Inject constructor(
     }
 
     suspend fun processWalletConnectSignResult(walletConnectSignResult: WalletConnectSignResult) {
+        if (walletConnectSignResult !is WalletConnectSignResult.Success) {
+            _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occurred))))
+            recordException(Exception("Wallet connect sign result is not Success: $walletConnectSignResult"))
+            return
+        }
         with(walletConnectSignResult) {
-            if (this is WalletConnectSignResult.Success) {
-                walletConnectClientManager.approveRequest(
-                    sessionIdentifier = sessionIdentifier,
-                    requestId = requestId,
-                    signedTransaction = signedTransaction.map { it?.let { Base64.encodeToString(it, Base64.DEFAULT) } }
-                )
-                logWalletConnectRequestConfirmation()
-                _requestResultLiveData.postValue(
-                    Event(Resource.Success(AnnotatedString(R.string.transaction_successfully_confirmed)))
-                )
-                _walletConnectRequestLiveData.postValue(null)
-            } else {
-                _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occurred))))
-                val exception = Exception("Wallet connect sign result is not Success: $walletConnectSignResult")
-                recordException(exception)
+            val encodedTransactionList = signedTransaction.map {
+                it?.let { tx -> Base64.encodeToString(tx, Base64.DEFAULT) }
             }
+            walletConnectClientManager.approveRequest(
+                sessionIdentifier = sessionIdentifier,
+                requestId = requestId,
+                signedTransaction = encodedTransactionList
+            )
+            logWalletConnectRequestConfirmation()
+            _requestResultLiveData.postValue(
+                Event(Resource.Success(AnnotatedString(R.string.transaction_successfully_confirmed)))
+            )
+            _walletConnectRequestLiveData.postValue(null)
         }
     }
 

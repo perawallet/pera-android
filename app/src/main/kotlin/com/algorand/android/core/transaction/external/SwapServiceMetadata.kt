@@ -14,7 +14,9 @@ package com.algorand.android.core.transaction.external
 
 data class SwapServiceMetadata(
     val swapId: Long,
-    val txnTypes: List<String>
+    val txnTypes: List<String>,
+    val preSignedTxnBytes: List<List<ByteArray?>> = emptyList(),
+    val unsignedCountPerGroup: List<Int> = emptyList()
 ) {
     companion object {
         const val INVALID_SWAP_ID = -1L

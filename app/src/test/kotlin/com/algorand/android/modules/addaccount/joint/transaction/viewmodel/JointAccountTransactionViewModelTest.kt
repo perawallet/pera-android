@@ -213,7 +213,7 @@ internal class JointAccountTransactionViewModelTest {
             transactionState = JointAccountTransactionState.AwaitingConfirmation,
             signerAccounts = emptyList(),
             signedCount = 1,
-            requiredSignatureCount = 2,
+            threshold = 2,
             hasCurrentUserAlreadySigned = false,
             shouldShowPendingSignaturesDirectly = false,
             rawTransactions = listOf("raw_tx"),

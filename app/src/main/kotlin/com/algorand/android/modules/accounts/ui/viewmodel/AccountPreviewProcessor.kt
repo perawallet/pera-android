@@ -69,7 +69,8 @@ class AccountPreviewProcessor @Inject constructor(
         privacyMode: PrivacyMode,
         spotBanners: List<SpotBanner>
     ): AccountPreview {
-        val inboxButtonLabel = getTotalInboxCount()
+        val inboxResult = getTotalInboxCount()
+        val inboxButtonLabel = inboxResult.label
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
@@ -101,7 +102,8 @@ class AccountPreviewProcessor @Inject constructor(
             accountListItems = accountList,
             portfolioValueItem = portfolio,
             hasNewNotification = notificationStatusUseCase.hasNewNotification(),
-            inboxButtonLabel = inboxButtonLabel
+            inboxButtonLabel = inboxButtonLabel,
+            hasUnseenInboxItems = inboxResult.hasUnseenItems
         )
     }
 

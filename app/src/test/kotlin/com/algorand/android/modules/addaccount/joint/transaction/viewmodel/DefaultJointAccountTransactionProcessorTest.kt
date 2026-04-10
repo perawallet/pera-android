@@ -96,7 +96,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 0,
-            requiredSignatureCount = 2,
+            threshold = 2,
             signerAccounts = signerAccounts
         )
 
@@ -140,7 +140,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 1,
-            requiredSignatureCount = 2,
+            threshold = 2,
             signerAccounts = signerAccounts
         )
 
@@ -156,7 +156,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 0,
-            requiredSignatureCount = 3,
+            threshold = 3,
             signerAccounts = signerAccounts
         )
 
@@ -253,7 +253,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
     fun `EXPECT Completed state WHEN processing loaded preview with enough signatures`() {
         val preview = createTestPreview(
             signedCount = 2,
-            requiredSignatureCount = 2,
+            threshold = 2,
             transactionState = JointAccountTransactionState.PendingSignatures
         )
 
@@ -270,7 +270,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 2,
-            requiredSignatureCount = 2,
+            threshold = 2,
             signerAccounts = signerAccounts,
             transactionState = JointAccountTransactionState.PendingSignatures
         )
@@ -289,7 +289,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 1,
-            requiredSignatureCount = 2,
+            threshold = 2,
             signerAccounts = signerAccounts
         )
 
@@ -307,7 +307,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 0,
-            requiredSignatureCount = 3,
+            threshold = 3,
             signerAccounts = signerAccounts
         )
 
@@ -321,7 +321,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
     fun `EXPECT Completed state WHEN processing loaded preview with AwaitingConfirmation and enough signatures`() {
         val preview = createTestPreview(
             signedCount = 2,
-            requiredSignatureCount = 2,
+            threshold = 2,
             transactionState = JointAccountTransactionState.AwaitingConfirmation
         )
 
@@ -334,7 +334,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
     fun `EXPECT same state WHEN processing loaded preview without enough signatures`() {
         val preview = createTestPreview(
             signedCount = 1,
-            requiredSignatureCount = 2,
+            threshold = 2,
             transactionState = JointAccountTransactionState.PendingSignatures
         )
 
@@ -345,7 +345,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
 
     @Test
     fun `EXPECT ShowPendingSignatures WHEN transaction completed in post signing action`() {
-        val preview = createTestPreview(signedCount = 2, requiredSignatureCount = 2)
+        val preview = createTestPreview(signedCount = 2, threshold = 2)
         val data = JointAccountTransactionProcessor.ConfirmTransactionData(
             requestId = "request_id",
             preview = preview,
@@ -371,7 +371,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 1,
-            requiredSignatureCount = 3,
+            threshold = 3,
             signerAccounts = signerAccounts
         )
         val data = JointAccountTransactionProcessor.ConfirmTransactionData(
@@ -389,7 +389,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
     private fun createTestPreview(
         rawTransactions: List<String> = listOf("raw_tx_1"),
         signedCount: Int = 1,
-        requiredSignatureCount: Int = 2,
+        threshold: Int = 2,
         allLocalParticipantAddresses: List<String> = emptyList(),
         unsignedLocalParticipantAddresses: List<String> = listOf("ADDR1"),
         unsignedLedgerParticipantAddresses: List<String> = emptyList(),
@@ -418,7 +418,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
             transactionState = transactionState,
             signerAccounts = signerAccounts,
             signedCount = signedCount,
-            requiredSignatureCount = requiredSignatureCount,
+            threshold = threshold,
             hasCurrentUserAlreadySigned = false,
             shouldShowPendingSignaturesDirectly = false,
             rawTransactions = rawTransactions,

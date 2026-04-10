@@ -56,7 +56,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
@@ -345,7 +348,12 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
             syncSignResultHolder.events
                 .filter { it.signRequestId == signRequestId }
                 .take(1)
-                .onCompletion { cause -> if (cause != null) postJointSyncError() }
+                .onCompletion { cause ->
+                    when (cause) {
+                        null, is CancellationException -> Unit
+                        else -> postJointSyncError()
+                    }
+                }
                 .collect { event ->
                     syncSignResultHolder.consumeResult(signRequestId)
                     when (event.result) {
@@ -401,9 +409,34 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                     JointAccountSyncSignForegroundService.EXTRA_SWAP_TXN_TYPES,
                     meta.txnTypes.toTypedArray()
                 )
+                val serialized = serializePreSignedBytes(meta.preSignedTxnBytes)
+                putExtra(JointAccountSyncSignForegroundService.EXTRA_SWAP_PRE_SIGNED_BYTES, serialized)
+                putExtra(
+                    JointAccountSyncSignForegroundService.EXTRA_SWAP_UNSIGNED_COUNTS,
+                    meta.unsignedCountPerGroup.toIntArray()
+                )
             }
         }
         applicationContext.startForegroundService(intent)
+    }
+
+    private fun serializePreSignedBytes(preSignedPerGroup: List<List<ByteArray?>>): ByteArray {
+        val bos = ByteArrayOutputStream()
+        val dos = DataOutputStream(bos)
+        dos.writeInt(preSignedPerGroup.size)
+        for (group in preSignedPerGroup) {
+            dos.writeInt(group.size)
+            for (bytes in group) {
+                if (bytes == null) {
+                    dos.writeInt(-1)
+                } else {
+                    dos.writeInt(bytes.size)
+                    dos.write(bytes)
+                }
+            }
+        }
+        dos.flush()
+        return bos.toByteArray()
     }
 
     private fun postJointSyncError() {

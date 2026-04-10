@@ -113,6 +113,18 @@ class JointAccountTransactionViewModel @Inject constructor(
         }
     }
 
+    fun declineLedgerAccount(signRequestId: String, accountAddress: String) {
+        viewModelScope.launch {
+            declineJointAccountSignRequest(signRequestId, listOf(accountAddress)).use(
+                onSuccess = {
+                    refreshInboxCache()
+                    silentRefreshPreview()
+                },
+                onFailed = { _, _ -> emitError(R.string.an_error_occurred) }
+            )
+        }
+    }
+
     fun onLedgerSignSuccess() {
         viewModelScope.launch {
             refreshInboxCache()
@@ -144,7 +156,8 @@ class JointAccountTransactionViewModel @Inject constructor(
                 ledgerBluetoothAddress = bluetoothAddress,
                 ledgerAccountIndex = accountIndex,
                 accountAuthAddress = signer.accountAuthAddress,
-                isRekeyedToAnotherAccount = signer.accountAuthAddress != null
+                isRekeyedToAnotherAccount = signer.accountAuthAddress != null,
+                jointAccountAddress = preview.jointAccountAddress
             )
             viewModelScope.launch {
                 eventDelegate.sendEvent(ViewEvent.StartLedgerSigning(ledgerData))
@@ -231,20 +244,12 @@ class JointAccountTransactionViewModel @Inject constructor(
         val result = signAndSubmitJointAccountSignature(
             signRequestId = data.requestId,
             participantAddresses = data.preview.unsignedLocalParticipantAddresses,
-            rawTransactionGroups = listOf(data.preview.rawTransactions)
+            rawTransactionGroups = listOf(data.preview.rawTransactions),
+            jointAccountAddress = data.preview.jointAccountAddress
         )
-        when (result.apiResult) {
-            null -> {
-                emitError(R.string.an_error_occurred)
-                return emptyList()
-            }
-
-            is PeraResult.Error -> {
-                emitError(R.string.an_error_occurred)
-                return emptyList()
-            }
-
-            is PeraResult.Success -> Unit
+        if (result.apiResult !is PeraResult.Success) {
+            emitError(R.string.an_error_occurred)
+            return emptyList()
         }
         return result.signedAddresses
     }
@@ -285,15 +290,11 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     private fun loadTransactionPreview(silentRefresh: Boolean = false) {
         viewModelScope.launch {
-            if (silentRefresh) {
-                silentRefreshPreview()
-            } else {
-                loadTransactionPreviewWithLoading()
-            }
+            if (silentRefresh) silentRefreshPreview() else loadFullPreview()
         }
     }
 
-    private suspend fun loadTransactionPreviewWithLoading() {
+    private suspend fun loadFullPreview() {
         val requestId = signRequestId
         if (requestId.isNullOrBlank()) {
             emitError(R.string.an_error_occurred)

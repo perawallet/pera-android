@@ -176,14 +176,14 @@ fun PendingSignaturesContent(
 
         StatusBadgesSection(
             signedCount = transactionPreview.signedCount,
-            totalParticipantCount = transactionPreview.signerAccounts.size,
+            threshold = transactionPreview.threshold,
             timeRemaining = transactionPreview.timeRemaining,
             transactionState = transactionPreview.transactionState
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        AccountsSectionHeader(threshold = transactionPreview.requiredSignatureCount)
+        AccountsSectionHeader(threshold = transactionPreview.threshold)
 
         Spacer(modifier = Modifier.height(16.dp))
 

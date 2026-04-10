@@ -49,7 +49,7 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         val newSignedCount = updatedSigners.count { it.signatureStatus == JointAccountSignatureStatus.Signed }
         val remainingUnsignedLocalAddresses = preview.unsignedLocalParticipantAddresses
             .filterNot { it in confirmedSignedAddresses }
-        val isCompleted = isTransactionCompleted(newSignedCount, preview.requiredSignatureCount)
+        val isCompleted = isTransactionCompleted(newSignedCount, preview.threshold)
         val transactionState = if (isCompleted) {
             JointAccountTransactionState.Completed
         } else {
@@ -82,12 +82,13 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
             ledgerBluetoothAddress = bluetoothAddress,
             ledgerAccountIndex = accountIndex,
             accountAuthAddress = ledgerSigner.accountAuthAddress,
-            isRekeyedToAnotherAccount = ledgerSigner.accountAuthAddress != null
+            isRekeyedToAnotherAccount = ledgerSigner.accountAuthAddress != null,
+            jointAccountAddress = preview.jointAccountAddress
         )
     }
 
     override fun processLoadedPreview(preview: JointAccountTransactionViewState): JointAccountTransactionViewState {
-        val isCompletedBySignatureCount = isTransactionCompleted(preview.signedCount, preview.requiredSignatureCount)
+        val isCompletedBySignatureCount = isTransactionCompleted(preview.signedCount, preview.threshold)
         val shouldComplete = isCompletedBySignatureCount &&
                 !preview.transactionState.isFinalized()
 
@@ -127,8 +128,8 @@ internal class DefaultJointAccountTransactionProcessor @Inject constructor() :
         return signerAccounts.firstOrNull { it.canSignWithLedger }
     }
 
-    private fun isTransactionCompleted(signedCount: Int, requiredSignatureCount: Int): Boolean {
-        return signedCount >= requiredSignatureCount
+    private fun isTransactionCompleted(signedCount: Int, threshold: Int): Boolean {
+        return signedCount >= threshold
     }
 
     private fun markSignersAsSigned(

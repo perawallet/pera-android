@@ -38,7 +38,7 @@ fun StatusBadgesSectionPendingPreview() {
         ) {
             StatusBadgesSection(
                 signedCount = 1,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = "≈ 52m",
                 transactionState = JointAccountTransactionState.PendingSignatures
             )
@@ -58,7 +58,7 @@ fun StatusBadgesSectionPendingNoTimePreview() {
         ) {
             StatusBadgesSection(
                 signedCount = 2,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = null,
                 transactionState = JointAccountTransactionState.PendingSignatures
             )
@@ -78,7 +78,7 @@ fun StatusBadgesSectionCanceledPreview() {
         ) {
             StatusBadgesSection(
                 signedCount = 1,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = null,
                 transactionState = JointAccountTransactionState.Canceled
             )
@@ -98,7 +98,7 @@ fun StatusBadgesSectionCompletedPreview() {
         ) {
             StatusBadgesSection(
                 signedCount = 3,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = null,
                 transactionState = JointAccountTransactionState.Completed
             )
@@ -118,7 +118,7 @@ fun StatusBadgesSectionFailedPreview() {
         ) {
             StatusBadgesSection(
                 signedCount = 1,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = null,
                 transactionState = JointAccountTransactionState.Failed("Insufficient balance")
             )
@@ -138,28 +138,28 @@ fun StatusBadgesSectionAllStatesPreview() {
         ) {
             StatusBadgesSection(
                 signedCount = 1,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = "≈ 52m",
                 transactionState = JointAccountTransactionState.PendingSignatures
             )
             Spacer(modifier = Modifier.height(12.dp))
             StatusBadgesSection(
                 signedCount = 1,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = null,
                 transactionState = JointAccountTransactionState.Canceled
             )
             Spacer(modifier = Modifier.height(12.dp))
             StatusBadgesSection(
                 signedCount = 3,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = null,
                 transactionState = JointAccountTransactionState.Completed
             )
             Spacer(modifier = Modifier.height(12.dp))
             StatusBadgesSection(
                 signedCount = 1,
-                totalParticipantCount = 3,
+                threshold = 3,
                 timeRemaining = null,
                 transactionState = JointAccountTransactionState.Failed("Transaction failed")
             )

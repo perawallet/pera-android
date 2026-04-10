@@ -337,15 +337,19 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    private val inboxButtonLabelCollector: suspend (InboxButtonLabel?) -> Unit = { label ->
-        binding.inboxButton.apply {
-            isVisible = label != null
-            text = when (label) {
-                is InboxButtonLabel.JointAccountRequest -> getString(R.string.joint_account_request)
-                is InboxButtonLabel.SignTxnRequest -> getString(R.string.sign_txn_request)
-                is InboxButtonLabel.Inbox -> getString(R.string.inbox)
-                null -> null
-            }
+    private val inboxButtonCollector: suspend (Pair<InboxButtonLabel?, Boolean>) -> Unit = { (label, hasUnseen) ->
+        binding.inboxButton.isVisible = label != null
+        binding.inboxButtonText.text = when (label) {
+            is InboxButtonLabel.JointAccountRequest -> getString(R.string.joint_account_request)
+            is InboxButtonLabel.SignTxnRequest -> getString(R.string.sign_txn_request)
+            is InboxButtonLabel.Inbox -> getString(R.string.inbox)
+            null -> null
+        }
+        if (hasUnseen) {
+            binding.inboxIconLottieView.playAnimation()
+        } else {
+            binding.inboxIconLottieView.cancelAnimation()
+            binding.inboxIconLottieView.progress = 1f
         }
     }
 
@@ -435,6 +439,9 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.logNotificationClick()
             navigateToNotifications()
         }
+        binding.inboxIconLottieView.setColorFilter(
+            ContextCompat.getColor(requireContext(), R.color.button_square_icon)
+        )
         binding.inboxButton.setOnClickListener { navToInboxNavigation() }
     }
 
@@ -486,8 +493,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 notificationStateCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.inboxButtonLabel },
-                inboxButtonLabelCollector
+                accountPreviewFlow.map {
+                    Pair(it?.inboxButtonLabel, it?.hasUnseenInboxItems ?: false)
+                }.distinctUntilChanged(),
+                inboxButtonCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountsViewModel.viewEvent,

@@ -28,7 +28,7 @@ data class JointAccountTransactionViewState(
     val transactionState: JointAccountTransactionState,
     val signerAccounts: List<JointAccountSignerItem>,
     val signedCount: Int,
-    val requiredSignatureCount: Int,
+    val threshold: Int,
     val timeRemaining: String? = null,
     val transactionId: String? = null,
     val jointAccountAddress: String? = null,

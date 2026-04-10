@@ -56,7 +56,8 @@ interface JointAccountTransactionProcessor {
         val ledgerBluetoothAddress: String,
         val ledgerAccountIndex: Int,
         val accountAuthAddress: String? = null,
-        val isRekeyedToAnotherAccount: Boolean = false
+        val isRekeyedToAnotherAccount: Boolean = false,
+        val jointAccountAddress: String? = null
     )
 
     sealed interface PostSigningAction {

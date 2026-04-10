@@ -193,7 +193,7 @@ internal class GetJointAccountTransactionViewStateUseCase(
             transactionState = transactionState,
             signerAccounts = participantData.signerAccounts,
             signedCount = participantData.signedCount,
-            requiredSignatureCount = threshold,
+            threshold = threshold,
             timeRemaining = expirationData.timeRemaining,
             transactionId = signRequest.id,
             jointAccountAddress = jointAccountAddress,

@@ -341,7 +341,7 @@ internal class GetJointAccountTransactionViewStateUseCaseTest {
 
         assertTrue(result is PeraResult.Success)
         val viewState = (result as PeraResult.Success).data
-        assertEquals(3, viewState.requiredSignatureCount)
+        assertEquals(3, viewState.threshold)
     }
 
     private fun createBaseAssetRawTransaction(): RawTransaction {

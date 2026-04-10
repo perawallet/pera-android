@@ -70,28 +70,49 @@
         app:layout_constraintTop_toBottomOf="@id/toolbarPrimaryPortfolioValue"
         tools:text="$105,413.95" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <LinearLayout
         android:id="@+id/inboxButton"
-        style="?attr/toolbarNavigationButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:layout_gravity="center"
         android:layout_marginStart="@dimen/spacing_large"
         android:layout_marginTop="@dimen/spacing_xxxsmall"
         android:background="@drawable/bg_asset_inbox_rectangle"
-        android:drawableStart="@drawable/ic_asset_request"
-        android:drawableEnd="@drawable/ic_right_16dp"
-        android:drawablePadding="6dp"
-        android:maxLines="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/spacing_xsmall"
-        android:textAppearance="@style/TextAppearance.Footnote.Mono.Medium"
-        android:textColor="@color/button_square_icon"
         android:visibility="gone"
-        app:drawableTint="@color/button_square_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@tools:sample/lorem[1]"
-        tools:visibility="visible" />
+        tools:visibility="visible">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/inboxIconLottieView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:lottie_rawRes="@raw/arrow_slide_in"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/inboxButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Footnote.Mono.Medium"
+            android:textColor="@color/button_square_icon"
+            tools:text="Sign txn request" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_right_16dp"
+            app:tint="@color/button_square_icon" />
+
+    </LinearLayout>
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/signTransactionRequestBannerComposeView"

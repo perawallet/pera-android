@@ -66,7 +66,8 @@ class AccountPreviewMapper @Inject constructor(
         accountListItems: List<BaseAccountListItem>,
         portfolioValueItem: BasePortfolioValueItem?,
         hasNewNotification: Boolean,
-        inboxButtonLabel: InboxButtonLabel?
+        inboxButtonLabel: InboxButtonLabel?,
+        hasUnseenInboxItems: Boolean = false
     ): AccountPreview {
         return AccountPreview(
             isEmptyStateVisible = false,
@@ -77,7 +78,8 @@ class AccountPreviewMapper @Inject constructor(
             isMotionLayoutTransitionEnabled = true,
             isSuccessStateVisible = true,
             hasNewNotification = hasNewNotification,
-            inboxButtonLabel = inboxButtonLabel
+            inboxButtonLabel = inboxButtonLabel,
+            hasUnseenInboxItems = hasUnseenInboxItems
         )
     }
 }

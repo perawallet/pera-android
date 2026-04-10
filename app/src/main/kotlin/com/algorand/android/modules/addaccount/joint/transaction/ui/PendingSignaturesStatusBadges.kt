@@ -37,7 +37,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 @Composable
 internal fun StatusBadgesSection(
     signedCount: Int,
-    totalParticipantCount: Int,
+    threshold: Int,
     timeRemaining: String?,
     transactionState: JointAccountTransactionState
 ) {
@@ -80,7 +80,7 @@ internal fun StatusBadgesSection(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     SignedCountBadge(
                         signedCount = signedCount,
-                        totalCount = totalParticipantCount
+                        totalCount = threshold
                     )
                     if (timeRemaining != null) {
                         TimeRemainingBadge(timeRemaining = timeRemaining)

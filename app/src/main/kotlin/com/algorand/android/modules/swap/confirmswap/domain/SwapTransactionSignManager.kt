@@ -90,30 +90,17 @@ class SwapTransactionSignManager @Inject constructor(
     override fun buildRawBytesGroups(
         txList: List<UnsignedSwapSingleTransactionData>
     ): List<List<ByteArray>>? {
-        val quoteTransactions = swapQuoteTransaction
-        if (quoteTransactions == null) {
-            return null
+        val quoteTransactions = swapQuoteTransaction ?: return null
+        val allRawBytes = quoteTransactions.flatMap { buildUserSigningRawBytes(it) ?: return null }
+        return allRawBytes.takeIf { it.isNotEmpty() }?.let { listOf(it) }
+    }
+
+    private fun buildUserSigningRawBytes(group: SwapQuoteTransaction): List<ByteArray>? {
+        return group.signedTransactions.mapIndexedNotNull { i, signed ->
+            if (signed.signedTransactionMsgPack != null) return@mapIndexedNotNull null
+            group.unsignedTransactions.getOrNull(i)?.transactionMsgPack?.decodeBase64()
+                ?: return null
         }
-        val result = mutableListOf<List<ByteArray>>()
-        for (group in quoteTransactions) {
-            val allTxns = group.unsignedTransactions
-            val allRawBytes = mutableListOf<ByteArray>()
-            for (txData in allTxns) {
-                val bytes = txData.transactionMsgPack?.decodeBase64()
-                if (bytes == null) {
-                    return null
-                }
-                allRawBytes.add(bytes)
-            }
-            if (allRawBytes.isEmpty()) {
-                continue
-            }
-            result.add(allRawBytes)
-        }
-        if (result.isEmpty()) {
-            return null
-        }
-        return result
     }
 
     private fun insertSignedSwapTransaction(transaction: ExternalTransaction, signedTransaction: ByteArray?) {
@@ -133,18 +120,35 @@ class SwapTransactionSignManager @Inject constructor(
     override fun jointSyncAlgodSubmissionKind(): JointSyncAlgodSubmissionKind =
         JointSyncAlgodSubmissionKind.SWAP
 
+    @Suppress("ReturnCount")
     override fun getSwapMetadataForService(): SwapServiceMetadata? {
-        val swapId = pendingSwapIdForSyncService
+        val swapId = pendingSwapIdForSyncService.takeIf { it != SwapServiceMetadata.INVALID_SWAP_ID } ?: return null
         val quotes = swapQuoteTransaction ?: return null
-        if (swapId == SwapServiceMetadata.INVALID_SWAP_ID) return null
-        val types = quotes.map { quote ->
-            when (quote) {
-                is SwapQuoteTransaction.OptInTransaction -> SwapServiceMetadata.TXN_TYPE_OPTIN
-                is SwapQuoteTransaction.SwapTransaction -> SwapServiceMetadata.TXN_TYPE_SWAP
-                is SwapQuoteTransaction.PeraFeeTransaction -> SwapServiceMetadata.TXN_TYPE_PERA_FEE
-                is SwapQuoteTransaction.InvalidTransaction -> return null
-            }
+
+        val types = mutableListOf<String>()
+        val preSignedPerGroup = mutableListOf<List<ByteArray?>>()
+        val unsignedCountPerGroup = mutableListOf<Int>()
+
+        for (quote in quotes) {
+            val userRawBytes = buildUserSigningRawBytes(quote) ?: return null
+            if (userRawBytes.isEmpty()) continue
+
+            types.add(quote.toTxnTypeName() ?: return null)
+            unsignedCountPerGroup.add(userRawBytes.size)
+
+            val slots = quote.signedTransactions.map { it.signedTransactionMsgPack }
+            if (slots.count { it == null } != userRawBytes.size) return null
+            preSignedPerGroup.add(slots)
         }
-        return SwapServiceMetadata(swapId = swapId, txnTypes = types)
+
+        if (types.isEmpty()) return null
+        return SwapServiceMetadata(swapId, types, preSignedPerGroup, unsignedCountPerGroup)
+    }
+
+    private fun SwapQuoteTransaction.toTxnTypeName(): String? = when (this) {
+        is SwapQuoteTransaction.OptInTransaction -> SwapServiceMetadata.TXN_TYPE_OPTIN
+        is SwapQuoteTransaction.SwapTransaction -> SwapServiceMetadata.TXN_TYPE_SWAP
+        is SwapQuoteTransaction.PeraFeeTransaction -> SwapServiceMetadata.TXN_TYPE_PERA_FEE
+        is SwapQuoteTransaction.InvalidTransaction -> null
     }
 }

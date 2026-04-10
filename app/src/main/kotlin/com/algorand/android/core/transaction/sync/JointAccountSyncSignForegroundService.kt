@@ -25,7 +25,6 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectVersionIdentifier
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.logger.PeraErrorLogger
 import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
@@ -72,9 +71,6 @@ class JointAccountSyncSignForegroundService : Service() {
 
     @Inject
     internal lateinit var algodSubmitter: SyncSignAlgodSubmitter
-
-    @Inject
-    lateinit var errorLogger: PeraErrorLogger
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val activeSessions = ConcurrentHashMap<String, SyncSignSession>()
@@ -147,6 +143,10 @@ class JointAccountSyncSignForegroundService : Service() {
         } ?: JointSyncAlgodSubmissionKind.NONE
         val swapId = getLongExtra(EXTRA_SWAP_ID, SwapServiceMetadata.INVALID_SWAP_ID)
         val swapTxnTypes = getStringArrayExtra(EXTRA_SWAP_TXN_TYPES)?.toList().orEmpty()
+        val preSignedBytes = getByteArrayExtra(EXTRA_SWAP_PRE_SIGNED_BYTES)
+            ?.let { deserializePreSignedBytes(it) }
+            .orEmpty()
+        val unsignedCounts = getIntArrayExtra(EXTRA_SWAP_UNSIGNED_COUNTS)?.toList().orEmpty()
         return SyncSignSession(
             signRequestId = signRequestId,
             deviceId = deviceId,
@@ -156,7 +156,9 @@ class JointAccountSyncSignForegroundService : Service() {
             notificationId = NOTIFICATION_ID_BASE + (signRequestId.hashCode() and 0x7FFFFFFF) % MAX_NOTIFICATION_RANGE,
             algodSubmissionKind = algodSubmissionKind,
             swapId = swapId,
-            swapTxnTypes = swapTxnTypes
+            swapTxnTypes = swapTxnTypes,
+            swapPreSignedBytesPerGroup = preSignedBytes,
+            swapUnsignedCountPerGroup = unsignedCounts
         )
     }
 
@@ -171,9 +173,6 @@ class JointAccountSyncSignForegroundService : Service() {
         while (serviceScope.isActive) {
             val elapsedMs = timeProvider.getCurrentTimeMillis() - startTimeMs
             if (elapsedMs >= MAX_POLLING_DURATION_MS) {
-                errorLogger.logError(
-                    "SyncSign: Polling timed out after ${elapsedMs}ms for signRequestId=${session.signRequestId}"
-                )
                 rejectWalletConnectRequestIfNeeded(session)
                 syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Expired)
                 dismissSession(session)
@@ -205,13 +204,6 @@ class JointAccountSyncSignForegroundService : Service() {
         consecutiveErrors: Int
     ): Boolean {
         if (consecutiveErrors < MAX_CONSECUTIVE_ERRORS) return false
-        errorLogger.logError(
-            IllegalStateException(
-                "SyncSign: Polling failed after $consecutiveErrors consecutive errors " +
-                    "for signRequestId=${session.signRequestId}",
-                result.exception
-            )
-        )
         rejectWalletConnectRequestIfNeeded(session)
         syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Failed)
         dismissSession(session)
@@ -243,21 +235,25 @@ class JointAccountSyncSignForegroundService : Service() {
                 updateNotification(session, signRequest)
                 if (assembleAndSubmit(session, signRequest)) PollOutcome.STOP_READY else PollOutcome.CONTINUE
             }
+
             SignRequestStatus.DECLINED -> {
                 rejectWalletConnectRequestIfNeeded(session)
                 syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Declined)
                 PollOutcome.STOP_FAILED
             }
+
             SignRequestStatus.EXPIRED -> {
                 rejectWalletConnectRequestIfNeeded(session)
                 syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Expired)
                 PollOutcome.STOP_FAILED
             }
+
             SignRequestStatus.FAILED, null -> {
                 rejectWalletConnectRequestIfNeeded(session)
                 syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Failed)
                 PollOutcome.STOP_FAILED
             }
+
             SignRequestStatus.PENDING,
             SignRequestStatus.SUBMITTING -> {
                 updateNotification(session, signRequest)
@@ -294,9 +290,6 @@ class JointAccountSyncSignForegroundService : Service() {
         val threshold = jointAccount?.threshold
 
         if (transactionLists == null || participantAddresses == null || version == null || threshold == null) {
-            errorLogger.logError(
-                "SyncSign: Missing transaction data for signRequestId=${session.signRequestId}"
-            )
             syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Failed)
             return null
         }
@@ -306,9 +299,6 @@ class JointAccountSyncSignForegroundService : Service() {
             val rawTransactions = txListEntry.rawTransactions
             val responses = txListEntry.responses
             if (rawTransactions == null || responses == null) {
-                errorLogger.logError(
-                    "SyncSign: Missing transaction data for signRequestId=${session.signRequestId}"
-                )
                 syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Failed)
                 return null
             }
@@ -321,12 +311,6 @@ class JointAccountSyncSignForegroundService : Service() {
             )) {
                 is PeraResult.Success -> assembledGroups.add(assembleResult.data)
                 is PeraResult.Error -> {
-                    errorLogger.logError(
-                        IllegalStateException(
-                            "SyncSign: Assembly failed for signRequestId=${session.signRequestId}",
-                            assembleResult.exception
-                        )
-                    )
                     syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Failed)
                     return null
                 }
@@ -344,7 +328,7 @@ class JointAccountSyncSignForegroundService : Service() {
         val wcSession = session.wcSessionIdentifier
         val isWalletConnectSession = wcSession != null && session.wcRequestId != -1L
         val shouldSubmitInAppToAlgod = !isWalletConnectSession &&
-            session.algodSubmissionKind != JointSyncAlgodSubmissionKind.NONE
+                session.algodSubmissionKind != JointSyncAlgodSubmissionKind.NONE
 
         if (shouldSubmitInAppToAlgod) {
             return handleAlgodSubmission(session, signRequest, assembledGroups)
@@ -383,9 +367,6 @@ class JointAccountSyncSignForegroundService : Service() {
     ): Boolean {
         val txnId = algodSubmitter.submit(session, assembledGroups)
         if (txnId.isNullOrBlank()) {
-            errorLogger.logError(
-                "SyncSign: Algod submission returned empty txnId for signRequestId=${session.signRequestId}"
-            )
             syncSignResultHolder.setResult(session.signRequestId, SyncSignResultHolder.SyncSignResult.Failed)
             return true
         }
@@ -429,6 +410,26 @@ class JointAccountSyncSignForegroundService : Service() {
         if (activeSessions.isEmpty()) stopSelf()
     }
 
+    private fun deserializePreSignedBytes(data: ByteArray): List<List<ByteArray?>> {
+        return runCatching {
+            val dis = java.io.DataInputStream(java.io.ByteArrayInputStream(data))
+            val groupCount = dis.readInt()
+            (0 until groupCount).map {
+                val subCount = dis.readInt()
+                (0 until subCount).map {
+                    val len = dis.readInt()
+                    if (len < 0) {
+                        null
+                    } else {
+                        val buf = ByteArray(len)
+                        dis.readFully(buf)
+                        buf
+                    }
+                }
+            }
+        }.getOrElse { emptyList() }
+    }
+
     private enum class PollOutcome {
         STOP_READY,
         STOP_FAILED,
@@ -449,5 +450,7 @@ class JointAccountSyncSignForegroundService : Service() {
         const val EXTRA_ALGOD_SUBMISSION_KIND = "algod_submission_kind"
         const val EXTRA_SWAP_ID = "swap_id"
         const val EXTRA_SWAP_TXN_TYPES = "swap_txn_types"
+        const val EXTRA_SWAP_PRE_SIGNED_BYTES = "swap_pre_signed_bytes"
+        const val EXTRA_SWAP_UNSIGNED_COUNTS = "swap_unsigned_counts"
     }
 }

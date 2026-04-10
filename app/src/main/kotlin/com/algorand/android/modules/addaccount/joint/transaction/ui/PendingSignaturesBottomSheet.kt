@@ -141,7 +141,8 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
                                 ledgerBluetoothAddress = event.data.ledgerBluetoothAddress,
                                 ledgerAccountIndex = event.data.ledgerAccountIndex,
                                 accountAuthAddress = event.data.accountAuthAddress,
-                                isRekeyedToAnotherAccount = event.data.isRekeyedToAnotherAccount
+                                isRekeyedToAnotherAccount = event.data.isRekeyedToAnotherAccount,
+                                jointAccountAddress = event.data.jointAccountAddress
                             )
                         }
 
@@ -196,6 +197,12 @@ class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
             is JointAccountLedgerSignHelper.LedgerSignResult.Cancelled -> {
                 hideLedgerLoading()
                 ledgerSignHelper.resetState()
+            }
+
+            is JointAccountLedgerSignHelper.LedgerSignResult.RejectedOnDevice -> {
+                hideLedgerLoading()
+                ledgerSignHelper.resetState()
+                viewModel.declineLedgerAccount(result.signRequestId, result.accountAddress)
             }
 
             is JointAccountLedgerSignHelper.LedgerSignResult.Idle -> Unit

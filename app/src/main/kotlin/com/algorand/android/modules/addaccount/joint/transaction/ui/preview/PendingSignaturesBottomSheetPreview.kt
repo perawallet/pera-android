@@ -133,7 +133,7 @@ private fun createMockPreviewPending(): JointAccountTransactionViewState {
         transactionState = JointAccountTransactionState.PendingSignatures,
         signerAccounts = createMockPendingSignerItems(jointIcon),
         signedCount = 1,
-        requiredSignatureCount = 3,
+        threshold = 3,
         timeRemaining = "≈ 52m"
     )
 }

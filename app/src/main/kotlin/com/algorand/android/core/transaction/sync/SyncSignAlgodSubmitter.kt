@@ -18,7 +18,6 @@ import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.flatten
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.logger.PeraErrorLogger
 import com.algorand.wallet.swap.domain.model.SignedSwapTransaction
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
@@ -31,8 +30,7 @@ import javax.inject.Inject
 internal class SyncSignAlgodSubmitter @Inject constructor(
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val sendSwapTransactions: SendSwapTransactions,
-    private val setSwapStatusFailed: SetSwapStatusFailed,
-    private val errorLogger: PeraErrorLogger
+    private val setSwapStatusFailed: SetSwapStatusFailed
 ) {
 
     suspend fun submit(
@@ -52,25 +50,66 @@ internal class SyncSignAlgodSubmitter @Inject constructor(
         assembledGroups: List<List<ByteArray>>
     ): String? {
         if (session.swapId == SwapServiceMetadata.INVALID_SWAP_ID) return null
-        val flattenedPerGroup = assembledGroups.map { it.flatten() }
-        val signedSwapTxns = buildSignedSwapTransactions(session.swapTxnTypes, flattenedPerGroup)
+
+        val signedSwapTxns = buildSignedSwapTransactions(session, assembledGroups)
         if (signedSwapTxns == null) {
-            errorLogger.logError("SyncSign: Swap txn type/count mismatch")
             setSwapStatusFailed(session.swapId, SwapStatusFailureReason.OTHER)
             return null
         }
+
         return when (val result = sendSwapTransactions(session.swapId, signedSwapTxns)) {
             is PeraResult.Success -> result.data.firstOrNull()?.value
             is PeraResult.Error -> {
-                errorLogger.logError(
-                    IllegalStateException(
-                        "SyncSign: Swap send failed for swapId=${session.swapId}",
-                        result.exception
-                    )
-                )
                 setSwapStatusFailed(session.swapId, SwapStatusFailureReason.OTHER)
                 null
             }
+        }
+    }
+
+    private fun buildSignedSwapTransactions(
+        session: SyncSignSession,
+        assembledGroups: List<List<ByteArray>>
+    ): List<SignedSwapTransaction>? {
+        val allAssembled = assembledGroups.flatMap { it }
+        val unsignedCounts = session.swapUnsignedCountPerGroup
+        val slotBytesPerGroup = session.swapPreSignedBytesPerGroup
+        val types = session.swapTxnTypes
+
+        if (types.isEmpty() || unsignedCounts.size != types.size) return null
+        if (allAssembled.size != unsignedCounts.sum()) return null
+
+        var offset = 0
+        return types.mapIndexed { index, typeName ->
+            val type = parseSwapTxnType(typeName) ?: return null
+            val count = unsignedCounts[index]
+            val assembledSlice = allAssembled.subList(offset, offset + count)
+            offset += count
+
+            val slots = slotBytesPerGroup.getOrNull(index).orEmpty()
+            val interleaved = interleaveWithAssembled(slots, assembledSlice) ?: return null
+
+            SignedSwapTransaction(
+                signedTransaction = SignedTransaction(interleaved.flatten()),
+                type = type
+            )
+        }
+    }
+
+    private fun interleaveWithAssembled(
+        slots: List<ByteArray?>,
+        assembled: List<ByteArray>
+    ): List<ByteArray>? {
+        var jointIdx = 0
+        val result = slots.map { slot -> slot ?: assembled.getOrNull(jointIdx++) ?: return null }
+        return if (jointIdx == assembled.size) result else null
+    }
+
+    private fun parseSwapTxnType(name: String): SignedSwapTransaction.Type? {
+        return when (name) {
+            SwapServiceMetadata.TXN_TYPE_OPTIN -> SignedSwapTransaction.Type.OptIn
+            SwapServiceMetadata.TXN_TYPE_SWAP -> SignedSwapTransaction.Type.Swap
+            SwapServiceMetadata.TXN_TYPE_PERA_FEE -> SignedSwapTransaction.Type.PeraFee
+            else -> null
         }
     }
 
@@ -92,9 +131,6 @@ internal class SyncSignAlgodSubmitter @Inject constructor(
                 }
 
                 is DataResource.Error -> {
-                    val ex = resource.exception
-                        ?: IllegalStateException("SyncSign: ARC59 send failed for ${session.signRequestId}")
-                    errorLogger.logError(ex)
                     txnId = null
                 }
 
@@ -102,25 +138,5 @@ internal class SyncSignAlgodSubmitter @Inject constructor(
             }
         }
         return txnId
-    }
-
-    private fun buildSignedSwapTransactions(
-        types: List<String>,
-        allSignedBytes: List<ByteArray>
-    ): List<SignedSwapTransaction>? {
-        if (types.size != allSignedBytes.size) return null
-        return types.zip(allSignedBytes).map { (typeName, bytes) ->
-            val type = parseSwapTxnType(typeName) ?: return null
-            SignedSwapTransaction(signedTransaction = SignedTransaction(bytes), type = type)
-        }
-    }
-
-    private fun parseSwapTxnType(name: String): SignedSwapTransaction.Type? {
-        return when (name) {
-            SwapServiceMetadata.TXN_TYPE_OPTIN -> SignedSwapTransaction.Type.OptIn
-            SwapServiceMetadata.TXN_TYPE_SWAP -> SignedSwapTransaction.Type.Swap
-            SwapServiceMetadata.TXN_TYPE_PERA_FEE -> SignedSwapTransaction.Type.PeraFee
-            else -> null
-        }
     }
 }

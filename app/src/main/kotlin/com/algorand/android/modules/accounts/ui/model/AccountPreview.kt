@@ -25,5 +25,6 @@ data class AccountPreview(
     val isMotionLayoutTransitionEnabled: Boolean,
     val isSuccessStateVisible: Boolean,
     val hasNewNotification: Boolean,
-    val inboxButtonLabel: InboxButtonLabel? = null
+    val inboxButtonLabel: InboxButtonLabel? = null,
+    val hasUnseenInboxItems: Boolean = false
 )

@@ -67,7 +67,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
             ),
             timeAgo = getTimeAgo(jointSignRequestDTO, resources, currentBlockNumber),
             signedCount = getSignedCount(jointSignRequestDTO, requiredData.participantAddresses),
-            totalCount = requiredData.participantAddresses.size,
+            totalCount = requiredData.threshold,
             timeLeft = if (statusLine.isError) {
                 resources.getString(R.string.zero_minutes_short)
             } else {

@@ -79,10 +79,9 @@ internal class DefaultBackupRepository @Inject constructor(
     ): PeraResult<List<DeltaEntry>> {
         val typesQuery = types?.joinToString(",") { it.name }
         return request {
-
             backupApiService.getDeltas(backupId.value, fromSeq, typesQuery)
         }.map { response ->
-            response.mapNotNull { deltaMapper.toDomainModel(it) }
+            response.entries?.mapNotNull { deltaMapper.toDomainModel(it) }.orEmpty()
         }
     }
 

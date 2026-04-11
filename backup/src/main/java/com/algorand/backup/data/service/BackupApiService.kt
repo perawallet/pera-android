@@ -17,7 +17,7 @@ import com.algorand.backup.data.api.model.BackupBatchReadResponse
 import com.algorand.backup.data.api.model.BackupBatchUpsertRequest
 import com.algorand.backup.data.api.model.BackupBatchUpsertResponse
 import com.algorand.backup.data.api.model.BackupDeleteItemResponse
-import com.algorand.backup.data.api.model.BackupDeltaEntryResponse
+import com.algorand.backup.data.api.model.BackupDeltaResponse
 import com.algorand.backup.data.api.model.BackupManifestResponse
 import com.algorand.backup.data.api.model.BackupRegistrationProofRequest
 import com.algorand.backup.data.api.model.BackupRegistrationProofResponse
@@ -49,7 +49,7 @@ internal interface BackupApiService {
         @Path("backupId") backupId: String,
         @Query("from_seq") fromSeq: Long,
         @Query("types") types: String? = null
-    ): Response<List<BackupDeltaEntryResponse>>
+    ): Response<BackupDeltaResponse>
 
     @GET("backup/{backupId}/{key}")
     suspend fun getItem(

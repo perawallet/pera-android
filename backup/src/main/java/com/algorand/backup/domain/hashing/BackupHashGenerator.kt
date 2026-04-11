@@ -15,11 +15,11 @@ package com.algorand.backup.domain.hashing
 import com.algorand.backup.domain.model.BackupGlobalHash
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.ItemHash
-import com.algorand.backup.domain.model.ManifestItem
+import com.algorand.backup.domain.model.BackupManifestItem
 
 internal interface BackupHashGenerator {
 
     fun generateItemHash(encryptedBytes: ByteArray): ItemHash
 
-    fun generateGlobalHash(items: Map<BackupItemKey, ManifestItem>): BackupGlobalHash
+    fun generateGlobalHash(items: Map<BackupItemKey, BackupManifestItem>): BackupGlobalHash
 }

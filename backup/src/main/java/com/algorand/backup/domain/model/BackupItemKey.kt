@@ -13,4 +13,17 @@
 package com.algorand.backup.domain.model
 
 @JvmInline
-value class BackupItemKey(val value: String)
+value class BackupItemKey(val value: String) {
+
+    fun isAddress(): Boolean = value.startsWith(ACCOUNTS_PREFIX)
+
+    fun isSecrets(): Boolean = value.startsWith(SECRETS_PREFIX)
+
+    companion object {
+        const val ACCOUNTS_PREFIX = "accounts/"
+        const val SECRETS_PREFIX = "secrets/"
+
+        fun accounts(address: String) = BackupItemKey("$ACCOUNTS_PREFIX$address")
+        fun secrets(address: String) = BackupItemKey("$SECRETS_PREFIX$address")
+    }
+}

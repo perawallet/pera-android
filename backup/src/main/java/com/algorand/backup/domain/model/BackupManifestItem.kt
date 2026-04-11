@@ -12,7 +12,7 @@
 
 package com.algorand.backup.domain.model
 
-data class ManifestItem(
+data class BackupManifestItem(
     val type: BackupItemType,
     val version: Int,
     val status: BackupItemStatus,

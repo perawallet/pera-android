@@ -47,15 +47,18 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
     ): Map<BackupItemKey, ByteArray> {
         val payloads = mutableMapOf<BackupItemKey, ByteArray>()
 
+        val dirtyAddresses = mutableSetOf<String>()
+
         for (payload in localBackupDataProvider.getAddressPayloads()) {
-            val key = BackupItemKey("$ACCOUNTS_PREFIX${payload.address}")
+            val key = BackupItemKey.accounts(payload.address)
             if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
             payloads[key] = addressBackupPayloadMapper.serialize(payload)
+            dirtyAddresses.add(payload.address)
         }
 
         for (payload in localBackupDataProvider.getSecretsPayloads()) {
-            val key = BackupItemKey("$SECRETS_PREFIX${payload.address}")
-            if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
+            if (payload.address !in dirtyAddresses) continue
+            val key = BackupItemKey.secrets(payload.address)
             payloads[key] = secretsBackupPayloadMapper.serialize(payload)
         }
 
@@ -82,8 +85,4 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
         }
     }
 
-    private companion object {
-        const val ACCOUNTS_PREFIX = "accounts/"
-        const val SECRETS_PREFIX = "secrets/"
-    }
 }

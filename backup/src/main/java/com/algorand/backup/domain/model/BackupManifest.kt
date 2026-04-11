@@ -12,10 +12,10 @@
 
 package com.algorand.backup.domain.model
 
-data class Manifest(
+data class BackupManifest(
     val backupId: BackupId,
     val backupGlobalHash: BackupGlobalHash,
     val globalVersion: Int,
     val lastSeq: Long,
-    val items: Map<BackupItemKey, ManifestItem>
+    val items: Map<BackupItemKey, BackupManifestItem>
 )

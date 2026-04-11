@@ -15,7 +15,7 @@ package com.algorand.backup.domain.hashing
 import com.algorand.backup.domain.model.BackupGlobalHash
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.ItemHash
-import com.algorand.backup.domain.model.ManifestItem
+import com.algorand.backup.domain.model.BackupManifestItem
 import java.security.MessageDigest
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ internal class MessageDigestHashGenerator @Inject constructor() : BackupHashGene
         return ItemHash("sha256:$hash")
     }
 
-    override fun generateGlobalHash(items: Map<BackupItemKey, ManifestItem>): BackupGlobalHash {
+    override fun generateGlobalHash(items: Map<BackupItemKey, BackupManifestItem>): BackupGlobalHash {
         val concatenation = items.keys
             .sortedBy { it.value }
             .joinToString("") { key ->

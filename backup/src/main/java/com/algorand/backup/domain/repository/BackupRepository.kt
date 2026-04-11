@@ -21,7 +21,7 @@ import com.algorand.backup.domain.model.BackupBatchUpsertItemResult
 import com.algorand.backup.domain.model.DeltaEntry
 import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.DeviceId
-import com.algorand.backup.domain.model.Manifest
+import com.algorand.backup.domain.model.BackupManifest
 import com.algorand.backup.domain.model.BackupUpsertItemResult
 import com.algorand.wallet.foundation.PeraResult
 
@@ -29,7 +29,7 @@ internal interface BackupRepository {
 
     suspend fun register(keyMaterial: DerivedKeyMaterial, deviceId: DeviceId): PeraResult<Unit>
 
-    suspend fun getManifest(backupId: BackupId): PeraResult<Manifest>
+    suspend fun getManifest(backupId: BackupId): PeraResult<BackupManifest>
 
     suspend fun getDeltas(
         backupId: BackupId,

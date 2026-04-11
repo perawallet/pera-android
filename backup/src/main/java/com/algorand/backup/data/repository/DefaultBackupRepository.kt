@@ -31,7 +31,7 @@ import com.algorand.backup.domain.model.DeltaEntry
 import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.ItemHash
-import com.algorand.backup.domain.model.Manifest
+import com.algorand.backup.domain.model.BackupManifest
 import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.backup.domain.security.BackupRequestSigner
 import com.algorand.backup.domain.security.NonceGenerator
@@ -64,7 +64,7 @@ internal class DefaultBackupRepository @Inject constructor(
         }.map { }
     }
 
-    override suspend fun getManifest(backupId: BackupId): PeraResult<Manifest> {
+    override suspend fun getManifest(backupId: BackupId): PeraResult<BackupManifest> {
         return request {
             backupApiService.getManifest(backupId.value)
         }.map { response ->

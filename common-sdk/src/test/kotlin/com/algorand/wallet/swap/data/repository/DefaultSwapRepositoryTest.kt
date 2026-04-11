@@ -25,8 +25,8 @@ import com.algorand.wallet.swap.data.mapper.SwapUpdateStatusRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsResponse
-import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
-import com.algorand.wallet.swap.data.model.SwapPeraFeeResponse
+import com.algorand.wallet.swap.data.model.SwapCalculateAmountRequestBody
+import com.algorand.wallet.swap.data.model.SwapCalculateAmountResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteProviderResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteProvidersResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
@@ -35,7 +35,7 @@ import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteTransactionResponse
 import com.algorand.wallet.swap.data.model.TopSwapPairsResponse
 import com.algorand.wallet.swap.data.service.SwapApiService
-import com.algorand.wallet.swap.domain.model.SwapPeraFee
+import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
@@ -46,12 +46,12 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.math.BigInteger
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.math.BigInteger
 
 class DefaultSwapRepositoryTest {
 
@@ -143,22 +143,21 @@ class DefaultSwapRepositoryTest {
     }
 
     @Test
-    fun `EXPECT error WHEN get Pera fee api call fails`(): TestResult = runTest {
-        coEvery { swapApiService.getPeraFee(SWAP_PERA_FEE_REQUEST_BODY) } throws Exception()
+    fun `EXPECT error WHEN calculate swap amount api call fails`(): TestResult = runTest {
+        coEvery { swapApiService.calculateSwapAmount(CALCULATE_AMOUNT_REQUEST_BODY) } throws Exception()
 
-        val result = sut.getPeraFee(PERA_FEE_ASSET_ID, PERA_FEE_AMOUNT)
+        val result = sut.calculateSwapAmount(CALCULATE_AMOUNT_PAYLOAD, CALCULATE_AMOUNT_PERCENTAGE)
 
         assert(result is PeraResult.Error)
     }
 
     @Test
-    fun `EXPECT Pera fee WHEN api call returns valid fee`(): TestResult = runTest {
-        coEvery { swapApiService.getPeraFee(SWAP_PERA_FEE_REQUEST_BODY) } returns SwapPeraFeeResponse(BigInteger.ONE)
+    fun `EXPECT calculated amount WHEN calculate swap amount api call returns valid response`(): TestResult = runTest {
+        coEvery { swapApiService.calculateSwapAmount(CALCULATE_AMOUNT_REQUEST_BODY) } returns CALCULATE_AMOUNT_RESPONSE
 
-        val result = sut.getPeraFee(PERA_FEE_ASSET_ID, PERA_FEE_AMOUNT)
+        val result = sut.calculateSwapAmount(CALCULATE_AMOUNT_PAYLOAD, CALCULATE_AMOUNT_PERCENTAGE)
 
-        val expected = SwapPeraFee(BigInteger.ONE)
-        assertEquals(PeraResult.Success(expected), result)
+        assertEquals(PeraResult.Success(BigInteger.TEN), result)
     }
 
     @Test
@@ -266,9 +265,26 @@ class DefaultSwapRepositoryTest {
         val SWAP_QUOTE_RESULT_RESPONSE = peraFixture<SwapQuoteResultResponse>().copy(
             swapQuoteResponseList = listOf(SWAP_QUOTE_RESPONSE)
         )
-        val PERA_FEE_AMOUNT: BigInteger = BigInteger.TEN
-        const val PERA_FEE_ASSET_ID = 1L
-        val SWAP_PERA_FEE_REQUEST_BODY = SwapPeraFeeRequestBody(PERA_FEE_ASSET_ID, PERA_FEE_AMOUNT)
+        const val CALCULATE_AMOUNT_PERCENTAGE = "1.00"
+        val CALCULATE_AMOUNT_PAYLOAD = SwapAmountByPercentagePayload(
+            address = "test-address",
+            assetInId = 0L,
+            assetOutId = 1L,
+            percentage = 100f
+        )
+        val CALCULATE_AMOUNT_REQUEST_BODY = SwapCalculateAmountRequestBody(
+            CALCULATE_AMOUNT_PAYLOAD.address, CALCULATE_AMOUNT_PAYLOAD.assetInId,
+            CALCULATE_AMOUNT_PAYLOAD.assetOutId, amountInput = null, percentage = CALCULATE_AMOUNT_PERCENTAGE
+        )
+        val CALCULATE_AMOUNT_RESPONSE = SwapCalculateAmountResponse(
+            amount = BigInteger.TEN,
+            peraFee = BigInteger.ONE,
+            peraFeeAssetDetail = null,
+            peraFeeAssetId = null,
+            peraFeeAmountInMicroAlgo = BigInteger.ONE,
+            peraFeeAmountInFeeAsset = BigInteger.ONE,
+            peraFeeAmountInInputAsset = BigInteger.ONE
+        )
         const val CREATE_QUOTE_ID = 1L
         val CREATE_QUOTE_REQUEST = CreateSwapQuoteTransactionsRequestBody(CREATE_QUOTE_ID)
         val QUOTE_TXN_RESPONSE = peraFixture<SwapQuoteTransactionResponse>()

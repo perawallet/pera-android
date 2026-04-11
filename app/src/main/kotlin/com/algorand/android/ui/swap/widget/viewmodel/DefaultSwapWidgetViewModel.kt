@@ -37,6 +37,9 @@ import com.algorand.wallet.swap.domain.usecase.GetSwapQuotes
 import com.algorand.wallet.swap.domain.usecase.GetSwapUseLocalCurrencyPreference
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.math.BigDecimal
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -50,9 +53,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-import java.util.Locale
-import javax.inject.Inject
 
 @HiltViewModel
 class DefaultSwapWidgetViewModel @Inject constructor(
@@ -82,12 +82,12 @@ class DefaultSwapWidgetViewModel @Inject constructor(
 
     override fun getAmountInputFlow(): StateFlow<SwapAmountInput.Input> = swapAmountInput.amountInputFlow
 
-    override fun setAmountByPercentage(swapDetails: SwapViewModel.SwapDetails, percentage: Int) {
+    override fun setAmountByPercentage(swapDetails: SwapViewModel.SwapDetails, percentage: Float) {
         viewModelScope.launch {
             val currentState = stateDelegate.state.value
             stateDelegate.updateState { ViewState.Loading }
             val payload = with(swapDetails) {
-                SwapAmountByPercentagePayload(address.orEmpty(), assetInId, assetOutId, percentage.toFloat())
+                SwapAmountByPercentagePayload(address.orEmpty(), assetInId, assetOutId, percentage)
             }
             getSwapAmountByPercentage(payload).use(
                 onSuccess = {

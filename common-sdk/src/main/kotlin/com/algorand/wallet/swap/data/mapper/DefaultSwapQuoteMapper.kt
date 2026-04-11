@@ -50,7 +50,7 @@ internal class DefaultSwapQuoteMapper @Inject constructor(
             val amountInAlgo = response.peraFeeAmountInMicroAlgo?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS).orZero()
             SwapQuoteV2.SwapFee.PeraFeeType.Asset(amount, peraFeeAssetDetail) to amountInAlgo
         } else {
-            val amount = response.peraFeeAmount?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS).orZero()
+            val amount = response.peraFeeAmountInFeeAsset?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS).orZero()
             SwapQuoteV2.SwapFee.PeraFeeType.Algo to amount
         }
         return SwapQuoteV2.SwapFee(peraFeeAmountInAlgo, type)

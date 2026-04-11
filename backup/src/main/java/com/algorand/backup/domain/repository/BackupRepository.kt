@@ -39,10 +39,7 @@ internal interface BackupRepository {
 
     suspend fun getItem(backupId: BackupId, key: BackupItemKey): PeraResult<String>
 
-    suspend fun batchReadItems(
-        backupId: BackupId,
-        keys: List<BackupItemKey>
-    ): PeraResult<Map<BackupItemKey, String>>
+    suspend fun batchReadItems(backupId: BackupId, keys: List<BackupItemKey>): PeraResult<Map<BackupItemKey, String>>
 
     suspend fun upsertItem(
         backupId: BackupId,

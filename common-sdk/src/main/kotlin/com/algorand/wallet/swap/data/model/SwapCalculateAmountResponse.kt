@@ -15,7 +15,19 @@ package com.algorand.wallet.swap.data.model
 import com.google.gson.annotations.SerializedName
 import java.math.BigInteger
 
-internal data class SwapPeraFeeResponse(
-    @SerializedName("pera_fee_amount")
-    val peraFeeAmount: BigInteger?
+internal data class SwapCalculateAmountResponse(
+    @SerializedName("amount")
+    val amount: BigInteger?,
+    @SerializedName("pera_fee")
+    val peraFee: BigInteger?,
+    @SerializedName("pera_fee_asset")
+    val peraFeeAssetDetail: SwapQuoteAssetDetailResponse?,
+    @SerializedName("pera_fee_asset_id")
+    val peraFeeAssetId: Long?,
+    @SerializedName("pera_fee_amount_in_microalgo")
+    val peraFeeAmountInMicroAlgo: BigInteger?,
+    @SerializedName("pera_fee_amount_in_fee_asset")
+    val peraFeeAmountInFeeAsset: BigInteger?,
+    @SerializedName("pera_fee_amount_in_input_asset")
+    val peraFeeAmountInInputAsset: BigInteger?
 )

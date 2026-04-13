@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 private const val ASSET_IN_CONTAINER_ID = "assetInContainer"
 private const val ASSET_OUT_CONTAINER_ID = "assetOutContainer"
 private const val SWAP_CONFIGURATION_CONTAINER_ID = "swapConfigurationContainer"
-private const val MAX_PERCENTAGE = 100
+private const val MAX_PERCENTAGE = 100f
 
 @Composable
 fun SwapWidget(

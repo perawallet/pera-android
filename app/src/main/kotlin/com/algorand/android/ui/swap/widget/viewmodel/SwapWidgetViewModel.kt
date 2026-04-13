@@ -28,7 +28,7 @@ interface SwapWidgetViewModel : StateViewModel<ViewState> {
 
     fun getAmountInputFlow(): StateFlow<SwapAmountInput.Input>
 
-    fun setAmountByPercentage(swapDetails: SwapViewModel.SwapDetails, percentage: Int)
+    fun setAmountByPercentage(swapDetails: SwapViewModel.SwapDetails, percentage: Float)
 
     fun initWidget(
         swapDetailsFlow: Flow<SwapViewModel.SwapDetails>,

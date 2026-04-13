@@ -16,6 +16,7 @@ import com.algorand.backup.domain.mapper.SyncItemStateMapper
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.BackupItemStatus
+import com.algorand.backup.domain.model.BackupManifest
 import com.algorand.backup.domain.model.DeltaEntry
 import com.algorand.backup.domain.model.DeltaOperation
 import com.algorand.backup.domain.model.PullSyncResult
@@ -35,69 +36,113 @@ internal class PullBackupSyncUseCase @Inject constructor(
     override suspend operator fun invoke(backupId: BackupId): PullSyncResult {
         val syncState = syncStateRepository.getSyncState(backupId) ?: createInitialSyncState(backupId)
 
-        val manifest = when (val manifestResult = backupRepository.getManifest(backupId)) {
-            is PeraResult.Success -> manifestResult.data
-            is PeraResult.Error -> return PullSyncResult.Error(manifestResult.exception)
+        val manifest = when (val result = backupRepository.getManifest(backupId)) {
+            is PeraResult.Success -> result.data
+            is PeraResult.Error -> {
+                if (result.code == HTTP_NOT_FOUND) return PullSyncResult.UpToDate
+                return PullSyncResult.Error(result.exception)
+            }
         }
 
         if (manifest.backupGlobalHash == syncState.lastKnownBackupHash) {
             return PullSyncResult.UpToDate
         }
 
-        val deltas = when (val deltasResult = backupRepository.getDeltas(backupId, syncState.lastSyncedSeq)) {
-            is PeraResult.Success -> deltasResult.data
-            is PeraResult.Error -> return PullSyncResult.Error(deltasResult.exception)
+        val deltas = when (val result = backupRepository.getDeltas(backupId, syncState.lastSyncedSeq)) {
+            is PeraResult.Success -> result.data
+            is PeraResult.Error -> return PullSyncResult.Error(result.exception)
         }
 
         if (deltas.isEmpty()) {
-            syncStateRepository.updateGlobalPointers(backupId, manifest.backupGlobalHash, syncState.lastSyncedSeq)
-            return PullSyncResult.UpToDate
+            return handleEmptyDeltas(backupId, syncState, manifest)
         }
 
+        return applyDeltas(backupId, syncState, manifest, deltas)
+    }
+
+    private suspend fun handleEmptyDeltas(
+        backupId: BackupId,
+        syncState: SyncState,
+        backupManifest: BackupManifest
+    ): PullSyncResult {
+        if (syncState.lastKnownBackupHash == null && backupManifest.items.isNotEmpty()) {
+            return populateFromManifest(backupId, backupManifest)
+        }
+        syncStateRepository.updateGlobalPointers(backupId, backupManifest.backupGlobalHash, syncState.lastSyncedSeq)
+        return PullSyncResult.UpToDate
+    }
+
+    private suspend fun populateFromManifest(backupId: BackupId, backupManifest: BackupManifest): PullSyncResult {
+        val activeKeys = backupManifest.items
+            .filter { (_, item) -> item.status == BackupItemStatus.ACTIVE }
+            .map { (key, item) ->
+                syncStateRepository.updateItemState(backupId, key, syncItemStateMapper.mapFromManifestItem(item))
+                key
+            }
+        syncStateRepository.updateGlobalPointers(backupId, backupManifest.backupGlobalHash, backupManifest.lastSeq)
+        return PullSyncResult.Updated(updatedKeys = activeKeys, deletedKeys = emptyList())
+    }
+
+    private suspend fun applyDeltas(
+        backupId: BackupId,
+        syncState: SyncState,
+        backupManifest: BackupManifest,
+        deltas: List<DeltaEntry>
+    ): PullSyncResult {
         val updatedKeys = mutableListOf<BackupItemKey>()
         val deletedKeys = mutableListOf<BackupItemKey>()
 
         for (delta in deltas) {
             when (delta.operation) {
-                DeltaOperation.UPSERT -> {
-                    val existingItem = syncState.items[delta.key]
-                    val updatedItem = syncItemStateMapper.mapFromUpsertDelta(delta, existingItem)
-                    syncStateRepository.updateItemState(backupId, delta.key, updatedItem)
-
-                    if (shouldDownloadPayload(existingItem, delta)) {
-                        updatedKeys.add(delta.key)
-                    }
-                }
-                DeltaOperation.DELETE -> {
-                    val existingItem = syncState.items[delta.key]
-                    if (existingItem != null) {
-                        val ignoredItem = syncItemStateMapper.mapFromDeleteDelta(delta, existingItem)
-                        syncStateRepository.updateItemState(backupId, delta.key, ignoredItem)
-                    }
-                    deletedKeys.add(delta.key)
-                }
+                DeltaOperation.UPSERT -> applyUpsertDelta(backupId, syncState, delta)?.let { updatedKeys.add(it) }
+                DeltaOperation.DELETE -> applyDeleteDelta(backupId, syncState, delta).let { deletedKeys.add(it) }
             }
         }
 
         val maxSeq = deltas.maxOf { it.seq }
-        syncStateRepository.updateGlobalPointers(backupId, manifest.backupGlobalHash, maxSeq)
+        syncStateRepository.updateGlobalPointers(backupId, backupManifest.backupGlobalHash, maxSeq)
 
         return PullSyncResult.Updated(updatedKeys = updatedKeys, deletedKeys = deletedKeys)
     }
 
+    private suspend fun applyUpsertDelta(
+        backupId: BackupId,
+        syncState: SyncState,
+        delta: DeltaEntry
+    ): BackupItemKey? {
+        val existingItem = syncState.items[delta.key]
+        val updatedItem = syncItemStateMapper.mapFromUpsertDelta(delta, existingItem)
+        syncStateRepository.updateItemState(backupId, delta.key, updatedItem)
+        return if (shouldDownloadPayload(existingItem, delta)) delta.key else null
+    }
+
+    private suspend fun applyDeleteDelta(
+        backupId: BackupId,
+        syncState: SyncState,
+        delta: DeltaEntry
+    ): BackupItemKey {
+        val existingItem = syncState.items[delta.key]
+        if (existingItem != null) {
+            val ignoredItem = syncItemStateMapper.mapFromDeleteDelta(delta, existingItem)
+            syncStateRepository.updateItemState(backupId, delta.key, ignoredItem)
+        }
+        return delta.key
+    }
+
     private fun shouldDownloadPayload(existingItem: SyncItemState?, delta: DeltaEntry): Boolean {
-        if (existingItem?.status == BackupItemStatus.IGNORED) return false
-        if (delta.status == BackupItemStatus.IGNORED) return false
-        if (existingItem == null) return true
-        return delta.hash != null && delta.hash != existingItem.lastRemoteHash
+        return when {
+            existingItem?.status == BackupItemStatus.IGNORED -> false
+            delta.status == BackupItemStatus.IGNORED -> false
+            existingItem == null -> true
+            else -> delta.hash != null && delta.hash != existingItem.lastRemoteHash
+        }
     }
 
     private fun createInitialSyncState(backupId: BackupId): SyncState {
-        return SyncState(
-            backupId = backupId,
-            lastKnownBackupHash = null,
-            lastSyncedSeq = 0,
-            items = emptyMap()
-        )
+        return SyncState(backupId = backupId, lastKnownBackupHash = null, lastSyncedSeq = 0, items = emptyMap())
+    }
+
+    private companion object {
+        const val HTTP_NOT_FOUND = 404
     }
 }

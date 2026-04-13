@@ -12,23 +12,18 @@
 
 package com.algorand.backup.domain.usecase
 
-import com.algorand.backup.domain.mapper.SyncItemStateMapper
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
-import com.algorand.backup.domain.model.BatchUpsertInput
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.PushSyncResult
-import com.algorand.backup.domain.model.SyncItemState
-import com.algorand.backup.domain.model.UpsertItemResult
-import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
 internal class PushBackupSyncUseCase @Inject constructor(
-    private val backupRepository: BackupRepository,
     private val syncStateRepository: SyncStateRepository,
-    private val syncItemStateMapper: SyncItemStateMapper
+    private val pushDirtyBackupItems: PushDirtyBackupItems,
+    private val deletePendingBackupItems: DeletePendingBackupItems
 ) : PushBackupSync {
 
     override suspend fun invoke(
@@ -46,26 +41,30 @@ internal class PushBackupSyncUseCase @Inject constructor(
         val succeededKeys = mutableListOf<BackupItemKey>()
         val conflictedKeys = mutableListOf<BackupItemKey>()
         val deletedKeys = mutableListOf<BackupItemKey>()
+        var maxSeq = 0L
 
         if (dirtyItems.isNotEmpty()) {
-            when (val upsertResult = pushDirtyItems(backupId, deviceId, dirtyItems, encryptedPayloads)) {
-                is UpsertOutcome.Success -> {
-                    succeededKeys.addAll(upsertResult.succeeded)
-                    conflictedKeys.addAll(upsertResult.conflicted)
+            when (val upsertResult = pushDirtyBackupItems(backupId, deviceId, dirtyItems, encryptedPayloads)) {
+                is PeraResult.Success -> {
+                    succeededKeys.addAll(upsertResult.data.succeededKeys)
+                    conflictedKeys.addAll(upsertResult.data.conflictedKeys)
+                    maxSeq = maxOf(maxSeq, upsertResult.data.maxSeq)
                 }
-                is UpsertOutcome.Error -> return PushSyncResult.Error(upsertResult.exception)
+                is PeraResult.Error -> return PushSyncResult.Error(upsertResult.exception)
             }
         }
 
-        for ((key, _) in pendingDeletes) {
-            when (val deleteResult = backupRepository.deleteItem(backupId, key)) {
+        if (pendingDeletes.isNotEmpty()) {
+            when (val deleteResult = deletePendingBackupItems(backupId, pendingDeletes)) {
                 is PeraResult.Success -> {
-                    syncStateRepository.removeItem(backupId, key)
-                    deletedKeys.add(key)
+                    deletedKeys.addAll(deleteResult.data.deletedKeys)
+                    maxSeq = maxOf(maxSeq, deleteResult.data.maxSeq)
                 }
                 is PeraResult.Error -> return PushSyncResult.Error(deleteResult.exception)
             }
         }
+
+        updateGlobalPointersIfNeeded(backupId, maxSeq)
 
         return PushSyncResult.Pushed(
             succeededKeys = succeededKeys,
@@ -74,55 +73,12 @@ internal class PushBackupSyncUseCase @Inject constructor(
         )
     }
 
-    private suspend fun pushDirtyItems(
-        backupId: BackupId,
-        deviceId: DeviceId,
-        dirtyItems: Map<BackupItemKey, SyncItemState>,
-        encryptedPayloads: Map<BackupItemKey, String>
-    ): UpsertOutcome {
-        val batchInputs = dirtyItems.mapNotNull { (key, itemState) ->
-            val payload = encryptedPayloads[key] ?: return@mapNotNull null
-            BatchUpsertInput(
-                key = key,
-                expectedVersion = itemState.baseVersion,
-                status = itemState.status,
-                payload = payload
-            )
+    private suspend fun updateGlobalPointersIfNeeded(backupId: BackupId, maxSeq: Long) {
+        if (maxSeq <= 0) return
+        val currentState = syncStateRepository.getSyncState(backupId) ?: return
+        val lastKnownHash = currentState.lastKnownBackupHash ?: return
+        if (maxSeq > currentState.lastSyncedSeq) {
+            syncStateRepository.updateGlobalPointers(backupId, lastKnownHash, maxSeq)
         }
-
-        if (batchInputs.isEmpty()) return UpsertOutcome.Success(emptyList(), emptyList())
-
-        return when (val result = backupRepository.batchUpsertItems(backupId, deviceId, batchInputs)) {
-            is PeraResult.Success -> {
-                val succeeded = mutableListOf<BackupItemKey>()
-                val conflicted = mutableListOf<BackupItemKey>()
-
-                for (itemResult in result.data) {
-                    val existingItem = dirtyItems[itemResult.key] ?: continue
-                    when (val upsertResult = itemResult.result) {
-                        is UpsertItemResult.Success -> {
-                            val updated = syncItemStateMapper.mapFromPushSuccess(existingItem, upsertResult.newVersion)
-                            syncStateRepository.updateItemState(backupId, itemResult.key, updated)
-                            succeeded.add(itemResult.key)
-                        }
-                        is UpsertItemResult.Conflict -> {
-                            conflicted.add(itemResult.key)
-                        }
-                    }
-                }
-
-                UpsertOutcome.Success(succeeded, conflicted)
-            }
-            is PeraResult.Error -> UpsertOutcome.Error(result.exception)
-        }
-    }
-
-    private sealed interface UpsertOutcome {
-        data class Success(
-            val succeeded: List<BackupItemKey>,
-            val conflicted: List<BackupItemKey>
-        ) : UpsertOutcome
-
-        data class Error(val exception: Exception) : UpsertOutcome
     }
 }

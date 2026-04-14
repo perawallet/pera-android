@@ -37,12 +37,17 @@ internal class BackupAuthInterceptor @Inject constructor(private val requestSign
     }
 
     private fun createAuthenticatedRequest(originalRequest: Request, signedRequest: SignedRequest): Request {
-        return originalRequest.newBuilder()
+        val builder = originalRequest.newBuilder()
             .addHeader(HEADER_BACKUP_ID, signedRequest.backupId.value)
             .addHeader(HEADER_DEVICE_ID, signedRequest.deviceId.value)
             .addHeader(HEADER_NONCE, signedRequest.nonce)
             .addHeader(HEADER_SIGNATURE, signedRequest.signature)
-            .build()
+
+        if (originalRequest.body != null) {
+            builder.header(HEADER_CONTENT_TYPE, CONTENT_TYPE_JSON)
+        }
+
+        return builder.build()
     }
 
     companion object {
@@ -50,5 +55,7 @@ internal class BackupAuthInterceptor @Inject constructor(private val requestSign
         private const val HEADER_DEVICE_ID = "X-Device-Id"
         private const val HEADER_NONCE = "X-Nonce"
         private const val HEADER_SIGNATURE = "X-Signature"
+        private const val HEADER_CONTENT_TYPE = "Content-Type"
+        private const val CONTENT_TYPE_JSON = "application/json"
     }
 }

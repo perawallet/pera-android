@@ -12,6 +12,7 @@
 
 package com.algorand.backup.domain.usecase
 
+import com.algorand.backup.domain.model.BackupWebSocketEvent
 import com.algorand.backup.domain.model.Argon2idConfig
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
@@ -27,6 +28,8 @@ import com.algorand.backup.domain.model.SensitiveBytes
 import com.algorand.backup.domain.model.SyncBackupResult
 import com.algorand.backup.domain.model.SyncItemState
 import com.algorand.wallet.foundation.PeraResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharedFlow
 
 interface CreateBackup {
     suspend operator fun invoke(mnemonic: String, deviceId: DeviceId): PeraResult<CreatedBackup>
@@ -130,4 +133,16 @@ interface PreparePushPayloads {
 
 interface SyncBackup {
     suspend operator fun invoke(): SyncBackupResult
+}
+
+internal fun interface ConnectBackupWebSocket {
+    operator fun invoke(scope: CoroutineScope)
+}
+
+internal fun interface DisconnectBackupWebSocket {
+    operator fun invoke()
+}
+
+internal fun interface GetBackupWebSocketEvents {
+    operator fun invoke(): SharedFlow<BackupWebSocketEvent>
 }

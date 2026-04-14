@@ -23,6 +23,7 @@ import com.algorand.wallet.account.core.domain.usecase.AddJointAccount
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeedId
+import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
@@ -37,7 +38,8 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
     private val addNoAuthAccount: AddNoAuthAccount,
     private val addJointAccount: AddJointAccount,
     private val getHdSeedId: GetHdSeedId,
-    private val algoAccountSdk: AlgoAccountSdk
+    private val algoAccountSdk: AlgoAccountSdk,
+    private val setAccountCustomName: SetAccountCustomName
 ) : LocalBackupDataImporter {
 
     override suspend fun importSecrets(
@@ -57,6 +59,17 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
 
     override suspend fun importAddresses(payloads: List<AddressBackupPayload>) {
         for (payload in payloads) {
+            val address = payload.address
+            val customName = payload.customName
+            val existsLocally = getLocalAccount(address) != null
+
+            if (existsLocally) {
+                if (customName != null) {
+                    setAccountCustomName(address, customName)
+                }
+                continue
+            }
+
             when (payload) {
                 is AddressBackupPayload.Algo25 -> Unit
                 is AddressBackupPayload.HdSeed -> Unit
@@ -98,7 +111,6 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
     }
 
     private suspend fun importHdKeyAccount(payload: AddressBackupPayload.HdKey) {
-        if (getLocalAccount(payload.address) != null) return
         val seedId = getHdSeedId(payload.seedFirstDerivedAddress) ?: return
         // TODO: Add privateKey to AddressBackupPayload.HdKey instead of using a placeholder
         val privateKey = ByteArray(0)
@@ -118,7 +130,6 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
     }
 
     private suspend fun importLedgerBleAccount(payload: AddressBackupPayload.LedgerBle) {
-        if (getLocalAccount(payload.address) != null) return
         addLedgerBleAccount(
             address = payload.address,
             deviceMacAddress = payload.deviceMacAddress,
@@ -130,7 +141,6 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
     }
 
     private suspend fun importNoAuthAccount(payload: AddressBackupPayload.NoAuth) {
-        if (getLocalAccount(payload.address) != null) return
         addNoAuthAccount(
             address = payload.address,
             customName = payload.customName,
@@ -139,7 +149,6 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
     }
 
     private suspend fun importJointAccount(payload: AddressBackupPayload.Joint) {
-        if (getLocalAccount(payload.address) != null) return
         addJointAccount(
             address = payload.address,
             participantAddresses = payload.participantAddresses,

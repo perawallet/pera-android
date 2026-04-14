@@ -47,18 +47,15 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
     ): Map<BackupItemKey, ByteArray> {
         val payloads = mutableMapOf<BackupItemKey, ByteArray>()
 
-        val dirtyAddresses = mutableSetOf<String>()
-
         for (payload in localBackupDataProvider.getAddressPayloads()) {
             val key = BackupItemKey.accounts(payload.address)
             if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
             payloads[key] = addressBackupPayloadMapper.serialize(payload)
-            dirtyAddresses.add(payload.address)
         }
 
         for (payload in localBackupDataProvider.getSecretsPayloads()) {
-            if (payload.address !in dirtyAddresses) continue
             val key = BackupItemKey.secrets(payload.address)
+            if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
             payloads[key] = secretsBackupPayloadMapper.serialize(payload)
         }
 
@@ -84,5 +81,4 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
             syncStateRepository.updateItemState(backupId, key, item)
         }
     }
-
 }

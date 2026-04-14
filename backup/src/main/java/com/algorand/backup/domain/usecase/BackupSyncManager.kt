@@ -1,0 +1,180 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.backup.domain.usecase
+
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import com.algorand.backup.domain.model.BackupItemChange
+import com.algorand.backup.domain.model.BackupSyncStatus
+import com.algorand.backup.domain.model.BackupWebSocketEvent
+import com.algorand.backup.domain.model.SyncBackupResult
+import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+
+@Singleton
+class BackupSyncManager internal constructor(
+    private val syncBackup: SyncBackup,
+    private val pullAndImportSync: PullAndImportSync,
+    private val hasBackup: HasBackup,
+    private val connectBackupWebSocket: ConnectBackupWebSocket,
+    private val disconnectBackupWebSocket: DisconnectBackupWebSocket,
+    private val getBackupWebSocketEvents: GetBackupWebSocketEvents,
+    private val itemObservers: Set<BackupItemObserver>,
+    private val scope: CoroutineScope
+) : DefaultLifecycleObserver {
+
+    private val _syncStatus = MutableStateFlow<BackupSyncStatus>(BackupSyncStatus.Idle)
+    val syncStatus: StateFlow<BackupSyncStatus> get() = _syncStatus
+
+    private var periodicJob: Job? = null
+    private var webSocketJob: Job? = null
+    private var observeJob: Job? = null
+    private var debouncedSyncJob: Job? = null
+
+    override fun onResume(owner: LifecycleOwner) {
+        startObservingChanges()
+        if (!hasBackup()) return
+        syncNow()
+        startPeriodicSync()
+        connectWebSocket()
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        stopPeriodicSync()
+        stopObservingChanges()
+        disconnectWebSocket()
+    }
+
+    fun enableSync() {
+        syncNow()
+        startPeriodicSync()
+        connectWebSocket()
+    }
+
+    fun syncNow() {
+        if (!hasBackup()) return
+        scope.launch { runFullSync() }
+    }
+
+    fun stop() {
+        stopPeriodicSync()
+        stopObservingChanges()
+        disconnectWebSocket()
+        debouncedSyncJob?.cancel()
+        _syncStatus.value = BackupSyncStatus.Idle
+    }
+
+    private fun startObservingChanges() {
+        stopObservingChanges()
+        val flows = itemObservers.map { observer -> observer.observeChanges(scope) }
+        observeJob = flows
+            .merge()
+            .filter { it is BackupItemChange.SyncRequired }
+            .onEach { scheduleDebouncedSync() }
+            .launchIn(scope)
+    }
+
+    private fun stopObservingChanges() {
+        observeJob?.cancel()
+        observeJob = null
+        itemObservers.forEach { it.reset() }
+    }
+
+    private fun scheduleDebouncedSync() {
+        debouncedSyncJob?.cancel()
+        debouncedSyncJob = scope.launch {
+            delay(SYNC_DEBOUNCE_MS)
+            runFullSync()
+        }
+    }
+
+    private suspend fun runFullSync() {
+        stopObservingChanges()
+        _syncStatus.value = BackupSyncStatus.Syncing
+
+        val result = syncBackup()
+
+        _syncStatus.value = when (result) {
+            is SyncBackupResult.Success -> BackupSyncStatus.UpToDate
+            is SyncBackupResult.SuccessWithPendingChanges -> BackupSyncStatus.HasLocalChanges
+            is SyncBackupResult.AlreadyRunning -> _syncStatus.value
+            is SyncBackupResult.Error -> BackupSyncStatus.Error(result.exception)
+        }
+
+        startObservingChanges()
+    }
+
+    private fun connectWebSocket() {
+        webSocketJob?.cancel()
+        webSocketJob = getBackupWebSocketEvents()
+            .onEach { event -> handleWebSocketEvent(event) }
+            .launchIn(scope)
+        connectBackupWebSocket(scope)
+    }
+
+    private fun disconnectWebSocket() {
+        disconnectBackupWebSocket()
+        webSocketJob?.cancel()
+        webSocketJob = null
+    }
+
+    private fun handleWebSocketEvent(event: BackupWebSocketEvent) {
+        when (event) {
+            is BackupWebSocketEvent.ItemsUpdated -> pullNow()
+            is BackupWebSocketEvent.Connected,
+            is BackupWebSocketEvent.Disconnected,
+            is BackupWebSocketEvent.Error,
+            is BackupWebSocketEvent.Unknown -> Unit
+        }
+    }
+
+    private fun pullNow() {
+        if (!hasBackup()) return
+        scope.launch {
+            stopObservingChanges()
+            pullAndImportSync()
+            startObservingChanges()
+        }
+    }
+
+    private fun startPeriodicSync() {
+        stopPeriodicSync()
+        periodicJob = scope.launch {
+            while (true) {
+                delay(SYNC_INTERVAL_MS)
+                if (hasBackup()) {
+                    runFullSync()
+                }
+            }
+        }
+    }
+
+    private fun stopPeriodicSync() {
+        periodicJob?.cancel()
+        periodicJob = null
+    }
+
+    private companion object {
+        const val SYNC_DEBOUNCE_MS = 1000L
+        const val SYNC_INTERVAL_MS = 5 * 60 * 1000L // 5 minutes
+    }
+}

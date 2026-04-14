@@ -67,9 +67,17 @@ internal class DefaultBackupRepository @Inject constructor(
     override suspend fun getManifest(backupId: BackupId): PeraResult<BackupManifest> {
         return request {
             backupApiService.getManifest(backupId.value)
-        }.map { response ->
-            manifestMapper.toDomainModel(response) ?: throw IllegalStateException("Failed to parse manifest")
-        }
+        }.use(
+            onSuccess = { response ->
+                val manifest = manifestMapper.toDomainModel(response)
+                if (manifest != null) {
+                    PeraResult.Success(manifest)
+                } else {
+                    PeraResult.Error(IllegalStateException("Failed to parse manifest"))
+                }
+            },
+            onFailed = { exception, code -> PeraResult.Error(exception, code) }
+        )
     }
 
     override suspend fun getDeltas(

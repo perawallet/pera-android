@@ -33,8 +33,10 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.retrofit)
+    implementation(libs.logging.interceptor)
     implementation(libs.converter.gson)
     implementation(libs.dagger.hilt.android)
+    implementation(libs.lifecycle.common.java8)
 
     ksp(libs.dagger.hilt.compiler)
     ksp(libs.androidx.hilt.compiler)

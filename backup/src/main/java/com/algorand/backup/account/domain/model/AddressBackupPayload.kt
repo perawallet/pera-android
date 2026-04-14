@@ -15,8 +15,11 @@ package com.algorand.backup.account.domain.model
 sealed interface AddressBackupPayload {
 
     val address: String
+    val customName: String?
 
-    data class HdSeed(override val address: String) : AddressBackupPayload
+    data class HdSeed(override val address: String) : AddressBackupPayload {
+        override val customName: String? get() = null
+    }
 
     data class HdKey(
         override val address: String,
@@ -26,12 +29,12 @@ sealed interface AddressBackupPayload {
         val change: Int,
         val keyIndex: Int,
         val derivationType: Int,
-        val customName: String?
+        override val customName: String?
     ) : AddressBackupPayload
 
     data class Algo25(
         override val address: String,
-        val customName: String?
+        override val customName: String?
     ) : AddressBackupPayload
 
     data class LedgerBle(
@@ -39,12 +42,12 @@ sealed interface AddressBackupPayload {
         val deviceMacAddress: String,
         val bluetoothName: String?,
         val indexInLedger: Int,
-        val customName: String?
+        override val customName: String?
     ) : AddressBackupPayload
 
     data class NoAuth(
         override val address: String,
-        val customName: String?
+        override val customName: String?
     ) : AddressBackupPayload
 
     data class Joint(
@@ -52,6 +55,6 @@ sealed interface AddressBackupPayload {
         val participantAddresses: List<String>,
         val threshold: Int,
         val version: Int,
-        val customName: String?
+        override val customName: String?
     ) : AddressBackupPayload
 }

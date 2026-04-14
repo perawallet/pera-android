@@ -13,36 +13,44 @@
 package com.algorand.android.ui.swap.usecase
 
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Data
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.test.peraFixture
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class GetPreselectedSwapAddressUseCaseTest {
 
     private val getLastUsedSwapAddress: GetLastUsedSwapAddress = mockk()
     private val setLastUsedSwapAddress: SetLastUsedSwapAddress = mockk(relaxed = true)
-    private val getAccountLiteCacheData: GetAccountLiteCacheData = mockk()
+    private val cacheFlow = MutableStateFlow<AccountLiteCacheStatus>(AccountLiteCacheStatus.Idle)
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow = mockk {
+        every { this@mockk() } returns cacheFlow
+    }
 
     private val sut = GetPreselectedSwapAddressUseCase(
         getLastUsedSwapAddress,
-        getAccountLiteCacheData,
+        getAccountLiteCacheFlow,
         setLastUsedSwapAddress
     )
 
     @Test
     fun `EXPECT last used address WHEN exists in cache and can sign transaction`(): TestResult = runTest {
         coEvery { getLastUsedSwapAddress() } returns ALGO_25_ADDRESS
-        coEvery { getAccountLiteCacheData() } returns Data(emptyList(), ACCOUNT_LITES)
+        cacheFlow.value = Data(emptyList(), ACCOUNT_LITES)
 
         val result = sut()
 
@@ -55,7 +63,7 @@ class GetPreselectedSwapAddressUseCaseTest {
             accountLites = mapOf(WATCH_ADDRESS to WATCH_ACCOUNT_LITE, ALGO_25_ADDRESS to ALGO_25_LITE)
         )
         coEvery { getLastUsedSwapAddress() } returns null
-        coEvery { getAccountLiteCacheData() } returns accountLiteCacheData
+        cacheFlow.value = accountLiteCacheData
 
         val result = sut()
 
@@ -80,7 +88,7 @@ class GetPreselectedSwapAddressUseCaseTest {
             )
         )
         coEvery { getLastUsedSwapAddress() } returns ALGO_25_ADDRESS
-        coEvery { getAccountLiteCacheData() } returns accountLiteCacheData
+        cacheFlow.value = accountLiteCacheData
 
         val result = sut()
 
@@ -88,15 +96,16 @@ class GetPreselectedSwapAddressUseCaseTest {
     }
 
     @Test
-    fun `EXPECT last used address to be updated WHEN cache is not valid and there is valid address`(): TestResult = runTest {
-        coEvery { getLastUsedSwapAddress() } returns "INVALID_ADDRESS"
-        coEvery { getAccountLiteCacheData() } returns Data(emptyList(), ACCOUNT_LITES)
+    fun `EXPECT last used address to be updated WHEN cache is not valid and there is valid address`(): TestResult =
+        runTest {
+            coEvery { getLastUsedSwapAddress() } returns "INVALID_ADDRESS"
+            cacheFlow.value = Data(emptyList(), ACCOUNT_LITES)
 
-        val result = sut()
+            val result = sut()
 
-        assertEquals(ALGO_25_ADDRESS, result)
-        coVerify { setLastUsedSwapAddress(ALGO_25_ADDRESS) }
-    }
+            assertEquals(ALGO_25_ADDRESS, result)
+            coVerify { setLastUsedSwapAddress(ALGO_25_ADDRESS) }
+        }
 
     @Test
     fun `EXPECT null WHEN no valid address exists`(): TestResult = runTest {
@@ -104,11 +113,47 @@ class GetPreselectedSwapAddressUseCaseTest {
             accountLites = mapOf(WATCH_ADDRESS to WATCH_ACCOUNT_LITE)
         )
         coEvery { getLastUsedSwapAddress() } returns null
-        coEvery { getAccountLiteCacheData() } returns accountLiteCacheData
+        cacheFlow.value = accountLiteCacheData
 
         val result = sut()
 
         assertEquals(null, result)
+    }
+
+    @Test
+    fun `EXPECT suspend WHEN cache is idle THEN return address after data emitted`(): TestResult = runTest {
+        coEvery { getLastUsedSwapAddress() } returns ALGO_25_ADDRESS
+        cacheFlow.value = AccountLiteCacheStatus.Idle
+
+        val deferred = async { sut() }
+
+        cacheFlow.value = Data(emptyList(), ACCOUNT_LITES)
+        assertFalse(deferred.isCompleted)
+        assertEquals(ALGO_25_ADDRESS, deferred.await())
+    }
+
+    @Test
+    fun `EXPECT suspend WHEN cache is loading THEN return address after data emitted`(): TestResult = runTest {
+        coEvery { getLastUsedSwapAddress() } returns ALGO_25_ADDRESS
+        cacheFlow.value = AccountLiteCacheStatus.Loading
+
+        val deferred = async { sut() }
+
+        cacheFlow.value = Data(emptyList(), ACCOUNT_LITES)
+        assertFalse(deferred.isCompleted)
+        assertEquals(ALGO_25_ADDRESS, deferred.await())
+    }
+
+    @Test
+    fun `EXPECT null WHEN cache transitions from loading to empty local accounts`(): TestResult = runTest {
+        coEvery { getLastUsedSwapAddress() } returns null
+        cacheFlow.value = AccountLiteCacheStatus.Loading
+
+        val deferred = async { sut() }
+
+        cacheFlow.value = AccountLiteCacheStatus.EmptyLocalAccounts
+        assertFalse(deferred.isCompleted)
+        assertEquals(null, deferred.await())
     }
 
     private companion object {

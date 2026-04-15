@@ -10,11 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.model
+package com.algorand.android.ui.register.selectwallet.di
 
-data class HdWalletSummary(
-    val seedId: Int,
-    val accountCount: Int,
-    val maxAccountIndex: Int,
-    val addresses: List<String>
-)
+import com.algorand.android.ui.register.selectwallet.GetHdWalletTotalValue
+import com.algorand.android.ui.register.selectwallet.GetHdWalletTotalValueUseCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal object HdWalletSelectionModule {
+
+    @Provides
+    fun provideGetHdWalletTotalValue(useCase: GetHdWalletTotalValueUseCase): GetHdWalletTotalValue = useCase
+}

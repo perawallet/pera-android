@@ -10,19 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.model
+package com.algorand.android.ui.register.selectwallet
 
-import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
 import com.algorand.wallet.account.local.domain.model.HdWalletSummary
-import javax.inject.Inject
 
-internal class HdWalletSummaryMapperImpl @Inject constructor() : HdWalletSummaryMapper {
-    override fun invoke(entity: HdKeyEntity, addresses: List<String>): HdWalletSummary {
-        return HdWalletSummary(
-            seedId = entity.seedId,
-            accountCount = addresses.size,
-            maxAccountIndex = entity.account,
-            addresses = addresses
-        )
-    }
+fun interface GetHdWalletTotalValue {
+    suspend operator fun invoke(summary: HdWalletSummary): Pair<String, String>
 }

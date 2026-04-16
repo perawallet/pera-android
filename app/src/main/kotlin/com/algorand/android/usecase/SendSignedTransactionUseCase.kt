@@ -15,7 +15,7 @@ package com.algorand.android.usecase
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.SignedTransactionDetail.AssetOperation.AssetAddition
 import com.algorand.android.models.SignedTransactionDetail.Send
-import com.algorand.android.models.TrackTransactionRequest
+
 import com.algorand.android.modules.transaction.confirmation.domain.usecase.TransactionConfirmationUseCase
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.repository.TransactionsRepository
@@ -100,7 +100,6 @@ class SendSignedTransactionUseCase @Inject constructor(
         txnId: String?
     ): DataResource<String> {
         txnId?.let { transactionId ->
-            transactionsRepository.postTrackTransaction(TrackTransactionRequest(transactionId))
             if (shouldLogTransaction && signedTransactionDetail is Send) {
                 logTransactionEvent(signedTransactionDetail, transactionId)
             }

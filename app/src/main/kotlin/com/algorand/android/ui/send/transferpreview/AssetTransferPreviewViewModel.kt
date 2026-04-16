@@ -126,7 +126,12 @@ class AssetTransferPreviewViewModel @Inject constructor(
                                 )
                             } else {
                                 _sendAlgoResponseFlow.emit(
-                                    Event(GlobalWarning(R.string.error, AnnotatedString(R.string.an_error_occurred)))
+                                    Event(
+                                        GlobalWarning(
+                                            R.string.error,
+                                            AnnotatedString(R.string.send_transaction_failed)
+                                        )
+                                    )
                                 )
                             }
                         }

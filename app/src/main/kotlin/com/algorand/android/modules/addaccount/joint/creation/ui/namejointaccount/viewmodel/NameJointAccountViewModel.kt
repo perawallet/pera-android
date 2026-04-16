@@ -89,13 +89,13 @@ class NameJointAccountViewModel @Inject constructor(
         val accountName = (currentState as? ViewState.Idle)?.accountName ?: return
         val trimmedName = accountName.trim()
         if (!isValidAccountName(trimmedName)) {
-            emitError(R.string.an_error_occurred)
+            emitError(R.string.joint_account_name_required)
             return
         }
 
         val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
         if (deviceId.isNullOrBlank()) {
-            emitError(R.string.an_error_occurred)
+            emitError(R.string.joint_account_device_not_registered)
             return
         }
 
@@ -128,7 +128,7 @@ class NameJointAccountViewModel @Inject constructor(
         return when (exception) {
             is JointAccountValidationException -> R.string.joint_account_validation_insufficient_participants
             is IOException -> R.string.the_internet_connection
-            else -> R.string.an_error_occurred
+            else -> R.string.joint_account_create_failed
         }
     }
 
@@ -143,7 +143,7 @@ class NameJointAccountViewModel @Inject constructor(
     ) {
         if (jointAccountAddress == null) {
             revertToIdle()
-            emitError(R.string.an_error_occurred)
+            emitError(R.string.joint_account_create_failed)
             return
         }
 
@@ -177,7 +177,7 @@ class NameJointAccountViewModel @Inject constructor(
             eventDelegate.sendEvent(ViewEvent.AccountCreatedSuccessfully)
         } else {
             revertToIdle()
-            emitError(R.string.an_error_occurred)
+            emitError(R.string.joint_account_save_failed)
         }
     }
 

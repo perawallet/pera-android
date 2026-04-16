@@ -45,12 +45,12 @@ sealed class TransactionManagerResult {
 
             data class Defined(
                 val description: AnnotatedString,
-                @param:StringRes override val titleResId: Int = R.string.error_default_title
+                @param:StringRes override val titleResId: Int = R.string.error
             ) : GlobalWarningError()
 
             data class Api(
                 val errorMessage: String,
-                @param:StringRes override val titleResId: Int = R.string.error_default_title
+                @param:StringRes override val titleResId: Int = R.string.error
             ) : GlobalWarningError()
 
             data class MinBalanceError(

@@ -14,8 +14,10 @@ package com.algorand.android.utils
 
 import androidx.lifecycle.SavedStateHandle
 
-fun <T> SavedStateHandle.getOrThrow(argKey: String, exception: Throwable = IllegalArgumentException()): T {
-    // TODO add detailed message here to find out with fragment causes the crash
+fun <T> SavedStateHandle.getOrThrow(
+    argKey: String,
+    exception: Throwable = IllegalArgumentException("Required argument '$argKey' is missing from SavedStateHandle")
+): T {
     return get(argKey) ?: throw exception
 }
 

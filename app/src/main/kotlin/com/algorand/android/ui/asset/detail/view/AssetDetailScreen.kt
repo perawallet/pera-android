@@ -162,7 +162,7 @@ private fun ErrorState(onRetryClick: () -> Unit) {
             modifier = Modifier.padding(24.dp),
             iconResId = null,
             titleResId = null,
-            descriptionResId = R.string.an_error_occurred,
+            descriptionResId = R.string.asset_info_load_failed,
             buttonTextResId = R.string.retry,
             onClick = onRetryClick
         )

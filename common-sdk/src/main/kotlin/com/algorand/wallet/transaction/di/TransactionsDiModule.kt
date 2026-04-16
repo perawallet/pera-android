@@ -14,7 +14,7 @@ package com.algorand.wallet.transaction.di
 
 import com.algorand.wallet.transaction.data.repository.DefaultTransactionRepository
 import com.algorand.wallet.transaction.data.service.TransactionsAlgodApiService
-import com.algorand.wallet.transaction.data.service.TransactionsMobileApiService
+
 import com.algorand.wallet.transaction.domain.repository.TransactionRepository
 import com.algorand.wallet.transaction.domain.usecase.SendSignedTransaction
 import com.algorand.wallet.transaction.domain.usecase.SendSignedTransactionUseCase
@@ -29,14 +29,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object TransactionsDiModule {
-
-    @Provides
-    @Singleton
-    fun provideTransactionMobileApiService(
-        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
-    ): TransactionsMobileApiService {
-        return retrofit.create(TransactionsMobileApiService::class.java)
-    }
 
     @Provides
     @Singleton

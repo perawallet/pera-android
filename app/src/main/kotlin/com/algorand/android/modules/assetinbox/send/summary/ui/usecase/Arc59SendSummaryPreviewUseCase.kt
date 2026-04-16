@@ -61,7 +61,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
     ): Flow<Arc59SendSummaryPreview> = flow {
         val assetDetail = getAsset(assetId)
         if (assetDetail == null) {
-            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occurred))
+            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.arc59_send_summary_not_loaded))
             val newPreview = preview.copy(isLoading = false, showError = errorEvent)
             emit(newPreview)
             return@flow
@@ -84,7 +84,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         preview: Arc59SendSummaryPreview
     ): Flow<Arc59SendSummaryPreview> = flow {
         if (preview.summary == null) {
-            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occurred))
+            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.arc59_send_summary_not_loaded))
             emit(preview.copy(isLoading = false, showError = errorEvent))
         } else {
             if (!hasAccountEnoughAlgo(args.senderPublicKey, preview.summary.totalProtocolAndMbrFee)) {
@@ -124,7 +124,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
     ): Flow<Arc59SendSummaryPreview> = channelFlow {
         val safeSignedTransactions = signedTransactions.filterIsInstance<SignedTransactionDetail>()
         if (safeSignedTransactions.isEmpty()) {
-            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occurred))
+            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.arc59_send_summary_not_loaded))
             send(preview.copy(isLoading = false, showError = errorEvent))
             return@channelFlow
         }

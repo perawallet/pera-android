@@ -127,7 +127,7 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
 
     private fun displayError(errorType: DisplayError.ErrorType) {
         val message = when (errorType) {
-            DisplayError.ErrorType.Generic -> getString(R.string.an_error_occurred)
+            DisplayError.ErrorType.Generic -> getString(R.string.swap_generic_error)
             is DisplayError.ErrorType.Api -> errorType.message
             is DisplayError.ErrorType.Local -> context?.getXmlStyledString(errorType.description)?.toString().orEmpty()
         }

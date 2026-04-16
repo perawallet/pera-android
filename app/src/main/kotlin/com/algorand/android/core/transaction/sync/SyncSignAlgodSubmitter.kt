@@ -18,6 +18,7 @@ import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.flatten
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.logger.PeraLogger
 import com.algorand.wallet.swap.domain.model.SignedSwapTransaction
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason
 import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
@@ -49,10 +50,14 @@ internal class SyncSignAlgodSubmitter @Inject constructor(
         session: SyncSignSession,
         assembledGroups: List<List<ByteArray>>
     ): String? {
-        if (session.swapId == SwapServiceMetadata.INVALID_SWAP_ID) return null
+        if (session.swapId == SwapServiceMetadata.INVALID_SWAP_ID) {
+            PeraLogger.e(TAG, "submitSwap: INVALID_SWAP_ID")
+            return null
+        }
 
         val signedSwapTxns = buildSignedSwapTransactions(session, assembledGroups)
         if (signedSwapTxns == null) {
+            PeraLogger.e(TAG, "submitSwap: buildSignedSwapTransactions returned null, marking swap failed")
             setSwapStatusFailed(session.swapId, SwapStatusFailureReason.OTHER)
             return null
         }
@@ -75,18 +80,42 @@ internal class SyncSignAlgodSubmitter @Inject constructor(
         val slotBytesPerGroup = session.swapPreSignedBytesPerGroup
         val types = session.swapTxnTypes
 
-        if (types.isEmpty() || unsignedCounts.size != types.size) return null
-        if (allAssembled.size != unsignedCounts.sum()) return null
+        if (types.isEmpty() || unsignedCounts.size != types.size) {
+            PeraLogger.e(
+                TAG, "buildSignedSwapTransactions: FAIL types/counts mismatch " +
+                        "types.size=${types.size} unsignedCounts.size=${unsignedCounts.size}"
+            )
+            return null
+        }
+        if (allAssembled.size != unsignedCounts.sum()) {
+            PeraLogger.e(
+                TAG, "buildSignedSwapTransactions: FAIL assembled count mismatch " +
+                        "allAssembled=${allAssembled.size} unsignedCounts.sum=${unsignedCounts.sum()}"
+            )
+            return null
+        }
 
         var offset = 0
         return types.mapIndexed { index, typeName ->
-            val type = parseSwapTxnType(typeName) ?: return null
+            val type = parseSwapTxnType(typeName)
+            if (type == null) {
+                PeraLogger.e(TAG, "buildSignedSwapTransactions: FAIL unknown txnType=$typeName")
+                return null
+            }
             val count = unsignedCounts[index]
             val assembledSlice = allAssembled.subList(offset, offset + count)
             offset += count
 
             val slots = slotBytesPerGroup.getOrNull(index).orEmpty()
-            val interleaved = interleaveWithAssembled(slots, assembledSlice) ?: return null
+            val interleaved = interleaveWithAssembled(slots, assembledSlice)
+            if (interleaved == null) {
+                PeraLogger.e(
+                    TAG, "buildSignedSwapTransactions: FAIL interleave at index=$index " +
+                            "slots.size=${slots.size} assembledSlice.size=${assembledSlice.size} " +
+                            "nullSlots=${slots.count { it == null }}"
+                )
+                return null
+            }
 
             SignedSwapTransaction(
                 signedTransaction = SignedTransaction(interleaved.flatten()),
@@ -138,5 +167,9 @@ internal class SyncSignAlgodSubmitter @Inject constructor(
             }
         }
         return txnId
+    }
+
+    companion object {
+        private const val TAG = "SyncSignAlgodSubmitter"
     }
 }

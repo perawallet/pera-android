@@ -13,10 +13,8 @@
 package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
 
 import android.util.Base64
-import com.algorand.algosdk.transaction.SignedTransaction
-import com.algorand.algosdk.util.Encoder
+import app.perawallet.gomobilesdk.sdk.Sdk
 import com.algorand.android.utils.decodeBase64
-import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePack
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
@@ -29,6 +27,7 @@ import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInp
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import javax.inject.Inject
 
 data class SignAndSubmitResult(
@@ -51,7 +50,8 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val getHdSeed: GetHdSeed,
     private val signHdKeyTransaction: SignHdKeyTransaction,
-    private val parseTransactionMessagePack: ParseTransactionMessagePack
+    private val parseTransactionMessagePack: ParseTransactionMessagePack,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) : SignAndSubmitJointAccountSignature {
 
     override suspend fun invoke(
@@ -68,7 +68,7 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
             val groupedSignatures = signAllTransactionGroups(
                 rawTransactionGroups, participantAddress, jointAccountAddress
             )
-            if (groupedSignatures == null) {
+            if (groupedSignatures == null || !hasAnySignature(groupedSignatures)) {
                 continue
             }
             signatureInputs.add(
@@ -106,18 +106,32 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
         participantAddress: String,
         jointAccountAddress: String?
     ): List<String?>? {
-        val localAccount = getLocalAccount(participantAddress) ?: return null
+        val signerAddress = getAccountRekeyAdminAddress(participantAddress) ?: participantAddress
+        val localAccount = getLocalAccount(signerAddress) ?: return null
         return rawTransactions.map { rawTransaction ->
             val transactionBytes = rawTransaction.decodeBase64() ?: return null
-            if (jointAccountAddress != null && !isJointAccountTransaction(transactionBytes, jointAccountAddress)) {
+            if (jointAccountAddress != null &&
+                !isJointAccountTransaction(transactionBytes, jointAccountAddress)
+            ) {
                 return@map null
             }
-            signTransaction(transactionBytes, localAccount)?.let { Base64.encodeToString(it, Base64.NO_WRAP) }
+            signTransaction(transactionBytes, localAccount)
+                ?.let { Base64.encodeToString(it, Base64.NO_WRAP) }
         }
     }
 
-    private fun isJointAccountTransaction(transactionBytes: ByteArray, jointAccountAddress: String): Boolean {
-        return parseTransactionMessagePack(transactionBytes)?.senderAddress?.decodedAddress == jointAccountAddress
+    private suspend fun isJointAccountTransaction(
+        transactionBytes: ByteArray,
+        jointAccountAddress: String
+    ): Boolean {
+        val senderAddress = parseTransactionMessagePack(transactionBytes)
+            ?.senderAddress?.decodedAddress ?: return false
+        if (senderAddress == jointAccountAddress) return true
+        return getAccountRekeyAdminAddress(senderAddress) == jointAccountAddress
+    }
+
+    private fun hasAnySignature(groupedSignatures: List<List<String?>>): Boolean {
+        return groupedSignatures.any { group -> group.any { it != null } }
     }
 
     private suspend fun signTransaction(transactionBytes: ByteArray, localAccount: LocalAccount): ByteArray? {
@@ -125,8 +139,7 @@ internal class SignAndSubmitJointAccountSignatureUseCase @Inject constructor(
             is LocalAccount.Algo25 -> {
                 val secretKey = getAlgo25SecretKey(localAccount.algoAddress) ?: return null
                 try {
-                    val signed = transactionBytes.signTx(secretKey).takeIf { it.isNotEmpty() } ?: return null
-                    Encoder.decodeFromMsgPack(signed, SignedTransaction::class.java).sig?.bytes
+                    Sdk.signTransactionReturnSignature(secretKey, transactionBytes)
                 } finally {
                     secretKey.clearFromMemory()
                 }

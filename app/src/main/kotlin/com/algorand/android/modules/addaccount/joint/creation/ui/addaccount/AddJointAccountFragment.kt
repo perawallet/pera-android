@@ -82,7 +82,7 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
                     }
 
                     is AddJointAccountViewModel.ViewEvent.ShowError -> {
-                        showGlobalError(getString(R.string.an_error_occurred))
+                        showGlobalError(getString(event.messageResId))
                     }
 
                     is AddJointAccountViewModel.ViewEvent.ShowJointAccountError -> {

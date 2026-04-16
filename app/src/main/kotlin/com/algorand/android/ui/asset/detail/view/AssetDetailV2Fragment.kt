@@ -86,7 +86,7 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
     private val csvViewEventCollector: suspend (CsvViewModel.ViewEvent) -> Unit = {
         when (it) {
             is CsvViewModel.ViewEvent.ShareFile -> shareFile(it.file, CSV_FILE_MIME_TYPE, shareResultLauncher)
-            CsvViewModel.ViewEvent.ShowErrorMessage -> showGlobalError(getString(R.string.an_error_occurred))
+            CsvViewModel.ViewEvent.ShowErrorMessage -> showGlobalError(getString(R.string.csv_export_failed))
         }
     }
 

@@ -50,34 +50,35 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
         val formattedIntegerLength = formattedInteger.length
         val groupingSeparator = symbols.groupingSeparator
 
+        val digitPositions = IntArray(integerPartLength + 1)
+        var digitIndex = 0
+        for (i in formattedInteger.indices) {
+            if (formattedInteger[i] != groupingSeparator) {
+                digitPositions[digitIndex] = i
+                digitIndex++
+            }
+        }
+        digitPositions[integerPartLength] = formattedIntegerLength
+
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
                 if (offset <= 0) return 0
                 if (offset >= original.length) return result.length
-                if (offset < integerPartLength) {
-                    var digitsSeen = 0
-                    for (i in formattedInteger.indices) {
-                        if (formattedInteger[i] != groupingSeparator) {
-                            if (digitsSeen == offset) return i
-                            digitsSeen++
-                        }
-                    }
-                    return formattedIntegerLength
-                }
-                return (formattedIntegerLength + (offset - integerPartLength)).coerceAtMost(result.length)
+                if (offset <= integerPartLength) return digitPositions[offset]
+                return formattedIntegerLength + (offset - integerPartLength)
             }
 
             override fun transformedToOriginal(offset: Int): Int {
                 if (offset <= 0) return 0
                 if (offset >= result.length) return original.length
                 if (offset <= formattedIntegerLength) {
-                    var separatorCount = 0
-                    for (i in 0 until offset) {
-                        if (formattedInteger[i] == groupingSeparator) {
-                            separatorCount++
-                        }
+                    var lo = 0
+                    var hi = integerPartLength
+                    while (lo < hi) {
+                        val mid = (lo + hi + 1) / 2
+                        if (digitPositions[mid] <= offset) lo = mid else hi = mid - 1
                     }
-                    return offset - separatorCount
+                    return lo
                 }
                 return integerPartLength + (offset - formattedIntegerLength)
             }

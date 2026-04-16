@@ -18,5 +18,4 @@ import com.algorand.wallet.transaction.domain.model.TransactionId
 internal interface TransactionRepository {
     suspend fun sendSignedTransaction(signedTransaction: ByteArray): PeraResult<TransactionId>
     suspend fun waitForConfirmation(txnId: TransactionId, maxRoundToWait: Int): PeraResult<TransactionId>
-    suspend fun trackTransaction(txnId: TransactionId)
 }

@@ -202,7 +202,7 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
     private fun showTransactionCancelledError(result: TransactionCancelled) {
         dismissLedgerDialog()
         val annotatedString = (result.error as? Error.Defined)?.description
-            ?: AnnotatedString(R.string.an_error_occurred)
+            ?: AnnotatedString(R.string.key_reg_signing_failed)
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }

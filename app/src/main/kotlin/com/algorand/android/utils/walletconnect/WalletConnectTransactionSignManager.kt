@@ -71,6 +71,15 @@ class WalletConnectTransactionSignManager @Inject constructor(
     private val jointAccountTransactionSignHelper get() = syncSignDependencies.jointAccountTransactionSignHelper
     private val syncSignRequestPollingManager get() = syncSignDependencies.syncSignRequestPollingManager
     private val applicationContext get() = syncSignDependencies.applicationContext
+    private val jointAccountLedgerSignDelegate get() = syncSignDependencies.jointAccountLedgerSignDelegate
+
+    private var pendingJointLedgerAddress: String? = null
+
+    private val jointLedgerScanCallback by lazy {
+        jointAccountLedgerSignDelegate.createScanCallback { _ ->
+            postJointSignError(R.string.joint_account_ledger_signing_failed)
+        }
+    }
 
     val signResultLiveData: LiveData<WalletConnectSignResult>
         get() = _signResultLiveData
@@ -139,10 +148,44 @@ class WalletConnectTransactionSignManager @Inject constructor(
                     ).apply(::postResult)
                 }
 
-                is SignedTransactionResult -> signHelper.cacheDequeuedItem(transactionByteArray)
-                is LedgerErrorResult -> postResult(Api(errorMessage))
-                is AppErrorResult -> postResult(Defined(AnnotatedString(errorMessageId), titleResId))
-                is OperationCancelledResult -> postResult(TransactionCancelledByLedger())
+                is SignedTransactionResult -> {
+                    if (jointAccountLedgerSignDelegate.hasPendingSign) {
+                        currentScope.launch {
+                            val syncResult = jointAccountLedgerSignDelegate.handleSignResultForSync(
+                                signedTransactionData = transactionByteArray,
+                                scanCallback = jointLedgerScanCallback,
+                                onError = { postJointSignError(R.string.joint_account_ledger_signing_failed) }
+                            )
+                            if (syncResult != null) {
+                                handleJointLedgerSyncCompletion(syncResult)
+                            }
+                        }
+                    } else {
+                        signHelper.cacheDequeuedItem(transactionByteArray)
+                    }
+                }
+
+                is LedgerErrorResult -> {
+                    if (hasActiveLedgerOperation()) {
+                        clearPendingJointLedgerState()
+                        postResult(Api(errorMessage))
+                    }
+                }
+
+                is AppErrorResult -> {
+                    if (hasActiveLedgerOperation()) {
+                        clearPendingJointLedgerState()
+                        postResult(Defined(AnnotatedString(errorMessageId), titleResId))
+                    }
+                }
+
+                is OperationCancelledResult -> {
+                    if (hasActiveLedgerOperation()) {
+                        clearPendingJointLedgerState()
+                        postResult(TransactionCancelledByLedger())
+                    }
+                }
+
                 else -> {
                     sendErrorLog("Unhandled else case in WalletConnectSignManager.operationManagerCollectorAction")
                 }
@@ -227,25 +270,21 @@ class WalletConnectTransactionSignManager @Inject constructor(
         )
         when (result) {
             is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
-                val deviceId = syncSignDependencies.getSelectedNodeDeviceId()
-                if (deviceId == null) {
-                    return postJointSignError()
-                }
-                val signRequestId = result.signRequestId
-                startSyncSignForegroundService(
-                    deviceId = deviceId,
-                    signRequestId = signRequestId
+                handleWcSyncPending(result, jointAddress)
+            }
+
+            is JointAccountTransactionSignHelper.JointSignResult.SyncNeedsLedgerSign -> {
+                pendingJointLedgerAddress = jointAddress
+                jointAccountLedgerSignDelegate.startLedgerSign(
+                    proposal = result.pendingProposal,
+                    scanCallback = jointLedgerScanCallback,
+                    coroutineScope = currentScope,
+                    operationManager = ledgerBleOperationManager,
+                    onError = {
+                        pendingJointLedgerAddress = null
+                        postJointSignError(R.string.joint_account_ledger_signing_failed)
+                    }
                 )
-                val threshold = (getLocalAccount(jointAddress) as? LocalAccount.Joint)?.threshold ?: 2
-                postResult(
-                    WalletConnectSignResult.WaitingForJointSignatures(
-                        signRequestId = signRequestId,
-                        signedCount = 1,
-                        threshold = threshold
-                    )
-                )
-                // JointAccountSyncSignForegroundService completes the WC request when signatures are ready
-                // (processWalletConnectSignResult); no in-manager result collection is required here.
             }
 
             else -> {
@@ -254,10 +293,58 @@ class WalletConnectTransactionSignManager @Inject constructor(
         }
     }
 
-    private fun postJointSignError() {
+    private suspend fun handleWcSyncPending(
+        result: JointAccountTransactionSignHelper.JointSignResult.SyncPending,
+        jointAddress: String
+    ) {
+        val deviceId = syncSignDependencies.getSelectedNodeDeviceId()
+        if (deviceId == null) {
+            return postJointSignError()
+        }
+        val signRequestId = result.signRequestId
+        startSyncSignForegroundService(
+            deviceId = deviceId,
+            signRequestId = signRequestId
+        )
+        val threshold = (getLocalAccount(jointAddress) as? LocalAccount.Joint)?.threshold ?: 2
+        postResult(
+            WalletConnectSignResult.WaitingForJointSignatures(
+                signRequestId = signRequestId,
+                signedCount = 1,
+                threshold = threshold
+            )
+        )
+    }
+
+    private fun hasActiveLedgerOperation(): Boolean {
+        return signHelper.currentItem != null || jointAccountLedgerSignDelegate.hasPendingSign
+    }
+
+    private fun clearPendingJointLedgerState() {
+        if (jointAccountLedgerSignDelegate.hasPendingSign) {
+            jointAccountLedgerSignDelegate.clear()
+            pendingJointLedgerAddress = null
+        }
+    }
+
+    private suspend fun handleJointLedgerSyncCompletion(
+        syncResult: JointAccountTransactionSignHelper.JointSignResult
+    ) {
+        val jointAddress = pendingJointLedgerAddress
+        pendingJointLedgerAddress = null
+        when (syncResult) {
+            is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
+                if (jointAddress == null) return postJointSignError()
+                handleWcSyncPending(syncResult, jointAddress)
+            }
+            else -> postJointSignError(R.string.joint_account_proposal_failed)
+        }
+    }
+
+    private fun postJointSignError(messageResId: Int = R.string.transaction_signing_failed) {
         signHelper.clearCachedData()
         postResult(
-            WalletConnectSignResult.Error.Defined(AnnotatedString(R.string.an_error_occurred))
+            WalletConnectSignResult.Error.Defined(AnnotatedString(messageResId))
         )
     }
 
@@ -385,6 +472,8 @@ class WalletConnectTransactionSignManager @Inject constructor(
         syncSignRequestPollingManager.stopPolling()
         ledgerBleSearchManager.stop()
         signHelper.clearCachedData()
+        jointAccountLedgerSignDelegate.clear()
+        pendingJointLedgerAddress = null
         transaction = null
     }
 

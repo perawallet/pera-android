@@ -104,7 +104,7 @@ internal class NameJointAccountViewModelTest {
         advanceUntilIdle()
         job.cancel()
 
-        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.an_error_occurred })
+        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.joint_account_device_not_registered })
         coVerify(exactly = 0) { createJointAccount(any(), any(), any(), any()) }
     }
 
@@ -124,7 +124,7 @@ internal class NameJointAccountViewModelTest {
 
         val state = stateDelegate.state.value
         assertTrue(state is ViewState.Idle)
-        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.an_error_occurred })
+        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.joint_account_name_required })
     }
 
     @Test
@@ -236,7 +236,7 @@ internal class NameJointAccountViewModelTest {
 
         val state = stateDelegate.state.value
         assertTrue(state is ViewState.Idle)
-        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.an_error_occurred })
+        assertTrue(events.any { it is ViewEvent.ShowError && it.messageResId == R.string.joint_account_create_failed })
     }
 
     @Test

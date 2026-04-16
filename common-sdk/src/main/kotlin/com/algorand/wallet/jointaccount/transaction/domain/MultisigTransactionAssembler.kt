@@ -34,7 +34,8 @@ class MultisigTransactionAssembler @Inject constructor() {
         participantAddresses: List<String>,
         version: Int,
         threshold: Int,
-        responses: List<ParticipantSignature>
+        responses: List<ParticipantSignature>,
+        jointAccountAddress: String? = null
     ): PeraResult<List<ByteArray>> {
         if (rawTransactionsBase64.isEmpty()) return PeraResult.Success(emptyList())
         val signedResponses = responses.filter { it.type == SignRequestResponseType.SIGNED }
@@ -42,6 +43,7 @@ class MultisigTransactionAssembler @Inject constructor() {
         val publicKeysByAddress = resolvePublicKeys(participantAddresses) ?: return PeraResult.Error(
             Exception("Failed to resolve participant public keys")
         )
+        val multisigPublicKey = jointAccountAddress?.let { resolvePublicKeyBytes(it) }
         val signedList = mutableListOf<ByteArray>()
         for (txIndex in rawTransactionsBase64.indices) {
             val validSignatureCount = countValidSignaturesForTransaction(
@@ -56,6 +58,14 @@ class MultisigTransactionAssembler @Inject constructor() {
             }
             val rawTxBytes = decodeBase64(rawTransactionsBase64[txIndex])
                 ?: return PeraResult.Error(Exception("Invalid base64 raw transaction"))
+            val senderPk = extractSenderPublicKey(rawTxBytes)
+            val authAddrPk = if (multisigPublicKey != null && senderPk != null &&
+                !multisigPublicKey.contentEquals(senderPk)
+            ) {
+                multisigPublicKey
+            } else {
+                null
+            }
             val signedTxBytes = packSignedMultisigTransaction(
                 rawTxBytes = rawTxBytes,
                 participantAddresses = participantAddresses,
@@ -63,7 +73,8 @@ class MultisigTransactionAssembler @Inject constructor() {
                 signaturesByAddress = signaturesByAddress,
                 txIndex = txIndex,
                 version = version,
-                threshold = threshold
+                threshold = threshold,
+                authAddrPublicKey = authAddrPk
             ) ?: return PeraResult.Error(Exception("Failed to pack signed multisig transaction"))
             signedList.add(signedTxBytes)
         }
@@ -94,8 +105,10 @@ class MultisigTransactionAssembler @Inject constructor() {
 
     /**
      * Builds the signed multisig transaction msgpack manually.
-     * The outer map has two keys in alphabetical order: "msig" and "txn".
+     * The outer map keys are in alphabetical order: "msig", optionally "sgnr", and "txn".
      * The "txn" value is the raw transaction bytes embedded directly.
+     * The "sgnr" field is included when the transaction sender differs from the multisig
+     * address (i.e. the sender is a rekeyed account whose auth-addr is the multisig).
      */
     private fun packSignedMultisigTransaction(
         rawTxBytes: ByteArray,
@@ -104,12 +117,14 @@ class MultisigTransactionAssembler @Inject constructor() {
         signaturesByAddress: Map<String, List<String?>>,
         txIndex: Int,
         version: Int,
-        threshold: Int
+        threshold: Int,
+        authAddrPublicKey: ByteArray? = null
     ): ByteArray? {
         return runCatching {
             val outputStream = ByteArrayOutputStream()
             MessagePack.newDefaultPacker(outputStream).use { packer ->
-                packer.packMapHeader(2)
+                val fieldCount = if (authAddrPublicKey != null) 3 else 2
+                packer.packMapHeader(fieldCount)
 
                 packer.packString("msig")
                 packMultisig(
@@ -121,6 +136,12 @@ class MultisigTransactionAssembler @Inject constructor() {
                     version = version,
                     threshold = threshold
                 )
+
+                if (authAddrPublicKey != null) {
+                    packer.packString("sgnr")
+                    packer.packBinaryHeader(authAddrPublicKey.size)
+                    packer.addPayload(authAddrPublicKey)
+                }
 
                 packer.packString("txn")
                 packer.addPayload(rawTxBytes)
@@ -170,6 +191,32 @@ class MultisigTransactionAssembler @Inject constructor() {
             packer.packBinaryHeader(signature.size)
             packer.addPayload(signature)
         }
+    }
+
+    /**
+     * Extracts the 32-byte sender public key ("snd") from raw transaction msgpack bytes.
+     */
+    private fun extractSenderPublicKey(rawTxBytes: ByteArray): ByteArray? {
+        return runCatching {
+            val unpacker = MessagePack.newDefaultUnpacker(rawTxBytes)
+            val mapSize = unpacker.unpackMapHeader()
+            for (i in 0 until mapSize) {
+                val key = unpacker.unpackString()
+                if (key == "snd") {
+                    val len = unpacker.unpackBinaryHeader()
+                    val sndBytes = ByteArray(len)
+                    unpacker.readPayload(sndBytes)
+                    return sndBytes
+                } else {
+                    unpacker.skipValue()
+                }
+            }
+            null
+        }.getOrNull()
+    }
+
+    private fun resolvePublicKeyBytes(address: String): ByteArray? {
+        return runCatching { Address(address).getBytes() }.getOrNull()
     }
 
     private fun decodeBase64(str: String): ByteArray? {

@@ -30,7 +30,7 @@ interface LedgerBleObserver : ConnectionObserver, BondingObserver {
 
     fun onManagerError(
         @StringRes errorResId: Int,
-        @StringRes titleResId: Int = R.string.error_default_title
+        @StringRes titleResId: Int = R.string.error
     ) {
         // override when needed
     }

@@ -1132,12 +1132,42 @@
 
     <string name="an_error_occurred">An Error Occurred</string>
     <string name="joint_account_transaction_decode_failed">Failed to process the transaction</string>
-    <string name="joint_account_signing_failed">Failed to sign the transaction</string>
+    <string name="joint_account_proposal_failed">Failed to create the signing request. Please try again.</string>
+    <string name="joint_account_ledger_signing_failed">Failed to sign with the Ledger device. Please try again.</string>
+    <string name="joint_account_sign_request_not_found">Sign request not found. Please try again.</string>
+    <string name="joint_account_no_participants_found">No participants found. Please try again.</string>
+    <string name="joint_account_decline_failed">Failed to decline the signing request. Please try again.</string>
+    <string name="joint_account_ledger_connection_lost">Lost connection to Ledger device. Please try again.</string>
+    <string name="joint_account_create_failed">Failed to create shared account. Please try again.</string>
+    <string name="joint_account_save_failed">Failed to save shared account. Please try again.</string>
+    <string name="joint_account_device_not_registered">Device registration error. Please restart the app.</string>
+    <string name="joint_account_name_required">Please enter a name for the shared account.</string>
+    <string name="joint_account_participant_load_failed">Failed to load participant. Please try again.</string>
+    <string name="joint_account_verify_participant_failed">Could not verify participant. Please try again.</string>
     <string name="sign_request_not_available">This sign request is no longer available. It may have expired or been cancelled.</string>
+    <string name="transaction_signing_failed">Failed to sign transaction. Please try again.</string>
+    <string name="transaction_data_empty">No transaction data provided.</string>
+    <string name="wallet_connect_signing_failed">Signing request failed. Please try again.</string>
+    <string name="wallet_connect_session_extend_failed">Failed to extend WalletConnect session. Please try again.</string>
+    <string name="wallet_connect_session_load_failed">Failed to load session details. Please try again.</string>
+    <string name="swap_generic_error">Swap failed. Please try again.</string>
+    <string name="swap_details_load_failed">Failed to load swap details.</string>
+    <string name="swap_asset_load_failed">Failed to load assets for swap.</string>
+    <string name="send_transaction_failed">Failed to send transaction. Please try again.</string>
+    <string name="send_amount_error">Failed to process amount. Please try again.</string>
+    <string name="csv_export_failed">Failed to export transactions. Please try again.</string>
+    <string name="asset_info_load_failed">Failed to load asset details. Please try again.</string>
+    <string name="asset_operation_failed">Failed to complete asset operation. Please try again.</string>
+    <string name="account_create_failed">Failed to create account. Please try again.</string>
+    <string name="account_rekeyed_scan_failed">Failed to scan rekeyed accounts. Please try again.</string>
+    <string name="passphrase_load_failed">Failed to load passphrase.</string>
+    <string name="key_reg_signing_failed">Failed to sign key registration. Please try again.</string>
+    <string name="ledger_reconnect_failed">Failed to reconnect to Ledger device. Please try again.</string>
+    <string name="arc59_asset_not_found">Asset not found. Please try again.</string>
+    <string name="arc59_send_summary_not_loaded">Send summary not ready. Please try again.</string>
     <string name="error">Error</string>
     <string name="key_not_valid">Key not valid, please make sure you have the right key.</string>
     <string name="scanned_qr_is_not_valid">Scanned QR is not valid.</string>
-    <string name="error_default_title">Error</string>
     <string name="error_app_closed_title">Ledger Connection Error</string>
     <string name="error_app_closed_message">Please open the Algorand App on your ledger device.</string>
     <string name="error_permission_title">Permission Denied</string>
@@ -1152,7 +1182,7 @@
     <string name="something_went_wrong">Something went wrong</string>
     <string name="sorry_something_went">Sorry, something went wrong there.</string>
     <string name="we_couldn_t_reach">We couldn\'t reach the server, make sure you are connected to the internet</string>
-    <string name="connection_failed">Connection failed</string>
+    <string name="connection_failed">Connection Failed</string>
     <string name="we_are_sorry_but_the">We are sorry, but the dApp is not responding. Please refresh the page and try scanning a new QR Code. If the error persists, please contact the dApp.</string>
     <string name="well_this_is_unexpected">Well, this is unexpected</string>
     <string name="uh_oh_something">Uh oh, something went wrong.</string>
@@ -1164,7 +1194,7 @@
     <string name="we_couldn_t_automatically_detect">We couldn\'t automatically detect the browser you started the WalletConnect session from. Please select it to go back to <annotation replacement="peer_name">peer_name_placeholder</annotation> and finish your operation:</string>
     <string name="invalid_request_format_pera">Invalid request format: Pera Wallet is unable to parse the transaction request.</string>
     <string name="invalid_arbitrary_data_request">Invalid request format: Pera Wallet is unable to parse the arbitrary data request.</string>
-    <string name="connection_failed_upper_case">Connection Failed</string>
+
     <string name="confirmation_failed">Confirmation Failed</string>
     <string name="upload_failed">Upload Failed</string>
     <string name="unable_to_parse_file">Unable to parse the backup file: JSON formatting error.</string>

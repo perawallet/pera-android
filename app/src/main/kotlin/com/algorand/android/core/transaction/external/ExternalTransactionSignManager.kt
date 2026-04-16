@@ -77,6 +77,15 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     private val syncSignRequestPollingManager get() = syncSignDependencies.syncSignRequestPollingManager
     private val applicationContext get() = syncSignDependencies.applicationContext
     private val syncSignResultHolder get() = syncSignDependencies.syncSignResultHolder
+    private val jointAccountLedgerSignDelegate get() = syncSignDependencies.jointAccountLedgerSignDelegate
+
+    private var pendingJointLedgerAddress: String? = null
+
+    private val jointLedgerScanCallback by lazy {
+        jointAccountLedgerSignDelegate.createScanCallback { _ ->
+            postJointSyncError(R.string.joint_account_ledger_signing_failed)
+        }
+    }
 
     private val _signResultFlow = MutableStateFlow<ExternalTransactionSignResult>(NotInitialized)
     protected val signResultFlow: StateFlow<ExternalTransactionSignResult>
@@ -144,23 +153,50 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                 }
 
                 is SignedTransactionResult -> {
-                    externalTransactionQueuingHelper.currentItem?.run {
-                        onTransactionSigned(this, ledgerBleResult.transactionByteArray)
+                    if (jointAccountLedgerSignDelegate.hasPendingSign) {
+                        currentScope.launch {
+                            val syncResult = jointAccountLedgerSignDelegate.handleSignResultForSync(
+                                signedTransactionData = ledgerBleResult.transactionByteArray,
+                                scanCallback = jointLedgerScanCallback,
+                                onError = { postJointSyncError(R.string.joint_account_ledger_signing_failed) }
+                            )
+                            if (syncResult != null) {
+                                handleJointLedgerSyncCompletion(syncResult)
+                            }
+                        }
+                    } else {
+                        externalTransactionQueuingHelper.currentItem?.run {
+                            onTransactionSigned(this, ledgerBleResult.transactionByteArray)
+                        }
                     }
                 }
 
                 is LedgerErrorResult -> {
-                    postResult(ExternalTransactionSignResult.Error.Api(ledgerBleResult.errorMessage))
+                    if (hasActiveLedgerOperation()) {
+                        clearPendingJointLedgerState()
+                        postResult(ExternalTransactionSignResult.Error.Api(ledgerBleResult.errorMessage))
+                    }
                 }
 
-                is AppErrorResult -> postResult(
-                    ExternalTransactionSignResult.Error.Defined(
-                        AnnotatedString(ledgerBleResult.errorMessageId),
-                        ledgerBleResult.titleResId
-                    )
-                )
+                is AppErrorResult -> {
+                    if (hasActiveLedgerOperation()) {
+                        clearPendingJointLedgerState()
+                        postResult(
+                            ExternalTransactionSignResult.Error.Defined(
+                                AnnotatedString(ledgerBleResult.errorMessageId),
+                                ledgerBleResult.titleResId
+                            )
+                        )
+                    }
+                }
 
-                is OperationCancelledResult -> postResult(ExternalTransactionSignResult.TransactionCancelled())
+                is OperationCancelledResult -> {
+                    if (hasActiveLedgerOperation()) {
+                        clearPendingJointLedgerState()
+                        postResult(ExternalTransactionSignResult.TransactionCancelled())
+                    }
+                }
+
                 else -> {
                     val errorMessage =
                         "Unhandled else case in ExternalTransactionSignManager.operationManagerCollectorAction"
@@ -181,8 +217,13 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         this.transaction = transaction
         currentScope.launch {
             val firstAddress = transaction.firstOrNull()?.accountAddress
-            if (firstAddress != null && getTransactionSigner(firstAddress) is TransactionSigner.Joint) {
-                signJointAccountTransaction()
+            if (firstAddress != null) {
+                val signer = getTransactionSigner(firstAddress)
+                if (signer is TransactionSigner.Joint) {
+                    signJointAccountTransaction(signer.address)
+                } else {
+                    externalTransactionQueuingHelper.initItemsToBeEnqueued(transaction)
+                }
             } else {
                 externalTransactionQueuingHelper.initItemsToBeEnqueued(transaction)
             }
@@ -295,10 +336,8 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         }
     }
 
-    private fun signJointAccountTransaction() {
+    private fun signJointAccountTransaction(jointAccountAddress: String) {
         val txList = transaction ?: return postJointSyncError()
-        val firstTransaction = txList.firstOrNull() ?: return postJointSyncError()
-        val jointAccountAddress = firstTransaction.accountAddress
         val rawBytesGroups = buildRawBytesGroups(txList) ?: return postJointSyncError()
         currentScope.launch {
             val result = jointAccountTransactionSignHelper
@@ -309,6 +348,20 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
             when (result) {
                 is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
                     handleSyncPendingResult(result, jointAccountAddress, txList)
+                }
+
+                is JointAccountTransactionSignHelper.JointSignResult.SyncNeedsLedgerSign -> {
+                    pendingJointLedgerAddress = jointAccountAddress
+                    jointAccountLedgerSignDelegate.startLedgerSign(
+                        proposal = result.pendingProposal,
+                        scanCallback = jointLedgerScanCallback,
+                        coroutineScope = currentScope,
+                        operationManager = ledgerBleOperationManager,
+                        onError = {
+                            pendingJointLedgerAddress = null
+                            postJointSyncError(R.string.joint_account_ledger_signing_failed)
+                        }
+                    )
                 }
 
                 else -> postJointSyncError()
@@ -395,6 +448,12 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         signRequestId: String,
         jointAccountAddress: String
     ) {
+        val meta = getSwapMetadataForService()
+        com.algorand.wallet.logger.PeraLogger.d("ExternalTxnSignMgr",
+            "startSyncSignForegroundService: kind=${jointSyncAlgodSubmissionKind()}, " +
+            "metadata=${if (meta != null) "present(swapId=${meta.swapId}, types=${meta.txnTypes}, " +
+                "unsignedCounts=${meta.unsignedCountPerGroup}, " +
+                "preSignedGroups=${meta.preSignedTxnBytes.size})" else "NULL"}")
         val intent = Intent(applicationContext, JointAccountSyncSignForegroundService::class.java).apply {
             putExtra(JointAccountSyncSignForegroundService.EXTRA_DEVICE_ID, deviceId)
             putExtra(JointAccountSyncSignForegroundService.EXTRA_SIGN_REQUEST_ID, signRequestId)
@@ -403,17 +462,17 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                 JointAccountSyncSignForegroundService.EXTRA_ALGOD_SUBMISSION_KIND,
                 jointSyncAlgodSubmissionKind().name
             )
-            getSwapMetadataForService()?.let { meta ->
-                putExtra(JointAccountSyncSignForegroundService.EXTRA_SWAP_ID, meta.swapId)
+            meta?.let {
+                putExtra(JointAccountSyncSignForegroundService.EXTRA_SWAP_ID, it.swapId)
                 putExtra(
                     JointAccountSyncSignForegroundService.EXTRA_SWAP_TXN_TYPES,
-                    meta.txnTypes.toTypedArray()
+                    it.txnTypes.toTypedArray()
                 )
-                val serialized = serializePreSignedBytes(meta.preSignedTxnBytes)
+                val serialized = serializePreSignedBytes(it.preSignedTxnBytes)
                 putExtra(JointAccountSyncSignForegroundService.EXTRA_SWAP_PRE_SIGNED_BYTES, serialized)
                 putExtra(
                     JointAccountSyncSignForegroundService.EXTRA_SWAP_UNSIGNED_COUNTS,
-                    meta.unsignedCountPerGroup.toIntArray()
+                    it.unsignedCountPerGroup.toIntArray()
                 )
             }
         }
@@ -439,10 +498,37 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         return bos.toByteArray()
     }
 
-    private fun postJointSyncError() {
+    private fun hasActiveLedgerOperation(): Boolean {
+        return externalTransactionQueuingHelper.currentItem != null ||
+            jointAccountLedgerSignDelegate.hasPendingSign
+    }
+
+    private fun clearPendingJointLedgerState() {
+        if (jointAccountLedgerSignDelegate.hasPendingSign) {
+            jointAccountLedgerSignDelegate.clear()
+            pendingJointLedgerAddress = null
+        }
+    }
+
+    private suspend fun handleJointLedgerSyncCompletion(
+        syncResult: JointAccountTransactionSignHelper.JointSignResult
+    ) {
+        val jointAddress = pendingJointLedgerAddress
+        pendingJointLedgerAddress = null
+        when (syncResult) {
+            is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
+                val txList = transaction ?: return postJointSyncError()
+                if (jointAddress == null) return postJointSyncError()
+                handleSyncPendingResult(syncResult, jointAddress, txList)
+            }
+            else -> postJointSyncError(R.string.joint_account_proposal_failed)
+        }
+    }
+
+    private fun postJointSyncError(messageResId: Int = R.string.transaction_signing_failed) {
         postResult(
             ExternalTransactionSignResult.Error.Defined(
-                AnnotatedString(R.string.an_error_occurred)
+                AnnotatedString(messageResId)
             )
         )
     }
@@ -470,6 +556,8 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
         syncSignRequestPollingManager.stopPolling()
         ledgerBleSearchManager.stop()
         externalTransactionQueuingHelper.clearCachedData()
+        jointAccountLedgerSignDelegate.clear()
+        pendingJointLedgerAddress = null
         transaction = null
     }
 

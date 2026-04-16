@@ -17,7 +17,7 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.transaction.domain.model.TransactionId
 import com.algorand.wallet.transaction.domain.repository.TransactionRepository
 import io.mockk.coEvery
-import io.mockk.coVerify
+
 import io.mockk.mockk
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
@@ -65,26 +65,6 @@ class SendSignedTransactionUseCaseTest {
             coEvery { transactionRepository.waitForConfirmation(TXN_ID, MAX_ROUND) } returns PeraResult.Success(TXN_ID)
             val result = sut(TXN_BYTE_ARRAY, WAIT_FOR_CONFIRMATION)
             assertEquals(result.getDataOrNull() ?: return@runTest, TXN_ID)
-        }
-
-    @Test
-    fun `EXPECT txn to be tracked WHEN sending transaction is successful`(): TestResult = runTest {
-        coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
-
-        sut(TXN_BYTE_ARRAY, waitForConfirmation = false)
-
-        coVerify { transactionRepository.trackTransaction(TXN_ID) }
-    }
-
-    @Test
-    fun `EXPECT txn to be tracked WHEN waiting is required and sending and waiting are successful`(): TestResult =
-        runTest {
-            coEvery { transactionRepository.sendSignedTransaction(TXN_BYTE_ARRAY) } returns PeraResult.Success(TXN_ID)
-            coEvery { transactionRepository.waitForConfirmation(TXN_ID, MAX_ROUND) } returns PeraResult.Success(TXN_ID)
-
-            sut(TXN_BYTE_ARRAY, WAIT_FOR_CONFIRMATION)
-
-            coVerify { transactionRepository.trackTransaction(TXN_ID) }
         }
 
     private companion object {

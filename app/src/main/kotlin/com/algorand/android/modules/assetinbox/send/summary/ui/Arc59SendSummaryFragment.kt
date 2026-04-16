@@ -121,7 +121,7 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
     private fun showTransactionCancelledError(result: TransactionCancelled) {
         dismissLedgerDialog()
         val annotatedString = (result.error as? Error.Defined)?.description
-            ?: AnnotatedString(R.string.an_error_occurred)
+            ?: AnnotatedString(R.string.arc59_send_summary_not_loaded)
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }

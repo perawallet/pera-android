@@ -168,6 +168,17 @@
         </Constraint>
 
         <Constraint
+            android:id="@id/confettiAnimationLottieView"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="210dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </Constraint>
+
+        <Constraint
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
             <Layout
@@ -336,6 +347,17 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_large"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </Constraint>
+
+        <Constraint
+            android:id="@id/confettiAnimationLottieView"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="210dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

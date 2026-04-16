@@ -13,6 +13,7 @@
 package com.algorand.android.core.transaction.sync
 
 import android.content.Context
+import com.algorand.android.core.transaction.JointAccountLedgerSignDelegate
 import com.algorand.android.core.transaction.JointAccountTransactionSignHelper
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.wallet.jointaccount.transaction.domain.MultisigTransactionAssembler
@@ -26,5 +27,6 @@ class JointAccountSyncSignDependencies(
     val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
     val applicationContext: Context,
     val syncSignResultHolder: SyncSignResultHolder,
-    val markSignRequestsConfirmed: MarkSignRequestsConfirmed
+    val markSignRequestsConfirmed: MarkSignRequestsConfirmed,
+    val jointAccountLedgerSignDelegate: JointAccountLedgerSignDelegate
 )

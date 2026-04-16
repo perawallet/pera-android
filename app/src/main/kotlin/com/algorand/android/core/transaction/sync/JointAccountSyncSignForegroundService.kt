@@ -307,7 +307,8 @@ class JointAccountSyncSignForegroundService : Service() {
                 participantAddresses = participantAddresses,
                 version = version,
                 threshold = threshold,
-                responses = responses
+                responses = responses,
+                jointAccountAddress = jointAccount.address
             )) {
                 is PeraResult.Success -> assembledGroups.add(assembleResult.data)
                 is PeraResult.Error -> {

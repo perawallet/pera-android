@@ -27,8 +27,8 @@ class CsvErrorResIdDecider @Inject constructor() {
         // TODO: Use ErrorResource whenever merge this with [swap-feature]
         return when (dataResource) {
             is DataResource.Error.Api -> Local(dataResource.exception.message.orEmpty())
-            is DataResource.Error.Local -> GlobalWarning(annotatedString = AnnotatedString(R.string.an_error_occurred))
-            else -> GlobalWarning(annotatedString = AnnotatedString(R.string.an_error_occurred))
+            is DataResource.Error.Local -> GlobalWarning(annotatedString = AnnotatedString(R.string.csv_export_failed))
+            else -> GlobalWarning(annotatedString = AnnotatedString(R.string.csv_export_failed))
         }
     }
 }

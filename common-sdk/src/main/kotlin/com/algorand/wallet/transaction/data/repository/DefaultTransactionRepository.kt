@@ -15,9 +15,7 @@ package com.algorand.wallet.transaction.data.repository
 import com.algorand.algosdk.v2.client.Utils
 import com.algorand.algosdk.v2.client.common.AlgodClient
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.transaction.data.model.TrackTransactionRequest
 import com.algorand.wallet.transaction.data.service.TransactionsAlgodApiService
-import com.algorand.wallet.transaction.data.service.TransactionsMobileApiService
 import com.algorand.wallet.transaction.domain.model.TransactionId
 import com.algorand.wallet.transaction.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +26,6 @@ import javax.inject.Inject
 
 internal class DefaultTransactionRepository @Inject constructor(
     private val transactionsAlgodApiService: TransactionsAlgodApiService,
-    private val transactionsMobileApiService: TransactionsMobileApiService,
     private val algodClient: AlgodClient?
 ) : TransactionRepository {
 
@@ -54,11 +51,4 @@ internal class DefaultTransactionRepository @Inject constructor(
         }
     }
 
-    override suspend fun trackTransaction(txnId: TransactionId) {
-        try {
-            transactionsMobileApiService.trackTransaction(TrackTransactionRequest(txnId.value))
-        } catch (e: Exception) {
-            // Fire and forget
-        }
-    }
 }

@@ -138,7 +138,7 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
             }
 
             is Result.Error -> {
-                showGlobalError(getString(R.string.an_error_occurred))
+                showGlobalError(getString(R.string.account_create_failed))
             }
         }
     }
@@ -190,7 +190,7 @@ class AddAccountIntroFragment : DaggerBaseFragment(0), AddAccountIntroScreenList
             }
 
             is AddAccountIntroViewModel.ViewEvent.ShowError -> {
-                showGlobalError(getString(R.string.an_error_occurred))
+                showGlobalError(getString(R.string.account_create_failed))
             }
         }
     }

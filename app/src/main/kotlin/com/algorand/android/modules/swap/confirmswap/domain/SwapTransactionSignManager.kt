@@ -30,6 +30,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
+import com.algorand.wallet.logger.PeraLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -122,27 +123,60 @@ class SwapTransactionSignManager @Inject constructor(
 
     @Suppress("ReturnCount")
     override fun getSwapMetadataForService(): SwapServiceMetadata? {
-        val swapId = pendingSwapIdForSyncService.takeIf { it != SwapServiceMetadata.INVALID_SWAP_ID } ?: return null
-        val quotes = swapQuoteTransaction ?: return null
+        val swapId = pendingSwapIdForSyncService.takeIf { it != SwapServiceMetadata.INVALID_SWAP_ID }
+        if (swapId == null) {
+            PeraLogger.e(TAG, "getSwapMetadataForService: INVALID_SWAP_ID")
+            return null
+        }
+        val quotes = swapQuoteTransaction
+        if (quotes == null) {
+            PeraLogger.e(TAG, "getSwapMetadataForService: quotes is null")
+            return null
+        }
 
         val types = mutableListOf<String>()
         val preSignedPerGroup = mutableListOf<List<ByteArray?>>()
         val unsignedCountPerGroup = mutableListOf<Int>()
 
-        for (quote in quotes) {
-            val userRawBytes = buildUserSigningRawBytes(quote) ?: return null
-            if (userRawBytes.isEmpty()) continue
+        for ((idx, quote) in quotes.withIndex()) {
+            val userRawBytes = buildUserSigningRawBytes(quote)
+            if (userRawBytes == null) {
+                PeraLogger.e(TAG, "getSwapMetadataForService: buildUserSigningRawBytes returned null at idx=$idx")
+                return null
+            }
+            if (userRawBytes.isEmpty()) {
+                continue
+            }
 
-            types.add(quote.toTxnTypeName() ?: return null)
+            val typeName = quote.toTxnTypeName()
+            if (typeName == null) {
+                PeraLogger.e(TAG, "getSwapMetadataForService: unknown type at idx=$idx")
+                return null
+            }
+            types.add(typeName)
             unsignedCountPerGroup.add(userRawBytes.size)
 
             val slots = quote.signedTransactions.map { it.signedTransactionMsgPack }
-            if (slots.count { it == null } != userRawBytes.size) return null
+            val nullSlotCount = slots.count { it == null }
+            if (nullSlotCount != userRawBytes.size) {
+                PeraLogger.e(
+                    TAG,
+                    "getSwapMetadataForService: MISMATCH nullSlots=$nullSlotCount != userRawBytes=${userRawBytes.size}"
+                )
+                return null
+            }
             preSignedPerGroup.add(slots)
         }
 
-        if (types.isEmpty()) return null
+        if (types.isEmpty()) {
+            PeraLogger.e(TAG, "getSwapMetadataForService: types is empty after processing")
+            return null
+        }
         return SwapServiceMetadata(swapId, types, preSignedPerGroup, unsignedCountPerGroup)
+    }
+
+    companion object {
+        private const val TAG = "SwapTxnSignManager"
     }
 
     private fun SwapQuoteTransaction.toTxnTypeName(): String? = when (this) {

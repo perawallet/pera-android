@@ -62,7 +62,7 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
 
     private val viewEventCollector: suspend (ViewPassphraseViewModel.ViewEvent) -> Unit = {
         when (it) {
-            ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred), tag = baseActivityTag)
+            ShowGenericError -> showGlobalError(getString(R.string.passphrase_load_failed), tag = baseActivityTag)
             NavigateBack -> navBack()
         }
     }

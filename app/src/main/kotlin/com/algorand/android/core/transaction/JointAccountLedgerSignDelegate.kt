@@ -145,6 +145,60 @@ class JointAccountLedgerSignDelegate @Inject constructor(
         }
     }
 
+    suspend fun handleSignResultForSync(
+        signedTransactionData: ByteArray,
+        scanCallback: CustomScanCallback,
+        onError: () -> Unit
+    ): JointAccountTransactionSignHelper.JointSignResult? {
+        signedTransactions.add(signedTransactionData)
+        currentIndex++
+
+        val pending = pendingSign ?: run {
+            onError()
+            return null
+        }
+
+        if (currentIndex < pending.rawTransactionBytes.size) {
+            val currentConnectedDevice = ledgerBleOperationManager.connectedBluetoothDevice
+            if (currentConnectedDevice != null) {
+                scanCallback.onLedgerScanned(
+                    currentConnectedDevice,
+                    currentIndex,
+                    pending.rawTransactionBytes.size
+                )
+            } else {
+                clear()
+                onError()
+            }
+            return null
+        } else {
+            return completeSyncProposalAfterLedgerSign(pending, onError)
+        }
+    }
+
+    private suspend fun completeSyncProposalAfterLedgerSign(
+        pending: PendingJointAccountLedgerSign,
+        onError: () -> Unit
+    ): JointAccountTransactionSignHelper.JointSignResult? {
+        val signatureBase64List = signedTransactions.mapNotNull { signedTx ->
+            extractSignatureFromSignedTransaction(signedTx)?.let { Encoder.encodeToBase64(it) }
+        }
+
+        if (signatureBase64List.size != pending.rawTransactionBytes.size) {
+            clear()
+            onError()
+            return null
+        }
+
+        val result = jointAccountTransactionSignHelper.completeSyncJointAccountProposal(
+            pendingProposal = pending.proposal,
+            signatureBase64List = signatureBase64List
+        )
+
+        clear()
+        return result
+    }
+
     fun clear() {
         pendingSign = null
         signedTransactions.clear()

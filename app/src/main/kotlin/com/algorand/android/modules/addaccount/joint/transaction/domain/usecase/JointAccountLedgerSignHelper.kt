@@ -99,7 +99,7 @@ class JointAccountLedgerSignHelper @Inject constructor(
                 }
 
                 is LedgerBleResult.LedgerErrorResult -> {
-                    _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+                    _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_ledger_signing_failed)
                 }
 
                 is LedgerBleResult.OperationCancelledResult -> {
@@ -141,7 +141,7 @@ class JointAccountLedgerSignHelper @Inject constructor(
 
         val rawTransactions = decodeBase64Transactions(rawTransactionsBase64)
         if (rawTransactions.isEmpty()) {
-            _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+            _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_transaction_decode_failed)
             return
         }
 
@@ -218,7 +218,7 @@ class JointAccountLedgerSignHelper @Inject constructor(
         if (device != null) {
             scanCallback.onLedgerScanned(device, currentTransactionIndex, request.rawTransactions.size)
         } else {
-            _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+            _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_ledger_connection_lost)
         }
     }
 
@@ -228,7 +228,7 @@ class JointAccountLedgerSignHelper @Inject constructor(
 
             val ledgerSignatures = signedTransactions.mapNotNull(::extractSignatureFromSignedTransaction)
             if (ledgerSignatures.size != request.jointAccountTransactionIndices.size) {
-                _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+                _signResultFlow.value = LedgerSignResult.Error(R.string.transaction_signing_failed)
                 return@launch
             }
 
@@ -241,7 +241,9 @@ class JointAccountLedgerSignHelper @Inject constructor(
 
             addJointAccountSignature(request.signRequestId, listOf(input)).use(
                 onSuccess = { _signResultFlow.value = LedgerSignResult.Success },
-                onFailed = { _, _ -> _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred) }
+                onFailed = { _, _ ->
+                    _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_ledger_signing_failed)
+                }
             )
         }
     }

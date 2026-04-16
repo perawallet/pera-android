@@ -13,6 +13,7 @@
 package com.algorand.android.modules.addaccount.joint.di
 
 import android.content.Context
+import com.algorand.android.core.transaction.JointAccountLedgerSignDelegate
 import com.algorand.android.core.transaction.JointAccountTransactionSignHelper
 import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
 import com.algorand.android.core.transaction.sync.SignArbitraryDataForSyncRequest
@@ -50,7 +51,8 @@ internal object JointAccountSyncSignModule {
         getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
         @ApplicationContext applicationContext: Context,
         syncSignResultHolder: SyncSignResultHolder,
-        markSignRequestsConfirmed: MarkSignRequestsConfirmed
+        markSignRequestsConfirmed: MarkSignRequestsConfirmed,
+        jointAccountLedgerSignDelegate: JointAccountLedgerSignDelegate
     ): JointAccountSyncSignDependencies = JointAccountSyncSignDependencies(
         jointAccountTransactionSignHelper = jointAccountTransactionSignHelper,
         signArbitraryDataForSyncRequest = signArbitraryDataForSyncRequest,
@@ -59,7 +61,8 @@ internal object JointAccountSyncSignModule {
         getSelectedNodeDeviceId = getSelectedNodeDeviceId,
         applicationContext = applicationContext,
         syncSignResultHolder = syncSignResultHolder,
-        markSignRequestsConfirmed = markSignRequestsConfirmed
+        markSignRequestsConfirmed = markSignRequestsConfirmed,
+        jointAccountLedgerSignDelegate = jointAccountLedgerSignDelegate
     )
 
     @Provides

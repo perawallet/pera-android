@@ -302,7 +302,7 @@ class WalletConnectManager @Inject constructor(
 
     suspend fun processWalletConnectSignResult(walletConnectSignResult: WalletConnectSignResult) {
         if (walletConnectSignResult !is WalletConnectSignResult.Success) {
-            _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occurred))))
+            _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.wallet_connect_signing_failed))))
             recordException(Exception("Wallet connect sign result is not Success: $walletConnectSignResult"))
             return
         }

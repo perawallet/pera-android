@@ -38,12 +38,12 @@ sealed class WalletConnectSignResult {
 
         class Defined(
             val description: AnnotatedString,
-            @StringRes titleResId: Int = R.string.error_default_title
+            @StringRes titleResId: Int = R.string.error
         ) : Error(titleResId)
 
         class Api(
             val errorMessage: String,
-            @StringRes titleResId: Int = R.string.error_default_title
+            @StringRes titleResId: Int = R.string.error
         ) : Error(titleResId)
     }
 

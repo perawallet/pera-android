@@ -72,10 +72,10 @@ class KeyRegTransactionSignManager @Inject constructor(
         transaction: KeyRegTransaction?,
         signedTransactions: List<ByteArray?>?
     ): ExternalTransactionSignResult {
-        if (transaction == null) return Error.Defined(AnnotatedString(R.string.an_error_occurred))
+        if (transaction == null) return Error.Defined(AnnotatedString(R.string.key_reg_signing_failed))
         val signedTransaction = signedTransactions?.firstOrNull()
         return if (signedTransaction == null) {
-            Error.Defined(AnnotatedString(R.string.an_error_occurred))
+            Error.Defined(AnnotatedString(R.string.key_reg_signing_failed))
         } else {
             Success(listOf(signedTransaction))
         }

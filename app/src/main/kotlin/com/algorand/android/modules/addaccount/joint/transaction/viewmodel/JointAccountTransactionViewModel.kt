@@ -36,7 +36,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,7 +56,7 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     private val signRequestId: String? = savedStateHandle.get<String>("signRequestId")
     val hideCloseForNow: Boolean = savedStateHandle.get<Boolean>("hideCloseForNow") ?: false
-    private val isSilentRefreshInProgress = AtomicBoolean(false)
+    private var isSilentRefreshInProgress = false
 
     init {
         stateDelegate.setDefaultState(ViewState.Loading)
@@ -68,7 +67,7 @@ class JointAccountTransactionViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Content> { contentState ->
             val validationResult = processor.validateConfirmTransaction(contentState.preview, signRequestId)
             if (validationResult == null) {
-                emitError(R.string.an_error_occurred)
+                emitError(R.string.joint_account_sign_request_not_found)
                 return@onState
             }
             viewModelScope.launch {
@@ -101,9 +100,9 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     fun declineSignRequest() {
         stateDelegate.onState<ViewState.Content> { contentState ->
-            val requestId = signRequestId ?: return@onState emitError(R.string.an_error_occurred)
+            val requestId = signRequestId ?: return@onState emitError(R.string.joint_account_sign_request_not_found)
             val participantAddresses = processor.findDeclineParticipantAddresses(contentState.preview)
-            if (participantAddresses.isEmpty()) return@onState emitError(R.string.an_error_occurred)
+            if (participantAddresses.isEmpty()) return@onState emitError(R.string.joint_account_no_participants_found)
 
             viewModelScope.launch {
                 jointAccountTransactionEventTracker.logJointAccountDeclinePendingTxPress()
@@ -120,7 +119,7 @@ class JointAccountTransactionViewModel @Inject constructor(
                     refreshInboxCache()
                     silentRefreshPreview()
                 },
-                onFailed = { _, _ -> emitError(R.string.an_error_occurred) }
+                onFailed = { _, _ -> emitError(R.string.joint_account_decline_failed) }
             )
         }
     }
@@ -208,7 +207,7 @@ class JointAccountTransactionViewModel @Inject constructor(
             startInboxPollObserver()
             viewModelScope.launch { refreshInboxCache() }
         } else {
-            emitError(R.string.an_error_occurred)
+            emitError(R.string.joint_account_sign_request_not_found)
             emitNavigateBack()
         }
     }
@@ -248,7 +247,7 @@ class JointAccountTransactionViewModel @Inject constructor(
             jointAccountAddress = data.preview.jointAccountAddress
         )
         if (result.apiResult !is PeraResult.Success) {
-            emitError(R.string.an_error_occurred)
+            emitError(R.string.transaction_signing_failed)
             return emptyList()
         }
         return result.signedAddresses
@@ -283,7 +282,7 @@ class JointAccountTransactionViewModel @Inject constructor(
             },
             onFailed = { _, _ ->
                 stateDelegate.updateState { ViewState.Content(preview) }
-                emitError(R.string.an_error_occurred)
+                emitError(R.string.joint_account_decline_failed)
             }
         )
     }
@@ -297,7 +296,7 @@ class JointAccountTransactionViewModel @Inject constructor(
     private suspend fun loadFullPreview() {
         val requestId = signRequestId
         if (requestId.isNullOrBlank()) {
-            emitError(R.string.an_error_occurred)
+            emitError(R.string.joint_account_sign_request_not_found)
             emitNavigateBack()
             return
         }
@@ -320,7 +319,8 @@ class JointAccountTransactionViewModel @Inject constructor(
 
     private suspend fun silentRefreshPreview() {
         val requestId = signRequestId ?: return
-        if (!isSilentRefreshInProgress.compareAndSet(false, true)) return
+        if (isSilentRefreshInProgress) return
+        isSilentRefreshInProgress = true
         try {
             getJointAccountTransactionViewState(requestId).use(
                 onSuccess = { preview ->
@@ -334,7 +334,7 @@ class JointAccountTransactionViewModel @Inject constructor(
                 onFailed = { _, _ -> }
             )
         } finally {
-            isSilentRefreshInProgress.set(false)
+            isSilentRefreshInProgress = false
         }
     }
 

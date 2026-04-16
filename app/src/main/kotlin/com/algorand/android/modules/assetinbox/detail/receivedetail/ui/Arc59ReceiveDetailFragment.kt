@@ -241,7 +241,7 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
     private fun showTransactionCancelledError(result: ExternalTransactionSignResult.TransactionCancelled) {
         dismissLedgerDialog()
         val annotatedString = (result.error as? ExternalTransactionSignResult.Error.Defined)?.description
-            ?: AnnotatedString(R.string.an_error_occurred)
+            ?: AnnotatedString(R.string.asset_info_load_failed)
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }

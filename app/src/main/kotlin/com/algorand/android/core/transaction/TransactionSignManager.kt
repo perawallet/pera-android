@@ -160,12 +160,12 @@ class TransactionSignManager @Inject constructor(
     private val signHelperListener = object : ListQueuingHelper.Listener<TransactionSignData, ByteArray> {
         override fun onAllItemsDequeued(dequeuedItemList: List<ByteArray?>) {
             if (dequeuedItemList.isEmpty() || dequeuedItemList.any { it == null }) {
-                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                 return
             }
             val safeSignedTransactions = dequeuedItemList.mapToNotNullableListOrNull { it }
             if (safeSignedTransactions == null) {
-                postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                postResult(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                 return
             }
             transactionDataList?.let { postSignResult(safeSignedTransactions, it) }
@@ -234,7 +234,7 @@ class TransactionSignManager @Inject constructor(
         currentScope.launch {
             postResult(TransactionManagerResult.Loading)
             transactionData.toList().ifEmpty {
-                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                 return@launch
             }.let { transactionList ->
                 processTransactionDataList(transactionList, isGroupTransaction)?.let {
@@ -269,7 +269,7 @@ class TransactionSignManager @Inject constructor(
                 val transactionBytes = transactionByteArray ?: return handleSignError()
                 val signedTx = localAccountSigningHelper.signWithAlgo25Account(transactionBytes, signer.address)
                 if (signedTx == null) {
-                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                     return
                 }
                 checkAndCacheSignedTransaction(signedTx)
@@ -299,7 +299,7 @@ class TransactionSignManager @Inject constructor(
     }
 
     private fun handleSignError() {
-        setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+        setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
     }
 
     private suspend fun handleJointAccountTransaction(signer: TransactionSigner.Joint) {
@@ -326,14 +326,18 @@ class TransactionSignManager @Inject constructor(
                 postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
             }
 
+            is JointAccountTransactionSignHelper.JointSignResult.SyncNeedsLedgerSign -> {
+                postJointAccountError()
+            }
+
             is JointAccountTransactionSignHelper.JointSignResult.Error -> {
                 postJointAccountError()
             }
         }
     }
 
-    private fun postJointAccountError() {
-        postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+    private fun postJointAccountError(messageResId: Int = R.string.transaction_signing_failed) {
+        postResult(Defined(AnnotatedString(stringResId = messageResId)))
     }
 
     private suspend fun TransactionSignData.createArc59SendTransactions(): List<Arc59TransactionData>? {
@@ -657,7 +661,7 @@ class TransactionSignManager @Inject constructor(
         if (signedBytesArrayList.isEmpty() || transactionDataList.isEmpty() ||
             signedBytesArrayList.size != transactionDataList.size
         ) {
-            postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+            postResult(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
             return
         }
 

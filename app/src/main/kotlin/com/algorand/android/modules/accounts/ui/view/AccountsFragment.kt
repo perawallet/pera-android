@@ -447,7 +447,9 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     override fun onResume() {
         super.onResume()
-        clearConfettiView()
+        if (!binding.confettiAnimationLottieView.isAnimating) {
+            clearConfettiView()
+        }
         accountsViewModel.refreshCachedAlgoPrice()
     }
 

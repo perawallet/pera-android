@@ -10,20 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.addaccount.joint.transaction.domain.exception
+package com.algorand.wallet.foundation.network.exceptions
 
-import androidx.annotation.StringRes
-import com.algorand.android.R
-
-sealed class JointAccountSigningException(
-    @param:StringRes val errorResId: Int
-) : Exception() {
-
-    data object TransactionDecodeFailed : JointAccountSigningException(
-        R.string.joint_account_transaction_decode_failed
-    )
-
-    data object SigningFailed : JointAccountSigningException(
-        R.string.transaction_signing_failed
-    )
-}
+/**
+ * Exception that carries a user-facing error message parsed from a Pera API error response.
+ * This wraps the message extracted from the `detail` or `fallback_message` fields of the
+ * standard Pera API error format.
+ */
+class PeraApiException(
+    val userMessage: String,
+    val httpCode: Int? = null,
+    cause: Throwable? = null
+) : Exception(userMessage, cause)

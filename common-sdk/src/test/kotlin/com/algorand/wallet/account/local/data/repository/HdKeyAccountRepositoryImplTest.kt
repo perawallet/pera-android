@@ -204,20 +204,18 @@ internal class HdKeyAccountRepositoryImplTest {
             seedId = SEED_ID_1,
             accountCount = 3,
             maxAccountIndex = 2,
-            primaryValue = "",
-            secondaryValue = ""
+            addresses = listOf(ADDRESS_1, ADDRESS_2, "addr3")
         )
         val expectedSummary2 = HdWalletSummary(
             seedId = SEED_ID_2,
             accountCount = 1,
             maxAccountIndex = 0,
-            primaryValue = "",
-            secondaryValue = ""
+            addresses = listOf("addr4")
         )
 
         coEvery { hdKeyDao.getAll() } returns entities
-        coEvery { hdWalletSummaryMapper(entities[2], 3) } returns expectedSummary1
-        coEvery { hdWalletSummaryMapper(entities[3], 1) } returns expectedSummary2
+        coEvery { hdWalletSummaryMapper(entities[2], listOf(ADDRESS_1, ADDRESS_2, "addr3")) } returns expectedSummary1
+        coEvery { hdWalletSummaryMapper(entities[3], listOf("addr4")) } returns expectedSummary2
 
         val result = sut.getHdWalletSummaries()
 

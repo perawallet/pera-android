@@ -34,22 +34,20 @@ class HdWalletSummaryMapperImplTest {
             derivationType = 1
         )
 
-        val accountCount = 10
+        val addresses = listOf("addr1", "addr2", "addr3")
 
         val expected = HdWalletSummary(
             seedId = 123,
-            accountCount = 10,
+            accountCount = 3,
             maxAccountIndex = 5,
-            primaryValue = "",
-            secondaryValue = ""
+            addresses = addresses
         )
 
-        val result = sut.invoke(entity, accountCount)
+        val result = sut.invoke(entity, addresses)
 
         assertEquals(expected.seedId, result.seedId)
         assertEquals(expected.accountCount, result.accountCount)
         assertEquals(expected.maxAccountIndex, result.maxAccountIndex)
-        assertEquals(expected.primaryValue, result.primaryValue)
-        assertEquals(expected.secondaryValue, result.secondaryValue)
+        assertEquals(expected.addresses, result.addresses)
     }
 }

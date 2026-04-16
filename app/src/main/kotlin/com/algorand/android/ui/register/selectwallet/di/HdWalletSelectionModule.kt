@@ -10,16 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.data.model
+package com.algorand.android.ui.register.selectwallet.di
 
-import com.google.gson.annotations.SerializedName
-import java.math.BigInteger
+import com.algorand.android.ui.register.selectwallet.GetHdWalletTotalValue
+import com.algorand.android.ui.register.selectwallet.GetHdWalletTotalValueUseCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-internal data class SwapPeraFeeResponse(
-    @SerializedName("pera_fee_amount")
-    val peraFeeAmount: BigInteger?,
-    @SerializedName("pera_fee_asset")
-    val peraFeeAssetDetail: SwapQuoteAssetDetailResponse?,
-    @SerializedName("pera_fee_amount_in_fee_asset")
-    val peraFeeAmountInFeeAsset: BigInteger?
-)
+@Module
+@InstallIn(SingletonComponent::class)
+internal object HdWalletSelectionModule {
+
+    @Provides
+    fun provideGetHdWalletTotalValue(useCase: GetHdWalletTotalValueUseCase): GetHdWalletTotalValue = useCase
+}

@@ -110,7 +110,7 @@ fun SwapConfigurationBottomSheet(
                 endContainer = {
                     PeraToolbarTextButton(text = stringResource(R.string.apply), enabled = isApplyButtonEnabled) {
                         val result = SwapConfigurationResult(
-                            balancePercentage = balanceTextState.value.text.toIntOrNull(),
+                            balancePercentage = balanceTextState.value.text.toFloatOrNull(),
                             slippageTolerance = slippageTextState.value.text.toDoubleOrNull(),
                             useLocalCurrency = localCurrencyState.value
                         )

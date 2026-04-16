@@ -246,6 +246,7 @@ class HdWalletSelectionFragment : DaggerBaseFragment(0) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
+                    modifier = Modifier.align(Alignment.End),
                     style = PeraTheme.typography.footnote.sans,
                     color = PeraTheme.colors.text.gray,
                     text = secondaryValue

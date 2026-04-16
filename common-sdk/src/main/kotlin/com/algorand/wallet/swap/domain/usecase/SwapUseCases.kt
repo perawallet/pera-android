@@ -53,10 +53,6 @@ fun interface GetAvailableSwapAssets {
     suspend operator fun invoke(assetInId: Long, query: String?): PeraResult<List<AvailableSwapAsset>>
 }
 
-fun interface GetSwapPeraFee {
-    suspend operator fun invoke(assetInId: Long, amount: BigDecimal, fractionDecimals: Int): PeraResult<BigDecimal>
-}
-
 fun interface GetSwapAmountByPercentage {
     suspend operator fun invoke(payload: SwapAmountByPercentagePayload): PeraResult<BigDecimal>
 }

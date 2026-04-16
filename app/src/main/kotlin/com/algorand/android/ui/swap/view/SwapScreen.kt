@@ -22,10 +22,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
 import com.algorand.android.ui.swap.history.viewmodel.SwapPairHistoryViewModel
 import com.algorand.android.ui.swap.providers.viewmodel.SwapQuoteProvidersViewModel
 import com.algorand.android.ui.swap.topfive.viewmodel.DefaultTopSwapPairsViewModel
@@ -68,7 +70,8 @@ fun SwapScreen(
             val viewState = swapViewModel.state.collectAsStateWithLifecycle()
             val scope = rememberCoroutineScope()
             when (viewState.value) {
-                SwapViewModel.ViewState.Idle -> Unit
+                SwapViewModel.ViewState.Idle,
+                SwapViewModel.ViewState.Loading -> FullScreenProgress()
                 is SwapViewModel.ViewState.Content -> {
                     SwapToolbar(scope, swapViewModel, listener)
                     SwapScreenContentState(
@@ -100,6 +103,13 @@ fun SwapScreen(
                 Introduction -> SwapScreenIntroductionState(listener = listener)
             }
         }
+    }
+}
+
+@Composable
+private fun FullScreenProgress() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        PeraCircularProgressIndicator()
     }
 }
 

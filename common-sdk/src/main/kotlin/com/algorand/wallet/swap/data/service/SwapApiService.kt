@@ -17,8 +17,8 @@ import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBod
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsResponse
 import com.algorand.wallet.swap.data.model.SwapHistoriesResponse
 import com.algorand.wallet.swap.data.model.SwapPairHistoriesResponse
-import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
-import com.algorand.wallet.swap.data.model.SwapPeraFeeResponse
+import com.algorand.wallet.swap.data.model.SwapCalculateAmountRequestBody
+import com.algorand.wallet.swap.data.model.SwapCalculateAmountResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteProvidersResponse
 import com.algorand.wallet.swap.data.model.SwapQuoteRequestBody
 import com.algorand.wallet.swap.data.model.SwapQuoteResultResponse
@@ -44,8 +44,8 @@ internal interface SwapApiService {
     @POST("v2/dex-swap/quotes/")
     suspend fun getSwapQuote(@Body requestBody: SwapQuoteRequestBody): SwapQuoteResultResponse
 
-    @POST("v1/dex-swap/calculate-pera-fee/")
-    suspend fun getPeraFee(@Body requestBody: SwapPeraFeeRequestBody): SwapPeraFeeResponse
+    @POST("v1/dex-swap/calculate-swap-amount/")
+    suspend fun calculateSwapAmount(@Body requestBody: SwapCalculateAmountRequestBody): SwapCalculateAmountResponse
 
     @POST("v2/dex-swap/prepare-transactions/")
     suspend fun getQuoteTransactions(

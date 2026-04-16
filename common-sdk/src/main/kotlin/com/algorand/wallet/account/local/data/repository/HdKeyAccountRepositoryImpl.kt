@@ -109,8 +109,10 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
                 .mapNotNull { (_, group) -> group.maxByOrNull { it.account } }
 
             uniqueHdKeyEntities.map { uniqueHdKeyEntity ->
-                val accountCount = hdKeyEntities.count { uniqueHdKeyEntity.seedId == it.seedId }
-                hdWalletSummaryMapper(uniqueHdKeyEntity, accountCount)
+                val addresses = hdKeyEntities
+                    .filter { uniqueHdKeyEntity.seedId == it.seedId }
+                    .map { it.algoAddress }
+                hdWalletSummaryMapper(uniqueHdKeyEntity, addresses)
             }
         }
     }

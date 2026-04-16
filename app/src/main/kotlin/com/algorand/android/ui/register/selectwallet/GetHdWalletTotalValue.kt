@@ -10,8 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.swap.domain.model
+package com.algorand.android.ui.register.selectwallet
 
-import java.math.BigInteger
+import com.algorand.wallet.account.local.domain.model.HdWalletSummary
 
-data class SwapPeraFee(val fee: BigInteger?)
+fun interface GetHdWalletTotalValue {
+    suspend operator fun invoke(summary: HdWalletSummary): Pair<String, String>
+}

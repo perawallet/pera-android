@@ -13,7 +13,7 @@
 package com.algorand.android.ui.swap.configuration.model
 
 data class SwapConfigurationResult(
-    val balancePercentage: Int?,
+    val balancePercentage: Float?,
     val slippageTolerance: Double?,
     val useLocalCurrency: Boolean
 )

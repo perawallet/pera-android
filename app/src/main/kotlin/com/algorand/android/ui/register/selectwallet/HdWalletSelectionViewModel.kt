@@ -40,7 +40,8 @@ class HdWalletSelectionViewModel @Inject constructor(
     private val bip39WalletProvider: Bip39WalletProvider,
     private val getHdEntropy: GetHdEntropy,
     private val getHdWalletSummaries: GetHdWalletSummaries,
-    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper
+    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper,
+    private val getHdWalletTotalValue: GetHdWalletTotalValue
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     init {
@@ -50,14 +51,15 @@ class HdWalletSelectionViewModel @Inject constructor(
     fun loadLocalWallets() {
         stateDelegate.updateState { ViewState.Loading }
         viewModelScope.launch {
-            val walletItemPreviews = getHdWalletSummaries()?.map {
+            val walletItemPreviews = getHdWalletSummaries()?.map { summary ->
+                val (primaryValue, secondaryValue) = getHdWalletTotalValue(summary)
                 WalletItemPreview(
-                    seedId = it.seedId,
-                    name = "Wallet #${it.seedId}",
-                    numberOfAccounts = "${it.accountCount} account",
-                    primaryValue = it.primaryValue,
-                    secondaryValue = it.secondaryValue,
-                    maxAccountIndex = it.maxAccountIndex
+                    seedId = summary.seedId,
+                    name = "Wallet #${summary.seedId}",
+                    numberOfAccounts = "${summary.accountCount} account",
+                    primaryValue = primaryValue,
+                    secondaryValue = secondaryValue,
+                    maxAccountIndex = summary.maxAccountIndex
                 )
             }.orEmpty()
             stateDelegate.updateState {

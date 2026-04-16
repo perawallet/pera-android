@@ -13,11 +13,16 @@
 package com.algorand.wallet.swap.data.model
 
 import com.google.gson.annotations.SerializedName
-import java.math.BigInteger
 
-internal data class SwapPeraFeeRequestBody(
+internal data class SwapCalculateAmountRequestBody(
+    @SerializedName("address")
+    val address: String,
     @SerializedName("asset_in_id")
     val assetInId: Long,
-    @SerializedName("amount")
-    val amount: BigInteger
+    @SerializedName("asset_out_id")
+    val assetOutId: Long,
+    @SerializedName("amount_input")
+    val amountInput: String?,
+    @SerializedName("percentage")
+    val percentage: String?
 )

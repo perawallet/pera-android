@@ -17,14 +17,12 @@ import com.algorand.wallet.account.local.domain.model.HdWalletSummary
 import javax.inject.Inject
 
 internal class HdWalletSummaryMapperImpl @Inject constructor() : HdWalletSummaryMapper {
-    // TODO: set primary and secondary values
-    override fun invoke(entity: HdKeyEntity, accountCount: Int): HdWalletSummary {
+    override fun invoke(entity: HdKeyEntity, addresses: List<String>): HdWalletSummary {
         return HdWalletSummary(
             seedId = entity.seedId,
-            accountCount = accountCount,
+            accountCount = addresses.size,
             maxAccountIndex = entity.account,
-            primaryValue = "",
-            secondaryValue = ""
+            addresses = addresses
         )
     }
 }

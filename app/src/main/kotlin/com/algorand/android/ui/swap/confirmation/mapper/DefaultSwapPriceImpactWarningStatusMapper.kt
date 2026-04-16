@@ -22,13 +22,15 @@ import javax.inject.Inject
 internal class DefaultSwapPriceImpactWarningStatusMapper @Inject constructor() : SwapPriceImpactWarningStatusMapper {
 
     override fun invoke(priceImpactPercentage: Float): SwapPriceImpact {
+        val priceImpactAsPercentage = priceImpactPercentage * PERCENTAGE_MULTIPLIER
         val warningStatus = when {
-            priceImpactPercentage < FIVE_PERCENT -> SwapPriceImpact.WarningStatus.NoWarning
-            priceImpactPercentage < FIFTEEN_PERCENT -> SwapPriceImpact.WarningStatus.Level1(FIVE_PERCENT)
+            priceImpactAsPercentage < FIVE_PERCENT -> SwapPriceImpact.WarningStatus.NoWarning
+            priceImpactAsPercentage < FIFTEEN_PERCENT -> SwapPriceImpact.WarningStatus.Level1(FIVE_PERCENT)
             else -> SwapPriceImpact.WarningStatus.Level2(FIFTEEN_PERCENT)
         }
-        val percentage = priceImpactPercentage.toBigDecimal()
+        val percentage = priceImpactAsPercentage.toBigDecimal()
             .setScale(PRICE_IMPACT_PERCENTAGE_SCALE, HALF_EVEN)
+            .stripTrailingZeros()
             .toPlainString()
         val renderer = AmountRenderer(SimpleFormattedAmount("$percentage%"), Plain)
         return SwapPriceImpact(renderer, warningStatus)
@@ -37,6 +39,7 @@ internal class DefaultSwapPriceImpactWarningStatusMapper @Inject constructor() :
     private companion object {
         private const val FIVE_PERCENT = 5f
         private const val FIFTEEN_PERCENT = 15f
+        private const val PERCENTAGE_MULTIPLIER = 100f
         private const val PRICE_IMPACT_PERCENTAGE_SCALE = 4
     }
 }

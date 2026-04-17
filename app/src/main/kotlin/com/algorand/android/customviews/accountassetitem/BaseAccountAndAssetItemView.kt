@@ -22,6 +22,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.algorand.android.R
@@ -39,7 +40,7 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
     protected val binding: ItemAccountAndAssetListBinding = viewBinding(ItemAccountAndAssetListBinding::inflate)
 
     init {
-        initRootView()
+        initRootView(attrs)
     }
 
     fun getStartIconImageView(): AppCompatImageView = binding.startIconImageView
@@ -168,9 +169,19 @@ abstract class BaseAccountAndAssetItemView @JvmOverloads constructor(
         binding.startIconProgressBar.isVisible = isVisible
     }
 
-    private fun initRootView() {
-        val horizontalPadding = resources.getDimension(R.dimen.spacing_xlarge).toInt()
-        updatePadding(left = horizontalPadding, right = horizontalPadding)
+    private fun initRootView(attrs: AttributeSet?) {
+        val defaultPadding = resources.getDimension(R.dimen.spacing_xlarge).toInt()
+        context.obtainStyledAttributes(attrs, R.styleable.BaseAccountAndAssetItemView).use {
+            val horizontalPadding = it.getDimensionPixelSize(
+                R.styleable.BaseAccountAndAssetItemView_rootHorizontalPadding,
+                defaultPadding
+            )
+            updatePadding(left = horizontalPadding, right = horizontalPadding)
+            binding.dividerView.isVisible = it.getBoolean(
+                R.styleable.BaseAccountAndAssetItemView_isDividerVisible,
+                true
+            )
+        }
         minHeight = resources.getDimensionPixelSize(R.dimen.account_asset_item_view_min_height)
     }
 

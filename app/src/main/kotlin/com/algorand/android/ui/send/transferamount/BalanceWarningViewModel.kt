@@ -14,12 +14,15 @@
 package com.algorand.android.ui.send.transferamount
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BalanceWarningViewModel @Inject constructor(
@@ -29,12 +32,18 @@ class BalanceWarningViewModel @Inject constructor(
 
     private val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
 
-    val balanceWarningPreviewFlow: StateFlow<BalanceWarningPreview>
-        get() = _balanceWarningPreviewFlow
-    private val _balanceWarningPreviewFlow = MutableStateFlow(getInitialPreview())
+    private val _balanceWarningPreviewFlow = MutableStateFlow<BalanceWarningPreview?>(null)
+    val balanceWarningPreviewFlow: StateFlow<BalanceWarningPreview?>
+        get() = _balanceWarningPreviewFlow.asStateFlow()
 
-    private fun getInitialPreview(): BalanceWarningPreview {
-        return balanceWarningPreviewUseCase.getInitialPreview(accountAddress)
+    init {
+        getInitialPreview()
+    }
+
+    private fun getInitialPreview() {
+        viewModelScope.launch {
+            _balanceWarningPreviewFlow.value = balanceWarningPreviewUseCase.getInitialPreview(accountAddress)
+        }
     }
 
     companion object {

@@ -12,31 +12,28 @@
 
 package com.algorand.android.ui.send.transferamount
 
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.utils.MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS
+import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.toAlgoDisplayValue
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class BalanceWarningPreviewUseCase @Inject constructor(
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val balanceWarningPreviewMapper: BalanceWarningPreviewMapper
 ) {
-    fun getInitialPreview(accountAddress: String): BalanceWarningPreview {
+    suspend fun getInitialPreview(accountAddress: String): BalanceWarningPreview {
+        val algoData = getAccountBaseOwnedAssetData(accountAddress, ALGO_ID)
         return balanceWarningPreviewMapper.mapTo(
-            formattedAlgoAmount = getFormattedAlgoAmount(accountAddress),
-            formattedAlgoPrimaryCurrencyValue = getFormattedAlgoPrimaryCurrencyValue(accountAddress),
+            formattedAlgoAmount = algoData
+                ?.formattedAmount
+                ?.formatAsAlgoAmount(),
+            formattedAlgoPrimaryCurrencyValue = algoData
+                ?.getSelectedCurrencyParityValue()
+                ?.getFormattedCompactValue(),
             formattedMinBalanceToKeepPerOptedInAsset = getFormattedMinBalanceToKeepPerOptedInAsset()
         )
-    }
-
-    private fun getFormattedAlgoAmount(accountAddress: String): String? {
-        return getAlgoData(accountAddress)?.formattedAmount
-    }
-
-    private fun getFormattedAlgoPrimaryCurrencyValue(accountAddress: String): String? {
-        return getAlgoData(accountAddress)?.getSelectedCurrencyParityValue()?.getFormattedCompactValue()
     }
 
     private fun getFormattedMinBalanceToKeepPerOptedInAsset(): String {
@@ -45,9 +42,5 @@ class BalanceWarningPreviewUseCase @Inject constructor(
             .toAlgoDisplayValue()
             .stripTrailingZeros()
             .toPlainString()
-    }
-
-    private fun getAlgoData(accountAddress: String): BaseAccountAssetData.BaseOwnedAssetData? {
-        return getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(ALGO_ID, accountAddress)
     }
 }

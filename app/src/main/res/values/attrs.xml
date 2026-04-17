@@ -217,4 +217,9 @@
         <attr name="startOptionIcon" format="reference" />
         <attr name="endOptionIcon" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="BaseAccountAndAssetItemView">
+        <attr name="rootHorizontalPadding" format="dimension" />
+        <attr name="isDividerVisible" format="boolean" />
+    </declare-styleable>
 </resources>

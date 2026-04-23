@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 @Singleton
 class BackupSyncManager internal constructor(
@@ -45,10 +47,13 @@ class BackupSyncManager internal constructor(
     private val _syncStatus = MutableStateFlow<BackupSyncStatus>(BackupSyncStatus.Idle)
     val syncStatus: StateFlow<BackupSyncStatus> get() = _syncStatus
 
+    private val syncMutex = Mutex()
+
     private var periodicJob: Job? = null
     private var webSocketJob: Job? = null
     private var observeJob: Job? = null
     private var debouncedSyncJob: Job? = null
+    private var debouncedPullJob: Job? = null
 
     override fun onResume(owner: LifecycleOwner) {
         startObservingChanges()
@@ -80,6 +85,7 @@ class BackupSyncManager internal constructor(
         stopObservingChanges()
         disconnectWebSocket()
         debouncedSyncJob?.cancel()
+        debouncedPullJob?.cancel()
         _syncStatus.value = BackupSyncStatus.Idle
     }
 
@@ -108,19 +114,21 @@ class BackupSyncManager internal constructor(
     }
 
     private suspend fun runFullSync() {
-        stopObservingChanges()
-        _syncStatus.value = BackupSyncStatus.Syncing
+        syncMutex.withLock {
+            stopObservingChanges()
+            _syncStatus.value = BackupSyncStatus.Syncing
 
-        val result = syncBackup()
+            val result = syncBackup()
 
-        _syncStatus.value = when (result) {
-            is SyncBackupResult.Success -> BackupSyncStatus.UpToDate
-            is SyncBackupResult.SuccessWithPendingChanges -> BackupSyncStatus.HasLocalChanges
-            is SyncBackupResult.AlreadyRunning -> _syncStatus.value
-            is SyncBackupResult.Error -> BackupSyncStatus.Error(result.exception)
+            _syncStatus.value = when (result) {
+                is SyncBackupResult.Success -> BackupSyncStatus.UpToDate
+                is SyncBackupResult.SuccessWithPendingChanges -> BackupSyncStatus.HasLocalChanges
+                is SyncBackupResult.AlreadyRunning -> _syncStatus.value
+                is SyncBackupResult.Error -> BackupSyncStatus.Error(result.exception)
+            }
+
+            startObservingChanges()
         }
-
-        startObservingChanges()
     }
 
     private fun connectWebSocket() {
@@ -139,7 +147,7 @@ class BackupSyncManager internal constructor(
 
     private fun handleWebSocketEvent(event: BackupWebSocketEvent) {
         when (event) {
-            is BackupWebSocketEvent.ItemsUpdated -> pullNow()
+            is BackupWebSocketEvent.ItemsUpdated -> scheduleDebouncedPull()
             is BackupWebSocketEvent.Connected,
             is BackupWebSocketEvent.Disconnected,
             is BackupWebSocketEvent.Error,
@@ -147,9 +155,17 @@ class BackupSyncManager internal constructor(
         }
     }
 
-    private fun pullNow() {
+    private fun scheduleDebouncedPull() {
         if (!hasBackup()) return
-        scope.launch {
+        debouncedPullJob?.cancel()
+        debouncedPullJob = scope.launch {
+            delay(PULL_DEBOUNCE_MS)
+            runPull()
+        }
+    }
+
+    private suspend fun runPull() {
+        syncMutex.withLock {
             stopObservingChanges()
             pullAndImportSync()
             startObservingChanges()
@@ -175,6 +191,7 @@ class BackupSyncManager internal constructor(
 
     private companion object {
         const val SYNC_DEBOUNCE_MS = 1000L
+        const val PULL_DEBOUNCE_MS = 500L
         const val SYNC_INTERVAL_MS = 5 * 60 * 1000L // 5 minutes
     }
 }

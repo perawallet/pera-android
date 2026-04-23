@@ -27,7 +27,6 @@ import com.algorand.backup.data.repository.DefaultLocalBackupDataProvider
 import com.algorand.backup.data.repository.DefaultSyncStateRepository
 import com.algorand.backup.data.service.BackupApiService
 import com.algorand.backup.data.service.BackupAuthInterceptor
-import com.algorand.backup.data.service.BackupWebSocketClient
 import com.algorand.backup.data.service.BackupWebSocketUrlBuilder
 import com.algorand.backup.data.service.DefaultBackupWebSocketUrlBuilder
 import com.algorand.backup.domain.repository.BackupAuthRepository
@@ -49,6 +48,7 @@ import com.algorand.backup.domain.security.DefaultHkdfKeyManager
 import com.algorand.backup.domain.security.DefaultNonceGenerator
 import com.algorand.backup.domain.security.DefaultPeraAndroidKeyStore
 import com.algorand.backup.domain.security.DefaultPeraCipher
+import com.algorand.backup.domain.security.DefaultSaltGenerator
 import com.algorand.backup.domain.security.Ed25519KeyManager
 import com.algorand.backup.domain.security.HkdfKeyManager
 import com.algorand.backup.domain.security.NonceGenerator
@@ -157,7 +157,7 @@ internal object BackupModule {
 
     @Provides
     @Singleton
-    fun provideSaltGenerator(generator: SaltGenerator): SaltGenerator = generator
+    fun provideSaltGenerator(generator: DefaultSaltGenerator): SaltGenerator = generator
 
     @Provides
     @Singleton
@@ -333,10 +333,6 @@ internal object BackupModule {
             baseUrl = BACKUP_BASE_URL
         )
     }
-
-    @Provides
-    @Singleton
-    fun provideBackupWebSocketClient(client: BackupWebSocketClient): BackupWebSocketClient = client
 
     @Provides
     @Singleton

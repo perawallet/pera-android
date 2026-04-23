@@ -55,7 +55,7 @@ internal class DefaultBackupSyncStateUpdater @Inject constructor(
     }
 
     private suspend fun markExistingItemDirty(backupId: BackupId, key: BackupItemKey, existingItem: SyncItemState) {
-        if (existingItem.isDirty || existingItem.pendingDelete) return
+        if (existingItem.pendingDelete) return
         val dirtyItem = existingItem.copy(
             baseVersion = existingItem.knownVersion,
             isDirty = true

@@ -16,6 +16,7 @@ import com.algorand.backup.data.mapper.BackupWebSocketEventMapper
 import com.algorand.backup.domain.model.BackupWebSocketEvent
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -31,6 +32,7 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
+@Singleton
 internal class BackupWebSocketClient @Inject constructor(
     private val httpClient: OkHttpClient,
     private val webSocketUrlBuilder: BackupWebSocketUrlBuilder,

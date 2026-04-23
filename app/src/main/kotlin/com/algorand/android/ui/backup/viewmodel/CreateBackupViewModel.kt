@@ -23,6 +23,7 @@ import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel.ViewState
 import com.algorand.android.ui.device.usecase.GetDeviceConfig
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.SyncBackupResult
+import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.CreateBackup
 import com.algorand.backup.domain.usecase.SyncBackup
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
@@ -42,6 +43,7 @@ class CreateBackupViewModel @Inject constructor(
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val createBackup: CreateBackup,
     private val syncBackup: SyncBackup,
+    private val backupSyncManager: BackupSyncManager,
     private val getDeviceConfig: GetDeviceConfig,
     bip39WalletProvider: Bip39WalletProvider,
     peraBip39Sdk: PeraBip39Sdk
@@ -67,8 +69,7 @@ class CreateBackupViewModel @Inject constructor(
                     is PeraResult.Success -> {
                         val backup = result.data
                         val salt = Base64.encodeToString(backup.salt, Base64.NO_WRAP)
-                        Log.e(LOG_TAG, "Mnemonic: ${currentState.mnemonic}")
-                        Log.e(LOG_TAG, "Salt: $salt")
+                        backupSyncManager.enableSync()
                         stateDelegate.updateState {
                             ViewState.Syncing(backupId = backup.backupId.value, salt = salt)
                         }

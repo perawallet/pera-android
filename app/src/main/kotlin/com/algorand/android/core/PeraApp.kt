@@ -28,6 +28,7 @@ import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.ui.vibration.PeraVibration
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
+import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.security.PeraSecurityManager
@@ -60,6 +61,9 @@ open class PeraApp : Application() {
 
     @Inject
     lateinit var pendingIntentKeeper: PendingIntentKeeper
+
+    @Inject
+    lateinit var backupSyncManager: BackupSyncManager
 
     @Inject
     lateinit var peraSecurityManager: PeraSecurityManager
@@ -118,6 +122,7 @@ open class PeraApp : Application() {
             addObserver(applicationStatusObserver)
             addObserver(firebaseTokenManager)
             addObserver(pendingIntentKeeper)
+            addObserver(backupSyncManager)
         }
     }
 

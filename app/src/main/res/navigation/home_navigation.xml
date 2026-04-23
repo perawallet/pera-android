@@ -819,6 +819,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_passkeysFragment"
             app:destination="@id/passkeysFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_backupFragment"
+            app:destination="@id/backupFragment" />
     </fragment>
 
     <fragment
@@ -1101,6 +1104,9 @@
         <action
             android:id="@+id/action_accountDetailFragment_to_haveYouBackedUpAccountConfirmationBottomSheet"
             app:destination="@id/haveYouBackedUpAccountConfirmationBottomSheet" />
+        <action
+            android:id="@+id/action_accountDetailFragment_to_backupDeleteConfirmationBottomSheet"
+            app:destination="@id/backupDeleteConfirmationBottomSheet" />
         <action
             android:id="@+id/action_accountDetailFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
@@ -1582,6 +1588,12 @@
         android:label="HaveYouBackedUpAccountConfirmationBottomSheet"
         tools:layout="@layout/bottom_sheet_double_button" />
 
+    <dialog
+        android:id="@+id/backupDeleteConfirmationBottomSheet"
+        android:name="com.algorand.android.modules.accountdetail.removeaccount.ui.BackupDeleteConfirmationBottomSheet"
+        android:label="BackupDeleteConfirmationBottomSheet"
+        tools:layout="@layout/bottom_sheet_double_button" />
+
     <fragment
         android:id="@+id/menuFragment"
         android:name="com.algorand.android.ui.menu.view.MenuFragment"
@@ -1732,6 +1744,11 @@
         android:id="@+id/passkeysFragment"
         android:name="com.algorand.android.ui.passkey.view.PasskeysFragment"
         android:label="PasskeysFragment" />
+
+    <fragment
+        android:id="@+id/backupFragment"
+        android:name="com.algorand.android.ui.backup.view.BackupFragment"
+        android:label="BackupFragment" />
 
     <fragment
         android:id="@+id/developerOptionsFragment"

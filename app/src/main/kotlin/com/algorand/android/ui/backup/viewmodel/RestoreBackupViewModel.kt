@@ -20,6 +20,7 @@ import com.algorand.android.R
 import com.algorand.android.ui.backup.viewmodel.RestoreBackupViewModel.ViewState
 import com.algorand.backup.domain.model.Argon2idConfig
 import com.algorand.backup.domain.model.DeviceId
+import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -35,7 +36,8 @@ import javax.inject.Inject
 class RestoreBackupViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
-    private val restoreBackup: RestoreBackup
+    private val restoreBackup: RestoreBackup,
+    private val backupSyncManager: BackupSyncManager
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<RestoreBackupViewModel.ViewEvent> by eventDelegate {
 
     init {
@@ -77,6 +79,7 @@ class RestoreBackupViewModel @Inject constructor(
                 )) {
                     is PeraResult.Success -> {
                         val restored = result.data
+                        backupSyncManager.enableSync()
                         stateDelegate.updateState {
                             ViewState.Success(
                                 backupId = restored.backupId.value,

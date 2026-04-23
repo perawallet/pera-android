@@ -341,6 +341,7 @@ android.buildTypes.all {
 dependencies {
 
     // Internal modules
+    implementation(project(":backup"))
     implementation(project(":common-sdk"))
     implementation(project(":credentials"))
 

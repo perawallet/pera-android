@@ -25,6 +25,7 @@ import com.algorand.android.modules.algosdk.data.service.AlgorandSDKUtils
 import com.algorand.android.modules.algosdk.domain.model.dto.RawTransactionDTO
 import com.algorand.android.utils.decodeBase64
 import com.algorand.android.utils.fromJson
+import com.algorand.wallet.logger.PeraErrorLogger
 import com.google.gson.Gson
 import javax.inject.Inject
 
@@ -34,7 +35,8 @@ class AlgorandSDKUtilsImpl @Inject constructor(
     private val rawTransactionDTOMapper: RawTransactionDTOMapper,
     private val algorandAddressDTOMapper: AlgorandAddressDTOMapper,
     private val algodClient: AlgodClient?,
-    private val gson: Gson
+    private val gson: Gson,
+    private val errorLogger: PeraErrorLogger
 ) : AlgorandSDKUtils {
 
     @Throws(Exception::class)
@@ -46,7 +48,12 @@ class AlgorandSDKUtilsImpl @Inject constructor(
     }
 
     override fun parseRawTransaction(txnByteArray: ByteArray): RawTransactionDTO? {
-        val transactionJson = Sdk.transactionMsgpackToJson(txnByteArray)
+        val transactionJson = try {
+            Sdk.transactionMsgpackToJson(txnByteArray)
+        } catch (throwable: Throwable) {
+            errorLogger.logError(throwable)
+            return null
+        }
         val rawTransactionPayload = gson.fromJson<RawTransactionPayload>(transactionJson) ?: return null
         return rawTransactionDTOMapper.mapToRawTransactionDTO(rawTransactionPayload)
     }

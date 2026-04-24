@@ -10,7 +10,7 @@ android-minSdk = "28"
 android-namespace = "com.algorand.android"
 android-targetSdk = "36"
 android-versionCode = "124"
-android-versionName = "6.202607.0"
+android-versionName = "6.202608.0"
 ndk = "29.0.14206865"
 
 # Pera / Algorand SDK

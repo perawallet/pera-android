@@ -28,10 +28,18 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
         }
 
         val symbols = DecimalFormatSymbols.getInstance()
-        val decimalSeparator = symbols.decimalSeparator.toString()
-        val parts = original.split(decimalSeparator)
+        val decimalSeparator = symbols.decimalSeparator
 
-        val integerPart = parts.getOrNull(0)?.filter { it.isDigit() }.orEmpty()
+        // Formatting assumes the input contains only digits and at most the decimal
+        // separator. Anything else (e.g. grouping separators from pasted text) would
+        // break the offset mapping below, so pass such input through unchanged.
+        if (original.any { !it.isDigit() && it != decimalSeparator }) {
+            return TransformedText(text, OffsetMapping.Identity)
+        }
+
+        val decimalSeparatorString = decimalSeparator.toString()
+        val parts = original.split(decimalSeparatorString, limit = 2)
+        val integerPart = parts[0]
         val decimalPart = parts.getOrNull(1)
 
         val formattedInteger = try {
@@ -41,9 +49,9 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
         }
 
         val result = if (!decimalPart.isNullOrEmpty()) {
-            "$formattedInteger$decimalSeparator$decimalPart"
+            "$formattedInteger$decimalSeparatorString$decimalPart"
         } else {
-            "$formattedInteger${decimalSeparator.takeIf { original.contains(it) }.orEmpty()}"
+            "$formattedInteger${decimalSeparatorString.takeIf { original.contains(it) }.orEmpty()}"
         }
 
         val integerPartLength = integerPart.length
@@ -54,8 +62,7 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
         var digitIndex = 0
         for (i in formattedInteger.indices) {
             if (formattedInteger[i] != groupingSeparator) {
-                digitPositions[digitIndex] = i
-                digitIndex++
+                digitPositions[digitIndex++] = i
             }
         }
         digitPositions[integerPartLength] = formattedIntegerLength

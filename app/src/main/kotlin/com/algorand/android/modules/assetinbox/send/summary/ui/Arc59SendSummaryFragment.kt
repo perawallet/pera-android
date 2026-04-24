@@ -249,6 +249,10 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
 
     private fun navToArc59SendWarningBottomSheet() {
         val warningMessage = arc59SendSummaryViewModel.getWarningMessage()
+        if (warningMessage == null) {
+            arc59SendSummaryViewModel.createTransactionData()
+            return
+        }
         nav(
             Arc59SendSummaryFragmentDirections.actionArc59SendSummaryFragmentToArc59SendWarningBottomSheet(
                 warningMessage

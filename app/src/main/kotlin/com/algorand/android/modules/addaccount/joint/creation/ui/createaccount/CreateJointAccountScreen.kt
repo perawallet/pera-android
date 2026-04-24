@@ -73,6 +73,7 @@ fun CreateJointAccountScreen(
                 ) {
                     ContentSection(
                         selectedAccounts = state.selectedAccounts,
+                        canAddMoreAccounts = state.canAddMoreAccounts,
                         onEditClick = { index, address ->
                             listener.onEditAccountClick(index, address)
                         },
@@ -121,6 +122,7 @@ private fun ToolbarSection(listener: CreateJointAccountScreenListener) {
 @Composable
 private fun ContentSection(
     selectedAccounts: List<SelectedJointAccountItem>,
+    canAddMoreAccounts: Boolean,
     onEditClick: (Int, String) -> Unit,
     onRemoveClick: (Int) -> Unit,
     onAddAccountClick: () -> Unit
@@ -140,7 +142,9 @@ private fun ContentSection(
             onRemoveClick = onRemoveClick
         )
         Spacer(modifier = Modifier.height(8.dp))
-        AddAccountButtonSection(onAddAccountClick = onAddAccountClick)
+        if (canAddMoreAccounts) {
+            AddAccountButtonSection(onAddAccountClick = onAddAccountClick)
+        }
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

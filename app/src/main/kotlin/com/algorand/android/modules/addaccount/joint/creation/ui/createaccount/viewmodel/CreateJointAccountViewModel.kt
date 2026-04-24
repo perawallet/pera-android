@@ -65,6 +65,9 @@ class CreateJointAccountViewModel @Inject constructor(
     fun addSelectedAccount(account: SelectedJointAccountItem) {
         stateDelegate.updateState { currentState ->
             val content = currentState as? ViewState.Content ?: return@updateState currentState
+            if (content.selectedAccounts.size >= JointAccountValidationException.MAX_PARTICIPANTS) {
+                return@updateState currentState
+            }
             content.copy(selectedAccounts = content.selectedAccounts + account)
         }
     }
@@ -168,6 +171,9 @@ class CreateJointAccountViewModel @Inject constructor(
         ) : ViewState {
             val isContinueEnabled: Boolean
                 get() = selectedAccounts.size >= JointAccountValidationException.MIN_PARTICIPANTS
+
+            val canAddMoreAccounts: Boolean
+                get() = selectedAccounts.size < JointAccountValidationException.MAX_PARTICIPANTS
         }
     }
 

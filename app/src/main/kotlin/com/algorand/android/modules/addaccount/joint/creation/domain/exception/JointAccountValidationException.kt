@@ -30,5 +30,6 @@ sealed class JointAccountValidationException : Exception() {
 
     companion object {
         const val MIN_PARTICIPANTS = 2
+        const val MAX_PARTICIPANTS = 16
     }
 }

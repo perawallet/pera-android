@@ -13,6 +13,7 @@
 
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
     android:insetLeft="@dimen/spacing_xlarge"
+    android:insetTop="@dimen/spacing_xxlarge"
     android:insetRight="@dimen/spacing_xlarge"
     android:insetBottom="44dp"
     android:paddingHorizontal="@dimen/spacing_xlarge">

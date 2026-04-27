@@ -44,6 +44,7 @@ import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
 @Composable
 fun CreateBackupScreen(
     onBackClick: () -> Unit,
+    onCompleteClick: () -> Unit,
     viewModel: CreateBackupViewModel = hiltViewModel()
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
@@ -95,11 +96,19 @@ fun CreateBackupScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        PeraSecondaryButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onBackClick,
-            text = stringResource(R.string.back)
-        )
+        if (viewState is ViewState.Success) {
+            PeraPrimaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onCompleteClick,
+                text = stringResource(R.string.done)
+            )
+        } else {
+            PeraSecondaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onBackClick,
+                text = stringResource(R.string.back)
+            )
+        }
     }
 }
 

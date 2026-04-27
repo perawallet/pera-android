@@ -28,7 +28,17 @@ class CreateBackupFragment : BaseFragment(0) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            CreateBackupScreen(onBackClick = ::navBack)
+            CreateBackupScreen(
+                onBackClick = ::navBack,
+                onCompleteClick = ::navigateToOverview
+            )
         }
+    }
+
+    private fun navigateToOverview() {
+        nav(
+            CreateBackupFragmentDirections
+                .actionCreateBackupFragmentToBackupOverviewFragment()
+        )
     }
 }

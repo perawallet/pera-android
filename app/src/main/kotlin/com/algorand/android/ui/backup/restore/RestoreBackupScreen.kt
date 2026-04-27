@@ -41,6 +41,7 @@ import com.algorand.android.ui.compose.widget.textfield.PeraTextField
 @Composable
 fun RestoreBackupScreen(
     onBackClick: () -> Unit,
+    onCompleteClick: () -> Unit,
     viewModel: RestoreBackupViewModel = hiltViewModel()
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
@@ -159,10 +160,18 @@ fun RestoreBackupScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        PeraSecondaryButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onBackClick,
-            text = stringResource(R.string.back)
-        )
+        if (viewState is ViewState.Success) {
+            PeraPrimaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onCompleteClick,
+                text = stringResource(R.string.done)
+            )
+        } else {
+            PeraSecondaryButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onBackClick,
+                text = stringResource(R.string.back)
+            )
+        }
     }
 }

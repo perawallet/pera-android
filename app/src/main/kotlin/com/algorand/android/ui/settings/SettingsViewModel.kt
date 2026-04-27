@@ -82,6 +82,8 @@ class SettingsViewModel @Inject constructor(
 
     fun isBackupFeatureEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.BACKUP.key)
 
+    fun isBackupEnabled(): Boolean = hasBackup()
+
     fun enableDeveloperOptions() {
         devOptionsClickCounter.click()
     }

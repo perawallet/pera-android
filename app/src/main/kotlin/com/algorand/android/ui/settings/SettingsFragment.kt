@@ -130,7 +130,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             }
             cloudBackupListItem.apply {
                 if (settingsViewModel.isBackupFeatureEnabled()) show() else hide()
-                setOnClickListener { nav(SettingsFragmentDirections.actionSettingsFragmentToBackupFragment()) }
+                setOnClickListener { onCloudBackupClick() }
             }
         }
     }
@@ -246,5 +246,14 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     private fun onPrivacyPolicyClick() {
         context?.openPrivacyPolicyUrl()
+    }
+
+    private fun onCloudBackupClick() {
+        val direction = if (settingsViewModel.isBackupEnabled()) {
+            SettingsFragmentDirections.actionSettingsFragmentToBackupOverviewFragment()
+        } else {
+            SettingsFragmentDirections.actionSettingsFragmentToBackupOptionsFragment()
+        }
+        nav(direction)
     }
 }

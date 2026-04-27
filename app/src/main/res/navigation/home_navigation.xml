@@ -820,8 +820,11 @@
             android:id="@+id/action_settingsFragment_to_passkeysFragment"
             app:destination="@id/passkeysFragment" />
         <action
-            android:id="@+id/action_settingsFragment_to_backupFragment"
-            app:destination="@id/backupFragment" />
+            android:id="@+id/action_settingsFragment_to_backupOptionsFragment"
+            app:destination="@id/backupOptionsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment" />
     </fragment>
 
     <fragment
@@ -1746,9 +1749,36 @@
         android:label="PasskeysFragment" />
 
     <fragment
+        android:id="@+id/backupOptionsFragment"
+        android:name="com.algorand.android.ui.backup.options.BackupOptionsFragment"
+        android:label="BackupOptionsFragment">
+        <action
+            android:id="@+id/action_backupOptionsFragment_to_createBackupFragment"
+            app:destination="@id/createBackupFragment" />
+        <action
+            android:id="@+id/action_backupOptionsFragment_to_restoreBackupFragment"
+            app:destination="@id/restoreBackupFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/backupFragment"
         android:name="com.algorand.android.ui.backup.view.BackupFragment"
         android:label="BackupFragment" />
+
+    <fragment
+        android:id="@+id/createBackupFragment"
+        android:name="com.algorand.android.ui.backup.create.CreateBackupFragment"
+        android:label="CreateBackupFragment" />
+
+    <fragment
+        android:id="@+id/restoreBackupFragment"
+        android:name="com.algorand.android.ui.backup.restore.RestoreBackupFragment"
+        android:label="RestoreBackupFragment" />
+
+    <fragment
+        android:id="@+id/backupOverviewFragment"
+        android:name="com.algorand.android.ui.backup.overview.BackupOverviewFragment"
+        android:label="BackupOverviewFragment" />
 
     <fragment
         android:id="@+id/developerOptionsFragment"

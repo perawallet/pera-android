@@ -14,6 +14,7 @@ package com.algorand.android.modules.tutorialdialog.util
 
 import android.content.Context
 import com.algorand.android.R
+import com.algorand.android.modules.tutorialdialog.ui.BackupTutorialDialog
 import com.algorand.android.modules.tutorialdialog.ui.TutorialDialogBuilder
 
 fun Context.showCopyAccountAddressTutorialDialog(onDismiss: (() -> Unit)? = null) {
@@ -45,4 +46,11 @@ fun Context.showGiftCardsTutorialDialog(onBuyGiftCards: (() -> Unit)? = null, on
         .setPrimaryButton(textRes = R.string.buy_gift_cards, onClick = onBuyGiftCards)
         .setSecondaryButton(textRes = R.string.later, onClick = onLater)
         .show()
+}
+
+fun Context.showBackupTutorialDialog(onContinue: (() -> Unit)? = null) {
+    BackupTutorialDialog.create(this).apply {
+        onContinueClick = onContinue
+        show()
+    }
 }

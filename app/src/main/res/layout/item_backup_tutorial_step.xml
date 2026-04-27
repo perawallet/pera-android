@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:paddingHorizontal="@dimen/spacing_xlarge"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/stepNumberTextView"
+        style="@style/TextAppearance.Body.Sans"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_backup_tutorial_step"
+        android:gravity="center"
+        android:textColor="@color/text_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/stepTitleTextView"
+        style="@style/TextAppearance.Body.Sans.Medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_normal"
+        app:layout_constraintBottom_toBottomOf="@id/stepNumberTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/stepNumberTextView"
+        app:layout_constraintTop_toTopOf="@id/stepNumberTextView"
+        tools:text="Secure Encryption" />
+
+    <TextView
+        android:id="@+id/stepDescriptionTextView"
+        style="@style/TextAppearance.Body.Sans"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/stepTitleTextView"
+        app:layout_constraintStart_toStartOf="@id/stepTitleTextView"
+        app:layout_constraintTop_toBottomOf="@id/stepTitleTextView"
+        tools:text="Your data is encrypted locally with your master password before being uploaded." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

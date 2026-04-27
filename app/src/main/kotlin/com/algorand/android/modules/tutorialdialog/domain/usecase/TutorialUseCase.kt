@@ -16,8 +16,10 @@ import com.algorand.android.modules.appopencount.domain.usecase.ApplicationOpenC
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import kotlinx.coroutines.flow.Flow
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class TutorialUseCase @Inject constructor(
     private val cacheTutorialUseCase: CacheTutorialUseCase,
@@ -26,7 +28,8 @@ class TutorialUseCase @Inject constructor(
     private val removeDismissedTutorialFromCacheUseCase: RemoveDismissedTutorialFromCacheUseCase,
     private val setTutorialDismissedUseCase: SetTutorialDismissedUseCase,
     private val applicationOpenCountPreferenceUseCase: ApplicationOpenCountPreferenceUseCase,
-    private val getLocalAccounts: GetLocalAccounts
+    private val getLocalAccounts: GetLocalAccounts,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) {
 
     suspend fun initializeTutorial() {
@@ -34,8 +37,18 @@ class TutorialUseCase @Inject constructor(
         if (applicationOpeningCount < 1 || !isThereAnyNormalLocalAccount()) return
 
         val dismissedTutorials = getDismissedTutorialIdsUseCase.getDismissedTutorialIdList()
-        Tutorial.entries.firstOrNull { !dismissedTutorials.contains(it.ordinal) }?.let { upcomingTutorial ->
-            cacheTutorialUseCase.cacheTutorial(upcomingTutorial)
+        Tutorial.entries
+            .filter { isTutorialAvailable(it) }
+            .firstOrNull { !dismissedTutorials.contains(it.ordinal) }
+            ?.let { upcomingTutorial ->
+                cacheTutorialUseCase.cacheTutorial(upcomingTutorial)
+            }
+    }
+
+    private fun isTutorialAvailable(tutorial: Tutorial): Boolean {
+        return when (tutorial) {
+            Tutorial.BACKUP -> isFeatureToggleEnabled(FeatureToggle.BACKUP.key)
+            else -> true
         }
     }
 

@@ -1265,7 +1265,16 @@
                 android:name="warningConfirmation"
                 app:argType="com.algorand.android.models.WarningConfirmation" />
         </action>
+        <action
+            android:id="@+id/action_editContactFragment_to_contactBackupDeleteConfirmationBottomSheet"
+            app:destination="@id/contactBackupDeleteConfirmationBottomSheet" />
     </fragment>
+
+    <dialog
+        android:id="@+id/contactBackupDeleteConfirmationBottomSheet"
+        android:name="com.algorand.android.ui.contacts.editcontact.ContactBackupDeleteConfirmationBottomSheet"
+        android:label="ContactBackupDeleteConfirmationBottomSheet"
+        tools:layout="@layout/bottom_sheet_double_button" />
 
     <fragment
         android:id="@+id/editContactQrScannerFragment"

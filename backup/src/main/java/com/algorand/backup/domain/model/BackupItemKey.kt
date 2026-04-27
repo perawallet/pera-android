@@ -19,11 +19,15 @@ value class BackupItemKey(val value: String) {
 
     fun isSecrets(): Boolean = value.startsWith(SECRETS_PREFIX)
 
+    fun isContact(): Boolean = value.startsWith(CONTACTS_PREFIX)
+
     companion object {
         const val ACCOUNTS_PREFIX = "accounts/"
         const val SECRETS_PREFIX = "secrets/"
+        const val CONTACTS_PREFIX = "contacts/"
 
         fun accounts(address: String) = BackupItemKey("$ACCOUNTS_PREFIX$address")
         fun secrets(address: String) = BackupItemKey("$SECRETS_PREFIX$address")
+        fun contacts(publicKey: String) = BackupItemKey("$CONTACTS_PREFIX$publicKey")
     }
 }

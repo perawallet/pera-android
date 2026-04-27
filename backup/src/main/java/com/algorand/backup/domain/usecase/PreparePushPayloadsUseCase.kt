@@ -14,6 +14,8 @@ package com.algorand.backup.domain.usecase
 
 import com.algorand.backup.account.domain.mapper.AddressBackupPayloadMapper
 import com.algorand.backup.account.domain.mapper.SecretsBackupPayloadMapper
+import com.algorand.backup.contact.domain.mapper.ContactBackupPayloadMapper
+import com.algorand.backup.contact.domain.usecase.ContactsBackupDataProvider
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.BackupItemStatus
@@ -25,9 +27,11 @@ import javax.inject.Inject
 
 internal class PreparePushPayloadsUseCase @Inject constructor(
     private val localBackupDataProvider: LocalBackupDataProvider,
+    private val contactsBackupDataProvider: ContactsBackupDataProvider,
     private val syncStateRepository: SyncStateRepository,
     private val addressBackupPayloadMapper: AddressBackupPayloadMapper,
     private val secretsBackupPayloadMapper: SecretsBackupPayloadMapper,
+    private val contactBackupPayloadMapper: ContactBackupPayloadMapper,
     private val encryptBackupPayloads: EncryptBackupPayloads
 ) : PreparePushPayloads {
 
@@ -59,6 +63,12 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
             payloads[key] = secretsBackupPayloadMapper.serialize(payload)
         }
 
+        for (payload in contactsBackupDataProvider.getContactPayloads()) {
+            val key = BackupItemKey.contacts(payload.address)
+            if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
+            payloads[key] = contactBackupPayloadMapper.serialize(payload)
+        }
+
         return payloads
     }
 
@@ -70,7 +80,7 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
         keys.forEach { key ->
             val existing = existingItems[key]
             val item = SyncItemState(
-                type = BackupItemType.ACCOUNT,
+                type = key.toBackupItemType(),
                 knownVersion = existing?.knownVersion ?: 0,
                 baseVersion = existing?.baseVersion ?: 0,
                 isDirty = true,
@@ -80,5 +90,9 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
             )
             syncStateRepository.updateItemState(backupId, key, item)
         }
+    }
+
+    private fun BackupItemKey.toBackupItemType(): BackupItemType {
+        return if (isContact()) BackupItemType.CONTACT else BackupItemType.ACCOUNT
     }
 }

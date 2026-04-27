@@ -17,6 +17,8 @@ import com.algorand.android.core.LegacyAccountManager
 import com.algorand.android.credentials.passkeys.domain.usecase.ClearAllPasskeys
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.repository.ContactRepository
+import com.algorand.backup.domain.usecase.DisableBackup
+import com.algorand.backup.domain.usecase.HasBackup
 import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformation
 import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccounts
 import com.algorand.wallet.banner.common.domain.usecase.ClearAllBannerCaches
@@ -34,9 +36,14 @@ class DeleteAllDataUseCase @Inject constructor(
     private val clearAllCustomInformation: ClearAllCustomInformation,
     private val clearAllBannerCaches: ClearAllBannerCaches,
     private val clearDismissedBannerIds: ClearDismissedBannerIds,
-    private val clearAllPasskeys: ClearAllPasskeys
+    private val clearAllPasskeys: ClearAllPasskeys,
+    private val hasBackup: HasBackup,
+    private val disableBackup: DisableBackup
 ) {
     suspend fun deleteAllData() {
+        if (hasBackup()) {
+            disableBackup()
+        }
         legacyAccountManager.removeAllData()
         walletConnectManager.killAllSessions()
         deleteAllLocalAccounts()

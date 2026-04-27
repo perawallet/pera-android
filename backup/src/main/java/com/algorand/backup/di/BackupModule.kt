@@ -16,6 +16,9 @@ import com.algorand.backup.account.domain.mapper.AddressBackupPayloadMapper
 import com.algorand.backup.account.domain.mapper.DefaultAddressBackupPayloadMapper
 import com.algorand.backup.account.domain.mapper.DefaultSecretsBackupPayloadMapper
 import com.algorand.backup.account.domain.mapper.SecretsBackupPayloadMapper
+import com.algorand.backup.contact.domain.mapper.ContactBackupPayloadMapper
+import com.algorand.backup.contact.domain.mapper.DefaultContactBackupPayloadMapper
+import com.algorand.backup.contact.domain.usecase.ContactBackupItemObserver
 import com.algorand.backup.data.mapper.SyncStateCacheMapper
 import com.algorand.backup.data.model.BackupAuthCredentialsCacheData
 import com.algorand.backup.data.model.SyncStateCacheModel
@@ -304,6 +307,11 @@ internal object BackupModule {
     ): SecretsBackupPayloadMapper = mapper
 
     @Provides
+    fun provideContactBackupPayloadMapper(
+        mapper: DefaultContactBackupPayloadMapper
+    ): ContactBackupPayloadMapper = mapper
+
+    @Provides
     fun providePreparePushPayloads(useCase: PreparePushPayloadsUseCase): PreparePushPayloads = useCase
 
     @Provides
@@ -359,6 +367,12 @@ internal object BackupModule {
     @IntoSet
     fun provideAccountBackupItemObserver(
         observer: AccountBackupItemObserver
+    ): BackupItemObserver = observer
+
+    @Provides
+    @IntoSet
+    fun provideContactBackupItemObserver(
+        observer: ContactBackupItemObserver
     ): BackupItemObserver = observer
 
     @Provides

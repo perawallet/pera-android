@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.backup.view
+package com.algorand.android.ui.backup.restore
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column

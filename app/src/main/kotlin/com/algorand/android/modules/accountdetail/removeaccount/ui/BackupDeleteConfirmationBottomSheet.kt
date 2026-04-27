@@ -23,16 +23,18 @@ import com.google.android.material.button.MaterialButton
 class BackupDeleteConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
 
     override fun setTitleText(textView: TextView) {
-        textView.setText(R.string.remove_from_backup)
+        textView.setText(R.string.delete_from_cloud_backup_title)
     }
 
     override fun setDescriptionText(textView: TextView) {
-        textView.setText(R.string.this_account_is_backed_up)
+        textView.setText(R.string.delete_from_cloud_backup_description)
     }
 
     override fun setAcceptButton(materialButton: MaterialButton) {
         materialButton.apply {
-            setText(R.string.remove_from_backup)
+            setText(R.string.delete)
+            backgroundTintList = ContextCompat.getColorStateList(context, R.color.negative_lighter)
+            setTextColor(ContextCompat.getColor(context, R.color.negative))
             setOnClickListener {
                 setFragmentNavigationResult(BACKUP_DELETE_CONFIRMATION_KEY, true)
                 navBack()
@@ -42,7 +44,7 @@ class BackupDeleteConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
 
     override fun setCancelButton(materialButton: MaterialButton) {
         materialButton.apply {
-            setText(R.string.keep_in_backup)
+            setText(R.string.cancel)
             setOnClickListener {
                 setFragmentNavigationResult(BACKUP_DELETE_CONFIRMATION_KEY, false)
                 navBack()
@@ -52,7 +54,7 @@ class BackupDeleteConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
 
     override fun setIconImageView(imageView: ImageView) {
         imageView.apply {
-            setImageResource(R.drawable.ic_trash)
+            setImageResource(R.drawable.ic_cloud_no_connection)
             imageTintList = ContextCompat.getColorStateList(context, R.color.negative)
         }
     }

@@ -17,6 +17,7 @@ import com.algorand.backup.data.model.SyncStateCacheModel
 import com.algorand.backup.domain.model.BackupGlobalHash
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.BackupSyncResult
 import com.algorand.backup.domain.model.SyncItemState
 import com.algorand.backup.domain.model.SyncState
 import com.algorand.backup.domain.repository.SyncStateRepository
@@ -71,6 +72,23 @@ internal class DefaultSyncStateRepository(
                 current.copy(
                     lastKnownBackupHash = lastKnownBackupHash.value,
                     lastSyncedSeq = lastSyncedSeq
+                )
+            )
+        }
+    }
+
+    override suspend fun recordLatestSync(
+        backupId: BackupId,
+        timestampMillis: Long,
+        result: BackupSyncResult
+    ) {
+        mutex.withLock {
+            val current = persistentCache.get()
+                ?.takeIf { it.backupId == backupId.value } ?: return
+            persistentCache.put(
+                current.copy(
+                    lastSyncedAt = timestampMillis,
+                    lastSyncResult = result.name
                 )
             )
         }

@@ -19,6 +19,7 @@ import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
+import com.algorand.backup.domain.model.BackupSyncResult
 import com.algorand.backup.domain.model.ItemHash
 import com.algorand.backup.domain.model.SyncItemState
 import com.algorand.backup.domain.model.SyncState
@@ -33,7 +34,9 @@ internal class SyncStateCacheMapper @Inject constructor() {
             lastSyncedSeq = domain.lastSyncedSeq,
             items = domain.items.map { (key, state) ->
                 key.value to toItemCacheModel(state)
-            }.toMap()
+            }.toMap(),
+            lastSyncedAt = domain.lastSyncedAt,
+            lastSyncResult = domain.lastSyncResult?.name
         )
     }
 
@@ -44,7 +47,9 @@ internal class SyncStateCacheMapper @Inject constructor() {
             lastSyncedSeq = cache.lastSyncedSeq,
             items = cache.items.map { (key, state) ->
                 BackupItemKey(key) to toItemDomainModel(state)
-            }.toMap()
+            }.toMap(),
+            lastSyncedAt = cache.lastSyncedAt,
+            lastSyncResult = cache.lastSyncResult?.let { runCatching { BackupSyncResult.valueOf(it) }.getOrNull() }
         )
     }
 

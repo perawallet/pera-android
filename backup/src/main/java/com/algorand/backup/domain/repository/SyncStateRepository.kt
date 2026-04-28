@@ -15,6 +15,7 @@ package com.algorand.backup.domain.repository
 import com.algorand.backup.domain.model.BackupGlobalHash
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.BackupSyncResult
 import com.algorand.backup.domain.model.SyncItemState
 import com.algorand.backup.domain.model.SyncState
 
@@ -33,6 +34,8 @@ internal interface SyncStateRepository {
         lastKnownBackupHash: BackupGlobalHash,
         lastSyncedSeq: Long
     )
+
+    suspend fun recordLatestSync(backupId: BackupId, timestampMillis: Long, result: BackupSyncResult)
 
     suspend fun getDirtyItems(backupId: BackupId): Map<BackupItemKey, SyncItemState>
 

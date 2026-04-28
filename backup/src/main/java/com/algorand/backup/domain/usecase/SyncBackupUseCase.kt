@@ -29,7 +29,8 @@ internal class SyncBackupUseCase @Inject constructor(
     private val pushBackupSync: PushBackupSync,
     private val preparePushPayloads: PreparePushPayloads,
     private val syncStateRepository: SyncStateRepository,
-    private val backupRepository: BackupRepository
+    private val backupRepository: BackupRepository,
+    private val saveBackupSyncResult: SaveBackupSyncResult
 ) : SyncBackup {
 
     private val syncMutex = Mutex()
@@ -38,7 +39,8 @@ internal class SyncBackupUseCase @Inject constructor(
         if (!syncMutex.tryLock()) return SyncBackupResult.AlreadyRunning
 
         return try {
-            runSync()
+            val result = runSync()
+            result.also { saveBackupSyncResult(it) }
         } finally {
             syncMutex.unlock()
         }

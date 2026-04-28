@@ -10,15 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.backup.data.model
+package com.algorand.backup.domain.model
 
-import com.google.gson.annotations.SerializedName
-
-internal data class SyncStateCacheModel(
-    @SerializedName("backup_id") val backupId: String,
-    @SerializedName("last_known_backup_hash") val lastKnownBackupHash: String?,
-    @SerializedName("last_synced_seq") val lastSyncedSeq: Long,
-    @SerializedName("items") val items: Map<String, SyncItemStateCacheModel>,
-    @SerializedName("last_synced_at") val lastSyncedAt: Long? = null,
-    @SerializedName("last_sync_result") val lastSyncResult: String? = null
+data class LatestSync(
+    val timestampMillis: Long,
+    val result: BackupSyncResult
 )

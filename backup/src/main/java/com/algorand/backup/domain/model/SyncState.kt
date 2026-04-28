@@ -16,5 +16,7 @@ data class SyncState(
     val backupId: BackupId,
     val lastKnownBackupHash: BackupGlobalHash?,
     val lastSyncedSeq: Long,
-    val items: Map<BackupItemKey, SyncItemState>
+    val items: Map<BackupItemKey, SyncItemState>,
+    val lastSyncedAt: Long? = null,
+    val lastSyncResult: BackupSyncResult? = null
 )

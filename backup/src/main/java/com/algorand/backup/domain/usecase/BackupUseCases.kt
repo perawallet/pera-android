@@ -30,6 +30,7 @@ import com.algorand.backup.domain.model.RestoredBackup
 import com.algorand.backup.domain.model.SensitiveBytes
 import com.algorand.backup.domain.model.SyncBackupResult
 import com.algorand.backup.domain.model.SyncItemState
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow

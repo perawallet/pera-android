@@ -73,6 +73,7 @@ import com.algorand.backup.domain.usecase.DecryptBackupPayloads
 import com.algorand.backup.domain.usecase.DecryptBackupPayloadsUseCase
 import com.algorand.backup.domain.usecase.DefaultBackupSyncStateUpdater
 import com.algorand.backup.domain.usecase.DefaultDeleteAccountFromBackup
+import com.algorand.backup.domain.usecase.DefaultResolveAddedAccountBackupKeys
 import com.algorand.backup.domain.usecase.DeleteAccountFromBackup
 import com.algorand.backup.domain.usecase.DeleteBackup
 import com.algorand.backup.domain.usecase.DeleteBackupItem
@@ -112,6 +113,7 @@ import com.algorand.backup.domain.usecase.PushDirtyBackupItemsUseCase
 import com.algorand.backup.domain.usecase.ReactivateBackupItem
 import com.algorand.backup.domain.usecase.ReactivateBackupItemUseCase
 import com.algorand.backup.domain.usecase.RegisterBackup
+import com.algorand.backup.domain.usecase.ResolveAddedAccountBackupKeys
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.backup.domain.usecase.RestoreBackupUseCase
 import com.algorand.backup.domain.usecase.StoreBackupCredentials
@@ -304,6 +306,11 @@ internal object BackupModule {
 
     @Provides
     fun provideDeleteAccountFromBackup(useCase: DefaultDeleteAccountFromBackup): DeleteAccountFromBackup = useCase
+
+    @Provides
+    fun provideResolveAddedAccountBackupKeys(
+        useCase: DefaultResolveAddedAccountBackupKeys
+    ): ResolveAddedAccountBackupKeys = useCase
 
     @Provides
     fun provideReactivateBackupItem(useCase: ReactivateBackupItemUseCase): ReactivateBackupItem = useCase

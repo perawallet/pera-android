@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.onEach
 internal class AccountBackupItemObserver @Inject constructor(
     private val getLocalAccountsFlow: GetLocalAccountsFlow,
     private val getAccountsCustomInfoFlow: GetAccountsCustomInfoFlow,
+    private val resolveAddedAccountBackupKeys: ResolveAddedAccountBackupKeys,
     private val syncStateUpdater: BackupSyncStateUpdater,
     private val hasBackup: HasBackup,
     private val changeProcessor: BackupAccountChangeProcessor
@@ -77,6 +78,11 @@ internal class AccountBackupItemObserver @Inject constructor(
 
         if (deleteKeys.isNotEmpty()) {
             syncStateUpdater.markPendingDelete(deleteKeys)
+        }
+
+        val addedKeys = resolveAddedAccountBackupKeys(event.addedAddresses, accounts)
+        if (addedKeys.isNotEmpty()) {
+            syncStateUpdater.markDirty(addedKeys, BackupItemType.ACCOUNT)
         }
 
         return true

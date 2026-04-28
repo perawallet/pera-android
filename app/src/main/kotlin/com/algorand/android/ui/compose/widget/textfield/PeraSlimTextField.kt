@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -45,7 +47,10 @@ fun PeraSlimTextField(
     endIconContainer: @Composable (() -> Unit)? = null,
     singleLine: Boolean = true,
     enabled: Boolean = true,
-    textColor: Color = PeraTheme.colors.text.main
+    textColor: Color = PeraTheme.colors.text.main,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     Row(
         modifier = modifier
@@ -71,6 +76,9 @@ fun PeraSlimTextField(
                 textStyle = PeraTheme.typography.footnote.sans.copy(color = textColor),
                 cursorBrush = SolidColor(textColor),
                 onValueChange = onTextChanged,
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                interactionSource = interactionSource,
                 decorationBox = @Composable { innerTextField ->
                     TextFieldDefaults.DecorationBox(
                         value = textField,
@@ -79,7 +87,7 @@ fun PeraSlimTextField(
                         enabled = enabled,
                         visualTransformation = VisualTransformation.None,
                         contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp),
-                        interactionSource = remember { MutableInteractionSource() },
+                        interactionSource = interactionSource,
                         shape = RectangleShape,
                         colors = TextFieldDefaults.colors().copy(
                             focusedContainerColor = Color.Transparent,

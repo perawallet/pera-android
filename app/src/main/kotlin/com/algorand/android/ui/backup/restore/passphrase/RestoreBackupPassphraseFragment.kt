@@ -10,45 +10,36 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.backup.options
+package com.algorand.android.ui.backup.restore.passphrase
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.algorand.android.R
+import androidx.fragment.app.viewModels
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BackupOptionsFragment : BaseFragment(0) {
+class RestoreBackupPassphraseFragment : BaseFragment(0) {
 
-    private val toolbarConfiguration = ToolbarConfiguration(
-        startIconResId = R.drawable.ic_left_arrow,
-        startIconClick = ::navBack
-    )
+    private val viewModel: RestoreBackupPassphraseViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration(
-        toolbarConfiguration = toolbarConfiguration
-    )
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            BackupOptionsScreen(
-                onSetUpBackupClick = ::navigateToSetUpBackup,
-                onRestoreBackupClick = ::navigateToRestoreBackup
+            RestoreBackupPassphraseScreen(
+                viewModel = viewModel,
+                onBackClick = ::navBack,
+                onProceedClick = ::onProceed
             )
         }
     }
 
-    private fun navigateToSetUpBackup() {
-        nav(BackupOptionsFragmentDirections.actionBackupOptionsFragmentToCreateBackupFragment())
-    }
-
-    private fun navigateToRestoreBackup() {
-        nav(BackupOptionsFragmentDirections.actionBackupOptionsFragmentToRestoreBackupPassphraseFragment())
+    private fun onProceed(passphrase: String) {
+        // TODO: navigate to next step in restore flow with the entered passphrase
     }
 }

@@ -1765,8 +1765,8 @@
             android:id="@+id/action_backupOptionsFragment_to_createBackupFragment"
             app:destination="@id/createBackupFragment" />
         <action
-            android:id="@+id/action_backupOptionsFragment_to_restoreBackupFragment"
-            app:destination="@id/restoreBackupFragment" />
+            android:id="@+id/action_backupOptionsFragment_to_restoreBackupPassphraseFragment"
+            app:destination="@id/restoreBackupPassphraseFragment" />
     </fragment>
 
     <fragment
@@ -1812,6 +1812,11 @@
             app:popUpTo="@id/backupOptionsFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <fragment
+        android:id="@+id/restoreBackupPassphraseFragment"
+        android:name="com.algorand.android.ui.backup.restore.passphrase.RestoreBackupPassphraseFragment"
+        android:label="RestoreBackupPassphraseFragment" />
 
     <fragment
         android:id="@+id/backupOverviewFragment"

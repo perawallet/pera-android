@@ -177,6 +177,14 @@ internal class DefaultBackupRepository @Inject constructor(
         }.map { it.seq ?: ALREADY_DELETED_SEQ }
     }
 
+    override suspend fun deleteBackup(backupId: BackupId): PeraResult<BackupId> {
+        return request {
+            backupApiService.deleteBackup(backupId.value)
+        }.map { response ->
+            response.backupId?.let { BackupId(it) } ?: backupId
+        }
+    }
+
     private companion object {
         const val HTTP_NOT_FOUND = 404
         const val ALREADY_DELETED_SEQ = -1L

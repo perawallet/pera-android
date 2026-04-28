@@ -24,6 +24,7 @@ import com.algorand.backup.data.model.BackupAuthCredentialsCacheData
 import com.algorand.backup.data.model.SyncStateCacheModel
 import com.algorand.backup.data.repository.DefaultBackupAuthRepository
 import com.algorand.backup.data.repository.DefaultBackupRepository
+import com.algorand.backup.data.repository.DefaultBackupSnapshotRepository
 import com.algorand.backup.data.repository.DefaultBackupWebSocketRepository
 import com.algorand.backup.data.repository.DefaultLocalBackupDataImporter
 import com.algorand.backup.data.repository.DefaultLocalBackupDataProvider
@@ -71,6 +72,7 @@ import com.algorand.backup.domain.usecase.DecryptBackupPayloadsUseCase
 import com.algorand.backup.domain.usecase.DefaultBackupSyncStateUpdater
 import com.algorand.backup.domain.usecase.DeleteBackupItem
 import com.algorand.backup.domain.usecase.DeleteBackupItemUseCase
+import com.algorand.backup.domain.usecase.DeleteBackupUseCase
 import com.algorand.backup.domain.usecase.DeletePendingBackupItems
 import com.algorand.backup.domain.usecase.DeletePendingBackupItemsUseCase
 import com.algorand.backup.domain.usecase.DisableBackup
@@ -295,6 +297,9 @@ internal object BackupModule {
 
     @Provides
     fun provideDisableBackup(useCase: DisableBackupUseCase): DisableBackup = useCase
+
+    @Provides
+    fun provideDeleteBackup(useCase: DeleteBackupUseCase): DeleteBackup = useCase
 
     @Provides
     fun provideAddressBackupPayloadMapper(

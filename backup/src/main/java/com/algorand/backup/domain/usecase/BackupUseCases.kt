@@ -123,6 +123,10 @@ interface DisableBackup {
     suspend operator fun invoke()
 }
 
+interface DeleteBackup {
+    suspend operator fun invoke(): PeraResult<Unit>
+}
+
 interface PullAndImportSync {
     suspend operator fun invoke(): SyncBackupResult
 }

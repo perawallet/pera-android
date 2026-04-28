@@ -58,4 +58,6 @@ internal interface BackupRepository {
     ): PeraResult<List<BackupBatchUpsertItemResult>>
 
     suspend fun deleteItem(backupId: BackupId, key: BackupItemKey): PeraResult<Long>
+
+    suspend fun deleteBackup(backupId: BackupId): PeraResult<BackupId>
 }

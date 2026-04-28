@@ -17,6 +17,7 @@ import com.algorand.backup.data.api.model.BackupBatchReadResponse
 import com.algorand.backup.data.api.model.BackupBatchUpsertRequest
 import com.algorand.backup.data.api.model.BackupBatchUpsertResponse
 import com.algorand.backup.data.api.model.BackupDeleteItemResponse
+import com.algorand.backup.data.api.model.BackupDeleteResponse
 import com.algorand.backup.data.api.model.BackupDeltaResponse
 import com.algorand.backup.data.api.model.BackupManifestResponse
 import com.algorand.backup.data.api.model.BackupRegistrationProofRequest
@@ -81,4 +82,9 @@ internal interface BackupApiService {
         @Path("backupId") backupId: String,
         @Path("key", encoded = true) key: String
     ): Response<BackupDeleteItemResponse>
+
+    @DELETE("backup/{backupId}")
+    suspend fun deleteBackup(
+        @Path("backupId") backupId: String
+    ): Response<BackupDeleteResponse>
 }

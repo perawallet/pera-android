@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.bip39.sdk
+package com.algorand.android.ui.backup.verify.model
 
-interface Bip39WalletProvider {
-    fun getBip39Wallet(entropy: ByteArray): Bip39Wallet
-    fun createBip39Wallet(): Bip39Wallet
-    fun create12WordBip39Wallet(): Bip39Wallet
+sealed interface BackupConfirmationResult {
+    data object EnableCloudBackup : BackupConfirmationResult
+    data object ShowCredentialsAgain : BackupConfirmationResult
+    data object Dismiss : BackupConfirmationResult
 }

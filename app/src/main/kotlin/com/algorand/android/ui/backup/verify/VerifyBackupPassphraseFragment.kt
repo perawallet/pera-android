@@ -10,43 +10,42 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.backup.create
+package com.algorand.android.ui.backup.verify
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel
 import com.algorand.android.ui.compose.extensions.createComposeView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CreateBackupFragment : BaseFragment(0) {
+class VerifyBackupPassphraseFragment : BaseFragment(0) {
 
-    private val viewModel: CreateBackupViewModel by viewModels()
+    private val viewModel: VerifyBackupPassphraseViewModel by viewModels()
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            CreateBackupScreen(
+            VerifyBackupPassphraseScreen(
                 viewModel = viewModel,
                 onBackClick = ::navBack,
-                onProceedClick = ::navigateToVerifyPassphrase
+                onBackupCreated = ::navigateToOverview,
+                onShowError = ::showError
             )
         }
     }
 
-    private fun navigateToVerifyPassphrase(mnemonic: String, encryptionKey: String) {
-        nav(
-            CreateBackupFragmentDirections
-                .actionCreateBackupFragmentToVerifyBackupPassphraseFragment(
-                    mnemonic = mnemonic,
-                    encryptionKey = encryptionKey
-                )
-        )
+    private fun showError(@StringRes errorMessageResId: Int) {
+        showGlobalError(errorMessage = getString(errorMessageResId))
+    }
+
+    private fun navigateToOverview() {
+        nav(VerifyBackupPassphraseFragmentDirections.actionVerifyBackupPassphraseFragmentToBackupOverviewFragment())
     }
 }

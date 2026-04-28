@@ -12,225 +12,286 @@
 
 package com.algorand.android.ui.backup.create
 
-import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel
-import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel.ViewEvent
 import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.button.PeraButtonState
+import com.algorand.android.ui.compose.widget.PeraToolbar
+import com.algorand.android.ui.compose.widget.PeraToolbarIcon
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
+import com.algorand.android.utils.copyToClipboard
 
 @Composable
 fun CreateBackupScreen(
+    viewModel: CreateBackupViewModel,
     onBackClick: () -> Unit,
-    onCompleteClick: () -> Unit,
-    viewModel: CreateBackupViewModel = hiltViewModel()
+    onProceedClick: (mnemonic: String, encryptionKey: String) -> Unit
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
 
-    LaunchedEffect(viewModel.viewEvent) {
-        viewModel.viewEvent.collect { event ->
-            when (event) {
-                is ViewEvent.ShowError -> {
-                    Toast.makeText(context, event.messageResId, Toast.LENGTH_LONG).show()
-                }
+    Column(modifier = Modifier.fillMaxSize()) {
+        PeraToolbar(
+            text = stringResource(R.string.set_up_a_new_cloud_backup),
+            startContainer = {
+                PeraToolbarIcon(
+                    iconResId = R.drawable.ic_left_arrow,
+                    modifier = Modifier.clickableNoRipple(onClick = onBackClick)
+                )
+            }
+        )
+
+        when (viewState) {
+            is ViewState.Error -> ErrorContent(messageResId = viewState.messageResId)
+            is ViewState.Content -> ReadyContent(
+                mnemonic = viewState.mnemonic,
+                encryptionKey = viewState.encryptionKey,
+                onCopyMnemonicClick = { context.copyToClipboard(viewState.mnemonic) },
+                onCopyEncryptionKeyClick = { context.copyToClipboard(viewState.encryptionKey) },
+                onProceedClick = { onProceedClick(viewState.mnemonic, viewState.encryptionKey) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ErrorContent(messageResId: Int) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(messageResId),
+            style = PeraTheme.typography.body.regular.sans,
+            color = PeraTheme.colors.helper.negative,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun ReadyContent(
+    mnemonic: String,
+    encryptionKey: String,
+    onCopyMnemonicClick: () -> Unit,
+    onCopyEncryptionKeyClick: () -> Unit,
+    onProceedClick: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.cloud_backup_setup_description),
+                style = PeraTheme.typography.body.regular.sans,
+                color = PeraTheme.colors.text.main
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            SectionLabel(textRes = R.string.passphrase)
+            Spacer(modifier = Modifier.height(8.dp))
+            MnemonicGrid(mnemonic = mnemonic)
+            Spacer(modifier = Modifier.height(12.dp))
+            CopyToClipboardButton(onClick = onCopyMnemonicClick)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            SectionLabel(textRes = R.string.encryption_key)
+            Spacer(modifier = Modifier.height(8.dp))
+            EncryptionKeyField(value = encryptionKey, onCopyClick = onCopyEncryptionKeyClick)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            CredentialsWarningCard()
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        PeraPrimaryButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            onClick = onProceedClick,
+            text = stringResource(R.string.proceed)
+        )
+    }
+}
+
+@Composable
+private fun SectionLabel(textRes: Int) {
+    Text(
+        text = stringResource(textRes),
+        style = PeraTheme.typography.footnote.sans,
+        color = PeraTheme.colors.text.gray
+    )
+}
+
+@Composable
+private fun MnemonicGrid(mnemonic: String) {
+    val words = mnemonic.split(" ")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = PeraTheme.colors.layer.grayLightest, shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 24.dp, vertical = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(40.dp)
+    ) {
+        MnemonicColumn(
+            modifier = Modifier.weight(1f),
+            words = words.take(MNEMONIC_COLUMN_SIZE),
+            startIndex = 1
+        )
+        MnemonicColumn(
+            modifier = Modifier.weight(1f),
+            words = words.drop(MNEMONIC_COLUMN_SIZE).take(MNEMONIC_COLUMN_SIZE),
+            startIndex = MNEMONIC_COLUMN_SIZE + 1
+        )
+    }
+}
+
+@Composable
+private fun MnemonicColumn(
+    modifier: Modifier = Modifier,
+    words: List<String>,
+    startIndex: Int
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        words.forEachIndexed { index, word ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    modifier = Modifier.width(20.dp),
+                    text = (startIndex + index).toString(),
+                    style = PeraTheme.typography.footnote.sans,
+                    color = PeraTheme.colors.text.gray,
+                    textAlign = TextAlign.End
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = word,
+                    style = PeraTheme.typography.body.regular.sans,
+                    color = PeraTheme.colors.text.main
+                )
             }
         }
     }
+}
 
-    Column(
+@Composable
+private fun CopyToClipboardButton(onClick: () -> Unit) {
+    Row(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 24.dp)
+            .fillMaxWidth()
+            .clickableNoRipple(onClick = onClick),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = stringResource(R.string.create_backup),
-            style = PeraTheme.typography.title.regular.sansBold,
-            color = PeraTheme.colors.text.main
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(R.drawable.ic_copy),
+            tint = PeraTheme.colors.helper.positive,
+            contentDescription = null
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        when (viewState) {
-            is ViewState.Error -> ErrorContent()
-            is ViewState.MnemonicGenerated -> MnemonicContent(
-                mnemonic = viewState.mnemonic,
-                buttonText = stringResource(R.string.confirm_create_backup),
-                buttonState = PeraButtonState.ENABLED,
-                onButtonClick = viewModel::confirmBackup
-            )
-            is ViewState.Loading -> MnemonicContent(
-                mnemonic = viewState.mnemonic,
-                buttonText = stringResource(R.string.backup_creating),
-                buttonState = PeraButtonState.PROGRESS,
-                onButtonClick = {}
-            )
-            is ViewState.Syncing -> SyncingContent()
-            is ViewState.Success -> SuccessContent(
-                backupId = viewState.backupId,
-                salt = viewState.salt
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        if (viewState is ViewState.Success) {
-            PeraPrimaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onCompleteClick,
-                text = stringResource(R.string.done)
-            )
-        } else {
-            PeraSecondaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onBackClick,
-                text = stringResource(R.string.back)
-            )
-        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = stringResource(R.string.copy_to_clipboard),
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.helper.positive
+        )
     }
 }
 
 @Composable
-private fun ErrorContent() {
-    Text(
-        text = stringResource(R.string.backup_recovery_phrase_error),
-        style = PeraTheme.typography.body.regular.sans,
-        color = PeraTheme.colors.helper.negative
-    )
+private fun EncryptionKeyField(value: String, onCopyClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = PeraTheme.colors.layer.grayLightest, shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = value,
+            style = PeraTheme.typography.body.regular.sans,
+            color = PeraTheme.colors.text.main
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Icon(
+            modifier = Modifier
+                .size(20.dp)
+                .clickableNoRipple(onClick = onCopyClick),
+            painter = painterResource(R.drawable.ic_copy),
+            tint = PeraTheme.colors.helper.positive,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable
-private fun MnemonicContent(
-    mnemonic: String,
-    buttonText: String,
-    buttonState: PeraButtonState,
-    onButtonClick: () -> Unit
-) {
-    Text(
-        text = stringResource(R.string.backup_recovery_phrase_description),
-        style = PeraTheme.typography.body.regular.sans,
-        color = PeraTheme.colors.text.gray
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    MnemonicDisplay(mnemonic = mnemonic)
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    PeraPrimaryButton(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onButtonClick,
-        text = buttonText,
-        state = buttonState
-    )
-}
-
-@Composable
-private fun SyncingContent() {
-    Text(
-        text = stringResource(R.string.backup_syncing_description),
-        style = PeraTheme.typography.body.large.sansMedium,
-        color = PeraTheme.colors.text.main
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    PeraPrimaryButton(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = {},
-        text = stringResource(R.string.backup_syncing),
-        state = PeraButtonState.PROGRESS
-    )
-}
-
-@Composable
-private fun SuccessContent(backupId: String, salt: String) {
-    Text(
-        text = stringResource(R.string.backup_created_successfully),
-        style = PeraTheme.typography.body.large.sansMedium,
-        color = PeraTheme.colors.text.main
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    LabeledText(
-        label = stringResource(R.string.backup_id_label),
-        value = backupId,
-        labelColor = PeraTheme.colors.text.main
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    LabeledText(
-        label = stringResource(R.string.backup_salt_label),
-        value = salt,
-        labelColor = PeraTheme.colors.helper.negative
-    )
-}
-
-@Composable
-private fun LabeledText(label: String, value: String, labelColor: Color) {
-    Text(
-        text = label,
-        style = PeraTheme.typography.body.regular.sansMedium,
-        color = labelColor
-    )
-
-    Text(
-        text = value,
-        style = PeraTheme.typography.body.regular.sans,
-        color = PeraTheme.colors.text.gray
-    )
-}
-
-@Composable
-private fun MnemonicDisplay(mnemonic: String) {
-    val words = mnemonic.split(" ")
+private fun CredentialsWarningCard() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                color = PeraTheme.colors.layer.grayLightest,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(16.dp)
+            .background(color = PeraTheme.colors.layer.grayLighter, shape = RoundedCornerShape(12.dp))
+            .padding(horizontal = 20.dp, vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        words.chunked(3).forEachIndexed { rowIndex, rowWords ->
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = rowWords.mapIndexed { colIndex, word ->
-                    "${rowIndex * 3 + colIndex + 1}. $word"
-                }.joinToString("    "),
-                style = PeraTheme.typography.body.regular.sansMedium,
-                color = PeraTheme.colors.text.main,
-                textAlign = TextAlign.Start
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(R.drawable.ic_info),
+                tint = PeraTheme.colors.text.main,
+                contentDescription = null
             )
-            if (rowIndex < (words.size / 3) - 1) {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.required_for_local_encryption),
+                style = PeraTheme.typography.body.regular.sansMedium,
+                color = PeraTheme.colors.text.main
+            )
         }
+        Text(
+            text = stringResource(R.string.backup_credentials_unrecoverable_warning),
+            style = PeraTheme.typography.body.regular.sans,
+            color = PeraTheme.colors.text.gray
+        )
     }
 }
+
+private const val MNEMONIC_COLUMN_SIZE = 6

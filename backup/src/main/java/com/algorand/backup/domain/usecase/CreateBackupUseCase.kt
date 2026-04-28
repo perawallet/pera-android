@@ -21,7 +21,6 @@ import com.algorand.backup.domain.model.SyncState
 import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.backup.domain.security.BackupEncryptionManager
 import com.algorand.backup.domain.security.BackupKeyDerivationManager
-import com.algorand.backup.domain.security.SaltGenerator
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
@@ -30,12 +29,10 @@ internal class CreateBackupUseCase @Inject constructor(
     private val registerBackup: RegisterBackup,
     private val encryptionManager: BackupEncryptionManager,
     private val syncStateRepository: SyncStateRepository,
-    private val storeBackupCredentials: StoreBackupCredentials,
-    private val saltGenerator: SaltGenerator
+    private val storeBackupCredentials: StoreBackupCredentials
 ) : CreateBackup {
 
-    override suspend fun invoke(mnemonic: String, deviceId: DeviceId): PeraResult<CreatedBackup> {
-        val salt = saltGenerator.generate()
+    override suspend fun invoke(mnemonic: String, deviceId: DeviceId, salt: ByteArray): PeraResult<CreatedBackup> {
         val keyDerivationInput = KeyDerivationInput(mnemonic, salt, Argon2idConfig.DEFAULT)
         val keyMaterial = when (val result = keyDerivationManager.deriveKeys(keyDerivationInput)) {
             is PeraResult.Success -> result.data

@@ -36,7 +36,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
 interface CreateBackup {
-    suspend operator fun invoke(mnemonic: String, deviceId: DeviceId): PeraResult<CreatedBackup>
+    suspend operator fun invoke(mnemonic: String, deviceId: DeviceId, salt: ByteArray): PeraResult<CreatedBackup>
 }
 
 interface RestoreBackup {

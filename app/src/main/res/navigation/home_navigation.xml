@@ -1774,7 +1774,29 @@
         android:name="com.algorand.android.ui.backup.create.CreateBackupFragment"
         android:label="CreateBackupFragment">
         <action
-            android:id="@+id/action_createBackupFragment_to_backupOverviewFragment"
+            android:id="@+id/action_createBackupFragment_to_verifyBackupPassphraseFragment"
+            app:destination="@id/verifyBackupPassphraseFragment">
+            <argument
+                android:name="mnemonic"
+                app:argType="string" />
+            <argument
+                android:name="encryptionKey"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/verifyBackupPassphraseFragment"
+        android:name="com.algorand.android.ui.backup.verify.VerifyBackupPassphraseFragment"
+        android:label="VerifyBackupPassphraseFragment">
+        <argument
+            android:name="mnemonic"
+            app:argType="string" />
+        <argument
+            android:name="encryptionKey"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_verifyBackupPassphraseFragment_to_backupOverviewFragment"
             app:destination="@id/backupOverviewFragment"
             app:popUpTo="@id/backupOptionsFragment"
             app:popUpToInclusive="true" />

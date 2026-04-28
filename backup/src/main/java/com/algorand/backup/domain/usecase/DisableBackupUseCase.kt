@@ -12,6 +12,7 @@
 
 package com.algorand.backup.domain.usecase
 
+import com.algorand.backup.domain.repository.BackupSnapshotRepository
 import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.backup.domain.security.BackupEncryptionManager
 import javax.inject.Inject
@@ -21,12 +22,14 @@ internal class DisableBackupUseCase @Inject constructor(
     private val clearBackupCredentials: ClearBackupCredentials,
     private val encryptionManager: BackupEncryptionManager,
     private val syncStateRepository: SyncStateRepository,
+    private val backupSnapshotRepository: BackupSnapshotRepository,
     private val backupSyncManager: BackupSyncManager
 ) : DisableBackup {
 
     override suspend fun invoke() {
         backupSyncManager.stop()
         getBackupId()?.let { backupId -> syncStateRepository.deleteSyncState(backupId) }
+        backupSnapshotRepository.clear()
         encryptionManager.deleteKey()
         clearBackupCredentials()
     }

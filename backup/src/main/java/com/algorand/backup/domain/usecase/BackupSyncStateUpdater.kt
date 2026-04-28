@@ -18,4 +18,5 @@ import com.algorand.backup.domain.model.BackupItemType
 internal interface BackupSyncStateUpdater {
     suspend fun markDirty(keys: Set<BackupItemKey>, type: BackupItemType)
     suspend fun markPendingDelete(keys: Set<BackupItemKey>)
+    suspend fun markIgnored(keys: Set<BackupItemKey>)
 }

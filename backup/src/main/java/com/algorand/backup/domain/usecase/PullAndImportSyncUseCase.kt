@@ -12,35 +12,15 @@
 
 package com.algorand.backup.domain.usecase
 
-import android.util.Base64
-import com.algorand.backup.account.domain.mapper.AddressBackupPayloadMapper
-import com.algorand.backup.account.domain.mapper.SecretsBackupPayloadMapper
-import com.algorand.backup.account.domain.model.AddressBackupPayload
-import com.algorand.backup.account.domain.model.SecretsBackupPayload
-import com.algorand.backup.contact.domain.mapper.ContactBackupPayloadMapper
-import com.algorand.backup.contact.domain.model.ContactBackupPayload
-import com.algorand.backup.contact.domain.usecase.ContactsBackupDataImporter
-import com.algorand.backup.domain.model.BackupId
-import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.PullSyncResult
 import com.algorand.backup.domain.model.SyncBackupResult
-import com.algorand.backup.domain.repository.BackupRepository
-import com.algorand.backup.domain.security.BackupEncryptionManager
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
 
 internal class PullAndImportSyncUseCase @Inject constructor(
     private val getBackupId: GetBackupId,
     private val pullBackupSync: PullBackupSync,
-    private val backupRepository: BackupRepository,
-    private val encryptionManager: BackupEncryptionManager,
-    private val addressBackupPayloadMapper: AddressBackupPayloadMapper,
-    private val secretsBackupPayloadMapper: SecretsBackupPayloadMapper,
-    private val contactBackupPayloadMapper: ContactBackupPayloadMapper,
-    private val localBackupDataImporter: LocalBackupDataImporter,
-    private val contactsBackupDataImporter: ContactsBackupDataImporter,
-    private val errorLogger: PeraErrorLogger
+    private val fetchAndImportBackupItems: FetchAndImportBackupItems
 ) : PullAndImportSync {
 
     override suspend fun invoke(): SyncBackupResult {
@@ -49,41 +29,11 @@ internal class PullAndImportSyncUseCase @Inject constructor(
             is PullSyncResult.UpToDate -> SyncBackupResult.Success
             is PullSyncResult.Error -> SyncBackupResult.Error(result.exception)
             is PullSyncResult.Updated -> {
-                downloadAndImport(backupId, result.updatedKeys)
-                SyncBackupResult.Success
-            }
-        }
-    }
-
-    private suspend fun downloadAndImport(backupId: BackupId, keys: List<BackupItemKey>) {
-        if (keys.isEmpty()) return
-
-        val downloadResult = backupRepository.batchReadItems(backupId, keys)
-        if (downloadResult !is PeraResult.Success) return
-
-        val addressPayloads = mutableListOf<AddressBackupPayload>()
-        val secretsPayloads = mutableListOf<SecretsBackupPayload>()
-        val contactPayloads = mutableListOf<ContactBackupPayload>()
-
-        for ((key, base64Payload) in downloadResult.data) {
-            val encrypted = Base64.decode(base64Payload, Base64.NO_WRAP)
-            val decrypted = when (val decryptResult = encryptionManager.decrypt(encrypted, key.value)) {
-                is PeraResult.Success -> decryptResult.data
-                is PeraResult.Error -> {
-                    errorLogger.logError(decryptResult.exception)
-                    continue
+                when (val importResult = fetchAndImportBackupItems(backupId, result.updatedKeys)) {
+                    is PeraResult.Success -> SyncBackupResult.Success
+                    is PeraResult.Error -> SyncBackupResult.Error(importResult.exception)
                 }
             }
-
-            when {
-                key.isAddress() -> addressBackupPayloadMapper.deserialize(decrypted)?.let { addressPayloads.add(it) }
-                key.isSecrets() -> secretsBackupPayloadMapper.deserialize(decrypted)?.let { secretsPayloads.add(it) }
-                key.isContact() -> contactBackupPayloadMapper.deserialize(decrypted)?.let { contactPayloads.add(it) }
-            }
         }
-
-        if (secretsPayloads.isNotEmpty()) localBackupDataImporter.importSecrets(secretsPayloads, addressPayloads)
-        if (addressPayloads.isNotEmpty()) localBackupDataImporter.importAddresses(addressPayloads)
-        if (contactPayloads.isNotEmpty()) contactsBackupDataImporter.importContacts(contactPayloads)
     }
 }

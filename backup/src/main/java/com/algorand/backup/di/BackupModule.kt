@@ -62,10 +62,14 @@ import com.algorand.backup.domain.security.PeraAndroidKeyStore
 import com.algorand.backup.domain.security.PeraCipher
 import com.algorand.backup.domain.security.SaltGenerator
 import com.algorand.backup.domain.usecase.AccountBackupItemObserver
+import com.algorand.backup.domain.usecase.AdvanceBackupSyncCursor
+import com.algorand.backup.domain.usecase.AdvanceBackupSyncCursorUseCase
 import com.algorand.backup.domain.usecase.BackupItemObserver
 import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.BackupSyncStateUpdater
 import com.algorand.backup.domain.usecase.ClearBackupCredentials
+import com.algorand.backup.domain.usecase.CommitPushedItemsToSnapshot
+import com.algorand.backup.domain.usecase.CommitPushedItemsToSnapshotUseCase
 import com.algorand.backup.domain.usecase.ConnectBackupWebSocket
 import com.algorand.backup.domain.usecase.CreateBackup
 import com.algorand.backup.domain.usecase.CreateBackupUseCase
@@ -86,6 +90,8 @@ import com.algorand.backup.domain.usecase.DisableBackupUseCase
 import com.algorand.backup.domain.usecase.DisconnectBackupWebSocket
 import com.algorand.backup.domain.usecase.EncryptBackupPayloads
 import com.algorand.backup.domain.usecase.EncryptBackupPayloadsUseCase
+import com.algorand.backup.domain.usecase.EvictDeletedItemsFromSnapshot
+import com.algorand.backup.domain.usecase.EvictDeletedItemsFromSnapshotUseCase
 import com.algorand.backup.domain.usecase.FetchAndImportBackupItems
 import com.algorand.backup.domain.usecase.FetchAndImportBackupItemsUseCase
 import com.algorand.backup.domain.usecase.DefaultGetLatestSync
@@ -297,6 +303,21 @@ internal object BackupModule {
 
     @Provides
     fun provideDeletePendingBackupItems(useCase: DeletePendingBackupItemsUseCase): DeletePendingBackupItems = useCase
+
+    @Provides
+    fun provideCommitPushedItemsToSnapshot(
+        useCase: CommitPushedItemsToSnapshotUseCase
+    ): CommitPushedItemsToSnapshot = useCase
+
+    @Provides
+    fun provideEvictDeletedItemsFromSnapshot(
+        useCase: EvictDeletedItemsFromSnapshotUseCase
+    ): EvictDeletedItemsFromSnapshot = useCase
+
+    @Provides
+    fun provideAdvanceBackupSyncCursor(
+        useCase: AdvanceBackupSyncCursorUseCase
+    ): AdvanceBackupSyncCursor = useCase
 
     @Provides
     fun providePushBackupSync(useCase: PushBackupSyncUseCase): PushBackupSync = useCase

@@ -37,39 +37,39 @@ internal class PreparePushPayloadsUseCase @Inject constructor(
 
     override suspend fun invoke(backupId: BackupId): PeraResult<Map<BackupItemKey, String>> {
         val existingItems = syncStateRepository.getSyncState(backupId)?.items.orEmpty()
-        val plaintextPayloads = collectDirtyPayloads(existingItems)
+        val dirtyPayloads = collectDirtyPayloads(existingItems)
 
-        if (plaintextPayloads.isEmpty()) return PeraResult.Success(emptyMap())
+        if (dirtyPayloads.isEmpty()) return PeraResult.Success(emptyMap())
 
-        markItemsDirty(backupId, plaintextPayloads.keys, existingItems)
+        markItemsDirty(backupId, dirtyPayloads.keys, existingItems)
 
-        return encryptBackupPayloads(plaintextPayloads)
+        return encryptBackupPayloads(dirtyPayloads)
     }
 
     private suspend fun collectDirtyPayloads(
         existingItems: Map<BackupItemKey, SyncItemState>
     ): Map<BackupItemKey, ByteArray> {
-        val payloads = mutableMapOf<BackupItemKey, ByteArray>()
+        val dirtyPayloads = mutableMapOf<BackupItemKey, ByteArray>()
 
         for (payload in localBackupDataProvider.getAddressPayloads()) {
             val key = BackupItemKey.accounts(payload.address)
             if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
-            payloads[key] = addressBackupPayloadMapper.serialize(payload)
+            dirtyPayloads[key] = addressBackupPayloadMapper.serialize(payload)
         }
 
         for (payload in localBackupDataProvider.getSecretsPayloads()) {
             val key = BackupItemKey.secrets(payload.address)
             if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
-            payloads[key] = secretsBackupPayloadMapper.serialize(payload)
+            dirtyPayloads[key] = secretsBackupPayloadMapper.serialize(payload)
         }
 
         for (payload in contactsBackupDataProvider.getContactPayloads()) {
             val key = BackupItemKey.contacts(payload.address)
             if (existingItems.containsKey(key) && existingItems[key]?.isDirty != true) continue
-            payloads[key] = contactBackupPayloadMapper.serialize(payload)
+            dirtyPayloads[key] = contactBackupPayloadMapper.serialize(payload)
         }
 
-        return payloads
+        return dirtyPayloads
     }
 
     private suspend fun markItemsDirty(

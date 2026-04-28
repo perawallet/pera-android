@@ -15,6 +15,7 @@ package com.algorand.backup.domain.usecase
 import com.algorand.backup.domain.mapper.SyncItemStateMapper
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
 import com.algorand.backup.domain.model.SyncItemState
 import com.algorand.backup.domain.repository.SyncStateRepository
@@ -36,11 +37,24 @@ internal class DefaultBackupSyncStateUpdater @Inject constructor(
         keys.forEach { key -> markItemPendingDelete(backupId, key) }
     }
 
+    override suspend fun markIgnored(keys: Set<BackupItemKey>) {
+        val backupId = getBackupId() ?: return
+        keys.forEach { key -> markItemIgnored(backupId, key) }
+    }
+
     private suspend fun markItemPendingDelete(backupId: BackupId, key: BackupItemKey) {
         val syncState = syncStateRepository.getSyncState(backupId)
         val existingItem = syncState?.items?.get(key) ?: return
+        if (existingItem.status == BackupItemStatus.IGNORED) return
         val deletedItem = existingItem.copy(pendingDelete = true)
         syncStateRepository.updateItemState(backupId, key, deletedItem)
+    }
+
+    private suspend fun markItemIgnored(backupId: BackupId, key: BackupItemKey) {
+        val syncState = syncStateRepository.getSyncState(backupId)
+        val existingItem = syncState?.items?.get(key) ?: return
+        val ignoredItem = syncItemStateMapper.mapForLocalOnlyDelete(existingItem)
+        syncStateRepository.updateItemState(backupId, key, ignoredItem)
     }
 
     private suspend fun markItemDirty(backupId: BackupId, key: BackupItemKey, type: BackupItemType) {
@@ -58,7 +72,8 @@ internal class DefaultBackupSyncStateUpdater @Inject constructor(
         if (existingItem.pendingDelete) return
         val dirtyItem = existingItem.copy(
             baseVersion = existingItem.knownVersion,
-            isDirty = true
+            isDirty = true,
+            status = BackupItemStatus.ACTIVE
         )
         syncStateRepository.updateItemState(backupId, key, dirtyItem)
     }

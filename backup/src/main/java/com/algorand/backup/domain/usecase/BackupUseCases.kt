@@ -76,6 +76,18 @@ internal interface DeletePendingBackupItems {
     ): PeraResult<DeletedBackupItems>
 }
 
+internal fun interface CommitPushedItemsToSnapshot {
+    suspend operator fun invoke(succeededKeys: List<BackupItemKey>)
+}
+
+internal fun interface EvictDeletedItemsFromSnapshot {
+    suspend operator fun invoke(deletedKeys: List<BackupItemKey>)
+}
+
+internal fun interface AdvanceBackupSyncCursor {
+    suspend operator fun invoke(backupId: BackupId, maxSeq: Long)
+}
+
 interface DeleteBackupItem {
     suspend operator fun invoke(backupId: BackupId, key: BackupItemKey, deleteFromServer: Boolean)
 }

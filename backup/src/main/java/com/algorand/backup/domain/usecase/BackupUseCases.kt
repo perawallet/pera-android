@@ -143,6 +143,10 @@ interface PullAndImportSync {
     suspend operator fun invoke(): SyncBackupResult
 }
 
+interface FetchAndImportBackupItems {
+    suspend operator fun invoke(backupId: BackupId, keys: List<BackupItemKey>): PeraResult<Unit>
+}
+
 interface PreparePushPayloads {
     suspend operator fun invoke(backupId: BackupId): PeraResult<Map<BackupItemKey, String>>
 }

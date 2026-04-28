@@ -33,6 +33,8 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.launchIO
+import com.algorand.backup.domain.usecase.DeleteAccountFromBackup
+import com.algorand.backup.domain.usecase.HasBackup
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.usecase.GetAsset
@@ -60,7 +62,9 @@ class AccountDetailViewModel @Inject constructor(
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val getAccountAssetHolding: GetAccountAssetHolding,
     private val getAsset: GetAsset,
-    private val eventDelegate: EventDelegate<ViewEvent>
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val hasBackup: HasBackup,
+    private val deleteAccountFromBackup: DeleteAccountFromBackup
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
@@ -96,8 +100,17 @@ class AccountDetailViewModel @Inject constructor(
 
     fun isAccountHistoryV2Enabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.ACCOUNT_HISTORY_V2.key)
 
-    fun removeAccount(publicKey: String) {
+    fun isBackupEnabled(): Boolean {
+        val toggleEnabled = isFeatureToggleEnabled(FeatureToggle.BACKUP.key)
+        val backupExists = hasBackup()
+        return toggleEnabled && backupExists
+    }
+
+    fun removeAccount(publicKey: String, deleteFromBackup: Boolean? = null) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (deleteFromBackup != null) {
+                deleteAccountFromBackup(address = publicKey, deleteFromServer = deleteFromBackup)
+            }
             accountDeletionUseCase.removeAccount(publicKey)
             _accountDetailPreviewFlow.update {
                 it?.copy(

@@ -80,6 +80,14 @@ interface DeleteBackupItem {
     suspend operator fun invoke(backupId: BackupId, key: BackupItemKey, deleteFromServer: Boolean)
 }
 
+fun interface DeleteAccountFromBackup {
+    suspend operator fun invoke(address: String, deleteFromServer: Boolean)
+}
+
+internal interface ResolveAddedAccountBackupKeys {
+    suspend operator fun invoke(addedAddresses: Set<String>, accounts: List<LocalAccount>): Set<BackupItemKey>
+}
+
 interface EncryptBackupPayloads {
     suspend operator fun invoke(payloads: Map<BackupItemKey, ByteArray>): PeraResult<Map<BackupItemKey, String>>
 }

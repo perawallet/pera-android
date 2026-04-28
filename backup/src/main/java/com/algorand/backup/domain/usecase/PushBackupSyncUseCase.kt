@@ -14,8 +14,11 @@ package com.algorand.backup.domain.usecase
 
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.DeletedBackupItems
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.PushSyncResult
+import com.algorand.backup.domain.model.PushedDirtyBackupItems
+import com.algorand.backup.domain.model.SyncItemState
 import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
@@ -23,7 +26,10 @@ import javax.inject.Inject
 internal class PushBackupSyncUseCase @Inject constructor(
     private val syncStateRepository: SyncStateRepository,
     private val pushDirtyBackupItems: PushDirtyBackupItems,
-    private val deletePendingBackupItems: DeletePendingBackupItems
+    private val deletePendingBackupItems: DeletePendingBackupItems,
+    private val commitPushedItemsToSnapshot: CommitPushedItemsToSnapshot,
+    private val evictDeletedItemsFromSnapshot: EvictDeletedItemsFromSnapshot,
+    private val advanceBackupSyncCursor: AdvanceBackupSyncCursor
 ) : PushBackupSync {
 
     override suspend fun invoke(
@@ -38,47 +44,47 @@ internal class PushBackupSyncUseCase @Inject constructor(
             return PushSyncResult.NothingToPush
         }
 
-        val succeededKeys = mutableListOf<BackupItemKey>()
-        val conflictedKeys = mutableListOf<BackupItemKey>()
-        val deletedKeys = mutableListOf<BackupItemKey>()
-        var maxSeq = 0L
-
-        if (dirtyItems.isNotEmpty()) {
-            when (val upsertResult = pushDirtyBackupItems(backupId, deviceId, dirtyItems, encryptedPayloads)) {
-                is PeraResult.Success -> {
-                    succeededKeys.addAll(upsertResult.data.succeededKeys)
-                    conflictedKeys.addAll(upsertResult.data.conflictedKeys)
-                    maxSeq = maxOf(maxSeq, upsertResult.data.maxSeq)
-                }
-                is PeraResult.Error -> return PushSyncResult.Error(upsertResult.exception)
-            }
+        val pushedDirty = when (val result = pushDirty(backupId, deviceId, dirtyItems, encryptedPayloads)) {
+            is PeraResult.Success -> result.data
+            is PeraResult.Error -> return PushSyncResult.Error(result.exception)
         }
 
-        if (pendingDeletes.isNotEmpty()) {
-            when (val deleteResult = deletePendingBackupItems(backupId, pendingDeletes)) {
-                is PeraResult.Success -> {
-                    deletedKeys.addAll(deleteResult.data.deletedKeys)
-                    maxSeq = maxOf(maxSeq, deleteResult.data.maxSeq)
-                }
-                is PeraResult.Error -> return PushSyncResult.Error(deleteResult.exception)
-            }
+        val pushedDeletes = when (val result = pushDeletes(backupId, pendingDeletes)) {
+            is PeraResult.Success -> result.data
+            is PeraResult.Error -> return PushSyncResult.Error(result.exception)
         }
 
-        updateGlobalPointersIfNeeded(backupId, maxSeq)
+        commitPushedItemsToSnapshot(pushedDirty.succeededKeys)
+        evictDeletedItemsFromSnapshot(pushedDeletes.deletedKeys)
+        advanceBackupSyncCursor(backupId, maxOf(pushedDirty.maxSeq, pushedDeletes.maxSeq))
 
         return PushSyncResult.Pushed(
-            succeededKeys = succeededKeys,
-            conflictedKeys = conflictedKeys,
-            deletedKeys = deletedKeys
+            succeededKeys = pushedDirty.succeededKeys,
+            conflictedKeys = pushedDirty.conflictedKeys,
+            deletedKeys = pushedDeletes.deletedKeys
         )
     }
 
-    private suspend fun updateGlobalPointersIfNeeded(backupId: BackupId, maxSeq: Long) {
-        if (maxSeq <= 0) return
-        val currentState = syncStateRepository.getSyncState(backupId) ?: return
-        val lastKnownHash = currentState.lastKnownBackupHash ?: return
-        if (maxSeq > currentState.lastSyncedSeq) {
-            syncStateRepository.updateGlobalPointers(backupId, lastKnownHash, maxSeq)
-        }
+    private suspend fun pushDirty(
+        backupId: BackupId,
+        deviceId: DeviceId,
+        dirtyItems: Map<BackupItemKey, SyncItemState>,
+        encryptedPayloads: Map<BackupItemKey, String>
+    ): PeraResult<PushedDirtyBackupItems> {
+        if (dirtyItems.isEmpty()) return PeraResult.Success(EMPTY_PUSHED_DIRTY)
+        return pushDirtyBackupItems(backupId, deviceId, dirtyItems, encryptedPayloads)
+    }
+
+    private suspend fun pushDeletes(
+        backupId: BackupId,
+        pendingDeletes: Map<BackupItemKey, SyncItemState>
+    ): PeraResult<DeletedBackupItems> {
+        if (pendingDeletes.isEmpty()) return PeraResult.Success(EMPTY_DELETED)
+        return deletePendingBackupItems(backupId, pendingDeletes)
+    }
+
+    private companion object {
+        val EMPTY_PUSHED_DIRTY = PushedDirtyBackupItems(emptyList(), emptyList())
+        val EMPTY_DELETED = DeletedBackupItems(emptyList())
     }
 }

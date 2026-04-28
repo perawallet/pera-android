@@ -12,6 +12,8 @@
 
 package com.algorand.backup.domain.usecase
 
+import com.algorand.backup.account.domain.model.AddressBackupPayload
+import com.algorand.backup.contact.domain.model.ContactBackupPayload
 import com.algorand.backup.domain.model.BackupWebSocketEvent
 import com.algorand.backup.domain.model.Argon2idConfig
 import com.algorand.backup.domain.model.BackupId
@@ -19,6 +21,7 @@ import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.CreatedBackup
 import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.DeviceId
+import com.algorand.backup.domain.model.LatestSync
 import com.algorand.backup.domain.model.PullSyncResult
 import com.algorand.backup.domain.model.DeletedBackupItems
 import com.algorand.backup.domain.model.PushedDirtyBackupItems
@@ -137,6 +140,22 @@ interface PreparePushPayloads {
 
 interface SyncBackup {
     suspend operator fun invoke(): SyncBackupResult
+}
+
+fun interface GetLatestSync {
+    suspend operator fun invoke(): LatestSync?
+}
+
+fun interface SaveBackupSyncResult {
+    suspend operator fun invoke(result: SyncBackupResult)
+}
+
+fun interface GetAddressBackupSnapshot {
+    suspend operator fun invoke(): List<AddressBackupPayload>
+}
+
+fun interface GetContactBackupSnapshot {
+    suspend operator fun invoke(): List<ContactBackupPayload>
 }
 
 internal fun interface ConnectBackupWebSocket {

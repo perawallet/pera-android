@@ -22,6 +22,7 @@ import com.algorand.backup.contact.domain.usecase.ContactBackupItemObserver
 import com.algorand.backup.data.mapper.SyncStateCacheMapper
 import com.algorand.backup.data.model.BackupAuthCredentialsCacheData
 import com.algorand.backup.data.model.SyncStateCacheModel
+import com.algorand.backup.data.model.BackupSnapshotCacheData
 import com.algorand.backup.data.repository.DefaultBackupAuthRepository
 import com.algorand.backup.data.repository.DefaultBackupRepository
 import com.algorand.backup.data.repository.DefaultBackupSnapshotRepository
@@ -35,6 +36,7 @@ import com.algorand.backup.data.service.BackupWebSocketUrlBuilder
 import com.algorand.backup.data.service.DefaultBackupWebSocketUrlBuilder
 import com.algorand.backup.domain.repository.BackupAuthRepository
 import com.algorand.backup.domain.repository.BackupRepository
+import com.algorand.backup.domain.repository.BackupSnapshotRepository
 import com.algorand.backup.domain.repository.BackupWebSocketRepository
 import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.backup.domain.security.ArgonKeyManager
@@ -70,6 +72,9 @@ import com.algorand.backup.domain.usecase.CreateBackupUseCase
 import com.algorand.backup.domain.usecase.DecryptBackupPayloads
 import com.algorand.backup.domain.usecase.DecryptBackupPayloadsUseCase
 import com.algorand.backup.domain.usecase.DefaultBackupSyncStateUpdater
+import com.algorand.backup.domain.usecase.DefaultDeleteAccountFromBackup
+import com.algorand.backup.domain.usecase.DeleteAccountFromBackup
+import com.algorand.backup.domain.usecase.DeleteBackup
 import com.algorand.backup.domain.usecase.DeleteBackupItem
 import com.algorand.backup.domain.usecase.DeleteBackupItemUseCase
 import com.algorand.backup.domain.usecase.DeleteBackupUseCase
@@ -80,9 +85,17 @@ import com.algorand.backup.domain.usecase.DisableBackupUseCase
 import com.algorand.backup.domain.usecase.DisconnectBackupWebSocket
 import com.algorand.backup.domain.usecase.EncryptBackupPayloads
 import com.algorand.backup.domain.usecase.EncryptBackupPayloadsUseCase
+import com.algorand.backup.domain.usecase.FetchAndImportBackupItems
+import com.algorand.backup.domain.usecase.FetchAndImportBackupItemsUseCase
+import com.algorand.backup.domain.usecase.DefaultGetLatestSync
+import com.algorand.backup.domain.usecase.DefaultSaveBackupSyncResult
+import com.algorand.backup.domain.usecase.GetAddressBackupSnapshot
 import com.algorand.backup.domain.usecase.GetBackupDeviceId
 import com.algorand.backup.domain.usecase.GetBackupId
 import com.algorand.backup.domain.usecase.GetBackupWebSocketEvents
+import com.algorand.backup.domain.usecase.GetContactBackupSnapshot
+import com.algorand.backup.domain.usecase.GetLatestSync
+import com.algorand.backup.domain.usecase.SaveBackupSyncResult
 import com.algorand.backup.domain.usecase.HasBackup
 import com.algorand.backup.domain.usecase.LocalBackupDataImporter
 import com.algorand.backup.domain.usecase.LocalBackupDataProvider
@@ -128,6 +141,7 @@ internal object BackupModule {
 
     private const val SYNC_STATE_CACHE_KEY = "backup_sync_state"
     private const val AUTH_CREDENTIALS_CACHE_KEY = "backup_auth_credentials"
+    private const val SNAPSHOT_CACHE_KEY = "backup_snapshot"
     private const val TIMEOUT_SECONDS = 60L
     private const val BACKUP_BASE_URL = "http://10.0.2.2:3011/api/v3/"
 
@@ -214,6 +228,37 @@ internal object BackupModule {
     }
 
     @Provides
+    @Singleton
+    fun provideBackupSnapshotRepository(
+        cacheProvider: PersistentCacheProvider,
+        addressMapper: AddressBackupPayloadMapper
+    ): BackupSnapshotRepository {
+        return DefaultBackupSnapshotRepository(
+            persistentCache = cacheProvider.getPersistentCache(
+                type = BackupSnapshotCacheData::class.java,
+                key = SNAPSHOT_CACHE_KEY
+            ),
+            addressMapper = addressMapper
+        )
+    }
+
+    @Provides
+    fun provideGetAddressBackupSnapshot(
+        repository: BackupSnapshotRepository
+    ): GetAddressBackupSnapshot = GetAddressBackupSnapshot(repository::getAddressPayloads)
+
+    @Provides
+    fun provideGetContactBackupSnapshot(
+        repository: BackupSnapshotRepository
+    ): GetContactBackupSnapshot = GetContactBackupSnapshot(repository::getContactPayloads)
+
+    @Provides
+    fun provideGetLatestSync(useCase: DefaultGetLatestSync): GetLatestSync = useCase
+
+    @Provides
+    fun provideSaveBackupSyncResult(useCase: DefaultSaveBackupSyncResult): SaveBackupSyncResult = useCase
+
+    @Provides
     fun provideArgonKeyManager(manager: DefaultArgonKeyManager): ArgonKeyManager = manager
 
     @Provides
@@ -256,6 +301,9 @@ internal object BackupModule {
 
     @Provides
     fun provideDeleteBackupItem(useCase: DeleteBackupItemUseCase): DeleteBackupItem = useCase
+
+    @Provides
+    fun provideDeleteAccountFromBackup(useCase: DefaultDeleteAccountFromBackup): DeleteAccountFromBackup = useCase
 
     @Provides
     fun provideReactivateBackupItem(useCase: ReactivateBackupItemUseCase): ReactivateBackupItem = useCase
@@ -324,6 +372,11 @@ internal object BackupModule {
 
     @Provides
     fun providePullAndImportSync(useCase: PullAndImportSyncUseCase): PullAndImportSync = useCase
+
+    @Provides
+    fun provideFetchAndImportBackupItems(
+        useCase: FetchAndImportBackupItemsUseCase
+    ): FetchAndImportBackupItems = useCase
 
     @Provides
     fun provideLocalBackupDataProvider(provider: DefaultLocalBackupDataProvider): LocalBackupDataProvider = provider

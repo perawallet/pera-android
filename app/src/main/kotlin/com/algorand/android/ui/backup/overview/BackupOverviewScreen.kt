@@ -140,10 +140,11 @@ private fun StatusSection(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         BorderedNavigationRow(
-            iconRes = R.drawable.ic_cloud,
+            iconRes = R.drawable.ic_key,
             title = stringResource(R.string.credential_address),
             description = credentialAddress,
             showChevron = true,
+            showInfoIcon = true,
             onClick = onCredentialAddressClick
         )
         if (latestSync != null) {
@@ -175,6 +176,7 @@ private fun BorderedNavigationRow(
     description: String,
     onClick: () -> Unit,
     showChevron: Boolean = false,
+    showInfoIcon: Boolean = false,
     iconTint: Color = PeraTheme.colors.text.main,
     titleColor: Color = PeraTheme.colors.text.main
 ) {
@@ -199,11 +201,24 @@ private fun BorderedNavigationRow(
         )
         Spacer(modifier = Modifier.size(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = PeraTheme.typography.body.regular.sansMedium,
-                color = titleColor
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = PeraTheme.typography.body.regular.sansMedium,
+                    color = titleColor
+                )
+                if (showInfoIcon) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(R.drawable.ic_info),
+                        tint = PeraTheme.colors.text.gray,
+                        contentDescription = null
+                    )
+                }
+            }
             Text(
                 text = description,
                 style = PeraTheme.typography.footnote.sans,
@@ -238,7 +253,7 @@ private fun LatestSyncRow(latestSync: LatestSyncState) {
         Icon(
             modifier = Modifier.size(24.dp),
             painter = painterResource(
-                if (isSuccess) R.drawable.ic_cloud_check else R.drawable.ic_cloud_no_connection
+                if (isSuccess) R.drawable.ic_cloud_check else R.drawable.ic_cloud_failed
             ),
             tint = if (isSuccess) PeraTheme.colors.link.primary else PeraTheme.colors.helper.negative,
             contentDescription = null

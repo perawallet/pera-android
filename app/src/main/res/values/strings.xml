@@ -1291,6 +1291,8 @@
     <string name="set_up_a_new_cloud_backup">Set Up a new Cloud Backup</string>
     <string name="cloud_backup_setup_description">Store your 12-word key and encryption keys securely to retrieve your backup in the future.</string>
     <string name="encryption_key">Encryption Key</string>
+    <string name="enter_encryption_key">Enter Encryption Key</string>
+    <string name="enter_encryption_key_description">Enter your encryption key to restore/retrieve the Cloud Backup</string>
     <string name="copy_to_clipboard">Copy to Clipboard</string>
     <string name="required_for_local_encryption">Required for local encryption</string>
     <string name="backup_credentials_unrecoverable_warning">These credentials are unrecoverable if lost. Store them securely to avoid losing access to your backup.</string>

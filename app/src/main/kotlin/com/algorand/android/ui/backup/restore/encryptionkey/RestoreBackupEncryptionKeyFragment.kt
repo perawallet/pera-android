@@ -10,12 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.backup.restore.passphrase
+package com.algorand.android.ui.backup.restore.encryptionkey
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
@@ -23,28 +24,31 @@ import com.algorand.android.ui.compose.extensions.createComposeView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RestoreBackupPassphraseFragment : BaseFragment(0) {
+class RestoreBackupEncryptionKeyFragment : BaseFragment(0) {
 
-    private val viewModel: RestoreBackupPassphraseViewModel by viewModels()
+    private val viewModel: RestoreBackupEncryptionKeyViewModel by viewModels()
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            RestoreBackupPassphraseScreen(
+            RestoreBackupEncryptionKeyScreen(
                 viewModel = viewModel,
                 onBackClick = ::navBack,
-                onProceedClick = ::onProceed
+                onBackupRestored = ::navigateToOverview,
+                onShowError = ::showError
             )
         }
     }
 
-    private fun onProceed(passphrase: String) {
+    private fun showError(@StringRes errorMessageResId: Int) {
+        showGlobalError(errorMessage = getString(errorMessageResId))
+    }
+
+    private fun navigateToOverview() {
         nav(
-            RestoreBackupPassphraseFragmentDirections
-                .actionRestoreBackupPassphraseFragmentToRestoreBackupEncryptionKeyFragment(
-                    mnemonic = passphrase
-                )
+            RestoreBackupEncryptionKeyFragmentDirections
+                .actionRestoreBackupEncryptionKeyFragmentToBackupOverviewFragment()
         )
     }
 }

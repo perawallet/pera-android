@@ -1816,7 +1816,29 @@
     <fragment
         android:id="@+id/restoreBackupPassphraseFragment"
         android:name="com.algorand.android.ui.backup.restore.passphrase.RestoreBackupPassphraseFragment"
-        android:label="RestoreBackupPassphraseFragment" />
+        android:label="RestoreBackupPassphraseFragment">
+        <action
+            android:id="@+id/action_restoreBackupPassphraseFragment_to_restoreBackupEncryptionKeyFragment"
+            app:destination="@id/restoreBackupEncryptionKeyFragment">
+            <argument
+                android:name="mnemonic"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/restoreBackupEncryptionKeyFragment"
+        android:name="com.algorand.android.ui.backup.restore.encryptionkey.RestoreBackupEncryptionKeyFragment"
+        android:label="RestoreBackupEncryptionKeyFragment">
+        <argument
+            android:name="mnemonic"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_restoreBackupEncryptionKeyFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment"
+            app:popUpTo="@id/backupOptionsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/backupOverviewFragment"

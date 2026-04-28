@@ -13,4 +13,13 @@
 package com.algorand.backup.domain.model
 
 @JvmInline
-value class BackupId(val value: String)
+value class BackupId(val value: String) {
+
+    val address: String get() = value.removePrefix(PREFIX)
+
+    companion object {
+        private const val PREFIX = "did:pera:"
+
+        fun fromAddress(address: String): BackupId = BackupId("$PREFIX$address")
+    }
+}

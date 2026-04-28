@@ -23,10 +23,8 @@ internal class DefaultBackupIdManager @Inject constructor(private val algoSdk: A
     override fun createBackupId(publicKey: SensitiveBytes): PeraResult<BackupId> {
         val address = algoSdk.generateAddressFromPublicKey(publicKey.reveal())
             ?: return PeraResult.Error(IllegalStateException("Failed to derive Algorand address from public key"))
-        return PeraResult.Success(BackupId("$BACKUP_ID_PREFIX${address.decodedAddress}"))
-    }
-
-    companion object {
-        private const val BACKUP_ID_PREFIX = "did:pera:"
+        val decodedAddress = address.decodedAddress
+            ?: return PeraResult.Error(IllegalStateException("Derived Algorand address is missing decoded value"))
+        return PeraResult.Success(BackupId.fromAddress(decodedAddress))
     }
 }

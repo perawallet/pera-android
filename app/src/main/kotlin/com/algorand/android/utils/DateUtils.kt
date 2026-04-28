@@ -35,6 +35,7 @@ const val MONTH_DAY_YEAR_WITH_DOT_PATTERN: String = "MM.dd.yyyy"
 const val ISO_EXTENDED_DATE_FORMAT: String = "yyyy-MM-dd"
 const val MONTH_DAY_PATTERN: String = "MMM dd"
 const val DATE_AND_TIME_PATTERN: String = "MMMM dd, yyyy - HH:mm:ss"
+const val MONTH_DAY_YEAR_TIME_PATTERN: String = "MMMM d, yyyy - HH:mm"
 const val TXN_DATE_AND_TIME_PATTERN: String = "MMM dd, yyyy hh:mm a"
 const val TXN_DATE_PATTERN: String = "MMM dd, yyyy"
 const val UTC_ZONE_ID: String = "UTC"
@@ -65,6 +66,10 @@ fun ZonedDateTime.formatAsCustomDateString(): String {
 fun Long.getZonedDateTimeFromTimeStamp(): ZonedDateTime {
     val zone = ZoneId.systemDefault()
     return Instant.ofEpochMilli(this * UNIX_TIME_STAMP_MULTIPLIER).atZone(zone)
+}
+
+fun Long.toZonedDateTimeFromMillis(): ZonedDateTime {
+    return Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault())
 }
 
 fun getBeginningOfDay(dayBefore: Long = 0): ZonedDateTime {

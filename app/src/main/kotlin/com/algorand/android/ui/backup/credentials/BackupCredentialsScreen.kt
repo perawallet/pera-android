@@ -10,30 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.backup.create
+package com.algorand.android.ui.backup.credentials
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,8 +36,7 @@ import com.algorand.android.ui.backup.components.BackupEncryptionKeyField
 import com.algorand.android.ui.backup.components.BackupMnemonicGrid
 import com.algorand.android.ui.backup.components.BackupSectionLabel
 import com.algorand.android.ui.backup.components.CopyToClipboardButton
-import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel
-import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel.ViewState
+import com.algorand.android.ui.backup.credentials.BackupCredentialsViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
@@ -53,40 +45,41 @@ import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.utils.copyToClipboard
 
 @Composable
-fun CreateBackupScreen(
-    viewModel: CreateBackupViewModel,
-    onBackClick: () -> Unit,
-    onProceedClick: (mnemonic: String, encryptionKey: String) -> Unit
+fun BackupCredentialsScreen(
+    viewModel: BackupCredentialsViewModel,
+    onCloseClick: () -> Unit,
+    onStoreCredentialsClick: () -> Unit
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
-    val context = LocalContext.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PeraTheme.colors.background.primary)
+    ) {
         PeraToolbar(
-            text = stringResource(R.string.set_up_a_new_cloud_backup),
+            modifier = Modifier.padding(horizontal = 12.dp),
+            text = stringResource(R.string.backup_credentials),
             startContainer = {
                 PeraToolbarIcon(
-                    iconResId = R.drawable.ic_left_arrow,
-                    modifier = Modifier.clickableNoRipple(onClick = onBackClick)
+                    iconResId = R.drawable.ic_close,
+                    modifier = Modifier.clickableNoRipple(onClick = onCloseClick)
                 )
             }
         )
 
         when (viewState) {
-            is ViewState.Error -> ErrorContent(messageResId = viewState.messageResId)
-            is ViewState.Content -> ReadyContent(
-                mnemonic = viewState.mnemonic,
-                encryptionKey = viewState.encryptionKey,
-                onCopyMnemonicClick = { context.copyToClipboard(viewState.mnemonic) },
-                onCopyEncryptionKeyClick = { context.copyToClipboard(viewState.encryptionKey) },
-                onProceedClick = { onProceedClick(viewState.mnemonic, viewState.encryptionKey) }
+            is ViewState.Error -> ErrorContent()
+            is ViewState.Content -> ContentBody(
+                viewState = viewState,
+                onStoreCredentialsClick = onStoreCredentialsClick
             )
         }
     }
 }
 
 @Composable
-private fun ErrorContent(messageResId: Int) {
+private fun ErrorContent() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,7 +87,7 @@ private fun ErrorContent(messageResId: Int) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(messageResId),
+            text = stringResource(R.string.backup_credentials_load_error),
             style = PeraTheme.typography.body.regular.sans,
             color = PeraTheme.colors.helper.negative,
             textAlign = TextAlign.Center
@@ -103,13 +96,12 @@ private fun ErrorContent(messageResId: Int) {
 }
 
 @Composable
-private fun ReadyContent(
-    mnemonic: String,
-    encryptionKey: String,
-    onCopyMnemonicClick: () -> Unit,
-    onCopyEncryptionKeyClick: () -> Unit,
-    onProceedClick: () -> Unit
+private fun ContentBody(
+    viewState: ViewState.Content,
+    onStoreCredentialsClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -117,29 +109,33 @@ private fun ReadyContent(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
         ) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            BackupSectionLabel(textRes = R.string.credential_address)
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.cloud_backup_setup_description),
+                modifier = Modifier.fillMaxWidth(),
+                text = viewState.credentialAddress,
                 style = PeraTheme.typography.body.regular.sans,
                 color = PeraTheme.colors.text.main
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             BackupSectionLabel(textRes = R.string.passphrase)
             Spacer(modifier = Modifier.height(8.dp))
-            BackupMnemonicGrid(mnemonic = mnemonic)
+            BackupMnemonicGrid(mnemonic = viewState.mnemonic)
             Spacer(modifier = Modifier.height(12.dp))
-            CopyToClipboardButton(onClick = onCopyMnemonicClick)
+            CopyToClipboardButton(onClick = { context.copyToClipboard(viewState.mnemonic) })
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             BackupSectionLabel(textRes = R.string.encryption_key)
             Spacer(modifier = Modifier.height(8.dp))
-            BackupEncryptionKeyField(value = encryptionKey, onCopyClick = onCopyEncryptionKeyClick)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            CredentialsWarningCard()
+            BackupEncryptionKeyField(
+                value = viewState.encryptionKey,
+                onCopyClick = { context.copyToClipboard(viewState.encryptionKey) }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -148,39 +144,8 @@ private fun ReadyContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 16.dp),
-            onClick = onProceedClick,
-            text = stringResource(R.string.proceed)
-        )
-    }
-}
-
-@Composable
-private fun CredentialsWarningCard() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = PeraTheme.colors.layer.grayLighter, shape = RoundedCornerShape(12.dp))
-            .padding(horizontal = 20.dp, vertical = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(R.drawable.ic_info),
-                tint = PeraTheme.colors.text.main,
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.required_for_local_encryption),
-                style = PeraTheme.typography.body.regular.sansMedium,
-                color = PeraTheme.colors.text.main
-            )
-        }
-        Text(
-            text = stringResource(R.string.backup_credentials_unrecoverable_warning),
-            style = PeraTheme.typography.body.regular.sans,
-            color = PeraTheme.colors.text.gray
+            onClick = onStoreCredentialsClick,
+            text = stringResource(R.string.store_your_credentials)
         )
     }
 }

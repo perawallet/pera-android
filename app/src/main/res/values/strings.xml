@@ -1296,6 +1296,9 @@
     <string name="copy_to_clipboard">Copy to Clipboard</string>
     <string name="required_for_local_encryption">Required for local encryption</string>
     <string name="backup_credentials_unrecoverable_warning">These credentials are unrecoverable if lost. Store them securely to avoid losing access to your backup.</string>
+    <string name="backup_credentials">Backup Credentials</string>
+    <string name="store_your_credentials">Store your Credentials</string>
+    <string name="backup_credentials_load_error">Could not load your credentials. Please try again.</string>
     <string name="proceed">Proceed</string>
     <string name="verify_passphrase">Verify Passphrase</string>
     <string name="verify_passphrase_description">Choose the correct words to confirm you\'ve stored your 12-word key securely.</string>

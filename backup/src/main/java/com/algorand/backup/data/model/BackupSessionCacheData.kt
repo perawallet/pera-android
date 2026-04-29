@@ -14,10 +14,9 @@ package com.algorand.backup.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class BackupAuthCredentialsCacheData(
+internal data class BackupSessionCacheData(
     @SerializedName("backup_id") val backupId: String,
-    @SerializedName("wrapped_mnemonic") val wrappedMnemonic: String,
-    @SerializedName("mnemonic_iv") val mnemonicIv: String,
-    @SerializedName("wrapped_salt") val wrappedSalt: String,
-    @SerializedName("salt_iv") val saltIv: String
+    @SerializedName("device_id") val deviceId: String,
+    @SerializedName("wrapped_private_key") val wrappedPrivateKey: String,
+    @SerializedName("wrapping_iv") val wrappingIv: String
 )

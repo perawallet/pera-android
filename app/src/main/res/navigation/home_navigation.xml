@@ -1853,7 +1853,15 @@
         <action
             android:id="@+id/action_backupOverviewFragment_to_backupContactsListFragment"
             app:destination="@id/backupContactsListFragment" />
+        <action
+            android:id="@+id/action_backupOverviewFragment_to_backupCredentialsFragment"
+            app:destination="@id/backupCredentialsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/backupCredentialsFragment"
+        android:name="com.algorand.android.ui.backup.credentials.BackupCredentialsFragment"
+        android:label="BackupCredentialsFragment" />
 
     <fragment
         android:id="@+id/backupAccountsListFragment"

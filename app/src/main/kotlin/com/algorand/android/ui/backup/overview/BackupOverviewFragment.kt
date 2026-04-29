@@ -85,7 +85,10 @@ class BackupOverviewFragment : BaseFragment(0), BackupOverviewScreenListener {
     }
 
     override fun onCredentialAddressClick() {
-        // TODO: navigate to credential address detail
+        nav(
+            BackupOverviewFragmentDirections
+                .actionBackupOverviewFragmentToBackupCredentialsFragment()
+        )
     }
 
     override fun onSyncWithOtherDevicesClick() {

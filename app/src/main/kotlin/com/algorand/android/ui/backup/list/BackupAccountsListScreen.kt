@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
+import com.algorand.android.ui.backup.list.BackupAccountsListViewModel.ViewEvent
 import com.algorand.android.ui.backup.list.model.BackupAccountListItem
 import com.algorand.android.ui.backup.list.model.BackupListTab
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -43,9 +45,18 @@ import com.algorand.backup.account.domain.model.AddressBackupPayload
 
 @Composable
 fun BackupAccountsListScreen(
+    listener: BackupAccountsListScreenListener,
     viewModel: BackupAccountsListViewModel = hiltViewModel()
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(viewModel.viewEvent) {
+        viewModel.viewEvent.collect { event ->
+            when (event) {
+                is ViewEvent.ShowImportError -> listener.onShowImportError(event.message)
+            }
+        }
+    }
 
     BackupAccountsListContent(
         selectedTab = viewState.selectedTab,
@@ -137,4 +148,8 @@ private fun AccountRow(
             )
         }
     }
+}
+
+interface BackupAccountsListScreenListener {
+    fun onShowImportError(message: String?)
 }

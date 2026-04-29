@@ -170,3 +170,11 @@ fun interface GetHdSeedId {
 fun interface GetAllHdSeedFirstAddresses {
     suspend operator fun invoke(): List<HdSeedFirstAddress>
 }
+
+fun interface GetSeedIdByFirstAddress {
+    suspend operator fun invoke(firstAddress: String): Int?
+}
+
+fun interface IsThereAnySeedWithFirstAddress {
+    suspend operator fun invoke(firstAddress: String): Boolean
+}

@@ -10,12 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.usecase
+package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.backup.account.domain.model.AddressBackupPayload
-import com.algorand.backup.account.domain.model.SecretsBackupPayload
+import javax.inject.Inject
 
-interface LocalBackupDataImporter {
-    suspend fun importAddresses(payloads: List<AddressBackupPayload>): Set<String>
-    suspend fun importSecrets(secretsPayloads: List<SecretsBackupPayload>, addressPayloads: List<AddressBackupPayload>)
+internal class IsThereAnySeedWithFirstAddressUseCase @Inject constructor(
+    private val getSeedIdByFirstAddress: GetSeedIdByFirstAddress
+) : IsThereAnySeedWithFirstAddress {
+
+    override suspend fun invoke(firstAddress: String): Boolean = getSeedIdByFirstAddress(firstAddress) != null
 }

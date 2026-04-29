@@ -34,6 +34,11 @@ internal class DefaultAddBackupAccountToLocal @Inject constructor(
         return when (val importResult = fetchAndImportBackupItems(backupId, keys)) {
             is PeraResult.Error -> importResult
             is PeraResult.Success -> {
+                if (payload.address !in importResult.data) {
+                    return PeraResult.Error(
+                        IllegalStateException("Account ${payload.address} could not be imported from backup")
+                    )
+                }
                 keys.forEach { key -> reactivateBackupItem(backupId, key) }
                 PeraResult.Success(Unit)
             }

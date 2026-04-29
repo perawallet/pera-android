@@ -24,7 +24,7 @@ import com.algorand.android.ui.compose.extensions.createComposeView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BackupAccountsListFragment : BaseFragment(0) {
+class BackupAccountsListFragment : BaseFragment(0), BackupAccountsListScreenListener {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.accounts,
@@ -38,7 +38,14 @@ class BackupAccountsListFragment : BaseFragment(0) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            BackupAccountsListScreen()
+            BackupAccountsListScreen(listener = this@BackupAccountsListFragment)
         }
+    }
+
+    override fun onShowImportError(message: String?) {
+        showGlobalError(
+            errorMessage = message ?: getString(R.string.an_error_occurred),
+            title = getString(R.string.an_error_occurred)
+        )
     }
 }

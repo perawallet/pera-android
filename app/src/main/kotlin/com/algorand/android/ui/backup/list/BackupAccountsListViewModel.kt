@@ -15,6 +15,7 @@ package com.algorand.android.ui.backup.list
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.ui.backup.list.BackupAccountsListViewModel.ViewEvent
 import com.algorand.android.ui.backup.list.BackupAccountsListViewModel.ViewState
 import com.algorand.android.ui.backup.list.model.BackupAccountListItem
 import com.algorand.android.ui.backup.list.model.BackupListTab
@@ -22,6 +23,9 @@ import com.algorand.android.ui.backup.list.usecase.AddBackupAccountToLocal
 import com.algorand.android.ui.backup.list.usecase.GetNotSyncedBackupAccounts
 import com.algorand.android.ui.backup.list.usecase.GetSyncedBackupAccounts
 import com.algorand.backup.account.domain.model.AddressBackupPayload
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,11 +35,12 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class BackupAccountsListViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     private val getSyncedBackupAccounts: GetSyncedBackupAccounts,
     private val getNotSyncedBackupAccounts: GetNotSyncedBackupAccounts,
     private val addBackupAccountToLocal: AddBackupAccountToLocal,
     savedStateHandle: SavedStateHandle
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     init {
         val initialTab = savedStateHandle.get<BackupListTab>(SELECTED_TAB_KEY) ?: BackupListTab.SYNCED
@@ -49,8 +54,13 @@ class BackupAccountsListViewModel @Inject constructor(
 
     fun addAccountToLocal(payload: AddressBackupPayload) {
         viewModelScope.launch {
-            addBackupAccountToLocal(payload)
-            loadAccounts()
+            when (val result = addBackupAccountToLocal(payload)) {
+                is PeraResult.Success -> loadAccounts()
+                is PeraResult.Error -> {
+                    loadAccounts()
+                    eventDelegate.sendEvent(ViewEvent.ShowImportError(result.exception.message))
+                }
+            }
         }
     }
 
@@ -67,6 +77,10 @@ class BackupAccountsListViewModel @Inject constructor(
         val synced: List<BackupAccountListItem> = emptyList(),
         val notSynced: List<BackupAccountListItem> = emptyList()
     )
+
+    sealed interface ViewEvent {
+        data class ShowImportError(val message: String?) : ViewEvent
+    }
 
     private companion object {
         const val SELECTED_TAB_KEY = "selectedTab"

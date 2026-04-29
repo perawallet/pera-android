@@ -25,6 +25,7 @@ import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.backup.domain.repository.BackupSnapshotRepository
 import com.algorand.backup.domain.security.BackupEncryptionManager
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnySeedWithFirstAddress
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
@@ -38,24 +39,30 @@ internal class FetchAndImportBackupItemsUseCase @Inject constructor(
     private val localBackupDataImporter: LocalBackupDataImporter,
     private val contactsBackupDataImporter: ContactsBackupDataImporter,
     private val backupSnapshotRepository: BackupSnapshotRepository,
+    private val isThereAnySeedWithFirstAddress: IsThereAnySeedWithFirstAddress,
     private val errorLogger: PeraErrorLogger
 ) : FetchAndImportBackupItems {
 
-    override suspend fun invoke(backupId: BackupId, keys: List<BackupItemKey>): PeraResult<Unit> {
-        if (keys.isEmpty()) return PeraResult.Success(Unit)
+    override suspend fun invoke(backupId: BackupId, keys: List<BackupItemKey>): PeraResult<Set<String>> {
+        if (keys.isEmpty()) return PeraResult.Success(emptySet())
 
         return when (val downloadResult = backupRepository.batchReadItems(backupId, keys)) {
             is PeraResult.Error -> PeraResult.Error(downloadResult.exception, downloadResult.code)
-            is PeraResult.Success -> importPayloads(downloadResult.data)
+            is PeraResult.Success -> importPayloads(backupId, downloadResult.data)
         }
     }
 
-    private suspend fun importPayloads(data: Map<BackupItemKey, String>): PeraResult<Unit> {
+    private suspend fun importPayloads(
+        backupId: BackupId,
+        data: Map<BackupItemKey, String>
+    ): PeraResult<Set<String>> {
         return try {
             val payloads = decryptAndCategorize(data)
-            updateSnapshot(payloads)
-            importToLocal(payloads)
-            PeraResult.Success(Unit)
+            val resolvedSecrets = ensureParentSeedsAvailable(backupId, payloads)
+            val combined = payloads.copy(secrets = payloads.secrets + resolvedSecrets)
+            val importedAddresses = importToLocal(combined)
+            updateSnapshot(combined, importedAddresses)
+            PeraResult.Success(importedAddresses)
         } catch (e: Exception) {
             errorLogger.logError(e)
             PeraResult.Error(e)
@@ -88,17 +95,62 @@ internal class FetchAndImportBackupItemsUseCase @Inject constructor(
         }
     }
 
-    private suspend fun updateSnapshot(payloads: DecryptedPayloads) {
-        if (payloads.addresses.isNotEmpty()) backupSnapshotRepository.upsertAddressPayloads(payloads.addresses)
-        if (payloads.contacts.isNotEmpty()) backupSnapshotRepository.upsertContactPayloads(payloads.contacts)
+    private suspend fun ensureParentSeedsAvailable(
+        backupId: BackupId,
+        payloads: DecryptedPayloads
+    ): List<SecretsBackupPayload.HdSeed> {
+        val hdKeys = payloads.addresses.filterIsInstance<AddressBackupPayload.HdKey>()
+        if (hdKeys.isEmpty()) return emptyList()
+
+        val incomingSeedAddresses = payloads.secrets.filterIsInstance<SecretsBackupPayload.HdSeed>()
+            .map { it.address }
+            .toSet()
+        val candidateAddresses = hdKeys
+            .map { it.seedFirstDerivedAddress }
+            .filter { it.isNotEmpty() && it !in incomingSeedAddresses }
+            .toSet()
+        val missingSeedAddresses = candidateAddresses.filterNot { isThereAnySeedWithFirstAddress(it) }
+
+        if (missingSeedAddresses.isEmpty()) return emptyList()
+
+        return missingSeedAddresses.mapNotNull { address ->
+            fetchSeedSecret(backupId, address)
+        }
     }
 
-    private suspend fun importToLocal(payloads: DecryptedPayloads) {
+    private suspend fun fetchSeedSecret(backupId: BackupId, address: String): SecretsBackupPayload.HdSeed? {
+        val key = BackupItemKey.secrets(address)
+        val base64Payload = when (val result = backupRepository.getItem(backupId, key)) {
+            is PeraResult.Success -> result.data
+            is PeraResult.Error -> {
+                errorLogger.logError(result.exception)
+                return null
+            }
+        }
+        val decrypted = decryptOrNull(key, base64Payload) ?: return null
+        val payload = secretsBackupPayloadMapper.deserialize(decrypted) ?: return null
+        return payload as? SecretsBackupPayload.HdSeed
+    }
+
+    private suspend fun importToLocal(payloads: DecryptedPayloads): Set<String> {
         if (payloads.secrets.isNotEmpty()) {
             localBackupDataImporter.importSecrets(payloads.secrets, payloads.addresses)
         }
-        if (payloads.addresses.isNotEmpty()) localBackupDataImporter.importAddresses(payloads.addresses)
+        val importedAddresses = if (payloads.addresses.isNotEmpty()) {
+            localBackupDataImporter.importAddresses(payloads.addresses)
+        } else {
+            emptySet()
+        }
         if (payloads.contacts.isNotEmpty()) contactsBackupDataImporter.importContacts(payloads.contacts)
+        return importedAddresses
+    }
+
+    private suspend fun updateSnapshot(payloads: DecryptedPayloads, importedAddresses: Set<String>) {
+        val addressPayloadsToSnapshot = payloads.addresses.filter { it.address in importedAddresses }
+        if (addressPayloadsToSnapshot.isNotEmpty()) {
+            backupSnapshotRepository.upsertAddressPayloads(addressPayloadsToSnapshot)
+        }
+        if (payloads.contacts.isNotEmpty()) backupSnapshotRepository.upsertContactPayloads(payloads.contacts)
     }
 
     private data class DecryptedPayloads(

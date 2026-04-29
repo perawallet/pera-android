@@ -73,6 +73,10 @@ import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeedId
+import com.algorand.wallet.account.local.domain.usecase.GetSeedIdByFirstAddress
+import com.algorand.wallet.account.local.domain.usecase.GetSeedIdByFirstAddressUseCase
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnySeedWithFirstAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnySeedWithFirstAddressUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetHdWalletSummaries
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
@@ -381,4 +385,14 @@ internal object LocalAccountsModule {
     fun provideGetAllHdSeedFirstAddresses(
         useCase: GetAllHdSeedFirstAddressesUseCase
     ): GetAllHdSeedFirstAddresses = useCase
+
+    @Provides
+    fun provideGetSeedIdByFirstAddress(
+        useCase: GetSeedIdByFirstAddressUseCase
+    ): GetSeedIdByFirstAddress = useCase
+
+    @Provides
+    fun provideIsThereAnySeedWithFirstAddress(
+        useCase: IsThereAnySeedWithFirstAddressUseCase
+    ): IsThereAnySeedWithFirstAddress = useCase
 }

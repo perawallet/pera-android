@@ -15,40 +15,42 @@ package com.algorand.backup.data.repository
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import com.algorand.backup.data.model.BackupAuthCredentialsCacheData
+import com.algorand.backup.data.model.BackupSessionCacheData
 import com.algorand.backup.domain.model.AesGcmEncryptionResult
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.SensitiveBytes
-import com.algorand.backup.domain.repository.BackupAuthRepository
+import com.algorand.backup.domain.repository.BackupSessionRepository
 import com.algorand.backup.domain.security.PeraAndroidKeyStore
 import com.algorand.backup.domain.security.PeraCipher
 import com.algorand.backup.domain.security.safeDestroy
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCache
 
-internal class DefaultBackupAuthRepository(
-    private val persistentCache: PersistentCache<BackupAuthCredentialsCacheData>,
+internal class DefaultBackupSessionRepository(
+    private val persistentCache: PersistentCache<BackupSessionCacheData>,
     private val peraAndroidKeyStore: PeraAndroidKeyStore,
     private val peraCipher: PeraCipher
-) : BackupAuthRepository {
+) : BackupSessionRepository {
 
-    override fun storeCredentials(
+    override fun storeSession(
         backupId: BackupId,
         deviceId: DeviceId,
         authPrivateKey: SensitiveBytes
     ): PeraResult<Unit> {
         return try {
-            clearCredentials()
+            clearSession()
             ensureWrappingKey()
 
             val wrappingKey = peraAndroidKeyStore.getSecretKey(WRAPPING_KEY_ALIAS)
                 ?: return PeraResult.Error(IllegalStateException("Failed to create wrapping key"))
 
-            val encryptionResult = peraCipher.encrypt(wrappingKey, authPrivateKey.reveal())
-            val cacheModel = mapToBackupAuthCredentialsCacheModel(backupId, deviceId, encryptionResult)
-            persistentCache.put(cacheModel)
-            wrappingKey.safeDestroy()
+            try {
+                val encryptionResult = peraCipher.encrypt(wrappingKey, authPrivateKey.reveal())
+                persistentCache.put(toCacheData(backupId, deviceId, encryptionResult))
+            } finally {
+                wrappingKey.safeDestroy()
+            }
             PeraResult.Success(Unit)
         } catch (e: Exception) {
             PeraResult.Error(e)
@@ -59,7 +61,7 @@ internal class DefaultBackupAuthRepository(
         val cached = persistentCache.get()
         val wrappingKey = peraAndroidKeyStore.getSecretKey(WRAPPING_KEY_ALIAS)
         if (cached == null || wrappingKey == null) {
-            return PeraResult.Error(IllegalStateException("Auth credentials or wrapping key not found"))
+            return PeraResult.Error(IllegalStateException("Backup session or wrapping key not found"))
         }
         return try {
             val wrapped = Base64.decode(cached.wrappedPrivateKey, Base64.NO_WRAP)
@@ -78,9 +80,9 @@ internal class DefaultBackupAuthRepository(
 
     override fun getDeviceId(): DeviceId? = persistentCache.get()?.deviceId?.let { DeviceId(it) }
 
-    override fun hasCredentials(): Boolean = persistentCache.get() != null
+    override fun hasSession(): Boolean = persistentCache.get() != null
 
-    override fun clearCredentials() {
+    override fun clearSession() {
         persistentCache.clear()
         peraAndroidKeyStore.deleteEntry(WRAPPING_KEY_ALIAS)
     }
@@ -97,12 +99,12 @@ internal class DefaultBackupAuthRepository(
         peraAndroidKeyStore.generateSecretKey(spec)
     }
 
-    private fun mapToBackupAuthCredentialsCacheModel(
+    private fun toCacheData(
         backupId: BackupId,
         deviceId: DeviceId,
         encryptionResult: AesGcmEncryptionResult
-    ): BackupAuthCredentialsCacheData {
-        return BackupAuthCredentialsCacheData(
+    ): BackupSessionCacheData {
+        return BackupSessionCacheData(
             backupId = backupId.value,
             deviceId = deviceId.value,
             wrappedPrivateKey = Base64.encodeToString(encryptionResult.ciphertext, Base64.NO_WRAP),
@@ -111,7 +113,7 @@ internal class DefaultBackupAuthRepository(
     }
 
     private companion object {
-        const val WRAPPING_KEY_ALIAS = "pera_backup_auth_wrapping_key"
+        const val WRAPPING_KEY_ALIAS = "pera_backup_session_wrapping_key"
         const val AES_KEY_SIZE_BITS = 256
     }
 }

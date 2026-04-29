@@ -17,6 +17,7 @@ import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.CreatedBackup
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.KeyDerivationInput
+import com.algorand.backup.domain.model.SensitiveBytes
 import com.algorand.backup.domain.model.SyncState
 import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.backup.domain.security.BackupEncryptionManager
@@ -29,7 +30,8 @@ internal class CreateBackupUseCase @Inject constructor(
     private val registerBackup: RegisterBackup,
     private val encryptionManager: BackupEncryptionManager,
     private val syncStateRepository: SyncStateRepository,
-    private val storeBackupCredentials: StoreBackupCredentials
+    private val storeBackupSession: StoreBackupSession,
+    private val storeBackupAuthCredentials: StoreBackupAuthCredentials
 ) : CreateBackup {
 
     override suspend fun invoke(mnemonic: String, deviceId: DeviceId, salt: ByteArray): PeraResult<CreatedBackup> {
@@ -50,9 +52,20 @@ internal class CreateBackupUseCase @Inject constructor(
                 return PeraResult.Error(importResult.exception)
             }
 
-            val storeResult = storeBackupCredentials(keyMaterial.backupId, deviceId, keyMaterial.authPrivateKey)
-            if (storeResult is PeraResult.Error) {
-                return PeraResult.Error(storeResult.exception)
+            val sessionStoreResult = storeBackupSession(
+                keyMaterial.backupId,
+                deviceId,
+                keyMaterial.authPrivateKey
+            )
+            if (sessionStoreResult is PeraResult.Error) {
+                return PeraResult.Error(sessionStoreResult.exception)
+            }
+
+            val authStoreResult = SensitiveBytes(mnemonic.toByteArray(Charsets.UTF_8)).use { mnemonicBytes ->
+                storeBackupAuthCredentials(keyMaterial.backupId, mnemonicBytes, salt)
+            }
+            if (authStoreResult is PeraResult.Error) {
+                return PeraResult.Error(authStoreResult.exception)
             }
 
             initializeSyncState(keyMaterial.backupId)

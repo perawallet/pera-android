@@ -123,7 +123,7 @@ fun interface GetBackupDeviceId {
     operator fun invoke(): DeviceId?
 }
 
-internal fun interface StoreBackupCredentials {
+internal fun interface StoreBackupSession {
     operator fun invoke(backupId: BackupId, deviceId: DeviceId, authPrivateKey: SensitiveBytes): PeraResult<Unit>
 }
 
@@ -131,7 +131,21 @@ internal interface UseBackupPrivateKey {
     operator fun <T : Any> invoke(block: (SensitiveBytes) -> T): PeraResult<T>
 }
 
-internal fun interface ClearBackupCredentials {
+internal fun interface ClearBackupSession {
+    operator fun invoke()
+}
+
+internal fun interface StoreBackupAuthCredentials {
+    operator fun invoke(backupId: BackupId, mnemonic: SensitiveBytes, salt: ByteArray): PeraResult<Unit>
+}
+
+interface RevealBackupAuthCredentials {
+    operator fun <T : Any> invoke(
+        block: (backupId: BackupId, mnemonic: SensitiveBytes, salt: ByteArray) -> T
+    ): PeraResult<T>
+}
+
+internal fun interface ClearBackupAuthCredentials {
     operator fun invoke()
 }
 

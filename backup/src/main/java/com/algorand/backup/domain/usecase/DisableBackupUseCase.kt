@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 internal class DisableBackupUseCase @Inject constructor(
     private val getBackupId: GetBackupId,
-    private val clearBackupCredentials: ClearBackupCredentials,
+    private val clearBackupSession: ClearBackupSession,
+    private val clearBackupAuthCredentials: ClearBackupAuthCredentials,
     private val encryptionManager: BackupEncryptionManager,
     private val syncStateRepository: SyncStateRepository,
     private val backupSnapshotRepository: BackupSnapshotRepository,
@@ -31,6 +32,7 @@ internal class DisableBackupUseCase @Inject constructor(
         getBackupId()?.let { backupId -> syncStateRepository.deleteSyncState(backupId) }
         backupSnapshotRepository.clear()
         encryptionManager.deleteKey()
-        clearBackupCredentials()
+        clearBackupSession()
+        clearBackupAuthCredentials()
     }
 }

@@ -21,9 +21,12 @@ import com.algorand.backup.contact.domain.mapper.DefaultContactBackupPayloadMapp
 import com.algorand.backup.contact.domain.usecase.ContactBackupItemObserver
 import com.algorand.backup.data.mapper.SyncStateCacheMapper
 import com.algorand.backup.data.model.BackupAuthCredentialsCacheData
+import com.algorand.backup.data.model.BackupSessionCacheData
+import com.algorand.backup.data.repository.DefaultBackupAuthCredentialsRepository
+import com.algorand.backup.domain.repository.BackupAuthCredentialsRepository
 import com.algorand.backup.data.model.SyncStateCacheModel
 import com.algorand.backup.data.model.BackupSnapshotCacheData
-import com.algorand.backup.data.repository.DefaultBackupAuthRepository
+import com.algorand.backup.data.repository.DefaultBackupSessionRepository
 import com.algorand.backup.data.repository.DefaultBackupRepository
 import com.algorand.backup.data.repository.DefaultBackupSnapshotRepository
 import com.algorand.backup.data.repository.DefaultBackupWebSocketRepository
@@ -34,7 +37,7 @@ import com.algorand.backup.data.service.BackupApiService
 import com.algorand.backup.data.service.BackupAuthInterceptor
 import com.algorand.backup.data.service.BackupWebSocketUrlBuilder
 import com.algorand.backup.data.service.DefaultBackupWebSocketUrlBuilder
-import com.algorand.backup.domain.repository.BackupAuthRepository
+import com.algorand.backup.domain.repository.BackupSessionRepository
 import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.backup.domain.repository.BackupSnapshotRepository
 import com.algorand.backup.domain.repository.BackupWebSocketRepository
@@ -67,7 +70,8 @@ import com.algorand.backup.domain.usecase.AdvanceBackupSyncCursorUseCase
 import com.algorand.backup.domain.usecase.BackupItemObserver
 import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.BackupSyncStateUpdater
-import com.algorand.backup.domain.usecase.ClearBackupCredentials
+import com.algorand.backup.domain.usecase.ClearBackupAuthCredentials
+import com.algorand.backup.domain.usecase.ClearBackupSession
 import com.algorand.backup.domain.usecase.CommitPushedItemsToSnapshot
 import com.algorand.backup.domain.usecase.CommitPushedItemsToSnapshotUseCase
 import com.algorand.backup.domain.usecase.ConnectBackupWebSocket
@@ -122,10 +126,13 @@ import com.algorand.backup.domain.usecase.RegisterBackup
 import com.algorand.backup.domain.usecase.ResolveAddedAccountBackupKeys
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.backup.domain.usecase.RestoreBackupUseCase
-import com.algorand.backup.domain.usecase.StoreBackupCredentials
+import com.algorand.backup.domain.usecase.RevealBackupAuthCredentials
+import com.algorand.backup.domain.usecase.StoreBackupAuthCredentials
+import com.algorand.backup.domain.usecase.StoreBackupSession
 import com.algorand.backup.domain.usecase.SyncBackup
 import com.algorand.backup.domain.usecase.SyncBackupUseCase
 import com.algorand.backup.domain.usecase.UseBackupPrivateKey
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.gson.Gson
 import dagger.Module
@@ -148,6 +155,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 internal object BackupModule {
 
     private const val SYNC_STATE_CACHE_KEY = "backup_sync_state"
+    private const val SESSION_CACHE_KEY = "backup_session"
     private const val AUTH_CREDENTIALS_CACHE_KEY = "backup_auth_credentials"
     private const val SNAPSHOT_CACHE_KEY = "backup_snapshot"
     private const val TIMEOUT_SECONDS = 60L
@@ -163,12 +171,29 @@ internal object BackupModule {
 
     @Provides
     @Singleton
-    fun provideBackupAuthRepository(
+    fun provideBackupSessionRepository(
         cacheProvider: PersistentCacheProvider,
         peraAndroidKeyStore: PeraAndroidKeyStore,
         peraCipher: PeraCipher
-    ): BackupAuthRepository {
-        return DefaultBackupAuthRepository(
+    ): BackupSessionRepository {
+        return DefaultBackupSessionRepository(
+            persistentCache = cacheProvider.getPersistentCache(
+                type = BackupSessionCacheData::class.java,
+                key = SESSION_CACHE_KEY
+            ),
+            peraAndroidKeyStore = peraAndroidKeyStore,
+            peraCipher = peraCipher
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideBackupAuthCredentialsRepository(
+        cacheProvider: PersistentCacheProvider,
+        peraAndroidKeyStore: PeraAndroidKeyStore,
+        peraCipher: PeraCipher
+    ): BackupAuthCredentialsRepository {
+        return DefaultBackupAuthCredentialsRepository(
             persistentCache = cacheProvider.getPersistentCache(
                 type = BackupAuthCredentialsCacheData::class.java,
                 key = AUTH_CREDENTIALS_CACHE_KEY
@@ -343,23 +368,23 @@ internal object BackupModule {
     fun provideDecryptBackupPayloads(useCase: DecryptBackupPayloadsUseCase): DecryptBackupPayloads = useCase
 
     @Provides
-    fun provideHasBackup(repository: BackupAuthRepository): HasBackup = HasBackup(repository::hasCredentials)
+    fun provideHasBackup(repository: BackupSessionRepository): HasBackup = HasBackup(repository::hasSession)
 
     @Provides
-    fun provideGetBackupId(repository: BackupAuthRepository): GetBackupId = GetBackupId(repository::getBackupId)
+    fun provideGetBackupId(repository: BackupSessionRepository): GetBackupId = GetBackupId(repository::getBackupId)
 
     @Provides
     fun provideGetBackupDeviceId(
-        repository: BackupAuthRepository
+        repository: BackupSessionRepository
     ): GetBackupDeviceId = GetBackupDeviceId(repository::getDeviceId)
 
     @Provides
-    fun provideStoreBackupCredentials(
-        repository: BackupAuthRepository
-    ): StoreBackupCredentials = StoreBackupCredentials(repository::storeCredentials)
+    fun provideStoreBackupSession(
+        repository: BackupSessionRepository
+    ): StoreBackupSession = StoreBackupSession(repository::storeSession)
 
     @Provides
-    fun provideUseBackupPrivateKey(repository: BackupAuthRepository): UseBackupPrivateKey {
+    fun provideUseBackupPrivateKey(repository: BackupSessionRepository): UseBackupPrivateKey {
         return object : UseBackupPrivateKey {
             override fun <T : Any> invoke(block: (com.algorand.backup.domain.model.SensitiveBytes) -> T) =
                 repository.usePrivateKey(block)
@@ -367,8 +392,35 @@ internal object BackupModule {
     }
 
     @Provides
-    fun provideClearBackupCredentials(repository: BackupAuthRepository): ClearBackupCredentials {
-        return ClearBackupCredentials(repository::clearCredentials)
+    fun provideClearBackupSession(repository: BackupSessionRepository): ClearBackupSession {
+        return ClearBackupSession(repository::clearSession)
+    }
+
+    @Provides
+    fun provideStoreBackupAuthCredentials(
+        repository: BackupAuthCredentialsRepository
+    ): StoreBackupAuthCredentials = StoreBackupAuthCredentials(repository::storeCredentials)
+
+    @Provides
+    fun provideRevealBackupAuthCredentials(
+        repository: BackupAuthCredentialsRepository
+    ): RevealBackupAuthCredentials {
+        return object : RevealBackupAuthCredentials {
+            override fun <T : Any> invoke(
+                block: (
+                    com.algorand.backup.domain.model.BackupId,
+                    com.algorand.backup.domain.model.SensitiveBytes,
+                    ByteArray
+                ) -> T
+            ): PeraResult<T> = repository.useCredentials(block)
+        }
+    }
+
+    @Provides
+    fun provideClearBackupAuthCredentials(
+        repository: BackupAuthCredentialsRepository
+    ): ClearBackupAuthCredentials {
+        return ClearBackupAuthCredentials(repository::clearCredentials)
     }
 
     @Provides
@@ -418,11 +470,11 @@ internal object BackupModule {
     @Provides
     @Singleton
     fun provideBackupWebSocketUrlBuilder(
-        backupAuthRepository: BackupAuthRepository,
+        backupSessionRepository: BackupSessionRepository,
         requestSigner: BackupRequestSigner
     ): BackupWebSocketUrlBuilder {
         return DefaultBackupWebSocketUrlBuilder(
-            backupAuthRepository = backupAuthRepository,
+            backupSessionRepository = backupSessionRepository,
             requestSigner = requestSigner,
             baseUrl = BACKUP_BASE_URL
         )

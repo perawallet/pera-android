@@ -13,15 +13,14 @@
 package com.algorand.backup.domain.repository
 
 import com.algorand.backup.domain.model.BackupId
-import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.SensitiveBytes
 import com.algorand.wallet.foundation.PeraResult
 
-internal interface BackupAuthRepository {
-    fun storeCredentials(backupId: BackupId, deviceId: DeviceId, authPrivateKey: SensitiveBytes): PeraResult<Unit>
-    fun <T : Any> usePrivateKey(block: (SensitiveBytes) -> T): PeraResult<T>
-    fun getBackupId(): BackupId?
-    fun getDeviceId(): DeviceId?
+internal interface BackupAuthCredentialsRepository {
+    fun storeCredentials(backupId: BackupId, mnemonic: SensitiveBytes, salt: ByteArray): PeraResult<Unit>
+    fun <T : Any> useCredentials(
+        block: (backupId: BackupId, mnemonic: SensitiveBytes, salt: ByteArray) -> T
+    ): PeraResult<T>
     fun hasCredentials(): Boolean
     fun clearCredentials()
 }

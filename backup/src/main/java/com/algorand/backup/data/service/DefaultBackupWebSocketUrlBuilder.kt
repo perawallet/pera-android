@@ -12,21 +12,21 @@
 
 package com.algorand.backup.data.service
 
-import com.algorand.backup.domain.repository.BackupAuthRepository
+import com.algorand.backup.domain.repository.BackupSessionRepository
 import com.algorand.backup.domain.security.BackupRequestSigner
 import com.algorand.wallet.foundation.PeraResult
 import java.time.Instant
 import javax.inject.Inject
 
 internal class DefaultBackupWebSocketUrlBuilder @Inject constructor(
-    private val backupAuthRepository: BackupAuthRepository,
+    private val backupSessionRepository: BackupSessionRepository,
     private val requestSigner: BackupRequestSigner,
     private val baseUrl: String,
 ) : BackupWebSocketUrlBuilder {
 
     override fun buildUrl(): PeraResult<String> {
-        val backupId = backupAuthRepository.getBackupId() ?: return PeraResult.Error(IllegalArgumentException())
-        val deviceId = backupAuthRepository.getDeviceId() ?: return PeraResult.Error(IllegalArgumentException())
+        val backupId = backupSessionRepository.getBackupId() ?: return PeraResult.Error(IllegalArgumentException())
+        val deviceId = backupSessionRepository.getDeviceId() ?: return PeraResult.Error(IllegalArgumentException())
 
         val timestamp = Instant.now().toString()
         val signatureResult = requestSigner.createWebSocketToken(backupId, deviceId, timestamp)

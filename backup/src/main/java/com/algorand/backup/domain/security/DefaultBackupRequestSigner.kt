@@ -18,7 +18,7 @@ import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.RegistrationProof
 import com.algorand.backup.domain.model.SensitiveBytes
 import com.algorand.backup.domain.model.SignedRequest
-import com.algorand.backup.domain.repository.BackupAuthRepository
+import com.algorand.backup.domain.repository.BackupSessionRepository
 import com.algorand.wallet.foundation.PeraResult
 import java.security.MessageDigest
 import javax.inject.Inject
@@ -29,16 +29,16 @@ import org.bouncycastle.crypto.signers.Ed25519Signer
 
 internal class DefaultBackupRequestSigner @Inject constructor(
     private val nonceGenerator: NonceGenerator,
-    private val backupAuthRepository: BackupAuthRepository
+    private val backupSessionRepository: BackupSessionRepository
 ) : BackupRequestSigner {
 
     override fun signHttpRequest(request: Request): PeraResult<SignedRequest> {
-        val backupId = backupAuthRepository.getBackupId()
+        val backupId = backupSessionRepository.getBackupId()
             ?: return PeraResult.Error(IllegalStateException("Backup ID not found"))
-        val deviceId = backupAuthRepository.getDeviceId()
+        val deviceId = backupSessionRepository.getDeviceId()
             ?: return PeraResult.Error(IllegalStateException("Device ID not found"))
 
-        return backupAuthRepository.usePrivateKey { authPrivateKey ->
+        return backupSessionRepository.usePrivateKey { authPrivateKey ->
             val nonce = nonceGenerator.generate()
             val message = buildMessage(request, nonce)
             val signature = sign(message, authPrivateKey.reveal())
@@ -82,7 +82,7 @@ internal class DefaultBackupRequestSigner @Inject constructor(
     }
 
     override fun createWebSocketToken(backupId: BackupId, deviceId: DeviceId, timestamp: String): PeraResult<String> {
-        return backupAuthRepository.usePrivateKey { authPrivateKey ->
+        return backupSessionRepository.usePrivateKey { authPrivateKey ->
             val message = buildMessageBytes(MESSAGE_PREFIX_WS, backupId.value, deviceId.value, timestamp)
             val signature = sign(message, authPrivateKey.reveal())
             encodeBase64(signature)

@@ -1317,6 +1317,14 @@
     <string name="backup_creation_failed">Backup creation failed</string>
     <string name="backup_invalid_salt_format">Invalid salt format</string>
     <string name="backup_restore_failed">Restore failed</string>
+    <string name="sync_backup_pin_title">Set a sync PIN</string>
+    <string name="sync_backup_pin_description">Enter a 6-digit PIN. Your other device will need this same PIN to complete the sync.</string>
+    <string name="sync_backup_qr_description">Use your other device to scan this QR code. Enter the PIN you set to begin syncing.</string>
+    <string name="restore_backup_pin_title">Enter sync PIN</string>
+    <string name="restore_backup_pin_description">Enter the 6-digit PIN that was set on the device sharing the backup.</string>
+    <string name="restore_backup_options_description">Restore your backup by scanning a QR code or entering your credentials manually.</string>
+    <string name="enter_details_manually">Enter Details Manually</string>
+    <string name="scan_backup_sync_qr_title">Scan the QR shown on your other device</string>
     <string name="no_passkeys_yet">No passkeys yet</string>
     <string name="remove_passkey">Remove Passkey</string>
     <string name="type_new_address_or_search">Type a new address or search</string>

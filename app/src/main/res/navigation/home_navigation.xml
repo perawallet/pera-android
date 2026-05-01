@@ -1767,6 +1767,9 @@
         <action
             android:id="@+id/action_backupOptionsFragment_to_restoreBackupPassphraseFragment"
             app:destination="@id/restoreBackupPassphraseFragment" />
+        <action
+            android:id="@+id/action_backupOptionsFragment_to_restoreBackupOptionsBottomSheet"
+            app:destination="@id/restoreBackupOptionsBottomSheet" />
     </fragment>
 
     <fragment
@@ -1856,6 +1859,78 @@
         <action
             android:id="@+id/action_backupOverviewFragment_to_backupCredentialsFragment"
             app:destination="@id/backupCredentialsFragment" />
+        <action
+            android:id="@+id/action_backupOverviewFragment_to_syncBackupPinFragment"
+            app:destination="@id/syncBackupPinFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/syncBackupPinFragment"
+        android:name="com.algorand.android.ui.backup.sync.pin.SyncBackupPinFragment"
+        android:label="SyncBackupPinFragment">
+        <action
+            android:id="@+id/action_syncBackupPinFragment_to_syncBackupQrFragment"
+            app:destination="@id/syncBackupQrFragment"
+            app:popUpTo="@id/syncBackupPinFragment"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="encryptedPayload"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/syncBackupQrFragment"
+        android:name="com.algorand.android.ui.backup.sync.qr.SyncBackupQrFragment"
+        android:label="SyncBackupQrFragment">
+        <argument
+            android:name="encryptedPayload"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/restoreBackupOptionsBottomSheet"
+        android:name="com.algorand.android.ui.backup.restore.options.RestoreBackupOptionsBottomSheet"
+        android:label="RestoreBackupOptionsBottomSheet">
+        <action
+            android:id="@+id/action_restoreBackupOptionsBottomSheet_to_restoreBackupQrScannerFragment"
+            app:destination="@id/restoreBackupQrScannerFragment"
+            app:popUpTo="@id/restoreBackupOptionsBottomSheet"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_restoreBackupOptionsBottomSheet_to_restoreBackupPassphraseFragment"
+            app:destination="@id/restoreBackupPassphraseFragment"
+            app:popUpTo="@id/restoreBackupOptionsBottomSheet"
+            app:popUpToInclusive="true" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/restoreBackupQrScannerFragment"
+        android:name="com.algorand.android.ui.backup.restore.qr.RestoreBackupQrScannerFragment"
+        android:label="RestoreBackupQrScannerFragment">
+        <action
+            android:id="@+id/action_restoreBackupQrScannerFragment_to_restoreBackupPinFragment"
+            app:destination="@id/restoreBackupPinFragment"
+            app:popUpTo="@id/restoreBackupQrScannerFragment"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="encryptedPayload"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/restoreBackupPinFragment"
+        android:name="com.algorand.android.ui.backup.restore.pin.RestoreBackupPinFragment"
+        android:label="RestoreBackupPinFragment">
+        <argument
+            android:name="encryptedPayload"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_restoreBackupPinFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment"
+            app:popUpTo="@id/backupOptionsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

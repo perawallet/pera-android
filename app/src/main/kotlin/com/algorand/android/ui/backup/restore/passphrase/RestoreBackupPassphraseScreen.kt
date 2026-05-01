@@ -62,7 +62,8 @@ private const val WORDS_PER_COLUMN = WORD_COUNT / COLUMN_COUNT
 fun RestoreBackupPassphraseScreen(
     viewModel: RestoreBackupPassphraseViewModel,
     onBackClick: () -> Unit,
-    onProceedClick: (passphrase: String) -> Unit
+    onProceedClick: (passphrase: String) -> Unit,
+    onShowError: (errorMessageResId: Int) -> Unit
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
     val focusRequesters = remember { List(WORD_COUNT) { FocusRequester() } }
@@ -70,6 +71,14 @@ fun RestoreBackupPassphraseScreen(
 
     LaunchedEffect(Unit) {
         focusRequesters.first().requestFocus()
+    }
+
+    LaunchedEffect(viewModel.viewEvent) {
+        viewModel.viewEvent.collect { event ->
+            when (event) {
+                is RestoreBackupPassphraseViewModel.ViewEvent.ShowError -> onShowError(event.messageResId)
+            }
+        }
     }
 
     Column(

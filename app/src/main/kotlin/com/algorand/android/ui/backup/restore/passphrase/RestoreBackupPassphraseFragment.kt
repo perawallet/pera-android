@@ -34,9 +34,14 @@ class RestoreBackupPassphraseFragment : BaseFragment(0) {
             RestoreBackupPassphraseScreen(
                 viewModel = viewModel,
                 onBackClick = ::navBack,
-                onProceedClick = ::onProceed
+                onProceedClick = ::onProceed,
+                onShowError = ::showError
             )
         }
+    }
+
+    private fun showError(messageResId: Int) {
+        showGlobalError(getString(messageResId))
     }
 
     private fun onProceed(passphrase: String) {

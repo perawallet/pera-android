@@ -39,7 +39,7 @@ class BackupOptionsFragment : BaseFragment(0) {
         return createComposeView {
             BackupOptionsScreen(
                 onSetUpBackupClick = ::navigateToSetUpBackup,
-                onRestoreBackupClick = ::navigateToRestoreBackup
+                onRestoreBackupClick = ::openRestoreOptions
             )
         }
     }
@@ -48,7 +48,7 @@ class BackupOptionsFragment : BaseFragment(0) {
         nav(BackupOptionsFragmentDirections.actionBackupOptionsFragmentToCreateBackupFragment())
     }
 
-    private fun navigateToRestoreBackup() {
-        nav(BackupOptionsFragmentDirections.actionBackupOptionsFragmentToRestoreBackupPassphraseFragment())
+    private fun openRestoreOptions() {
+        nav(BackupOptionsFragmentDirections.actionBackupOptionsFragmentToRestoreBackupOptionsBottomSheet())
     }
 }

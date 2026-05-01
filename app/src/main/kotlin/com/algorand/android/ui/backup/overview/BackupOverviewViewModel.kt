@@ -65,6 +65,10 @@ class BackupOverviewViewModel @Inject constructor(
         observeSyncStatus()
     }
 
+    fun refresh() {
+        loadProtectedDataCounts()
+    }
+
     fun disableBackup() {
         viewModelScope.launch {
             disableBackup.invoke()

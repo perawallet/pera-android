@@ -59,6 +59,11 @@ class BackupOverviewFragment : BaseFragment(0), BackupOverviewScreenListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
+    }
+
     override fun onNavigateBack() {
         navBack()
     }
@@ -92,6 +97,9 @@ class BackupOverviewFragment : BaseFragment(0), BackupOverviewScreenListener {
     }
 
     override fun onSyncWithOtherDevicesClick() {
-        // TODO: navigate to QR sync flow
+        nav(
+            BackupOverviewFragmentDirections
+                .actionBackupOverviewFragmentToSyncBackupPinFragment()
+        )
     }
 }

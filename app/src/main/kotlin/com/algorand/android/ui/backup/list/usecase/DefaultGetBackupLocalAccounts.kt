@@ -15,22 +15,24 @@ package com.algorand.android.ui.backup.list.usecase
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.ui.backup.list.mapper.BackupAccountIconPreviewMapper
 import com.algorand.android.ui.backup.list.model.BackupLocalAccountItem
-import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.backup.domain.usecase.GetAddressBackupSnapshot
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import javax.inject.Inject
 
 internal class DefaultGetBackupLocalAccounts @Inject constructor(
     private val getLocalAccounts: GetLocalAccounts,
     private val getAccountLite: GetAccountLite,
+    private val getAddressBackupSnapshot: GetAddressBackupSnapshot,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val backupAccountIconPreviewMapper: BackupAccountIconPreviewMapper
 ) : GetBackupLocalAccounts {
 
     override suspend fun invoke(): List<BackupLocalAccountItem> {
+        val backupAddresses = getAddressBackupSnapshot().map { it.address }.toHashSet()
         return getLocalAccounts().map { account ->
             val accountLite = getAccountLite(account.algoAddress)
             val cachedInfo = accountLite?.cachedInfo
@@ -38,7 +40,7 @@ internal class DefaultGetBackupLocalAccounts @Inject constructor(
                 displayName = accountLite?.customName ?: account.algoAddress.toShortenedAddress(),
                 address = account.algoAddress,
                 iconPreview = backupAccountIconPreviewMapper.mapFromLocalAccount(account),
-                isBackedUp = accountLite?.isBackedUp ?: false,
+                isBackedUp = account.algoAddress in backupAddresses,
                 assetCount = cachedInfo?.assetCount,
                 formattedBalance = cachedInfo?.primaryAccountValue?.let { value ->
                     getCompactPrimaryAmountRenderer(PeraAmount(value), RenderType.Plain).getDisplayValue()

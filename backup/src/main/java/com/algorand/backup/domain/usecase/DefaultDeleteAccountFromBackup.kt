@@ -12,6 +12,7 @@
 
 package com.algorand.backup.domain.usecase
 
+import com.algorand.backup.account.domain.model.AddressBackupPayload
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeedFirstAddresses
@@ -22,17 +23,18 @@ internal class DefaultDeleteAccountFromBackup @Inject constructor(
     private val getBackupId: GetBackupId,
     private val getLocalAccounts: GetLocalAccounts,
     private val getAllHdSeedFirstAddresses: GetAllHdSeedFirstAddresses,
+    private val getAddressBackupSnapshot: GetAddressBackupSnapshot,
     private val deleteBackupItem: DeleteBackupItem
 ) : DeleteAccountFromBackup {
 
     override suspend fun invoke(address: String, deleteFromServer: Boolean) {
         val backupId = getBackupId() ?: return
-        val accounts = getLocalAccounts()
-        val account = accounts.firstOrNull { it.algoAddress == address } ?: return
-
         deleteBackupItem(backupId, BackupItemKey.accounts(address), deleteFromServer)
 
-        val secretsAddress = resolveSecretsAddress(account, accounts)
+        val accounts = getLocalAccounts()
+        val secretsAddress = accounts.firstOrNull { it.algoAddress == address }
+            ?.let { account -> resolveSecretsAddress(account, accounts) }
+            ?: resolveSecretsAddressFromBackup(address)
         if (secretsAddress != null) {
             deleteBackupItem(backupId, BackupItemKey.secrets(secretsAddress), deleteFromServer)
         }
@@ -59,5 +61,17 @@ internal class DefaultDeleteAccountFromBackup @Inject constructor(
             return null
         }
         return getAllHdSeedFirstAddresses().firstOrNull { it.seedId == account.seedId }?.firstAddress
+    }
+
+    private suspend fun resolveSecretsAddressFromBackup(address: String): String? {
+        return when (val payload = getAddressBackupSnapshot().firstOrNull { it.address == address }) {
+            is AddressBackupPayload.Algo25 -> payload.address
+            is AddressBackupPayload.HdKey -> payload.seedFirstDerivedAddress
+            is AddressBackupPayload.HdSeed -> payload.address
+            is AddressBackupPayload.LedgerBle,
+            is AddressBackupPayload.NoAuth,
+            is AddressBackupPayload.Joint,
+            null -> null
+        }
     }
 }

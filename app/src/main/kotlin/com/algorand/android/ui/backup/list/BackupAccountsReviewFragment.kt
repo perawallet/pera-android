@@ -21,16 +21,19 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.accountdetail.removeaccount.ui.BackupDeleteConfirmationBottomSheet.Companion.BACKUP_DELETE_CONFIRMATION_KEY
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.utils.useFragmentResultListenerValue
+import com.algorand.backup.account.domain.model.AddressBackupPayload
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BackupAccountsListFragment : BaseFragment(0), BackupAccountsListScreenListener {
+class BackupAccountsReviewFragment : BaseFragment(0), BackupAccountsReviewScreenListener {
 
-    private val viewModel: BackupAccountsListViewModel by viewModels()
+    private val viewModel: BackupAccountsReviewViewModel by viewModels()
 
     private val toolbarConfiguration = ToolbarConfiguration(
-        titleResId = R.string.accounts,
+        titleResId = R.string.accounts_to_review,
         startIconResId = R.drawable.ic_left_arrow,
         startIconClick = ::navBack
     )
@@ -41,7 +44,18 @@ class BackupAccountsListFragment : BaseFragment(0), BackupAccountsListScreenList
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            BackupAccountsListScreen(listener = this@BackupAccountsListFragment)
+            BackupAccountsReviewScreen(listener = this@BackupAccountsReviewFragment)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        useFragmentResultListenerValue<Boolean>(BACKUP_DELETE_CONFIRMATION_KEY) { confirmed ->
+            if (confirmed) {
+                viewModel.confirmRemoveFromBackup()
+            } else {
+                viewModel.cancelRemoveFromBackup()
+            }
         }
     }
 
@@ -50,14 +64,34 @@ class BackupAccountsListFragment : BaseFragment(0), BackupAccountsListScreenList
         viewModel.refresh()
     }
 
-    override fun onReviewClick() {
+    override fun onRemoveFromBackupClick(payload: AddressBackupPayload) {
         nav(
-            BackupAccountsListFragmentDirections
-                .actionBackupAccountsListFragmentToBackupAccountsReviewFragment()
+            BackupAccountsReviewFragmentDirections
+                .actionBackupAccountsReviewFragmentToBackupDeleteConfirmationBottomSheet()
         )
     }
 
     override fun onBackUpAccountClick(address: String) {
         // TODO: Launch the per-account backup flow once the destination is wired up.
+    }
+
+    override fun onAddSuccess() {
+        showAlertSuccess(title = getString(R.string.account_has_been_added))
+    }
+
+    override fun onNavigateBackWithSuccess() {
+        showAlertSuccess(title = getString(R.string.account_has_been_added), tag = baseActivityTag)
+        navBack()
+    }
+
+    override fun onNavigateBack() {
+        navBack()
+    }
+
+    override fun onShowImportError(message: String?) {
+        showGlobalError(
+            errorMessage = message ?: getString(R.string.an_error_occurred),
+            title = getString(R.string.an_error_occurred)
+        )
     }
 }

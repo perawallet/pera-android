@@ -14,6 +14,7 @@ package com.algorand.android.ui.backup.list.usecase
 
 import com.algorand.android.ui.backup.list.mapper.BackupAccountIconPreviewMapper
 import com.algorand.android.ui.backup.list.model.BackupAccountListItem
+import com.algorand.android.utils.toShortenedAddress
 import com.algorand.backup.domain.usecase.GetAddressBackupSnapshot
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import javax.inject.Inject
@@ -30,7 +31,7 @@ internal class DefaultGetNotSyncedBackupAccounts @Inject constructor(
             .filter { it.address !in localAddresses }
             .map { payload ->
                 BackupAccountListItem(
-                    displayName = payload.customName ?: payload.address,
+                    displayName = payload.customName ?: payload.address.toShortenedAddress(),
                     address = payload.address,
                     iconPreview = backupAccountIconPreviewMapper.mapFromAddressBackupPayload(payload),
                     payload = payload

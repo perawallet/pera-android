@@ -1941,7 +1941,20 @@
     <fragment
         android:id="@+id/backupAccountsListFragment"
         android:name="com.algorand.android.ui.backup.list.BackupAccountsListFragment"
-        android:label="BackupAccountsListFragment" />
+        android:label="BackupAccountsListFragment">
+        <action
+            android:id="@+id/action_backupAccountsListFragment_to_backupAccountsReviewFragment"
+            app:destination="@id/backupAccountsReviewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/backupAccountsReviewFragment"
+        android:name="com.algorand.android.ui.backup.list.BackupAccountsReviewFragment"
+        android:label="BackupAccountsReviewFragment">
+        <action
+            android:id="@+id/action_backupAccountsReviewFragment_to_backupDeleteConfirmationBottomSheet"
+            app:destination="@id/backupDeleteConfirmationBottomSheet" />
+    </fragment>
 
     <fragment
         android:id="@+id/backupContactsListFragment"

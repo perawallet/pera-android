@@ -36,6 +36,10 @@ class BackupAccountsListViewModel @Inject constructor(
         loadAccounts()
     }
 
+    fun refresh() {
+        loadAccounts()
+    }
+
     private fun loadAccounts() {
         viewModelScope.launch {
             val localAccounts = getBackupLocalAccounts()

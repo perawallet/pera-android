@@ -37,7 +37,7 @@ private const val SHAKE_HALF_DURATION_MS = 50
 @Composable
 fun SixDigitPasswordContainer(
     enteredDigitCount: Int,
-    isError: Boolean,
+    isError: Boolean = false,
     modifier: Modifier = Modifier,
     onErrorAnimationEnd: () -> Unit = {}
 ) {

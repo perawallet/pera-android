@@ -23,13 +23,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -81,37 +79,57 @@ private fun BackupOverviewContent(
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        StatusSection(
-            credentialAddress = viewState.credentialAddress,
-            latestSync = viewState.latestSync,
-            onCredentialAddressClick = listener::onCredentialAddressClick
-        )
+        if (viewState.latestSync != null) {
+            LatestSyncRow(latestSync = viewState.latestSync)
+        }
 
         SectionContainer(titleRes = R.string.protected_data) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 ProtectedDataRow(
                     iconRes = R.drawable.ic_wallet,
                     titleRes = R.string.accounts,
-                    description = stringResource(R.string.accounts_in_sync, viewState.accountCount),
+                    syncedCount = viewState.accountCount,
                     notSyncedCount = viewState.notSyncedAccountCount,
+                    syncedTextRes = R.string.accounts_in_sync,
                     notSyncedTextRes = R.string.accounts_not_synced,
-                    onEditClick = { listener.onEditAccountsClick(BackupListTab.SYNCED) },
-                    onNotSyncedClick = { listener.onEditAccountsClick(BackupListTab.NOT_SYNCED) }
+                    onClick = {
+                        val tab = if (viewState.notSyncedAccountCount > 0) {
+                            BackupListTab.NOT_SYNCED
+                        } else {
+                            BackupListTab.SYNCED
+                        }
+                        listener.onEditAccountsClick(tab)
+                    }
                 )
                 ProtectedDataRow(
                     iconRes = R.drawable.ic_contacts,
                     titleRes = R.string.contacts,
-                    description = stringResource(R.string.contacts_in_sync, viewState.contactCount),
+                    syncedCount = viewState.contactCount,
                     notSyncedCount = viewState.notSyncedContactCount,
+                    syncedTextRes = R.string.contacts_in_sync,
                     notSyncedTextRes = R.string.contacts_not_synced,
-                    onEditClick = { listener.onEditContactsClick(BackupListTab.SYNCED) },
-                    onNotSyncedClick = { listener.onEditContactsClick(BackupListTab.NOT_SYNCED) }
+                    onClick = {
+                        val tab = if (viewState.notSyncedContactCount > 0) {
+                            BackupListTab.NOT_SYNCED
+                        } else {
+                            BackupListTab.SYNCED
+                        }
+                        listener.onEditContactsClick(tab)
+                    }
                 )
             }
         }
 
-        SectionContainer(titleRes = R.string.backup_settings) {
+        SectionContainer(titleRes = R.string.backup_details) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                BorderedNavigationRow(
+                    iconRes = R.drawable.ic_key,
+                    title = stringResource(R.string.credential_address),
+                    description = viewState.credentialAddress,
+                    showChevron = true,
+                    showInfoIcon = true,
+                    onClick = listener::onCredentialAddressClick
+                )
                 BorderedNavigationRow(
                     iconRes = R.drawable.ic_qr,
                     title = stringResource(R.string.sync_with_other_devices),
@@ -128,27 +146,6 @@ private fun BackupOverviewContent(
                     onClick = listener::onDisableBackupClick
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun StatusSection(
-    credentialAddress: String,
-    latestSync: LatestSyncState?,
-    onCredentialAddressClick: () -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        BorderedNavigationRow(
-            iconRes = R.drawable.ic_key,
-            title = stringResource(R.string.credential_address),
-            description = credentialAddress,
-            showChevron = true,
-            showInfoIcon = true,
-            onClick = onCredentialAddressClick
-        )
-        if (latestSync != null) {
-            LatestSyncRow(latestSync = latestSync)
         }
     }
 }
@@ -305,92 +302,64 @@ private fun SyncOutcomeBadge(isSuccess: Boolean) {
 private fun ProtectedDataRow(
     @DrawableRes iconRes: Int,
     @StringRes titleRes: Int,
-    description: String,
+    syncedCount: Int,
     notSyncedCount: Int,
+    @StringRes syncedTextRes: Int,
     @StringRes notSyncedTextRes: Int,
-    onEditClick: () -> Unit,
-    onNotSyncedClick: () -> Unit
+    onClick: () -> Unit
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickableNoRipple(onClick = onClick)
             .background(
                 color = PeraTheme.colors.layer.grayLighter,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(12.dp)
             )
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(iconRes),
-                tint = PeraTheme.colors.text.main,
-                contentDescription = null
+        Icon(
+            modifier = Modifier.size(24.dp),
+            painter = painterResource(iconRes),
+            tint = PeraTheme.colors.text.main,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(titleRes),
+                style = PeraTheme.typography.body.regular.sansMedium,
+                color = PeraTheme.colors.text.main
             )
-            Spacer(modifier = Modifier.size(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = stringResource(titleRes),
-                        style = PeraTheme.typography.body.large.sansMedium,
-                        color = PeraTheme.colors.text.main
+            if (notSyncedCount > 0) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        painter = painterResource(R.drawable.ic_cloud_no_connection),
+                        tint = PeraTheme.colors.helper.negative,
+                        contentDescription = null
                     )
                     Text(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .clickableNoRipple(onClick = onEditClick)
-                            .padding(horizontal = 4.dp),
-                        text = stringResource(R.string.edit),
-                        style = PeraTheme.typography.body.regular.sansMedium,
-                        color = PeraTheme.colors.link.primary
+                        text = stringResource(notSyncedTextRes, notSyncedCount),
+                        style = PeraTheme.typography.footnote.sansMedium,
+                        color = PeraTheme.colors.text.gray
                     )
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+            } else {
                 Text(
-                    text = description,
-                    style = PeraTheme.typography.body.regular.sans,
+                    text = stringResource(syncedTextRes, syncedCount),
+                    style = PeraTheme.typography.footnote.sans,
                     color = PeraTheme.colors.text.gray
                 )
             }
         }
-        if (notSyncedCount > 0) {
-            Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(
-                color = PeraTheme.colors.layer.gray,
-                thickness = 1.dp
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            NotSyncedRow(
-                text = stringResource(notSyncedTextRes, notSyncedCount),
-                onClick = onNotSyncedClick
-            )
-        }
-    }
-}
-
-@Composable
-private fun NotSyncedRow(text: String, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
-            .clickableNoRipple(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
         Icon(
             modifier = Modifier.size(20.dp),
-            painter = painterResource(R.drawable.ic_cloud_no_connection),
-            tint = PeraTheme.colors.helper.negative,
-            contentDescription = null
-        )
-        Text(
-            text = text,
-            style = PeraTheme.typography.footnote.sansMedium,
-            color = PeraTheme.colors.text.gray
-        )
-        Icon(
-            modifier = Modifier.size(16.dp),
             painter = painterResource(R.drawable.ic_right_arrow),
             tint = PeraTheme.colors.text.gray,
             contentDescription = null

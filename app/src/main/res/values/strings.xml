@@ -1260,7 +1260,7 @@
     <string name="backup_status_success">SUCCESS</string>
     <string name="backup_status_failed">FAILED</string>
     <string name="protected_data">Protected Data</string>
-    <string name="backup_settings">Backup Settings</string>
+    <string name="backup_details">Backup Details</string>
     <string name="accounts_in_sync">%d accounts in sync</string>
     <string name="contacts_in_sync">%d contacts in sync</string>
     <string name="accounts_not_synced">You have %d accounts not synced</string>

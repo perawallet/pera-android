@@ -42,10 +42,11 @@ class BackupAccountsListFragment : BaseFragment(0), BackupAccountsListScreenList
         }
     }
 
-    override fun onShowImportError(message: String?) {
-        showGlobalError(
-            errorMessage = message ?: getString(R.string.an_error_occurred),
-            title = getString(R.string.an_error_occurred)
-        )
+    override fun onReviewClick() {
+        // TODO: Navigate to backup review flow once the destination is wired up.
+    }
+
+    override fun onBackUpAccountClick(address: String) {
+        // TODO: Launch the per-account backup flow once the destination is wired up.
     }
 }

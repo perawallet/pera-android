@@ -1275,6 +1275,13 @@
     <string name="add_to_local">Add to local</string>
     <string name="account_count">%d Accounts</string>
     <string name="contact_count">%d Contacts</string>
+    <string name="accounts_to_review">Accounts to review</string>
+    <string name="n_not_backed_up">%d not backed up</string>
+    <string name="n_available_from_backup">%d available from back up</string>
+    <string name="review">Review</string>
+    <string name="available_on_this_device">Available on this device</string>
+    <string name="back_up">Back Up</string>
+    <string name="n_assets">%d assets</string>
     <string name="disable_cloud_backup_question">Disable Cloud Backup?</string>
     <string name="disable_cloud_backup_question_description">Your data will no longer be synced across devices and local-only data may be lost if this device is reset.</string>
     <string name="keep_backup_enabled">Keep Backup Enabled</string>

@@ -12,20 +12,12 @@
 
 package com.algorand.android.ui.backup.list
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.ui.backup.list.BackupAccountsListViewModel.ViewEvent
 import com.algorand.android.ui.backup.list.BackupAccountsListViewModel.ViewState
-import com.algorand.android.ui.backup.list.model.BackupAccountListItem
-import com.algorand.android.ui.backup.list.model.BackupListTab
-import com.algorand.android.ui.backup.list.usecase.AddBackupAccountToLocal
+import com.algorand.android.ui.backup.list.model.BackupLocalAccountItem
+import com.algorand.android.ui.backup.list.usecase.GetBackupLocalAccounts
 import com.algorand.android.ui.backup.list.usecase.GetNotSyncedBackupAccounts
-import com.algorand.android.ui.backup.list.usecase.GetSyncedBackupAccounts
-import com.algorand.backup.account.domain.model.AddressBackupPayload
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,54 +27,35 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class BackupAccountsListViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
-    private val eventDelegate: EventDelegate<ViewEvent>,
-    private val getSyncedBackupAccounts: GetSyncedBackupAccounts,
-    private val getNotSyncedBackupAccounts: GetNotSyncedBackupAccounts,
-    private val addBackupAccountToLocal: AddBackupAccountToLocal,
-    savedStateHandle: SavedStateHandle
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
+    private val getBackupLocalAccounts: GetBackupLocalAccounts,
+    private val getNotSyncedBackupAccounts: GetNotSyncedBackupAccounts
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     init {
-        val initialTab = savedStateHandle.get<BackupListTab>(SELECTED_TAB_KEY) ?: BackupListTab.SYNCED
-        stateDelegate.setDefaultState(ViewState(selectedTab = initialTab))
+        stateDelegate.setDefaultState(ViewState())
         loadAccounts()
-    }
-
-    fun selectTab(tab: BackupListTab) {
-        stateDelegate.updateState { it.copy(selectedTab = tab) }
-    }
-
-    fun addAccountToLocal(payload: AddressBackupPayload) {
-        viewModelScope.launch {
-            when (val result = addBackupAccountToLocal(payload)) {
-                is PeraResult.Success -> loadAccounts()
-                is PeraResult.Error -> {
-                    loadAccounts()
-                    eventDelegate.sendEvent(ViewEvent.ShowImportError(result.exception.message))
-                }
-            }
-        }
     }
 
     private fun loadAccounts() {
         viewModelScope.launch {
-            val synced = getSyncedBackupAccounts()
-            val notSynced = getNotSyncedBackupAccounts()
-            stateDelegate.updateState { it.copy(synced = synced, notSynced = notSynced) }
+            val localAccounts = getBackupLocalAccounts()
+            val availableFromBackup = getNotSyncedBackupAccounts()
+            stateDelegate.updateState {
+                it.copy(
+                    localAccounts = localAccounts,
+                    notBackedUpCount = localAccounts.count { account -> !account.isBackedUp },
+                    availableFromBackupCount = availableFromBackup.size
+                )
+            }
         }
     }
 
     data class ViewState(
-        val selectedTab: BackupListTab = BackupListTab.SYNCED,
-        val synced: List<BackupAccountListItem> = emptyList(),
-        val notSynced: List<BackupAccountListItem> = emptyList()
-    )
-
-    sealed interface ViewEvent {
-        data class ShowImportError(val message: String?) : ViewEvent
-    }
-
-    private companion object {
-        const val SELECTED_TAB_KEY = "selectedTab"
+        val localAccounts: List<BackupLocalAccountItem> = emptyList(),
+        val notBackedUpCount: Int = 0,
+        val availableFromBackupCount: Int = 0
+    ) {
+        val hasAccountsToReview: Boolean
+            get() = notBackedUpCount > 0 || availableFromBackupCount > 0
     }
 }

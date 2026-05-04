@@ -75,10 +75,10 @@ class BackupOverviewFragment : BaseFragment(0), BackupOverviewScreenListener {
         )
     }
 
-    override fun onEditAccountsClick(selectedTab: BackupListTab) {
+    override fun onEditAccountsClick() {
         nav(
             BackupOverviewFragmentDirections
-                .actionBackupOverviewFragmentToBackupAccountsListFragment(selectedTab)
+                .actionBackupOverviewFragmentToBackupAccountsListFragment()
         )
     }
 

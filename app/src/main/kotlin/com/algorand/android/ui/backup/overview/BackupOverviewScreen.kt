@@ -92,14 +92,7 @@ private fun BackupOverviewContent(
                     notSyncedCount = viewState.notSyncedAccountCount,
                     syncedTextRes = R.string.accounts_in_sync,
                     notSyncedTextRes = R.string.accounts_not_synced,
-                    onClick = {
-                        val tab = if (viewState.notSyncedAccountCount > 0) {
-                            BackupListTab.NOT_SYNCED
-                        } else {
-                            BackupListTab.SYNCED
-                        }
-                        listener.onEditAccountsClick(tab)
-                    }
+                    onClick = listener::onEditAccountsClick
                 )
                 ProtectedDataRow(
                     iconRes = R.drawable.ic_contacts,
@@ -370,7 +363,7 @@ private fun ProtectedDataRow(
 interface BackupOverviewScreenListener {
     fun onNavigateBack()
     fun onDisableBackupClick()
-    fun onEditAccountsClick(selectedTab: BackupListTab)
+    fun onEditAccountsClick()
     fun onEditContactsClick(selectedTab: BackupListTab)
     fun onCredentialAddressClick()
     fun onSyncWithOtherDevicesClick()

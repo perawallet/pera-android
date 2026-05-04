@@ -14,9 +14,14 @@ package com.algorand.android.ui.backup.list.usecase
 
 import com.algorand.android.ui.backup.list.model.BackupAccountListItem
 import com.algorand.android.ui.backup.list.model.BackupContactListItem
+import com.algorand.android.ui.backup.list.model.BackupLocalAccountItem
 import com.algorand.backup.account.domain.model.AddressBackupPayload
 import com.algorand.backup.contact.domain.model.ContactBackupPayload
 import com.algorand.wallet.foundation.PeraResult
+
+fun interface GetBackupLocalAccounts {
+    suspend operator fun invoke(): List<BackupLocalAccountItem>
+}
 
 fun interface GetSyncedBackupAccounts {
     suspend operator fun invoke(): List<BackupAccountListItem>

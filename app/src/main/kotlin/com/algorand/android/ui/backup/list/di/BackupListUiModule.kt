@@ -16,10 +16,12 @@ import com.algorand.android.ui.backup.list.usecase.AddBackupAccountToLocal
 import com.algorand.android.ui.backup.list.usecase.AddBackupContactToLocal
 import com.algorand.android.ui.backup.list.usecase.DefaultAddBackupAccountToLocal
 import com.algorand.android.ui.backup.list.usecase.DefaultAddBackupContactToLocal
+import com.algorand.android.ui.backup.list.usecase.DefaultGetBackupLocalAccounts
 import com.algorand.android.ui.backup.list.usecase.DefaultGetNotSyncedBackupAccounts
 import com.algorand.android.ui.backup.list.usecase.DefaultGetNotSyncedBackupContacts
 import com.algorand.android.ui.backup.list.usecase.DefaultGetSyncedBackupAccounts
 import com.algorand.android.ui.backup.list.usecase.DefaultGetSyncedBackupContacts
+import com.algorand.android.ui.backup.list.usecase.GetBackupLocalAccounts
 import com.algorand.android.ui.backup.list.usecase.GetNotSyncedBackupAccounts
 import com.algorand.android.ui.backup.list.usecase.GetNotSyncedBackupContacts
 import com.algorand.android.ui.backup.list.usecase.GetSyncedBackupAccounts
@@ -32,6 +34,9 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class BackupListUiModule {
+
+    @Binds
+    abstract fun bindGetBackupLocalAccounts(impl: DefaultGetBackupLocalAccounts): GetBackupLocalAccounts
 
     @Binds
     abstract fun bindGetSyncedBackupAccounts(impl: DefaultGetSyncedBackupAccounts): GetSyncedBackupAccounts

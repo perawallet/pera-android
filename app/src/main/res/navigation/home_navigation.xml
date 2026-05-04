@@ -1941,12 +1941,7 @@
     <fragment
         android:id="@+id/backupAccountsListFragment"
         android:name="com.algorand.android.ui.backup.list.BackupAccountsListFragment"
-        android:label="BackupAccountsListFragment">
-        <argument
-            android:name="selectedTab"
-            android:defaultValue="SYNCED"
-            app:argType="com.algorand.android.ui.backup.list.model.BackupListTab" />
-    </fragment>
+        android:label="BackupAccountsListFragment" />
 
     <fragment
         android:id="@+id/backupContactsListFragment"

@@ -182,8 +182,7 @@ class HdWalletSelectionFragment : DaggerBaseFragment(0) {
                 text = stringResource(id = R.string.create_a_new_wallet),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                    .fillMaxWidth(),
                 leftIcon = {
                     PeraIcon(
                         painter = painterResource(id = R.drawable.ic_plus),

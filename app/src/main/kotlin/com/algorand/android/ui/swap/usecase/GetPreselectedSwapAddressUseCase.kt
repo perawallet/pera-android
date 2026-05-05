@@ -14,6 +14,7 @@ package com.algorand.android.ui.swap.usecase
 
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import javax.inject.Inject
@@ -46,7 +47,7 @@ internal class GetPreselectedSwapAddressUseCase @Inject constructor(
         return data.accountLites.mapNotNull { (address, accountLite) ->
             address.takeIf {
                 val accountType = accountLite.cachedInfo?.type ?: return@takeIf false
-                accountType.canSignTransaction()
+                accountType.canSignTransaction() && accountType !is AccountType.Joint
             }
         }
     }

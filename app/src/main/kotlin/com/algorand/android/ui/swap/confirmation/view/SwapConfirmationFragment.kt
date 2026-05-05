@@ -31,10 +31,12 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.DisplayLedgerNotFoundDialog
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.HideLedgerWaitingForApprovalDialog
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToLedgerWaitingForApprovalDialog
+import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToPendingSignatures
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewEvent.NavigateToSwapScreen
 import com.algorand.android.utils.browser.openTinymanFaqPriceImpactUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.navigateToPendingSignaturesBottomSheet
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,6 +61,10 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
             is NavigateToSwapScreen -> {
                 displaySuccessAlert(viewEvent)
                 navigateToSwapScreen()
+            }
+
+            is NavigateToPendingSignatures -> {
+                navigateToPendingSignaturesBottomSheet(viewEvent.signRequestId) { _ -> navBack() }
             }
         }
     }
@@ -121,7 +127,7 @@ class SwapConfirmationFragment : BaseFragment(0), SwapConfirmationScreenListener
 
     private fun displayError(errorType: DisplayError.ErrorType) {
         val message = when (errorType) {
-            DisplayError.ErrorType.Generic -> getString(R.string.an_error_occurred)
+            DisplayError.ErrorType.Generic -> getString(R.string.swap_generic_error)
             is DisplayError.ErrorType.Api -> errorType.message
             is DisplayError.ErrorType.Local -> context?.getXmlStyledString(errorType.description)?.toString().orEmpty()
         }

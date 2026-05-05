@@ -19,7 +19,7 @@ internal class AssetOptInDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {
-            val doesDeeplinkHaveAssetOptInQueries = assetId != null && amount == "0"
+            val doesDeeplinkHaveAssetOptInQueries = assetId != null && (amount == null || amount == "0")
             doesDeeplinkHaveAssetOptInQueries &&
                     accountAddress == null &&
                     walletConnectUrl == null &&

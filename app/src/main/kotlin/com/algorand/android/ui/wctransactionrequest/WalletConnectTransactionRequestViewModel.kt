@@ -69,6 +69,8 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
 
     private val shouldSkipConfirmation = savedStateHandle.getOrElse(SHOULD_SKIP_CONFIRMATION_KEY, false)
 
+    val isInAppBrowserSession: Boolean get() = shouldSkipConfirmation
+
     private val _walletConnectTransactionRequestPreviewFlow = MutableStateFlow(getInitialPreview())
     val walletConnectTransactionRequestPreviewFlow: StateFlow<WalletConnectTransactionRequestPreview>
         get() = _walletConnectTransactionRequestPreviewFlow

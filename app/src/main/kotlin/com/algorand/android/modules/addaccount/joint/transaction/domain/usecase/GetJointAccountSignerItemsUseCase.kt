@@ -1,0 +1,99 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.modules.addaccount.joint.transaction.domain.usecase
+
+import androidx.core.net.toUri
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
+import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.jointaccount.transaction.domain.model.ParticipantSignature
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
+import javax.inject.Inject
+
+internal class GetJointAccountSignerItemsUseCase @Inject constructor(
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getLocalAccount: GetLocalAccount,
+    private val contactRepository: ContactRepository,
+    private val getAccountType: GetAccountType,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
+) : GetJointAccountSignerItems {
+
+    override suspend operator fun invoke(
+        participantAddresses: List<String>,
+        responses: List<ParticipantSignature>
+    ): List<JointAccountSignerItem> {
+        // API returns at most one signed/declined response per account; mark all occurrences of that address
+        val signedAddresses = responses
+            .filter { it.type == SignRequestResponseType.SIGNED }
+            .map { it.address }
+            .toSet()
+        val declinedAddresses = responses
+            .filter { it.type == SignRequestResponseType.DECLINED }
+            .map { it.address }
+            .toSet()
+        return participantAddresses.map { address ->
+            val responseType = when {
+                address in signedAddresses -> SignRequestResponseType.SIGNED
+                address in declinedAddresses -> SignRequestResponseType.DECLINED
+                else -> null
+            }
+            createSignerItem(address, responseType)
+        }
+    }
+
+    override suspend fun hasSigningCapableLocalAccount(address: String): Boolean {
+        return getAccountType(address)?.canSignTransaction() == true
+    }
+
+    private suspend fun createSignerItem(
+        address: String,
+        responseType: SignRequestResponseType?
+    ): JointAccountSignerItem {
+        val status = when (responseType) {
+            SignRequestResponseType.SIGNED -> JointAccountSignatureStatus.Signed
+            SignRequestResponseType.DECLINED -> JointAccountSignatureStatus.Declined
+            else -> JointAccountSignatureStatus.Pending
+        }
+        val contact = contactRepository.getContactByAddress(address)
+        val localAccount = getLocalAccount(address)
+        val authAddress = getAccountRekeyAdminAddress(address)
+        val authAccount = authAddress?.let { getLocalAccount(it) }
+        val effectiveLedgerAccount = when {
+            localAccount is LocalAccount.LedgerBle -> localAccount
+            authAccount is LocalAccount.LedgerBle -> authAccount
+            else -> null
+        }
+        val isLedger = effectiveLedgerAccount != null
+
+        return JointAccountSignerItem(
+            accountAddress = address,
+            accountDisplayName = getAccountDisplayName(address),
+            accountIconDrawablePreview = getAccountIconDrawablePreview(address),
+            imageUri = contact?.imageUriAsString?.toUri(),
+            signatureStatus = status,
+            showProgress = status == JointAccountSignatureStatus.Pending,
+            isLocalAccount = localAccount != null,
+            isLedgerAccount = isLedger,
+            ledgerBluetoothAddress = effectiveLedgerAccount?.deviceMacAddress,
+            ledgerAccountIndex = effectiveLedgerAccount?.indexInLedger,
+            accountAuthAddress = authAddress
+        )
+    }
+}

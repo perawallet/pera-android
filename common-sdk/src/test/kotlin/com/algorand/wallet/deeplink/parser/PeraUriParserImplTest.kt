@@ -146,4 +146,32 @@ class PeraUriParserImplTest {
         )
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `EXPECT decoded query param values WHEN uri has percent-encoded values`() {
+        val uri = "algorand://ADDRESS?amount=1000000&note=Send%20it%20NOW!"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("Send it NOW!", result.getQueryParam("note"))
+        assertEquals("1000000", result.getQueryParam("amount"))
+    }
+
+    @Test
+    fun `EXPECT decoded query param values WHEN uri has plus-encoded spaces`() {
+        val uri = "algorand://ADDRESS?note=Send+it+NOW!"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("Send it NOW!", result.getQueryParam("note"))
+    }
+
+    @Test
+    fun `EXPECT original value WHEN percent encoding is malformed`() {
+        val uri = "algorand://ADDRESS?note=100%complete"
+
+        val result = sut.parseUri(uri)
+
+        assertEquals("100%complete", result.getQueryParam("note"))
+    }
 }

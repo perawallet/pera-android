@@ -19,11 +19,11 @@ import com.algorand.android.modules.transaction.confirmation.domain.repository.T
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object TransactionConfirmationRepositoryModule {
 
     @Provides

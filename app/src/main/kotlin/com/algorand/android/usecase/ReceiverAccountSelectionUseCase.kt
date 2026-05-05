@@ -36,6 +36,9 @@ import com.algorand.android.utils.exceptions.WarningException
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.validator.AccountTransactionValidator
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -57,6 +60,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
     private val getAccountSelectionAccountItems: GetAccountSelectionAccountItems,
     private val getAccountInformation: GetAccountInformation,
     private val getAccountState: GetAccountState,
+    private val getTransactionSigner: GetTransactionSigner,
     getAccountAssetUseCase: GetAccountAssetUseCase
 ) : BaseSendAccountSelectionUseCase(getAccountAssetUseCase) {
 
@@ -169,7 +173,19 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
             return Result.Error(Exception())
         }
 
-        if (accountAssetDetail.assetDetail == null && assetId != ALGO_ID && !isReceiverAccountInMyWallet) {
+        val isReceiverNotOptedInToAsset = accountAssetDetail.assetDetail == null && assetId != ALGO_ID
+        if (isReceiverNotOptedInToAsset) {
+            val senderSigner = getTransactionSigner(fromAccountAddress)
+            val isSenderJoint = senderSigner is TransactionSigner.Joint
+            val isReceiverJoint = receiverAccountType is AccountType.Joint
+            if (isSenderJoint && isReceiverAccountInMyWallet && !isReceiverJoint) {
+                return Result.Error(GlobalException(descriptionRes = R.string.receiver_not_opted_in_joint_account))
+            }
+        }
+
+        val shouldRedirectToArc59Inbox = isReceiverNotOptedInToAsset &&
+            (!isReceiverAccountInMyWallet || receiverAccountType is AccountType.Joint)
+        if (shouldRedirectToArc59Inbox) {
             val nextDirection = ReceiverAccountSelectionFragmentDirections
                 .actionReceiverAccountSelectionFragmentToArc59RequestOptInNavigation(
                     Arc59SendSummaryNavArgs(

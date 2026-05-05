@@ -1,0 +1,34 @@
+---
+description: Architecture principles learned from code reviews
+alwaysApply: true
+---
+
+# Architecture Principles
+
+## DI Modules Are Wiring Only
+- Hilt/Dagger modules (`@Module`) should ONLY wire dependencies, never contain business logic
+- If a provider method needs private helper functions, the logic belongs in a dedicated class
+- Bad: `AppModule` with `buildAead()`, `clearCorruptedKeystoreData()` private methods
+- Good: `AppModule` delegates to `androidEncryptionManager.getOrRecoverAead()`
+
+## Don't Expose Implementation Details Through Interfaces
+- Interfaces should expose behavior, not implementation primitives
+- Bad: `fun getKeyStore(): KeyStore` (leaks platform type to callers)
+- Good: `fun deleteKeystoreEntry(alias: String)` or `fun getOrRecoverAead(): Aead`
+
+## Inject Dependencies, Don't Pass Them
+- If a class is Hilt-managed, inject `Context` via `@ApplicationContext` in the constructor
+- Don't pass `Context` through method parameters when it can be a constructor dependency
+- Bad: `fun getOrRecoverAead(context: Context): Aead`
+- Good: Inject `@ApplicationContext context: Context` in constructor, then `fun getOrRecoverAead(): Aead`
+
+## Constants Belong Where They're Used
+- Move constants to the class that uses them, not a shared utils file
+- If a constant is only used by one class, put it in that class's companion object
+- Don't duplicate string literals across files -- derive related constants from each other
+- Bad: `ALGORAND_KEYSTORE_ALIAS` in EncryptionUtils + `TINK_KEYSTORE_ALIAS` in Impl
+- Good: Single `TINK_KEYSTORE_ALIAS` in Impl, URI derived as `"android-keystore://$TINK_KEYSTORE_ALIAS"`
+
+## Fix Deprecated APIs While Refactoring
+- When touching code with deprecated API calls, update them to the current API
+- Example: Tink `keysetHandle.getPrimitive(Class)` -> `keysetHandle.getPrimitive(RegistryConfiguration.get(), Class)`

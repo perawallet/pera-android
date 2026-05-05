@@ -16,9 +16,13 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
 import com.algorand.wallet.foundation.network.utils.requestWithPeraApiErrorHandler
 import com.algorand.wallet.jointaccount.creation.data.mapper.CreateJointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.mapper.IsJointAccountMapper
 import com.algorand.wallet.jointaccount.creation.data.mapper.JointAccountDTOMapper
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountResponse
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
 import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
+import com.algorand.wallet.jointaccount.creation.domain.model.IsJointAccountResult
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.data.service.JointAccountApiService
 import com.algorand.wallet.jointaccount.domain.repository.JointAccountRepository
@@ -26,7 +30,10 @@ import com.algorand.wallet.jointaccount.transaction.data.mapper.AddSignatureInpu
 import com.algorand.wallet.jointaccount.transaction.data.mapper.CreateSignRequestInputMapper
 import com.algorand.wallet.jointaccount.transaction.data.mapper.JointSignRequestMapper
 import com.algorand.wallet.jointaccount.transaction.data.mapper.SearchSignRequestsInputMapper
+import com.algorand.wallet.jointaccount.transaction.data.model.GetSignRequestWithSignaturesRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
+import com.algorand.wallet.jointaccount.transaction.data.model.MarkSignRequestsConfirmedRequest
+import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsResponse
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
@@ -39,13 +46,20 @@ import javax.inject.Inject
 internal class JointAccountRepositoryImpl @Inject constructor(
     private val jointAccountApiService: JointAccountApiService,
     private val createJointAccountDTOMapper: CreateJointAccountDTOMapper,
+    private val isJointAccountMapper: IsJointAccountMapper,
     private val jointAccountDTOMapper: JointAccountDTOMapper,
     private val createSignRequestInputMapper: CreateSignRequestInputMapper,
-    private val jointSignRequestDTOMapper: JointSignRequestMapper,
+    private val jointSignRequestMapper: JointSignRequestMapper,
     private val addSignatureInputMapper: AddSignatureInputMapper,
     private val searchSignRequestsInputMapper: SearchSignRequestsInputMapper,
-    private val peraApiErrorHandler: PeraRetrofitErrorHandler
+    private val peraApiErrorHandler: PeraRetrofitErrorHandler,
 ) : JointAccountRepository {
+
+    override suspend fun getJointAccountDetail(accountAddress: String): PeraResult<JointAccount> {
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.getJointAccountDetail(accountAddress)
+        }.mapToJointAccount()
+    }
 
     override suspend fun createJointAccount(
         createJointAccount: CreateJointAccountInput
@@ -54,6 +68,24 @@ internal class JointAccountRepositoryImpl @Inject constructor(
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             jointAccountApiService.createJointAccount(request)
         }.mapToJointAccount()
+    }
+
+    override suspend fun checkIsJointAccount(addresses: List<String>): PeraResult<List<IsJointAccountResult>> {
+        if (addresses.isEmpty()) return PeraResult.Success(emptyList())
+        val request = IsJointAccountRequest(accountAddresses = addresses)
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.checkIsJointAccount(request)
+        }.mapToIsJointAccountResults()
+    }
+
+    private fun PeraResult<List<IsJointAccountResponse>>.mapToIsJointAccountResults(): PeraResult<List<IsJointAccountResult>> {
+        return when (this) {
+            is PeraResult.Success -> {
+                val results = data.mapNotNull { isJointAccountMapper.mapToIsJointAccountResult(it) }
+                PeraResult.Success(results)
+            }
+            is PeraResult.Error -> this
+        }
     }
 
     private fun PeraResult<JointAccountResponse>.mapToJointAccount(): PeraResult<JointAccount> {
@@ -76,26 +108,40 @@ internal class JointAccountRepositoryImpl @Inject constructor(
         }.mapToJointSignRequest()
     }
 
-    override suspend fun addSignature(
+    override suspend fun addSignatures(
         signRequestId: String,
-        addSignatureInput: AddSignatureInput
+        addSignatureInputs: List<AddSignatureInput>
     ): PeraResult<JointSignRequest> {
-        val request = addSignatureInputMapper.mapToSignRequestTransactionListResponseRequest(
-            addSignatureInput
-        )
+        val requests = addSignatureInputs.map { input ->
+            addSignatureInputMapper.mapToSignRequestTransactionListResponseRequest(input)
+        }
         return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
-            jointAccountApiService.addSignature(signRequestId, listOf(request))
+            jointAccountApiService.addSignature(signRequestId, requests)
         }.mapToJointSignRequest()
     }
 
     private fun PeraResult<JointSignRequestResponse>.mapToJointSignRequest(): PeraResult<JointSignRequest> {
         return when (this) {
             is PeraResult.Success -> {
-                val dto = jointSignRequestDTOMapper.mapToJointSignRequest(data)
+                val dto = jointSignRequestMapper.mapToJointSignRequest(data)
                 if (dto != null) PeraResult.Success(dto) else PeraResult.Error(Exception("Failed to map sign request"))
             }
 
             is PeraResult.Error -> this
+        }
+    }
+
+    override suspend fun markSignRequestsConfirmed(
+        deviceId: String,
+        signRequestIds: List<String>
+    ): PeraResult<Unit> {
+        if (signRequestIds.isEmpty()) return PeraResult.Success(Unit)
+        val request = MarkSignRequestsConfirmedRequest(
+            deviceId = deviceId,
+            proposedSignRequestIds = signRequestIds
+        )
+        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.markSignRequestsConfirmed(request)
         }
     }
 
@@ -108,30 +154,62 @@ internal class JointAccountRepositoryImpl @Inject constructor(
             signRequestId = signRequestId
         )
         val request = searchSignRequestsInputMapper.mapToSearchSignRequestsRequest(searchInput)
-        return requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+        val result = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
             jointAccountApiService.searchSignRequests(request)
-        }.let { result ->
-            when (result) {
-                is PeraResult.Success -> {
-                    val signRequests = result.data.results?.mapNotNull { response ->
-                        jointSignRequestDTOMapper.mapToJointSignRequest(response)
-                    } ?: emptyList()
-                    val signRequest = signRequests.firstOrNull { it.id == signRequestId }
-                    if (signRequest != null) {
-                        PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
-                    } else {
-                        PeraResult.Error(Exception("Sign request not found"))
-                    }
-                }
+        }
+        return mapSearchResultToSignRequestWithFullSignature(result, signRequestId)
+    }
 
-                is PeraResult.Error -> result
+    override suspend fun getSignRequestWithFullSignatures(
+        deviceId: String,
+        signRequestId: String
+    ): PeraResult<SignRequestWithFullSignature> {
+        val request = GetSignRequestWithSignaturesRequest(
+            deviceId = deviceId,
+            proposedSignRequestIds = listOf(signRequestId)
+        )
+        val result = requestWithPeraApiErrorHandler(peraApiErrorHandler) {
+            jointAccountApiService.getSignRequestWithSignatures(request)
+        }
+        return when (result) {
+            is PeraResult.Success -> {
+                val signRequest = result.data
+                    .mapNotNull { jointSignRequestMapper.mapToJointSignRequest(it) }
+                    .firstOrNull { it.id == signRequestId }
+                if (signRequest != null) {
+                    PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
+                } else {
+                    PeraResult.Error(Exception("Sign request not found"))
+                }
             }
+            is PeraResult.Error -> result
+        }
+    }
+
+    private fun mapSearchResultToSignRequestWithFullSignature(
+        result: PeraResult<SearchSignRequestsResponse>,
+        signRequestId: String
+    ): PeraResult<SignRequestWithFullSignature> {
+        return when (result) {
+            is PeraResult.Success -> {
+                val signRequests = result.data.results?.mapNotNull { response ->
+                    jointSignRequestMapper.mapToJointSignRequest(response)
+                } ?: emptyList()
+                val signRequest = signRequests.firstOrNull { it.id == signRequestId }
+                if (signRequest != null) {
+                    PeraResult.Success(mapToSignRequestWithFullSignature(signRequest))
+                } else {
+                    PeraResult.Error(Exception("Sign request not found"))
+                }
+            }
+
+            is PeraResult.Error -> result
         }
     }
 
     private fun mapToSignRequestWithFullSignature(signRequest: JointSignRequest): SignRequestWithFullSignature {
         return SignRequestWithFullSignature(
-            id = signRequest.id?.toLongOrNull(),
+            id = signRequest.id,
             type = signRequest.type,
             jointAccount = signRequest.jointAccount,
             proposerAddress = signRequest.proposerAddress,
@@ -153,7 +231,8 @@ internal class JointAccountRepositoryImpl @Inject constructor(
                     lastValidExpectedDatetime = transactionList.expectedExpireDatetime
                 )
             },
-            status = signRequest.status
+            status = signRequest.status,
+            failReasonDisplay = signRequest.failReasonDisplay
         )
     }
 }

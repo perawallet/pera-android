@@ -15,13 +15,16 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection
 import com.algorand.android.R
 import com.algorand.android.mapper.LedgerAccountSelectionAccountItemMapper
 import com.algorand.android.mapper.LedgerAccountSelectionInstructionItemMapper
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.mapper.RekeyLedgerAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionPreview
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -35,7 +38,8 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
     private val ledgerAccountSelectionInstructionItemMapper: LedgerAccountSelectionInstructionItemMapper,
     private val ledgerAccountSelectionAccountItemMapper: LedgerAccountSelectionAccountItemMapper,
     private val fetchAndCacheAssets: FetchAndCacheAssets,
-    private val getAccountDisplayName: GetAccountDisplayName
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountInformation: GetAccountInformation
 ) {
 
     fun getUpdatedPreviewAccordingToAccountSelection(
@@ -77,7 +81,7 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
                     bleName = bluetoothName,
                     indexInLedger = index
                 )
-                val accountDisplayName = getAccountDisplayName(ledgerAccount.address)
+                val accountDisplayName = getLedgerAccountDisplayName(ledgerAccount.address)
                 // Since we don't have ledger account in our local, we have to create their drawable manually
                 val accountIconDrawablePreview = AccountIconDrawablePreview(
                     backgroundColorResId = R.color.wallet_3,
@@ -89,7 +93,8 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
                     selectorDrawableRes = R.drawable.selector_found_account_radio,
                     accountDisplayName = accountDisplayName,
                     accountIconDrawablePreview = accountIconDrawablePreview,
-                    selectedLedgerAccount = authAccountDetail
+                    selectedLedgerAccount = authAccountDetail,
+                    isInfoButtonVisible = getAccountInformation(ledgerAccount.address) != null
                 )
                 add(authAccountSelectionListItem)
             }
@@ -116,6 +121,12 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
         )
         emit(loadingState)
     }.distinctUntilChanged()
+
+    private suspend fun getLedgerAccountDisplayName(address: String): AccountDisplayName {
+        val base = getAccountDisplayName(address)
+        if (base.secondaryDisplayName != null) return base
+        return getAccountDisplayName(address, base.primaryDisplayName, AccountType.LedgerBle)
+    }
 
     private fun isAccountNotEligibleToRekey(
         ledgerAccountInformation: RekeyLedgerAccountSelectionNavArgs.LedgerAccountsNavArgs,

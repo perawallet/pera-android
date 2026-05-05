@@ -13,6 +13,7 @@
 package com.algorand.wallet.deeplink.parser
 
 import com.algorand.wallet.deeplink.model.PeraUri
+import java.net.URLDecoder
 import javax.inject.Inject
 
 internal class PeraUriParserImpl @Inject constructor() : PeraUriParser {
@@ -66,11 +67,20 @@ internal class PeraUriParserImpl @Inject constructor() : PeraUriParser {
             val (key, value) = param.split("=", limit = 2).let {
                 it[0] to it.getOrNull(1)
             }
-            key to value
+            decodeQueryParam(key) to value?.let { decodeQueryParam(it) }
+        }
+    }
+
+    private fun decodeQueryParam(value: String): String {
+        return try {
+            URLDecoder.decode(value, CHARSET_UTF_8)
+        } catch (e: IllegalArgumentException) {
+            value
         }
     }
 
     private companion object {
+        const val CHARSET_UTF_8 = "UTF-8"
         val URI_REGEX = Regex("""^([a-zA-Z][a-zA-Z\d+.-]*)://([^/?#]*)?(/[^?#]*)?(\?[^#]*)?(#.*)?$""")
     }
 }

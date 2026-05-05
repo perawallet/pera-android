@@ -17,7 +17,6 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider.AccountStatusDetailPreviewDecider
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
@@ -48,7 +47,6 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getAccountOriginalStateIconDrawablePreview: GetAccountOriginalStateIconDrawablePreview,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val fetchRekeyedAddresses: FetchRekeyedAddresses,
     private val accountActionProcessor: AccountStatusAccountActionProcessor,
@@ -78,7 +76,7 @@ class AccountStatusDetailViewModel @Inject constructor(
                 val viewState = ViewState.Content(
                     mainTitle = accountStatusDetailPreviewDecider.decideTitleString(accountType),
                     accountDisplayName = getAccountDisplayName(accountLite),
-                    iconDrawablePreview = getAccountOriginalStateIconDrawablePreview(accountType),
+                    iconDrawablePreview = getAccountIconDrawablePreview(accountLite),
                     accountActions = accountActionProcessor.getAccountActions(accountLite),
                     accountTypeDisplayName = accountStatusDetailPreviewDecider.decideAccountTypeString(accountLite),
                     accountTypeIconDrawablePreview = getAccountIconDrawablePreview(accountLite),
@@ -186,6 +184,7 @@ class AccountStatusDetailViewModel @Inject constructor(
             sealed interface AccountAction {
                 data object RekeyToStandard : AccountAction
                 data object RekeyToLedger : AccountAction
+                data object RekeyToJointAccount : AccountAction
                 data object RescanRekeyedAddresses : AccountAction
             }
         }

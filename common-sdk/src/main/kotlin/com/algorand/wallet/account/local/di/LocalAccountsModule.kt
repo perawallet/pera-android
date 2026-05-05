@@ -14,6 +14,7 @@ package com.algorand.wallet.account.local.di
 
 import android.content.Context
 import androidx.room.Room
+import com.algorand.wallet.account.core.domain.usecase.GetJointAccountCount
 import com.algorand.wallet.account.local.data.database.AddressDatabase
 import com.algorand.wallet.account.local.data.database.AddressDatabase.Companion.MIGRATION_1_2
 import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapper
@@ -53,6 +54,7 @@ import com.algorand.wallet.account.local.domain.repository.Algo25AccountReposito
 import com.algorand.wallet.account.local.domain.repository.Algo25NoAuthRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
+import com.algorand.wallet.account.local.domain.repository.JointAccountPersistence
 import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
@@ -87,10 +89,10 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
-import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
-import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddresses
+import com.algorand.wallet.account.local.domain.usecase.GetSignableAccountsByAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
@@ -192,6 +194,9 @@ internal object LocalAccountsModule {
     fun provideJointAccountRepository(repository: JointAccountRepositoryImpl): JointAccountRepository = repository
 
     @Provides
+    fun provideJointAccountPersistence(repository: JointAccountRepositoryImpl): JointAccountPersistence = repository
+
+    @Provides
     fun provideHdKeyEntityMapper(impl: HdKeyEntityMapperImpl): HdKeyEntityMapper = impl
 
     @Provides
@@ -253,6 +258,11 @@ internal object LocalAccountsModule {
     @Provides
     fun provideSaveJointAccount(repository: JointAccountRepository): SaveJointAccount {
         return SaveJointAccount(repository::addAccount)
+    }
+
+    @Provides
+    fun provideGetJointAccountCount(repository: JointAccountRepository): GetJointAccountCount {
+        return GetJointAccountCount(repository::getAccountCount)
     }
 
     @Provides

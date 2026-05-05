@@ -24,6 +24,7 @@ import com.algorand.android.modules.dapp.bidali.domain.model.TestnetBidaliSuppor
 import com.algorand.android.modules.dapp.bidali.getCompiledBidaliJavascript
 import com.algorand.android.usecase.IsOnMainnetUseCase
 import com.algorand.android.utils.formatAmountAsBigInteger
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.usecase.GetAsset
@@ -72,6 +73,9 @@ class BidaliBrowserUseCase @Inject constructor(
             selectedAssetId
         ) ?: return null
 
+        val signer = getTransactionSigner(selectedAccountLite.address)
+        val isReceiverOptedIn = isAssetOptedInByAccount(paymentRequest.address, selectedAssetId)
+        val isArc59 = !isReceiverOptedIn && signer !is TransactionSigner.Joint
         return TransactionSignData.Send(
             senderAccountAddress = selectedAccountLite.address,
             senderAuthAddress = selectedAccountLite.cachedInfo.rekeyAuthAddress,
@@ -85,8 +89,8 @@ class BidaliBrowserUseCase @Inject constructor(
                 publicKey = paymentRequest.address,
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
-            isArc59Transaction = !isAssetOptedInByAccount(paymentRequest.address, selectedAssetId),
-            signer = getTransactionSigner(selectedAccountLite.address)
+            isArc59Transaction = isArc59,
+            signer = signer
         )
     }
 

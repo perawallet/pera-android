@@ -20,4 +20,5 @@ interface ExternalTransaction {
     val accountAddress: String
     val accountAuthAddress: String?
     val isRekeyedToAnotherAccount: Boolean
+    val groupIndex: Int get() = 0
 }

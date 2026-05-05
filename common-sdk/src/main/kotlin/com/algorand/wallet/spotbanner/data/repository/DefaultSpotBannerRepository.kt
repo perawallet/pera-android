@@ -41,7 +41,7 @@ internal class DefaultSpotBannerRepository @Inject constructor(
             val spotBannersResponse = spotBannerApiService.getSpotBanners(deviceId)
             val cacheData = spotBannersResponse.mapNotNull { response -> spotBannerCacheDataMapper.map(response) }
             spotBannerCache.put(cacheData)
-        } catch (exception: Exception) {
+        } catch (_: Exception) {
             spotBannerCache.put(emptyList())
         }
     }

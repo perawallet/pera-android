@@ -40,9 +40,7 @@
             app:argType="boolean" />
         <action
             android:id="@+id/action_discoverDappFragment_to_singleButtonBottomSheetNavigation"
-            app:destination="@id/singleButtonBottomSheetNavigation"
-            app:popUpTo="@id/discoverDappFragment"
-            app:popUpToInclusive="true">
+            app:destination="@id/singleButtonBottomSheetNavigation">
             <argument
                 android:name="titleAnnotatedString"
                 app:argType="com.algorand.android.models.AnnotatedString" />

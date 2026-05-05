@@ -15,10 +15,4 @@ package com.algorand.wallet.jointaccount.transaction.domain.model
 enum class ProposeJointSignRequestResult(val value: String) {
     SIGNED("signed"),
     DECLINED("declined");
-
-    companion object {
-        private val map = entries.associateBy(ProposeJointSignRequestResult::value)
-
-        fun fromValue(value: String?): ProposeJointSignRequestResult? = value?.let { map[it] }
-    }
 }

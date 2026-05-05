@@ -44,6 +44,7 @@ import com.algorand.android.ui.asset.detail.viewmodel.AssetHoldingViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetLineChartViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetMarketsViewModel
 import com.algorand.android.ui.asset.detail.viewmodel.AssetPriceLineChartViewModel
+import androidx.compose.ui.res.stringResource
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.PeraSingleButtonState
 import com.algorand.android.ui.compose.widget.PeraToolbar
@@ -87,7 +88,8 @@ fun AssetDetailScreen(
                 Toolbar(
                     accountDisplayName = viewState.accountDisplayName,
                     accountIconDrawablePreview = viewState.accountIconDrawable,
-                    onBackClick = listener::onNavBackClick
+                    onBackClick = listener::onNavBackClick,
+                    onAccountIconClick = listener::onAccountIconClick
                 )
                 AssetDetailPagerIndicator(pagerState) { selectedPage ->
                     scope.launch { pagerState.animateScrollToPage(selectedPage) }
@@ -128,7 +130,8 @@ fun AssetDetailScreen(
 private fun Toolbar(
     accountDisplayName: AccountDisplayName,
     accountIconDrawablePreview: AccountIconDrawablePreview,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onAccountIconClick: () -> Unit
 ) {
     PeraToolbar(
         modifier = Modifier.padding(horizontal = 12.dp),
@@ -142,8 +145,11 @@ private fun Toolbar(
         },
         endContainer = {
             AccountIcon(
-                modifier = Modifier.size(28.dp),
-                iconDrawablePreview = accountIconDrawablePreview
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickableNoRipple(onClick = onAccountIconClick),
+                iconDrawablePreview = accountIconDrawablePreview,
+                contentDescription = stringResource(R.string.account_details)
             )
         }
     )
@@ -156,7 +162,7 @@ private fun ErrorState(onRetryClick: () -> Unit) {
             modifier = Modifier.padding(24.dp),
             iconResId = null,
             titleResId = null,
-            descriptionResId = R.string.an_error_occurred,
+            descriptionResId = R.string.asset_info_load_failed,
             buttonTextResId = R.string.retry,
             onClick = onRetryClick
         )
@@ -172,6 +178,7 @@ private fun LoadingState() {
 
 interface AssetDetailScreenListener : AssetMarketsScreenListener, AssetHoldingScreenListener {
     fun onNavBackClick()
+    fun onAccountIconClick()
     fun onFailedToUpdateFavoriteStatus()
     fun onFailedToUpdatePriceAlertStatus()
 }

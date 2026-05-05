@@ -23,29 +23,40 @@ internal class CreateExternalAddressAsContactUseCase @Inject constructor(
     private val contactRepository: ContactRepository
 ) : CreateExternalAddressAsContact {
 
-    override suspend operator fun invoke(
-        address: String,
-        shortenedAddress: String?
-    ): SelectedJointAccountItem? {
-        val displayAddress = shortenedAddress ?: address.toShortenedAddress()
+    override suspend operator fun invoke(address: String, displayName: String?): SelectedJointAccountItem? {
+        val existingContact = contactRepository.getContactByAddress(address)
+        if (existingContact != null) {
+            return SelectedJointAccountItem(
+                accountDisplayName = AccountDisplayName(
+                    accountAddress = address,
+                    primaryDisplayName = existingContact.name,
+                    secondaryDisplayName = address.toShortenedAddress()
+                ),
+                iconDrawablePreview = null,
+                isContact = true
+            )
+        }
 
+        val contactName = displayName ?: address.toShortenedAddress()
         val contact = User(
-            name = displayAddress,
+            name = contactName,
             publicKey = address,
             imageUriAsString = null
         )
 
-        return runCatching {
+        return try {
             contactRepository.addContact(contact)
             SelectedJointAccountItem(
                 accountDisplayName = AccountDisplayName(
                     accountAddress = address,
-                    primaryDisplayName = displayAddress,
+                    primaryDisplayName = contactName,
                     secondaryDisplayName = null
                 ),
                 iconDrawablePreview = null,
                 isContact = true
             )
-        }.getOrNull()
+        } catch (_: Exception) {
+            null
+        }
     }
 }

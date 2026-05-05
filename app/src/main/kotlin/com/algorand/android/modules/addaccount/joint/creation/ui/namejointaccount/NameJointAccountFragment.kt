@@ -17,8 +17,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -35,7 +33,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class NameJointAccountFragment : DaggerBaseFragment(0), NameJointAccountScreenListener {
 
     private val viewModel: NameJointAccountViewModel by viewModels()
-    private val args: NameJointAccountFragmentArgs by navArgs()
     private var loadingDialogFragment: LoadingDialogFragment? = null
 
     override val fragmentConfiguration = FragmentConfiguration()
@@ -73,7 +70,7 @@ class NameJointAccountFragment : DaggerBaseFragment(0), NameJointAccountScreenLi
         when (viewState) {
             is ViewState.Loading -> showLoadingDialog()
             is ViewState.Success -> dismissLoadingDialog()
-            is ViewState.Idle, is ViewState.Error -> dismissLoadingDialog()
+            is ViewState.Idle -> dismissLoadingDialog()
         }
     }
 
@@ -83,6 +80,11 @@ class NameJointAccountFragment : DaggerBaseFragment(0), NameJointAccountScreenLi
                 dismissLoadingDialog()
                 showSuccessMessage()
                 popBackToAccounts()
+            }
+
+            is ViewEvent.ShowError -> {
+                dismissLoadingDialog()
+                showGlobalError(getString(event.messageResId))
             }
         }
     }
@@ -115,16 +117,7 @@ class NameJointAccountFragment : DaggerBaseFragment(0), NameJointAccountScreenLi
         navBack()
     }
 
-    override fun onFinishClick(accountName: String) {
-        val participantAddresses = args.participantAddresses?.toList() ?: emptyList()
-        viewModel.createJointAccount(
-            accountName = accountName,
-            threshold = args.threshold,
-            participantAddresses = participantAddresses
-        )
-    }
-
     private fun popBackToAccounts() {
-        findNavController().popBackStack(R.id.accountsFragment, false)
+        nav(NameJointAccountFragmentDirections.actionNameJointAccountFragmentToHomeNavigation(showConfetti = true))
     }
 }

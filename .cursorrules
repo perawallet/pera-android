@@ -109,8 +109,6 @@
 - Use `with` scope function for cleaner code
 
 ### Cache vs Repository Naming
-- **In-memory caches are NOT repositories** - Use `InboxInMemoryCache`, not `InboxRepository`
-- **Use InMemoryCacheProvider** for in-memory caches, not custom `MutableStateFlow` implementations
 - **Use PersistentCacheProvider** for persistent storage, not SharedPreferences local sources
   ```kotlin
   // BAD: Custom SharedPreferences class
@@ -130,6 +128,14 @@
 - **Don't use @Singleton if state is external** - If cache/state is passed in constructor, no need for @Singleton
 - **Keep providers in correct feature modules** - `InboxApiService` belongs in `InboxModule`, not `JointAccountModule`
 - **Remove injection names when only one implementation** - `@Named` unnecessary if single implementation exists
+- **Use @param: target for constructor parameter annotations** - Avoids future Kotlin behavior changes
+  ```kotlin
+  // BAD: Annotation without explicit target
+  @Named(CACHE_NAME) private val cache: PersistentCache<String>
+
+  // GOOD: Explicit @param: target
+  @param:Named(CACHE_NAME) private val cache: PersistentCache<String>
+  ```
 
 ### Database/Data Access
 - **Create targeted DB queries** - Don't fetch all records and filter in memory

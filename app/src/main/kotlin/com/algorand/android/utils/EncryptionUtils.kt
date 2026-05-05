@@ -15,10 +15,6 @@ package com.algorand.android.utils
 import android.util.Base64
 import com.google.crypto.tink.Aead
 
-const val KEYSET_HANDLE: String = "ALGORAND_KEYSET"
-const val ENCRYPTED_SHARED_PREF_NAME: String = "ALGORAND_ENCR_ACCOUNTS"
-const val ALGORAND_KEYSTORE_URI: String = "android-keystore://algorand_keystore_key"
-const val KEY_TEMPLATE_AES256_GCM: String = "AES256_GCM"
 const val BACKUP_PROTOCOL_VERSION: String = "1.0"
 const val BACKUP_PROTOCOL_SUITE: String = "HMAC-SHA256:sodium_secretbox_easy"
 
@@ -29,8 +25,7 @@ fun Aead.encryptString(value: String?): String? {
         } else {
             Base64.encodeToString(encrypt(value.toByteArray(Charsets.UTF_8), null), Base64.DEFAULT)
         }
-    } catch (exception: Exception) {
-        exception.printStackTrace()
+    } catch (_: Exception) {
         null
     }
 }
@@ -42,8 +37,7 @@ fun Aead.decryptString(value: String?): String? {
         } else {
             String(decrypt(Base64.decode(value, Base64.DEFAULT), null), Charsets.UTF_8)
         }
-    } catch (exception: Exception) {
-        exception.printStackTrace()
+    } catch (_: Exception) {
         null
     }
 }

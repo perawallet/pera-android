@@ -12,10 +12,11 @@
 
 package com.algorand.android.modules.addaccount.joint.di
 
-import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.DefaultNameJointAccountProcessor
-import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountProcessor
+import com.algorand.android.modules.addaccount.joint.creation.ui.namejointaccount.viewmodel.NameJointAccountInboxCleanup
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.DefaultJointAccountTransactionProcessor
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionProcessor
+import com.algorand.android.ui.device.usecase.GetDeviceConfig
+import com.algorand.wallet.inbox.domain.usecase.DeleteInboxJointInvitationNotification
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +32,11 @@ internal object JointAccountViewModelModule {
     ): JointAccountTransactionProcessor = processor
 
     @Provides
-    fun provideNameJointAccountProcessor(
-        processor: DefaultNameJointAccountProcessor
-    ): NameJointAccountProcessor = processor
+    fun provideNameJointAccountInboxCleanup(
+        getDeviceConfig: GetDeviceConfig,
+        deleteInboxJointInvitationNotification: DeleteInboxJointInvitationNotification
+    ): NameJointAccountInboxCleanup = NameJointAccountInboxCleanup(
+        getDeviceConfig = getDeviceConfig,
+        deleteInboxJointInvitationNotification = deleteInboxJointInvitationNotification
+    )
 }

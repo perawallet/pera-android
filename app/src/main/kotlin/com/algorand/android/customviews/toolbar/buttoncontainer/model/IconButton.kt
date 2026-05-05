@@ -14,11 +14,14 @@ package com.algorand.android.customviews.toolbar.buttoncontainer.model
 
 import android.view.View
 import android.widget.ImageButton
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat.getColorStateList
 import com.algorand.android.R
 
 data class IconButton(
     @param:DrawableRes private val iconResId: Int,
+    @param:ColorRes private val iconTintResId: Int? = null,
     override val backgroundTintResId: Int? = null,
     override val onClick: () -> Unit
 ) : BaseToolbarButton() {
@@ -27,6 +30,11 @@ data class IconButton(
         get() = R.layout.custom_icon_tab_button
 
     override fun initAttributes(view: View) {
-        (view as? ImageButton)?.setImageResource(iconResId)
+        (view as? ImageButton)?.apply {
+            setImageResource(iconResId)
+            if (iconTintResId != null) {
+                imageTintList = getColorStateList(context, iconTintResId)
+            }
+        }
     }
 }

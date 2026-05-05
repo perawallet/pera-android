@@ -17,6 +17,7 @@ import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.model.NodeAssetDetailResponse
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetCreator
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class AssetInfoMapperImpl @Inject constructor(
@@ -198,16 +199,26 @@ internal class AssetInfoMapperImpl @Inject constructor(
     }
 
     private fun AssetResponse.mapToSupply(): Asset.Supply {
+        val total = totalSupply?.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO }
+            ?: deriveSupplyFromTotal(maxSupply, fractionDecimals ?: 0)
         return Asset.Supply(
-            total = totalSupply?.toBigDecimalOrNull(),
+            total = total,
             max = maxSupply?.toBigDecimalOrNull()
         )
     }
 
     private fun AssetDetailEntity.mapToSupply(): Asset.Supply {
+        val total = totalSupply?.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO }
+            ?: deriveSupplyFromTotal(maxSupply, decimals)
         return Asset.Supply(
-            total = totalSupply?.toBigDecimalOrNull(),
-            max = maxSupply?.toBigDecimalOrNull()
+            total = total,
+            max = maxSupply.toBigDecimalOrNull()
         )
+    }
+
+    private fun deriveSupplyFromTotal(total: String?, decimals: Int): BigDecimal? {
+        val rawTotal = total?.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: return null
+        if (decimals == 0) return rawTotal
+        return rawTotal.movePointLeft(decimals)
     }
 }

@@ -210,7 +210,6 @@
     <color name="wallet_4_icon_governor">@color/turquoise_700</color>
 
     <!-- Tab Bar -->
-    <color name="tab_bar_button">@color/gray_800</color>
     <color name="tab_bar_background">@color/white</color>
     <color name="tab_bar_icon_active">@color/gray_900</color>
     <color name="tab_bar_icon_non_active">@color/gray_400</color>
@@ -226,10 +225,6 @@
     <color name="switch_bg">@color/turquoise_600</color>
     <color name="switch_off_bg">@color/gray_400</color>
     <color name="switch_disabled_bg">@color/gray_400_alpha_50</color>
-
-    <!-- NFT Icons -->
-    <color name="nft_icon_bg">@color/gray_900_alpha_60</color>
-    <color name="nft_icon">@color/white</color>
 
     <!-- Meld -->
     <color name="meld">#171835</color>
@@ -257,15 +252,12 @@
 
     <!-- Testnet Badge -->
     <color name="testnet_bg">@color/yellow_500</color>
-    <color name="testnet_text">@color/gray_900</color>
 
     <!-- Algo Icon -->
     <color name="algo_icon_bg">@color/black</color>
     <color name="algo_icon">@color/white</color>
 
     <color name="button_stroke_color">@color/gray_100</color>
-
-    <color name="divider_color_dark">@color/gray_800</color>
 
     <!-- endregion App Color Palette -->
 
@@ -285,7 +277,6 @@
     <color name="secondary_background">@color/white</color>
     <color name="tertiary_background">@color/white</color>
     <color name="surface_on_background">@color/gray_900</color>
-    <color name="toolbar_button_color">@color/white</color>
     <color name="primary_background_ripple_color">@color/gray_100</color>
     <color name="passphrase_background_color">@color/gray_50</color>
 
@@ -299,14 +290,8 @@
     <color name="chart_time_frame_button_color">@color/gray_100</color>
     <color name="chart_time_frame_default_text_color">@color/gray_400</color>
 
-    <color name="wallet_connect_account_selection_border_color">@color/gray_100</color>
     <color name="wallet_connect_dapp_icon_background_color">@color/white</color>
     <color name="wallet_connect_dapp_icon_border_color">@color/gray_100</color>
-
-    <!-- Participant Count Badge -->
-    <color name="participant_count_badge_text_color">@color/wallet_1_icon</color>
-
-    <color name="governance_banner_icon_color">@color/black</color>
 
     <!-- Design Refactor  -->
 
@@ -378,8 +363,6 @@
     <color name="connected_node_testnet_text_color">@color/yellow_600</color>
 
     <!-- Backup -->
-    <color name="backup_banner_title">@color/white_alpha_60</color>
     <color name="backup_banner_description">@color/background</color>
     <color name="backup_banner_icon">@color/background</color>
-    <color name="backup_banner_icon_bg">@color/salmon_850_alpha20</color>
 </resources>

@@ -18,10 +18,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
@@ -36,7 +34,7 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0),
     private val viewStateCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewState) -> Unit = { state ->
         when (state) {
             AccountRecoveryTypeSelectionViewModel.ViewState.Idle -> Unit
-            is AccountRecoveryTypeSelectionViewModel.ViewState.NoLocalAccountState -> setupToolbar()
+            is AccountRecoveryTypeSelectionViewModel.ViewState.NoLocalAccountState -> Unit
         }
     }
 
@@ -54,12 +52,7 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUi()
         initObservers()
-    }
-
-    private fun initUi() {
-        accountRecoveryTypeSelectionViewModel.setupToolbar()
     }
 
     private fun initObservers() {
@@ -95,15 +88,6 @@ class AccountRecoveryTypeSelectionFragment : DaggerBaseFragment(0),
             AccountRecoveryTypeSelectionFragmentDirections
                 .actionAccountRecoveryTypeSelectionFragmentToWebImportNavigation()
         )
-    }
-
-    private fun setupToolbar() {
-        getAppToolbar()?.setEndButton(button = TextButton(R.string.skip, onClick = ::onSkipClick))
-    }
-
-    private fun onSkipClick() {
-        accountRecoveryTypeSelectionViewModel.setRegisterSkip()
-        nav(LoginNavigationDirections.actionGlobalToHomeNavigation())
     }
 
     override fun onCreateView(

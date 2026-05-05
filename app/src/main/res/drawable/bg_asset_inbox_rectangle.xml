@@ -15,6 +15,6 @@
     android:shape="rectangle">
 
     <corners android:radius="50dp" />
-    <solid android:color="@color/turquoise_500_alpha_12" />
+    <solid android:color="@color/button_square_bg" />
 
 </shape>

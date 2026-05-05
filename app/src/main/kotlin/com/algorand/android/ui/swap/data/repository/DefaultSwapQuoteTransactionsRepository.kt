@@ -19,11 +19,15 @@ import com.algorand.android.ui.swap.data.network.SwapQuoteTransactionsApiService
 import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactionsDto
 import com.algorand.android.ui.swap.domain.repository.SwapQuoteTransactionsRepository
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.network.exceptions.peraApiError
+import com.algorand.wallet.logger.PeraLogger
+import com.google.gson.Gson
 import javax.inject.Inject
 
 internal class DefaultSwapQuoteTransactionsRepository @Inject constructor(
     private val swapQuoteTransactionsApiService: SwapQuoteTransactionsApiService,
     private val swapQuoteTransactionDTOMapper: SwapQuoteTransactionDTOMapper,
+    private val gson: Gson
 ) : SwapQuoteTransactionsRepository {
 
     override suspend fun createQuoteTransactions(quoteId: Long): PeraResult<SwapQuoteTransactionsDto> {
@@ -32,7 +36,8 @@ internal class DefaultSwapQuoteTransactionsRepository @Inject constructor(
             val transactionsResponse = swapQuoteTransactionsApiService.getQuoteTransactions(requestBody)
             getSwapQuoteTransactionsResult(transactionsResponse)
         } catch (e: Exception) {
-            PeraResult.Error(e)
+            PeraLogger.e(TAG, "API call failed for quoteId=$quoteId", e)
+            peraApiError(e, gson)
         }
     }
 
@@ -41,9 +46,17 @@ internal class DefaultSwapQuoteTransactionsRepository @Inject constructor(
     ): PeraResult<SwapQuoteTransactionsDto> {
         val txns = response.transactionGroups?.map { swapQuoteTransactionDTOMapper.mapToSwapQuoteTransactionDTO(it) }
         return if (txns == null || txns.isEmpty() || response.swapId == null) {
-            PeraResult.Error(IllegalStateException())
+            PeraLogger.e(
+                TAG,
+                "Invalid response - txnGroups=${response.transactionGroups?.size}, swapId=${response.swapId}"
+            )
+            PeraResult.Error(IllegalStateException("Invalid swap quote transactions response"))
         } else {
             PeraResult.Success(SwapQuoteTransactionsDto(txns, response.swapId))
         }
+    }
+
+    private companion object {
+        const val TAG = "SwapQuoteTxnRepo"
     }
 }

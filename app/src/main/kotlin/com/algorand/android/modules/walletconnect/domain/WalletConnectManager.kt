@@ -54,6 +54,7 @@ import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
+import com.algorand.wallet.logger.PeraErrorLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -86,7 +87,8 @@ class WalletConnectManager @Inject constructor(
     private val walletConnectMethodDecider: WalletConnectMethodDecider,
     private val getPreselectedAccountAddresses: GetWalletConnectRequestPreselectedAccountAddresses,
     private val clearWalletConnectPreselectedAddressCache: ClearWalletConnectPreselectedAddressCache,
-    private val cacheWalletConnectPreselectedAccountAddresses: CacheWalletConnectRequestPreselectedAccountAddresses
+    private val cacheWalletConnectPreselectedAccountAddresses: CacheWalletConnectRequestPreselectedAccountAddresses,
+    private val errorLogger: PeraErrorLogger
 ) : DefaultLifecycleObserver {
 
     val sessionResultFlow: SharedFlow<Event<Resource<WalletConnectSessionProposal>>>
@@ -281,24 +283,43 @@ class WalletConnectManager @Inject constructor(
         _walletConnectRequestLiveData.postValue(null)
     }
 
+    suspend fun silentRejectRequest(
+        sessionIdentifier: WalletConnectSessionIdentifier,
+        requestId: Long,
+        errorResponse: WalletConnectError
+    ) {
+        try {
+            walletConnectClientManager.rejectRequest(
+                sessionId = sessionIdentifier.sessionIdentifier,
+                requestId = requestId,
+                versionIdentifier = sessionIdentifier.versionIdentifier,
+                errorResponse = errorResponse
+            )
+        } catch (e: Exception) {
+            errorLogger.logError(e)
+        }
+    }
+
     suspend fun processWalletConnectSignResult(walletConnectSignResult: WalletConnectSignResult) {
+        if (walletConnectSignResult !is WalletConnectSignResult.Success) {
+            _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.wallet_connect_signing_failed))))
+            recordException(Exception("Wallet connect sign result is not Success: $walletConnectSignResult"))
+            return
+        }
         with(walletConnectSignResult) {
-            if (this is WalletConnectSignResult.Success) {
-                walletConnectClientManager.approveRequest(
-                    sessionIdentifier = sessionIdentifier,
-                    requestId = requestId,
-                    signedTransaction = signedTransaction.map { it?.let { Base64.encodeToString(it, Base64.DEFAULT) } }
-                )
-                logWalletConnectRequestConfirmation()
-                _requestResultLiveData.postValue(
-                    Event(Resource.Success(AnnotatedString(R.string.transaction_successfully_confirmed)))
-                )
-                _walletConnectRequestLiveData.postValue(null)
-            } else {
-                _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occurred))))
-                val exception = Exception("Wallet connect sign result is not Success: $walletConnectSignResult")
-                recordException(exception)
+            val encodedTransactionList = signedTransaction.map {
+                it?.let { tx -> Base64.encodeToString(tx, Base64.DEFAULT) }
             }
+            walletConnectClientManager.approveRequest(
+                sessionIdentifier = sessionIdentifier,
+                requestId = requestId,
+                signedTransaction = encodedTransactionList
+            )
+            logWalletConnectRequestConfirmation()
+            _requestResultLiveData.postValue(
+                Event(Resource.Success(AnnotatedString(R.string.transaction_successfully_confirmed)))
+            )
+            _walletConnectRequestLiveData.postValue(null)
         }
     }
 

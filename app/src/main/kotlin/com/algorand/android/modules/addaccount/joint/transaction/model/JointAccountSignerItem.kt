@@ -25,17 +25,21 @@ data class JointAccountSignerItem(
     val accountIconDrawablePreview: AccountIconDrawablePreview,
     val imageUri: Uri?, // For contacts
     val signatureStatus: JointAccountSignatureStatus,
+    val showProgress: Boolean = false,
+    val isLocalAccount: Boolean = false,
     val isLedgerAccount: Boolean = false,
     val ledgerBluetoothAddress: String? = null,
-    val ledgerAccountIndex: Int? = null
+    val ledgerAccountIndex: Int? = null,
+    val accountAuthAddress: String? = null
 ) {
     /**
      * Returns true if this signer can be signed with Ledger
-     * (is a Ledger account AND has all required data AND hasn't signed/rejected yet)
+     * (is a Ledger account AND has all required data AND hasn't signed/declined yet)
      */
     val canSignWithLedger: Boolean
         get() = isLedgerAccount &&
-            ledgerBluetoothAddress != null &&
-            ledgerAccountIndex != null &&
-            signatureStatus == JointAccountSignatureStatus.Pending
+                ledgerBluetoothAddress != null &&
+                ledgerAccountIndex != null &&
+                signatureStatus == JointAccountSignatureStatus.Pending &&
+                showProgress
 }

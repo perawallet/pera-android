@@ -23,6 +23,7 @@ import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetA
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
@@ -51,6 +52,9 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
         val senderAccountLite = getAccountLite(accountAddress)
         val senderAccountLiteCachedData = senderAccountLite?.cachedInfo ?: return null
         val receiverAddress = assetTransaction.receiverUser?.publicKey
+        val signer = getTransactionSigner(accountAddress)
+        val isReceiverOptedIn = isAssetOptedInByAccount(receiverAddress.orEmpty(), assetId)
+        val isArc59 = !isReceiverOptedIn && signer !is TransactionSigner.Joint
         return TransactionSignData.Send(
             senderAccountAddress = accountAddress,
             senderAuthAddress = senderAccountLiteCachedData.rekeyAuthAddress,
@@ -65,8 +69,8 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
-            isArc59Transaction = !isAssetOptedInByAccount(receiverAddress.orEmpty(), assetId),
-            signer = getTransactionSigner(accountAddress)
+            isArc59Transaction = isArc59,
+            signer = signer
         )
     }
 

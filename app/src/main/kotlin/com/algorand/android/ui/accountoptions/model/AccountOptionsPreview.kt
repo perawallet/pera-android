@@ -26,5 +26,6 @@ data class AccountOptionsPreview(
     val isPassphraseButtonVisible: Boolean,
     val isUndoRekeyButtonVisible: Boolean,
     val canSignTransaction: Boolean,
+    val isJointAccount: Boolean,
     val registrationType: AccountRegistrationType
 )

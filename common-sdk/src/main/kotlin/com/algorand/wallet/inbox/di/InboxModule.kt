@@ -14,20 +14,27 @@ package com.algorand.wallet.inbox.di
 
 import com.algorand.wallet.foundation.cache.InMemoryCacheProvider
 import com.algorand.wallet.foundation.cache.InMemoryCachedObject
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
+import com.algorand.wallet.inbox.data.repository.DefaultInboxRepository
 import com.algorand.wallet.inbox.data.repository.InboxApiRepositoryImpl
 import com.algorand.wallet.inbox.domain.InboxCacheManager
 import com.algorand.wallet.inbox.domain.InboxCacheManagerImpl
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
+import com.algorand.wallet.inbox.domain.repository.InboxRepository
 import com.algorand.wallet.inbox.domain.usecase.CacheInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.ClearInboxCache
+import com.algorand.wallet.inbox.domain.usecase.GetInboxLastOpenedTime
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddressesUseCase
+import com.algorand.wallet.inbox.domain.usecase.GetJointAccountInboxCountFlow
+import com.algorand.wallet.inbox.domain.usecase.GetJointAccountInboxCountFlowUseCase
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddress
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddressUseCase
 import com.algorand.wallet.inbox.domain.usecase.RefreshInboxCache
+import com.algorand.wallet.inbox.domain.usecase.SetInboxLastOpenedTime
 import com.algorand.wallet.inbox.jointaccount.data.mapper.InboxSearchMapper
 import com.algorand.wallet.inbox.jointaccount.data.mapper.InboxSearchMapperImpl
 import com.algorand.wallet.inbox.jointaccount.data.service.InboxApiService
@@ -46,6 +53,7 @@ internal object InboxModule {
 
     private const val INBOX_CACHE_NAME = "inboxCache"
     private const val INBOX_CACHE_FLOW_NAME = "inboxCacheFlow"
+    private const val INBOX_LAST_OPENED_TIME_KEY = "inbox_last_opened_time"
 
     @Provides
     @Singleton
@@ -80,6 +88,21 @@ internal object InboxModule {
     fun provideInboxSearchMapper(impl: InboxSearchMapperImpl): InboxSearchMapper = impl
 
     @Provides
+    @Singleton
+    fun provideInboxRepository(
+        @Named(INBOX_CACHE_NAME) inboxCache: InMemoryCachedObject<InboxMessages>,
+        @Named(INBOX_CACHE_FLOW_NAME) inboxCacheFlow: MutableStateFlow<InboxMessages?>,
+        persistentCacheProvider: PersistentCacheProvider
+    ): InboxRepository = DefaultInboxRepository(
+        inboxCache = inboxCache,
+        inboxCacheFlow = inboxCacheFlow,
+        lastOpenedTimeCache = persistentCacheProvider.getPersistentCache(
+            String::class.java,
+            INBOX_LAST_OPENED_TIME_KEY
+        )
+    )
+
+    @Provides
     fun provideCacheInboxMessages(
         @Named(INBOX_CACHE_NAME) cache: InMemoryCachedObject<InboxMessages>,
         @Named(INBOX_CACHE_FLOW_NAME) cacheFlow: MutableStateFlow<InboxMessages?>
@@ -103,17 +126,13 @@ internal object InboxModule {
 
     @Provides
     fun provideGetInboxMessagesFlow(
-        @Named(INBOX_CACHE_FLOW_NAME) cacheFlow: MutableStateFlow<InboxMessages?>
-    ): GetInboxMessagesFlow {
-        return GetInboxMessagesFlow { cacheFlow }
-    }
+        repository: InboxRepository
+    ): GetInboxMessagesFlow = GetInboxMessagesFlow(repository::getInboxMessagesFlow)
 
     @Provides
     fun provideGetInboxMessages(
-        @Named(INBOX_CACHE_NAME) cache: InMemoryCachedObject<InboxMessages>
-    ): GetInboxMessages {
-        return GetInboxMessages { cache.get() }
-    }
+        repository: InboxRepository
+    ): GetInboxMessages = GetInboxMessages(repository::getInboxMessages)
 
     @Provides
     fun provideGetInboxValidAddresses(
@@ -129,4 +148,19 @@ internal object InboxModule {
     fun provideRefreshInboxCache(
         inboxCacheManager: InboxCacheManager
     ): RefreshInboxCache = RefreshInboxCache(inboxCacheManager::refreshCache)
+
+    @Provides
+    fun provideGetJointAccountInboxCountFlow(
+        useCase: GetJointAccountInboxCountFlowUseCase
+    ): GetJointAccountInboxCountFlow = useCase
+
+    @Provides
+    fun provideSetInboxLastOpenedTime(
+        repository: InboxRepository
+    ): SetInboxLastOpenedTime = SetInboxLastOpenedTime(repository::setLastOpenedTime)
+
+    @Provides
+    fun provideGetInboxLastOpenedTime(
+        repository: InboxRepository
+    ): GetInboxLastOpenedTime = GetInboxLastOpenedTime(repository::getLastOpenedTime)
 }

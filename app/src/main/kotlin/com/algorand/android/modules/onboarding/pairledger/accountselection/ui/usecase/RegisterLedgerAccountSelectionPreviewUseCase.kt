@@ -16,7 +16,9 @@ import com.algorand.android.R
 import com.algorand.android.mapper.LedgerAccountSelectionAccountItemMapper
 import com.algorand.android.mapper.LedgerAccountSelectionInstructionItemMapper
 import com.algorand.android.models.AccountIconResource
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.mapper.RegisterLedgerAccountSelectionPreviewMapper
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionNavArgs
@@ -26,6 +28,7 @@ import com.algorand.android.modules.rekey.model.AccountSelectionListItem.SearchT
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -42,6 +45,7 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
     private val fetchRekeyedAccounts: FetchRekeyedAccounts,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val fetchAndCacheAssets: FetchAndCacheAssets,
+    private val getAccountInformation: GetAccountInformation,
 ) {
 
     fun getUpdatedPreviewAccordingToAccountSelection(
@@ -76,7 +80,7 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
                 fetchAndCacheAssets(ledgerAccountInformation.assetHoldingIds, false)
 
                 val isRekeyed = ledgerAccountInformation.isRekeyed
-                val accountDisplayName = getAccountDisplayName(ledgerAccountInformation.address)
+                val accountDisplayName = getLedgerAccountDisplayName(ledgerAccountInformation.address)
 
                 val authAccountDetail = SelectedLedgerAccount.LedgerAccount(
                     address = ledgerAccountInformation.address,
@@ -95,7 +99,8 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
                     accountDisplayName = accountDisplayName,
                     accountIconDrawablePreview = accountIconDrawablePreview,
                     address = ledgerAccountInformation.address,
-                    selectedLedgerAccount = authAccountDetail
+                    selectedLedgerAccount = authAccountDetail,
+                    isInfoButtonVisible = getAccountInformation(ledgerAccountInformation.address) != null
                 )
                 add(authAccountSelectionListItem)
 
@@ -130,6 +135,12 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
         )
         emit(loadingState)
     }.distinctUntilChanged()
+
+    private suspend fun getLedgerAccountDisplayName(address: String): AccountDisplayName {
+        val base = getAccountDisplayName(address)
+        if (base.secondaryDisplayName != null) return base
+        return getAccountDisplayName(address, base.primaryDisplayName, AccountType.LedgerBle)
+    }
 
     private suspend fun getRekeyedAccountsOfAuthAccount(
         rekeyAdminAddress: String,

@@ -159,6 +159,7 @@
     <dimen name="primary_portfolio_value_height">48dp</dimen>
 
     <dimen name="action_button_corner_radius">8dp</dimen>
+    <dimen name="square_button_size">40dp</dimen>
 
     <dimen name="rekey_confirmation_bottom_padding">240dp</dimen>
 

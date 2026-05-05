@@ -13,23 +13,38 @@
 package com.algorand.wallet.jointaccount.data.service
 
 import com.algorand.wallet.jointaccount.creation.data.model.CreateJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountRequest
+import com.algorand.wallet.jointaccount.creation.data.model.IsJointAccountResponse
 import com.algorand.wallet.jointaccount.creation.data.model.JointAccountResponse
+import com.algorand.wallet.jointaccount.transaction.data.model.GetSignRequestWithSignaturesRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.JointSignRequestResponse
+import com.algorand.wallet.jointaccount.transaction.data.model.MarkSignRequestsConfirmedRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.ProposeJointSignRequestRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsRequest
 import com.algorand.wallet.jointaccount.transaction.data.model.SearchSignRequestsResponse
 import com.algorand.wallet.jointaccount.transaction.data.model.SignRequestTransactionListResponseRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 internal interface JointAccountApiService {
 
+    @GET("v1/joint-accounts/accounts/{account_address}/")
+    suspend fun getJointAccountDetail(
+        @Path("account_address") accountAddress: String
+    ): Response<JointAccountResponse>
+
     @POST("v1/joint-accounts/accounts/")
     suspend fun createJointAccount(
         @Body createJointAccountRequest: CreateJointAccountRequest
     ): Response<JointAccountResponse>
+
+    @POST("v1/joint-accounts/is-joint-account/")
+    suspend fun checkIsJointAccount(
+        @Body request: IsJointAccountRequest
+    ): Response<List<IsJointAccountResponse>>
 
     @POST("v1/joint-accounts/sign-requests/")
     suspend fun proposeSignRequest(
@@ -46,4 +61,14 @@ internal interface JointAccountApiService {
     suspend fun searchSignRequests(
         @Body searchSignRequestsRequest: SearchSignRequestsRequest
     ): Response<SearchSignRequestsResponse>
+
+    @POST("v1/joint-accounts/sign-requests/with-signatures/")
+    suspend fun getSignRequestWithSignatures(
+        @Body request: GetSignRequestWithSignaturesRequest
+    ): Response<List<JointSignRequestResponse>>
+
+    @POST("v1/joint-accounts/sign-requests/mark-confirmed/")
+    suspend fun markSignRequestsConfirmed(
+        @Body request: MarkSignRequestsConfirmedRequest
+    ): Response<Unit>
 }

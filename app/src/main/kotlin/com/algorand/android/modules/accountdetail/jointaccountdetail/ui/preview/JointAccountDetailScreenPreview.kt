@@ -259,7 +259,7 @@ private fun ActionFooterPreview() {
 
 private fun createSampleContentState(): ViewState.Content {
     return ViewState.Content(
-        accountDisplayName = "Joint Account",
+        accountDisplayName = "Shared Account",
         accountAddressShortened = "DUA4...2ETI",
         numberOfAccounts = 3,
         threshold = 2,

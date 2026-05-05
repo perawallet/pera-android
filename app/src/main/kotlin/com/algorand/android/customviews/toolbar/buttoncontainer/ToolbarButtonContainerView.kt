@@ -45,7 +45,7 @@ class ToolbarButtonContainerView(context: Context, attrs: AttributeSet? = null) 
 
     private fun addEndMargin(button: View) {
         val endMargin = context.resources.getDimensionPixelSize(
-            if (isEmpty()) R.dimen.spacing_large else R.dimen.spacing_small
+            if (isEmpty()) R.dimen.spacing_normal else R.dimen.spacing_xsmall
         )
 
         (button.layoutParams as? LayoutParams)?.setMargins(

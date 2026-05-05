@@ -27,49 +27,51 @@ import org.junit.Test
 
 internal class CreateExternalAddressAsContactUseCaseTest {
 
-    private val contactRepository: ContactRepository = mockk(relaxed = true)
+    private val contactRepository: ContactRepository = mockk(relaxed = true) {
+        coEvery { getContactByAddress(any()) } returns null
+    }
     private val sut = CreateExternalAddressAsContactUseCase(contactRepository)
 
     @Test
-    fun `EXPECT contact added with correct fields WHEN invoke is called`() = runTest {
+    fun `EXPECT contact added with correct fields WHEN invoke is called with displayName`() = runTest {
         val contactSlot = slot<User>()
         coEvery { contactRepository.addContact(capture(contactSlot)) } returns Unit
 
-        sut(TEST_ADDRESS, TEST_SHORTENED_ADDRESS)
+        sut(TEST_ADDRESS, TEST_DISPLAY_NAME)
 
-        coVerify { contactRepository.addContact(any()) }
+        coVerify(exactly = 1) { contactRepository.addContact(any()) }
         assertEquals(TEST_ADDRESS, contactSlot.captured.publicKey)
-        assertEquals(TEST_SHORTENED_ADDRESS, contactSlot.captured.name)
+        assertEquals(TEST_DISPLAY_NAME, contactSlot.captured.name)
         assertNull(contactSlot.captured.imageUriAsString)
     }
 
     @Test
-    fun `EXPECT correct SelectedJointAccountItem WHEN invoke is called`() = runTest {
-        val result = sut(TEST_ADDRESS, TEST_SHORTENED_ADDRESS)
+    fun `EXPECT correct SelectedJointAccountItem WHEN invoke is called with displayName`() = runTest {
+        val result = sut(TEST_ADDRESS, TEST_DISPLAY_NAME)
 
         assertNotNull(result)
         assertEquals(TEST_ADDRESS, result!!.accountDisplayName.accountAddress)
-        assertEquals(TEST_SHORTENED_ADDRESS, result.accountDisplayName.primaryDisplayName)
+        assertEquals(TEST_DISPLAY_NAME, result.accountDisplayName.primaryDisplayName)
         assertNull(result.accountDisplayName.secondaryDisplayName)
         assertNull(result.iconDrawablePreview)
         assertTrue(result.isContact)
     }
 
     @Test
-    fun `EXPECT custom shortened address WHEN custom shortenedAddress is provided`() = runTest {
+    fun `EXPECT displayName as contact name WHEN displayName is provided`() = runTest {
         val contactSlot = slot<User>()
         coEvery { contactRepository.addContact(capture(contactSlot)) } returns Unit
-        val customName = "Custom...Name"
+        val displayName = "nfd.algo"
 
-        val result = sut(TEST_ADDRESS, customName)
+        val result = sut(TEST_ADDRESS, displayName)
 
         assertNotNull(result)
-        assertEquals(customName, contactSlot.captured.name)
-        assertEquals(customName, result!!.accountDisplayName.primaryDisplayName)
+        assertEquals(displayName, contactSlot.captured.name)
+        assertEquals(displayName, result!!.accountDisplayName.primaryDisplayName)
     }
 
     @Test
-    fun `EXPECT auto-shortened address WHEN shortenedAddress is null`() = runTest {
+    fun `EXPECT shortened address as contact name WHEN displayName is null`() = runTest {
         val contactSlot = slot<User>()
         coEvery { contactRepository.addContact(capture(contactSlot)) } returns Unit
 
@@ -83,13 +85,13 @@ internal class CreateExternalAddressAsContactUseCaseTest {
     fun `EXPECT null WHEN repository throws exception`() = runTest {
         coEvery { contactRepository.addContact(any()) } throws RuntimeException("Database error")
 
-        val result = sut(TEST_ADDRESS, TEST_SHORTENED_ADDRESS)
+        val result = sut(TEST_ADDRESS, TEST_DISPLAY_NAME)
 
         assertNull(result)
     }
 
     private companion object {
         const val TEST_ADDRESS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVU4"
-        const val TEST_SHORTENED_ADDRESS = "ABCD...UVU4"
+        const val TEST_DISPLAY_NAME = "ABCD...UVU4"
     }
 }

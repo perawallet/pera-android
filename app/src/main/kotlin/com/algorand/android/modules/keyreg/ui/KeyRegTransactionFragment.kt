@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -42,6 +43,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.navigateToPendingSignaturesBottomSheet
 import com.algorand.android.utils.showAlertDialog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.startSavedStateListener
@@ -116,6 +118,12 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
                 is Error -> showTransactionSignResultError(it)
                 LedgerScanFailed -> showLedgerNotFoundDialog()
                 is LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
+                is ExternalTransactionSignResult.WaitingForJointSignatures -> {
+                    navigateToPendingSignaturesBottomSheet(it.signRequestId) { _ ->
+                        nav(MainNavigationDirections.actionGlobalMainNavigation())
+                    }
+                }
+
                 Loading -> showLoader()
                 NotInitialized -> Unit
                 is TransactionCancelled -> showTransactionCancelledError(it)
@@ -194,7 +202,7 @@ class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_
     private fun showTransactionCancelledError(result: TransactionCancelled) {
         dismissLedgerDialog()
         val annotatedString = (result.error as? Error.Defined)?.description
-            ?: AnnotatedString(R.string.an_error_occurred)
+            ?: AnnotatedString(R.string.key_reg_signing_failed)
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }

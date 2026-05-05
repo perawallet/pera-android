@@ -19,7 +19,6 @@ import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -30,12 +29,19 @@ internal class FetchInboxMessagesUseCaseTest {
     private val repository: InboxApiRepository = mockk()
     private val sut = FetchInboxMessagesUseCase(repository)
 
+    private companion object {
+        const val TEST_DEVICE_ID = 12345L
+    }
+
     @Test
     fun `EXPECT success WHEN repository succeeds`() = runTest {
+        val testAddresses = listOf("ADDR1", "ADDR2")
         val expectedMessages = createInboxMessages()
-        coEvery { repository.getInboxMessages(TEST_DEVICE_ID, any()) } returns PeraResult.Success(expectedMessages)
+        coEvery {
+            repository.getInboxMessages(TEST_DEVICE_ID, InboxSearchInput(testAddresses))
+        } returns PeraResult.Success(expectedMessages)
 
-        val result = sut(TEST_DEVICE_ID, TEST_ADDRESSES)
+        val result = sut(TEST_DEVICE_ID, testAddresses)
 
         assertTrue(result is PeraResult.Success)
         assertEquals(expectedMessages, (result as PeraResult.Success).data)
@@ -43,60 +49,48 @@ internal class FetchInboxMessagesUseCaseTest {
 
     @Test
     fun `EXPECT error WHEN repository fails`() = runTest {
+        val testAddresses = listOf("ADDR1")
         val exception = Exception("Network error")
-        coEvery { repository.getInboxMessages(TEST_DEVICE_ID, any()) } returns PeraResult.Error(exception)
+        coEvery {
+            repository.getInboxMessages(TEST_DEVICE_ID, InboxSearchInput(testAddresses))
+        } returns PeraResult.Error(exception)
 
-        val result = sut(TEST_DEVICE_ID, TEST_ADDRESSES)
+        val result = sut(TEST_DEVICE_ID, testAddresses)
 
         assertTrue(result is PeraResult.Error)
     }
 
     @Test
-    fun `EXPECT correct device id passed to repository`() = runTest {
-        coEvery { repository.getInboxMessages(any(), any()) } returns PeraResult.Success(createInboxMessages())
+    fun `EXPECT correct parameters passed to repository WHEN multiple addresses provided`() = runTest {
+        val testAddresses = listOf("ADDR1", "ADDR2")
+        coEvery {
+            repository.getInboxMessages(TEST_DEVICE_ID, InboxSearchInput(testAddresses))
+        } returns PeraResult.Success(createInboxMessages())
 
-        sut(TEST_DEVICE_ID, TEST_ADDRESSES)
+        sut(TEST_DEVICE_ID, testAddresses)
 
-        coVerify { repository.getInboxMessages(TEST_DEVICE_ID, any()) }
+        coVerify {
+            repository.getInboxMessages(TEST_DEVICE_ID, InboxSearchInput(testAddresses))
+        }
     }
 
     @Test
-    fun `EXPECT addresses wrapped in InboxSearchInput`() = runTest {
-        val inputSlot = slot<InboxSearchInput>()
-        coEvery { repository.getInboxMessages(any(), capture(inputSlot)) } returns PeraResult.Success(createInboxMessages())
+    fun `EXPECT correct parameters passed to repository WHEN empty address list provided`() = runTest {
+        val testAddresses = emptyList<String>()
+        coEvery {
+            repository.getInboxMessages(TEST_DEVICE_ID, InboxSearchInput(testAddresses))
+        } returns PeraResult.Success(createInboxMessages())
 
-        sut(TEST_DEVICE_ID, TEST_ADDRESSES)
+        sut(TEST_DEVICE_ID, testAddresses)
 
-        assertEquals(TEST_ADDRESSES, inputSlot.captured.addresses)
-    }
-
-    @Test
-    fun `EXPECT success WHEN addresses list is empty`() = runTest {
-        coEvery { repository.getInboxMessages(any(), any()) } returns PeraResult.Success(createInboxMessages())
-
-        val result = sut(TEST_DEVICE_ID, emptyList())
-
-        assertTrue(result is PeraResult.Success)
-    }
-
-    @Test
-    fun `EXPECT success WHEN single address provided`() = runTest {
-        val singleAddress = listOf("ADDR1")
-        coEvery { repository.getInboxMessages(any(), any()) } returns PeraResult.Success(createInboxMessages())
-
-        val result = sut(TEST_DEVICE_ID, singleAddress)
-
-        assertTrue(result is PeraResult.Success)
+        coVerify {
+            repository.getInboxMessages(TEST_DEVICE_ID, InboxSearchInput(testAddresses))
+        }
     }
 
     private fun createInboxMessages() = InboxMessages(
         jointAccountImportRequests = emptyList(),
-        jointAccountSignRequests = emptyList(),
-        assetInboxes = emptyList()
+        assetInboxes = emptyList(),
+        jointAccountSignRequests = emptyList()
     )
-
-    private companion object {
-        const val TEST_DEVICE_ID = 12345L
-        val TEST_ADDRESSES = listOf("ADDR1", "ADDR2", "ADDR3")
-    }
 }

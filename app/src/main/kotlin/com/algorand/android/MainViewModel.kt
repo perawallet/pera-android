@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
+import com.algorand.android.MainActivity.Companion.SIGN_REQUEST_ID_INTENT_KEY
 import com.algorand.android.MainActivity.Companion.WC_ARBITRARY_DATA_ID_INTENT_KEY
 import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
 import com.algorand.android.core.BaseViewModel
@@ -64,8 +65,6 @@ import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +73,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -319,6 +320,7 @@ class MainViewModel @Inject constructor(
     private suspend fun handlePendingIntentWithExtras(pendingIntent: Intent): Boolean {
         val transactionId = pendingIntent.getLongExtra(WC_TRANSACTION_ID_INTENT_KEY, -1L)
         val arbitraryDataId = pendingIntent.getLongExtra(WC_ARBITRARY_DATA_ID_INTENT_KEY, -1L)
+        val signRequestId = pendingIntent.getStringExtra(SIGN_REQUEST_ID_INTENT_KEY)
 
         return when {
             transactionId != -1L -> {
@@ -328,6 +330,11 @@ class MainViewModel @Inject constructor(
 
             arbitraryDataId != -1L -> {
                 eventDelegate.sendEvent(ViewEvent.NavToWalletConnectArbitraryDataRequestNavigation(arbitraryDataId))
+                true
+            }
+
+            signRequestId != null -> {
+                eventDelegate.sendEvent(ViewEvent.NavToJointAccountSignRequest(signRequestId))
                 true
             }
 
@@ -415,7 +422,7 @@ class MainViewModel @Inject constructor(
         val accountType = getAccountType(accountAddress)
         val canSignTransaction = accountType?.canSignTransaction() == true
         return if (canSignTransaction) {
-            ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
+            ViewEvent.NavToInboxNavigation
         } else if (accountType != null) {
             ViewEvent.NavToAccountDetailFragment(accountAddress)
         } else {
@@ -427,16 +434,17 @@ class MainViewModel @Inject constructor(
         data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
         data class HandleTransactionDetailDeepLink(val address: String, val transactionId: String) : ViewEvent
         data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
-        data class NavToAssetInboxOneAccountNavigation(val address: String) : ViewEvent
         data class NavToAccountDetailFragment(val address: String) : ViewEvent
         data class NavToAssetDetailFragment(val address: String, val assetId: Long) : ViewEvent
         data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
         data class NavToWalletConnectTransactionRequestNavigation(val wcRequestId: Long) : ViewEvent
         data class NavToWalletConnectArbitraryDataRequestNavigation(val wcRequestId: Long) : ViewEvent
+        data class NavToJointAccountSignRequest(val signRequestId: String) : ViewEvent
         data class NavToRecoverWithPassphraseNavigation(val mnemonic: String) : ViewEvent
         data class NavToKeyRegTransactionFragment(val transactionDetail: KeyRegTransactionDetail) : ViewEvent
         data class ShowKeyRegDeeplinkError(val address: String) : ViewEvent
 
+        data object NavToInboxNavigation : ViewEvent
         data object ShowMaxAccountLimitExceededError : ViewEvent
         data object ShowDeeplinkAccountNotFoundError : ViewEvent
         data object StartInAppReview : ViewEvent

@@ -12,7 +12,6 @@
 
 package com.algorand.android.credentials.passkeys.domain.model
 
-import android.util.Log
 import com.algorand.android.credentials.passkeys.domain.PeraMessageDigest
 import com.algorand.android.credentials.passkeys.domain.WebAuthnUtils
 import com.algorand.android.credentials.passkeys.foundation.Cbor
@@ -105,8 +104,6 @@ internal class AuthenticatorAttestationResponse(
         jsonOutput.put("publicKeyAlgorithm", publicKeyAlgorithm)
         if (spki != null) {
             jsonOutput.put("publicKey", WebAuthnUtils.b64Encode(spki))
-        } else {
-            Log.i("AuthAttest", " Public key is null")
         }
     }
 

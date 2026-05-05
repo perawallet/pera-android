@@ -12,24 +12,22 @@
 
 package com.algorand.wallet.jointaccount.transaction.domain.model
 
-enum class SignRequestStatus(val value: String) {
-    // Waiting statuses
-    PENDING("pending"),
-    READY("ready"),
-    SUBMITTING("submitting"),
-
-    // Finalized statuses
-    CONFIRMED("confirmed"),
-    FAILED("failed"),
-    EXPIRED("expired");
+enum class SignRequestStatus {
+    PENDING,
+    READY,
+    SUBMITTING,
+    CONFIRMED,
+    FAILED,
+    EXPIRED,
+    DECLINED;
 
     companion object {
-        private val map = entries.associateBy(SignRequestStatus::value)
-
-        fun fromValue(value: String?): SignRequestStatus? = value?.let { map[it] }
-
         val WAITING_STATUSES = listOf(PENDING, READY, SUBMITTING)
-        val FINALIZED_STATUSES = listOf(CONFIRMED, FAILED, EXPIRED)
+        val FINALIZED_STATUSES = listOf(CONFIRMED, FAILED, EXPIRED, DECLINED)
+
+        fun fromValue(value: String?): SignRequestStatus? {
+            return entries.firstOrNull { it.name.equals(value, ignoreCase = true) }
+        }
     }
 
     fun isWaiting(): Boolean = this in WAITING_STATUSES

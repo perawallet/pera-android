@@ -16,20 +16,22 @@ import android.content.res.Resources
 import android.text.format.DateUtils
 import com.algorand.android.R
 import com.algorand.android.models.Result
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequestInboxItem
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
-import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
 import com.algorand.wallet.utils.date.RelativeTimeDifference
 import com.algorand.wallet.utils.date.TimeProvider
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class SignatureRequestInboxItemMapper @Inject constructor(
+    private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getTransactionParams: GetTransactionParams,
     private val timeProvider: TimeProvider,
@@ -49,33 +51,37 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     ): SignatureRequestInboxItem? {
         val requiredData = extractRequiredData(jointSignRequestDTO) ?: return null
 
-        val isExpired = isSignRequestExpired(jointSignRequestDTO)
+        val statusLine =
+            mapStatusToStatusLine(jointSignRequestDTO.status, resources, jointSignRequestDTO.failReasonDisplay)
         val creationDateTime = getCreationDateTime(jointSignRequestDTO)
+        val displayName = getAccountDisplayName(requiredData.jointAccountAddress).primaryDisplayName
 
         return SignatureRequestInboxItem(
             signRequestId = requiredData.signRequestId,
             jointAccountAddress = requiredData.jointAccountAddress,
-            jointAccountAddressShortened = requiredData.jointAccountAddress.toShortenedAddress(),
+            jointAccountAddressShortened = displayName,
             accountIconDrawablePreview = getAccountIconDrawablePreview(requiredData.jointAccountAddress),
             description = resources.getString(
                 R.string.signature_request_description,
-                requiredData.jointAccountAddress.toShortenedAddress()
+                displayName
             ),
             timeAgo = getTimeAgo(jointSignRequestDTO, resources, currentBlockNumber),
-            signedCount = getSignedCount(jointSignRequestDTO),
+            signedCount = getSignedCount(jointSignRequestDTO, requiredData.participantAddresses),
             totalCount = requiredData.threshold,
-            timeLeft = if (isExpired) {
+            timeLeft = if (statusLine.isError) {
                 resources.getString(R.string.zero_minutes_short)
             } else {
                 getTimeLeft(jointSignRequestDTO, resources)
             },
             isRead = isRead(creationDateTime, lastOpenedTime),
-            isExpired = isExpired,
+            statusLineText = statusLine.text,
+            statusLineIsError = statusLine.isError,
+            failReasonDisplay = jointSignRequestDTO.failReasonDisplay,
             canUserSign = canUserSign(
                 jointSignRequestDTO,
                 requiredData.participantAddresses,
                 localAccountAddresses,
-                isExpired
+                statusLine.isError
             )
         )
     }
@@ -94,13 +100,54 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         }
     }
 
+    private fun mapStatusToStatusLine(
+        status: SignRequestStatus?,
+        resources: Resources,
+        failReasonDisplay: String?
+    ): StatusLineData {
+        return when (status) {
+            SignRequestStatus.FAILED -> StatusLineData(
+                text = failReasonDisplay?.takeIf { it.isNotBlank() }
+                    ?: resources.getString(R.string.failed_transaction),
+                isError = true
+            )
+
+            SignRequestStatus.EXPIRED -> StatusLineData(
+                text = resources.getString(R.string.expired_transaction),
+                isError = true
+            )
+
+            SignRequestStatus.DECLINED -> StatusLineData(
+                text = resources.getString(R.string.declined_transaction),
+                isError = true
+            )
+
+            SignRequestStatus.CONFIRMED -> StatusLineData(
+                text = resources.getString(R.string.transaction_successfully_completed),
+                isError = false
+            )
+
+            SignRequestStatus.READY, SignRequestStatus.SUBMITTING -> StatusLineData(
+                text = resources.getString(R.string.submitting_transaction),
+                isError = false
+            )
+
+            else -> StatusLineData(
+                text = resources.getString(R.string.pending_transaction),
+                isError = false
+            )
+        }
+    }
+
+    private data class StatusLineData(val text: String, val isError: Boolean)
+
     private fun canUserSign(
         jointSignRequestDTO: JointSignRequest,
         participantAddresses: List<String>,
         localAccountAddresses: List<String>,
-        isExpired: Boolean
+        isBlockedByStatus: Boolean
     ): Boolean {
-        if (isExpired) return false
+        if (isBlockedByStatus) return false
 
         val localParticipants = participantAddresses.filter { it in localAccountAddresses }
         if (localParticipants.isEmpty()) return false
@@ -110,7 +157,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
             ?.responses
             ?.filter {
                 it.response == SignRequestResponseType.SIGNED ||
-                    it.response == SignRequestResponseType.REJECTED
+                        it.response == SignRequestResponseType.DECLINED
             }
             ?.mapNotNull { it.address }
             .orEmpty()
@@ -118,18 +165,14 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         return localParticipants.any { it !in respondedAddresses }
     }
 
-    private fun isSignRequestExpired(dto: JointSignRequest): Boolean {
-        val expireDateTime = getExpireDateTime(dto) ?: return false
-        return timeProvider.getZonedDateTimeNow().isAfter(expireDateTime)
-    }
-
-    private fun getSignedCount(dto: JointSignRequest): Int {
-        return dto.transactionLists
+    private fun getSignedCount(dto: JointSignRequest, participantAddresses: List<String>): Int {
+        val signedAddresses = dto.transactionLists
             ?.flatMap { it.responses.orEmpty() }
             ?.filter { it.response == SignRequestResponseType.SIGNED && !it.address.isNullOrBlank() }
             ?.mapNotNull { it.address }
             ?.toSet()
-            ?.size ?: 0
+            .orEmpty()
+        return participantAddresses.count { it in signedAddresses }
     }
 
     private fun getTimeAgo(
@@ -157,7 +200,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
         val expireDateTime = getExpireDateTime(dto) ?: return ""
         val estimatedCreationDateTime = expireDateTime.minusMinutes(VALIDITY_WINDOW_MINUTES)
         val timeDifference = timeProvider.getCurrentTimeMillis() -
-            estimatedCreationDateTime.toInstant().toEpochMilli()
+                estimatedCreationDateTime.toInstant().toEpochMilli()
 
         if (timeDifference < 0) return resources.getString(R.string.just_now)
 
@@ -178,16 +221,19 @@ class SignatureRequestInboxItemMapper @Inject constructor(
                 relativeTime.value,
                 relativeTime.value.toString()
             )
+
             is RelativeTimeDifference.RelativeTime.Hours -> resources.getQuantityString(
                 R.plurals.hours_ago,
                 relativeTime.value,
                 relativeTime.value.toString()
             )
+
             is RelativeTimeDifference.RelativeTime.Days -> resources.getQuantityString(
                 R.plurals.days_ago,
                 relativeTime.value,
                 relativeTime.value.toString()
             )
+
             is RelativeTimeDifference.RelativeTime.Date -> relativeTime.value
         }
     }
@@ -195,7 +241,7 @@ class SignatureRequestInboxItemMapper @Inject constructor(
     private fun getTimeLeft(dto: JointSignRequest, resources: Resources): String? {
         val expireDateTime = getExpireDateTime(dto) ?: return null
         val timeDifferenceMillis = expireDateTime.toInstant().toEpochMilli() -
-            timeProvider.getCurrentTimeMillis()
+                timeProvider.getCurrentTimeMillis()
         return formatTimeLeft(timeDifferenceMillis, resources)
     }
 
@@ -208,10 +254,12 @@ class SignatureRequestInboxItemMapper @Inject constructor(
                 R.string.minutes_short,
                 millis / DateUtils.MINUTE_IN_MILLIS
             )
+
             millis < DateUtils.DAY_IN_MILLIS -> resources.getString(
                 R.string.hours_short,
                 millis / DateUtils.HOUR_IN_MILLIS
             )
+
             else -> resources.getString(R.string.days_short, millis / DateUtils.DAY_IN_MILLIS)
         }
     }

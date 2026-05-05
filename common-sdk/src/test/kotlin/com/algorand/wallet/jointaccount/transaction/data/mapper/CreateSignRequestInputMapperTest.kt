@@ -16,6 +16,7 @@ import com.algorand.wallet.jointaccount.transaction.data.model.ProposeJointSignR
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResponseInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.ProposeJointSignRequestResult
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -184,7 +185,7 @@ internal class CreateSignRequestInputMapperTest {
     private fun createTestInput() = CreateSignRequestInput(
         jointAccountAddress = TEST_JOINT_ACCOUNT_ADDRESS,
         proposerAddress = TEST_PROPOSER_ADDRESS,
-        type = TEST_TYPE,
+        type = TEST_SIGN_REQUEST_TYPE,
         rawTransactionLists = TEST_RAW_TRANSACTION_LISTS,
         responses = listOf(
             ProposeJointSignRequestResponseInput(
@@ -198,7 +199,7 @@ internal class CreateSignRequestInputMapperTest {
     private fun createExpectedRequest() = com.algorand.wallet.jointaccount.transaction.data.model.ProposeJointSignRequestRequest(
         jointAccountAddress = TEST_JOINT_ACCOUNT_ADDRESS,
         proposerAddress = TEST_PROPOSER_ADDRESS,
-        type = TEST_TYPE,
+        type = TEST_SIGN_REQUEST_TYPE.value,
         rawTransactionLists = TEST_RAW_TRANSACTION_LISTS,
         responses = listOf(
             ProposeJointSignRequestResponse(
@@ -213,7 +214,7 @@ internal class CreateSignRequestInputMapperTest {
     private companion object {
         const val TEST_JOINT_ACCOUNT_ADDRESS = "JOINT_ADDRESS_123"
         const val TEST_PROPOSER_ADDRESS = "PROPOSER_ADDRESS"
-        const val TEST_TYPE = "payment"
+        val TEST_SIGN_REQUEST_TYPE = SignRequestType.ASYNC
         val TEST_RESPONSE_TYPE = ProposeJointSignRequestResult.SIGNED
         val TEST_RAW_TRANSACTION_LISTS = listOf(listOf("raw_tx_1", "raw_tx_2"))
         val TEST_SIGNATURE_LISTS = listOf(listOf("sig_1", null))

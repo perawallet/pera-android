@@ -18,7 +18,6 @@
 
     <string name="cancel">Cancel</string>
     <string name="decline">Decline</string>
-    <string name="sign">Sign</string>
     <string name="share_via">Share via</string>
     <string name="ok">OK</string>
     <string name="next">Next</string>
@@ -37,6 +36,7 @@
     <string name="status">Status</string>
     <string name="unnamed">Unnamed</string>
     <string name="approve">Approve</string>
+    <string name="sign">Sign</string>
     <string name="you_need_at_least">You need at least %1$s Algo to opt-in to this asset</string>
     <string name="connect">Connect</string>
     <string name="please_ensure">Please ensure that location services are enabled.</string>
@@ -240,7 +240,6 @@
     <string name="you_can_use_your_algo_or">You can use your ALGO or USDC balance to Buy gift card and mobile topups from thousands of brands worldwide!</string>
     <string name="confirm">Confirm</string>
     <string name="standard">Standard</string>
-    <string name="joint">Joint</string>
     <string name="watch">Watch</string>
     <string name="this_action_is_not_available">This action is not available for this account type</string>
     <string name="skip_for_now">Skip for now</string>
@@ -278,7 +277,8 @@
     <string name="dialpad_period">.</string>
     <string name="dialpad_0">0</string>
     <string name="rejecting_requests">Rejecting Requests</string>
-    <string name="this_feature_as_an_inbox">This is your unified inbox where you can manage all incoming requests. Here you can accept or reject asset transfer requests for assets or NFTs which you are not opted into already, respond to joint account invitations, and sign pending transactions for your joint accounts.</string>
+    <string name="this_feature_as_an_inbox">This is your unified inbox where you can manage all incoming requests. Here you can accept or reject asset transfer requests for assets or NFTs which you are not opted into already, respond to shared account invitations, and sign pending transactions for your shared accounts.</string>
+    <string name="this_feature_as_an_inbox_asset_only">This feature is an inbox for your account. Others can send you assets and NFTs, even if you have not explicitly opted in to receive them. From here, you can choose to accept or reject the asset transfer requests.</string>
     <string name="reject">Reject</string>
     <string name="ignore">Ignore</string>
     <string name="claim">Claim</string>
@@ -297,7 +297,6 @@
     <string name="download_completed">Download completed: ID %1$d</string>
     <string name="you_dont_have_any">You don\'t have any authorized account matching with %1$s</string>
     <string name="recommended">Recommended</string>
-    <string name="create_legacy_algo25_account">Create Legacy Algo25 Account</string>
     <string name="already_imported">Already Imported</string>
     <string name="use_your_screen_lock">Use your screen lock</string>
     <string name="create_your_new_account">Create your new account under a Universal Wallet you already have</string>
@@ -313,10 +312,7 @@
     <string name="invite_friends">Invite Friends</string>
     <string name="menu">Menu</string>
     <string name="simply_the_best_algorand">Simply the best Algorand wallet.</string>
-    <string name="you_are_all_set">You\'re all set!</string>
-    <string name="we_will_inform_this">We will inform this device via a push notification when we launch in your country.</string>
     <string name="go_to_cards">Go to Cards</string>
-    <string name="create_pera_card">Create Pera Card</string>
     <string name="once_you_enable_this">Once you enable this, you can confirm transaction request to rekey your account. This will give the control of your account to another address.</string>
     <string name="this_signature_includes">This signature includes rekey transaction, giving control over your accounts to another address. Please make sure that you understand the implications before proceeding.</string>
     <string name="you_pay">You pay</string>
@@ -334,6 +330,8 @@
     <string name="now">Now</string>
     <string name="developer_options">Developer Options</string>
     <string name="override_feature_flags">Override Feature Flags</string>
+    <string name="enable_all">Enable All</string>
+    <string name="disable_all">Disable All</string>
     <string name="overridden">Overridden</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
@@ -411,9 +409,8 @@
     <string name="based_on_your_account">Based on your account configuration, your minimum balance is %1$s. By hitting continue, your transaction amount will be updated to maintain the Algorand Blockchain\'s minimum required balance. You\'ll be able to preview this change in the next steps.</string>
     <string name="sorry_we_cant_show_account">Sorry, we can\'t show the details of this account. It looks like we are having issues for the calculation.\n\nPlease note that some asset values might not be available, therefore the total portfolio value should be considered an estimation.  </string>
     <string name="sorry_we_cant_show_portfolio">Sorry, we can\'t show the details of this portfolio. It looks like we are having issues for the calculation.\n\nPlease note that some asset values might not be available, therefore the total portfolio value should be considered an estimation.  </string>
-    <string name="add_an_account">Add an Account</string>
     <string name="add_account_desc">Add a new account to your existing Universal Wallet</string>
-    <string name="add_joint_account">Add Joint Account</string>
+    <string name="add_joint_account">Add Shared Account</string>
     <string name="add_joint_account_desc">Create a new multi-sig account with enhanced security that requires multiple signers</string>
     <string name="add_account">Add Account</string>
     <string name="import_account">Import Account</string>
@@ -423,26 +420,23 @@
     <string name="create_algo25_account_desc">Legacy format that is specific to Algorand</string>
     <string name="add_an_account_title">Add an\naccount</string>
     <string name="see_other_options">See other options</string>
-    <string name="joint_account">Joint Account</string>
-    <string name="joint_account_badge">Joint Account (%1$d)</string>
-    <string name="you_ve_been_invited_to_join_joint_account">You\'ve been invited to join a joint account %1$s</string>
+    <string name="joint_account">Shared Account</string>
+    <string name="joint_account_badge">Shared Account (%1$d)</string>
+    <string name="joint_account_default_name">Shared Account #%1$d</string>
+    <string name="you_ve_been_invited_to_join_joint_account">You\'ve been invited to join a shared account %1$s</string>
     <string name="you_ve_been_invited">You\'ve been invited</string>
     <string name="view_invitation_details">View invitation details</string>
     <string name="joint_account_info_1">Enhanced security by requiring multiple approvals. Great for shared or high-value accounts.</string>
     <string name="joint_account_info_2">Assign signers and required approvals per transaction.</string>
     <string name="joint_account_info_3">Monitor activity and signer actions securely.</string>
-    <string name="create_joint_account">Create Joint Account</string>
-    <string name="create_joint_account_description">Choose the accounts that will jointly manage and sign transactions for this account.</string>
-    <string name="creating_joint_account">Creating joint account…</string>
+    <string name="create_joint_account">Create Shared Account</string>
+    <string name="create_joint_account_description">Choose the accounts that will manage and sign transactions for this account.</string>
+    <string name="creating_joint_account">Creating shared account…</string>
     <string name="joint_account_min_accounts_required">You need add at least two accounts</string>
-    <string name="joint_account_validation_insufficient_participants">At least two participants are required to create a joint account</string>
-    <string name="joint_account_validation_too_many_participants">Maximum <annotation replacement="max_participants">%1$s</annotation> participants are allowed for a joint account</string>
-    <string name="joint_account_validation_invalid_threshold">Threshold must be between 1 and the number of participants</string>
-    <string name="joint_account_validation_duplicate_addresses">Duplicate addresses are not allowed. Please remove duplicate participants</string>
-    <string name="joint_account_validation_invalid_address">One or more addresses are invalid. Please check the addresses and try again</string>
-    <string name="joint_account_feature_not_supported">This feature is not available for joint accounts yet</string>
-    <string name="joint_accounts_are_not_supported">Swaps with joint accounts are not yet supported. Joint accounts require multi-signature approval which is not available in the swap flow.</string>
-    <string name="ledger_decline_not_supported">Declining with Ledger accounts is not supported. Ledger devices can only sign transactions, not decline requests. Please use a standard account to decline.</string>
+    <string name="joint_account_validation_insufficient_participants">At least two participants are required to create a shared account</string>
+    <string name="joint_account_feature_not_supported">This feature is not available for shared accounts yet</string>
+    <string name="joint_accounts_cannot_be_added">Shared accounts cannot be added to a new shared account</string>
+    <string name="joint_accounts_are_not_supported">Swaps with shared accounts are not yet supported. Shared accounts require multi-signature approval which is not available in the swap flow.</string>
     <string name="search_or_enter_wallet_address">Search or enter wallet address</string>
     <string name="selected_account">Selected account</string>
     <string name="you_are_about_to_remove_watch_account">You are about to remove a watch account. Are you sure you want to proceed with this choice?</string>
@@ -467,7 +461,7 @@
     <string name="pera_wallet_provides_an_easy">Pera Wallet provides an easy and fast way to swap assets. Swapping allows an ASA to be exchanged with another one using a smart contract, at market fees.</string>
     <string name="minimum_balance">Minimum Balance</string>
     <string name="account_does_not_have">Account doesn\'t have enough balance for this transaction.</string>
-    <string name="this_account_doesn_t">This account doesn\'t have enough balance for this transaction.</string>
+    <string name="this_account_doesn_t">This account doesn\'t have enough ALGO balance for this transaction.</string>
     <string name="algo_balance_is_too_low">Algo balance is too low. The minimum balance should be <annotation replacement="algo_icon">ALGO_ICON_PLACEHOLDER</annotation> <annotation replacement="min_balance">MIN_BALANCE_PLACEHOLDER</annotation></string>
     <string name="min_balance">Min Balance %1$s</string>
     <string name="minimum_balance_is_the_minimum">Minimum balance is the minimum amount of Algo you have to keep in an account. It increases every time the account is opted in to a smart contract, ASA or NFT.</string>
@@ -633,7 +627,6 @@
     <string name="the_transaction_cannot_be">The transaction cannot be completed because the amount will put your account below minimum required balance of <annotation replacement="min_balance">min_balance_placeholder</annotation> Algo.</string>
     <string name="transaction_request">Transaction Request</string>
     <string name="review_transaction">Review Transaction</string>
-    <string name="sign_txn_request">Sign txn request</string>
     <string name="raw_transaction">Raw Transaction</string>
     <string name="transaction_successfully_confirmed">Transaction successfully confirmed</string>
     <string name="sender">Sender</string>
@@ -646,6 +639,7 @@
     <string name="this_transaction_fee_is_higher">This transaction fee is higher than the usual fee of 0.001 Algo.</string>
     <string name="this_transaction_will_be">This transaction will be submitted in the future. Once confirmed, the connected application can send these transactions out at their discretion. Please make sure you review the transactions carefully as this process is irreversible.</string>
     <string name="you_can_not_send_your">You cannot send your max balance to yourself. Please select a different amount or recipient and try again.</string>
+    <string name="receiver_not_opted_in_joint_account">The receiver hasn\'t opted in to this asset. Please ask the receiver to opt in first and then try again.</string>
     <string name="transaction_count_group_id_formatted"><annotation replacement="transaction_count">transaction_count_placeholder</annotation> Txns · Group ID: <annotation replacement="group_id">group_id_placeholder</annotation></string>
     <string name="invalid_input_group_transaction">Invalid Input: Group transaction does not need to be signed by Wallet user. </string>
     <string name="your_transaction_is_being_processed">Your transaction is being processed</string>
@@ -670,7 +664,9 @@
     <string name="approve_transaction">Approve Transaction</string>
     <string name="sender_account">Sender Account</string>
     <string name="transacting_fee">Transaction Fee</string>
-    <string name="transfer_to">Transfer to %1$s</string>
+    <string name="transfer_to_styled">Transfer to <annotation type="bold">%1$s</annotation></string>
+    <string name="joint_sign_request_opt_in_from">Opt-in Request from</string>
+    <string name="joint_sign_request_opt_out_from">Opt-out Request from</string>
     <string name="confirm_transfer">Confirm transfer</string>
     <string name="no_transactions">No transactions</string>
     <string name="send_transaction">Send transaction</string>
@@ -793,6 +789,8 @@
     <string name="asset_transfer_requests">Asset Transfer Requests</string>
     <string name="asset_transfer_request">Asset Transfer Request</string>
     <string name="inbox">Inbox</string>
+    <string name="joint_account_request">Shared account request</string>
+    <string name="sign_txn_request">Sign txn request</string>
     <string name="no_pending_asset_transfer">No Pending Requests</string>
     <string name="when_you_have_an_asset">When you have requests or invitations, you can view them here. Tap on the info icon to learn more about this feature.</string>
     <string name="how_this_asset_transfer">How this asset transfer works?</string>
@@ -1000,6 +998,9 @@
     <string name="rekey_to_ledger_account_lower_case">Rekey to Ledger account</string>
     <string name="rekey_to_standard_account">Rekey to Standard Account</string>
     <string name="rekey_to_standard_account_lower_case">Rekey to standard account</string>
+    <string name="rekey_to_joint_account">Rekey to Shared Account</string>
+    <string name="rekey_to_joint_account_lower_case">Rekey to shared account</string>
+    <string name="choose_the_joint_account_rekey">Choose the shared account you would like to rekey to. The shared account you select here will be responsible for signing all transactions for the source account.</string>
     <string name="rekey_your_account_to">Rekey your account to a different standard account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="summary_of_rekey">Summary of rekey</string>
     <string name="currently_rekeyed">Currently Rekeyed</string>
@@ -1012,6 +1013,7 @@
     <string name="rekeyed_to">Rekeyed to</string>
     <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions.</string>
     <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account.</string>
+    <string name="your_account_is_rekeyed_to_joint_account">Your account is rekeyed to another shared account. Transactions for this account will be authorized by the other account.</string>
     <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account.</string>
     <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device.</string>
     <string name="undo_rekey">Undo rekey</string>
@@ -1129,13 +1131,43 @@
     <!-- ============================================================ -->
 
     <string name="an_error_occurred">An Error Occurred</string>
+    <string name="joint_account_transaction_decode_failed">Failed to process the transaction</string>
+    <string name="joint_account_proposal_failed">Failed to create the signing request. Please try again.</string>
+    <string name="joint_account_ledger_signing_failed">Failed to sign with the Ledger device. Please try again.</string>
+    <string name="joint_account_sign_request_not_found">Sign request not found. Please try again.</string>
+    <string name="joint_account_no_participants_found">No participants found. Please try again.</string>
+    <string name="joint_account_decline_failed">Failed to decline the signing request. Please try again.</string>
+    <string name="joint_account_ledger_connection_lost">Lost connection to Ledger device. Please try again.</string>
+    <string name="joint_account_create_failed">Failed to create shared account. Please try again.</string>
+    <string name="joint_account_save_failed">Failed to save shared account. Please try again.</string>
+    <string name="joint_account_device_not_registered">Device registration error. Please restart the app.</string>
+    <string name="joint_account_name_required">Please enter a name for the shared account.</string>
+    <string name="joint_account_participant_load_failed">Failed to load participant. Please try again.</string>
+    <string name="joint_account_verify_participant_failed">Could not verify participant. Please try again.</string>
     <string name="sign_request_not_available">This sign request is no longer available. It may have expired or been cancelled.</string>
-    <string name="expired">Expired</string>
-    <string name="sign_request_expired">This sign request has expired and is no longer valid.</string>
+    <string name="transaction_signing_failed">Failed to sign transaction. Please try again.</string>
+    <string name="transaction_data_empty">No transaction data provided.</string>
+    <string name="wallet_connect_signing_failed">Signing request failed. Please try again.</string>
+    <string name="wallet_connect_session_extend_failed">Failed to extend WalletConnect session. Please try again.</string>
+    <string name="wallet_connect_session_load_failed">Failed to load session details. Please try again.</string>
+    <string name="swap_generic_error">Swap failed. Please try again.</string>
+    <string name="swap_details_load_failed">Failed to load swap details.</string>
+    <string name="swap_asset_load_failed">Failed to load assets for swap.</string>
+    <string name="send_transaction_failed">Failed to send transaction. Please try again.</string>
+    <string name="send_amount_error">Failed to process amount. Please try again.</string>
+    <string name="csv_export_failed">Failed to export transactions. Please try again.</string>
+    <string name="asset_info_load_failed">Failed to load asset details. Please try again.</string>
+    <string name="asset_operation_failed">Failed to complete asset operation. Please try again.</string>
+    <string name="account_create_failed">Failed to create account. Please try again.</string>
+    <string name="account_rekeyed_scan_failed">Failed to scan rekeyed accounts. Please try again.</string>
+    <string name="passphrase_load_failed">Failed to load passphrase.</string>
+    <string name="key_reg_signing_failed">Failed to sign key registration. Please try again.</string>
+    <string name="ledger_reconnect_failed">Failed to reconnect to Ledger device. Please try again.</string>
+    <string name="arc59_asset_not_found">Asset not found. Please try again.</string>
+    <string name="arc59_send_summary_not_loaded">Send summary not ready. Please try again.</string>
     <string name="error">Error</string>
     <string name="key_not_valid">Key not valid, please make sure you have the right key.</string>
     <string name="scanned_qr_is_not_valid">Scanned QR is not valid.</string>
-    <string name="error_default_title">Error</string>
     <string name="error_app_closed_title">Ledger Connection Error</string>
     <string name="error_app_closed_message">Please open the Algorand App on your ledger device.</string>
     <string name="error_permission_title">Permission Denied</string>
@@ -1150,7 +1182,7 @@
     <string name="something_went_wrong">Something went wrong</string>
     <string name="sorry_something_went">Sorry, something went wrong there.</string>
     <string name="we_couldn_t_reach">We couldn\'t reach the server, make sure you are connected to the internet</string>
-    <string name="connection_failed">Connection failed</string>
+    <string name="connection_failed">Connection Failed</string>
     <string name="we_are_sorry_but_the">We are sorry, but the dApp is not responding. Please refresh the page and try scanning a new QR Code. If the error persists, please contact the dApp.</string>
     <string name="well_this_is_unexpected">Well, this is unexpected</string>
     <string name="uh_oh_something">Uh oh, something went wrong.</string>
@@ -1162,7 +1194,7 @@
     <string name="we_couldn_t_automatically_detect">We couldn\'t automatically detect the browser you started the WalletConnect session from. Please select it to go back to <annotation replacement="peer_name">peer_name_placeholder</annotation> and finish your operation:</string>
     <string name="invalid_request_format_pera">Invalid request format: Pera Wallet is unable to parse the transaction request.</string>
     <string name="invalid_arbitrary_data_request">Invalid request format: Pera Wallet is unable to parse the arbitrary data request.</string>
-    <string name="connection_failed_upper_case">Connection Failed</string>
+
     <string name="confirmation_failed">Confirmation Failed</string>
     <string name="upload_failed">Upload Failed</string>
     <string name="unable_to_parse_file">Unable to parse the backup file: JSON formatting error.</string>
@@ -1232,6 +1264,7 @@
     <string name="no_passkeys_yet">No passkeys yet</string>
     <string name="remove_passkey">Remove Passkey</string>
     <string name="type_new_address_or_search">Type a new address or search</string>
+    <string name="add_joint_account_address_input">Address search input</string>
     <string name="no_accounts_found">No accounts found…</string>
     <string name="edit_address">Edit address</string>
     <string name="nickname_optional">Nickname (Optional)</string>
@@ -1264,18 +1297,35 @@
     <string name="pending_transaction">Pending transaction</string>
     <string name="unread">Unread</string>
     <string name="pending_signatures">Pending signatures</string>
-    <string name="signature_request">Signature request</string>
+    <string name="sync_sign_notification_channel_name">Shared account signing</string>
+    <string name="sync_sign_notification_waiting">Waiting for co-signers… %1$d/%2$d signed</string>
+    <string name="sync_sign_notification_ready">Transaction ready — tap to open</string>
+    <string name="sync_sign_notification_failed">Sign request failed or expired</string>
+    <string name="sync_sign_notification_dot_separated">%1$s · %2$s</string>
     <string name="signature_request_description">Signature request to sign for %1$s</string>
-    <string name="to_sign_for_format"> to sign for %1$s</string>
     <string name="of_signed">%1$d of %2$d signed</string>
     <string name="time_left">≈ %1$s left</string>
-    <string name="sign_request_created">Sign request created</string>
-    <string name="sign_request_created_description">Your sign request has been created and is awaiting signatures from other participants.</string>
     <string name="you_need_at_least_accounts_to_sign">You need at least %1$d accounts to sign</string>
     <string name="close_for_now">Close for now</string>
     <string name="transaction_canceled">Transaction canceled.</string>
     <string name="transaction_successfully_completed">Transaction successfully completed.</string>
+    <string name="submitting_transaction">Submitting transaction…</string>
     <string name="signed">Signed</string>
-    <string name="rejected">Rejected</string>
+    <string name="failed_transaction">Failed transaction</string>
+    <string name="expired_transaction">Expired transaction</string>
+    <string name="declined_transaction">Declined transaction</string>
+    <string name="signature_request_declined">Signature request declined</string>
+    <string name="signature_request_cancelled">Signature request cancelled</string>
 
+    <string name="joint_account_invitation_accepted">Shared account invitation accepted</string>
+    <string name="before_you_create_joint_account">Before You Create a Shared Account</string>
+    <string name="joint_account_disclaimer_1">Once you create a shared account, you cannot change the participants.</string>
+    <string name="joint_account_disclaimer_2">Once you create a shared account, rekeying any of the participating accounts may result in losing access.</string>
+    <string name="proceed">Proceed</string>
+    <string name="go_back_and_edit">Go Back and Edit</string>
+    <string name="invitation_ignored">Invitation ignored</string>
+    <string name="cancel_transaction_request">Cancel Transaction Request</string>
+    <string name="cancel_transaction_request_description">The transaction request will be cancelled. Are you sure?</string>
+    <string name="yes_cancel">Yes, Cancel</string>
+    <string name="keep_waiting">Keep Waiting</string>
 </resources>

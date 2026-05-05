@@ -109,7 +109,6 @@
     <color name="wallet_4_icon_governor">@color/turquoise_800</color>
 
     <!-- Tab Bar -->
-    <color name="tab_bar_button">@color/gray_800</color>
     <color name="tab_bar_background">@color/gray_900</color>
     <color name="tab_bar_icon_active">@color/gray_50</color>
     <color name="tab_bar_icon_non_active">@color/gray_500</color>
@@ -124,10 +123,6 @@
     <!-- Switches -->
     <color name="switch_bg">@color/yellow_500</color>
     <color name="switch_off_bg">@color/gray_800</color>
-
-    <!-- NFT Icons -->
-    <color name="nft_icon_bg">@color/gray_900_alpha_60</color>
-    <color name="nft_icon">@color/white</color>
 
     <!-- Algorand Standard Assets (ASA) Tiers -->
     <color name="trusted_icon_bg">@color/turquoise_600</color>
@@ -149,7 +144,6 @@
 
     <!-- Testnet Badge -->
     <color name="testnet_bg">@color/yellow_500</color>
-    <color name="testnet_text">@color/gray_900</color>
 
     <!-- Algo Icon -->
     <color name="algo_icon_bg">@color/black</color>
@@ -165,7 +159,6 @@
     <color name="secondary_background">@color/gray_900</color>
     <color name="tertiary_background">@color/gray_900</color>
     <color name="surface_on_background">@color/gray_900</color>
-    <color name="toolbar_button_color">@color/gray_800</color>
     <color name="primary_background_ripple_color">@color/gray_900</color>
     <color name="passphrase_background_color">@color/gray_800</color>
 
@@ -175,11 +168,8 @@
     <color name="chart_time_frame_button_color">@color/gray_800</color>
     <color name="chart_time_frame_default_text_color">@color/gray_500</color>
 
-    <color name="wallet_connect_account_selection_border_color">@color/gray_800</color>
     <color name="wallet_connect_dapp_icon_background_color">@color/gray_800</color>
     <color name="wallet_connect_dapp_icon_border_color">@color/transparent</color>
-
-    <color name="participant_count_badge_text_color">@color/wallet_3_icon</color>
 
     <color name="primary_background">@color/gray_900</color>
 
@@ -215,8 +205,6 @@
     <color name="transaction_amount_positive_color">@color/turquoise_600</color>
     <color name="transaction_amount_negative_color">@color/salmon_500</color>
 
-    <color name="governance_banner_icon_color">@color/white</color>
-
     <!--  Verification Info Badge  -->
     <color name="verification_badge_bg_gradient_start_color">#252529</color>
 
@@ -241,11 +229,7 @@
     <color name="connected_node_testnet_text_color">@color/yellow_600</color>
 
     <!-- Backup -->
-    <color name="backup_banner_title">@color/black_alpha_64</color>
     <color name="backup_banner_description">@color/background</color>
     <color name="backup_banner_icon">@color/background</color>
-    <color name="backup_banner_icon_bg">@color/salmon_850_alpha20</color>
-
-    <color name="divider_color_dark">@color/gray_800</color>
 
 </resources>

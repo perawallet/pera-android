@@ -16,6 +16,7 @@ import com.algorand.wallet.inbox.domain.model.AssetInbox
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestType
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import io.mockk.coEvery
@@ -30,7 +31,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
 
     private val getInboxMessages: GetInboxMessages = mockk()
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled = mockk {
-        every { this@mockk(any()) } returns false
+        every { this@mockk(FeatureToggle.JOINT_ACCOUNT.key) } returns false
     }
 
     @Test
@@ -211,7 +212,7 @@ internal class HasInboxItemsForAddressUseCaseTest {
             participantAddresses = participantAddresses
         ),
         proposerAddress = "PROPOSER",
-        type = "transfer",
+        type = SignRequestType.ASYNC,
         rawTransactionLists = null,
         transactionLists = null,
         expectedExpireDatetime = null,

@@ -188,10 +188,10 @@ class LedgerBleOperationManager @Inject constructor(
                                 }
                                 sendPublicKeyRequest()
                             } else {
-                                // all the accounts are fetched.
                                 postResult(
                                     when (this) {
                                         is AccountFetchAllOperation -> {
+                                            accounts.add(fetchedAccountInformation)
                                             LedgerBleResult.AccountResult(accounts, device)
                                         }
 
@@ -308,6 +308,14 @@ class LedgerBleOperationManager @Inject constructor(
     fun manualStopAllProcess() {
         currentScope.coroutineContext.cancelChildren()
         stopAllResources()
+    }
+
+    /**
+     * Disconnects from the current Ledger device without stopping operations.
+     * Use when switching to a different Ledger device (e.g. second signer in joint account).
+     */
+    fun disconnectCurrentDevice() {
+        ledgerBleConnectionManager.disconnect().enqueue()
     }
 
     override fun stopAllResources() {

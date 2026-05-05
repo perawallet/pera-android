@@ -15,15 +15,22 @@ package com.algorand.wallet.inbox.domain
 import androidx.lifecycle.Lifecycle
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus.INITIALIZED
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
-import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.model.InboxSearchInput
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.CacheInboxMessages
 import com.algorand.wallet.inbox.domain.usecase.ClearInboxCache
 import com.algorand.wallet.inbox.domain.usecase.GetInboxValidAddresses
+import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequestTransactionList
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestStatus
+import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestType
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
@@ -33,10 +40,25 @@ internal class InboxCacheManagerImpl @Inject constructor(
     private val cacheInboxMessages: CacheInboxMessages,
     private val clearInboxCache: ClearInboxCache,
     private val getInboxValidAddresses: GetInboxValidAddresses,
-    private val getAllAccountInformationFlow: GetAllAccountInformationFlow,
     private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
-    private val inboxApiRepository: InboxApiRepository
+    private val inboxApiRepository: InboxApiRepository,
+    private val syncSignPollingTrigger: SyncSignPollingTrigger
 ) : InboxCacheManager, LifecycleAwareCacheManager.CacheManagerListener {
+
+    private val triggeredSignRequestIds: MutableSet<String> =
+        Collections.newSetFromMap(ConcurrentHashMap())
+
+    private fun trackTriggeredSignRequest(requestId: String) {
+        if (triggeredSignRequestIds.size >= MAX_TRACKED_SIGN_REQUESTS) {
+            triggeredSignRequestIds.iterator().let { iter ->
+                if (iter.hasNext()) {
+                    iter.next()
+                    iter.remove()
+                }
+            }
+        }
+        triggeredSignRequestIds.add(requestId)
+    }
 
     override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {
         initialize()
@@ -61,33 +83,80 @@ internal class InboxCacheManagerImpl @Inject constructor(
     }
 
     private suspend fun runManagerJob() {
-        getAllAccountInformationFlow().collectLatest {
-            updateInboxCache()
+        while (true) {
+            try {
+                updateInboxCache()
+            } catch (_: Exception) {
+                // Continue polling on transient failures
+            }
+            delay(INBOX_POLL_INTERVAL_MS)
         }
     }
 
     private suspend fun updateInboxCache() {
         val validAddresses = getInboxValidAddresses()
         if (validAddresses.isEmpty()) {
+            triggeredSignRequestIds.clear()
             clearInboxCache()
             return
         }
 
-        val deviceId = getSelectedNodeDeviceId()?.toLongOrNull() ?: run {
-            return
-        }
+        val deviceId = getSelectedNodeDeviceId() ?: return
+        val deviceIdLong = deviceId.toLongOrNull() ?: return
 
         val inboxSearchInput = InboxSearchInput(addresses = validAddresses)
-        inboxApiRepository.getInboxMessages(deviceId, inboxSearchInput).use(
+        inboxApiRepository.getInboxMessages(deviceIdLong, inboxSearchInput).use(
             onSuccess = { inboxMessages ->
                 cacheInboxMessages(inboxMessages)
+                triggerSyncSignPollingIfNeeded(inboxMessages, deviceId, validAddresses.toSet())
             },
             onFailed = { _, _ ->
             }
         )
     }
 
+    private fun triggerSyncSignPollingIfNeeded(
+        inboxMessages: InboxMessages,
+        deviceId: String,
+        localAddresses: Set<String>
+    ) {
+        inboxMessages.jointAccountSignRequests.orEmpty()
+            .filter { request ->
+                request.type == SignRequestType.SYNC &&
+                    request.status == SignRequestStatus.PENDING &&
+                    request.id != null &&
+                    request.id !in triggeredSignRequestIds &&
+                    hasLocalAccountAlreadySigned(request.transactionLists, localAddresses)
+            }
+            .forEach { request ->
+                val requestId = request.id ?: return@forEach
+                trackTriggeredSignRequest(requestId)
+                syncSignPollingTrigger.onPendingSyncSignRequestDetected(
+                    deviceId = deviceId,
+                    signRequestId = requestId,
+                    jointAccountAddress = request.jointAccount?.address.orEmpty()
+                )
+            }
+    }
+
+    private fun hasLocalAccountAlreadySigned(
+        transactionLists: List<JointSignRequestTransactionList>?,
+        localAddresses: Set<String>
+    ): Boolean {
+        return transactionLists?.any { txList ->
+            txList.responses?.any { response ->
+                response.address in localAddresses &&
+                    response.response == SignRequestResponseType.SIGNED
+            } == true
+        } == true
+    }
+
     override suspend fun refreshCache() {
         updateInboxCache()
+    }
+
+    private companion object {
+        const val INBOX_POLL_INTERVAL_MS = 6_000L
+        const val MAX_TRACKED_SIGN_REQUESTS = 500
     }
 }

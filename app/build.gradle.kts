@@ -46,7 +46,8 @@ val getVersionCode = {
 
 val gitHashProvider = providers.exec {
     commandLine("git", "rev-parse", "--short", "HEAD")
-}.standardOutput.asText.map { it.trim() }.orElse("unknown")
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { it.trim().ifEmpty { "unknown" } }.orElse("unknown")
 
 android {
     namespace = libs.versions.android.namespace.get()

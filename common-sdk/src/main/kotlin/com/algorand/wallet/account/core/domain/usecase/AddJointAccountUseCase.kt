@@ -16,6 +16,7 @@ import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveJointAccount
+import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
 internal class AddJointAccountUseCase @Inject constructor(
@@ -30,14 +31,19 @@ internal class AddJointAccountUseCase @Inject constructor(
         version: Int,
         customName: String?,
         orderIndex: Int
-    ) {
-        val account = LocalAccount.Joint(
-            algoAddress = address,
-            participantAddresses = participantAddresses,
-            threshold = threshold,
-            version = version
-        )
-        saveJointAccount(account)
-        setAccountCustomInfo(CustomAccountInfo(address, customName, orderIndex, isBackedUp = true))
+    ): PeraResult<Unit> {
+        return try {
+            val account = LocalAccount.Joint(
+                algoAddress = address,
+                participantAddresses = participantAddresses,
+                threshold = threshold,
+                version = version
+            )
+            saveJointAccount(account)
+            setAccountCustomInfo(CustomAccountInfo(address, customName, orderIndex, isBackedUp = true))
+            PeraResult.Success(Unit)
+        } catch (e: Exception) {
+            PeraResult.Error(e)
+        }
     }
 }

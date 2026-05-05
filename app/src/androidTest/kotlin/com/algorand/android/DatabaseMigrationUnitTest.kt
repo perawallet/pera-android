@@ -1,8 +1,6 @@
 package com.algorand.android
 
 import android.database.Cursor
-import android.database.DatabaseUtils
-import android.util.Log
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
@@ -69,8 +67,6 @@ class DatabaseMigrationUnitTest {
         migratedDb!!.insertNodeToDatabaseLatestVersion()
         val queryString = "SELECT * FROM Node"
         val cursor: Cursor = migratedDb!!.query(queryString, emptyArray())
-        Log.d(TAG, "Node DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
-        Log.d(TAG, "Node Count in Database: ${cursor.count}")
         Assert.assertTrue("Nodes Count After Migration Not Successful", cursor.count == defaultNodeList.size)
     }
 
@@ -79,8 +75,6 @@ class DatabaseMigrationUnitTest {
         migratedDb!!.insertUser("LastPublicKey")
         val queryString = "SELECT * FROM User"
         val cursor = migratedDb!!.query(queryString, emptyArray())
-        Log.d(TAG, "User DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
-        Log.d(TAG, "User Count in Database: ${cursor.count}")
         Assert.assertTrue("Users Count After Migration Not Successful", cursor.count == 2)
     }
 
@@ -89,8 +83,6 @@ class DatabaseMigrationUnitTest {
         migratedDb!!.insertWalletConnectSession()
         val queryString = "SELECT * FROM WalletConnectSessionEntity"
         val cursor = migratedDb!!.query(queryString, emptyArray())
-        Log.d(TAG, "WalletConnectSessionEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
-        Log.d(TAG, "Session count in Database: ${cursor.count}")
         Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)
     }
 
@@ -99,8 +91,6 @@ class DatabaseMigrationUnitTest {
         migratedDb!!.insertWalletConnectSessionAccount()
         val queryString = "SELECT * FROM WalletConnectSessionAccountEntity"
         val cursor = migratedDb!!.query(queryString, emptyArray())
-        Log.d(TAG, "WalletConnectSessionAccountEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
-        Log.d(TAG, "Connected account count in Database: ${cursor.count}")
         Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)
     }
 

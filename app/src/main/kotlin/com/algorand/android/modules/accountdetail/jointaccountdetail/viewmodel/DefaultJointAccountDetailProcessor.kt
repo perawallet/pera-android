@@ -19,14 +19,17 @@ import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import com.algorand.wallet.inbox.domain.usecase.GetInboxMessages
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
+import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountDetail
 import javax.inject.Inject
 
 internal class DefaultJointAccountDetailProcessor @Inject constructor(
     private val getJointAccount: GetJointAccount,
+    private val getJointAccountDetail: GetJointAccountDetail,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val contactRepository: ContactRepository,
     private val createJointAccountParticipantItem: CreateJointAccountParticipantItem,
@@ -77,6 +80,32 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
         return parseInvitationFromInboxMessages(inboxMessages, accountAddress)
     }
 
+    override suspend fun fetchJointAccountFromApi(
+        accountAddress: String
+    ): JointAccountDetailProcessor.InvitationResult {
+        return when (val result = getJointAccountDetail(accountAddress)) {
+            is PeraResult.Success -> {
+                val jointAccount = result.data
+                val participantAddresses = jointAccount.participantAddresses
+                val threshold = jointAccount.threshold
+                if (participantAddresses.isNullOrEmpty() || threshold == null) {
+                    JointAccountDetailProcessor.InvitationResult.NotFound
+                } else {
+                    JointAccountDetailProcessor.InvitationResult.Success(
+                        JointAccountDetailProcessor.InvitationData(
+                            threshold = threshold,
+                            participantAddresses = participantAddresses
+                        )
+                    )
+                }
+            }
+
+            is PeraResult.Error -> {
+                JointAccountDetailProcessor.InvitationResult.NetworkError
+            }
+        }
+    }
+
     override suspend fun createParticipantItems(
         participantAddresses: List<String>
     ): List<JointAccountParticipantItem> {
@@ -102,6 +131,12 @@ internal class DefaultJointAccountDetailProcessor @Inject constructor(
             contactDatabaseId = contact.contactDatabaseId,
             contactProfileImageUri = contact.imageUriAsString
         )
+    }
+
+    override suspend fun updateContactName(address: String, newName: String) {
+        val contact = contactRepository.getContactByAddress(address) ?: return
+        val updatedContact = contact.copy(name = newName)
+        contactRepository.updateContact(updatedContact)
     }
 
     private fun parseInvitationFromInboxMessages(

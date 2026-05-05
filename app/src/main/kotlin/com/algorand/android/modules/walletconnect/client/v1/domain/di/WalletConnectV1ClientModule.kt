@@ -112,6 +112,7 @@ object WalletConnectV1ClientModule {
         walletConnectMapper: WalletConnectSessionConfigMapper
     ): WalletConnectSessionBuilder {
         val storageFile = File(appContext.cacheDir, WalletConnectClientV1Impl.CACHE_STORAGE_NAME).apply {
+            parentFile?.mkdirs()
             createNewFile()
         }
         return WalletConnectSessionBuilder(

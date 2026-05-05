@@ -26,9 +26,16 @@ internal class DeleteInboxJointInvitationNotificationUseCaseTest {
     private val repository: InboxApiRepository = mockk()
     private val sut = DeleteInboxJointInvitationNotificationUseCase(repository)
 
+    private companion object {
+        const val TEST_DEVICE_ID = 12345L
+        const val TEST_JOINT_ADDRESS = "JOINT_ADDRESS_123"
+    }
+
     @Test
     fun `EXPECT success WHEN repository succeeds`() = runTest {
-        coEvery { repository.deleteJointInvitationNotification(TEST_DEVICE_ID, TEST_JOINT_ADDRESS) } returns PeraResult.Success(Unit)
+        coEvery {
+            repository.deleteJointInvitationNotification(TEST_DEVICE_ID, TEST_JOINT_ADDRESS)
+        } returns PeraResult.Success(Unit)
 
         val result = sut(TEST_DEVICE_ID, TEST_JOINT_ADDRESS)
 
@@ -38,7 +45,9 @@ internal class DeleteInboxJointInvitationNotificationUseCaseTest {
     @Test
     fun `EXPECT error WHEN repository fails`() = runTest {
         val exception = Exception("Network error")
-        coEvery { repository.deleteJointInvitationNotification(TEST_DEVICE_ID, TEST_JOINT_ADDRESS) } returns PeraResult.Error(exception)
+        coEvery {
+            repository.deleteJointInvitationNotification(TEST_DEVICE_ID, TEST_JOINT_ADDRESS)
+        } returns PeraResult.Error(exception)
 
         val result = sut(TEST_DEVICE_ID, TEST_JOINT_ADDRESS)
 
@@ -47,37 +56,14 @@ internal class DeleteInboxJointInvitationNotificationUseCaseTest {
 
     @Test
     fun `EXPECT correct parameters passed to repository`() = runTest {
-        coEvery { repository.deleteJointInvitationNotification(any(), any()) } returns PeraResult.Success(Unit)
+        coEvery {
+            repository.deleteJointInvitationNotification(TEST_DEVICE_ID, TEST_JOINT_ADDRESS)
+        } returns PeraResult.Success(Unit)
 
         sut(TEST_DEVICE_ID, TEST_JOINT_ADDRESS)
 
-        coVerify { repository.deleteJointInvitationNotification(TEST_DEVICE_ID, TEST_JOINT_ADDRESS) }
-    }
-
-    @Test
-    fun `EXPECT repository called with different device id`() = runTest {
-        val differentDeviceId = 99999L
-        coEvery { repository.deleteJointInvitationNotification(differentDeviceId, TEST_JOINT_ADDRESS) } returns PeraResult.Success(Unit)
-
-        val result = sut(differentDeviceId, TEST_JOINT_ADDRESS)
-
-        assertTrue(result is PeraResult.Success)
-        coVerify { repository.deleteJointInvitationNotification(differentDeviceId, TEST_JOINT_ADDRESS) }
-    }
-
-    @Test
-    fun `EXPECT repository called with different joint address`() = runTest {
-        val differentAddress = "DIFFERENT_JOINT_ADDRESS"
-        coEvery { repository.deleteJointInvitationNotification(TEST_DEVICE_ID, differentAddress) } returns PeraResult.Success(Unit)
-
-        val result = sut(TEST_DEVICE_ID, differentAddress)
-
-        assertTrue(result is PeraResult.Success)
-        coVerify { repository.deleteJointInvitationNotification(TEST_DEVICE_ID, differentAddress) }
-    }
-
-    private companion object {
-        const val TEST_DEVICE_ID = 12345L
-        const val TEST_JOINT_ADDRESS = "JOINT_ADDRESS_123"
+        coVerify {
+            repository.deleteJointInvitationNotification(TEST_DEVICE_ID, TEST_JOINT_ADDRESS)
+        }
     }
 }

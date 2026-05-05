@@ -21,18 +21,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.AccountIconDrawablePreviews
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
-import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesBottomSheet
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesContent
 import com.algorand.android.ui.compose.preview.PeraPreviewLightDark
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
@@ -40,15 +41,13 @@ import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragInd
 @OptIn(ExperimentalMaterial3Api::class)
 @PeraPreviewLightDark
 @Composable
-fun PendingSignaturesBottomSheetPreview() {
+fun PendingSignaturesBottomSheetScreenPreview() {
     PeraTheme {
-        PendingSignaturesBottomSheet(
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        PendingSignaturesContent(
             transactionPreview = createMockPreviewPending(),
-            onDismiss = {},
             onCancel = {},
-            onCloseForNow = {},
-            onCloseCompleted = {}
+            onClose = {},
+            onCloseCompleted = {},
         )
     }
 }
@@ -105,69 +104,83 @@ fun PendingSignaturesCompletedPreview() {
 }
 
 @Composable
-private fun PendingSignaturesContentInternal(preview: JointAccountTransactionPreview) {
+private fun PendingSignaturesContentInternal(preview: JointAccountTransactionViewState) {
     // This is a simplified version for preview purposes
     // The actual content is rendered by PendingSignaturesBottomSheet
     Spacer(modifier = Modifier.height(400.dp))
 }
 
-private fun createMockPreviewPending(): JointAccountTransactionPreview {
+private fun createMockPreviewPending(): JointAccountTransactionViewState {
     val jointIcon = AccountIconDrawablePreviews.getJointDrawable()
-    return JointAccountTransactionPreview(
+    return JointAccountTransactionViewState(
         jointAccountDisplayName = AccountDisplayName(
             accountAddress = "HZQ73CXUPMVKRB4LNGJAGVZQCFPQDCCPSDZZE",
-            primaryDisplayName = "Joint Account #1",
+            primaryDisplayName = "Shared Account #1",
             secondaryDisplayName = "HZQ7...DZZE"
         ),
         jointAccountIconPreview = jointIcon,
+        centerPreview = JointAccountSignRequestCenterPreview.Transfer(
+            recipientShortAddress = "JDM35...XJD3M",
+            amount = "₳21.6500",
+            convertedAmount = "$6.24"
+        ),
+        addressForClipboard = "JDM35UAJXUCQY4XKXGHDWZQSVXJD3M",
         recipientAddress = "JDM35UAJXUCQY4XKXGHDWZQSVXJD3M",
         recipientShortAddress = "JDM35...XJD3M",
         amount = "₳21.6500",
         convertedAmount = "$6.24",
         transactionFee = "-₳0.002",
         transactionState = JointAccountTransactionState.PendingSignatures,
-        signerAccounts = listOf(
-            JointAccountSignerItem(
-                accountAddress = "HZQ73CXUPMVKRB4LNGJAGVZQCFPQDCCPSDZZE",
-                accountDisplayName = AccountDisplayName(
-                    accountAddress = "HZQ73CXUPMVKRB4LNGJAGVZQCFPQDCCPSDZZE",
-                    primaryDisplayName = "HZQ73C...PSDZZE",
-                    secondaryDisplayName = null
-                ),
-                accountIconDrawablePreview = jointIcon,
-                imageUri = null,
-                signatureStatus = JointAccountSignatureStatus.Signed
-            ),
-            JointAccountSignerItem(
-                accountAddress = "DUA4XLTFPBPWDDCH47SGDNZ5IJ52DFXG7X2N2ETI",
-                accountDisplayName = AccountDisplayName(
-                    accountAddress = "DUA4XLTFPBPWDDCH47SGDNZ5IJ52DFXG7X2N2ETI",
-                    primaryDisplayName = "tahir.algo",
-                    secondaryDisplayName = "DUA4...2ETI"
-                ),
-                accountIconDrawablePreview = jointIcon,
-                imageUri = null,
-                signatureStatus = JointAccountSignatureStatus.Pending
-            ),
-            JointAccountSignerItem(
-                accountAddress = "S93KZQHV4XLTFPBPWDDCH47SGNSK2",
-                accountDisplayName = AccountDisplayName(
-                    accountAddress = "S93KZQHV4XLTFPBPWDDCH47SGNSK2",
-                    primaryDisplayName = "Katie Rochester",
-                    secondaryDisplayName = "S93K...NSK2"
-                ),
-                accountIconDrawablePreview = jointIcon,
-                imageUri = null,
-                signatureStatus = JointAccountSignatureStatus.Pending
-            )
-        ),
+        signerAccounts = createMockPendingSignerItems(jointIcon),
         signedCount = 1,
-        requiredSignatureCount = 3,
+        threshold = 3,
         timeRemaining = "≈ 52m"
     )
 }
 
-private fun createMockPreviewCanceled(): JointAccountTransactionPreview {
+private fun createMockPendingSignerItems(
+    jointIcon: AccountIconDrawablePreview
+): List<JointAccountSignerItem> {
+    return listOf(
+        JointAccountSignerItem(
+            accountAddress = "HZQ73CXUPMVKRB4LNGJAGVZQCFPQDCCPSDZZE",
+            accountDisplayName = AccountDisplayName(
+                accountAddress = "HZQ73CXUPMVKRB4LNGJAGVZQCFPQDCCPSDZZE",
+                primaryDisplayName = "HZQ73C...PSDZZE",
+                secondaryDisplayName = null
+            ),
+            accountIconDrawablePreview = jointIcon,
+            imageUri = null,
+            signatureStatus = JointAccountSignatureStatus.Signed
+        ),
+        JointAccountSignerItem(
+            accountAddress = "DUA4XLTFPBPWDDCH47SGDNZ5IJ52DFXG7X2N2ETI",
+            accountDisplayName = AccountDisplayName(
+                accountAddress = "DUA4XLTFPBPWDDCH47SGDNZ5IJ52DFXG7X2N2ETI",
+                primaryDisplayName = "tahir.algo",
+                secondaryDisplayName = "DUA4...2ETI"
+            ),
+            accountIconDrawablePreview = jointIcon,
+            imageUri = null,
+            signatureStatus = JointAccountSignatureStatus.Pending,
+            showProgress = true
+        ),
+        JointAccountSignerItem(
+            accountAddress = "S93KZQHV4XLTFPBPWDDCH47SGNSK2",
+            accountDisplayName = AccountDisplayName(
+                accountAddress = "S93KZQHV4XLTFPBPWDDCH47SGNSK2",
+                primaryDisplayName = "Katie Rochester",
+                secondaryDisplayName = "S93K...NSK2"
+            ),
+            accountIconDrawablePreview = jointIcon,
+            imageUri = null,
+            signatureStatus = JointAccountSignatureStatus.Pending,
+            showProgress = true
+        )
+    )
+}
+
+private fun createMockPreviewCanceled(): JointAccountTransactionViewState {
     val jointIcon = AccountIconDrawablePreviews.getJointDrawable()
     return createMockPreviewPending().copy(
         transactionState = JointAccountTransactionState.Canceled,
@@ -192,13 +205,13 @@ private fun createMockPreviewCanceled(): JointAccountTransactionPreview {
                 ),
                 accountIconDrawablePreview = jointIcon,
                 imageUri = null,
-                signatureStatus = JointAccountSignatureStatus.Rejected
+                signatureStatus = JointAccountSignatureStatus.Declined
             )
         )
     )
 }
 
-private fun createMockPreviewCompleted(): JointAccountTransactionPreview {
+private fun createMockPreviewCompleted(): JointAccountTransactionViewState {
     val jointIcon = AccountIconDrawablePreviews.getJointDrawable()
     return createMockPreviewPending().copy(
         transactionState = JointAccountTransactionState.Completed,

@@ -12,16 +12,23 @@
 
 package com.algorand.android.encryption.domain.usecase
 
+import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.util.Log
 import com.algorand.wallet.foundation.PeraResult
+import com.google.crypto.tink.Aead
+import com.google.crypto.tink.KeyTemplates
+import com.google.crypto.tink.RegistryConfiguration
+import com.google.crypto.tink.aead.AeadConfig
+import com.google.crypto.tink.integration.android.AndroidKeysetManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.inject.Inject
 
 internal class AndroidEncryptionManagerImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context,
     private val getStrongBoxUsedCheck: GetStrongBoxUsedCheck,
     private val saveStrongBoxUsedCheck: SaveStrongBoxUsedCheck,
 ) : AndroidEncryptionManager {
@@ -49,8 +56,8 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
             try {
                 // Clean up the test key if it was created
                 cleanUpStrongBoxTestAlias()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error cleaning up test key", e)
+            } catch (_: Exception) {
+                // Cleanup failure is non-critical; test alias may not exist
             }
         }
     }
@@ -82,7 +89,6 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
             val keyStore = getKeyStore()
             val originalKeyExists = keyStore.containsAlias(KEY_ALIAS)
             if (!originalKeyExists) {
-                Log.d(TAG, "No key to migrate to StrongBox")
                 return PeraResult.Success(false)
             }
 
@@ -96,9 +102,43 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
 
             return PeraResult.Success(false)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to migrate to StrongBox", e)
             return PeraResult.Error(e)
         }
+    }
+
+    override fun getOrRecoverAead(): Aead {
+        AeadConfig.register()
+        return try {
+            buildAead()
+        } catch (e: Exception) {
+            clearCorruptedKeystoreData()
+            buildAead()
+        }
+    }
+
+    private fun buildAead(): Aead {
+        return AndroidKeysetManager.Builder()
+            .withSharedPref(context, TINK_KEYSET_HANDLE, TINK_ENCRYPTED_PREF_NAME)
+            .withKeyTemplate(KeyTemplates.get(TINK_KEY_TEMPLATE))
+            .withMasterKeyUri(TINK_KEYSTORE_URI)
+            .build()
+            .keysetHandle
+            .getPrimitive(RegistryConfiguration.get(), Aead::class.java)
+    }
+
+    private fun clearCorruptedKeystoreData() {
+        try {
+            val keyStore = getKeyStore()
+            if (keyStore.containsAlias(TINK_KEYSTORE_ALIAS)) {
+                keyStore.deleteEntry(TINK_KEYSTORE_ALIAS)
+            }
+        } catch (_: Exception) {
+            // Keystore entry may already be deleted or corrupted beyond recovery
+        }
+        context.getSharedPreferences(TINK_ENCRYPTED_PREF_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .clear()
+            .apply()
     }
 
     private fun getKeyStore(): KeyStore {
@@ -121,13 +161,10 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
                 // Try to create StrongBox-backed key first
                 createKey(keyGenerator, STRONG_BOX_ALIAS, useStrongBox = true)
                 saveStrongBoxUsedCheck.invoke(true)
-                Log.d(TAG, "StrongBox key generated successfully")
             } catch (e: java.security.ProviderException) {
                 // Fall back to software-backed key
-                Log.d(TAG, "StrongBox not available, falling back to software-backed key", e)
                 createKey(keyGenerator, KEY_ALIAS, useStrongBox = false)
                 saveStrongBoxUsedCheck.invoke(false)
-                Log.d(TAG, "Software-backed key generated successfully")
             }
         }
     }
@@ -165,6 +202,10 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
         const val STRONG_BOX_ALIAS = "${KEY_ALIAS}_strongbox"
         const val STRONG_BOX_TEST_ALIAS = "StrongBoxTest"
         const val ENCRYPTION_KEY_SIZE_IN_BITS = 256
-        val TAG: String = AndroidEncryptionManager::class.java.simpleName
+        const val TINK_KEYSTORE_ALIAS = "algorand_keystore_key"
+        const val TINK_KEYSTORE_URI = "android-keystore://$TINK_KEYSTORE_ALIAS"
+        const val TINK_KEYSET_HANDLE = "ALGORAND_KEYSET"
+        const val TINK_ENCRYPTED_PREF_NAME = "ALGORAND_ENCR_ACCOUNTS"
+        const val TINK_KEY_TEMPLATE = "AES256_GCM"
     }
 }

@@ -17,6 +17,7 @@ import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheS
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Data
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.test.peraFixture
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
@@ -78,7 +79,8 @@ class GetPreselectedSwapAddressUseCaseTest {
             address = "LEDGER_ADDRESS",
             cachedInfo = peraFixture<AccountLite.CachedInfo>().copy(
                 type = AccountType.LedgerBle
-            )
+            ),
+            registrationType = AccountRegistrationType.LedgerBle
         )
         val accountLiteCacheData = peraFixture<Data>().copy(
             accountLites = mapOf(
@@ -160,13 +162,15 @@ class GetPreselectedSwapAddressUseCaseTest {
         const val ALGO_25_ADDRESS = "ALGO_25_ADDRESS"
         val ALGO_25_LITE = peraFixture<AccountLite>().copy(
             address = ALGO_25_ADDRESS,
-            cachedInfo = peraFixture<AccountLite.CachedInfo>().copy(type = AccountType.Algo25)
+            cachedInfo = peraFixture<AccountLite.CachedInfo>().copy(type = AccountType.Algo25),
+            registrationType = AccountRegistrationType.Algo25
         )
 
         const val WATCH_ADDRESS = "WATCH_ADDRESS"
         val WATCH_ACCOUNT_LITE = peraFixture<AccountLite>().copy(
             address = WATCH_ADDRESS,
-            cachedInfo = peraFixture<AccountLite.CachedInfo>().copy(type = AccountType.NoAuth)
+            cachedInfo = peraFixture<AccountLite.CachedInfo>().copy(type = AccountType.NoAuth),
+            registrationType = AccountRegistrationType.NoAuth
         )
 
         val ACCOUNT_LITES = mapOf(ALGO_25_ADDRESS to ALGO_25_LITE, WATCH_ADDRESS to WATCH_ACCOUNT_LITE)

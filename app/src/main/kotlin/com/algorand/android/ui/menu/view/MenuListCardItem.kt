@@ -32,8 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.algorand.android.ui.compose.widget.icon.rememberSafePainterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
@@ -105,13 +105,15 @@ private fun CardItemContainer(
                     Spacer(modifier = Modifier.height(20.dp))
                     description()
                 }
-                Image(
-                    modifier = Modifier
-                        .size(width = 116.dp, height = 112.dp)
-                        .offset(x = 24.dp),
-                    painter = painterResource(R.drawable.ic_cards_coloured),
-                    contentDescription = null
-                )
+                rememberSafePainterResource(R.drawable.ic_cards_coloured)?.let { painter ->
+                    Image(
+                        modifier = Modifier
+                            .size(width = 116.dp, height = 112.dp)
+                            .offset(x = 24.dp),
+                        painter = painter,
+                        contentDescription = null
+                    )
+                }
             }
             if (button != null) {
                 Spacer(modifier = Modifier.height(16.dp))

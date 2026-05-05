@@ -14,14 +14,21 @@ package com.algorand.android.ui.register.createwallet.name
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.algorand.android.R
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.nameregistration.BaseNameRegistrationFragment
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreateWalletNameRegistrationFragment : BaseNameRegistrationFragment() {
+
+    @Inject
+    lateinit var isThereAnyLocalAccount: IsThereAnyLocalAccount
 
     override val accountCreation: AccountCreation?
         get() = null
@@ -38,5 +45,14 @@ class CreateWalletNameRegistrationFragment : BaseNameRegistrationFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.labelTextView.setText(R.string.name_your_wallet)
         binding.descriptionTextView.setText(R.string.name_your_wallet_to)
+        hideBackButtonIfOnboarding()
+    }
+
+    private fun hideBackButtonIfOnboarding() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (!isThereAnyLocalAccount()) {
+                getAppToolbar()?.configureStartButton(null, null)
+            }
+        }
     }
 }

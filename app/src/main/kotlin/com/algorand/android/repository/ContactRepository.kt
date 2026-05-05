@@ -36,4 +36,8 @@ class ContactRepository @Inject constructor(
     suspend fun addContact(contact: User) {
         contactDao.addContact(contact)
     }
+
+    suspend fun updateContact(contact: User) {
+        contactDao.updateContact(contact)
+    }
 }

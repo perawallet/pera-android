@@ -53,12 +53,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel
-import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel.ViewState.Content
-import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel.ViewState.Idle
+import com.algorand.android.modules.addaccount.intro.viewmodel.AddAccountIntroViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.GroupChoiceNewBadge
 import com.algorand.android.ui.compose.widget.GroupChoiceWidget
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.icon.rememberSafePainterResource
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
@@ -71,6 +71,25 @@ fun AddAccountIntroScreen(
     viewModel: AddAccountIntroViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    when (val viewState = state) {
+        is ViewState.Loading -> Unit
+        is ViewState.Content -> {
+            AddAccountIntroContent(
+                modifier = modifier,
+                contentState = viewState,
+                listener = listener
+            )
+        }
+    }
+}
+
+@Composable
+fun AddAccountIntroContent(
+    modifier: Modifier = Modifier,
+    contentState: ViewState.Content,
+    listener: AddAccountIntroScreenListener
+) {
     var showOtherOptions by remember { mutableStateOf(false) }
 
     Column(
@@ -84,38 +103,64 @@ fun AddAccountIntroScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            when (state) {
-                is Idle -> Unit
-                is Content -> {
-                    val preview = (state as Content).preview
-                    if (preview.hasHdWallet) {
-                        AddAccountWidget(listener::onAddAccountClick)
-                    } else {
-                        CreateUniversalWalletWidget(listener::onCreateUniversalWalletClick)
-                    }
-                    if (viewModel.isJointAccountFeatureEnabled()) {
-                        AddJointAccountWidget(listener::onAddJointAccountClick)
-                    }
-                    ImportAccountWidget(listener::onImportAccountClick)
+            when (contentState.primaryAccountOption) {
+                is AddAccountIntroViewModel.PrimaryAccountOption.AddAccount ->
+                    AddAccountWidget(listener::onAddAccountClick)
 
-                    if (!showOtherOptions) {
-                        SeeOtherOptionsButton(
-                            onClick = { showOtherOptions = true }
-                        )
-                    } else {
-                        WatchAddressWidget(listener::onWatchAddressClick)
-                        if (preview.hasHdWallet) {
-                            CreateUniversalWalletWidget(listener::onCreateUniversalWalletClick)
-                        }
-                        CreateAlgo25AccountWidget(listener::onCreateAlgo25AccountClick)
-                    }
-
-                    TermsAndPrivacy(
-                        modifier = Modifier.padding(top = 48.dp, bottom = 24.dp)
-                    )
-                }
+                is AddAccountIntroViewModel.PrimaryAccountOption.CreateUniversalWallet ->
+                    CreateUniversalWalletWidget(listener::onCreateUniversalWalletClick)
             }
+            when (contentState.jointAccountOption) {
+                is AddAccountIntroViewModel.JointAccountOption.Visible ->
+                    AddJointAccountWidget(listener::onAddJointAccountClick)
+
+                is AddAccountIntroViewModel.JointAccountOption.Hidden -> Unit
+            }
+            ImportAccountWidget(listener::onImportAccountClick)
+
+            if (!showOtherOptions) {
+                SeeOtherOptionsButton(
+                    onClick = { showOtherOptions = true }
+                )
+            } else {
+                WatchAddressWidget(listener::onWatchAddressClick)
+                when (contentState.primaryAccountOption) {
+                    is AddAccountIntroViewModel.PrimaryAccountOption.AddAccount ->
+                        CreateUniversalWalletWidget(listener::onCreateUniversalWalletClick)
+
+                    is AddAccountIntroViewModel.PrimaryAccountOption.CreateUniversalWallet -> Unit
+                }
+                CreateAlgo25AccountWidget(listener::onCreateAlgo25AccountClick)
+            }
+
+            TermsAndPrivacy(
+                modifier = Modifier.padding(top = 48.dp, bottom = 24.dp)
+            )
         }
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+private fun AddAccountIntroScreenPreview() {
+    PeraTheme {
+        AddAccountIntroContent(
+            contentState = ViewState.Content(
+                isSkipButtonVisible = false,
+                isCloseButtonVisible = true,
+                primaryAccountOption = AddAccountIntroViewModel.PrimaryAccountOption.AddAccount,
+                jointAccountOption = AddAccountIntroViewModel.JointAccountOption.Visible
+            ),
+            listener = object : AddAccountIntroScreenListener {
+                override fun onAddAccountClick() = Unit
+                override fun onAddJointAccountClick() = Unit
+                override fun onImportAccountClick() = Unit
+                override fun onWatchAddressClick() = Unit
+                override fun onCreateUniversalWalletClick() = Unit
+                override fun onCreateAlgo25AccountClick() = Unit
+                override fun onCloseClick() = Unit
+            }
+        )
     }
 }
 
@@ -144,11 +189,13 @@ private fun Header(onCloseClick: () -> Unit) {
             )
         }
 
-        PeraIcon(
-            painter = painterResource(R.drawable.pera_icon_3d),
-            contentDescription = stringResource(id = R.string.add_an_account_title),
-            contentScale = ContentScale.FillWidth
-        )
+        rememberSafePainterResource(R.drawable.pera_icon_3d)?.let { painter ->
+            PeraIcon(
+                painter = painter,
+                contentDescription = stringResource(id = R.string.add_an_account_title),
+                contentScale = ContentScale.FillWidth
+            )
+        }
     }
 }
 

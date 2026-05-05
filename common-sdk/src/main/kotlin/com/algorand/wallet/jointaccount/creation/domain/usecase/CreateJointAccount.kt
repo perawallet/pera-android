@@ -19,6 +19,7 @@ fun interface CreateJointAccount {
     suspend operator fun invoke(
         participantAddresses: List<String>,
         threshold: Int,
-        version: Int
+        version: Int,
+        deviceId: String
     ): PeraResult<JointAccount>
 }

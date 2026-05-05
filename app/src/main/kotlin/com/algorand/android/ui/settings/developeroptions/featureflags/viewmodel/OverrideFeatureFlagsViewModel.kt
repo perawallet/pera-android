@@ -61,6 +61,26 @@ class OverrideFeatureFlagsViewModel @Inject constructor(
         }
     }
 
+    fun enableAllFeatureFlags() {
+        stateDelegate.onState<Content> { content ->
+            val updatedFlags = content.featureFlags.map { featureFlag ->
+                overrideFeatureFlagStatus(featureFlag.featureToggle.key, true)
+                featureFlag.copy(status = Overridden(true))
+            }
+            stateDelegate.updateState { Content(updatedFlags) }
+        }
+    }
+
+    fun disableAllFeatureFlags() {
+        stateDelegate.onState<Content> { content ->
+            val updatedFlags = content.featureFlags.map { featureFlag ->
+                clearOverriddenFeatureFlag(featureFlag.featureToggle.key)
+                featureFlag.copy(status = Remote)
+            }
+            stateDelegate.updateState { Content(updatedFlags) }
+        }
+    }
+
     fun toggleOverriddenStatus(featureToggle: FeatureToggle) {
         stateDelegate.onState<Content> { content ->
             val updatedFlags = content.featureFlags.map { featureFlag ->

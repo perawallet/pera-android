@@ -37,6 +37,7 @@ import com.algorand.android.models.ScreenState
 import com.algorand.android.models.TooltipConfig
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.InboxButtonLabel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowAccountAddressCopyTutorial
@@ -54,6 +55,7 @@ import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState.Data.ChartTendencyValues
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
+import com.algorand.android.utils.browser.openSupportCenterUrl
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
@@ -132,10 +134,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
             accountsViewModel.logBannerClick(bannerType)
-            when (bannerType) {
-                BannerType.Staking -> navToStakingFragment()
-                BannerType.Card -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
-                else -> nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
+            when {
+                bannerType == BannerType.Staking && url.isBlank() -> navToStakingFragment()
+                bannerType == BannerType.Card && url.isBlank() -> navToCardsFragment()
+                else -> navToBannerFragment(url)
             }
         }
 
@@ -183,18 +185,22 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onSpotBannerBannerClick(spotBanner: SpotBanner.Generic) {
             accountsViewModel.logSpotBannerClick(spotBanner.text)
-            val url = spotBanner.url ?: return
-            if (spotBanner.isExternalButtonUrl) {
-                context?.openUrl(url)
-            } else {
-                (activity as MainActivity).handleDeepLink(url)
+            val url = spotBanner.url
+            when {
+                url.isNullOrBlank() -> context?.openSupportCenterUrl()
+                spotBanner.isExternalButtonUrl -> context?.openUrl(url)
+                else -> (activity as? MainActivity)?.handleDeepLink(url) ?: context?.openUrl(url)
             }
         }
 
         override fun onItemSelected(chartData: AccountsLineChartData) {
             with(binding) {
-                primaryPortfolioValue.text = chartData.primaryAmountRenderer.getDisplayValue()
-                secondaryPortfolioValue.text = chartData.secondaryAmountRenderer.getDisplayValue()
+                val primaryText = chartData.primaryAmountRenderer.getDisplayValue()
+                val secondaryText = chartData.secondaryAmountRenderer.getDisplayValue()
+                primaryPortfolioValue.text = primaryText
+                secondaryPortfolioValue.text = secondaryText
+                toolbarPrimaryPortfolioValue.text = primaryText
+                toolbarSecondaryPortfolioValue.text = secondaryText
                 chartSelectedItemDateTextView.text = formatDateToChartDateString(chartData.datetime)
                 portfolioDeltaText.hide()
                 portfolioPercentageText.hide()
@@ -204,8 +210,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onItemDeselected() {
             with(binding) {
                 val portfolioValueItem = accountsViewModel.getPortfolioValueItem()
-                primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
-                secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
+                val primaryText = portfolioValueItem?.getPrimaryAccountValue(requireContext()).orEmpty()
+                val secondaryText = portfolioValueItem?.getSecondaryAccountValue(requireContext()).orEmpty()
+                primaryPortfolioValue.text = primaryText
+                secondaryPortfolioValue.text = secondaryText
+                toolbarPrimaryPortfolioValue.text = primaryText
+                toolbarSecondaryPortfolioValue.text = secondaryText
                 chartSelectedItemDateTextView.text = " "
                 portfolioDeltaText.isVisible = portfolioValueItem?.privacyMode is Disabled
                 portfolioPercentageText.isVisible = portfolioValueItem?.privacyMode is Disabled
@@ -251,9 +261,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             with(binding) {
                 portfolioValueTitleTextView.isInvisible = !isVisible
                 primaryPortfolioValue.isInvisible = !isVisible
-                toolbarPrimaryPortfolioValue.isInvisible = !isVisible
                 secondaryPortfolioValue.isInvisible = !isVisible
-                toolbarSecondaryPortfolioValue.isInvisible = !isVisible
                 accountsRecyclerView.isInvisible = !isVisible
                 if (isVisible.not()) binding.accountsFragmentMotionLayout.transitionToState(R.id.start)
                 accountsFragmentMotionLayout.getTransition(R.id.accountsFragmentTransition).isEnabled = isVisible
@@ -263,6 +271,15 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             }
         }
     }
+
+    private val toolbarPortfolioVisibilityCollector: suspend (Pair<Boolean?, Boolean>) -> Unit =
+        { (isSuccessVisible, isInboxVisible) ->
+            val shouldShowToolbarPortfolio = isSuccessVisible == true && !isInboxVisible
+            with(binding) {
+                toolbarPrimaryPortfolioValue.isInvisible = !shouldShowToolbarPortfolio
+                toolbarSecondaryPortfolioValue.isInvisible = !shouldShowToolbarPortfolio
+            }
+        }
 
     private fun showPrivacyTooltip(tutorialId: Int) {
         with(binding.primaryPortfolioValue) {
@@ -294,7 +311,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 }
 
                 override fun onAnimationCancel(animation: Animator) {
-                    // Nothing to do
+                    isVisible = false
+                    removeAnimatorListener(this)
                 }
 
                 override fun onAnimationRepeat(animation: Animator) {
@@ -304,17 +322,34 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
+    private fun clearConfettiView() {
+        with(binding.confettiAnimationLottieView) {
+            removeAllAnimatorListeners()
+            cancelAnimation()
+            progress = 0F
+            isVisible = false
+        }
+    }
+
     private val notificationStateCollector: suspend (Boolean?) -> Unit = { isActive ->
         if (isActive != null) {
             binding.notificationImageButton.isActivated = isActive
         }
     }
 
-    private val assetInboxCountCollector: suspend (Int?) -> Unit = { assetInboxCountNullable ->
-        val assetInboxCount = assetInboxCountNullable ?: 0
-        binding.assetInboxAllAccountsButton.apply {
-            text = getString(R.string.inbox)
-            isVisible = assetInboxCount > 0
+    private val inboxButtonCollector: suspend (Pair<InboxButtonLabel?, Boolean>) -> Unit = { (label, hasUnseen) ->
+        binding.inboxButton.isVisible = label != null
+        binding.inboxButtonText.text = when (label) {
+            is InboxButtonLabel.JointAccountRequest -> getString(R.string.joint_account_request)
+            is InboxButtonLabel.SignTxnRequest -> getString(R.string.sign_txn_request)
+            is InboxButtonLabel.Inbox -> getString(R.string.inbox)
+            null -> null
+        }
+        if (hasUnseen) {
+            binding.inboxIconLottieView.playAnimation()
+        } else {
+            binding.inboxIconLottieView.cancelAnimation()
+            binding.inboxIconLottieView.progress = 1f
         }
     }
 
@@ -360,8 +395,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 text = portfolioValues.getSecondaryAccountValue(context)
                 setOnClickListener { accountsViewModel.togglePrivacy() }
             }
-            toolbarPrimaryPortfolioValue.text = portfolioValues.getPrimaryAccountValue(root.context)
-            toolbarSecondaryPortfolioValue.text = portfolioValues.getSecondaryAccountValue(root.context)
+            toolbarPrimaryPortfolioValue.text = primaryPortfolioValue.text
+            toolbarSecondaryPortfolioValue.text = secondaryPortfolioValue.text
             binding.portfolioDeltaText.isVisible = portfolioValues.privacyMode is Disabled
             binding.portfolioPercentageText.isVisible = portfolioValues.privacyMode is Disabled
             portfolioValueTitleTextView.apply {
@@ -404,11 +439,17 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.logNotificationClick()
             navigateToNotifications()
         }
-        binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
+        binding.inboxIconLottieView.setColorFilter(
+            ContextCompat.getColor(requireContext(), R.color.button_square_icon)
+        )
+        binding.inboxButton.setOnClickListener { navToInboxNavigation() }
     }
 
     override fun onResume() {
         super.onResume()
+        if (!binding.confettiAnimationLottieView.isAnimating) {
+            clearConfettiView()
+        }
         accountsViewModel.refreshCachedAlgoPrice()
     }
 
@@ -444,12 +485,20 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 successStateVisibilityCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
+                accountPreviewFlow.map { preview ->
+                    Pair(preview?.isSuccessStateVisible, preview?.inboxButtonLabel != null)
+                }.distinctUntilChanged(),
+                toolbarPortfolioVisibilityCollector
+            )
+            viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.hasNewNotification }.distinctUntilChanged(),
                 notificationStateCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.assetInboxCount },
-                assetInboxCountCollector
+                accountPreviewFlow.map {
+                    Pair(it?.inboxButtonLabel, it?.hasUnseenInboxItems ?: false)
+                }.distinctUntilChanged(),
+                inboxButtonCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountsViewModel.viewEvent,
@@ -474,8 +523,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         nav(AccountsFragmentDirections.actionAccountsFragmentToNotificationCenterFragment())
     }
 
-    private fun navToAssetInboxAllAccountsNavigation() {
-        nav(AccountsFragmentDirections.actionAccountsFragmentToAssetInboxAllAccountsNavigation())
+    private fun navToInboxNavigation() {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToInboxNavigation())
     }
 
     private fun onArrangeListClick() {
@@ -527,6 +576,14 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         } else {
             (activity as? MainActivity)?.navToStakingFragment()
         }
+    }
+
+    private fun navToBannerFragment(url: String) {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
+    }
+
+    private fun navToCardsFragment() {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
     }
 
     companion object {

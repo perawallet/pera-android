@@ -565,7 +565,7 @@ class AccountDetailFragment :
     private fun navToInboxWithFilter() {
         nav(
             AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToAssetInboxAllAccountsNavigation(
+                .actionAccountDetailFragmentToInboxNavigation(
                     filterAccountAddress = accountDetailViewModel.accountAddress
                 )
         )

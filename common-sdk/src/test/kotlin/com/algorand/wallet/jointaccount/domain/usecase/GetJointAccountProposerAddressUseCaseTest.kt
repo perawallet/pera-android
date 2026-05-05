@@ -147,6 +147,48 @@ internal class GetJointAccountProposerAddressUseCaseTest {
     }
 
     @Test
+    fun `EXPECT non-ledger address WHEN both ledger and non-ledger can sign`() = runTest {
+        coEvery { getLocalAccounts() } returns listOf(
+            createLedgerAccount(PARTICIPANT_1),
+            LocalAccount.Algo25(algoAddress = PARTICIPANT_2)
+        )
+        coEvery { getAccountType(PARTICIPANT_1) } returns AccountType.LedgerBle
+        coEvery { getAccountType(PARTICIPANT_2) } returns AccountType.Algo25
+
+        val result = sut(createJointAccount(listOf(PARTICIPANT_1, PARTICIPANT_2)))
+
+        assertEquals(PARTICIPANT_2, result)
+    }
+
+    @Test
+    fun `EXPECT ledger address WHEN only ledger can sign`() = runTest {
+        coEvery { getLocalAccounts() } returns listOf(
+            createLedgerAccount(PARTICIPANT_1),
+            LocalAccount.NoAuth(algoAddress = PARTICIPANT_2)
+        )
+        coEvery { getAccountType(PARTICIPANT_1) } returns AccountType.LedgerBle
+        coEvery { getAccountType(PARTICIPANT_2) } returns AccountType.NoAuth
+
+        val result = sut(createJointAccount(listOf(PARTICIPANT_1, PARTICIPANT_2)))
+
+        assertEquals(PARTICIPANT_1, result)
+    }
+
+    @Test
+    fun `EXPECT non-ledger address WHEN non-ledger appears before ledger`() = runTest {
+        coEvery { getLocalAccounts() } returns listOf(
+            LocalAccount.Algo25(algoAddress = PARTICIPANT_1),
+            createLedgerAccount(PARTICIPANT_2)
+        )
+        coEvery { getAccountType(PARTICIPANT_1) } returns AccountType.Algo25
+        coEvery { getAccountType(PARTICIPANT_2) } returns AccountType.LedgerBle
+
+        val result = sut(createJointAccount(listOf(PARTICIPANT_1, PARTICIPANT_2)))
+
+        assertEquals(PARTICIPANT_1, result)
+    }
+
+    @Test
     fun `EXPECT second WHEN first not in local wallet`() = runTest {
         coEvery { getLocalAccounts() } returns listOf(LocalAccount.Algo25(algoAddress = PARTICIPANT_2))
         coEvery { getAccountType(PARTICIPANT_2) } returns AccountType.Algo25

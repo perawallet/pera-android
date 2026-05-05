@@ -74,7 +74,7 @@ class AssetInboxOneAccountFragment :
 
     private fun initObservers() {
         collectLatestOnLifecycle(
-            flow = assetInboxOneAccountViewModel.viewStateFlow,
+            flow = assetInboxOneAccountViewModel.state,
             collection = viewStateCollector
         )
     }

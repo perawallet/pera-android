@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.algorand.android.modules.addaccount.joint.transaction.ui
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,63 +30,50 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
 import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.compose.widget.VerificationTierIcon
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIcon
+import com.algorand.android.ui.compose.widget.asset.icon.AssetIconDrawable
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirm
 import com.algorand.android.ui.compose.widget.button.slidetoconfirm.SlideToConfirmButton
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun JointAccountSignRequestScreen(
     viewModel: JointAccountTransactionViewModel,
-    listener: JointAccountSignRequestScreenListener,
-    showPendingSignatures: Boolean = false,
-    onPendingSignaturesShown: () -> Unit = {}
+    listener: JointAccountSignRequestScreenListener
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    LaunchedEffect(showPendingSignatures) {
-        if (showPendingSignatures) {
-            showBottomSheet = true
-            onPendingSignaturesShown()
-        }
-    }
 
     when (val state = viewState) {
         is ViewState.Loading -> LoadingState()
@@ -94,21 +81,9 @@ fun JointAccountSignRequestScreen(
             TransactionContent(
                 preview = state.preview,
                 listener = listener,
-                onShowBottomSheet = { showBottomSheet = true },
+                onShowTransactionDetails = listener::onShowTransactionDetailsClick,
                 onConfirm = { viewModel.onConfirmTransaction() }
             )
-
-            if (showBottomSheet) {
-                BottomSheetContent(
-                    scope = scope,
-                    sheetState = sheetState,
-                    preview = state.preview,
-                    onHideSheet = { showBottomSheet = false },
-                    onCancel = { viewModel.onCancel() },
-                    onCloseForNow = listener::onCloseClick,
-                    onCloseCompleted = listener::onNavigateToHome
-                )
-            }
         }
 
         is ViewState.Error -> {
@@ -150,9 +125,9 @@ private fun ErrorState(messageResId: Int) {
 
 @Composable
 private fun TransactionContent(
-    preview: JointAccountTransactionPreview,
+    preview: JointAccountTransactionViewState,
     listener: JointAccountSignRequestScreenListener,
-    onShowBottomSheet: () -> Unit,
+    onShowTransactionDetails: () -> Unit,
     onConfirm: () -> Unit
 ) {
     Box(
@@ -168,19 +143,31 @@ private fun TransactionContent(
         ) {
             ToolbarSection(preview = preview, listener = listener)
             Spacer(modifier = Modifier.height(48.dp))
-            JointAccountIconSection()
-            Spacer(modifier = Modifier.height(24.dp))
-            TransferToSection(
-                recipientAddress = preview.recipientShortAddress,
-                onCopyClick = listener::onCopyAddressClick
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            AmountSection(preview = preview)
+            when (val center = preview.centerPreview) {
+                is JointAccountSignRequestCenterPreview.Transfer -> {
+                    JointAccountIconSection()
+                    Spacer(modifier = Modifier.height(24.dp))
+                    TransferToSection(
+                        recipientAddress = center.recipientShortAddress,
+                        onCopyClick = listener::onCopyAddressClick
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    AmountSection(amount = center.amount, convertedAmount = center.convertedAmount)
+                }
+
+                is JointAccountSignRequestCenterPreview.AssetAction -> {
+                    AssetActionCenterSection(
+                        center = center,
+                        showCopy = preview.addressForClipboard.isNotBlank(),
+                        onCopyClick = listener::onCopyAddressClick
+                    )
+                }
+            }
         }
         BottomSection(
             modifier = Modifier.align(Alignment.BottomCenter),
             preview = preview,
-            onShowTransactionDetailsClick = onShowBottomSheet,
+            onShowTransactionDetailsClick = onShowTransactionDetails,
             onSlideToConfirm = onConfirm,
             listener = listener
         )
@@ -188,37 +175,41 @@ private fun TransactionContent(
 }
 
 @Composable
-private fun BottomSheetContent(
-    scope: CoroutineScope,
-    sheetState: SheetState,
-    preview: JointAccountTransactionPreview,
-    onHideSheet: () -> Unit,
-    onCancel: () -> Unit,
-    onCloseForNow: () -> Unit,
-    onCloseCompleted: () -> Unit
+private fun AssetActionCenterSection(
+    center: JointAccountSignRequestCenterPreview.AssetAction,
+    showCopy: Boolean,
+    onCopyClick: () -> Unit
 ) {
-    fun hideSheetAndExecute(action: () -> Unit) {
-        scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) {
-                onHideSheet()
-                action()
-            }
-        }
-    }
+    val (iconRes, prefixRes) = when (center.type) {
+        JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_IN ->
+            R.drawable.ic_buy_sell_small to R.string.joint_sign_request_opt_in_from
 
-    PendingSignaturesBottomSheet(
-        sheetState = sheetState,
-        transactionPreview = preview,
-        onDismiss = { hideSheetAndExecute {} },
-        onCancel = { hideSheetAndExecute(onCancel) },
-        onCloseForNow = { hideSheetAndExecute(onCloseForNow) },
-        onCloseCompleted = { hideSheetAndExecute(onCloseCompleted) }
+        JointAccountSignRequestCenterPreview.AssetAction.Type.OPT_OUT ->
+            R.drawable.ic_buy_sell_small to R.string.joint_sign_request_opt_out_from
+    }
+    AssetActionIconSection(iconRes = iconRes, contentDescription = stringResource(prefixRes))
+    Spacer(modifier = Modifier.height(24.dp))
+    if (center.shortAddress.isNotBlank()) {
+        OptRequestFromSection(
+            prefixResId = prefixRes,
+            shortAddress = center.shortAddress,
+            showCopy = showCopy,
+            onCopyClick = onCopyClick
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+    }
+    AssetDetailsSection(
+        assetIcon = center.assetIcon,
+        assetName = center.assetName,
+        assetUnitName = center.assetUnitName,
+        assetIdText = center.assetIdText,
+        verificationTier = center.verificationTier
     )
 }
 
 @Composable
 private fun ToolbarSection(
-    preview: JointAccountTransactionPreview,
+    preview: JointAccountTransactionViewState,
     listener: JointAccountSignRequestScreenListener
 ) {
     Column {
@@ -265,7 +256,7 @@ private fun JointAccountIconSection() {
             Icon(
                 modifier = Modifier.size(48.dp),
                 painter = painterResource(R.drawable.ic_joint),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.joint_account),
                 tint = PeraTheme.colors.text.gray
             )
         }
@@ -273,8 +264,48 @@ private fun JointAccountIconSection() {
 }
 
 @Composable
-private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit) {
-    val transferTo = stringResource(R.string.transfer_to)
+private fun AssetActionIconSection(@DrawableRes iconRes: Int, contentDescription: String?) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .background(color = PeraTheme.colors.layer.grayLighter, shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                painter = painterResource(iconRes),
+                contentDescription = contentDescription,
+                tint = PeraTheme.colors.text.gray
+            )
+        }
+    }
+}
+
+@Composable
+private fun OptRequestFromSection(
+    @StringRes prefixResId: Int,
+    shortAddress: String,
+    showCopy: Boolean,
+    onCopyClick: () -> Unit
+) {
+    val prefix = stringResource(prefixResId)
+    val grayColor = PeraTheme.colors.text.gray
+    val mainColor = PeraTheme.colors.text.main
+    val styledText = remember(prefix, shortAddress, grayColor, mainColor) {
+        buildAnnotatedString {
+            withStyle(SpanStyle(color = grayColor)) {
+                append(prefix)
+                append(" ")
+            }
+            withStyle(SpanStyle(color = mainColor, fontWeight = FontWeight.Medium)) {
+                append(shortAddress)
+            }
+        }
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -283,23 +314,110 @@ private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit)
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = buildAnnotatedString {
-                withStyle(SpanStyle(color = PeraTheme.colors.text.gray)) { append(transferTo) }
-                withStyle(
-                    SpanStyle(
-                        color = PeraTheme.colors.text.main,
-                        fontWeight = PeraTheme.typography.body.regular.sansMedium.fontWeight
-                    )
-                ) { append(recipientAddress) }
-            },
-            style = PeraTheme.typography.body.regular.sans
+            text = styledText,
+            style = PeraTheme.typography.body.regular.sans,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(onClick = onCopyClick, modifier = Modifier.size(16.dp)) {
+        if (showCopy) {
+            Spacer(modifier = Modifier.width(4.dp))
+            IconButton(onClick = onCopyClick) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    painter = painterResource(R.drawable.ic_copy),
+                    contentDescription = stringResource(R.string.copy),
+                    tint = PeraTheme.colors.text.gray
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AssetDetailsSection(
+    assetIcon: AssetIconDrawable,
+    assetName: String,
+    assetUnitName: String,
+    assetIdText: String,
+    verificationTier: VerificationTierConfiguration
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            AssetIcon(
+                modifier = Modifier.size(32.dp),
+                drawable = assetIcon,
+                shape = CircleShape
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = assetName,
+                style = PeraTheme.typography.title.regular.sansMedium,
+                color = PeraTheme.colors.text.main,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = assetUnitName,
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (verificationTier.drawableResId != null) {
+                Spacer(modifier = Modifier.width(4.dp))
+                VerificationTierIcon(
+                    modifier = Modifier.size(16.dp),
+                    verificationTier = verificationTier
+                )
+            }
+            Text(
+                text = " \u00B7 ",
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray
+            )
+            Text(
+                text = assetIdText,
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.transfer_to_styled, recipientAddress),
+            style = PeraTheme.typography.body.regular.sans,
+            color = PeraTheme.colors.text.main
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        IconButton(onClick = onCopyClick) {
             Icon(
-                modifier = Modifier
-                    .size(16.dp)
-                    .padding(1.dp),
+                modifier = Modifier.size(16.dp),
                 painter = painterResource(R.drawable.ic_copy),
                 contentDescription = stringResource(R.string.copy),
                 tint = PeraTheme.colors.text.gray
@@ -309,16 +427,16 @@ private fun TransferToSection(recipientAddress: String, onCopyClick: () -> Unit)
 }
 
 @Composable
-private fun AmountSection(preview: JointAccountTransactionPreview) {
+private fun AmountSection(amount: String, convertedAmount: String) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = preview.amount,
+            text = amount,
             style = PeraTheme.typography.title.regular.sansMedium,
             color = PeraTheme.colors.text.main
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = preview.convertedAmount,
+            text = convertedAmount,
             style = PeraTheme.typography.body.regular.sans,
             color = PeraTheme.colors.text.main,
             textAlign = TextAlign.Center
@@ -329,7 +447,7 @@ private fun AmountSection(preview: JointAccountTransactionPreview) {
 @Composable
 private fun BottomSection(
     modifier: Modifier = Modifier,
-    preview: JointAccountTransactionPreview,
+    preview: JointAccountTransactionViewState,
     onShowTransactionDetailsClick: () -> Unit,
     onSlideToConfirm: () -> Unit,
     listener: JointAccountSignRequestScreenListener
@@ -417,5 +535,6 @@ interface JointAccountSignRequestScreenListener {
     fun onCloseClick()
     fun onCopyAddressClick()
     fun onDeclineClick()
+    fun onShowTransactionDetailsClick()
     fun onNavigateToHome()
 }

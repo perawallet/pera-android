@@ -57,7 +57,7 @@ fun SpotBannerCarousel(spotBanners: List<SpotBanner>, listener: SpotBannerCarous
         ) {
             when (val banner = banners[it]) {
                 is SpotBanner.Generic -> {
-                    val modifier = getSpotBannerItemModifier { listener?.onSpotBannerBannerClick(banner) }
+                    val modifier = Modifier.spotBannerItem { listener?.onSpotBannerBannerClick(banner) }
                     GenericSpotBanner(modifier, banner) {
                         banners = banners.toMutableList().apply { remove(banner) }
                         listener?.onDismissSpotBannerClick(banner)
@@ -65,7 +65,7 @@ fun SpotBannerCarousel(spotBanners: List<SpotBanner>, listener: SpotBannerCarous
                 }
 
                 SpotBanner.BackupPassphrase -> {
-                    val modifier = getSpotBannerItemModifier { listener?.onBackupPassphraseBannerClick() }
+                    val modifier = Modifier.spotBannerItem { listener?.onBackupPassphraseBannerClick() }
                     BackupPassphraseSpotBanner(modifier)
                 }
             }
@@ -81,9 +81,9 @@ fun SpotBannerCarousel(spotBanners: List<SpotBanner>, listener: SpotBannerCarous
 }
 
 @Composable
-internal fun getSpotBannerItemModifier(onClick: () -> Unit): Modifier {
+internal fun Modifier.spotBannerItem(onClick: () -> Unit): Modifier {
     val shape = RoundedCornerShape(16.dp)
-    return Modifier
+    return this
         .defaultMinSize(minHeight = 72.dp)
         .background(color = PeraTheme.colors.background.primary, shape = shape)
         .border(width = 1.dp, color = PeraTheme.colors.layer.gray, shape = shape)

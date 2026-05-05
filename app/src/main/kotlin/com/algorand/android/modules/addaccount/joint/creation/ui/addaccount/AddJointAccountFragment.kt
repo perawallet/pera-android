@@ -12,21 +12,27 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.addaccount
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
+import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.AddJointAccountQrScannerFragment.Companion.ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY
 import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.viewmodel.AddJointAccountViewModel
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.getTextFromClipboard
+import com.algorand.android.utils.hideKeyboard
+import com.algorand.android.utils.setFragmentNavigationResult
+import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useSavedStateValue
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenListener {
@@ -34,6 +40,10 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
     private val viewModel: AddJointAccountViewModel by viewModels()
 
     override val fragmentConfiguration = FragmentConfiguration()
+
+    private val windowFocusChangeListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
+        if (hasFocus) updateClipboardAddress()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +58,56 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObservers()
+        initSavedStateListener()
+    }
+
+    private fun initSavedStateListener() {
+        startSavedStateListener(R.id.addJointAccountFragment) {
+            useSavedStateValue<String>(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY) { address ->
+                viewModel.onSearchQueryUpdate(address)
+            }
+        }
+    }
+
+    private fun initObservers() {
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            flow = viewModel.viewEvent,
+            collection = { event ->
+                when (event) {
+                    is AddJointAccountViewModel.ViewEvent.NavigateBackWithSelectedAccount -> {
+                        setResultAndNavigateBack(event.account)
+                    }
+
+                    is AddJointAccountViewModel.ViewEvent.ShowError -> {
+                        showGlobalError(getString(event.messageResId))
+                    }
+
+                    is AddJointAccountViewModel.ViewEvent.ShowJointAccountError -> {
+                        showGlobalError(getString(R.string.joint_accounts_cannot_be_added))
+                    }
+                }
+            }
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            view?.viewTreeObserver?.addOnWindowFocusChangeListener(windowFocusChangeListener)
+        }
+        updateClipboardAddress()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            view?.viewTreeObserver?.removeOnWindowFocusChangeListener(windowFocusChangeListener)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         viewModel.resetSearchQuery()
@@ -59,30 +119,32 @@ class AddJointAccountFragment : DaggerBaseFragment(0), AddJointAccountScreenList
     }
 
     override fun onAccountSelected(address: String) {
-        val selectedAccount = viewModel.createSelectedAccountFromItem(address)
-        if (selectedAccount != null) {
-            setResultAndNavigateBack(selectedAccount)
-        } else {
-            showGlobalError(getString(R.string.an_error_occurred))
-        }
+        viewModel.onAccountSelected(address)
     }
 
     override fun onExternalAddressSelected(address: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val selectedAccount = viewModel.createSelectedAccountFromExternalAddress(address)
-            if (selectedAccount != null) {
-                setResultAndNavigateBack(selectedAccount)
-            } else {
-                showGlobalError(getString(R.string.an_error_occurred))
-            }
-        }
+        viewModel.onExternalAddressSelected(address)
+    }
+
+    override fun onNfdSelected(address: String) {
+        viewModel.onNfdSelected(address)
+    }
+
+    override fun onQrScanClick() {
+        view?.hideKeyboard()
+        nav(AddJointAccountFragmentDirections.actionAddJointAccountFragmentToAddJointAccountQrScannerFragment())
+    }
+
+    override fun onPasteFromClipboardClick(address: String) {
+        viewModel.onSearchQueryUpdate(address)
+    }
+
+    private fun updateClipboardAddress() {
+        viewModel.updateClipboardAddress(context?.getTextFromClipboard())
     }
 
     private fun setResultAndNavigateBack(selectedAccount: SelectedJointAccountItem) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set(
-            RESULT_SELECTED_ACCOUNT,
-            selectedAccount
-        )
+        setFragmentNavigationResult(RESULT_SELECTED_ACCOUNT, selectedAccount)
         navBack()
     }
 

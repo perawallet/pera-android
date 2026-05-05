@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.remoteconfig.data.service
 
-import android.util.Log
 import com.google.firebase.BuildConfig
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -33,10 +32,8 @@ internal class FirebaseRemoteConfigServiceImpl @Inject constructor() : FirebaseR
     override suspend fun fetchRemoteConfig() = suspendCoroutine { continuation ->
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Log.d(TAG, "Fetch succeeded")
                 continuation.resume(Unit)
             } else {
-                Log.d(TAG, "Fetch failed")
                 continuation.resume(Unit)
             }
         }
@@ -57,7 +54,6 @@ internal class FirebaseRemoteConfigServiceImpl @Inject constructor() : FirebaseR
     }
 
     private companion object {
-        const val FETCH_INTERVAL_IN_SECS: Long = 3600L // 1 hour
-        const val TAG = "FirebaseRemoteConfigServiceImpl"
+        const val FETCH_INTERVAL_IN_SECS: Long = 3600L
     }
 }

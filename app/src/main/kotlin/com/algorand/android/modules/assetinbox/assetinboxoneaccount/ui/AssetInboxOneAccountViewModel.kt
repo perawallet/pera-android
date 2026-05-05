@@ -24,33 +24,34 @@ import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.usecase.A
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class AssetInboxOneAccountViewModel @Inject constructor(
+    private val stateDelegate: StateDelegate<AssetInboxOneAccountPreview>,
     private val assetInboxOneAccountPreviewUseCase: AssetInboxOneAccountPreviewUseCase,
     private val arc59ReceiveDetailNavArgsMapper: Arc59ReceiveDetailNavArgsMapper,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
-
-    private val _viewStateFlow = MutableStateFlow(assetInboxOneAccountPreviewUseCase.getInitialPreview())
-    val viewStateFlow: StateFlow<AssetInboxOneAccountPreview> = _viewStateFlow.asStateFlow()
+) : ViewModel(), StateViewModel<AssetInboxOneAccountPreview> by stateDelegate {
 
     private val args =
         savedStateHandle.getOrThrow<AssetInboxOneAccountNavArgs>(ASSET_INBOX_ONE_ACCOUNT_NAV_ARGS_KEY)
 
+    init {
+        stateDelegate.setDefaultState(assetInboxOneAccountPreviewUseCase.getInitialPreview())
+    }
+
     fun initializePreview() {
         viewModelScope.launchIO {
             assetInboxOneAccountPreviewUseCase.getAssetInboxOneAccountPreview(
-                _viewStateFlow.value,
+                state.value,
                 args.address
             ).collectLatest { preview ->
-                _viewStateFlow.value = preview
+                stateDelegate.updateState { preview }
             }
         }
     }

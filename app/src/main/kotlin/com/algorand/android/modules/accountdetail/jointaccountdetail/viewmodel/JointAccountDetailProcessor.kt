@@ -31,6 +31,8 @@ interface JointAccountDetailProcessor {
 
     suspend fun fetchInvitationFromInbox(accountAddress: String): InvitationResult
 
+    suspend fun fetchJointAccountFromApi(accountAddress: String): InvitationResult
+
     suspend fun createParticipantItems(participantAddresses: List<String>): List<JointAccountParticipantItem>
 
     suspend fun deleteInboxNotification(accountAddress: String)
@@ -38,6 +40,8 @@ interface JointAccountDetailProcessor {
     suspend fun isJointAccountExists(accountAddress: String): Boolean
 
     suspend fun getContactEditInfo(address: String): ContactEditInfo?
+
+    suspend fun updateContactName(address: String, newName: String)
 
     data class InvitationData(
         val threshold: Int,

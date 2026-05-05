@@ -17,6 +17,8 @@ import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepositor
 import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -26,7 +28,8 @@ internal class GetAllLocalAccountAddressesAsFlowUseCase @Inject constructor(
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
-    private val jointAccountRepository: JointAccountRepository
+    private val jointAccountRepository: JointAccountRepository,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : GetAllLocalAccountAddressesAsFlow {
 
     override fun invoke(): Flow<List<String>> {
@@ -37,12 +40,17 @@ internal class GetAllLocalAccountAddressesAsFlowUseCase @Inject constructor(
             noAuthAccountRepository.getAllAsFlow(),
             jointAccountRepository.getAllAsFlow()
         ) { hdKeyAccounts, algo25Accounts, ledgerBleAccounts, noAuthAccounts, jointAccounts ->
+            val jointAddresses = if (isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)) {
+                jointAccounts.map { it.algoAddress }
+            } else {
+                emptyList()
+            }
             buildList {
                 addAll(hdKeyAccounts.map { it.algoAddress })
                 addAll(algo25Accounts.map { it.algoAddress })
                 addAll(ledgerBleAccounts.map { it.algoAddress })
                 addAll(noAuthAccounts.map { it.algoAddress })
-                addAll(jointAccounts.map { it.algoAddress })
+                addAll(jointAddresses)
             }
         }
     }

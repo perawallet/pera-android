@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rekeyToJointAccountNavigation"
+    app:startDestination="@id/rekeyToJointAccountInstructionFragment">
+
+    <include app:graph="@navigation/rekeyed_account_rekey_confirmation_navigation" />
+
+    <action
+        android:id="@+id/action_rekeyToJointAccountNavigation_pop"
+        app:popUpTo="@id/rekeyToJointAccountNavigation"
+        app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/rekeyToJointAccountInstructionFragment"
+        android:name="com.algorand.android.modules.rekey.rekeytojointaccount.instruction.ui.RekeyToJointAccountIntroductionFragment"
+        android:label="RekeyToJointAccountInstructionFragment"
+        tools:layout="@layout/fragment_base_introduction">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_rekeyToJointAccountInstructionFragment_to_rekeyToJointAccountSelectionFragment"
+            app:destination="@id/rekeyToJointAccountSelectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/rekeyToJointAccountSelectionFragment"
+        android:name="com.algorand.android.modules.rekey.rekeytojointaccount.accountselection.ui.RekeyToJointAccountSelectionFragment"
+        android:label="RekeyToJointAccountSelectionFragment"
+        tools:layout="@layout/fragment_base_single_account_selection">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_rekeyToJointAccountSelectionFragment_to_rekeyToJointAccountConfirmationFragment"
+            app:destination="@id/rekeyToJointAccountConfirmationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/rekeyToJointAccountConfirmationFragment"
+        android:name="com.algorand.android.modules.rekey.rekeytojointaccount.confirmation.ui.RekeyToJointAccountConfirmationFragment"
+        android:label="RekeyToJointAccountConfirmationFragment"
+        tools:layout="@layout/fragment_base_rekey_confirmation">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="authAccountAddress"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_rekeyToJointAccountConfirmationFragment_to_rekeyToJointAccountVerifyInfoFragment"
+            app:destination="@id/rekeyToJointAccountVerifyInfoFragment" />
+        <action
+            android:id="@+id/action_rekeyToJointAccountConfirmationFragment_to_rekeyed_account_rekey_confirmation_navigation"
+            app:destination="@id/rekeyed_account_rekey_confirmation_navigation">
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+            <argument
+                android:name="authAccountAddress"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/rekeyToJointAccountVerifyInfoFragment"
+        android:name="com.algorand.android.modules.rekey.rekeytojointaccount.resultinfo.ui.RekeyToJointAccountVerifyInfoFragment"
+        android:label="RekeyToJointAccountVerifyInfoFragment">
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+        <argument
+            android:name="authAccountAddress"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

@@ -29,6 +29,7 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.getDecimalSeparator
 import com.algorand.android.utils.validator.AmountTransactionValidationUseCase
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -62,6 +63,9 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
         val senderAccountLite = getAccountLite(accountAddress) ?: return null
         val senderAccountCachedInfo = senderAccountLite.cachedInfo ?: return null
         val receiverAddress = assetTransaction.receiverUser?.publicKey
+        val signer = getTransactionSigner(accountAddress)
+        val isReceiverOptedIn = isAssetOptedInByAccount(receiverAddress.orEmpty(), assetId)
+        val isArc59 = !isReceiverOptedIn && signer !is TransactionSigner.Joint
         return TransactionSignData.Send(
             senderAccountAddress = senderAccountLite.address,
             senderAuthAddress = senderAccountCachedInfo.rekeyAuthAddress,
@@ -76,8 +80,8 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
-            signer = getTransactionSigner(accountAddress),
-            isArc59Transaction = !isAssetOptedInByAccount(receiverAddress.orEmpty(), assetId)
+            signer = signer,
+            isArc59Transaction = isArc59
         )
     }
 

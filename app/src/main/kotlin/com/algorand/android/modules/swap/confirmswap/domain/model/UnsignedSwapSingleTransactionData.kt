@@ -34,4 +34,7 @@ data class UnsignedSwapSingleTransactionData(
 
     override val transactionByteArray: ByteArray?
         get() = transactionMsgPack?.decodeBase64()
+
+    override val groupIndex: Int
+        get() = parentListIndex
 }

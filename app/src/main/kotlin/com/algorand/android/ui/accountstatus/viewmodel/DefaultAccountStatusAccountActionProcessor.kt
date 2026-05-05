@@ -14,16 +14,23 @@ package com.algorand.android.ui.accountstatus.viewmodel
 
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountAction
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import javax.inject.Inject
 
 internal class DefaultAccountStatusAccountActionProcessor @Inject constructor() : AccountStatusAccountActionProcessor {
 
     override suspend fun getAccountActions(accountLite: AccountLite): List<AccountAction> {
         val accountActions = mutableListOf<AccountAction>()
+        val accountType = accountLite.cachedInfo?.type
+        val isJointAccount = accountLite.registrationType is AccountRegistrationType.Joint
 
-        if (accountLite.cachedInfo?.type?.canSignTransaction() == true) {
-            accountActions.add(AccountAction.RekeyToLedger)
-            accountActions.add(AccountAction.RekeyToStandard)
+        if (accountType?.canSignTransaction() == true) {
+            if (isJointAccount) {
+                accountActions.add(AccountAction.RekeyToJointAccount)
+            } else {
+                accountActions.add(AccountAction.RekeyToLedger)
+                accountActions.add(AccountAction.RekeyToStandard)
+            }
         }
 
         if (accountLite.registrationType.hasSignerDetails) {

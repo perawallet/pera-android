@@ -28,19 +28,8 @@ sealed class JointAccountValidationException : Exception() {
         }
     }
 
-    data class InvalidThreshold(
-        val participantCount: Int,
-        val threshold: Int
-    ) : JointAccountValidationException() {
-        override fun toWarningException(): WarningException {
-            return WarningException(
-                titleRes = R.string.warning,
-                annotatedString = AnnotatedString(R.string.joint_account_validation_invalid_threshold)
-            )
-        }
-    }
-
     companion object {
         const val MIN_PARTICIPANTS = 2
+        const val MAX_PARTICIPANTS = 16
     }
 }

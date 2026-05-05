@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.walletconnect.client.v2.domain
 
-import android.util.Log
 import app.perawallet.walletconnectv2.internal.common.exception.CannotFindSequenceForTopic
 import app.perawallet.walletconnectv2.sign.client.Sign
 import app.perawallet.walletconnectv2.sign.client.SignClient
 import com.algorand.android.modules.walletconnect.client.v2.domain.repository.WalletConnectV2Repository
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.logger.PeraErrorLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,7 +28,8 @@ import javax.inject.Singleton
 @Singleton
 class WalletConnectV2SignClient @Inject constructor(
     @param:Named(WalletConnectV2Repository.INJECTION_NAME)
-    private val walletConnectRepository: WalletConnectV2Repository
+    private val walletConnectRepository: WalletConnectV2Repository,
+    private val errorLogger: PeraErrorLogger
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -37,25 +38,25 @@ class WalletConnectV2SignClient @Inject constructor(
         SignClient.setWalletDelegate(delegate)
     }
 
-    fun initialize(initParams: Sign.Params.Init) {
+    fun initialize(initParams: Sign.Params.Init, onSuccess: () -> Unit = {}) {
         try {
-            SignClient.initialize(initParams) { error ->
-                logError(error)
+            SignClient.initialize(initParams, onSuccess = onSuccess) { error ->
+                errorLogger.logError(error.throwable)
             }
         } catch (e: Exception) {
-            logError(e.message.orEmpty())
+            errorLogger.logError(e)
         }
     }
 
     fun approveSession(approveProposal: Sign.Params.Approve) {
         SignClient.approveSession(approveProposal) { error ->
-            logError(error)
+            errorLogger.logError(error.throwable)
         }
     }
 
     fun rejectSession(reject: Sign.Params.Reject) {
         SignClient.rejectSession(reject) { error ->
-            logError(error)
+            errorLogger.logError(error.throwable)
         }
     }
 
@@ -110,23 +111,11 @@ class WalletConnectV2SignClient @Inject constructor(
     }
 
     private fun onSignClientError(sessionTopic: String, error: Sign.Model.Error) {
-        logError(error)
+        errorLogger.logError(error.throwable)
         if (error.throwable is CannotFindSequenceForTopic) {
             coroutineScope.launchIO {
                 walletConnectRepository.deleteById(sessionTopic)
             }
         }
-    }
-
-    private fun logError(error: Sign.Model.Error) {
-        logError("${error.throwable} - ${error.throwable.stackTraceToString()}")
-    }
-
-    private fun logError(message: String) {
-        Log.e(logTag, message)
-    }
-
-    companion object {
-        private val logTag = SignClient::class.simpleName
     }
 }

@@ -14,13 +14,16 @@ package com.algorand.wallet.jointaccount.domain.repository
 
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.creation.domain.model.CreateJointAccountInput
+import com.algorand.wallet.jointaccount.creation.domain.model.IsJointAccountResult
 import com.algorand.wallet.jointaccount.creation.domain.model.JointAccount
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.CreateSignRequestInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestWithFullSignature
 
-internal interface JointAccountRepository {
+interface JointAccountRepository {
+
+    suspend fun getJointAccountDetail(accountAddress: String): PeraResult<JointAccount>
 
     suspend fun createJointAccount(
         createJointAccount: CreateJointAccountInput
@@ -30,9 +33,9 @@ internal interface JointAccountRepository {
         createSignRequestInput: CreateSignRequestInput
     ): PeraResult<JointSignRequest>
 
-    suspend fun addSignature(
+    suspend fun addSignatures(
         signRequestId: String,
-        addSignatureInput: AddSignatureInput
+        addSignatureInputs: List<AddSignatureInput>
     ): PeraResult<JointSignRequest>
 
     suspend fun getSignRequestWithSignatures(
@@ -40,7 +43,12 @@ internal interface JointAccountRepository {
         signRequestId: String
     ): PeraResult<SignRequestWithFullSignature>
 
-    companion object {
-        const val INJECTION_NAME: String = "jointAccountRepositoryInjectionName"
-    }
+    suspend fun getSignRequestWithFullSignatures(
+        deviceId: String,
+        signRequestId: String
+    ): PeraResult<SignRequestWithFullSignature>
+
+    suspend fun markSignRequestsConfirmed(deviceId: String, signRequestIds: List<String>): PeraResult<Unit>
+
+    suspend fun checkIsJointAccount(addresses: List<String>): PeraResult<List<IsJointAccountResult>>
 }

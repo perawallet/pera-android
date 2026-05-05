@@ -70,27 +70,49 @@
         app:layout_constraintTop_toBottomOf="@id/toolbarPrimaryPortfolioValue"
         tools:text="$105,413.95" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/assetInboxAllAccountsButton"
-        style="?attr/toolbarNavigationButtonStyle"
+    <LinearLayout
+        android:id="@+id/inboxButton"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:layout_gravity="center"
         android:layout_marginStart="@dimen/spacing_large"
         android:layout_marginTop="@dimen/spacing_xxxsmall"
         android:background="@drawable/bg_asset_inbox_rectangle"
-        android:drawableStart="@drawable/ic_asset_request"
-        android:drawablePadding="6dp"
-        android:maxLines="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/spacing_xsmall"
-        android:textAppearance="@style/TextAppearance.Footnote.Mono.Medium"
-        android:textColor="@color/link_primary"
         android:visibility="gone"
-        app:drawableTint="@color/link_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@tools:sample/lorem[1]"
-        tools:visibility="visible" />
+        tools:visibility="visible">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/inboxIconLottieView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            app:lottie_rawRes="@raw/arrow_slide_in"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/inboxButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Footnote.Mono.Medium"
+            android:textColor="@color/button_square_icon"
+            tools:text="Sign txn request" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_right_16dp"
+            app:tint="@color/button_square_icon" />
+
+    </LinearLayout>
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/signTransactionRequestBannerComposeView"
@@ -98,7 +120,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/assetInboxAllAccountsButton" />
+        app:layout_constraintTop_toBottomOf="@id/inboxButton" />
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/jointAccountRequestBannerComposeView"
@@ -126,9 +148,8 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/spacing_xxxsmall"
-        android:layout_marginEnd="@dimen/spacing_xlarge"
+        android:layout_marginEnd="@dimen/spacing_normal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/qrImageButton"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/selector_notification_button" />
 
@@ -248,6 +269,7 @@
         android:layout_width="0dp"
         android:layout_height="210dp"
         android:scaleType="centerCrop"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

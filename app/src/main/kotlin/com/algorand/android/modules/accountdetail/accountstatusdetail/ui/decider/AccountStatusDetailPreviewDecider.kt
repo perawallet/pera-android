@@ -59,11 +59,13 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                 val accountOriginalState = when (accountLite.registrationType) {
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
+                    AccountRegistrationType.Joint -> R.string.joint_account
                     else -> R.string.standard
                 }
                 val accountAuthState = when (accountLite.cachedInfo.rekeyAuthRegistrationType) {
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
+                    AccountRegistrationType.Joint -> R.string.joint_account
                     else -> R.string.standard
                 }
                 val accountStateString = context.getString(R.string.rekeyed)
@@ -79,6 +81,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
 
             AccountType.HdKey -> context.getString(R.string.universal_wallet)
             AccountType.Joint -> context.getString(R.string.joint_account)
+
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString
@@ -97,6 +100,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     }
 
                     AccountRegistrationType.LedgerBle -> R.string.your_account_is_rekeyed_to_an_account_on
+                    AccountRegistrationType.Joint -> R.string.your_account_is_rekeyed_to_joint_account
                     else -> R.string.your_account_is_rekeyed_to_unknown
                 }
             }

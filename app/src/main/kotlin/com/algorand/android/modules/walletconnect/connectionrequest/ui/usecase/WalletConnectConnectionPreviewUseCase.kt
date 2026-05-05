@@ -102,7 +102,9 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
 
     private fun createSortedAccountList(): Collection<AccountLite> {
         return getAccountLiteCacheData()?.accountLites
-            ?.filter { it.value.cachedInfo?.type?.canSignTransaction() == true }
+            ?.filter {
+                it.value.cachedInfo?.type?.canSignTransaction() == true
+            }
             ?.values
             .orEmpty()
     }
@@ -117,6 +119,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
                 is BaseWalletConnectConnectionItem.NetworkItem,
                 is BaseWalletConnectConnectionItem.DappInfoItem,
                 is RequestedPermissionsItem -> it
+
                 is BaseWalletConnectConnectionItem.AccountItem -> updateSelectedItemButtonState(it, accountAddress)
             }
         }

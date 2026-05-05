@@ -17,5 +17,5 @@ sealed class JointAccountSignatureStatus {
 
     data object Pending : JointAccountSignatureStatus()
 
-    data object Rejected : JointAccountSignatureStatus()
+    data object Declined : JointAccountSignatureStatus()
 }

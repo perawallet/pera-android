@@ -29,6 +29,7 @@ import com.algorand.android.discover.common.ui.model.WebViewError.HTTP_ERROR
 import com.algorand.android.discover.common.ui.model.WebViewError.NO_CONNECTION
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface.Companion.WEB_INTERFACE_NAME
+import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.discover.utils.JAVASCRIPT_PERACONNECT
 import com.algorand.android.discover.utils.getCustomUrl
 import com.algorand.android.models.FragmentConfiguration
@@ -44,10 +45,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
-import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
+import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
@@ -89,6 +90,27 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
     private val pageFinishedCollector: suspend (Event<Unit>) -> Unit = {
         it.consume()?.let {
             binding.webView.evaluateJavascript(JAVASCRIPT_PERACONNECT, null)
+        }
+    }
+
+    private val openDappWebviewEventCollector: suspend (Event<DappInfo>) -> Unit = {
+        it.consume()?.let { dappInfo ->
+            if (!dappInfo.url.isNullOrBlank()) {
+                nav(
+                    StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
+                        dappUrl = dappInfo.url,
+                        dappTitle = dappInfo.name ?: "",
+                        favorites = null,
+                        showFavorites = false
+                    )
+                )
+            }
+        }
+    }
+
+    private val openSystemBrowserEventCollector: suspend (Event<String>) -> Unit = {
+        it.consume()?.let { url ->
+            context?.openExternalBrowserApp(url)
         }
     }
 
@@ -154,6 +176,14 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
             stakingViewModel.stakingPreviewFlow.mapNotNull { it?.onPageFinished }.distinctUntilChanged(),
             pageFinishedCollector
         )
+        collectLatestOnLifecycle(
+            stakingViewModel.stakingPreviewFlow.mapNotNull { it?.openDappWebviewEvent }.distinctUntilChanged(),
+            openDappWebviewEventCollector
+        )
+        collectLatestOnLifecycle(
+            stakingViewModel.stakingPreviewFlow.mapNotNull { it?.openSystemBrowserEvent }.distinctUntilChanged(),
+            openSystemBrowserEventCollector
+        )
     }
 
     private fun getStakingUrl(): String {
@@ -182,24 +212,11 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
     }
 
     override fun openDappWebview(jsonEncodedPayload: String) {
-        stakingViewModel.getOpenDappWebview(jsonEncodedPayload)?.let { dappInfo ->
-            if (!dappInfo.url.isNullOrBlank()) {
-                nav(
-                    StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
-                        dappUrl = dappInfo.url,
-                        dappTitle = dappInfo.name ?: "",
-                        favorites = null, // always empty for now
-                        showFavorites = false
-                    )
-                )
-            }
-        }
+        stakingViewModel.handleOpenDappWebview(jsonEncodedPayload)
     }
 
     override fun openSystemBrowser(jsonEncodedPayload: String) {
-        stakingViewModel.getOpenSystemBrowserUrl(jsonEncodedPayload)?.let { url ->
-            context?.openExternalBrowserApp(url)
-        }
+        stakingViewModel.handleOpenSystemBrowser(jsonEncodedPayload)
     }
 
     private fun handleWebViewError(error: WebViewError) {

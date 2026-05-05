@@ -41,8 +41,6 @@ import com.algorand.android.models.TransactionSignData
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
-import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
@@ -95,9 +93,7 @@ class MainActivity :
                 )
             )
 
-            is MainViewModel.ViewEvent.NavToAssetInboxOneAccountNavigation -> navToAssetInboxOneAccountNavigation(
-                event.address
-            )
+            is MainViewModel.ViewEvent.NavToInboxNavigation -> navToInboxNavigation()
 
             is MainViewModel.ViewEvent.NavToAccountDetailFragment -> navToAccountDetailFragment(
                 event.address
@@ -115,6 +111,9 @@ class MainActivity :
             is MainViewModel.ViewEvent.NavToWalletConnectTransactionRequestNavigation ->
                 navToWalletConnectTransactionRequestNavigation(event.wcRequestId)
 
+            is MainViewModel.ViewEvent.NavToJointAccountSignRequest ->
+                navToJointAccountSignRequest(event.signRequestId)
+
             is MainViewModel.ViewEvent.ShowLockSuggestion -> showLockSuggestion()
 
             is MainViewModel.ViewEvent.StartInAppReview -> startInAppReview()
@@ -131,6 +130,7 @@ class MainActivity :
                 event.address,
                 event.assetId
             )
+
             is MainViewModel.ViewEvent.HandleTransactionDetailDeepLink -> {
                 navToTransactionDetailNavigation(event.address, event.transactionId)
             }
@@ -357,6 +357,11 @@ class MainActivity :
                 false
             }
         }
+
+        override fun onSignRequestDeepLink(signRequestId: String): Boolean {
+            navToJointAccountSignRequest(signRequestId)
+            return true
+        }
     }
 
     private val transactionManagerResultObserver = Observer<Event<TransactionManagerResult>?> {
@@ -399,8 +404,11 @@ class MainActivity :
                 is TransactionManagerResult.Success.TransactionRequestSigned -> {
                     hideProgress()
                     hideLedgerLoadingDialog()
-                    PendingSignaturesDialogFragment.newInstance(result.signRequestId)
-                        .show(supportFragmentManager, PendingSignaturesDialogFragment.TAG)
+                    nav(
+                        HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                            signRequestId = result.signRequestId
+                        )
+                    )
                 }
 
                 TransactionManagerResult.LedgerOperationCanceled -> {
@@ -539,8 +547,11 @@ class MainActivity :
     }
 
     fun isBasePeraWebViewFragmentActive(): Boolean {
-        val navHostFragment = supportFragmentManager.findFragmentById(binding.navigationHostFragment.id)
-        val currentFragment = (navHostFragment as NavHostFragment).childFragmentManager.fragments.first()
+        val navHostFragment = supportFragmentManager.findFragmentById(
+            binding.navigationHostFragment.id
+        ) as? NavHostFragment ?: return false
+
+        val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return false
         return currentFragment is BasePeraWebViewFragment || currentFragment is XoSwapFragment
     }
 
@@ -582,11 +593,19 @@ class MainActivity :
         }
     }
 
-    private fun navToJointAccountImportDeepLink(address: String) {
+    internal fun navToJointAccountImportDeepLink(address: String) {
         navToHome()
         nav(
             HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(
                 accountAddress = address
+            )
+        )
+    }
+
+    private fun navToJointAccountSignRequest(signRequestId: String) {
+        nav(
+            HomeNavigationDirections.actionGlobalToPendingSignaturesBottomSheet(
+                signRequestId = signRequestId
             )
         )
     }
@@ -604,14 +623,8 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))
     }
 
-    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
-        nav(
-            HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                AssetInboxOneAccountNavArgs(
-                    accountAddress
-                )
-            )
-        )
+    private fun navToInboxNavigation() {
+        nav(HomeNavigationDirections.actionGlobalInboxNavigation())
     }
 
     private fun navToAccountDetailFragment(address: String) {
@@ -996,5 +1009,6 @@ class MainActivity :
         const val DEEPLINK_AND_NAVIGATION_INTENT: String = "deeplinkNavIntent"
         const val WC_TRANSACTION_ID_INTENT_KEY: String = "wcTransactionId"
         const val WC_ARBITRARY_DATA_ID_INTENT_KEY: String = "wcArbitraryDataId"
+        const val SIGN_REQUEST_ID_INTENT_KEY: String = "signRequestId"
     }
 }

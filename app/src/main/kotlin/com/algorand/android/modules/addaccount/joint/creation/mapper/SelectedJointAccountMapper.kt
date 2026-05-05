@@ -12,7 +12,10 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.mapper
 
+import android.net.Uri
+import com.algorand.android.models.User
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.creation.model.JointAccountSelectionListItem
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
 import com.algorand.android.utils.toShortenedAddress
@@ -20,12 +23,29 @@ import javax.inject.Inject
 
 class SelectedJointAccountMapper @Inject constructor() {
 
+    fun mapFromDetail(
+        address: String,
+        user: User?,
+        iconDrawablePreview: AccountIconDrawablePreview?
+    ): SelectedJointAccountItem {
+        return SelectedJointAccountItem(
+            accountDisplayName = AccountDisplayName(
+                accountAddress = address,
+                primaryDisplayName = user?.name ?: address.toShortenedAddress(),
+                secondaryDisplayName = address.toShortenedAddress()
+            ),
+            iconDrawablePreview = iconDrawablePreview,
+            imageUri = user?.imageUriAsString?.let { Uri.parse(it) },
+            isContact = user != null
+        )
+    }
+
     fun mapFromAccountItem(item: JointAccountSelectionListItem.AccountItem): SelectedJointAccountItem {
         return SelectedJointAccountItem(
             accountDisplayName = AccountDisplayName(
                 accountAddress = item.address,
                 primaryDisplayName = item.displayName,
-                secondaryDisplayName = item.secondaryDisplayName
+                secondaryDisplayName = item.secondaryDisplayName ?: item.address.toShortenedAddress()
             ),
             iconDrawablePreview = item.iconDrawablePreview,
             isContact = false
@@ -64,12 +84,15 @@ class SelectedJointAccountMapper @Inject constructor() {
                 is JointAccountSelectionListItem.AccountItem -> {
                     if (item.address == address) return mapFromAccountItem(item)
                 }
+
                 is JointAccountSelectionListItem.ContactItem -> {
                     if (item.address == address) return mapFromContactItem(item)
                 }
+
                 is JointAccountSelectionListItem.NfdItem -> {
                     if (item.address == address) return mapFromNfdItem(item)
                 }
+
                 is JointAccountSelectionListItem.ExternalAddressItem -> Unit
             }
         }

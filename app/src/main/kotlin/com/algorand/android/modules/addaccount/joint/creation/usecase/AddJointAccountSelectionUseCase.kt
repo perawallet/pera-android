@@ -22,105 +22,101 @@ import com.algorand.android.modules.addaccount.joint.creation.model.JointAccount
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.isValidNFTDomain
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.detail.domain.model.AccountType
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import javax.inject.Inject
 
 class AddJointAccountSelectionUseCase @Inject constructor(
     private val getAccountSelectionAccountItems: GetAccountSelectionAccountItems,
     private val getAccountSelectionContactItems: GetAccountSelectionContactItems,
     private val getAccountSelectionNameServiceItems: GetAccountSelectionNameServiceItems,
-    private val jointAccountSelectionListItemMapper: JointAccountSelectionListItemMapper
+    private val jointAccountSelectionListItemMapper: JointAccountSelectionListItemMapper,
+    private val getAccountRegistrationType: GetAccountRegistrationType
 ) {
 
-    fun getAccountSelectionList(
+    suspend fun getAccountSelectionList(
         query: String,
-    ): Flow<List<JointAccountSelectionListItem>> {
+    ): List<JointAccountSelectionListItem> {
         val accountList = fetchAccountList(query)
         val contactList = fetchContactList(query)
         val trimmedQuery = query.trim()
         val nfdList = if (trimmedQuery.lowercase().isValidNFTDomain()) {
             fetchNfdList(trimmedQuery)
         } else {
-            flow { emit(emptyList()) }
+            emptyList()
         }
         val externalAddressList = fetchExternalAddressIfValid(query)
-        return combine(accountList, contactList, nfdList, externalAddressList) { accounts, contacts, nfds, external ->
-            val allAddresses = (
-                accounts.map { it.address } +
-                    contacts.map { it.address } +
-                    nfds.map { it.address }
-                ).toSet()
-            val filteredExternal = external.filter { it.address !in allAddresses }
 
-            buildList {
-                addAll(filteredExternal)
-                addAll(nfds)
-                addAll(accounts)
-                addAll(contacts)
-            }
+        val allAddresses = (
+                accountList.map { it.address } +
+                        contactList.map { it.address } +
+                        nfdList.map { it.address }
+                ).toSet()
+        val filteredExternal = externalAddressList.filter { it.address !in allAddresses }
+
+        return buildList {
+            addAll(filteredExternal)
+            addAll(nfdList)
+            addAll(accountList)
+            addAll(contactList)
         }
     }
 
-    private fun fetchAccountList(query: String) = flow {
+    private suspend fun fetchAccountList(query: String): List<JointAccountSelectionListItem> {
         val accounts = getAccountSelectionAccountItems(
             showHoldings = true,
             showFailedAccounts = false
         )
-        val filteredAccounts = accounts
-            .filterIsInstance<AccountItem>()
-            .filter { accountItem ->
-                val accountType = accountItem.accountListItem.itemConfiguration.accountType
-                accountType !is AccountType.Joint
+        val filteredAccounts = accounts.mapNotNull { item ->
+            val accountItem = item as? AccountItem ?: return@mapNotNull null
+            val registrationType = getAccountRegistrationType(accountItem.address)
+            if (registrationType is AccountRegistrationType.Joint) return@mapNotNull null
+            val displayName = accountItem.displayName
+            val address = accountItem.address
+            if (!displayName.contains(query, ignoreCase = true) &&
+                !address.contains(query, ignoreCase = true)
+            ) {
+                return@mapNotNull null
             }
-            .filter { accountItem ->
-                val displayName = accountItem.displayName
-                val address = accountItem.address
-                (displayName.contains(query, ignoreCase = true) ||
-                        address.contains(query, ignoreCase = true))
-            }
-            .map { accountItem ->
-                jointAccountSelectionListItemMapper.mapToAccountItem(accountItem)
-            }
-        emit(filteredAccounts)
+            jointAccountSelectionListItemMapper.mapToAccountItem(accountItem)
+        }
+        return filteredAccounts
     }
 
-    private fun fetchContactList(query: String) = flow {
+    private suspend fun fetchContactList(query: String): List<JointAccountSelectionListItem> {
         val contacts = getAccountSelectionContactItems()
-        val filteredContacts = contacts
-            .filterIsInstance<ContactItem>()
-            .filter { contactItem ->
-                val displayName = contactItem.displayName
-                val address = contactItem.address
-                (displayName.contains(query, ignoreCase = true) ||
-                        address.contains(query, ignoreCase = true))
+        val filteredContacts = contacts.mapNotNull { item ->
+            val contactItem = item as? ContactItem ?: return@mapNotNull null
+            val displayName = contactItem.displayName
+            val address = contactItem.address
+            if (!displayName.contains(query, ignoreCase = true) &&
+                !address.contains(query, ignoreCase = true)
+            ) {
+                return@mapNotNull null
             }
-            .map { contactItem ->
-                jointAccountSelectionListItemMapper.mapToContactItem(contactItem)
-            }
-        emit(filteredContacts)
+            jointAccountSelectionListItemMapper.mapToContactItem(contactItem)
+        }
+        return filteredContacts
     }
 
-    private fun fetchNfdList(query: String) = flow {
+    private suspend fun fetchNfdList(query: String): List<JointAccountSelectionListItem> {
         val nfdAccounts = getAccountSelectionNameServiceItems(query)
         val filteredNfds = nfdAccounts.map { nfdItem ->
             jointAccountSelectionListItemMapper.mapToNfdItem(nfdItem)
         }
-        emit(filteredNfds)
+        return filteredNfds
     }
 
-    private fun fetchExternalAddressIfValid(query: String) = flow {
+    private fun fetchExternalAddressIfValid(query: String): List<JointAccountSelectionListItem> {
         val trimmedQuery = query.trim()
-        if (trimmedQuery.isValidAddress()) {
+        return if (trimmedQuery.isValidAddress()) {
             val externalAddressItem = jointAccountSelectionListItemMapper.mapToExternalAddressItem(
                 address = trimmedQuery,
                 shortenedAddress = trimmedQuery.toShortenedAddress()
             )
-            emit(listOf(externalAddressItem))
+            listOf(externalAddressItem)
         } else {
-            emit(emptyList())
+            emptyList()
         }
     }
 }

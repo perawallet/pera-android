@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
+import com.algorand.android.ui.backup.list.BackupAccountsListViewModel.ViewEvent
 import com.algorand.android.ui.backup.list.model.BackupLocalAccountItem
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
@@ -52,13 +54,21 @@ fun BackupAccountsListScreen(
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
 
+    LaunchedEffect(viewModel.viewEvent) {
+        viewModel.viewEvent.collect { event ->
+            when (event) {
+                ViewEvent.BackUpSuccess -> listener.onBackUpSuccess()
+            }
+        }
+    }
+
     BackupAccountsListContent(
         notBackedUpCount = viewState.notBackedUpCount,
         availableFromBackupCount = viewState.availableFromBackupCount,
         showReviewBanner = viewState.hasAccountsToReview,
         localAccounts = viewState.localAccounts,
         onReviewClick = listener::onReviewClick,
-        onBackUpAccountClick = listener::onBackUpAccountClick
+        onBackUpAccountClick = viewModel::backUpAccount
     )
 }
 
@@ -287,5 +297,5 @@ private fun formatAccountSubtitle(item: BackupLocalAccountItem): String? {
 
 interface BackupAccountsListScreenListener {
     fun onReviewClick()
-    fun onBackUpAccountClick(address: String)
+    fun onBackUpSuccess()
 }

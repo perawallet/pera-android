@@ -32,7 +32,7 @@ import com.algorand.backup.domain.usecase.DeleteBackup
 import com.algorand.backup.domain.usecase.DisableBackup
 import com.algorand.backup.domain.usecase.GetBackupId
 import com.algorand.backup.domain.usecase.GetLatestSync
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
+import com.algorand.android.ui.backup.list.usecase.GetBackupLocalAccounts
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -48,7 +48,7 @@ class BackupOverviewViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     getBackupId: GetBackupId,
-    private val getLocalAccountCount: GetLocalAccountCount,
+    private val getBackupLocalAccounts: GetBackupLocalAccounts,
     private val contactUseCase: ContactUseCase,
     private val getNotSyncedBackupAccounts: GetNotSyncedBackupAccounts,
     private val getNotSyncedBackupContacts: GetNotSyncedBackupContacts,
@@ -85,7 +85,8 @@ class BackupOverviewViewModel @Inject constructor(
 
     private fun loadProtectedDataCounts() {
         viewModelScope.launch {
-            val accountCount = getLocalAccountCount()
+            val localAccounts = getBackupLocalAccounts()
+            val accountCount = localAccounts.count { it.isBackedUp }
             val contactCount = contactUseCase.getAllContacts().size
             val notSyncedAccountCount = getNotSyncedBackupAccounts().size
             val notSyncedContactCount = getNotSyncedBackupContacts().size

@@ -71,8 +71,8 @@ class BackupAccountsReviewFragment : BaseFragment(0), BackupAccountsReviewScreen
         )
     }
 
-    override fun onBackUpAccountClick(address: String) {
-        // TODO: Launch the per-account backup flow once the destination is wired up.
+    override fun onBackUpSuccess() {
+        showAlertSuccess(title = getString(R.string.account_has_been_backed_up))
     }
 
     override fun onAddSuccess() {

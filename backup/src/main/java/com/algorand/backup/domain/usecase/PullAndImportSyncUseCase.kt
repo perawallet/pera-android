@@ -12,15 +12,20 @@
 
 package com.algorand.backup.domain.usecase
 
+import com.algorand.backup.domain.model.BackupId
+import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.PullSyncResult
 import com.algorand.backup.domain.model.SyncBackupResult
+import com.algorand.backup.domain.repository.SyncStateRepository
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
 internal class PullAndImportSyncUseCase @Inject constructor(
     private val getBackupId: GetBackupId,
     private val pullBackupSync: PullBackupSync,
-    private val fetchAndImportBackupItems: FetchAndImportBackupItems
+    private val fetchAndImportBackupItems: FetchAndImportBackupItems,
+    private val evictDeletedItemsFromSnapshot: EvictDeletedItemsFromSnapshot,
+    private val syncStateRepository: SyncStateRepository
 ) : PullAndImportSync {
 
     override suspend fun invoke(): SyncBackupResult {
@@ -29,11 +34,24 @@ internal class PullAndImportSyncUseCase @Inject constructor(
             is PullSyncResult.UpToDate -> SyncBackupResult.Success
             is PullSyncResult.Error -> SyncBackupResult.Error(result.exception)
             is PullSyncResult.Updated -> {
+                handleDeletedKeys(backupId, result.deletedKeys)
+                handleReappearedKeys(backupId, result.reappearedKeys)
                 when (val importResult = fetchAndImportBackupItems(backupId, result.updatedKeys)) {
                     is PeraResult.Success -> SyncBackupResult.Success
                     is PeraResult.Error -> SyncBackupResult.Error(importResult.exception)
                 }
             }
         }
+    }
+
+    private suspend fun handleDeletedKeys(backupId: BackupId, deletedKeys: List<BackupItemKey>) {
+        if (deletedKeys.isEmpty()) return
+        evictDeletedItemsFromSnapshot(deletedKeys)
+        deletedKeys.forEach { key -> syncStateRepository.removeItem(backupId, key) }
+    }
+
+    private suspend fun handleReappearedKeys(backupId: BackupId, reappearedKeys: List<BackupItemKey>) {
+        if (reappearedKeys.isEmpty()) return
+        fetchAndImportBackupItems(backupId, reappearedKeys, importToLocal = false)
     }
 }

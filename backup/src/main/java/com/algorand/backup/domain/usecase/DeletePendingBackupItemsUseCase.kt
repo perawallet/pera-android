@@ -12,6 +12,7 @@
 
 package com.algorand.backup.domain.usecase
 
+import com.algorand.backup.domain.mapper.SyncItemStateMapper
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.DeletedBackupItems
@@ -25,6 +26,7 @@ import javax.inject.Inject
 internal class DeletePendingBackupItemsUseCase @Inject constructor(
     private val backupRepository: BackupRepository,
     private val syncStateRepository: SyncStateRepository,
+    private val syncItemStateMapper: SyncItemStateMapper,
     private val errorLogger: PeraErrorLogger
 ) : DeletePendingBackupItems {
 
@@ -35,16 +37,16 @@ internal class DeletePendingBackupItemsUseCase @Inject constructor(
         val deletedKeys = mutableListOf<BackupItemKey>()
         var maxSeq = 0L
 
-        pendingDeletes.forEach { (key, _) ->
+        pendingDeletes.forEach { (key, itemState) ->
             when (val deleteResult = backupRepository.deleteItem(backupId, key)) {
                 is PeraResult.Success -> {
-                    syncStateRepository.removeItem(backupId, key)
+                    markAsLocallyDeleted(backupId, key, itemState)
                     deletedKeys.add(key)
                     if (deleteResult.data > 0) maxSeq = maxOf(maxSeq, deleteResult.data)
                 }
                 is PeraResult.Error -> {
                     if (deleteResult.code == HTTP_NOT_FOUND) {
-                        syncStateRepository.removeItem(backupId, key)
+                        markAsLocallyDeleted(backupId, key, itemState)
                         deletedKeys.add(key)
                     } else {
                         errorLogger.logError(deleteResult.exception)
@@ -54,6 +56,11 @@ internal class DeletePendingBackupItemsUseCase @Inject constructor(
         }
 
         return PeraResult.Success(DeletedBackupItems(deletedKeys, maxSeq))
+    }
+
+    private suspend fun markAsLocallyDeleted(backupId: BackupId, key: BackupItemKey, itemState: SyncItemState) {
+        val ignoredItem = syncItemStateMapper.mapForLocalOnlyDelete(itemState)
+        syncStateRepository.updateItemState(backupId, key, ignoredItem)
     }
 
     private companion object {

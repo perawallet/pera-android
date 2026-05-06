@@ -91,27 +91,43 @@ internal class PullBackupSyncUseCase @Inject constructor(
     ): PullSyncResult {
         val updatedKeys = mutableListOf<BackupItemKey>()
         val deletedKeys = mutableListOf<BackupItemKey>()
+        val reappearedKeys = mutableListOf<BackupItemKey>()
 
         for (delta in deltas) {
             when (delta.operation) {
-                DeltaOperation.UPSERT -> applyUpsertDelta(backupId, syncState, delta)?.let { updatedKeys.add(it) }
-                DeltaOperation.DELETE -> applyDeleteDelta(backupId, syncState, delta).let { deletedKeys.add(it) }
+                DeltaOperation.UPSERT -> applyUpsertDelta(backupId, syncState, delta, reappearedKeys)
+                    ?.let { updatedKeys.add(it) }
+                DeltaOperation.DELETE -> applyDeleteDelta(backupId, syncState, delta)
+                    ?.let { deletedKeys.add(it) }
             }
         }
 
         val maxSeq = deltas.maxOf { it.seq }
         syncStateRepository.updateGlobalPointers(backupId, backupManifest.backupGlobalHash, maxSeq)
 
-        return PullSyncResult.Updated(updatedKeys = updatedKeys, deletedKeys = deletedKeys)
+        return PullSyncResult.Updated(
+            updatedKeys = updatedKeys,
+            deletedKeys = deletedKeys,
+            reappearedKeys = reappearedKeys
+        )
     }
 
     private suspend fun applyUpsertDelta(
         backupId: BackupId,
         syncState: SyncState,
-        delta: DeltaEntry
+        delta: DeltaEntry,
+        reappearedKeys: MutableList<BackupItemKey>
     ): BackupItemKey? {
         val existingItem = syncState.items[delta.key]
         val updatedItem = syncItemStateMapper.mapFromUpsertDelta(delta, existingItem)
+
+        if (existingItem?.status == BackupItemStatus.IGNORED) {
+            val ignoredItem = updatedItem.copy(status = BackupItemStatus.IGNORED)
+            syncStateRepository.updateItemState(backupId, delta.key, ignoredItem)
+            reappearedKeys.add(delta.key)
+            return null
+        }
+
         syncStateRepository.updateItemState(backupId, delta.key, updatedItem)
         return if (shouldDownloadPayload(existingItem, delta)) delta.key else null
     }
@@ -120,13 +136,13 @@ internal class PullBackupSyncUseCase @Inject constructor(
         backupId: BackupId,
         syncState: SyncState,
         delta: DeltaEntry
-    ): BackupItemKey {
+    ): BackupItemKey? {
         val existingItem = syncState.items[delta.key]
         if (existingItem != null) {
             val ignoredItem = syncItemStateMapper.mapFromDeleteDelta(delta, existingItem)
             syncStateRepository.updateItemState(backupId, delta.key, ignoredItem)
         }
-        return delta.key
+        return if (existingItem?.status != BackupItemStatus.IGNORED) delta.key else null
     }
 
     private fun shouldDownloadPayload(existingItem: SyncItemState?, delta: DeltaEntry): Boolean {

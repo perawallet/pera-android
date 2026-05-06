@@ -96,6 +96,10 @@ fun interface DeleteAccountFromBackup {
     suspend operator fun invoke(address: String, deleteFromServer: Boolean)
 }
 
+fun interface AddAccountToBackup {
+    suspend operator fun invoke(address: String)
+}
+
 internal interface ResolveAddedAccountBackupKeys {
     suspend operator fun invoke(addedAddresses: Set<String>, accounts: List<LocalAccount>): Set<BackupItemKey>
 }
@@ -170,7 +174,11 @@ interface PullAndImportSync {
 }
 
 interface FetchAndImportBackupItems {
-    suspend operator fun invoke(backupId: BackupId, keys: List<BackupItemKey>): PeraResult<Set<String>>
+    suspend operator fun invoke(
+        backupId: BackupId,
+        keys: List<BackupItemKey>,
+        importToLocal: Boolean = true
+    ): PeraResult<Set<String>>
 }
 
 interface PreparePushPayloads {

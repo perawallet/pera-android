@@ -68,6 +68,7 @@ fun BackupAccountsReviewScreen(
         viewModel.viewEvent.collect { event ->
             when (event) {
                 ViewEvent.AddSuccess -> listener.onAddSuccess()
+                ViewEvent.BackUpSuccess -> listener.onBackUpSuccess()
                 ViewEvent.NavigateBackWithSuccess -> listener.onNavigateBackWithSuccess()
                 ViewEvent.NavigateBack -> listener.onNavigateBack()
                 is ViewEvent.ShowImportError -> listener.onShowImportError(event.message)
@@ -85,7 +86,7 @@ fun BackupAccountsReviewScreen(
             viewModel.requestRemoveFromBackup(payload)
             listener.onRemoveFromBackupClick(payload)
         },
-        onBackUpAccountClick = listener::onBackUpAccountClick
+        onBackUpAccountClick = viewModel::backUpAccount
     )
 }
 
@@ -401,7 +402,7 @@ private fun SquareIconButton(
 
 interface BackupAccountsReviewScreenListener {
     fun onRemoveFromBackupClick(payload: AddressBackupPayload)
-    fun onBackUpAccountClick(address: String)
+    fun onBackUpSuccess()
     fun onAddSuccess()
     fun onNavigateBackWithSuccess()
     fun onNavigateBack()

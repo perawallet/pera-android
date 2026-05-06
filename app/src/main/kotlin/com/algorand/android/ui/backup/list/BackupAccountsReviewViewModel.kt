@@ -22,6 +22,9 @@ import com.algorand.android.ui.backup.list.usecase.AddBackupAccountToLocal
 import com.algorand.android.ui.backup.list.usecase.GetBackupLocalAccounts
 import com.algorand.android.ui.backup.list.usecase.GetNotSyncedBackupAccounts
 import com.algorand.backup.account.domain.model.AddressBackupPayload
+import com.algorand.backup.domain.model.BackupSyncStatus
+import com.algorand.backup.domain.usecase.AddAccountToBackup
+import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.DeleteAccountFromBackup
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -30,6 +33,8 @@ import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -39,7 +44,9 @@ class BackupAccountsReviewViewModel @Inject constructor(
     private val getBackupLocalAccounts: GetBackupLocalAccounts,
     private val getNotSyncedBackupAccounts: GetNotSyncedBackupAccounts,
     private val addBackupAccountToLocal: AddBackupAccountToLocal,
-    private val deleteAccountFromBackup: DeleteAccountFromBackup
+    private val deleteAccountFromBackup: DeleteAccountFromBackup,
+    private val addAccountToBackup: AddAccountToBackup,
+    private val backupSyncManager: BackupSyncManager
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     private var initialExpansionApplied = false
@@ -48,6 +55,7 @@ class BackupAccountsReviewViewModel @Inject constructor(
     init {
         stateDelegate.setDefaultState(ViewState())
         viewModelScope.launch { reloadState() }
+        observeSyncStatus()
     }
 
     fun refresh() {
@@ -99,6 +107,14 @@ class BackupAccountsReviewViewModel @Inject constructor(
         }
     }
 
+    fun backUpAccount(address: String) {
+        viewModelScope.launch {
+            addAccountToBackup(address)
+            backupSyncManager.syncNow()
+            eventDelegate.sendEvent(ViewEvent.BackUpSuccess)
+        }
+    }
+
     private suspend fun reloadState() {
         val notBackedUp = getBackupLocalAccounts().filterNot { it.isBackedUp }
         val availableFromBackup = getNotSyncedBackupAccounts()
@@ -117,6 +133,16 @@ class BackupAccountsReviewViewModel @Inject constructor(
         }
     }
 
+    private fun observeSyncStatus() {
+        backupSyncManager.syncStatus
+            .onEach { status ->
+                if (status !is BackupSyncStatus.Syncing) {
+                    reloadState()
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
     data class ViewState(
         val notBackedUp: List<BackupLocalAccountItem> = emptyList(),
         val availableFromBackup: List<BackupAccountListItem> = emptyList(),
@@ -125,6 +151,7 @@ class BackupAccountsReviewViewModel @Inject constructor(
 
     sealed interface ViewEvent {
         data object AddSuccess : ViewEvent
+        data object BackUpSuccess : ViewEvent
         data object NavigateBackWithSuccess : ViewEvent
         data object NavigateBack : ViewEvent
         data class ShowImportError(val message: String?) : ViewEvent

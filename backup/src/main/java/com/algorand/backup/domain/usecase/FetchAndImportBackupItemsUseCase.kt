@@ -43,29 +43,48 @@ internal class FetchAndImportBackupItemsUseCase @Inject constructor(
     private val errorLogger: PeraErrorLogger
 ) : FetchAndImportBackupItems {
 
-    override suspend fun invoke(backupId: BackupId, keys: List<BackupItemKey>): PeraResult<Set<String>> {
+    override suspend fun invoke(
+        backupId: BackupId,
+        keys: List<BackupItemKey>,
+        importToLocal: Boolean
+    ): PeraResult<Set<String>> {
         if (keys.isEmpty()) return PeraResult.Success(emptySet())
 
         return when (val downloadResult = backupRepository.batchReadItems(backupId, keys)) {
             is PeraResult.Error -> PeraResult.Error(downloadResult.exception, downloadResult.code)
-            is PeraResult.Success -> importPayloads(backupId, downloadResult.data)
+            is PeraResult.Success -> importPayloads(backupId, downloadResult.data, importToLocal)
         }
     }
 
     private suspend fun importPayloads(
         backupId: BackupId,
-        data: Map<BackupItemKey, String>
+        data: Map<BackupItemKey, String>,
+        importToLocal: Boolean
     ): PeraResult<Set<String>> {
         return try {
             val payloads = decryptAndCategorize(data)
-            val resolvedSecrets = ensureParentSeedsAvailable(backupId, payloads)
-            val combined = payloads.copy(secrets = payloads.secrets + resolvedSecrets)
-            val importedAddresses = importToLocal(combined)
-            updateSnapshot(combined, importedAddresses)
-            PeraResult.Success(importedAddresses)
+            if (importToLocal) {
+                val resolvedSecrets = ensureParentSeedsAvailable(backupId, payloads)
+                val combined = payloads.copy(secrets = payloads.secrets + resolvedSecrets)
+                val importedAddresses = importToLocal(combined)
+                updateSnapshot(combined, importedAddresses)
+                PeraResult.Success(importedAddresses)
+            } else {
+                snapshotAll(payloads)
+                PeraResult.Success(emptySet())
+            }
         } catch (e: Exception) {
             errorLogger.logError(e)
             PeraResult.Error(e)
+        }
+    }
+
+    private suspend fun snapshotAll(payloads: DecryptedPayloads) {
+        if (payloads.addresses.isNotEmpty()) {
+            backupSnapshotRepository.upsertAddressPayloads(payloads.addresses)
+        }
+        if (payloads.contacts.isNotEmpty()) {
+            backupSnapshotRepository.upsertContactPayloads(payloads.contacts)
         }
     }
 

@@ -79,6 +79,8 @@ import com.algorand.backup.domain.usecase.CreateBackup
 import com.algorand.backup.domain.usecase.CreateBackupUseCase
 import com.algorand.backup.domain.usecase.DecryptBackupPayloads
 import com.algorand.backup.domain.usecase.DecryptBackupPayloadsUseCase
+import com.algorand.backup.domain.usecase.AddAccountToBackup
+import com.algorand.backup.domain.usecase.DefaultAddAccountToBackup
 import com.algorand.backup.domain.usecase.DefaultBackupSyncStateUpdater
 import com.algorand.backup.domain.usecase.DefaultDeleteAccountFromBackup
 import com.algorand.backup.domain.usecase.DefaultResolveAddedAccountBackupKeys
@@ -352,6 +354,9 @@ internal object BackupModule {
 
     @Provides
     fun provideDeleteAccountFromBackup(useCase: DefaultDeleteAccountFromBackup): DeleteAccountFromBackup = useCase
+
+    @Provides
+    fun provideAddAccountToBackup(useCase: DefaultAddAccountToBackup): AddAccountToBackup = useCase
 
     @Provides
     fun provideResolveAddedAccountBackupKeys(

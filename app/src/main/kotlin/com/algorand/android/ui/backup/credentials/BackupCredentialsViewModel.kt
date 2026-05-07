@@ -14,22 +14,49 @@ package com.algorand.android.ui.backup.credentials
 
 import android.util.Base64
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.ui.backup.credentials.BackupCredentialsViewModel.ViewEvent
 import com.algorand.android.ui.backup.credentials.BackupCredentialsViewModel.ViewState
+import com.algorand.backup.domain.usecase.GenerateEncodedArgon2idHash
 import com.algorand.backup.domain.usecase.RevealBackupAuthCredentials
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.utils.date.TimeProvider
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BackupCredentialsViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
-    private val revealBackupAuthCredentials: RevealBackupAuthCredentials
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val revealBackupAuthCredentials: RevealBackupAuthCredentials,
+    private val generateEncodedArgon2idHash: GenerateEncodedArgon2idHash,
+    private val timeProvider: TimeProvider
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
+
+    private var exportJob: Job? = null
 
     init {
         stateDelegate.setDefaultState(loadCredentials())
+    }
+
+    fun exportArgon2idHash() {
+        if (exportJob?.isActive == true) return
+        exportJob = viewModelScope.launch(Dispatchers.Default) {
+            when (val result = generateEncodedArgon2idHash()) {
+                is PeraResult.Success -> eventDelegate.sendEvent(
+                    ViewEvent.Argon2idHashReady(encodedHash = result.data, fileName = createExportFileName())
+                )
+                is PeraResult.Error -> eventDelegate.sendEvent(ViewEvent.Argon2idHashFailed)
+            }
+        }
     }
 
     private fun loadCredentials(): ViewState {
@@ -53,5 +80,15 @@ class BackupCredentialsViewModel @Inject constructor(
             val mnemonic: String,
             val encryptionKey: String
         ) : ViewState
+    }
+
+    private fun createExportFileName(): String {
+        val date = timeProvider.getZonedDateTimeNow().format(DateTimeFormatter.ISO_LOCAL_DATE)
+        return "pera-backup-key-$date.txt"
+    }
+
+    sealed interface ViewEvent {
+        data class Argon2idHashReady(val encodedHash: String, val fileName: String) : ViewEvent
+        data object Argon2idHashFailed : ViewEvent
     }
 }

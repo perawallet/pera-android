@@ -216,3 +216,7 @@ internal fun interface DisconnectBackupWebSocket {
 internal fun interface GetBackupWebSocketEvents {
     operator fun invoke(): SharedFlow<BackupWebSocketEvent>
 }
+
+fun interface GenerateEncodedArgon2idHash {
+    operator fun invoke(): PeraResult<String>
+}

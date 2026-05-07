@@ -52,7 +52,9 @@ import com.algorand.backup.domain.security.Argon2idHashValidator
 import com.algorand.backup.domain.security.DefaultArgon2idEncoder
 import com.algorand.backup.domain.security.DefaultArgon2idHashValidator
 import com.algorand.backup.domain.security.DefaultArgonKeyManager
+import com.algorand.backup.domain.security.BackupMnemonicPasswordDeriver
 import com.algorand.backup.domain.security.DefaultBackupEncryptionManager
+import com.algorand.backup.domain.security.DefaultBackupMnemonicPasswordDeriver
 import com.algorand.backup.domain.security.DefaultBackupIdManager
 import com.algorand.backup.domain.security.DefaultBackupKeyDerivationManager
 import com.algorand.backup.domain.security.DefaultBackupRequestSigner
@@ -104,6 +106,8 @@ import com.algorand.backup.domain.usecase.EvictDeletedItemsFromSnapshot
 import com.algorand.backup.domain.usecase.EvictDeletedItemsFromSnapshotUseCase
 import com.algorand.backup.domain.usecase.FetchAndImportBackupItems
 import com.algorand.backup.domain.usecase.FetchAndImportBackupItemsUseCase
+import com.algorand.backup.domain.usecase.GenerateEncodedArgon2idHash
+import com.algorand.backup.domain.usecase.GenerateEncodedArgon2idHashUseCase
 import com.algorand.backup.domain.usecase.DefaultGetLatestSync
 import com.algorand.backup.domain.usecase.DefaultSaveBackupSyncResult
 import com.algorand.backup.domain.usecase.GetAddressBackupSnapshot
@@ -296,6 +300,16 @@ internal object BackupModule {
 
     @Provides
     fun provideSaveBackupSyncResult(useCase: DefaultSaveBackupSyncResult): SaveBackupSyncResult = useCase
+
+    @Provides
+    fun provideGenerateEncodedArgon2idHash(
+        useCase: GenerateEncodedArgon2idHashUseCase
+    ): GenerateEncodedArgon2idHash = useCase
+
+    @Provides
+    fun provideBackupMnemonicPasswordDeriver(
+        deriver: DefaultBackupMnemonicPasswordDeriver
+    ): BackupMnemonicPasswordDeriver = deriver
 
     @Provides
     fun provideArgonKeyManager(manager: DefaultArgonKeyManager): ArgonKeyManager = manager

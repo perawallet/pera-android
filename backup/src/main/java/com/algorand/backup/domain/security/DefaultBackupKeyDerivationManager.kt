@@ -14,20 +14,19 @@ package com.algorand.backup.domain.security
 
 import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.KeyDerivationInput
-import com.algorand.backup.domain.model.SensitiveBytes
 import com.algorand.wallet.foundation.PeraResult
-import java.security.MessageDigest
 import javax.inject.Inject
 
 internal class DefaultBackupKeyDerivationManager @Inject constructor(
     private val argonKeyManager: ArgonKeyManager,
     private val hkdfKeyManager: HkdfKeyManager,
     private val ed25519KeyManager: Ed25519KeyManager,
-    private val backupIdManager: BackupIdManager
+    private val backupIdManager: BackupIdManager,
+    private val mnemonicPasswordDeriver: BackupMnemonicPasswordDeriver
 ) : BackupKeyDerivationManager {
 
     override fun deriveKeys(input: KeyDerivationInput): PeraResult<DerivedKeyMaterial> {
-        val masterKey = derivePasswordFromMnemonic(input.mnemonic).use { password ->
+        val masterKey = mnemonicPasswordDeriver.derive(input.mnemonic).use { password ->
             argonKeyManager.deriveMasterKey(password, input.salt, input.argon2idConfig)
         }
 
@@ -64,15 +63,8 @@ internal class DefaultBackupKeyDerivationManager @Inject constructor(
         }
     }
 
-    private fun derivePasswordFromMnemonic(mnemonic: String): SensitiveBytes {
-        val normalized = mnemonic.trim().lowercase().split("\\s+".toRegex()).joinToString(" ")
-        return SensitiveBytes(MessageDigest.getInstance(SHA_256).digest(normalized.toByteArray(Charsets.UTF_8)))
-    }
-
-    companion object {
-        private const val SHA_256 = "SHA-256"
-
-        private val HKDF_INFO_ENCRYPTION_KEY = "backup-encryption-key".toByteArray(Charsets.UTF_8)
-        private val HKDF_INFO_AUTH_SEED = "backup-auth-seed".toByteArray(Charsets.UTF_8)
+    private companion object {
+        val HKDF_INFO_ENCRYPTION_KEY = "backup-encryption-key".toByteArray(Charsets.UTF_8)
+        val HKDF_INFO_AUTH_SEED = "backup-auth-seed".toByteArray(Charsets.UTF_8)
     }
 }

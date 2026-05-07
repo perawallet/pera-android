@@ -19,9 +19,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.ui.backup.overview.StoreBackupCredentialsBottomSheet
+import com.algorand.android.ui.backup.overview.StoreBackupCredentialsBottomSheet.Companion.RESULT_KEY as STORE_CREDENTIALS_RESULT_KEY
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.utils.disableScreenCapture
 import com.algorand.android.utils.enableScreenCapture
+import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,9 +39,30 @@ class BackupCredentialsFragment : BaseFragment(0) {
             BackupCredentialsScreen(
                 viewModel = viewModel,
                 onCloseClick = ::navBack,
-                onStoreCredentialsClick = ::navBack
+                onStoreCredentialsClick = ::navigateToStoreBackupCredentials
             )
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        useFragmentResultListenerValue<String>(STORE_CREDENTIALS_RESULT_KEY) { optionName ->
+            when (StoreBackupCredentialsBottomSheet.StorageOption.valueOf(optionName)) {
+                StoreBackupCredentialsBottomSheet.StorageOption.THIS_DEVICE -> {
+                    // TODO: Handle storing credentials on device
+                }
+                StoreBackupCredentialsBottomSheet.StorageOption.GOOGLE_DRIVE -> {
+                    // TODO: Handle storing credentials on Google Drive
+                }
+            }
+        }
+    }
+
+    private fun navigateToStoreBackupCredentials() {
+        nav(
+            BackupCredentialsFragmentDirections
+                .actionBackupCredentialsFragmentToStoreBackupCredentialsBottomSheet()
+        )
     }
 
     override fun onResume() {

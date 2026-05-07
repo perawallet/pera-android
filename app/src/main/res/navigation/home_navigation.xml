@@ -1936,7 +1936,11 @@
     <fragment
         android:id="@+id/backupCredentialsFragment"
         android:name="com.algorand.android.ui.backup.credentials.BackupCredentialsFragment"
-        android:label="BackupCredentialsFragment" />
+        android:label="BackupCredentialsFragment">
+        <action
+            android:id="@+id/action_backupCredentialsFragment_to_storeBackupCredentialsBottomSheet"
+            app:destination="@id/storeBackupCredentialsBottomSheet" />
+    </fragment>
 
     <fragment
         android:id="@+id/backupAccountsListFragment"
@@ -1971,6 +1975,11 @@
         android:name="com.algorand.android.ui.backup.overview.DisableBackupConfirmationBottomSheet"
         android:label="DisableBackupConfirmationBottomSheet"
         tools:layout="@layout/bottom_sheet_disable_backup_confirmation" />
+
+    <dialog
+        android:id="@+id/storeBackupCredentialsBottomSheet"
+        android:name="com.algorand.android.ui.backup.overview.StoreBackupCredentialsBottomSheet"
+        android:label="StoreBackupCredentialsBottomSheet" />
 
     <fragment
         android:id="@+id/developerOptionsFragment"

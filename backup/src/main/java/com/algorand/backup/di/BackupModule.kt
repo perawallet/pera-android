@@ -42,11 +42,15 @@ import com.algorand.backup.domain.repository.BackupRepository
 import com.algorand.backup.domain.repository.BackupSnapshotRepository
 import com.algorand.backup.domain.repository.BackupWebSocketRepository
 import com.algorand.backup.domain.repository.SyncStateRepository
+import com.algorand.backup.domain.security.Argon2idEncoder
 import com.algorand.backup.domain.security.ArgonKeyManager
 import com.algorand.backup.domain.security.BackupEncryptionManager
 import com.algorand.backup.domain.security.BackupIdManager
 import com.algorand.backup.domain.security.BackupKeyDerivationManager
 import com.algorand.backup.domain.security.BackupRequestSigner
+import com.algorand.backup.domain.security.Argon2idHashValidator
+import com.algorand.backup.domain.security.DefaultArgon2idEncoder
+import com.algorand.backup.domain.security.DefaultArgon2idHashValidator
 import com.algorand.backup.domain.security.DefaultArgonKeyManager
 import com.algorand.backup.domain.security.DefaultBackupEncryptionManager
 import com.algorand.backup.domain.security.DefaultBackupIdManager
@@ -295,6 +299,12 @@ internal object BackupModule {
 
     @Provides
     fun provideArgonKeyManager(manager: DefaultArgonKeyManager): ArgonKeyManager = manager
+
+    @Provides
+    fun provideArgon2idHashValidator(validator: DefaultArgon2idHashValidator): Argon2idHashValidator = validator
+
+    @Provides
+    fun provideArgon2idEncoder(encoder: DefaultArgon2idEncoder): Argon2idEncoder = encoder
 
     @Provides
     fun provideHkdfKeyManager(manager: DefaultHkdfKeyManager): HkdfKeyManager = manager

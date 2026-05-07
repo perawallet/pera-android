@@ -16,6 +16,7 @@ import com.algorand.backup.account.domain.model.AddressBackupPayload
 import com.algorand.backup.contact.domain.model.ContactBackupPayload
 import com.algorand.backup.domain.model.BackupWebSocketEvent
 import com.algorand.backup.domain.model.Argon2idConfig
+import com.algorand.backup.domain.model.Argon2idHash
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.CreatedBackup
@@ -219,4 +220,12 @@ internal fun interface GetBackupWebSocketEvents {
 
 fun interface GenerateEncodedArgon2idHash {
     operator fun invoke(): PeraResult<String>
+}
+
+interface ValidateBackupMnemonicForAddress {
+    operator fun invoke(
+        mnemonic: String,
+        argon2idHash: Argon2idHash,
+        expectedAddress: String
+    ): PeraResult<Unit>
 }

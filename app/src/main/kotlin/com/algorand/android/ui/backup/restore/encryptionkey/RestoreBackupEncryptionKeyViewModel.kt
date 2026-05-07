@@ -23,9 +23,12 @@ import com.algorand.android.ui.backup.restore.encryptionkey.RestoreBackupEncrypt
 import com.algorand.android.ui.device.usecase.GetDeviceConfig
 import com.algorand.android.utils.getOrThrow
 import com.algorand.backup.domain.model.Argon2idConfig
+import com.algorand.backup.domain.model.BackupMnemonicMismatchException
 import com.algorand.backup.domain.model.DeviceId
+import com.algorand.backup.domain.security.Argon2idEncoder
 import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.RestoreBackup
+import com.algorand.backup.domain.usecase.ValidateBackupMnemonicForAddress
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
@@ -33,6 +36,7 @@ import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -42,15 +46,25 @@ class RestoreBackupEncryptionKeyViewModel @Inject constructor(
     private val restoreBackup: RestoreBackup,
     private val backupSyncManager: BackupSyncManager,
     private val getDeviceConfig: GetDeviceConfig,
+    private val argon2idEncoder: Argon2idEncoder,
+    private val validateBackupMnemonicForAddress: ValidateBackupMnemonicForAddress,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     StateViewModel<ViewState> by stateDelegate,
     EventViewModel<ViewEvent> by eventDelegate {
 
     private val mnemonic: String = savedStateHandle.getOrThrow(MNEMONIC_KEY)
+    private val backupAddress: String? = savedStateHandle[BACKUP_ADDRESS_KEY]
+    private val decodedHash = savedStateHandle.get<String>(ENCODED_HASH_KEY)?.let { encoded ->
+        argon2idEncoder.decode(encoded).getDataOrNull()
+    }
 
     init {
-        stateDelegate.setDefaultState(ViewState(encryptionKey = "", isRestoring = false))
+        val initialKey = decodedHash?.let { Base64.encodeToString(it.salt, Base64.NO_WRAP) }
+        stateDelegate.setDefaultState(ViewState(encryptionKey = initialKey.orEmpty(), isRestoring = false))
+        if (initialKey != null) {
+            restore()
+        }
     }
 
     fun updateEncryptionKey(value: String) {
@@ -72,7 +86,21 @@ class RestoreBackupEncryptionKeyViewModel @Inject constructor(
 
         stateDelegate.updateState { it.copy(isRestoring = true) }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
+            if (backupAddress != null && decodedHash != null) {
+                val validationResult = validateBackupMnemonicForAddress(mnemonic, decodedHash, backupAddress)
+                if (validationResult is PeraResult.Error) {
+                    stateDelegate.updateState { it.copy(isRestoring = false) }
+                    val errorRes = if (validationResult.exception is BackupMnemonicMismatchException) {
+                        R.string.passphrase_does_not_match_backup_file
+                    } else {
+                        R.string.backup_restore_failed
+                    }
+                    eventDelegate.sendEvent(ViewEvent.ShowError(errorRes))
+                    return@launch
+                }
+            }
+
             val deviceId = DeviceId(getDeviceConfig().deviceId)
             when (restoreBackup(mnemonic, saltBytes, Argon2idConfig.DEFAULT, deviceId)) {
                 is PeraResult.Success -> {
@@ -99,5 +127,7 @@ class RestoreBackupEncryptionKeyViewModel @Inject constructor(
 
     private companion object {
         const val MNEMONIC_KEY = "mnemonic"
+        const val ENCODED_HASH_KEY = "encodedHash"
+        const val BACKUP_ADDRESS_KEY = "backupAddress"
     }
 }

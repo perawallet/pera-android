@@ -15,9 +15,9 @@ package com.algorand.android.ui.backup.credentials
 import android.util.Base64
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.ui.backup.CreateBackupFile
 import com.algorand.android.ui.backup.credentials.BackupCredentialsViewModel.ViewEvent
 import com.algorand.android.ui.backup.credentials.BackupCredentialsViewModel.ViewState
-import com.algorand.backup.domain.usecase.GenerateEncodedArgon2idHash
 import com.algorand.backup.domain.usecase.RevealBackupAuthCredentials
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.utils.date.TimeProvider
@@ -37,7 +37,7 @@ class BackupCredentialsViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val revealBackupAuthCredentials: RevealBackupAuthCredentials,
-    private val generateEncodedArgon2idHash: GenerateEncodedArgon2idHash,
+    private val createBackupFile: CreateBackupFile,
     private val timeProvider: TimeProvider
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
@@ -47,14 +47,17 @@ class BackupCredentialsViewModel @Inject constructor(
         stateDelegate.setDefaultState(loadCredentials())
     }
 
-    fun exportArgon2idHash() {
+    fun exportBackupFile() {
         if (exportJob?.isActive == true) return
         exportJob = viewModelScope.launch(Dispatchers.Default) {
-            when (val result = generateEncodedArgon2idHash()) {
+            when (val result = createBackupFile()) {
                 is PeraResult.Success -> eventDelegate.sendEvent(
-                    ViewEvent.Argon2idHashReady(encodedHash = result.data, fileName = createExportFileName())
+                    ViewEvent.BackupFileReady(
+                        fileContent = result.data,
+                        fileName = createExportFileName()
+                    )
                 )
-                is PeraResult.Error -> eventDelegate.sendEvent(ViewEvent.Argon2idHashFailed)
+                is PeraResult.Error -> eventDelegate.sendEvent(ViewEvent.BackupFileCreationFailed)
             }
         }
     }
@@ -88,7 +91,10 @@ class BackupCredentialsViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data class Argon2idHashReady(val encodedHash: String, val fileName: String) : ViewEvent
-        data object Argon2idHashFailed : ViewEvent
+        data class BackupFileReady(
+            val fileContent: String,
+            val fileName: String
+        ) : ViewEvent
+        data object BackupFileCreationFailed : ViewEvent
     }
 }

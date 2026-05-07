@@ -41,6 +41,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 fun RestoreBackupOptionsScreen(
     onCloseClick: () -> Unit,
     onScanQrClick: () -> Unit,
+    onImportFromDeviceClick: () -> Unit,
     onEnterManuallyClick: () -> Unit
 ) {
     Column(
@@ -64,6 +65,11 @@ fun RestoreBackupOptionsScreen(
                 iconRes = R.drawable.ic_qr_scan,
                 titleRes = R.string.scan_qr_code,
                 onClick = onScanQrClick
+            )
+            RestoreOptionRow(
+                iconRes = R.drawable.ic_device,
+                titleRes = R.string.import_from_this_device,
+                onClick = onImportFromDeviceClick
             )
             RestoreOptionRow(
                 iconRes = R.drawable.ic_key,

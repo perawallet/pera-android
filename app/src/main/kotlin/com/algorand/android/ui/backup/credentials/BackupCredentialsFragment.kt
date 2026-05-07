@@ -39,15 +39,15 @@ class BackupCredentialsFragment : BaseFragment(0) {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
-    private var pendingHashContent: String? = null
+    private var pendingFileContent: String? = null
 
     private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
         when (event) {
-            is ViewEvent.Argon2idHashReady -> {
-                pendingHashContent = event.encodedHash
+            is ViewEvent.BackupFileReady -> {
+                pendingFileContent = event.fileContent
                 createDocumentLauncher.launch(event.fileName)
             }
-            is ViewEvent.Argon2idHashFailed -> {
+            is ViewEvent.BackupFileCreationFailed -> {
                 showGlobalError(getString(R.string.backup_credentials_load_error))
             }
         }
@@ -56,7 +56,7 @@ class BackupCredentialsFragment : BaseFragment(0) {
     private val createDocumentLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument(MIME_TYPE_TEXT)
     ) { uri ->
-        uri?.let { writeHashToFile(it) }
+        uri?.let { writeToFile(it) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -75,7 +75,7 @@ class BackupCredentialsFragment : BaseFragment(0) {
         useFragmentResultListenerValue<String>(STORE_CREDENTIALS_RESULT_KEY) { optionName ->
             when (StoreBackupCredentialsBottomSheet.StorageOption.valueOf(optionName)) {
                 StoreBackupCredentialsBottomSheet.StorageOption.THIS_DEVICE -> {
-                    viewModel.exportArgon2idHash()
+                    viewModel.exportBackupFile()
                 }
                 StoreBackupCredentialsBottomSheet.StorageOption.GOOGLE_DRIVE -> {
                     // TODO: Handle storing credentials on Google Drive
@@ -91,9 +91,9 @@ class BackupCredentialsFragment : BaseFragment(0) {
         )
     }
 
-    private fun writeHashToFile(uri: Uri) {
-        val content = pendingHashContent ?: return
-        pendingHashContent = null
+    private fun writeToFile(uri: Uri) {
+        val content = pendingFileContent ?: return
+        pendingFileContent = null
         requireContext().contentResolver.openOutputStream(uri)?.use { stream ->
             stream.write(content.toByteArray(Charsets.UTF_8))
         }

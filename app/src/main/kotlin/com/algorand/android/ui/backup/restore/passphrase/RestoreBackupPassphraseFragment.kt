@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
@@ -26,6 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class RestoreBackupPassphraseFragment : BaseFragment(0) {
 
     private val viewModel: RestoreBackupPassphraseViewModel by viewModels()
+
+    private val args: RestoreBackupPassphraseFragmentArgs by navArgs()
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 
@@ -48,7 +51,9 @@ class RestoreBackupPassphraseFragment : BaseFragment(0) {
         nav(
             RestoreBackupPassphraseFragmentDirections
                 .actionRestoreBackupPassphraseFragmentToRestoreBackupEncryptionKeyFragment(
-                    mnemonic = passphrase
+                    mnemonic = passphrase,
+                    encodedHash = args.encodedHash,
+                    backupAddress = args.backupAddress
                 )
         )
     }

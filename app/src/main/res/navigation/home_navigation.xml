@@ -1820,12 +1820,32 @@
         android:id="@+id/restoreBackupPassphraseFragment"
         android:name="com.algorand.android.ui.backup.restore.passphrase.RestoreBackupPassphraseFragment"
         android:label="RestoreBackupPassphraseFragment">
+        <argument
+            android:name="encodedHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="backupAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_restoreBackupPassphraseFragment_to_restoreBackupEncryptionKeyFragment"
             app:destination="@id/restoreBackupEncryptionKeyFragment">
             <argument
                 android:name="mnemonic"
                 app:argType="string" />
+            <argument
+                android:name="encodedHash"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="backupAddress"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
         </action>
     </fragment>
 
@@ -1836,6 +1856,16 @@
         <argument
             android:name="mnemonic"
             app:argType="string" />
+        <argument
+            android:name="encodedHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="backupAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_restoreBackupEncryptionKeyFragment_to_backupOverviewFragment"
             app:destination="@id/backupOverviewFragment"

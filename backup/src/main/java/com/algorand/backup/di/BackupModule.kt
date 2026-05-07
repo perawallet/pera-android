@@ -142,6 +142,8 @@ import com.algorand.backup.domain.usecase.StoreBackupSession
 import com.algorand.backup.domain.usecase.SyncBackup
 import com.algorand.backup.domain.usecase.SyncBackupUseCase
 import com.algorand.backup.domain.usecase.UseBackupPrivateKey
+import com.algorand.backup.domain.usecase.ValidateBackupMnemonicForAddress
+import com.algorand.backup.domain.usecase.ValidateBackupMnemonicForAddressUseCase
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.gson.Gson
@@ -305,6 +307,11 @@ internal object BackupModule {
     fun provideGenerateEncodedArgon2idHash(
         useCase: GenerateEncodedArgon2idHashUseCase
     ): GenerateEncodedArgon2idHash = useCase
+
+    @Provides
+    fun provideValidateBackupMnemonicForAddress(
+        useCase: ValidateBackupMnemonicForAddressUseCase
+    ): ValidateBackupMnemonicForAddress = useCase
 
     @Provides
     fun provideBackupMnemonicPasswordDeriver(

@@ -27,6 +27,7 @@ import com.algorand.backup.domain.model.BackupMnemonicMismatchException
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.security.Argon2idEncoder
 import com.algorand.backup.domain.usecase.BackupSyncManager
+import com.algorand.backup.domain.usecase.DeriveBackupWalletAddress
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.backup.domain.usecase.ValidateBackupMnemonicForAddress
 import com.algorand.wallet.foundation.PeraResult
@@ -48,6 +49,7 @@ class RestoreBackupEncryptionKeyViewModel @Inject constructor(
     private val getDeviceConfig: GetDeviceConfig,
     private val argon2idEncoder: Argon2idEncoder,
     private val validateBackupMnemonicForAddress: ValidateBackupMnemonicForAddress,
+    private val deriveBackupWalletAddress: DeriveBackupWalletAddress,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     StateViewModel<ViewState> by stateDelegate,
@@ -77,42 +79,63 @@ class RestoreBackupEncryptionKeyViewModel @Inject constructor(
         val current = state.value
         if (current.isRestoring || current.encryptionKey.isBlank()) return
 
-        val saltBytes = try {
-            Base64.decode(current.encryptionKey, Base64.NO_WRAP)
-        } catch (e: IllegalArgumentException) {
-            eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowError(R.string.backup_invalid_salt_format))
-            return
-        }
+        val saltBytes = decodeSalt(current.encryptionKey) ?: return
 
         stateDelegate.updateState { it.copy(isRestoring = true) }
 
         viewModelScope.launch(Dispatchers.Default) {
-            if (backupAddress != null && decodedHash != null) {
-                val validationResult = validateBackupMnemonicForAddress(mnemonic, decodedHash, backupAddress)
-                if (validationResult is PeraResult.Error) {
-                    stateDelegate.updateState { it.copy(isRestoring = false) }
-                    val errorRes = if (validationResult.exception is BackupMnemonicMismatchException) {
-                        R.string.passphrase_does_not_match_backup_file
-                    } else {
-                        R.string.backup_restore_failed
-                    }
-                    eventDelegate.sendEvent(ViewEvent.ShowError(errorRes))
-                    return@launch
-                }
-            }
-
+            if (!validateMnemonicIfNeeded()) return@launch
+            val walletAddress = resolveWalletAddress() ?: return@launch
             val deviceId = DeviceId(getDeviceConfig().deviceId)
-            when (restoreBackup(mnemonic, saltBytes, Argon2idConfig.DEFAULT, deviceId)) {
-                is PeraResult.Success -> {
-                    backupSyncManager.enableSync()
-                    eventDelegate.sendEvent(ViewEvent.BackupRestored)
-                }
-                is PeraResult.Error -> {
-                    stateDelegate.updateState { it.copy(isRestoring = false) }
-                    eventDelegate.sendEvent(ViewEvent.ShowError(R.string.backup_restore_failed))
-                }
-            }
+            performRestore(saltBytes, deviceId, walletAddress)
         }
+    }
+
+    private fun decodeSalt(encryptionKey: String): ByteArray? {
+        return try {
+            Base64.decode(encryptionKey, Base64.NO_WRAP)
+        } catch (e: IllegalArgumentException) {
+            eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowError(R.string.backup_invalid_salt_format))
+            null
+        }
+    }
+
+    private suspend fun validateMnemonicIfNeeded(): Boolean {
+        if (backupAddress == null || decodedHash == null) return true
+        val result = validateBackupMnemonicForAddress(mnemonic, decodedHash, backupAddress)
+        if (result is PeraResult.Error) {
+            val errorRes = if (result.exception is BackupMnemonicMismatchException) {
+                R.string.passphrase_does_not_match_backup_file
+            } else {
+                R.string.backup_restore_failed
+            }
+            failWithError(errorRes)
+            return false
+        }
+        return true
+    }
+
+    private suspend fun resolveWalletAddress(): String? {
+        val address = backupAddress ?: deriveBackupWalletAddress(mnemonic)
+        if (address == null) {
+            failWithError(R.string.backup_restore_failed)
+        }
+        return address
+    }
+
+    private suspend fun performRestore(saltBytes: ByteArray, deviceId: DeviceId, walletAddress: String) {
+        when (restoreBackup(mnemonic, saltBytes, Argon2idConfig.DEFAULT, deviceId, walletAddress)) {
+            is PeraResult.Success -> {
+                backupSyncManager.enableSync()
+                eventDelegate.sendEvent(ViewEvent.BackupRestored)
+            }
+            is PeraResult.Error -> failWithError(R.string.backup_restore_failed)
+        }
+    }
+
+    private suspend fun failWithError(@StringRes messageResId: Int) {
+        stateDelegate.updateState { it.copy(isRestoring = false) }
+        eventDelegate.sendEvent(ViewEvent.ShowError(messageResId))
     }
 
     data class ViewState(val encryptionKey: String, val isRestoring: Boolean) {

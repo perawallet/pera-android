@@ -29,7 +29,8 @@ import org.bouncycastle.crypto.signers.Ed25519Signer
 
 internal class DefaultBackupRequestSigner @Inject constructor(
     private val nonceGenerator: NonceGenerator,
-    private val backupSessionRepository: BackupSessionRepository
+    private val backupSessionRepository: BackupSessionRepository,
+    private val backupRegistrationSigner: BackupRegistrationSigner
 ) : BackupRequestSigner {
 
     override fun signHttpRequest(request: Request): PeraResult<SignedRequest> {
@@ -64,20 +65,23 @@ internal class DefaultBackupRequestSigner @Inject constructor(
     }
 
     override fun createRegistrationProof(
-        authPrivateKey: SensitiveBytes,
         authPublicKey: SensitiveBytes,
         backupId: BackupId,
         deviceId: DeviceId,
-        nonce: String
+        nonce: String,
+        walletPrivateKey: ByteArray
     ): RegistrationProof {
-        val message = buildMessageBytes(MESSAGE_PREFIX_REGISTER, backupId.value, deviceId.value, nonce)
-        val signature = sign(message, authPrivateKey.reveal())
+        val authPubB64 = encodeBase64(authPublicKey.reveal())
+        val payload = buildMessageBytes(
+            MESSAGE_PREFIX_REGISTER, backupId.value, deviceId.value, nonce, authPubB64
+        )
+        val walletSignature = backupRegistrationSigner.sign(payload, walletPrivateKey)
         return RegistrationProof(
             backupId = backupId,
             deviceId = deviceId,
-            publicKey = encodeBase64(authPublicKey.reveal()),
+            publicKey = authPubB64,
             nonce = nonce,
-            signature = encodeBase64(signature)
+            walletSignature = encodeBase64(walletSignature)
         )
     }
 

@@ -1328,6 +1328,7 @@
     <string name="backup_id_value">Backup ID: %s</string>
     <string name="backup_recovery_phrase_error">Failed to generate recovery phrase. Please try again.</string>
     <string name="backup_creation_failed">Backup creation failed</string>
+    <string name="backup_already_exists">A backup already exists for this wallet.</string>
     <string name="backup_invalid_salt_format">Invalid salt format</string>
     <string name="backup_restore_failed">Restore failed</string>
     <string name="sync_backup_pin_title">Set a sync PIN</string>

@@ -39,7 +39,7 @@ internal interface BackupIdManager {
 }
 
 internal interface BackupKeyDerivationManager {
-    fun deriveKeys(input: KeyDerivationInput): PeraResult<DerivedKeyMaterial>
+    fun deriveKeys(input: KeyDerivationInput, walletAddress: String): PeraResult<DerivedKeyMaterial>
 }
 
 internal interface ArgonKeyManager {

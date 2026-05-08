@@ -10,12 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.model
+package com.algorand.backup.domain.security
 
-data class RegistrationProof(
-    val backupId: BackupId,
-    val deviceId: DeviceId,
-    val publicKey: String,
-    val nonce: String,
-    val walletSignature: String
-)
+fun interface BackupRegistrationSigner {
+    fun sign(data: ByteArray, secretKey: ByteArray): ByteArray
+}

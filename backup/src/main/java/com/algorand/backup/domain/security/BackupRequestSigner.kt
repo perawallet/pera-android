@@ -27,10 +27,10 @@ internal interface BackupRequestSigner {
     fun createWebSocketToken(backupId: BackupId, deviceId: DeviceId, timestamp: String): PeraResult<String>
 
     fun createRegistrationProof(
-        authPrivateKey: SensitiveBytes,
         authPublicKey: SensitiveBytes,
         backupId: BackupId,
         deviceId: DeviceId,
-        nonce: String
+        nonce: String,
+        walletPrivateKey: ByteArray
     ): RegistrationProof
 }

@@ -70,6 +70,7 @@ fun VerifyBackupPassphraseScreen(
                 ViewEvent.ShowBackupConfirmationDialog -> confirmationSheetState.show()
                 ViewEvent.BackupCreated -> onBackupCreated()
                 ViewEvent.BackupCreationFailed -> onShowError(R.string.backup_creation_failed)
+                ViewEvent.BackupAlreadyExists -> onShowError(R.string.backup_already_exists)
                 ViewEvent.IncorrectSelection -> onShowError(R.string.selected_words_are)
             }
         }

@@ -56,7 +56,7 @@ import com.algorand.android.utils.copyToClipboard
 fun CreateBackupScreen(
     viewModel: CreateBackupViewModel,
     onBackClick: () -> Unit,
-    onProceedClick: (mnemonic: String, encryptionKey: String) -> Unit
+    onProceedClick: (mnemonic: String, encryptionKey: String, walletAddress: String) -> Unit
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
@@ -79,7 +79,7 @@ fun CreateBackupScreen(
                 encryptionKey = viewState.encryptionKey,
                 onCopyMnemonicClick = { context.copyToClipboard(viewState.mnemonic) },
                 onCopyEncryptionKeyClick = { context.copyToClipboard(viewState.encryptionKey) },
-                onProceedClick = { onProceedClick(viewState.mnemonic, viewState.encryptionKey) }
+                onProceedClick = { onProceedClick(viewState.mnemonic, viewState.encryptionKey, viewState.walletAddress) }
             )
         }
     }

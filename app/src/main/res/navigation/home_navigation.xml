@@ -1785,6 +1785,9 @@
             <argument
                 android:name="encryptionKey"
                 app:argType="string" />
+            <argument
+                android:name="walletAddress"
+                app:argType="string" />
         </action>
     </fragment>
 
@@ -1797,6 +1800,9 @@
             app:argType="string" />
         <argument
             android:name="encryptionKey"
+            app:argType="string" />
+        <argument
+            android:name="walletAddress"
             app:argType="string" />
         <action
             android:id="@+id/action_verifyBackupPassphraseFragment_to_backupOverviewFragment"

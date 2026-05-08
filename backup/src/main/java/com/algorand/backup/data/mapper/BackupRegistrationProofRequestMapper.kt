@@ -24,7 +24,7 @@ internal class BackupRegistrationProofRequestMapper @Inject constructor() {
             deviceId = proof.deviceId.value,
             publicKey = proof.publicKey,
             nonce = proof.nonce,
-            signature = proof.signature
+            walletSignature = proof.walletSignature
         )
     }
 }

@@ -58,6 +58,7 @@ import com.algorand.backup.domain.security.DefaultBackupMnemonicPasswordDeriver
 import com.algorand.backup.domain.security.DefaultBackupIdManager
 import com.algorand.backup.domain.security.DefaultBackupKeyDerivationManager
 import com.algorand.backup.domain.security.DefaultBackupRequestSigner
+import com.algorand.backup.domain.security.BackupRegistrationSigner
 import com.algorand.backup.domain.security.DefaultEd25519KeyManager
 import com.algorand.backup.domain.security.DefaultHkdfKeyManager
 import com.algorand.backup.domain.security.DefaultNonceGenerator
@@ -91,6 +92,8 @@ import com.algorand.backup.domain.usecase.DefaultBackupSyncStateUpdater
 import com.algorand.backup.domain.usecase.DefaultDeleteAccountFromBackup
 import com.algorand.backup.domain.usecase.DefaultResolveAddedAccountBackupKeys
 import com.algorand.backup.domain.usecase.DeleteAccountFromBackup
+import com.algorand.backup.domain.usecase.DeriveBackupWalletAddress
+import com.algorand.backup.domain.usecase.DeriveBackupWalletAddressUseCase
 import com.algorand.backup.domain.usecase.DeleteBackup
 import com.algorand.backup.domain.usecase.DeleteBackupItem
 import com.algorand.backup.domain.usecase.DeleteBackupItemUseCase
@@ -132,8 +135,11 @@ import com.algorand.backup.domain.usecase.PushDirtyBackupItems
 import com.algorand.backup.domain.usecase.PushDirtyBackupItemsUseCase
 import com.algorand.backup.domain.usecase.ReactivateBackupItem
 import com.algorand.backup.domain.usecase.ReactivateBackupItemUseCase
+import com.algorand.backup.domain.usecase.GetBackupWalletPrivateKey
 import com.algorand.backup.domain.usecase.RegisterBackup
+import com.algorand.backup.domain.usecase.RegisterBackupUseCase
 import com.algorand.backup.domain.usecase.ResolveAddedAccountBackupKeys
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.backup.domain.usecase.RestoreBackupUseCase
 import com.algorand.backup.domain.usecase.RevealBackupAuthCredentials
@@ -345,7 +351,21 @@ internal object BackupModule {
     fun provideBackupEncryptionManager(manager: DefaultBackupEncryptionManager): BackupEncryptionManager = manager
 
     @Provides
-    fun provideRegisterBackup(repository: BackupRepository): RegisterBackup = RegisterBackup(repository::register)
+    fun provideRegisterBackup(useCase: RegisterBackupUseCase): RegisterBackup = useCase
+
+    @Provides
+    fun provideGetBackupWalletPrivateKey(
+        peraBip39Sdk: PeraBip39Sdk
+    ): GetBackupWalletPrivateKey = GetBackupWalletPrivateKey { mnemonic ->
+        peraBip39Sdk.getEntropyFromMnemonic(mnemonic)?.let { entropy ->
+            peraBip39Sdk.getSeedFromEntropy(entropy)
+        }
+    }
+
+    @Provides
+    fun provideDeriveBackupWalletAddress(
+        useCase: DeriveBackupWalletAddressUseCase
+    ): DeriveBackupWalletAddress = useCase
 
     @Provides
     fun provideCreateBackup(useCase: CreateBackupUseCase): CreateBackup = useCase

@@ -20,6 +20,7 @@ import com.algorand.backup.data.mapper.BackupUpsertItemRequestMapper
 import com.algorand.backup.data.mapper.DeltaEntryResponseMapper
 import com.algorand.backup.data.mapper.ManifestResponseMapper
 import com.algorand.backup.data.service.BackupApiService
+import com.algorand.backup.domain.model.BackupApiError
 import com.algorand.backup.domain.model.BackupBatchUpsertInput
 import com.algorand.backup.domain.model.BackupBatchUpsertItemResult
 import com.algorand.backup.domain.model.BackupId
@@ -28,13 +29,11 @@ import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
 import com.algorand.backup.domain.model.BackupUpsertItemResult
 import com.algorand.backup.domain.model.DeltaEntry
-import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.model.ItemHash
 import com.algorand.backup.domain.model.BackupManifest
+import com.algorand.backup.domain.model.RegistrationProof
 import com.algorand.backup.domain.repository.BackupRepository
-import com.algorand.backup.domain.security.BackupRequestSigner
-import com.algorand.backup.domain.security.NonceGenerator
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
@@ -45,21 +44,19 @@ internal class DefaultBackupRepository @Inject constructor(
     private val deltaMapper: DeltaEntryResponseMapper,
     private val batchUpsertRequestMapper: BackupBatchUpsertRequestMapper,
     private val registrationProofRequestMapper: BackupRegistrationProofRequestMapper,
-    private val upsertItemRequestMapper: BackupUpsertItemRequestMapper,
-    private val requestSigner: BackupRequestSigner,
-    private val nonceGenerator: NonceGenerator
+    private val upsertItemRequestMapper: BackupUpsertItemRequestMapper
 ) : BackupRepository {
 
-    override suspend fun register(keyMaterial: DerivedKeyMaterial, deviceId: DeviceId): PeraResult<Unit> {
-        val proof = requestSigner.createRegistrationProof(
-            authPrivateKey = keyMaterial.authPrivateKey,
-            authPublicKey = keyMaterial.authPublicKey,
-            backupId = keyMaterial.backupId,
-            deviceId = deviceId,
-            nonce = nonceGenerator.generate()
-        )
+    override suspend fun register(proof: RegistrationProof): PeraResult<Unit> {
         val proofRequest = registrationProofRequestMapper.toRequest(proof)
-        return request {
+        return request(
+            onFailed = { response ->
+                when (response.code()) {
+                    HTTP_CONFLICT -> PeraResult.Error(BackupApiError.BackupAlreadyExists())
+                    else -> PeraResult.Error(Exception(response.errorBody().toString()), response.code())
+                }
+            }
+        ) {
             backupApiService.register(proofRequest)
         }.map { }
     }
@@ -187,6 +184,7 @@ internal class DefaultBackupRepository @Inject constructor(
 
     private companion object {
         const val HTTP_NOT_FOUND = 404
+        const val HTTP_CONFLICT = 409
         const val ALREADY_DELETED_SEQ = -1L
     }
 }

@@ -37,7 +37,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
 interface CreateBackup {
-    suspend operator fun invoke(mnemonic: String, deviceId: DeviceId, salt: ByteArray): PeraResult<CreatedBackup>
+    suspend operator fun invoke(
+        mnemonic: String,
+        deviceId: DeviceId,
+        salt: ByteArray,
+        walletAddress: String
+    ): PeraResult<CreatedBackup>
 }
 
 interface RestoreBackup {
@@ -45,7 +50,8 @@ interface RestoreBackup {
         mnemonic: String,
         salt: ByteArray,
         argon2idConfig: Argon2idConfig,
-        deviceId: DeviceId
+        deviceId: DeviceId,
+        walletAddress: String
     ): PeraResult<RestoredBackup>
 }
 
@@ -158,8 +164,19 @@ interface ReactivateBackupItem {
     suspend operator fun invoke(backupId: BackupId, key: BackupItemKey)
 }
 
-internal fun interface RegisterBackup {
-    suspend operator fun invoke(keyMaterial: DerivedKeyMaterial, deviceId: DeviceId): PeraResult<Unit>
+internal interface RegisterBackup {
+    suspend operator fun invoke(
+        keyMaterial: DerivedKeyMaterial,
+        mnemonic: String
+    ): PeraResult<Unit>
+}
+
+internal fun interface GetBackupWalletPrivateKey {
+    operator fun invoke(mnemonic: String): ByteArray?
+}
+
+fun interface DeriveBackupWalletAddress {
+    operator fun invoke(mnemonic: String): String?
 }
 
 interface DisableBackup {

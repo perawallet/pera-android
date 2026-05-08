@@ -25,6 +25,7 @@ import com.algorand.android.ui.backup.sync.usecase.GetDecryptedBackupSyncQrPaylo
 import com.algorand.android.ui.device.usecase.GetDeviceConfig
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.usecase.BackupSyncManager
+import com.algorand.backup.domain.usecase.DeriveBackupWalletAddress
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -47,6 +48,7 @@ class RestoreBackupPinViewModel @Inject constructor(
     private val backupSyncManager: BackupSyncManager,
     private val getDeviceConfig: GetDeviceConfig,
     private val getDecryptedBackupSyncQrPayload: GetDecryptedBackupSyncQrPayload,
+    private val deriveBackupWalletAddress: DeriveBackupWalletAddress,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     StateViewModel<ViewState> by stateDelegate,
@@ -91,8 +93,10 @@ class RestoreBackupPinViewModel @Inject constructor(
     }
 
     private suspend fun restorePayload(payload: BackupSyncPayload) {
+        val walletAddress = deriveBackupWalletAddress(payload.mnemonic)
+            ?: run { resetToIdleWithError(R.string.backup_restore_failed); return }
         val deviceId = DeviceId(getDeviceConfig().deviceId)
-        when (restoreBackup(payload.mnemonic, payload.salt, payload.argon2idConfig, deviceId)) {
+        when (restoreBackup(payload.mnemonic, payload.salt, payload.argon2idConfig, deviceId, walletAddress)) {
             is PeraResult.Success -> {
                 backupSyncManager.enableSync()
                 eventDelegate.sendEvent(ViewEvent.BackupRestored)

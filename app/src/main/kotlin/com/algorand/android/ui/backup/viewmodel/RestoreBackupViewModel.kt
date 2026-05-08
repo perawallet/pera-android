@@ -21,6 +21,7 @@ import com.algorand.android.ui.backup.viewmodel.RestoreBackupViewModel.ViewState
 import com.algorand.backup.domain.model.Argon2idConfig
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.usecase.BackupSyncManager
+import com.algorand.backup.domain.usecase.DeriveBackupWalletAddress
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -37,7 +38,8 @@ class RestoreBackupViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val restoreBackup: RestoreBackup,
-    private val backupSyncManager: BackupSyncManager
+    private val backupSyncManager: BackupSyncManager,
+    private val deriveBackupWalletAddress: DeriveBackupWalletAddress
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<RestoreBackupViewModel.ViewEvent> by eventDelegate {
 
     init {
@@ -60,44 +62,54 @@ class RestoreBackupViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Idle> { currentState ->
             if (currentState.mnemonic.isBlank() || currentState.salt.isBlank()) return@onState
 
-            val saltBytes = try {
-                Base64.decode(currentState.salt, Base64.NO_WRAP)
-            } catch (e: IllegalArgumentException) {
-                eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowError(R.string.backup_invalid_salt_format))
-                return@onState
-            }
+            val saltBytes = decodeSalt(currentState.salt) ?: return@onState
 
             stateDelegate.updateState { ViewState.Loading(mnemonic = currentState.mnemonic, salt = currentState.salt) }
 
             viewModelScope.launch {
-                val deviceId = DeviceId(UUID.randomUUID().toString())
-                when (val result = restoreBackup(
-                    mnemonic = currentState.mnemonic,
-                    salt = saltBytes,
-                    argon2idConfig = Argon2idConfig.DEFAULT,
-                    deviceId = deviceId
-                )) {
-                    is PeraResult.Success -> {
-                        val restored = result.data
-                        backupSyncManager.enableSync()
-                        stateDelegate.updateState {
-                            ViewState.Success(
-                                backupId = restored.backupId.value,
-                                itemCount = restored.syncState.items.size
-                            )
-                        }
-                    }
-                    is PeraResult.Error -> {
-                        stateDelegate.updateState {
-                            ViewState.Idle(mnemonic = currentState.mnemonic, salt = currentState.salt)
-                        }
-                        eventDelegate.sendEvent(
-                            ViewEvent.ShowError(R.string.backup_restore_failed)
-                        )
-                    }
+                val walletAddress = deriveBackupWalletAddress(currentState.mnemonic)
+                if (walletAddress == null) {
+                    resetToIdleWithError(currentState, R.string.backup_restore_failed)
+                    return@launch
                 }
+                val deviceId = DeviceId(UUID.randomUUID().toString())
+                performRestore(currentState, saltBytes, deviceId, walletAddress)
             }
         }
+    }
+
+    private fun decodeSalt(salt: String): ByteArray? {
+        return try {
+            Base64.decode(salt, Base64.NO_WRAP)
+        } catch (e: IllegalArgumentException) {
+            eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowError(R.string.backup_invalid_salt_format))
+            null
+        }
+    }
+
+    private suspend fun performRestore(
+        previousState: ViewState.Idle,
+        saltBytes: ByteArray,
+        deviceId: DeviceId,
+        walletAddress: String
+    ) {
+        when (val result = restoreBackup(previousState.mnemonic, saltBytes, Argon2idConfig.DEFAULT, deviceId, walletAddress)) {
+            is PeraResult.Success -> {
+                backupSyncManager.enableSync()
+                stateDelegate.updateState {
+                    ViewState.Success(
+                        backupId = result.data.backupId.value,
+                        itemCount = result.data.syncState.items.size
+                    )
+                }
+            }
+            is PeraResult.Error -> resetToIdleWithError(previousState, R.string.backup_restore_failed)
+        }
+    }
+
+    private suspend fun resetToIdleWithError(previousState: ViewState.Idle, @StringRes messageResId: Int) {
+        stateDelegate.updateState { ViewState.Idle(mnemonic = previousState.mnemonic, salt = previousState.salt) }
+        eventDelegate.sendEvent(ViewEvent.ShowError(messageResId))
     }
 
     sealed interface ViewState {

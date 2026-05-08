@@ -46,17 +46,23 @@ internal class RestoreBackupUseCase @Inject constructor(
         mnemonic: String,
         salt: ByteArray,
         argon2idConfig: Argon2idConfig,
-        deviceId: DeviceId
+        deviceId: DeviceId,
+        walletAddress: String
     ): PeraResult<RestoredBackup> {
-        val keyMaterial = deriveKeys(mnemonic, salt, argon2idConfig)
+        val keyMaterial = deriveKeys(mnemonic, salt, argon2idConfig, walletAddress)
             ?: return PeraResult.Error(IllegalStateException("Key derivation failed"))
 
         return keyMaterial.use { restore(keyMaterial, mnemonic, salt, deviceId) }
     }
 
-    private fun deriveKeys(mnemonic: String, salt: ByteArray, argon2idConfig: Argon2idConfig): DerivedKeyMaterial? {
+    private fun deriveKeys(
+        mnemonic: String,
+        salt: ByteArray,
+        argon2idConfig: Argon2idConfig,
+        walletAddress: String
+    ): DerivedKeyMaterial? {
         val input = KeyDerivationInput(mnemonic = mnemonic, salt = salt, argon2idConfig = argon2idConfig)
-        return keyDerivationManager.deriveKeys(input).getDataOrNull()
+        return keyDerivationManager.deriveKeys(input, walletAddress).getDataOrNull()
     }
 
     private suspend fun restore(

@@ -19,5 +19,5 @@ internal data class BackupRegistrationProofRequest(
     @SerializedName("device_id") val deviceId: String,
     @SerializedName("public_key") val publicKey: String,
     @SerializedName("nonce") val nonce: String,
-    @SerializedName("signature") val signature: String
+    @SerializedName("wallet_signature") val walletSignature: String
 )

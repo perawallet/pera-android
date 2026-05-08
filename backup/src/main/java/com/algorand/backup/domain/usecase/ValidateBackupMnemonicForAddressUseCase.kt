@@ -29,7 +29,7 @@ internal class ValidateBackupMnemonicForAddressUseCase @Inject constructor(
             salt = argon2idHash.salt,
             argon2idConfig = argon2idHash.config
         )
-        return when (val result = keyDerivationManager.deriveKeys(input)) {
+        return when (val result = keyDerivationManager.deriveKeys(input, expectedAddress)) {
             is PeraResult.Success -> {
                 result.data.use { keyMaterial ->
                     if (keyMaterial.backupId.address == expectedAddress) {

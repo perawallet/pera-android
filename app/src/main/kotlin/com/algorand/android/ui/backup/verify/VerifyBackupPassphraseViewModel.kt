@@ -22,6 +22,7 @@ import com.algorand.android.ui.backup.verify.model.BackupPassphraseValidationOpt
 import com.algorand.android.ui.device.usecase.GetDeviceConfig
 import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.getOrThrow
+import com.algorand.backup.domain.model.BackupApiError
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.CreateBackup
@@ -46,6 +47,7 @@ class VerifyBackupPassphraseViewModel @Inject constructor(
 
     private val mnemonic: String = savedStateHandle.getOrThrow<String>(MNEMONIC_KEY)
     private val encryptionKey: String = savedStateHandle.getOrThrow<String>(ENCRYPTION_KEY_KEY)
+    private val walletAddress: String = savedStateHandle.getOrThrow<String>(WALLET_ADDRESS_KEY)
 
     init {
         stateDelegate.setDefaultState(
@@ -87,14 +89,19 @@ class VerifyBackupPassphraseViewModel @Inject constructor(
             stateDelegate.updateState { it.copy(type = ViewState.Type.CreatingBackup) }
             val deviceId = DeviceId(getDeviceConfig().deviceId)
             val saltBytes = Base64.decode(encryptionKey, Base64.NO_WRAP)
-            when (createBackup(mnemonic, deviceId, saltBytes)) {
+            when (val result = createBackup(mnemonic, deviceId, saltBytes, walletAddress)) {
                 is PeraResult.Success -> {
                     backupSyncManager.enableSync()
                     eventDelegate.sendEvent(ViewEvent.BackupCreated)
                 }
                 is PeraResult.Error -> {
                     stateDelegate.updateState { it.copy(type = ViewState.Type.Selection) }
-                    eventDelegate.sendEvent(ViewEvent.BackupCreationFailed)
+                    val event = if (result.exception is BackupApiError.BackupAlreadyExists) {
+                        ViewEvent.BackupAlreadyExists
+                    } else {
+                        ViewEvent.BackupCreationFailed
+                    }
+                    eventDelegate.sendEvent(event)
                 }
             }
         }
@@ -135,11 +142,13 @@ class VerifyBackupPassphraseViewModel @Inject constructor(
         data object IncorrectSelection : ViewEvent
         data object BackupCreated : ViewEvent
         data object BackupCreationFailed : ViewEvent
+        data object BackupAlreadyExists : ViewEvent
     }
 
     private companion object {
         const val MNEMONIC_KEY = "mnemonic"
         const val ENCRYPTION_KEY_KEY = "encryptionKey"
+        const val WALLET_ADDRESS_KEY = "walletAddress"
         const val ITEM_COUNT = 3
         const val OPTIONS_PER_ITEM = 3
     }

@@ -12,6 +12,7 @@
 
 package com.algorand.backup.domain.security
 
+import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.DerivedKeyMaterial
 import com.algorand.backup.domain.model.KeyDerivationInput
 import com.algorand.wallet.foundation.PeraResult
@@ -21,11 +22,10 @@ internal class DefaultBackupKeyDerivationManager @Inject constructor(
     private val argonKeyManager: ArgonKeyManager,
     private val hkdfKeyManager: HkdfKeyManager,
     private val ed25519KeyManager: Ed25519KeyManager,
-    private val backupIdManager: BackupIdManager,
     private val mnemonicPasswordDeriver: BackupMnemonicPasswordDeriver
 ) : BackupKeyDerivationManager {
 
-    override fun deriveKeys(input: KeyDerivationInput): PeraResult<DerivedKeyMaterial> {
+    override fun deriveKeys(input: KeyDerivationInput, walletAddress: String): PeraResult<DerivedKeyMaterial> {
         val masterKey = mnemonicPasswordDeriver.derive(input.mnemonic).use { password ->
             argonKeyManager.deriveMasterKey(password, input.salt, input.argon2idConfig)
         }
@@ -38,24 +38,15 @@ internal class DefaultBackupKeyDerivationManager @Inject constructor(
                     ed25519KeyManager.deriveKeyPair(seed)
                 }
 
-                when (val backupIdResult = backupIdManager.createBackupId(keyPair.second)) {
-                    is PeraResult.Success -> {
-                        PeraResult.Success(
-                            DerivedKeyMaterial(
-                                backupId = backupIdResult.data,
-                                encryptionKey = encryptionKey,
-                                authPrivateKey = keyPair.first,
-                                authPublicKey = keyPair.second
-                            )
-                        )
-                    }
-                    is PeraResult.Error -> {
-                        encryptionKey.close()
-                        keyPair.first.close()
-                        keyPair.second.close()
-                        PeraResult.Error(backupIdResult.exception)
-                    }
-                }
+                val backupId = BackupId.fromAddress(walletAddress)
+                PeraResult.Success(
+                    DerivedKeyMaterial(
+                        backupId = backupId,
+                        encryptionKey = encryptionKey,
+                        authPrivateKey = keyPair.first,
+                        authPublicKey = keyPair.second
+                    )
+                )
             } catch (e: Exception) {
                 encryptionKey.close()
                 throw e

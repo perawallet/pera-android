@@ -32,6 +32,10 @@ sealed class BackupApiError : Exception() {
         val backupId: BackupId
     ) : BackupApiError()
 
+    class BackupAlreadyExists : BackupApiError() {
+        private fun readResolve(): Any = BackupAlreadyExists()
+    }
+
     data class NetworkError(
         override val cause: Throwable?
     ) : BackupApiError()

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModel
 import com.algorand.android.R
 import com.algorand.android.ui.backup.viewmodel.CreateBackupViewModel.ViewState
 import com.algorand.backup.domain.security.SaltGenerator
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -41,19 +42,22 @@ class CreateBackupViewModel @Inject constructor(
         val wallet = bip39WalletProvider.create12WordBip39Wallet()
         val entropy = wallet.getEntropy().value
         val mnemonic = peraBip39Sdk.getMnemonicFromEntropy(entropy)
+        val walletAddress = wallet.generateAddress(HdKeyAddressIndex()).address
+        wallet.invalidate()
         val initialState = if (mnemonic == null) {
             ViewState.Error(R.string.backup_recovery_phrase_error)
         } else {
             ViewState.Content(
                 mnemonic = mnemonic,
-                encryptionKey = Base64.encodeToString(saltGenerator.generate(), Base64.NO_WRAP)
+                encryptionKey = Base64.encodeToString(saltGenerator.generate(), Base64.NO_WRAP),
+                walletAddress = walletAddress
             )
         }
         stateDelegate.setDefaultState(initialState)
     }
 
     sealed interface ViewState {
-        data class Content(val mnemonic: String, val encryptionKey: String) : ViewState
+        data class Content(val mnemonic: String, val encryptionKey: String, val walletAddress: String) : ViewState
         data class Error(@param:StringRes val messageResId: Int) : ViewState
     }
 }

@@ -40,12 +40,13 @@ class CreateBackupFragment : BaseFragment(0) {
         }
     }
 
-    private fun navigateToVerifyPassphrase(mnemonic: String, encryptionKey: String) {
+    private fun navigateToVerifyPassphrase(mnemonic: String, encryptionKey: String, walletAddress: String) {
         nav(
             CreateBackupFragmentDirections
                 .actionCreateBackupFragmentToVerifyBackupPassphraseFragment(
                     mnemonic = mnemonic,
-                    encryptionKey = encryptionKey
+                    encryptionKey = encryptionKey,
+                    walletAddress = walletAddress
                 )
         )
     }

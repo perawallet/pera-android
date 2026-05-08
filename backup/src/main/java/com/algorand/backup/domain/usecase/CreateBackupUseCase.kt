@@ -34,15 +34,20 @@ internal class CreateBackupUseCase @Inject constructor(
     private val storeBackupAuthCredentials: StoreBackupAuthCredentials
 ) : CreateBackup {
 
-    override suspend fun invoke(mnemonic: String, deviceId: DeviceId, salt: ByteArray): PeraResult<CreatedBackup> {
+    override suspend fun invoke(
+        mnemonic: String,
+        deviceId: DeviceId,
+        salt: ByteArray,
+        walletAddress: String
+    ): PeraResult<CreatedBackup> {
         val keyDerivationInput = KeyDerivationInput(mnemonic, salt, Argon2idConfig.DEFAULT)
-        val keyMaterial = when (val result = keyDerivationManager.deriveKeys(keyDerivationInput)) {
+        val keyMaterial = when (val result = keyDerivationManager.deriveKeys(keyDerivationInput, walletAddress)) {
             is PeraResult.Success -> result.data
             is PeraResult.Error -> return PeraResult.Error(result.exception)
         }
 
         return keyMaterial.use {
-            val registerResult = registerBackup(keyMaterial, deviceId)
+            val registerResult = registerBackup(keyMaterial, mnemonic)
             if (registerResult is PeraResult.Error) {
                 return PeraResult.Error(registerResult.exception, registerResult.code)
             }

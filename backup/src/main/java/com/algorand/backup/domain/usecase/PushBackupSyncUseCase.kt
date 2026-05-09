@@ -48,7 +48,7 @@ internal class PushBackupSyncUseCase @Inject constructor(
         val pushedDirty = when (val result = pushDirty(backupId, deviceId, dirtyItems, encryptedPayloads)) {
             is PeraResult.Success -> result.data
             is PeraResult.Error -> {
-                if (result.exception is BackupApiError.NotFound || result.exception is BackupApiError.AuthenticationFailed) {
+                if ((result.exception as? BackupApiError)?.isBackupDestroyed == true) {
                     return PushSyncResult.BackupDestroyed
                 }
                 return PushSyncResult.Error(result.exception)

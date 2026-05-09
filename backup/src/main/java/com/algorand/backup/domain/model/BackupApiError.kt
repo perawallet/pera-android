@@ -44,4 +44,7 @@ sealed class BackupApiError : Exception() {
         val statusCode: Int,
         override val message: String?
     ) : BackupApiError()
+
+    val isBackupDestroyed: Boolean
+        get() = this is NotFound || this is AuthenticationFailed
 }

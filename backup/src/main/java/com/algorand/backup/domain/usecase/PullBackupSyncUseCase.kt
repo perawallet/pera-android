@@ -40,7 +40,7 @@ internal class PullBackupSyncUseCase @Inject constructor(
         val manifest = when (val result = backupRepository.getManifest(backupId)) {
             is PeraResult.Success -> result.data
             is PeraResult.Error -> {
-                if (result.exception is BackupApiError.NotFound || result.exception is BackupApiError.AuthenticationFailed) {
+                if ((result.exception as? BackupApiError)?.isBackupDestroyed == true) {
                     return if (syncState.lastKnownBackupHash != null) {
                         PullSyncResult.BackupDestroyed
                     } else {
@@ -58,7 +58,7 @@ internal class PullBackupSyncUseCase @Inject constructor(
         val deltas = when (val result = backupRepository.getDeltas(backupId, syncState.lastSyncedSeq)) {
             is PeraResult.Success -> result.data
             is PeraResult.Error -> {
-                if (result.exception is BackupApiError.NotFound || result.exception is BackupApiError.AuthenticationFailed) {
+                if ((result.exception as? BackupApiError)?.isBackupDestroyed == true) {
                     return PullSyncResult.BackupDestroyed
                 }
                 return PullSyncResult.Error(result.exception)

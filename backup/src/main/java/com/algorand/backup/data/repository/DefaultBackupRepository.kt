@@ -20,6 +20,7 @@ import com.algorand.backup.data.mapper.BackupUpsertItemRequestMapper
 import com.algorand.backup.data.mapper.DeltaEntryResponseMapper
 import com.algorand.backup.data.mapper.ManifestResponseMapper
 import com.algorand.backup.data.service.BackupApiService
+import com.algorand.backup.data.service.BackupRegistrationApiService
 import com.algorand.backup.domain.model.BackupApiError
 import com.algorand.backup.domain.model.BackupBatchUpsertInput
 import com.algorand.backup.domain.model.BackupBatchUpsertItemResult
@@ -40,6 +41,7 @@ import javax.inject.Inject
 
 internal class DefaultBackupRepository @Inject constructor(
     private val backupApiService: BackupApiService,
+    private val registrationApiService: BackupRegistrationApiService,
     private val manifestMapper: ManifestResponseMapper,
     private val deltaMapper: DeltaEntryResponseMapper,
     private val batchUpsertRequestMapper: BackupBatchUpsertRequestMapper,
@@ -57,12 +59,14 @@ internal class DefaultBackupRepository @Inject constructor(
                 }
             }
         ) {
-            backupApiService.register(proofRequest)
+            registrationApiService.register(proofRequest)
         }.map { }
     }
 
     override suspend fun getManifest(backupId: BackupId): PeraResult<BackupManifest> {
-        return request {
+        return request(
+            onFailed = { response -> mapBackupApiError(response, backupId) }
+        ) {
             backupApiService.getManifest(backupId.value)
         }.use(
             onSuccess = { response ->
@@ -83,7 +87,9 @@ internal class DefaultBackupRepository @Inject constructor(
         types: List<BackupItemType>?
     ): PeraResult<List<DeltaEntry>> {
         val typesQuery = types?.joinToString(",") { it.name }
-        return request {
+        return request(
+            onFailed = { response -> mapBackupApiError(response, backupId) }
+        ) {
             backupApiService.getDeltas(backupId.value, fromSeq, typesQuery)
         }.map { response ->
             response.entries?.mapNotNull { deltaMapper.toDomainModel(it) }.orEmpty()
@@ -133,7 +139,9 @@ internal class DefaultBackupRepository @Inject constructor(
         items: List<BackupBatchUpsertInput>
     ): PeraResult<List<BackupBatchUpsertItemResult>> {
         val batchRequest = batchUpsertRequestMapper.toRequest(deviceId, items)
-        return request {
+        return request(
+            onFailed = { response -> mapBackupApiError(response, backupId) }
+        ) {
             backupApiService.batchUpsertItems(backupId.value, batchRequest)
         }.map { response ->
             response.results?.mapNotNull { item ->
@@ -163,10 +171,10 @@ internal class DefaultBackupRepository @Inject constructor(
     override suspend fun deleteItem(backupId: BackupId, key: BackupItemKey): PeraResult<Long> {
         return request(
             onFailed = { response ->
-                if (response.code() == HTTP_NOT_FOUND) {
-                    PeraResult.Success(BackupDeleteItemResponse(seq = ALREADY_DELETED_SEQ))
-                } else {
-                    PeraResult.Error(Exception(response.errorBody().toString()), response.code())
+                when (response.code()) {
+                    HTTP_NOT_FOUND -> PeraResult.Success(BackupDeleteItemResponse(seq = ALREADY_DELETED_SEQ))
+                    HTTP_UNAUTHORIZED -> PeraResult.Error(BackupApiError.AuthenticationFailed(backupId))
+                    else -> PeraResult.Error(Exception(response.errorBody().toString()), response.code())
                 }
             }
         ) {
@@ -182,7 +190,19 @@ internal class DefaultBackupRepository @Inject constructor(
         }
     }
 
+    private fun <T : Any> mapBackupApiError(
+        response: retrofit2.Response<T>,
+        backupId: BackupId
+    ): PeraResult<T> {
+        return when (response.code()) {
+            HTTP_UNAUTHORIZED -> PeraResult.Error(BackupApiError.AuthenticationFailed(backupId))
+            HTTP_NOT_FOUND -> PeraResult.Error(BackupApiError.NotFound(backupId))
+            else -> PeraResult.Error(Exception(response.errorBody().toString()), response.code())
+        }
+    }
+
     private companion object {
+        const val HTTP_UNAUTHORIZED = 401
         const val HTTP_NOT_FOUND = 404
         const val HTTP_CONFLICT = 409
         const val ALREADY_DELETED_SEQ = -1L

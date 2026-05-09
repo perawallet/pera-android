@@ -34,11 +34,13 @@ internal class BackupWebSocketEventMapper @Inject constructor(private val gson: 
                 fromSeq = response.fromSeq ?: 0,
                 toSeq = response.toSeq ?: 0
             )
+            TYPE_BACKUP_DELETED -> BackupWebSocketEvent.BackupDeleted
             else -> BackupWebSocketEvent.Unknown(response.type ?: "null")
         }
     }
 
     private companion object {
         const val TYPE_ITEMS_UPDATED = "ITEMS_UPDATED"
+        const val TYPE_BACKUP_DELETED = "BACKUP_DELETED"
     }
 }

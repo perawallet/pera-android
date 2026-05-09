@@ -16,6 +16,8 @@ sealed interface PullSyncResult {
 
     data object UpToDate : PullSyncResult
 
+    data object BackupDestroyed : PullSyncResult
+
     data class Updated(
         val updatedKeys: List<BackupItemKey>,
         val deletedKeys: List<BackupItemKey>,

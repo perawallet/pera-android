@@ -10,13 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.backup.domain.model
+package com.algorand.backup.data.service
 
-sealed interface BackupWebSocketEvent {
-    data class ItemsUpdated(val fromSeq: Long, val toSeq: Long) : BackupWebSocketEvent
-    data object BackupDeleted : BackupWebSocketEvent
-    data object Connected : BackupWebSocketEvent
-    data class Disconnected(val reason: String?) : BackupWebSocketEvent
-    data class Error(val exception: Exception) : BackupWebSocketEvent
-    data class Unknown(val type: String) : BackupWebSocketEvent
+import com.algorand.backup.data.api.model.BackupRegistrationProofRequest
+import com.algorand.backup.data.api.model.BackupRegistrationProofResponse
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
+
+internal interface BackupRegistrationApiService {
+
+    @POST("backup/register")
+    suspend fun register(
+        @Body request: BackupRegistrationProofRequest
+    ): Response<BackupRegistrationProofResponse>
 }

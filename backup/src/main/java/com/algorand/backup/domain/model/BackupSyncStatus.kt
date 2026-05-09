@@ -17,5 +17,6 @@ sealed interface BackupSyncStatus {
     data object Syncing : BackupSyncStatus
     data object UpToDate : BackupSyncStatus
     data object HasLocalChanges : BackupSyncStatus
+    data object BackupDestroyed : BackupSyncStatus
     data class Error(val exception: Exception?) : BackupSyncStatus
 }

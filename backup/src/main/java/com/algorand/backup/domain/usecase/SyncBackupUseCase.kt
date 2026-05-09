@@ -51,15 +51,14 @@ internal class SyncBackupUseCase @Inject constructor(
         val deviceId = getBackupDeviceId() ?: return SyncBackupResult.Error(IllegalStateException("No device ID"))
 
         val pullResult = pullAndImportSync()
+        if (pullResult is SyncBackupResult.BackupDestroyed) return pullResult
 
         val pushResult = pushLocalData(backupId, deviceId)
-        if (pushResult is PushSyncResult.Error && pullResult is SyncBackupResult.Error) {
-            return pullResult
-        }
-        if (pushResult is PushSyncResult.Error) return SyncBackupResult.Error(pushResult.exception)
-
-        if (pushResult is PushSyncResult.Pushed) {
-            refreshManifestHash(backupId)
+        when {
+            pushResult is PushSyncResult.BackupDestroyed -> return SyncBackupResult.BackupDestroyed
+            pushResult is PushSyncResult.Error && pullResult is SyncBackupResult.Error -> return pullResult
+            pushResult is PushSyncResult.Error -> return SyncBackupResult.Error(pushResult.exception)
+            pushResult is PushSyncResult.Pushed -> refreshManifestHash(backupId)
         }
 
         return checkPendingChanges(backupId)

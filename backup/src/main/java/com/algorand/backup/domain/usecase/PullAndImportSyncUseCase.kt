@@ -32,6 +32,7 @@ internal class PullAndImportSyncUseCase @Inject constructor(
         val backupId = getBackupId() ?: return SyncBackupResult.Error(IllegalStateException("No backup ID"))
         return when (val result = pullBackupSync(backupId)) {
             is PullSyncResult.UpToDate -> SyncBackupResult.Success
+            is PullSyncResult.BackupDestroyed -> SyncBackupResult.BackupDestroyed
             is PullSyncResult.Error -> SyncBackupResult.Error(result.exception)
             is PullSyncResult.Updated -> {
                 handleDeletedKeys(backupId, result.deletedKeys)

@@ -15,6 +15,7 @@ package com.algorand.backup.data.service
 import com.algorand.backup.domain.model.SignedRequest
 import com.algorand.backup.domain.security.BackupRequestSigner
 import com.algorand.wallet.foundation.PeraResult
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.Interceptor
@@ -29,7 +30,7 @@ internal class BackupAuthInterceptor @Inject constructor(private val requestSign
 
         val signedRequest = when (val result = requestSigner.signHttpRequest(originalRequest)) {
             is PeraResult.Success -> result.data
-            is PeraResult.Error -> return chain.proceed(originalRequest)
+            is PeraResult.Error -> throw IOException("Backup request signing failed")
         }
 
         val authenticatedRequest = createAuthenticatedRequest(originalRequest, signedRequest)

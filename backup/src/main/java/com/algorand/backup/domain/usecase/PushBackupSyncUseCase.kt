@@ -12,6 +12,7 @@
 
 package com.algorand.backup.domain.usecase
 
+import com.algorand.backup.domain.model.BackupApiError
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.DeletedBackupItems
@@ -46,7 +47,12 @@ internal class PushBackupSyncUseCase @Inject constructor(
 
         val pushedDirty = when (val result = pushDirty(backupId, deviceId, dirtyItems, encryptedPayloads)) {
             is PeraResult.Success -> result.data
-            is PeraResult.Error -> return PushSyncResult.Error(result.exception)
+            is PeraResult.Error -> {
+                if (result.exception is BackupApiError.NotFound || result.exception is BackupApiError.AuthenticationFailed) {
+                    return PushSyncResult.BackupDestroyed
+                }
+                return PushSyncResult.Error(result.exception)
+            }
         }
 
         val pushedDeletes = when (val result = pushDeletes(backupId, pendingDeletes)) {

@@ -113,6 +113,10 @@ class BackupOverviewViewModel @Inject constructor(
     private fun observeSyncStatus() {
         backupSyncManager.syncStatus
             .onEach { status ->
+                if (status is BackupSyncStatus.BackupDestroyed) {
+                    eventDelegate.sendEvent(ViewEvent.NavigateBack)
+                    return@onEach
+                }
                 if (status !is BackupSyncStatus.Syncing) {
                     loadProtectedDataCounts()
                 }

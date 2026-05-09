@@ -16,6 +16,8 @@ sealed interface PushSyncResult {
 
     data object NothingToPush : PushSyncResult
 
+    data object BackupDestroyed : PushSyncResult
+
     data class Pushed(
         val succeededKeys: List<BackupItemKey>,
         val conflictedKeys: List<BackupItemKey>,

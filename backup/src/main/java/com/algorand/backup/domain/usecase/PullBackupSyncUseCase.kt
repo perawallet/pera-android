@@ -13,6 +13,7 @@
 package com.algorand.backup.domain.usecase
 
 import com.algorand.backup.domain.mapper.SyncItemStateMapper
+import com.algorand.backup.domain.model.BackupApiError
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.BackupItemStatus
@@ -39,7 +40,13 @@ internal class PullBackupSyncUseCase @Inject constructor(
         val manifest = when (val result = backupRepository.getManifest(backupId)) {
             is PeraResult.Success -> result.data
             is PeraResult.Error -> {
-                if (result.code == HTTP_NOT_FOUND) return PullSyncResult.UpToDate
+                if (result.exception is BackupApiError.NotFound || result.exception is BackupApiError.AuthenticationFailed) {
+                    return if (syncState.lastKnownBackupHash != null) {
+                        PullSyncResult.BackupDestroyed
+                    } else {
+                        PullSyncResult.UpToDate
+                    }
+                }
                 return PullSyncResult.Error(result.exception)
             }
         }
@@ -50,7 +57,12 @@ internal class PullBackupSyncUseCase @Inject constructor(
 
         val deltas = when (val result = backupRepository.getDeltas(backupId, syncState.lastSyncedSeq)) {
             is PeraResult.Success -> result.data
-            is PeraResult.Error -> return PullSyncResult.Error(result.exception)
+            is PeraResult.Error -> {
+                if (result.exception is BackupApiError.NotFound || result.exception is BackupApiError.AuthenticationFailed) {
+                    return PullSyncResult.BackupDestroyed
+                }
+                return PullSyncResult.Error(result.exception)
+            }
         }
 
         if (deltas.isEmpty()) {
@@ -156,9 +168,5 @@ internal class PullBackupSyncUseCase @Inject constructor(
 
     private fun createInitialSyncState(backupId: BackupId): SyncState {
         return SyncState(backupId = backupId, lastKnownBackupHash = null, lastSyncedSeq = 0, items = emptyMap())
-    }
-
-    private companion object {
-        const val HTTP_NOT_FOUND = 404
     }
 }

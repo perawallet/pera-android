@@ -15,6 +15,7 @@ package com.algorand.backup.data.service
 import com.algorand.backup.domain.repository.BackupSessionRepository
 import com.algorand.backup.domain.security.BackupRequestSigner
 import com.algorand.wallet.foundation.PeraResult
+import java.net.URLEncoder
 import java.time.Instant
 import javax.inject.Inject
 
@@ -30,7 +31,7 @@ internal class DefaultBackupWebSocketUrlBuilder @Inject constructor(
 
         val timestamp = Instant.now().toString()
         val signatureResult = requestSigner.createWebSocketToken(backupId, deviceId, timestamp)
-        val signature = signatureResult.getDataOrNull()
+        val signature = signatureResult.getDataOrNull()?.let { URLEncoder.encode(it, "UTF-8") }
             ?: return PeraResult.Error(IllegalStateException("Failed to create signature"))
 
         val wsBaseUrl = baseUrl

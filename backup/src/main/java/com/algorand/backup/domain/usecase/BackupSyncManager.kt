@@ -41,7 +41,8 @@ class BackupSyncManager internal constructor(
     private val disconnectBackupWebSocket: DisconnectBackupWebSocket,
     private val getBackupWebSocketEvents: GetBackupWebSocketEvents,
     private val itemObservers: Set<BackupItemObserver>,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val onBackupDestroyed: suspend () -> Unit
 ) : DefaultLifecycleObserver {
 
     private val _syncStatus = MutableStateFlow<BackupSyncStatus>(BackupSyncStatus.Idle)
@@ -54,6 +55,7 @@ class BackupSyncManager internal constructor(
     private var observeJob: Job? = null
     private var debouncedSyncJob: Job? = null
     private var debouncedPullJob: Job? = null
+    private var destroyJob: Job? = null
 
     override fun onResume(owner: LifecycleOwner) {
         startObservingChanges()
@@ -70,6 +72,9 @@ class BackupSyncManager internal constructor(
     }
 
     fun enableSync() {
+        destroyJob?.cancel()
+        destroyJob = null
+        _syncStatus.value = BackupSyncStatus.Idle
         syncNow()
         startPeriodicSync()
         connectWebSocket()
@@ -86,7 +91,9 @@ class BackupSyncManager internal constructor(
         disconnectWebSocket()
         debouncedSyncJob?.cancel()
         debouncedPullJob?.cancel()
-        _syncStatus.value = BackupSyncStatus.Idle
+        if (_syncStatus.value != BackupSyncStatus.BackupDestroyed) {
+            _syncStatus.value = BackupSyncStatus.Idle
+        }
     }
 
     private fun startObservingChanges() {
@@ -120,10 +127,16 @@ class BackupSyncManager internal constructor(
 
             val result = syncBackup()
 
+            if (result is SyncBackupResult.BackupDestroyed) {
+                handleBackupDestroyed()
+                return@withLock
+            }
+
             _syncStatus.value = when (result) {
                 is SyncBackupResult.Success -> BackupSyncStatus.UpToDate
                 is SyncBackupResult.SuccessWithPendingChanges -> BackupSyncStatus.HasLocalChanges
                 is SyncBackupResult.AlreadyRunning -> _syncStatus.value
+                is SyncBackupResult.BackupDestroyed -> error("unreachable")
                 is SyncBackupResult.Error -> BackupSyncStatus.Error(result.exception)
             }
 
@@ -148,6 +161,9 @@ class BackupSyncManager internal constructor(
     private fun handleWebSocketEvent(event: BackupWebSocketEvent) {
         when (event) {
             is BackupWebSocketEvent.ItemsUpdated -> scheduleDebouncedPull()
+            is BackupWebSocketEvent.BackupDeleted -> {
+                destroyJob = scope.launch { handleBackupDestroyed() }
+            }
             is BackupWebSocketEvent.Connected,
             is BackupWebSocketEvent.Disconnected,
             is BackupWebSocketEvent.Error,
@@ -167,8 +183,22 @@ class BackupSyncManager internal constructor(
     private suspend fun runPull() {
         syncMutex.withLock {
             stopObservingChanges()
-            pullAndImportSync()
+            val result = pullAndImportSync()
+            if (result is SyncBackupResult.BackupDestroyed) {
+                handleBackupDestroyed()
+                return@withLock
+            }
             startObservingChanges()
+        }
+    }
+
+    private suspend fun handleBackupDestroyed() {
+        if (_syncStatus.value == BackupSyncStatus.BackupDestroyed) return
+        _syncStatus.value = BackupSyncStatus.BackupDestroyed
+        try {
+            onBackupDestroyed()
+        } catch (_: Exception) {
+            stop()
         }
     }
 

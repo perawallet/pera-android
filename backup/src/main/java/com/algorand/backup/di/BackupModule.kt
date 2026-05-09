@@ -35,6 +35,7 @@ import com.algorand.backup.data.repository.DefaultLocalBackupDataProvider
 import com.algorand.backup.data.repository.DefaultSyncStateRepository
 import com.algorand.backup.data.service.BackupApiService
 import com.algorand.backup.data.service.BackupAuthInterceptor
+import com.algorand.backup.data.service.BackupRegistrationApiService
 import com.algorand.backup.data.service.BackupWebSocketUrlBuilder
 import com.algorand.backup.data.service.DefaultBackupWebSocketUrlBuilder
 import com.algorand.backup.domain.repository.BackupSessionRepository
@@ -159,6 +160,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import java.util.concurrent.TimeUnit
+import javax.inject.Provider
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -257,6 +259,26 @@ internal object BackupModule {
             .client(backupHttpClient)
             .build()
             .create(BackupApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBackupRegistrationApiService(gson: Gson): BackupRegistrationApiService {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .build()
+        return Retrofit.Builder()
+            .baseUrl(BACKUP_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(client)
+            .build()
+            .create(BackupRegistrationApiService::class.java)
     }
 
     @Provides
@@ -578,7 +600,8 @@ internal object BackupModule {
         connectBackupWebSocket: ConnectBackupWebSocket,
         disconnectBackupWebSocket: DisconnectBackupWebSocket,
         getBackupWebSocketEvents: GetBackupWebSocketEvents,
-        itemObservers: Set<@JvmSuppressWildcards BackupItemObserver>
+        itemObservers: Set<@JvmSuppressWildcards BackupItemObserver>,
+        disableBackupProvider: Provider<DisableBackup>
     ): BackupSyncManager {
         return BackupSyncManager(
             syncBackup = syncBackup,
@@ -588,7 +611,8 @@ internal object BackupModule {
             disconnectBackupWebSocket = disconnectBackupWebSocket,
             getBackupWebSocketEvents = getBackupWebSocketEvents,
             itemObservers = itemObservers,
-            scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+            onBackupDestroyed = { disableBackupProvider.get().invoke() }
         )
     }
 }

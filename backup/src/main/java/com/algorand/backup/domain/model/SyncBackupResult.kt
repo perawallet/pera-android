@@ -16,5 +16,6 @@ sealed interface SyncBackupResult {
     data object Success : SyncBackupResult
     data object SuccessWithPendingChanges : SyncBackupResult
     data object AlreadyRunning : SyncBackupResult
+    data object BackupDestroyed : SyncBackupResult
     data class Error(val exception: Exception?) : SyncBackupResult
 }

@@ -20,8 +20,6 @@ import com.algorand.backup.data.api.model.BackupDeleteItemResponse
 import com.algorand.backup.data.api.model.BackupDeleteResponse
 import com.algorand.backup.data.api.model.BackupDeltaResponse
 import com.algorand.backup.data.api.model.BackupManifestResponse
-import com.algorand.backup.data.api.model.BackupRegistrationProofRequest
-import com.algorand.backup.data.api.model.BackupRegistrationProofResponse
 import com.algorand.backup.data.api.model.BackupUpsertItemRequest
 import com.algorand.backup.data.api.model.BackupUpsertItemResponse
 import retrofit2.Response
@@ -34,11 +32,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface BackupApiService {
-
-    @POST("backup/register")
-    suspend fun register(
-        @Body request: BackupRegistrationProofRequest
-    ): Response<BackupRegistrationProofResponse>
 
     @GET("backup/{backupId}/manifest")
     suspend fun getManifest(

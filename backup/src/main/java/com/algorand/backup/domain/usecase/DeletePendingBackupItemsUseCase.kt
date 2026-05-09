@@ -13,6 +13,7 @@
 package com.algorand.backup.domain.usecase
 
 import com.algorand.backup.domain.mapper.SyncItemStateMapper
+import com.algorand.backup.domain.model.BackupApiError
 import com.algorand.backup.domain.model.BackupId
 import com.algorand.backup.domain.model.BackupItemKey
 import com.algorand.backup.domain.model.DeletedBackupItems
@@ -45,7 +46,7 @@ internal class DeletePendingBackupItemsUseCase @Inject constructor(
                     if (deleteResult.data > 0) maxSeq = maxOf(maxSeq, deleteResult.data)
                 }
                 is PeraResult.Error -> {
-                    if (deleteResult.code == HTTP_NOT_FOUND) {
+                    if (deleteResult.exception is BackupApiError.NotFound) {
                         markAsLocallyDeleted(backupId, key, itemState)
                         deletedKeys.add(key)
                     } else {
@@ -63,7 +64,4 @@ internal class DeletePendingBackupItemsUseCase @Inject constructor(
         syncStateRepository.updateItemState(backupId, key, ignoredItem)
     }
 
-    private companion object {
-        const val HTTP_NOT_FOUND = 404
-    }
 }

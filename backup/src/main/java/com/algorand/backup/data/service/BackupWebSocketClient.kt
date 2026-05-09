@@ -15,6 +15,7 @@ package com.algorand.backup.data.service
 import com.algorand.backup.data.mapper.BackupWebSocketEventMapper
 import com.algorand.backup.domain.model.BackupWebSocketEvent
 import com.algorand.wallet.foundation.PeraResult
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -38,6 +39,10 @@ internal class BackupWebSocketClient @Inject constructor(
     private val webSocketUrlBuilder: BackupWebSocketUrlBuilder,
     private val eventMapper: BackupWebSocketEventMapper
 ) {
+
+    private val wsClient = httpClient.newBuilder()
+        .pingInterval(PING_INTERVAL_SECONDS, TimeUnit.SECONDS)
+        .build()
 
     private val _events = MutableSharedFlow<BackupWebSocketEvent>(
         extraBufferCapacity = 16,
@@ -89,7 +94,7 @@ internal class BackupWebSocketClient @Inject constructor(
         }
 
         val request = Request.Builder().url(wsUrl).build()
-        webSocket = httpClient.newWebSocket(request, getWebSocketListener())
+        webSocket = wsClient.newWebSocket(request, getWebSocketListener())
     }
 
     private fun getWebSocketListener(): WebSocketListener {
@@ -136,6 +141,11 @@ internal class BackupWebSocketClient @Inject constructor(
 
     private fun scheduleReconnect() {
         if (!shouldReconnect) return
+        if (reconnectAttempt >= MAX_RECONNECT_ATTEMPTS) {
+            _events.tryEmit(BackupWebSocketEvent.Error(Exception("Max reconnect attempts reached")))
+            shouldReconnect = false
+            return
+        }
 
         val currentScope = scope ?: return
 
@@ -158,10 +168,12 @@ internal class BackupWebSocketClient @Inject constructor(
     }
 
     private companion object {
+        const val PING_INTERVAL_SECONDS = 30L
         const val CLOSE_NORMAL = 1000
         const val INITIAL_BACKOFF_MS = 1000L
         const val MAX_BACKOFF_MS = 60_000L
         const val MAX_BACKOFF_SHIFT = 5
+        const val MAX_RECONNECT_ATTEMPTS = 10
         const val JITTER_MAX_MS = 500
     }
 }

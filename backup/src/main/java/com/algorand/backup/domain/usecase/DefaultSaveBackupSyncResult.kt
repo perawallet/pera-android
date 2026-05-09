@@ -29,7 +29,8 @@ internal class DefaultSaveBackupSyncResult @Inject constructor(
             SyncBackupResult.Success,
             SyncBackupResult.SuccessWithPendingChanges -> BackupSyncResult.SUCCESS
             is SyncBackupResult.Error -> BackupSyncResult.FAILED
-            SyncBackupResult.AlreadyRunning -> return
+            SyncBackupResult.AlreadyRunning,
+            SyncBackupResult.BackupDestroyed -> return
         }
         val backupId = getBackupId() ?: return
         syncStateRepository.recordLatestSync(backupId, timeProvider.getCurrentTimeMillis(), backupSyncResult)

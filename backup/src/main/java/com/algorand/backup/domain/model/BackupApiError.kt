@@ -15,7 +15,7 @@ package com.algorand.backup.domain.model
 sealed class BackupApiError : Exception() {
 
     data class AuthenticationFailed(
-        override val message: String
+        val backupId: BackupId
     ) : BackupApiError()
 
     data class NotFound(

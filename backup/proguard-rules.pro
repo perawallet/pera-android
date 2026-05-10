@@ -1,21 +1,31 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Backup module proguard rules (local minification)
+# Consumer-facing rules are in consumer-rules.pro
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-keepattributes Signature, *Annotation*
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Gson serialization
+-keep class com.algorand.backup.data.api.model.** { *; }
+-keep class com.algorand.backup.data.model.** { *; }
+-keep class com.algorand.backup.account.domain.model.** { *; }
+-keep class com.algorand.backup.contact.data.model.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Enums deserialized by Gson
+-keep enum com.algorand.backup.domain.model.** { *; }
+
+# Retrofit
+-keep,allowobfuscation interface com.algorand.backup.data.service.BackupApiService
+-keep,allowobfuscation interface com.algorand.backup.data.service.BackupRegistrationApiService
+
+# BouncyCastle crypto
+-keep class org.bouncycastle.crypto.generators.Argon2BytesGenerator { *; }
+-keep class org.bouncycastle.crypto.params.Argon2Parameters { *; }
+-keep class org.bouncycastle.crypto.params.Argon2Parameters$Builder { *; }
+-keep class org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters { *; }
+-keep class org.bouncycastle.crypto.params.Ed25519PublicKeyParameters { *; }
+-keep class org.bouncycastle.crypto.generators.HKDFBytesGenerator { *; }
+-keep class org.bouncycastle.crypto.params.HKDFParameters { *; }
+-keep class org.bouncycastle.crypto.digests.SHA256Digest { *; }
+-keep class org.bouncycastle.crypto.signers.Ed25519Signer { *; }
+
+# Security / Keystore
+-keep class com.algorand.backup.domain.security.** { *; }

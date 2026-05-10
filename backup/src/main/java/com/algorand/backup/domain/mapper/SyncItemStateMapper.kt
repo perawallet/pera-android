@@ -14,8 +14,8 @@ package com.algorand.backup.domain.mapper
 
 import com.algorand.backup.domain.model.BackupItemStatus
 import com.algorand.backup.domain.model.BackupItemType
-import com.algorand.backup.domain.model.DeltaEntry
 import com.algorand.backup.domain.model.BackupManifestItem
+import com.algorand.backup.domain.model.DeltaEntry
 import com.algorand.backup.domain.model.SyncItemState
 import javax.inject.Inject
 
@@ -40,7 +40,7 @@ internal class SyncItemStateMapper @Inject constructor() {
             baseVersion = backupManifestItem.version,
             isDirty = false,
             status = BackupItemStatus.ACTIVE,
-            lastRemoteHash = null,
+            lastRemoteHash = backupManifestItem.hash,
             pendingDelete = false
         )
     }

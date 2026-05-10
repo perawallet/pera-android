@@ -183,11 +183,22 @@ class BackupSyncManager internal constructor(
     private suspend fun runPull() {
         syncMutex.withLock {
             stopObservingChanges()
+            _syncStatus.value = BackupSyncStatus.Syncing
+
             val result = pullAndImportSync()
+
             if (result is SyncBackupResult.BackupDestroyed) {
                 handleBackupDestroyed()
                 return@withLock
             }
+
+            val newStatus = when (result) {
+                is SyncBackupResult.Success -> BackupSyncStatus.UpToDate
+                is SyncBackupResult.Error -> BackupSyncStatus.Error(result.exception)
+                else -> _syncStatus.value
+            }
+            _syncStatus.value = newStatus
+
             startObservingChanges()
         }
     }

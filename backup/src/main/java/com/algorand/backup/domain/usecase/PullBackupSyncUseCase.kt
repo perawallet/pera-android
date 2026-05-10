@@ -91,8 +91,12 @@ internal class PullBackupSyncUseCase @Inject constructor(
                 syncStateRepository.updateItemState(backupId, key, syncItemStateMapper.mapFromManifestItem(item))
                 key
             }
-        syncStateRepository.updateGlobalPointers(backupId, backupManifest.backupGlobalHash, backupManifest.lastSeq)
-        return PullSyncResult.Updated(updatedKeys = activeKeys, deletedKeys = emptyList())
+        return PullSyncResult.Updated(
+            updatedKeys = activeKeys,
+            deletedKeys = emptyList(),
+            newSeq = backupManifest.lastSeq,
+            backupGlobalHash = backupManifest.backupGlobalHash
+        )
     }
 
     private suspend fun applyDeltas(
@@ -115,12 +119,13 @@ internal class PullBackupSyncUseCase @Inject constructor(
         }
 
         val maxSeq = deltas.maxOf { it.seq }
-        syncStateRepository.updateGlobalPointers(backupId, backupManifest.backupGlobalHash, maxSeq)
 
         return PullSyncResult.Updated(
             updatedKeys = updatedKeys,
             deletedKeys = deletedKeys,
-            reappearedKeys = reappearedKeys
+            reappearedKeys = reappearedKeys,
+            newSeq = maxSeq,
+            backupGlobalHash = backupManifest.backupGlobalHash
         )
     }
 

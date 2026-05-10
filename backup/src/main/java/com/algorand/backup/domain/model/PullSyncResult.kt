@@ -21,7 +21,9 @@ sealed interface PullSyncResult {
     data class Updated(
         val updatedKeys: List<BackupItemKey>,
         val deletedKeys: List<BackupItemKey>,
-        val reappearedKeys: List<BackupItemKey> = emptyList()
+        val reappearedKeys: List<BackupItemKey> = emptyList(),
+        val newSeq: Long,
+        val backupGlobalHash: BackupGlobalHash
     ) : PullSyncResult
 
     data class Error(val exception: Exception) : PullSyncResult

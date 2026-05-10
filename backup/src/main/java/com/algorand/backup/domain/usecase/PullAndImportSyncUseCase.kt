@@ -38,7 +38,10 @@ internal class PullAndImportSyncUseCase @Inject constructor(
                 handleDeletedKeys(backupId, result.deletedKeys)
                 handleReappearedKeys(backupId, result.reappearedKeys)
                 when (val importResult = fetchAndImportBackupItems(backupId, result.updatedKeys)) {
-                    is PeraResult.Success -> SyncBackupResult.Success
+                    is PeraResult.Success -> {
+                        syncStateRepository.updateGlobalPointers(backupId, result.backupGlobalHash, result.newSeq)
+                        SyncBackupResult.Success
+                    }
                     is PeraResult.Error -> SyncBackupResult.Error(importResult.exception)
                 }
             }

@@ -57,7 +57,11 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
         addressPayloads: List<AddressBackupPayload>
     ) {
         for (payload in secretsPayloads) {
-            importSecretsPayload(payload, addressPayloads)
+            try {
+                importSecretsPayload(payload, addressPayloads)
+            } catch (e: Exception) {
+                errorLogger.logError(e)
+            }
         }
     }
 
@@ -65,8 +69,12 @@ internal class DefaultLocalBackupDataImporter @Inject constructor(
         val imported = mutableSetOf<String>()
         val seedIdCache = mutableMapOf<String, Int?>()
         for (payload in payloads) {
-            if (importAddressPayload(payload, seedIdCache)) {
-                imported += payload.address
+            try {
+                if (importAddressPayload(payload, seedIdCache)) {
+                    imported += payload.address
+                }
+            } catch (e: Exception) {
+                errorLogger.logError(e)
             }
         }
         return imported

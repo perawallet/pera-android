@@ -16,19 +16,25 @@ import com.algorand.android.database.ContactDao
 import com.algorand.android.models.User
 import com.algorand.backup.contact.domain.model.ContactBackupPayload
 import com.algorand.backup.contact.domain.usecase.ContactsBackupDataImporter
+import com.algorand.wallet.logger.PeraErrorLogger
 import javax.inject.Inject
 
 internal class DefaultContactsBackupDataImporter @Inject constructor(
-    private val contactDao: ContactDao
+    private val contactDao: ContactDao,
+    private val errorLogger: PeraErrorLogger
 ) : ContactsBackupDataImporter {
 
     override suspend fun importContacts(payloads: List<ContactBackupPayload>) {
         for (payload in payloads) {
-            val existing = contactDao.getContactByAddress(payload.address)
-            if (existing == null) {
-                contactDao.addContact(User(name = payload.name, publicKey = payload.address, imageUriAsString = null))
-            } else {
-                contactDao.updateContact(existing.copy(name = payload.name))
+            try {
+                val existing = contactDao.getContactByAddress(payload.address)
+                if (existing == null) {
+                    contactDao.addContact(User(name = payload.name, publicKey = payload.address, imageUriAsString = null))
+                } else {
+                    contactDao.updateContact(existing.copy(name = payload.name))
+                }
+            } catch (e: Exception) {
+                errorLogger.logError(e)
             }
         }
     }

@@ -27,6 +27,7 @@ data class BackupSyncPayload(
             argon2idConfig == other.argon2idConfig
     }
 
+    @Suppress("MagicNumber")
     override fun hashCode(): Int {
         var result = mnemonic.hashCode()
         result = 31 * result + salt.contentHashCode()

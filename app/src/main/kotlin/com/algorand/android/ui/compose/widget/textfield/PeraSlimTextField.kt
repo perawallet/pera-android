@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
 
+@Suppress("LongParameterList")
 @Composable
 fun PeraSlimTextField(
     modifier: Modifier = Modifier,

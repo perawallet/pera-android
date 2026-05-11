@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.ui.backup.viewmodel.RestoreBackupViewModel.ViewState
-import com.algorand.backup.domain.model.Argon2idConfig
+import com.algorand.backup.domain.model.Argon2idConfig.Companion.DEFAULT
 import com.algorand.backup.domain.model.DeviceId
 import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.backup.domain.usecase.DeriveBackupWalletAddress
@@ -29,9 +29,9 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RestoreBackupViewModel @Inject constructor(
@@ -40,7 +40,9 @@ class RestoreBackupViewModel @Inject constructor(
     private val restoreBackup: RestoreBackup,
     private val backupSyncManager: BackupSyncManager,
     private val deriveBackupWalletAddress: DeriveBackupWalletAddress
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<RestoreBackupViewModel.ViewEvent> by eventDelegate {
+) : ViewModel(),
+    StateViewModel<ViewState> by stateDelegate,
+    EventViewModel<RestoreBackupViewModel.ViewEvent> by eventDelegate {
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle())
@@ -93,7 +95,7 @@ class RestoreBackupViewModel @Inject constructor(
         deviceId: DeviceId,
         walletAddress: String
     ) {
-        when (val result = restoreBackup(previousState.mnemonic, saltBytes, Argon2idConfig.DEFAULT, deviceId, walletAddress)) {
+        when (val result = restoreBackup(previousState.mnemonic, saltBytes, DEFAULT, deviceId, walletAddress)) {
             is PeraResult.Success -> {
                 backupSyncManager.enableSync()
                 stateDelegate.updateState {

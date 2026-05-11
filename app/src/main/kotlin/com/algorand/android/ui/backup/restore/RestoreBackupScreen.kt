@@ -26,9 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.algorand.android.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.algorand.android.R
 import com.algorand.android.ui.backup.viewmodel.RestoreBackupViewModel
 import com.algorand.android.ui.backup.viewmodel.RestoreBackupViewModel.ViewEvent
 import com.algorand.android.ui.backup.viewmodel.RestoreBackupViewModel.ViewState
@@ -42,7 +42,7 @@ import com.algorand.android.ui.compose.widget.textfield.PeraTextField
 fun RestoreBackupScreen(
     onBackClick: () -> Unit,
     onCompleteClick: () -> Unit,
-    viewModel: RestoreBackupViewModel = hiltViewModel()
+    viewModel: RestoreBackupViewModel = hiltViewModel(),
 ) {
     val viewState = viewModel.state.collectAsStateWithLifecycle().value
     val context = LocalContext.current
@@ -58,120 +58,155 @@ fun RestoreBackupScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 24.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
     ) {
         Text(
             text = stringResource(R.string.restore_backup),
             style = PeraTheme.typography.title.regular.sansBold,
-            color = PeraTheme.colors.text.main
+            color = PeraTheme.colors.text.main,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         when (viewState) {
-            is ViewState.Idle -> {
-                PeraTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = viewState.mnemonic,
-                    onTextChanged = viewModel::updateMnemonic,
-                    hint = stringResource(R.string.backup_mnemonic_hint),
-                    singleLine = false
+            is ViewState.Idle ->
+                IdleContent(
+                    viewState = viewState,
+                    onMnemonicChanged = viewModel::updateMnemonic,
+                    onSaltChanged = viewModel::updateSalt,
+                    onRestoreClick = viewModel::restoreBackup,
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+            is ViewState.Loading -> LoadingContent(viewState = viewState)
 
-                PeraTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = viewState.salt,
-                    onTextChanged = viewModel::updateSalt,
-                    hint = stringResource(R.string.backup_salt_hint)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                PeraPrimaryButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = viewModel::restoreBackup,
-                    text = stringResource(R.string.restore_backup),
-                    state = if (viewState.mnemonic.isBlank() || viewState.salt.isBlank()) {
-                        PeraButtonState.DISABLED
-                    } else {
-                        PeraButtonState.ENABLED
-                    }
-                )
-            }
-
-            is ViewState.Loading -> {
-                PeraTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = viewState.mnemonic,
-                    onTextChanged = {},
-                    hint = stringResource(R.string.backup_mnemonic_hint),
-                    singleLine = false,
-                    enabled = false
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                PeraTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = viewState.salt,
-                    onTextChanged = {},
-                    hint = stringResource(R.string.backup_salt_hint),
-                    enabled = false
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                PeraPrimaryButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {},
-                    text = stringResource(R.string.backup_restoring),
-                    state = PeraButtonState.PROGRESS
-                )
-            }
-
-            is ViewState.Success -> {
-                Text(
-                    text = stringResource(R.string.backup_restored_successfully),
-                    style = PeraTheme.typography.body.large.sansMedium,
-                    color = PeraTheme.colors.text.main
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = stringResource(R.string.backup_id_value, viewState.backupId),
-                    style = PeraTheme.typography.body.regular.sans,
-                    color = PeraTheme.colors.text.gray
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = stringResource(R.string.backup_items_found, viewState.itemCount),
-                    style = PeraTheme.typography.body.regular.sans,
-                    color = PeraTheme.colors.text.gray
-                )
-            }
+            is ViewState.Success -> SuccessContent(viewState = viewState)
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (viewState is ViewState.Success) {
-            PeraPrimaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onCompleteClick,
-                text = stringResource(R.string.done)
-            )
-        } else {
-            PeraSecondaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onBackClick,
-                text = stringResource(R.string.back)
-            )
-        }
+        BottomButton(
+            isSuccess = viewState is ViewState.Success,
+            onCompleteClick = onCompleteClick,
+            onBackClick = onBackClick,
+        )
+    }
+}
+
+@Composable
+private fun IdleContent(
+    viewState: ViewState.Idle,
+    onMnemonicChanged: (String) -> Unit,
+    onSaltChanged: (String) -> Unit,
+    onRestoreClick: () -> Unit,
+) {
+    PeraTextField(
+        modifier = Modifier.fillMaxWidth(),
+        text = viewState.mnemonic,
+        onTextChanged = onMnemonicChanged,
+        hint = stringResource(R.string.backup_mnemonic_hint),
+        singleLine = false,
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    PeraTextField(
+        modifier = Modifier.fillMaxWidth(),
+        text = viewState.salt,
+        onTextChanged = onSaltChanged,
+        hint = stringResource(R.string.backup_salt_hint),
+    )
+
+    Spacer(modifier = Modifier.height(24.dp))
+
+    PeraPrimaryButton(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onRestoreClick,
+        text = stringResource(R.string.restore_backup),
+        state =
+            if (viewState.mnemonic.isBlank() || viewState.salt.isBlank()) {
+                PeraButtonState.DISABLED
+            } else {
+                PeraButtonState.ENABLED
+            },
+    )
+}
+
+@Composable
+private fun LoadingContent(viewState: ViewState.Loading) {
+    PeraTextField(
+        modifier = Modifier.fillMaxWidth(),
+        text = viewState.mnemonic,
+        onTextChanged = {},
+        hint = stringResource(R.string.backup_mnemonic_hint),
+        singleLine = false,
+        enabled = false,
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    PeraTextField(
+        modifier = Modifier.fillMaxWidth(),
+        text = viewState.salt,
+        onTextChanged = {},
+        hint = stringResource(R.string.backup_salt_hint),
+        enabled = false,
+    )
+
+    Spacer(modifier = Modifier.height(24.dp))
+
+    PeraPrimaryButton(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {},
+        text = stringResource(R.string.backup_restoring),
+        state = PeraButtonState.PROGRESS,
+    )
+}
+
+@Composable
+private fun SuccessContent(viewState: ViewState.Success) {
+    Text(
+        text = stringResource(R.string.backup_restored_successfully),
+        style = PeraTheme.typography.body.large.sansMedium,
+        color = PeraTheme.colors.text.main,
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Text(
+        text = stringResource(R.string.backup_id_value, viewState.backupId),
+        style = PeraTheme.typography.body.regular.sans,
+        color = PeraTheme.colors.text.gray,
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Text(
+        text = stringResource(R.string.backup_items_found, viewState.itemCount),
+        style = PeraTheme.typography.body.regular.sans,
+        color = PeraTheme.colors.text.gray,
+    )
+}
+
+@Composable
+private fun BottomButton(
+    isSuccess: Boolean,
+    onCompleteClick: () -> Unit,
+    onBackClick: () -> Unit,
+) {
+    if (isSuccess) {
+        PeraPrimaryButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onCompleteClick,
+            text = stringResource(R.string.done),
+        )
+    } else {
+        PeraSecondaryButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onBackClick,
+            text = stringResource(R.string.back),
+        )
     }
 }

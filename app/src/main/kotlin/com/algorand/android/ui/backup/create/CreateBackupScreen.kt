@@ -79,7 +79,9 @@ fun CreateBackupScreen(
                 encryptionKey = viewState.encryptionKey,
                 onCopyMnemonicClick = { context.copyToClipboard(viewState.mnemonic) },
                 onCopyEncryptionKeyClick = { context.copyToClipboard(viewState.encryptionKey) },
-                onProceedClick = { onProceedClick(viewState.mnemonic, viewState.encryptionKey, viewState.walletAddress) }
+                onProceedClick = {
+                    onProceedClick(viewState.mnemonic, viewState.encryptionKey, viewState.walletAddress)
+                }
             )
         }
     }

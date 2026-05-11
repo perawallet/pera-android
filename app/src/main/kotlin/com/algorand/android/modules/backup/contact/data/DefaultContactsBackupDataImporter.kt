@@ -29,7 +29,9 @@ internal class DefaultContactsBackupDataImporter @Inject constructor(
             try {
                 val existing = contactDao.getContactByAddress(payload.address)
                 if (existing == null) {
-                    contactDao.addContact(User(name = payload.name, publicKey = payload.address, imageUriAsString = null))
+                    contactDao.addContact(
+                        User(name = payload.name, publicKey = payload.address, imageUriAsString = null)
+                    )
                 } else {
                     contactDao.updateContact(existing.copy(name = payload.name))
                 }

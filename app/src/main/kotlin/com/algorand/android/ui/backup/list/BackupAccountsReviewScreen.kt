@@ -128,6 +128,7 @@ private fun BackupAccountsReviewContent(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun AddFromBackupCard(
     items: List<BackupAccountListItem>,

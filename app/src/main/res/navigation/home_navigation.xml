@@ -2042,6 +2042,11 @@
             android:name="path"
             android:defaultValue=""
             app:argType="string" />
+        <argument
+            android:name="address"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_xoSwapFragment_to_publicWebViewFragment"
             app:destination="@id/publicWebViewFragment" />

@@ -18,6 +18,8 @@ import com.algorand.backup.domain.model.BackupItemChange
 import com.algorand.backup.domain.model.BackupSyncStatus
 import com.algorand.backup.domain.model.BackupWebSocketEvent
 import com.algorand.backup.domain.model.SyncBackupResult
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -40,6 +42,7 @@ class BackupSyncManager internal constructor(
     private val connectBackupWebSocket: ConnectBackupWebSocket,
     private val disconnectBackupWebSocket: DisconnectBackupWebSocket,
     private val getBackupWebSocketEvents: GetBackupWebSocketEvents,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val itemObservers: Set<BackupItemObserver>,
     private val scope: CoroutineScope,
     private val onBackupDestroyed: suspend () -> Unit
@@ -58,6 +61,7 @@ class BackupSyncManager internal constructor(
     private var destroyJob: Job? = null
 
     override fun onResume(owner: LifecycleOwner) {
+        if (!isBackupFeatureEnabled()) return
         startObservingChanges()
         if (!hasBackup()) return
         syncNow()
@@ -72,6 +76,7 @@ class BackupSyncManager internal constructor(
     }
 
     fun enableSync() {
+        if (!isBackupFeatureEnabled()) return
         destroyJob?.cancel()
         destroyJob = null
         _syncStatus.value = BackupSyncStatus.Idle
@@ -229,6 +234,8 @@ class BackupSyncManager internal constructor(
         periodicJob?.cancel()
         periodicJob = null
     }
+
+    private fun isBackupFeatureEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.BACKUP.key)
 
     private companion object {
         const val SYNC_DEBOUNCE_MS = 1000L

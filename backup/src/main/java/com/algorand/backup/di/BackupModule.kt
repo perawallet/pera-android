@@ -59,7 +59,6 @@ import com.algorand.backup.domain.security.DefaultBackupMnemonicPasswordDeriver
 import com.algorand.backup.domain.security.DefaultBackupIdManager
 import com.algorand.backup.domain.security.DefaultBackupKeyDerivationManager
 import com.algorand.backup.domain.security.DefaultBackupRequestSigner
-import com.algorand.backup.domain.security.BackupRegistrationSigner
 import com.algorand.backup.domain.security.DefaultEd25519KeyManager
 import com.algorand.backup.domain.security.DefaultHkdfKeyManager
 import com.algorand.backup.domain.security.DefaultNonceGenerator
@@ -137,10 +136,10 @@ import com.algorand.backup.domain.usecase.PushDirtyBackupItemsUseCase
 import com.algorand.backup.domain.usecase.ReactivateBackupItem
 import com.algorand.backup.domain.usecase.ReactivateBackupItemUseCase
 import com.algorand.backup.domain.usecase.GetBackupWalletPrivateKey
+import com.algorand.backup.domain.usecase.GetBackupWalletPrivateKeyUseCase
 import com.algorand.backup.domain.usecase.RegisterBackup
 import com.algorand.backup.domain.usecase.RegisterBackupUseCase
 import com.algorand.backup.domain.usecase.ResolveAddedAccountBackupKeys
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.backup.domain.usecase.RestoreBackup
 import com.algorand.backup.domain.usecase.RestoreBackupUseCase
 import com.algorand.backup.domain.usecase.RevealBackupAuthCredentials
@@ -153,6 +152,7 @@ import com.algorand.backup.domain.usecase.ValidateBackupMnemonicForAddress
 import com.algorand.backup.domain.usecase.ValidateBackupMnemonicForAddressUseCase
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -377,12 +377,8 @@ internal object BackupModule {
 
     @Provides
     fun provideGetBackupWalletPrivateKey(
-        peraBip39Sdk: PeraBip39Sdk
-    ): GetBackupWalletPrivateKey = GetBackupWalletPrivateKey { mnemonic ->
-        peraBip39Sdk.getEntropyFromMnemonic(mnemonic)?.let { entropy ->
-            peraBip39Sdk.getSeedFromEntropy(entropy)
-        }
-    }
+        useCase: GetBackupWalletPrivateKeyUseCase
+    ): GetBackupWalletPrivateKey = useCase
 
     @Provides
     fun provideDeriveBackupWalletAddress(
@@ -600,6 +596,7 @@ internal object BackupModule {
         connectBackupWebSocket: ConnectBackupWebSocket,
         disconnectBackupWebSocket: DisconnectBackupWebSocket,
         getBackupWebSocketEvents: GetBackupWebSocketEvents,
+        isFeatureToggleEnabled: IsFeatureToggleEnabled,
         itemObservers: Set<@JvmSuppressWildcards BackupItemObserver>,
         disableBackupProvider: Provider<DisableBackup>
     ): BackupSyncManager {
@@ -610,6 +607,7 @@ internal object BackupModule {
             connectBackupWebSocket = connectBackupWebSocket,
             disconnectBackupWebSocket = disconnectBackupWebSocket,
             getBackupWebSocketEvents = getBackupWebSocketEvents,
+            isFeatureToggleEnabled = isFeatureToggleEnabled,
             itemObservers = itemObservers,
             scope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
             onBackupDestroyed = { disableBackupProvider.get().invoke() }

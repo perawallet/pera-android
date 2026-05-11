@@ -155,7 +155,7 @@ abstract class BaseFragment(
         (activity as? MainActivity)?.handleWalletConnectUrl(url)
     }
 
-    protected fun navigateToXoSwap() {
-        (activity as? MainActivity)?.navToXoSwapFragment(path = null)
+    protected fun navigateToXoSwap(address: String? = null) {
+        (activity as? MainActivity)?.navToXoSwapFragment(path = null, address = address)
     }
 }

@@ -26,4 +26,9 @@ internal class AlgorandBip39WalletProvider @Inject constructor() : Bip39WalletPr
         val entropy = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24).toEntropy()
         return AlgorandBip39Wallet(Bip39Entropy(entropy))
     }
+
+    override fun create12WordBip39Wallet(): Bip39Wallet {
+        val entropy = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12).toEntropy()
+        return AlgorandBip39Wallet(Bip39Entropy(entropy))
+    }
 }

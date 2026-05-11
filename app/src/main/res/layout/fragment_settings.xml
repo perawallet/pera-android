@@ -35,6 +35,14 @@
             android:textAppearance="@style/TextAppearance.Footnote.Description" />
 
         <com.algorand.android.customviews.SettingsListItem
+            android:id="@+id/cloudBackupListItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:endViewLayoutResource="@layout/layout_right_arrow_with_status"
+            app:settingIcon="@drawable/ic_cloud_check"
+            app:settingTitle="@string/cloud_backup" />
+
+        <com.algorand.android.customviews.SettingsListItem
             android:id="@+id/securityListItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

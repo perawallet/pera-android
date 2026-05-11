@@ -35,6 +35,7 @@ import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragmen
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
 import com.algorand.android.modules.accountdetail.history.ui.AccountTransactionHistoryFragment.AccountTransactionHistoryListener
+import com.algorand.android.modules.accountdetail.removeaccount.ui.BackupDeleteConfirmationBottomSheet.Companion.BACKUP_DELETE_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirections.Companion.actionAccountDetailFragmentToAssetRemovalActionNavigation
 import com.algorand.android.modules.accountdetail.ui.AccountDetailFragmentDirections.Companion.actionAccountDetailFragmentToAssetTransferBalanceActionNavigation
@@ -61,8 +62,8 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 import java.math.BigInteger
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class AccountDetailFragment :
@@ -319,10 +320,18 @@ class AccountDetailFragment :
         }
         useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
-                accountDetailViewModel.removeAccount(
-                    accountDetailViewModel.accountAddress
-                )
+                if (accountDetailViewModel.isBackupEnabled()) {
+                    view?.post { navToBackupDeleteConfirmationBottomSheet() }
+                } else {
+                    accountDetailViewModel.removeAccount(accountDetailViewModel.accountAddress)
+                }
             }
+        }
+        useFragmentResultListenerValue<Boolean>(BACKUP_DELETE_CONFIRMATION_KEY) { deleteFromBackup ->
+            accountDetailViewModel.removeAccount(
+                publicKey = accountDetailViewModel.accountAddress,
+                deleteFromBackup = deleteFromBackup
+            )
         }
         useFragmentResultListenerValue<Boolean>(InAppPinFragment.IN_APP_PIN_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
@@ -483,6 +492,10 @@ class AccountDetailFragment :
             AccountDetailFragmentDirections
                 .actionAccountDetailFragmentToHaveYouBackedUpAccountConfirmationBottomSheet()
         )
+    }
+
+    private fun navToBackupDeleteConfirmationBottomSheet() {
+        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToBackupDeleteConfirmationBottomSheet())
     }
 
     private fun navToViewPassphraseNavigation(accountAddress: String) {

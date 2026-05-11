@@ -1,0 +1,63 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.backup.domain.repository
+
+import com.algorand.backup.domain.model.BackupId
+import com.algorand.backup.domain.model.BackupItemKey
+import com.algorand.backup.domain.model.BackupItemStatus
+import com.algorand.backup.domain.model.BackupItemType
+import com.algorand.backup.domain.model.BackupBatchUpsertInput
+import com.algorand.backup.domain.model.BackupBatchUpsertItemResult
+import com.algorand.backup.domain.model.DeltaEntry
+import com.algorand.backup.domain.model.DeviceId
+import com.algorand.backup.domain.model.BackupManifest
+import com.algorand.backup.domain.model.RegistrationProof
+import com.algorand.backup.domain.model.BackupUpsertItemResult
+import com.algorand.wallet.foundation.PeraResult
+
+internal interface BackupRepository {
+
+    suspend fun register(proof: RegistrationProof): PeraResult<Unit>
+
+    suspend fun getManifest(backupId: BackupId): PeraResult<BackupManifest>
+
+    suspend fun getDeltas(
+        backupId: BackupId,
+        fromSeq: Long,
+        types: List<BackupItemType>? = null
+    ): PeraResult<List<DeltaEntry>>
+
+    suspend fun getItem(backupId: BackupId, key: BackupItemKey): PeraResult<String>
+
+    suspend fun batchReadItems(backupId: BackupId, keys: List<BackupItemKey>): PeraResult<Map<BackupItemKey, String>>
+
+    suspend fun upsertItem(
+        backupId: BackupId,
+        key: BackupItemKey,
+        type: BackupItemType,
+        expectedVersion: Int,
+        status: BackupItemStatus,
+        deviceId: DeviceId,
+        payload: String
+    ): PeraResult<BackupUpsertItemResult>
+
+    suspend fun batchUpsertItems(
+        backupId: BackupId,
+        deviceId: DeviceId,
+        items: List<BackupBatchUpsertInput>
+    ): PeraResult<List<BackupBatchUpsertItemResult>>
+
+    suspend fun deleteItem(backupId: BackupId, key: BackupItemKey): PeraResult<Long>
+
+    suspend fun deleteBackup(backupId: BackupId): PeraResult<BackupId>
+}

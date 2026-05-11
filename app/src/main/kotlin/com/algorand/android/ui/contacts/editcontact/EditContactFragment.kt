@@ -27,6 +27,7 @@ import com.algorand.android.models.User
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet
 import com.algorand.android.ui.contacts.BaseAddEditContactFragment
+import com.algorand.android.ui.contacts.editcontact.ContactBackupDeleteConfirmationBottomSheet.Companion.CONTACT_BACKUP_DELETE_CONFIRMATION_KEY
 import com.algorand.android.ui.contacts.editcontact.EditContactQrScannerFragment.Companion.ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY
 import com.algorand.android.ui.contacts.editcontact.EditContactQrScannerFragment.Companion.ACCOUNT_LABEL_QR_SCAN_RESULT_KEY
 import com.algorand.android.utils.Event
@@ -36,6 +37,7 @@ import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.useSavedStateValue
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,7 +76,7 @@ class EditContactFragment : BaseAddEditContactFragment() {
     override fun initDialogSavedStateListener() {
         startSavedStateListener(R.id.editContactFragment) {
             useSavedStateValue<Boolean>(WarningConfirmationBottomSheet.WARNING_CONFIRMATION_KEY) {
-                editContactViewModel.removeContactInDatabase(contactDatabaseId)
+                onDeleteConfirmed()
             }
             useSavedStateValue<String>(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY) { accountAddress ->
                 setContactAddressInputLayoutText(accountAddress)
@@ -82,6 +84,24 @@ class EditContactFragment : BaseAddEditContactFragment() {
             useSavedStateValue<String?>(ACCOUNT_LABEL_QR_SCAN_RESULT_KEY) { label ->
                 setContactNameInputLayoutText(label)
             }
+        }
+        useFragmentResultListenerValue<Boolean>(CONTACT_BACKUP_DELETE_CONFIRMATION_KEY) { deleteFromBackup ->
+            editContactViewModel.removeContactInDatabase(
+                contactDatabaseId = contactDatabaseId,
+                publicKey = args.contactPublicKey.orEmpty(),
+                deleteFromBackup = deleteFromBackup
+            )
+        }
+    }
+
+    private fun onDeleteConfirmed() {
+        if (editContactViewModel.isBackupEnabled() && !args.contactPublicKey.isNullOrEmpty()) {
+            nav(EditContactFragmentDirections.actionEditContactFragmentToContactBackupDeleteConfirmationBottomSheet())
+        } else {
+            editContactViewModel.removeContactInDatabase(
+                contactDatabaseId = contactDatabaseId,
+                publicKey = args.contactPublicKey.orEmpty()
+            )
         }
     }
 

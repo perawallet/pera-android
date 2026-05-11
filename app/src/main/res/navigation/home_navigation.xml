@@ -823,6 +823,12 @@
         <action
             android:id="@+id/action_settingsFragment_to_passkeysFragment"
             app:destination="@id/passkeysFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_backupOptionsFragment"
+            app:destination="@id/backupOptionsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment" />
     </fragment>
 
     <fragment
@@ -1098,6 +1104,9 @@
             android:id="@+id/action_accountDetailFragment_to_haveYouBackedUpAccountConfirmationBottomSheet"
             app:destination="@id/haveYouBackedUpAccountConfirmationBottomSheet" />
         <action
+            android:id="@+id/action_accountDetailFragment_to_backupDeleteConfirmationBottomSheet"
+            app:destination="@id/backupDeleteConfirmationBottomSheet" />
+        <action
             android:id="@+id/action_accountDetailFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
@@ -1252,7 +1261,16 @@
                 android:name="warningConfirmation"
                 app:argType="com.algorand.android.models.WarningConfirmation" />
         </action>
+        <action
+            android:id="@+id/action_editContactFragment_to_contactBackupDeleteConfirmationBottomSheet"
+            app:destination="@id/contactBackupDeleteConfirmationBottomSheet" />
     </fragment>
+
+    <dialog
+        android:id="@+id/contactBackupDeleteConfirmationBottomSheet"
+        android:name="com.algorand.android.ui.contacts.editcontact.ContactBackupDeleteConfirmationBottomSheet"
+        android:label="ContactBackupDeleteConfirmationBottomSheet"
+        tools:layout="@layout/bottom_sheet_double_button" />
 
     <fragment
         android:id="@+id/editContactQrScannerFragment"
@@ -1578,6 +1596,12 @@
         android:label="HaveYouBackedUpAccountConfirmationBottomSheet"
         tools:layout="@layout/bottom_sheet_double_button" />
 
+    <dialog
+        android:id="@+id/backupDeleteConfirmationBottomSheet"
+        android:name="com.algorand.android.modules.accountdetail.removeaccount.ui.BackupDeleteConfirmationBottomSheet"
+        android:label="BackupDeleteConfirmationBottomSheet"
+        tools:layout="@layout/bottom_sheet_double_button" />
+
     <fragment
         android:id="@+id/menuFragment"
         android:name="com.algorand.android.ui.menu.view.MenuFragment"
@@ -1735,6 +1759,266 @@
         android:id="@+id/passkeysFragment"
         android:name="com.algorand.android.ui.passkey.view.PasskeysFragment"
         android:label="PasskeysFragment" />
+
+    <fragment
+        android:id="@+id/backupOptionsFragment"
+        android:name="com.algorand.android.ui.backup.options.BackupOptionsFragment"
+        android:label="BackupOptionsFragment">
+        <action
+            android:id="@+id/action_backupOptionsFragment_to_createBackupFragment"
+            app:destination="@id/createBackupFragment" />
+        <action
+            android:id="@+id/action_backupOptionsFragment_to_restoreBackupPassphraseFragment"
+            app:destination="@id/restoreBackupPassphraseFragment" />
+        <action
+            android:id="@+id/action_backupOptionsFragment_to_restoreBackupOptionsBottomSheet"
+            app:destination="@id/restoreBackupOptionsBottomSheet" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createBackupFragment"
+        android:name="com.algorand.android.ui.backup.create.CreateBackupFragment"
+        android:label="CreateBackupFragment">
+        <action
+            android:id="@+id/action_createBackupFragment_to_verifyBackupPassphraseFragment"
+            app:destination="@id/verifyBackupPassphraseFragment">
+            <argument
+                android:name="mnemonic"
+                app:argType="string" />
+            <argument
+                android:name="encryptionKey"
+                app:argType="string" />
+            <argument
+                android:name="walletAddress"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/verifyBackupPassphraseFragment"
+        android:name="com.algorand.android.ui.backup.verify.VerifyBackupPassphraseFragment"
+        android:label="VerifyBackupPassphraseFragment">
+        <argument
+            android:name="mnemonic"
+            app:argType="string" />
+        <argument
+            android:name="encryptionKey"
+            app:argType="string" />
+        <argument
+            android:name="walletAddress"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_verifyBackupPassphraseFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment"
+            app:popUpTo="@id/backupOptionsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/restoreBackupFragment"
+        android:name="com.algorand.android.ui.backup.restore.RestoreBackupFragment"
+        android:label="RestoreBackupFragment">
+        <action
+            android:id="@+id/action_restoreBackupFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment"
+            app:popUpTo="@id/backupOptionsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/restoreBackupPassphraseFragment"
+        android:name="com.algorand.android.ui.backup.restore.passphrase.RestoreBackupPassphraseFragment"
+        android:label="RestoreBackupPassphraseFragment">
+        <argument
+            android:name="encodedHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="backupAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_restoreBackupPassphraseFragment_to_restoreBackupEncryptionKeyFragment"
+            app:destination="@id/restoreBackupEncryptionKeyFragment">
+            <argument
+                android:name="mnemonic"
+                app:argType="string" />
+            <argument
+                android:name="encodedHash"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="backupAddress"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/restoreBackupEncryptionKeyFragment"
+        android:name="com.algorand.android.ui.backup.restore.encryptionkey.RestoreBackupEncryptionKeyFragment"
+        android:label="RestoreBackupEncryptionKeyFragment">
+        <argument
+            android:name="mnemonic"
+            app:argType="string" />
+        <argument
+            android:name="encodedHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="backupAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_restoreBackupEncryptionKeyFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment"
+            app:popUpTo="@id/backupOptionsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/backupOverviewFragment"
+        android:name="com.algorand.android.ui.backup.overview.BackupOverviewFragment"
+        android:label="BackupOverviewFragment">
+        <action
+            android:id="@+id/action_backupOverviewFragment_to_disableBackupConfirmationBottomSheet"
+            app:destination="@id/disableBackupConfirmationBottomSheet" />
+        <action
+            android:id="@+id/action_backupOverviewFragment_to_backupAccountsListFragment"
+            app:destination="@id/backupAccountsListFragment" />
+        <action
+            android:id="@+id/action_backupOverviewFragment_to_backupContactsListFragment"
+            app:destination="@id/backupContactsListFragment" />
+        <action
+            android:id="@+id/action_backupOverviewFragment_to_backupCredentialsFragment"
+            app:destination="@id/backupCredentialsFragment" />
+        <action
+            android:id="@+id/action_backupOverviewFragment_to_syncBackupPinFragment"
+            app:destination="@id/syncBackupPinFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/syncBackupPinFragment"
+        android:name="com.algorand.android.ui.backup.sync.pin.SyncBackupPinFragment"
+        android:label="SyncBackupPinFragment">
+        <action
+            android:id="@+id/action_syncBackupPinFragment_to_syncBackupQrFragment"
+            app:destination="@id/syncBackupQrFragment"
+            app:popUpTo="@id/syncBackupPinFragment"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="encryptedPayload"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/syncBackupQrFragment"
+        android:name="com.algorand.android.ui.backup.sync.qr.SyncBackupQrFragment"
+        android:label="SyncBackupQrFragment">
+        <argument
+            android:name="encryptedPayload"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/restoreBackupOptionsBottomSheet"
+        android:name="com.algorand.android.ui.backup.restore.options.RestoreBackupOptionsBottomSheet"
+        android:label="RestoreBackupOptionsBottomSheet">
+        <action
+            android:id="@+id/action_restoreBackupOptionsBottomSheet_to_restoreBackupQrScannerFragment"
+            app:destination="@id/restoreBackupQrScannerFragment"
+            app:popUpTo="@id/restoreBackupOptionsBottomSheet"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_restoreBackupOptionsBottomSheet_to_restoreBackupPassphraseFragment"
+            app:destination="@id/restoreBackupPassphraseFragment"
+            app:popUpTo="@id/restoreBackupOptionsBottomSheet"
+            app:popUpToInclusive="true" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/restoreBackupQrScannerFragment"
+        android:name="com.algorand.android.ui.backup.restore.qr.RestoreBackupQrScannerFragment"
+        android:label="RestoreBackupQrScannerFragment">
+        <action
+            android:id="@+id/action_restoreBackupQrScannerFragment_to_restoreBackupPinFragment"
+            app:destination="@id/restoreBackupPinFragment"
+            app:popUpTo="@id/restoreBackupQrScannerFragment"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="encryptedPayload"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/restoreBackupPinFragment"
+        android:name="com.algorand.android.ui.backup.restore.pin.RestoreBackupPinFragment"
+        android:label="RestoreBackupPinFragment">
+        <argument
+            android:name="encryptedPayload"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_restoreBackupPinFragment_to_backupOverviewFragment"
+            app:destination="@id/backupOverviewFragment"
+            app:popUpTo="@id/backupOptionsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/backupCredentialsFragment"
+        android:name="com.algorand.android.ui.backup.credentials.BackupCredentialsFragment"
+        android:label="BackupCredentialsFragment">
+        <action
+            android:id="@+id/action_backupCredentialsFragment_to_storeBackupCredentialsBottomSheet"
+            app:destination="@id/storeBackupCredentialsBottomSheet" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/backupAccountsListFragment"
+        android:name="com.algorand.android.ui.backup.list.BackupAccountsListFragment"
+        android:label="BackupAccountsListFragment">
+        <action
+            android:id="@+id/action_backupAccountsListFragment_to_backupAccountsReviewFragment"
+            app:destination="@id/backupAccountsReviewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/backupAccountsReviewFragment"
+        android:name="com.algorand.android.ui.backup.list.BackupAccountsReviewFragment"
+        android:label="BackupAccountsReviewFragment">
+        <action
+            android:id="@+id/action_backupAccountsReviewFragment_to_backupDeleteConfirmationBottomSheet"
+            app:destination="@id/backupDeleteConfirmationBottomSheet" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/backupContactsListFragment"
+        android:name="com.algorand.android.ui.backup.list.BackupContactsListFragment"
+        android:label="BackupContactsListFragment">
+        <argument
+            android:name="selectedTab"
+            android:defaultValue="SYNCED"
+            app:argType="com.algorand.android.ui.backup.list.model.BackupListTab" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/disableBackupConfirmationBottomSheet"
+        android:name="com.algorand.android.ui.backup.overview.DisableBackupConfirmationBottomSheet"
+        android:label="DisableBackupConfirmationBottomSheet"
+        tools:layout="@layout/bottom_sheet_disable_backup_confirmation" />
+
+    <dialog
+        android:id="@+id/storeBackupCredentialsBottomSheet"
+        android:name="com.algorand.android.ui.backup.overview.StoreBackupCredentialsBottomSheet"
+        android:label="StoreBackupCredentialsBottomSheet" />
 
     <fragment
         android:id="@+id/developerOptionsFragment"

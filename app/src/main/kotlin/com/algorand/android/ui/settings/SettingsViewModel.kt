@@ -20,6 +20,8 @@ import com.algorand.android.ui.settings.model.SettingsPreview
 import com.algorand.android.ui.settings.usecase.SettingsPreviewUseCase
 import com.algorand.android.usecase.DeleteAllDataUseCase
 import com.algorand.android.utils.launchIO
+import com.algorand.backup.domain.usecase.BackupSyncManager
+import com.algorand.backup.domain.usecase.HasBackup
 import com.algorand.wallet.devoptions.domain.usecase.EnableDeveloperOptions
 import com.algorand.wallet.devoptions.domain.usecase.IsDeveloperOptionsEnabled
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
@@ -42,11 +44,28 @@ class SettingsViewModel @Inject constructor(
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
     private val isDeveloperOptionsEnabled: IsDeveloperOptionsEnabled,
     private val enableDeveloperOps: EnableDeveloperOptions,
-    private val settingsEventTracker: SettingsEventTracker
+    private val settingsEventTracker: SettingsEventTracker,
+    private val hasBackup: HasBackup,
+    backupSyncManager: BackupSyncManager
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     private val _settingsPreviewFlow = MutableStateFlow<SettingsPreview?>(null)
     val settingsPreviewFlow: StateFlow<SettingsPreview?> get() = _settingsPreviewFlow
+
+    private val _isCloudBackupEnabled = MutableStateFlow(hasBackup())
+    val isCloudBackupEnabledFlow: StateFlow<Boolean> get() = _isCloudBackupEnabled
+
+    init {
+        viewModelScope.launch {
+            backupSyncManager.syncStatus.collect {
+                _isCloudBackupEnabled.value = hasBackup()
+            }
+        }
+    }
+
+    fun refreshCloudBackupState() {
+        _isCloudBackupEnabled.value = hasBackup()
+    }
 
     private val devOptionsClickCounter = ClickCounter(onClick = ::processDevOptionsClick)
 
@@ -66,6 +85,10 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun isPasskeysFeatureEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.LIQUID_AUTH.key)
+
+    fun isBackupFeatureEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.BACKUP.key)
+
+    fun isBackupEnabled(): Boolean = hasBackup()
 
     fun enableDeveloperOptions() {
         devOptionsClickCounter.click()

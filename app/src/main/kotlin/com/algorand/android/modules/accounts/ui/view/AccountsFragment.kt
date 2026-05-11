@@ -41,6 +41,7 @@ import com.algorand.android.modules.accounts.ui.model.InboxButtonLabel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowAccountAddressCopyTutorial
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowBackupTutorial
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowConfetti
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowGiftCardsTutorial
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError
@@ -48,6 +49,7 @@ import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.View
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowPrivacyTooltip
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowSwapTutorial
 import com.algorand.android.modules.sorting.accountsorting.ui.AccountSortFragment.Companion.ACCOUNT_SORT_RESULT_KEY
+import com.algorand.android.modules.tutorialdialog.util.showBackupTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
@@ -86,6 +88,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             is ShowGiftCardsTutorial -> showGiftCardsTutorialDialog(event.tutorialId)
             is ShowNotificationPermission -> askNotificationPermission()
             is ShowSwapTutorial -> showSwapTutorialDialog(event.tutorialId)
+            is ShowBackupTutorial -> showBackupTutorialDialog(event.tutorialId)
             is ShowConfetti -> showConfetti()
             is ShowPrivacyTooltip -> showPrivacyTooltip(event.tutorialId)
         }
@@ -377,6 +380,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             onBuyGiftCards = ::navToBidali,
             onLater = {}
         )
+    }
+
+    private fun showBackupTutorialDialog(tutorialId: Int) {
+        accountsViewModel.dismissTutorial(tutorialId)
+        binding.root.context.showBackupTutorialDialog()
     }
 
     private fun askNotificationPermission() {

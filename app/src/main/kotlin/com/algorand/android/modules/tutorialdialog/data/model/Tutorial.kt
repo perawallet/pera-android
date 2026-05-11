@@ -17,5 +17,6 @@ enum class Tutorial(val id: Int) {
     ACCOUNT_ADDRESS_COPY(0),
     SWAP(1),
     GIFT_CARDS(2),
-    PRIVACY_MODE(3)
+    PRIVACY_MODE(3),
+    BACKUP(4)
 }

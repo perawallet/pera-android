@@ -1,0 +1,32 @@
+<!--
+  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M5.14089,18.6429C3.30008,17.9052 2,16.1044 2,14C2,11.6807 3.57923,9.73012 5.72107,9.16506C6.08659,9.06863 6.39695,8.8162 6.55632,8.47342C7.50998,6.42217 9.58891,5 12,5C14.4111,5 16.49,6.42217 17.4437,8.47342C17.603,8.8162 17.9134,9.06863 18.2789,9.16506C20.4208,9.73012 22,11.6807 22,14C22,16.1044 20.6999,17.9052 18.8591,18.6429"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="2" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M10,15L14,19M14,15L10,19"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="2" />
+</vector>

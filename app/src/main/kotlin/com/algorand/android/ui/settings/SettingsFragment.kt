@@ -14,6 +14,8 @@ package com.algorand.android.ui.settings
 
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
@@ -89,12 +91,20 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
         }
     }
 
+    private val cloudBackupEnabledCollector: suspend (Boolean) -> Unit = { enabled ->
+        binding.cloudBackupListItem
+            .getEndComponentViewStub<LinearLayout>()
+            ?.findViewById<TextView>(R.id.statusTextView)
+            ?.setText(if (enabled) R.string.on else R.string.off)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initDialogSavedStateListener()
         initObservers()
         initUi()
         settingsViewModel.initSettingsPreviewFlow()
+        settingsViewModel.refreshCloudBackupState()
     }
 
     private fun initUi() {
@@ -118,6 +128,10 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
             passkeysListItem.apply {
                 if (settingsViewModel.isPasskeysFeatureEnabled()) show() else hide()
                 setOnClickListener { settingsViewModel.onPasskeysClick() }
+            }
+            cloudBackupListItem.apply {
+                if (settingsViewModel.isBackupFeatureEnabled()) show() else hide()
+                setOnClickListener { onCloudBackupClick() }
             }
         }
     }
@@ -148,6 +162,10 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
                 state = State.CREATED
             )
         }
+        collectLatestOnLifecycle(
+            flow = settingsViewModel.isCloudBackupEnabledFlow,
+            collection = cloudBackupEnabledCollector
+        )
     }
 
     private fun onContactsClick() {
@@ -229,5 +247,14 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     private fun onPrivacyPolicyClick() {
         context?.openPrivacyPolicyUrl()
+    }
+
+    private fun onCloudBackupClick() {
+        val direction = if (settingsViewModel.isBackupEnabled()) {
+            SettingsFragmentDirections.actionSettingsFragmentToBackupOverviewFragment()
+        } else {
+            SettingsFragmentDirections.actionSettingsFragmentToBackupOptionsFragment()
+        }
+        nav(direction)
     }
 }

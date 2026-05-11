@@ -96,6 +96,7 @@ class AccountsViewModel @Inject constructor(
                         Tutorial.ACCOUNT_ADDRESS_COPY -> ViewEvent.ShowAccountAddressCopyTutorial(tutorial.id)
                         Tutorial.SWAP -> ViewEvent.ShowSwapTutorial(tutorial.id)
                         Tutorial.PRIVACY_MODE -> ViewEvent.ShowPrivacyTooltip(tutorial.id)
+                        Tutorial.BACKUP -> ViewEvent.ShowBackupTutorial(tutorial.id)
                     }
                     eventDelegate.sendEvent(tutorialEvent)
                 }
@@ -192,6 +193,7 @@ class AccountsViewModel @Inject constructor(
         data class ShowGiftCardsTutorial(val tutorialId: Int) : ViewEvent
         data class ShowAccountAddressCopyTutorial(val tutorialId: Int) : ViewEvent
         data class ShowSwapTutorial(val tutorialId: Int) : ViewEvent
+        data class ShowBackupTutorial(val tutorialId: Int) : ViewEvent
         data object ShowNotificationPermission : ViewEvent
         data object ShowConfetti : ViewEvent
         data class ShowPrivacyTooltip(val tutorialId: Int) : ViewEvent

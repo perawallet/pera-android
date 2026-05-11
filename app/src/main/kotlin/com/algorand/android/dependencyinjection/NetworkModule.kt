@@ -28,14 +28,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.TimeUnit
-import javax.inject.Named
-import javax.inject.Singleton
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+import javax.inject.Named
+import javax.inject.Singleton
 
 /**
  * Module which provides all required dependencies about network
@@ -73,13 +73,7 @@ object NetworkModule {
         indexerInterceptor: IndexerInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(indexerInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .build()
+        return buildHttpClient(loggingInterceptor, indexerInterceptor)
     }
 
     @Provides
@@ -89,13 +83,7 @@ object NetworkModule {
         algodInterceptor: AlgodInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(algodInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .build()
+        return buildHttpClient(loggingInterceptor, algodInterceptor)
     }
 
     @Provides
@@ -105,13 +93,7 @@ object NetworkModule {
         mobileHeaderInterceptor: MobileHeaderInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(mobileHeaderInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .build()
+        return buildHttpClient(loggingInterceptor, mobileHeaderInterceptor)
     }
 
     @Provides
@@ -125,14 +107,7 @@ object NetworkModule {
         val dispatcher = Dispatcher().apply {
             maxRequestsPerHost = 25
         }
-        return OkHttpClient.Builder()
-            .addInterceptor(mobileHeaderInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .dispatcher(dispatcher)
-            .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .build()
+        return buildHttpClient(loggingInterceptor, mobileHeaderInterceptor, dispatcher = dispatcher)
     }
 
     @Provides
@@ -141,12 +116,22 @@ object NetworkModule {
     fun provideAlgodExplorerPriceHttpClient(
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
-            .build()
+        return buildHttpClient(loggingInterceptor)
+    }
+
+    private fun buildHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        vararg interceptors: okhttp3.Interceptor,
+        dispatcher: Dispatcher? = null
+    ): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            interceptors.forEach { addInterceptor(it) }
+            addInterceptor(loggingInterceptor)
+            dispatcher?.let { dispatcher(it) }
+            connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
+            readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
+            writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
+        }.build()
     }
 
     @Provides

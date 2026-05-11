@@ -24,15 +24,18 @@ import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
 import com.algorand.wallet.deeplink.parser.CreateNewDeepLink
-import javax.inject.Inject
+import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
 class DeeplinkHandler @Inject constructor(
     private val isAssetOptedInByAnyLocalAccount: IsAssetOptedInByAnyLocalAccount,
     private val createDeepLink: CreateDeepLink,
-    private val createNewDeepLink: CreateNewDeepLink
+    private val createNewDeepLink: CreateNewDeepLink,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) {
 
     private var listener: Listener? = null
@@ -86,6 +89,7 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.Home -> handleHomeDeepLink()
             is DeepLink.Fido -> handleFidoDeepLink(deepLink)
             is DeepLink.JointAccountImport -> handleJointAccountImportDeepLink(deepLink)
+            is DeepLink.SignRequest -> handleSignRequestDeepLink(deepLink)
         }
         if (isDeeplinkHandled) {
             listener?.onDeepLinkHandled()
@@ -130,6 +134,7 @@ class DeeplinkHandler @Inject constructor(
     }
 
     private fun handleCardsDeepLink(deepLink: DeepLink.Cards): Boolean {
+        if (!isFeatureToggleEnabled(FeatureToggle.CARDS_IMMERSVE.key)) return false
         return triggerListener { it.onCardsDeepLink(deepLink.path); true }
     }
 
@@ -257,6 +262,10 @@ class DeeplinkHandler @Inject constructor(
         return triggerListener { it.onJointAccountImportDeepLink(deepLink.address) }
     }
 
+    private fun handleSignRequestDeepLink(deepLink: DeepLink.SignRequest): Boolean {
+        return triggerListener { it.onSignRequestDeepLink(deepLink.signRequestId) }
+    }
+
     private fun triggerListener(action: (Listener) -> Boolean): Boolean {
         return listener?.run(action) ?: false
     }
@@ -308,5 +317,6 @@ class DeeplinkHandler @Inject constructor(
         fun onDeepLinkNotHandled(deepLink: DeepLink)
         fun onFidoDeepLink(uri: String): Boolean = false
         fun onJointAccountImportDeepLink(address: String?): Boolean = false
+        fun onSignRequestDeepLink(signRequestId: String): Boolean = false
     }
 }

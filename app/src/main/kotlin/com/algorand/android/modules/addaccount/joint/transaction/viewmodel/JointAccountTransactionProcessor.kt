@@ -12,44 +12,39 @@
 
 package com.algorand.android.modules.addaccount.joint.transaction.viewmodel
 
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 
 interface JointAccountTransactionProcessor {
 
     fun validateConfirmTransaction(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signRequestId: String?
     ): ConfirmTransactionData?
 
     fun createUpdatedPreviewAfterSigning(
-        preview: JointAccountTransactionPreview,
+        preview: JointAccountTransactionViewState,
         signedAddresses: List<String>
-    ): JointAccountTransactionPreview
+    ): JointAccountTransactionViewState
 
     fun createLedgerSignData(
         signRequestId: String,
         rawTransactions: List<String>,
-        preview: JointAccountTransactionPreview
+        preview: JointAccountTransactionViewState
     ): LedgerSignData?
 
-    fun processLoadedPreview(preview: JointAccountTransactionPreview): JointAccountTransactionPreview
+    fun processLoadedPreview(preview: JointAccountTransactionViewState): JointAccountTransactionViewState
 
-    fun findDeclineParticipantAddress(preview: JointAccountTransactionPreview): String?
+    fun findDeclineParticipantAddresses(preview: JointAccountTransactionViewState): List<String>
 
     fun determinePostSigningAction(
         data: ConfirmTransactionData,
-        updatedPreview: JointAccountTransactionPreview,
-        signRequestId: String?
-    ): PostSigningAction
-
-    fun determineLedgerSuccessAction(
-        preview: JointAccountTransactionPreview,
+        updatedPreview: JointAccountTransactionViewState,
         signRequestId: String?
     ): PostSigningAction
 
     data class ConfirmTransactionData(
         val requestId: String,
-        val preview: JointAccountTransactionPreview,
+        val preview: JointAccountTransactionViewState,
         val hasUnsignedLocalAccounts: Boolean,
         val hasUnsignedLedgerAccounts: Boolean
     )
@@ -59,7 +54,10 @@ interface JointAccountTransactionProcessor {
         val accountAddress: String,
         val rawTransactions: List<String>,
         val ledgerBluetoothAddress: String,
-        val ledgerAccountIndex: Int
+        val ledgerAccountIndex: Int,
+        val accountAuthAddress: String? = null,
+        val isRekeyedToAnotherAccount: Boolean = false,
+        val jointAccountAddress: String? = null
     )
 
     sealed interface PostSigningAction {

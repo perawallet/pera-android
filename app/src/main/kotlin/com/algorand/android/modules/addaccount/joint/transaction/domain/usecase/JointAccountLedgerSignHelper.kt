@@ -27,7 +27,9 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.wallet.jointaccount.transaction.domain.model.AddSignatureInput
 import com.algorand.wallet.jointaccount.transaction.domain.model.SignRequestResponseType
+import com.algorand.wallet.algosdk.transaction.usecase.ParseTransactionMessagePack
 import com.algorand.wallet.jointaccount.transaction.domain.usecase.AddJointAccountSignature
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -36,7 +38,8 @@ import javax.inject.Inject
 class JointAccountLedgerSignHelper @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
     private val ledgerBleOperationManager: LedgerBleOperationManager,
-    private val addJointAccountSignature: AddJointAccountSignature
+    private val addJointAccountSignature: AddJointAccountSignature,
+    private val parseTransactionMessagePack: ParseTransactionMessagePack
 ) : LifecycleScopedCoroutineOwner() {
 
     private val _signResultFlow = MutableStateFlow<LedgerSignResult>(LedgerSignResult.Idle)
@@ -54,22 +57,20 @@ class JointAccountLedgerSignHelper @Inject constructor(
         ) {
             ledgerBleSearchManager.stop()
             currentScope.launch {
-                currentSignRequest?.let { request ->
-                    val rawTxBytes = request.rawTransactions.getOrNull(
-                        this@JointAccountLedgerSignHelper.currentTransactionIndex
-                    )
-                    if (rawTxBytes != null) {
-                        val transaction = JointAccountExternalTransaction(
-                            transactionByteArray = rawTxBytes,
-                            accountAddress = request.accountAddress,
-                        )
-                        ledgerBleOperationManager.startLedgerOperation(
-                            ExternalTransactionOperation(device, transaction),
-                            this@JointAccountLedgerSignHelper.currentTransactionIndex,
-                            request.rawTransactions.size
-                        )
-                    }
+                val request = currentSignRequest ?: return@launch
+                advanceToNextJointTransaction(request)
+
+                if (this@JointAccountLedgerSignHelper.currentTransactionIndex >= request.rawTransactions.size) {
+                    submitSignatures(request)
+                    return@launch
                 }
+
+                val rawTxBytes = request.rawTransactions[this@JointAccountLedgerSignHelper.currentTransactionIndex]
+                ledgerBleOperationManager.startLedgerOperation(
+                    ExternalTransactionOperation(device, request.toExternalTransaction(rawTxBytes)),
+                    this@JointAccountLedgerSignHelper.currentTransactionIndex,
+                    request.jointAccountTransactionIndices.size
+                )
             }
         }
 
@@ -98,11 +99,19 @@ class JointAccountLedgerSignHelper @Inject constructor(
                 }
 
                 is LedgerBleResult.LedgerErrorResult -> {
-                    _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+                    _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_ledger_signing_failed)
                 }
 
                 is LedgerBleResult.OperationCancelledResult -> {
-                    _signResultFlow.value = LedgerSignResult.Cancelled
+                    val request = currentSignRequest
+                    if (request != null) {
+                        _signResultFlow.value = LedgerSignResult.RejectedOnDevice(
+                            signRequestId = request.signRequestId,
+                            accountAddress = request.accountAddress
+                        )
+                    } else {
+                        _signResultFlow.value = LedgerSignResult.Cancelled
+                    }
                 }
 
                 else -> Unit
@@ -123,22 +132,39 @@ class JointAccountLedgerSignHelper @Inject constructor(
         accountAddress: String,
         rawTransactionsBase64: List<String>,
         ledgerBluetoothAddress: String,
-        ledgerAccountIndex: Int
+        ledgerAccountIndex: Int,
+        accountAuthAddress: String? = null,
+        isRekeyedToAnotherAccount: Boolean = false,
+        jointAccountAddress: String? = null
     ) {
         resetSigningState()
 
         val rawTransactions = decodeBase64Transactions(rawTransactionsBase64)
         if (rawTransactions.isEmpty()) {
-            _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+            _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_transaction_decode_failed)
             return
         }
 
-        currentSignRequest = createSignRequest(
-            signRequestId, accountAddress, rawTransactions, ledgerBluetoothAddress, ledgerAccountIndex
+        val jointTxIndices = if (jointAccountAddress != null) {
+            getJointAccountTransactionIndices(rawTransactions, jointAccountAddress)
+        } else {
+            rawTransactions.indices.toSet()
+        }
+
+        currentSignRequest = SignRequest(
+            signRequestId = signRequestId,
+            accountAddress = accountAddress,
+            rawTransactions = rawTransactions,
+            ledgerBluetoothAddress = ledgerBluetoothAddress,
+            ledgerAccountIndex = ledgerAccountIndex,
+            accountAuthAddress = accountAuthAddress,
+            isRekeyedToAnotherAccount = isRekeyedToAnotherAccount,
+            jointAccountTransactionIndices = jointTxIndices
         )
         _signResultFlow.value = LedgerSignResult.Scanning
 
-        startLedgerConnection(ledgerBluetoothAddress, rawTransactions.size)
+        val jointTxCount = jointTxIndices.size
+        startLedgerConnection(ledgerBluetoothAddress, jointTxCount)
     }
 
     private fun resetSigningState() {
@@ -153,22 +179,6 @@ class JointAccountLedgerSignHelper @Inject constructor(
         }
     }
 
-    private fun createSignRequest(
-        signRequestId: String,
-        accountAddress: String,
-        rawTransactions: List<ByteArray>,
-        ledgerBluetoothAddress: String,
-        ledgerAccountIndex: Int
-    ): SignRequest {
-        return SignRequest(
-            signRequestId = signRequestId,
-            accountAddress = accountAddress,
-            rawTransactions = rawTransactions,
-            ledgerBluetoothAddress = ledgerBluetoothAddress,
-            ledgerAccountIndex = ledgerAccountIndex
-        )
-    }
-
     private fun startLedgerConnection(ledgerBluetoothAddress: String, transactionCount: Int) {
         val currentConnectedDevice = ledgerBleOperationManager.connectedBluetoothDevice
         val isAlreadyConnected = currentConnectedDevice != null &&
@@ -177,33 +187,38 @@ class JointAccountLedgerSignHelper @Inject constructor(
         if (isAlreadyConnected) {
             scanCallback.onLedgerScanned(currentConnectedDevice!!, 0, transactionCount)
         } else {
-            ledgerBleSearchManager.scan(
-                newScanCallback = scanCallback,
-                filteredAddress = ledgerBluetoothAddress,
-                coroutineScope = currentScope
-            )
+            currentScope.launch {
+                if (currentConnectedDevice != null) {
+                    ledgerBleOperationManager.disconnectCurrentDevice()
+                    delay(DISCONNECT_BEFORE_RECONNECT_DELAY_MS)
+                }
+                ledgerBleSearchManager.scan(
+                    coroutineScope = currentScope,
+                    newScanCallback = scanCallback,
+                    filteredAddress = ledgerBluetoothAddress
+                )
+            }
         }
+    }
+
+    private companion object {
+        private const val DISCONNECT_BEFORE_RECONNECT_DELAY_MS = 500L
     }
 
     private fun handleSignedTransaction(signedTransactionData: ByteArray) {
         signedTransactions.add(signedTransactionData)
         currentTransactionIndex++
 
-        currentSignRequest?.let { request ->
-            if (currentTransactionIndex < request.rawTransactions.size) {
-                val currentConnectedDevice = ledgerBleOperationManager.connectedBluetoothDevice
-                if (currentConnectedDevice != null) {
-                    scanCallback.onLedgerScanned(
-                        currentConnectedDevice,
-                        currentTransactionIndex,
-                        request.rawTransactions.size
-                    )
-                } else {
-                    _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
-                }
-            } else {
-                submitSignatures(request)
-            }
+        val request = currentSignRequest ?: return
+        if (currentTransactionIndex >= request.rawTransactions.size) {
+            submitSignatures(request)
+            return
+        }
+        val device = ledgerBleOperationManager.connectedBluetoothDevice
+        if (device != null) {
+            scanCallback.onLedgerScanned(device, currentTransactionIndex, request.rawTransactions.size)
+        } else {
+            _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_ledger_connection_lost)
         }
     }
 
@@ -211,47 +226,51 @@ class JointAccountLedgerSignHelper @Inject constructor(
         currentScope.launch {
             _signResultFlow.value = LedgerSignResult.Submitting
 
-            val signatures = signedTransactions.mapNotNull { signedTx ->
-                extractSignatureFromSignedTransaction(signedTx)
-            }
-
-            if (signatures.size != request.rawTransactions.size) {
-                _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+            val ledgerSignatures = signedTransactions.mapNotNull(::extractSignatureFromSignedTransaction)
+            if (ledgerSignatures.size != request.jointAccountTransactionIndices.size) {
+                _signResultFlow.value = LedgerSignResult.Error(R.string.transaction_signing_failed)
                 return@launch
             }
 
-            val addSignatureInput = AddSignatureInput(
+            val allSignatures = buildSignatureList(request, ledgerSignatures)
+            val input = AddSignatureInput(
                 address = request.accountAddress,
                 response = SignRequestResponseType.SIGNED,
-                signatures = listOf(signatures.map { Encoder.encodeToBase64(it) })
+                signatures = listOf(allSignatures)
             )
 
-            addJointAccountSignature(
-                signRequestId = request.signRequestId,
-                addSignatureInput = addSignatureInput
-            ).use(
-                onSuccess = {
-                    _signResultFlow.value = LedgerSignResult.Success
-                },
+            addJointAccountSignature(request.signRequestId, listOf(input)).use(
+                onSuccess = { _signResultFlow.value = LedgerSignResult.Success },
                 onFailed = { _, _ ->
-                    _signResultFlow.value = LedgerSignResult.Error(R.string.an_error_occurred)
+                    _signResultFlow.value = LedgerSignResult.Error(R.string.joint_account_ledger_signing_failed)
                 }
             )
         }
     }
 
-    private fun extractSignatureFromSignedTransaction(signedTx: ByteArray): ByteArray? {
-        return try {
-            // The signed transaction contains the signature in the first 64 bytes after the 'sig' key
-            // We use Encoder to decode and extract the signature
-            val signedTransaction = Encoder.decodeFromMsgPack(
-                signedTx,
-                SignedTransaction::class.java
-            )
-            signedTransaction.sig?.bytes
-        } catch (e: Exception) {
-            null
+    private fun buildSignatureList(request: SignRequest, ledgerSignatures: List<ByteArray>): List<String?> {
+        var ledgerSigIndex = 0
+        return request.rawTransactions.indices.map { index ->
+            if (index in request.jointAccountTransactionIndices) {
+                Encoder.encodeToBase64(ledgerSignatures[ledgerSigIndex++])
+            } else {
+                null
+            }
         }
+    }
+
+    private fun advanceToNextJointTransaction(request: SignRequest) {
+        while (currentTransactionIndex < request.rawTransactions.size &&
+            currentTransactionIndex !in request.jointAccountTransactionIndices
+        ) {
+            currentTransactionIndex++
+        }
+    }
+
+    private fun extractSignatureFromSignedTransaction(signedTx: ByteArray): ByteArray? {
+        return runCatching {
+            Encoder.decodeFromMsgPack(signedTx, SignedTransaction::class.java).sig?.bytes
+        }.getOrNull()
     }
 
     fun cancel() {
@@ -260,9 +279,6 @@ class JointAccountLedgerSignHelper @Inject constructor(
         _signResultFlow.value = LedgerSignResult.Cancelled
     }
 
-    /**
-     * Reset the state to Idle. Should be called after handling Success or Error results.
-     */
     fun resetState() {
         _signResultFlow.value = LedgerSignResult.Idle
     }
@@ -274,23 +290,33 @@ class JointAccountLedgerSignHelper @Inject constructor(
         signedTransactions.clear()
     }
 
+    private fun getJointAccountTransactionIndices(
+        rawTransactions: List<ByteArray>,
+        jointAccountAddress: String
+    ): Set<Int> {
+        return rawTransactions.indices.filter { index ->
+            val senderAddress = parseTransactionMessagePack(rawTransactions[index])
+                ?.senderAddress?.decodedAddress
+            senderAddress == jointAccountAddress
+        }.toSet()
+    }
+
     private data class SignRequest(
         val signRequestId: String,
         val accountAddress: String,
         val rawTransactions: List<ByteArray>,
         val ledgerBluetoothAddress: String,
-        val ledgerAccountIndex: Int
-    )
-
-    /**
-     * Implementation of ExternalTransaction for joint account Ledger signing
-     */
-    private class JointAccountExternalTransaction(
-        override val transactionByteArray: ByteArray,
-        override val accountAddress: String,
-    ) : ExternalTransaction {
-        override val isRekeyedToAnotherAccount: Boolean = false
-        override val accountAuthAddress: String? = null
+        val ledgerAccountIndex: Int,
+        val accountAuthAddress: String? = null,
+        val isRekeyedToAnotherAccount: Boolean = false,
+        val jointAccountTransactionIndices: Set<Int> = emptySet()
+    ) {
+        fun toExternalTransaction(txBytes: ByteArray) = object : ExternalTransaction {
+            override val transactionByteArray = txBytes
+            override val accountAddress = this@SignRequest.accountAddress
+            override val accountAuthAddress = this@SignRequest.accountAuthAddress
+            override val isRekeyedToAnotherAccount = this@SignRequest.isRekeyedToAnotherAccount
+        }
     }
 
     sealed class LedgerSignResult {
@@ -305,6 +331,11 @@ class JointAccountLedgerSignHelper @Inject constructor(
         data object Submitting : LedgerSignResult()
         data object Success : LedgerSignResult()
         data object Cancelled : LedgerSignResult()
+        data class RejectedOnDevice(
+            val signRequestId: String,
+            val accountAddress: String
+        ) : LedgerSignResult()
+
         data class Error(val errorMessageResId: Int) : LedgerSignResult()
     }
 }

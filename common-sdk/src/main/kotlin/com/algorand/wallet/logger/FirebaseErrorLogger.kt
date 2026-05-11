@@ -20,10 +20,16 @@ internal class FirebaseErrorLogger @Inject constructor(
 ) : PeraErrorLogger {
 
     override fun logError(message: String) {
+        PeraLogger.e(TAG, message)
         crashlytics.recordException(Exception(message))
     }
 
     override fun logError(throwable: Throwable) {
+        PeraLogger.e(TAG, throwable.message.orEmpty(), throwable)
         crashlytics.recordException(throwable)
+    }
+
+    private companion object {
+        const val TAG = "PeraError"
     }
 }

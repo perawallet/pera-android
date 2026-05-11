@@ -22,7 +22,8 @@ sealed class ExternalTransactionSignResult {
 
     data class Success<T>(
         val signedTransaction: List<T>,
-        val signedTransactionsByteArray: List<ByteArray?>? = null
+        val signedTransactionsByteArray: List<ByteArray?>? = null,
+        val algodTransactionIdIfAlreadySubmitted: String? = null
     ) : ExternalTransactionSignResult()
 
     sealed class Error(@param:StringRes val titleResId: Int) : ExternalTransactionSignResult() {
@@ -36,12 +37,12 @@ sealed class ExternalTransactionSignResult {
 
         class Defined(
             val description: AnnotatedString,
-            @StringRes titleResId: Int = R.string.error_default_title
+            @StringRes titleResId: Int = R.string.error
         ) : Error(titleResId)
 
         class Api(
             val errorMessage: String,
-            @StringRes titleResId: Int = R.string.error_default_title
+            @StringRes titleResId: Int = R.string.error
         ) : Error(titleResId)
     }
 
@@ -63,4 +64,10 @@ sealed class ExternalTransactionSignResult {
 
     object LedgerScanFailed : ExternalTransactionSignResult()
     object NotInitialized : ExternalTransactionSignResult()
+
+    data class WaitingForJointSignatures(
+        val signRequestId: String,
+        val signedCount: Int,
+        val threshold: Int
+    ) : ExternalTransactionSignResult()
 }

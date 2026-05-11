@@ -20,10 +20,17 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountCreationEventTracker
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 
 @AndroidEntryPoint
 class SetThresholdFragment : DaggerBaseFragment(0), SetThresholdScreenListener {
+
+    @Inject
+    lateinit var jointAccountCreationEventTracker: JointAccountCreationEventTracker
 
     private val args: SetThresholdFragmentArgs by navArgs()
 
@@ -47,6 +54,7 @@ class SetThresholdFragment : DaggerBaseFragment(0), SetThresholdScreenListener {
     }
 
     override fun onContinueClick(threshold: Int) {
+        lifecycleScope.launch { jointAccountCreationEventTracker.logOnbJointAccountThresholdContinuePress() }
         navToNameJointAccountFragment(threshold)
     }
 

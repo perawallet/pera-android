@@ -39,8 +39,13 @@ class LedgerAccountSelectionViewHolder(
                 setStartIconDrawable(accountIconDrawable)
                 setTitleText(item.accountDisplayName.primaryDisplayName)
                 setDescriptionText(item.accountDisplayName.secondaryDisplayName)
-                setEndIconResource(R.drawable.ic_info)
-                setEndIconClickListener { listener.onAccountInfoClick(item) }
+                if (item.isInfoButtonVisible) {
+                    setEndIconResource(R.drawable.ic_info)
+                    setEndIconClickListener { listener.onAccountInfoClick(item) }
+                } else {
+                    setEndIconDrawable(null)
+                    setEndIconClickListener(null)
+                }
             }
             root.setOnClickListener { listener.onAccountItemClick(item) }
         }

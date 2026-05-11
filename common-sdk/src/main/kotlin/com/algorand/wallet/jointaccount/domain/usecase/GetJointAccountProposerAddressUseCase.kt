@@ -27,13 +27,20 @@ internal class GetJointAccountProposerAddressUseCase @Inject constructor(
         val localAccounts = getLocalAccounts()
         val localAccountAddresses = localAccounts.map { it.algoAddress }.toSet()
 
-        return jointAccount.participantAddresses.firstOrNull { participantAddress ->
-            val isInMyWallet = participantAddress in localAccountAddresses
-            if (!isInMyWallet) return@firstOrNull false
+        var ledgerFallbackAddress: String? = null
+        for (participantAddress in jointAccount.participantAddresses) {
+            if (participantAddress !in localAccountAddresses) continue
 
-            val accountType = getAccountType(participantAddress)
-            accountType?.canDirectlySign() == true
+            val accountType = getAccountType(participantAddress) ?: continue
+            if (!accountType.canDirectlySign()) continue
+
+            if (accountType is AccountType.LedgerBle) {
+                if (ledgerFallbackAddress == null) ledgerFallbackAddress = participantAddress
+            } else {
+                return participantAddress
+            }
         }
+        return ledgerFallbackAddress
     }
 
     private fun AccountType.canDirectlySign(): Boolean {

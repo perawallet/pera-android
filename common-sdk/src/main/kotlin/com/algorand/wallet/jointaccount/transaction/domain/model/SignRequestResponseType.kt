@@ -14,8 +14,7 @@ package com.algorand.wallet.jointaccount.transaction.domain.model
 
 enum class SignRequestResponseType(val value: String) {
     SIGNED("signed"),
-    DECLINED("declined"),
-    REJECTED("rejected");
+    DECLINED("declined");
 
     companion object {
         private val map = entries.associateBy(SignRequestResponseType::value)

@@ -14,6 +14,8 @@ package com.algorand.android.modules.assetinbox.detail.receivedetail.ui
 
 import com.algorand.android.R
 import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
+import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
+import com.algorand.android.core.transaction.sync.JointSyncAlgodSubmissionKind
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
@@ -21,6 +23,7 @@ import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.BaseArc59ClaimRejectTransaction
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Success
 import com.algorand.android.utils.flatten
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
@@ -39,7 +42,8 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     getAlgo25SecretKey: GetAlgo25SecretKey,
     getHdSeed: GetHdSeed,
     getLocalAccount: GetLocalAccount,
-    signHdKeyTransaction: SignHdKeyTransaction
+    signHdKeyTransaction: SignHdKeyTransaction,
+    syncSignDependencies: JointAccountSyncSignDependencies
 ) : ExternalTransactionSignManager<BaseArc59ClaimRejectTransaction>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
@@ -48,15 +52,30 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     getAlgo25SecretKey,
     getHdSeed,
     getLocalAccount,
-    signHdKeyTransaction
+    signHdKeyTransaction,
+    syncSignDependencies
 ) {
+
+    override fun jointSyncAlgodSubmissionKind(): JointSyncAlgodSubmissionKind =
+        JointSyncAlgodSubmissionKind.ARC59_CLAIM
 
     val arc59ClaimRejectTransactionSignResultFlow: Flow<ExternalTransactionSignResult> =
         signResultFlow.map { externalTransactionSignResult ->
             when (externalTransactionSignResult) {
-                is ExternalTransactionSignResult.Success<*> -> mapSignedTransactions(
-                    externalTransactionSignResult.signedTransactionsByteArray
-                )
+                is ExternalTransactionSignResult.Success<*> -> {
+                    val preSubmitted = externalTransactionSignResult.algodTransactionIdIfAlreadySubmitted
+                    if (!preSubmitted.isNullOrBlank()) {
+                        Success<SignedTransactionDetail>(
+                            signedTransaction = emptyList(),
+                            signedTransactionsByteArray = null,
+                            algodTransactionIdIfAlreadySubmitted = preSubmitted
+                        )
+                    } else {
+                        mapSignedTransactions(
+                            externalTransactionSignResult.signedTransactionsByteArray
+                        )
+                    }
+                }
 
                 else -> externalTransactionSignResult
             }
@@ -67,7 +86,7 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     ): ExternalTransactionSignResult {
         val transactionByteArray = signedTransactions?.filterNotNull()?.flatten()
         return if (transactionByteArray == null) {
-            ExternalTransactionSignResult.Error.Defined(AnnotatedString(R.string.an_error_occurred))
+            ExternalTransactionSignResult.Error.Defined(AnnotatedString(R.string.transaction_signing_failed))
         } else {
             val txnDetail = listOf(SignedTransactionDetail.Arc59ClaimOrReject(transactionByteArray))
             ExternalTransactionSignResult.Success<SignedTransactionDetail>(txnDetail)

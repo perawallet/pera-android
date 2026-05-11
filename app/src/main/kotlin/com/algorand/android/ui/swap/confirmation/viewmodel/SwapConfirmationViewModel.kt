@@ -45,8 +45,9 @@ import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewM
 import com.algorand.android.ui.swap.confirmation.viewmodel.SwapConfirmationViewModel.ViewState.Idle
 import com.algorand.android.ui.swap.domain.model.SwapQuoteTransactions
 import com.algorand.android.ui.swap.domain.usecase.CreateSwapV2QuoteTransactions
-import com.algorand.android.ui.swap.domain.usecase.IsJointAccountInAddresses
 import com.algorand.android.ui.swap.tracking.SwapConfirmationEventTracker
+import com.algorand.wallet.foundation.network.exceptions.PeraApiException
+import com.algorand.wallet.logger.PeraLogger
 import com.algorand.wallet.swap.domain.model.SwapQuoteV2
 import com.algorand.wallet.swap.domain.model.SwapStatusFailureReason.USER_CANCELLED
 import com.algorand.wallet.swap.domain.usecase.SendSwapTransactions
@@ -74,7 +75,6 @@ class SwapConfirmationViewModel @Inject constructor(
     private val setSwapStatusFailed: SetSwapStatusFailed,
     private val createSwapV2QuoteTransactions: CreateSwapV2QuoteTransactions,
     private val swapConfirmationEventTracker: SwapConfirmationEventTracker,
-    private val isJointAccountInAddresses: IsJointAccountInAddresses,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -121,17 +121,7 @@ class SwapConfirmationViewModel @Inject constructor(
     }
 
     private suspend fun signTransactions(transactions: SwapQuoteTransactions) {
-        val accountAddresses = transactions.transactions
-            .flatMap { it.getTransactionsThatNeedsToBeSigned() }
-            .map { it.accountAddress }
-            .distinct()
-
-        if (isJointAccountInAddresses(accountAddresses)) {
-            displayError(Local(AnnotatedString(R.string.joint_accounts_are_not_supported)))
-            return
-        }
-
-        swapTransactionSignManager.signSwapQuoteTransaction(transactions.transactions)
+        swapTransactionSignManager.signSwapQuoteTransaction(transactions.transactions, transactions.swapId)
         swapTransactionSignManager.swapTransactionSignResultFlow.collectLatest { result ->
             when (result) {
                 is Success<*> -> sendSignTransactions(transactions, result)
@@ -159,12 +149,25 @@ class SwapConfirmationViewModel @Inject constructor(
 
                 is TransactionCancelled -> {
                     setSwapStatusFailed(transactions.swapId, USER_CANCELLED)
-                    val error = (result.error as? ExternalTransactionSignResult.Error.Defined)?.description
-                    val errorType = if (error != null) Local(error) else Generic
-                    displayError(errorType)
+                    displayCancelledState()
+                }
+
+                is ExternalTransactionSignResult.WaitingForJointSignatures -> {
+                    eventDelegate.sendEvent(
+                        ViewEvent.NavigateToPendingSignatures(result.signRequestId)
+                    )
                 }
 
                 ExternalTransactionSignResult.NotInitialized -> Unit
+            }
+        }
+    }
+
+    private fun displayCancelledState() {
+        stateDelegate.onState<ViewState.Content> { contentState ->
+            viewModelScope.launch {
+                eventDelegate.sendEvent(ViewEvent.HideLedgerWaitingForApprovalDialog)
+                stateDelegate.updateState { contentState.copy(contentState = ContentState.Idle) }
             }
         }
     }
@@ -177,16 +180,26 @@ class SwapConfirmationViewModel @Inject constructor(
     private suspend fun sendSignTransactions(transactions: SwapQuoteTransactions, result: Success<*>) {
         stateDelegate.onState<ViewState.Content> { content ->
             eventDelegate.sendEvent(ViewEvent.HideLedgerWaitingForApprovalDialog)
+            val alreadySubmittedId = result.algodTransactionIdIfAlreadySubmitted
+            if (!alreadySubmittedId.isNullOrBlank()) {
+                setLastUsedSwapAddress(content.accountDisplayName.accountAddress)
+                updateUiToSendingSuccessState(content)
+                return@onState
+            }
             val signedTransactions = signedSwapTransactionMapper(result)
             if (signedTransactions == null) {
-                updateUiToSendingErrorState()
+                updateUiToSendingErrorState("signedSwapTransactionMapper returned null")
             } else {
                 sendSwapTransactions(transactions.swapId, signedTransactions).use(
                     onSuccess = {
                         setLastUsedSwapAddress(content.accountDisplayName.accountAddress)
                         updateUiToSendingSuccessState(content)
                     },
-                    onFailed = { _, _ -> updateUiToSendingErrorState() }
+                    onFailed = { exception, code ->
+                        updateUiToSendingErrorState(
+                            "sendSwapTransactions failed: ${exception.message} (code=$code)"
+                        )
+                    }
                 )
             }
         }
@@ -199,17 +212,19 @@ class SwapConfirmationViewModel @Inject constructor(
         eventDelegate.sendEvent(ViewEvent.NavigateToSwapScreen(assetInShortName, assetOutShortName))
     }
 
-    private suspend fun updateUiToSendingErrorState() {
+    private suspend fun updateUiToSendingErrorState(reason: String = "unknown") {
+        PeraLogger.e(TAG, "SwapConfirmation: sending failed - $reason")
         displayErrorState()
         eventDelegate.sendEvent(DisplayError(Generic))
     }
 
     private suspend fun displayFailedToCreateTxnError(exception: Exception, code: Int?) {
+        PeraLogger.e(TAG, "SwapConfirmation: createQuoteTransactions failed (code=$code)", exception)
         displayErrorState()
-        val errorType = if (exception is IOException) {
-            Local(AnnotatedString(R.string.the_internet_connection))
-        } else {
-            Generic
+        val errorType = when {
+            exception is IOException -> Local(AnnotatedString(R.string.the_internet_connection))
+            exception is PeraApiException -> Api(exception.userMessage)
+            else -> Generic
         }
         eventDelegate.sendEvent(DisplayError(errorType))
     }
@@ -255,7 +270,6 @@ class SwapConfirmationViewModel @Inject constructor(
             val priceImpact: SwapPriceImpact,
             val assetInDetail: AssetDetail,
             val assetOutDetail: AssetDetail,
-            val exchangeFee: AmountRenderer,
             val peraFee: AmountRenderer,
             val minReceivedAssetAmount: AmountRenderer,
             val assetInToOutPriceRatio: PriceRatio,
@@ -299,9 +313,12 @@ class SwapConfirmationViewModel @Inject constructor(
                 data class Local(val description: AnnotatedString, val title: AnnotatedString? = null) : ErrorType
             }
         }
+
+        data class NavigateToPendingSignatures(val signRequestId: String) : ViewEvent
     }
 
     private companion object {
+        const val TAG = "SwapConfirmation"
         const val SWAP_SUCCESS_DISPLAY_DURATION = 2000L
         const val SWAP_ERROR_DISPLAY_DURATION = 2000L
     }

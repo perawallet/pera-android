@@ -15,5 +15,6 @@ package com.algorand.android.notification.domain.model
 data class NotificationMetadata(
     val url: String? = null,
     val title: String? = null,
-    var alertMessage: String? = null
+    var alertMessage: String? = null,
+    val notificationType: String? = null
 )

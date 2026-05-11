@@ -12,15 +12,11 @@
 
 package com.algorand.android.modules.inbox.allaccounts.ui.model
 
-import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
-
 sealed interface InboxViewEvent {
-    data class NavigateToJointAccountInvitation(
-        val invitation: JointAccountInvitationInboxItem
-    ) : InboxViewEvent
-
     data class NavigateToJointAccountDetail(
-        val accountAddress: String
+        val accountAddress: String,
+        val threshold: Int = 0,
+        val participantAddresses: List<String> = emptyList()
     ) : InboxViewEvent
 
     data class ShowError(val message: String) : InboxViewEvent

@@ -38,7 +38,7 @@ internal class GetAssetDetailQuickActionItemsUseCase @Inject constructor(
         if (isWatchAccount) return emptyList()
         val isAlgo = assetId == ALGO_ID
         return buildList {
-            if (isAssetOptedInByAccount(address, assetId) && accountType !is AccountType.Joint) {
+            if (isAssetOptedInByAccount(address, assetId)) {
                 add(SwapButton)
             }
 

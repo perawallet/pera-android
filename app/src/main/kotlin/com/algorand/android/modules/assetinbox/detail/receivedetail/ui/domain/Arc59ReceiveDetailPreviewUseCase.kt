@@ -123,7 +123,7 @@ class Arc59ReceiveDetailPreviewUseCase @Inject constructor(
         val safeSignedTransactions = signedTransactions.filterIsInstance<SignedTransactionDetail>()
         if (safeSignedTransactions.isEmpty()) {
             val errorEvent =
-                Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occurred))
+                Event(ErrorResource.LocalErrorResource.Local(R.string.arc59_asset_not_found))
             send(preview.copy(isLoading = false, showError = errorEvent))
             return@channelFlow
         }

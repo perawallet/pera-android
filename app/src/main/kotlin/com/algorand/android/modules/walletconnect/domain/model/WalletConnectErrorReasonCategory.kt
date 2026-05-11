@@ -16,7 +16,7 @@ import androidx.annotation.StringRes
 import com.algorand.android.R
 
 enum class WalletConnectErrorReasonCategory(@param:StringRes val titleResId: Int) {
-    CONNECTION_FAILED(R.string.connection_failed_upper_case),
+    CONNECTION_FAILED(R.string.connection_failed),
     CONFIRMATION_FAILED(R.string.confirmation_failed),
     WC_SESSION_NOT_FOUND(R.string.wc_session_not_found)
 }

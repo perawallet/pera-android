@@ -12,17 +12,17 @@
 
 package com.algorand.android.ui.swap.domain.usecase
 
-import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import javax.inject.Inject
 
 internal class IsJointAccountInAddressesUseCase @Inject constructor(
-    private val getAccountType: GetAccountType
+    private val getAccountRegistrationType: GetAccountRegistrationType
 ) : IsJointAccountInAddresses {
 
     override suspend fun invoke(addresses: List<String>): Boolean {
         return addresses.any { address ->
-            getAccountType(address) == AccountType.Joint
+            getAccountRegistrationType(address) == AccountRegistrationType.Joint
         }
     }
 }

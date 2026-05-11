@@ -20,11 +20,11 @@ import com.google.android.material.button.MaterialButton
 class AssetInboxInfoBottomSheet : BaseInformationBottomSheet() {
 
     override fun initTitleTextView(titleTextView: TextView) {
-        titleTextView.setText(R.string.inbox)
+        titleTextView.setText(R.string.asset_transfer_request)
     }
 
     override fun initDescriptionTextView(descriptionTextView: TextView) {
-        descriptionTextView.setText(R.string.this_feature_as_an_inbox)
+        descriptionTextView.setText(R.string.this_feature_as_an_inbox_asset_only)
     }
 
     override fun initNeutralButton(neutralButton: MaterialButton) {

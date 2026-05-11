@@ -61,10 +61,6 @@ class PeraWebViewFragmentDelegate(
         }
     }
 
-    fun destroyWebView() {
-        webView.destroyWebView()
-    }
-
     private fun openNativeUri(uri: String) {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = uri.toUri()

@@ -26,12 +26,12 @@ import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class StakingViewModel @Inject constructor(
@@ -88,12 +88,18 @@ class StakingViewModel @Inject constructor(
 
     fun isXoSwapEnabled(): Boolean = isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)
 
-    fun getOpenDappWebview(jsonPayload: String): DappInfo? {
-        return gson.fromJson(jsonPayload, DappInfo::class.java)
+    fun handleOpenDappWebview(jsonPayload: String) {
+        val dappInfo = gson.fromJson(jsonPayload, DappInfo::class.java) ?: return
+        _stakingPreviewFlow.update {
+            it.copy(openDappWebviewEvent = Event(dappInfo))
+        }
     }
 
-    fun getOpenSystemBrowserUrl(jsonPayload: String): String? {
-        return parseOpenSystemBrowserUrl(jsonPayload)
+    fun handleOpenSystemBrowser(jsonPayload: String) {
+        val url = parseOpenSystemBrowserUrl(jsonPayload) ?: return
+        _stakingPreviewFlow.update {
+            it.copy(openSystemBrowserEvent = Event(url))
+        }
     }
 
     fun getPrimaryCurrencyId(): String {

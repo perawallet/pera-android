@@ -12,23 +12,26 @@
 
 package com.algorand.android.modules.addaccount.joint.di
 
+import android.content.Context
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContact
 import com.algorand.android.modules.addaccount.joint.creation.usecase.CreateExternalAddressAsContactUseCase
-import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountName
-import com.algorand.android.modules.addaccount.joint.creation.usecase.GetDefaultJointAccountNameUseCase
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.CalculateConvertedAlgoAmount
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.CalculateConvertedAlgoAmountUseCase
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.CreateSignerAccounts
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.CreateSignerAccountsUseCase
+import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumber
+import com.algorand.android.modules.addaccount.joint.creation.usecase.GetNextJointAccountNumberUseCase
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.DeclineJointAccountSignRequest
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.DeclineJointAccountSignRequestUseCase
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionPreview
-import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionPreviewUseCase
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.FormatAlgoAsDisplayCurrency
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.FormatAlgoAsDisplayCurrencyUseCase
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountSignerItems
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountSignerItemsUseCase
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewState
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewStateDependencies
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.GetJointAccountTransactionViewStateUseCase
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignature
 import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.SignAndSubmitJointAccountSignatureUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
@@ -41,9 +44,9 @@ internal object JointAccountUseCaseModule {
     ): SignAndSubmitJointAccountSignature = useCase
 
     @Provides
-    fun provideGetDefaultJointAccountName(
-        useCase: GetDefaultJointAccountNameUseCase
-    ): GetDefaultJointAccountName = useCase
+    fun provideGetNextJointAccountNumber(
+        useCase: GetNextJointAccountNumberUseCase
+    ): GetNextJointAccountNumber = useCase
 
     @Provides
     fun provideCreateExternalAddressAsContact(
@@ -51,22 +54,26 @@ internal object JointAccountUseCaseModule {
     ): CreateExternalAddressAsContact = useCase
 
     @Provides
-    fun provideCalculateConvertedAlgoAmount(
-        useCase: CalculateConvertedAlgoAmountUseCase
-    ): CalculateConvertedAlgoAmount = useCase
-
-    @Provides
-    fun provideCreateSignerAccounts(
-        useCase: CreateSignerAccountsUseCase
-    ): CreateSignerAccounts = useCase
-
-    @Provides
     fun provideDeclineJointAccountSignRequest(
         useCase: DeclineJointAccountSignRequestUseCase
     ): DeclineJointAccountSignRequest = useCase
 
     @Provides
-    fun provideGetJointAccountTransactionPreview(
-        useCase: GetJointAccountTransactionPreviewUseCase
-    ): GetJointAccountTransactionPreview = useCase
+    fun provideGetJointAccountTransactionViewState(
+        dependencies: GetJointAccountTransactionViewStateDependencies,
+        @ApplicationContext context: Context
+    ): GetJointAccountTransactionViewState = GetJointAccountTransactionViewStateUseCase(
+        dependencies = dependencies,
+        resources = context.resources
+    )
+
+    @Provides
+    fun provideFormatAlgoAsDisplayCurrency(
+        useCase: FormatAlgoAsDisplayCurrencyUseCase
+    ): FormatAlgoAsDisplayCurrency = useCase
+
+    @Provides
+    fun provideGetJointAccountSignerItems(
+        useCase: GetJointAccountSignerItemsUseCase
+    ): GetJointAccountSignerItems = useCase
 }

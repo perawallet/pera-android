@@ -48,6 +48,7 @@ import com.algorand.android.ui.compose.widget.textfield.PeraTextFieldLabel
 @Composable
 fun EditAccountNameScreen(
     account: SelectedJointAccountItem,
+    showRemoveButton: Boolean = true,
     listener: EditAccountNameScreenListener
 ) {
     var name by remember { mutableStateOf(account.accountDisplayName.primaryDisplayName) }
@@ -90,7 +91,7 @@ fun EditAccountNameScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (account.isContact) {
+            if (showRemoveButton && account.isContact) {
                 RemoveAddressButtonSection(onRemoveClick = listener::onRemoveClick)
             }
         }

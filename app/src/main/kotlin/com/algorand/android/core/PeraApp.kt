@@ -28,10 +28,12 @@ import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.ui.vibration.PeraVibration
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
+import com.algorand.android.BuildConfig
 import com.algorand.backup.domain.usecase.BackupSyncManager
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.security.PeraSecurityManager
+import com.algorand.wallet.logger.PeraLogger
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -84,6 +86,7 @@ open class PeraApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        PeraLogger.init(BuildConfig.DEBUG)
         KoinInitializer.initKoin(this)
         initializeFirebase()
         BaseViewModel.initialize(peraEventTracker)

@@ -198,4 +198,14 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
             mainActivity?.launchIntentWithUri(uri)
         }
     }
+
+    override fun onJointAccountImportDeepLink(address: String?): Boolean {
+        return if (address != null) {
+            true.also {
+                mainActivity?.navToJointAccountImportDeepLink(address)
+            }
+        } else {
+            false
+        }
+    }
 }

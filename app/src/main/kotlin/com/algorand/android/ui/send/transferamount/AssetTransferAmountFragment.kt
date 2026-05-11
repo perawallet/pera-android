@@ -126,7 +126,7 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
     private val viewEventCollector: suspend (AssetTransferAmountViewModel.ViewEvent) -> Unit = {
         when (it) {
             is GetMaximumAmountOfAsset -> onGetMaximumAmountOfAsset(it.formattedMaximumAmount)
-            is ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred), tag = baseActivityTag)
+            is ShowGenericError -> showGlobalError(getString(R.string.send_amount_error), tag = baseActivityTag)
             is NavigateBack -> navBack()
         }
     }

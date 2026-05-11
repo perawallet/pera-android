@@ -46,6 +46,3 @@ render.experimental.xml
 
 # Claude
 .claude/
-
-# Backend Feedback
-BACKEND_FEEDBACK.md

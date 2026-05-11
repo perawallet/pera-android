@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import com.algorand.android.R
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content
+import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountAction.RekeyToJointAccount
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountAction.RekeyToLedger
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountAction.RekeyToStandard
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountAction.RescanRekeyedAddresses
@@ -72,6 +73,7 @@ internal fun AccountStatusBottomSheetContentState(
             state.accountActions,
             listener::onRekeyToLedgerClick,
             listener::onRekeyToStandardClick,
+            listener::onRekeyToJointAccountClick,
             listener::onRescanRekeyedAddressesClick
         )
     }
@@ -153,6 +155,7 @@ private fun AccountActionsContainer(
     accountActions: List<Content.AccountAction>,
     onRekeyToLedgerClick: () -> Unit,
     onRekeyToStandardClick: () -> Unit,
+    onRekeyToJointAccountClick: () -> Unit,
     onRescanRekeyedAddressesClick: () -> Unit
 ) {
     Column {
@@ -164,6 +167,10 @@ private fun AccountActionsContainer(
 
                 RekeyToStandard -> {
                     AccountActionItem(stringResource(R.string.rekey_to_standard_account), onRekeyToStandardClick)
+                }
+
+                RekeyToJointAccount -> {
+                    AccountActionItem(stringResource(R.string.rekey_to_joint_account), onRekeyToJointAccountClick)
                 }
 
                 RescanRekeyedAddresses -> {
@@ -200,6 +207,7 @@ interface AccountStatusBottomSheetContentStateListener {
     fun onUndoRekeyClick()
     fun onRekeyToLedgerClick()
     fun onRekeyToStandardClick()
+    fun onRekeyToJointAccountClick()
     fun onRescanRekeyedAddressesClick()
     fun onScanRegisteredAddressesClick()
     fun onLearnMoreClick(url: String)

@@ -23,8 +23,7 @@
           {
             "fieldPath": "imageUriAsString",
             "columnName": "uri",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "contactDatabaseId",
@@ -49,8 +48,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_User_public_key` ON `${TABLE_NAME}` (`public_key`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "Node",
@@ -122,9 +120,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "NotificationFilter",
@@ -142,9 +138,7 @@
           "columnNames": [
             "public_key"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "WalletConnectSessionEntity",
@@ -189,8 +183,7 @@
           {
             "fieldPath": "fallbackBrowserGroupResponse",
             "columnName": "fallback_browser_group_response",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -198,9 +191,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "WalletConnectSessionAccountEntity",
@@ -231,7 +222,6 @@
             "id"
           ]
         },
-        "indices": [],
         "foreignKeys": [
           {
             "table": "WalletConnectSessionEntity",
@@ -268,9 +258,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "WalletConnectV1TransactionRequestIdEntity",
@@ -294,12 +282,9 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7f49dc8099f86b52486310ea053148e2')"

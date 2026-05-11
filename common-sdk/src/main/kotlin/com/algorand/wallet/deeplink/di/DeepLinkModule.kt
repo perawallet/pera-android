@@ -46,6 +46,7 @@ import com.algorand.wallet.deeplink.builder.ReceiverAccountSelectionNewDeepLinkB
 import com.algorand.wallet.deeplink.builder.RecoverAccountDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.RecoverAccountNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.SellNewDeepLinkBuilder
+import com.algorand.wallet.deeplink.builder.SignRequestNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.StakingDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.StakingPathNewDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.SwapNewDeepLinkBuilder
@@ -173,6 +174,7 @@ internal object DeepLinkModule {
             accountDetailNewDeepLinkBuilder = AccountDetailNewDeepLinkBuilder(),
             internalBrowserNewDeepLinkBuilder = InternalBrowserNewDeepLinkBuilder(),
             jointAccountImportNewDeepLinkBuilder = JointAccountImportNewDeepLinkBuilder(),
+            signRequestNewDeepLinkBuilder = SignRequestNewDeepLinkBuilder(),
             homeNewDeepLinkBuilder = HomeNewDeepLinkBuilder()
         )
     }

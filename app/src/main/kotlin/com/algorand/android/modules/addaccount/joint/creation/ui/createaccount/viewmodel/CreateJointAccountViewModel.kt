@@ -12,72 +12,177 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.createaccount.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.modules.addaccount.joint.creation.domain.exception.JointAccountValidationException
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountCreationEventTracker
+import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.foundation.cache.PersistentCache
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateJointAccountViewModel @Inject constructor(
-    private val stateDelegate: StateDelegate<ViewState>
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val contactRepository: ContactRepository,
+    private val jointAccountCreationEventTracker: JointAccountCreationEventTracker,
+    persistentCacheProvider: PersistentCacheProvider,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
-    StateViewModel<CreateJointAccountViewModel.ViewState> by stateDelegate {
+    StateViewModel<CreateJointAccountViewModel.ViewState> by stateDelegate,
+    EventViewModel<CreateJointAccountViewModel.ViewEvent> by eventDelegate {
+
+    private val disclaimerSeenCache: PersistentCache<Boolean> =
+        persistentCacheProvider.getPersistentCache(
+            Boolean::class.java,
+            DISCLAIMER_SEEN_KEY
+        )
+
+    private var editingAccountIndex: Int?
+        get() = savedStateHandle.get<Int>(EDITING_ACCOUNT_INDEX_KEY)
+        set(value) {
+            if (value != null) {
+                savedStateHandle[EDITING_ACCOUNT_INDEX_KEY] = value
+            } else {
+                savedStateHandle.remove<Int>(EDITING_ACCOUNT_INDEX_KEY)
+                Unit
+            }
+        }
 
     init {
-        stateDelegate.setDefaultState(ViewState())
+        stateDelegate.setDefaultState(ViewState.Content())
     }
 
-    fun addSelectedAccount(account: SelectedJointAccountItem): Boolean {
-        val currentAccounts = state.value.selectedAccounts
-        val addressExists = currentAccounts.any {
-            it.accountDisplayName.accountAddress == account.accountDisplayName.accountAddress
-        }
-        if (addressExists) return false
-
+    fun addSelectedAccount(account: SelectedJointAccountItem) {
         stateDelegate.updateState { currentState ->
-            currentState.copy(selectedAccounts = currentState.selectedAccounts + account)
+            val content = currentState as? ViewState.Content ?: return@updateState currentState
+            if (content.selectedAccounts.size >= JointAccountValidationException.MAX_PARTICIPANTS) {
+                return@updateState currentState
+            }
+            content.copy(selectedAccounts = content.selectedAccounts + account)
         }
-        return true
     }
 
-    fun updateAccountName(address: String, name: String) {
+    fun setEditingAccountIndex(index: Int) {
+        editingAccountIndex = index
+    }
+
+    fun updateAccountNameFromResult(name: String) {
+        val index = editingAccountIndex ?: return
         if (name.isBlank()) return
+        var addressToUpdate: String? = null
         stateDelegate.updateState { currentState ->
-            val updatedList = currentState.selectedAccounts.map { item ->
-                if (item.accountDisplayName.accountAddress == address) {
-                    val updatedDisplayName = item.accountDisplayName.copy(primaryDisplayName = name)
-                    item.copy(accountDisplayName = updatedDisplayName)
-                } else {
-                    item
-                }
+            val content = currentState as? ViewState.Content ?: return@updateState currentState
+            if (index !in content.selectedAccounts.indices) return@updateState currentState
+            val updatedList = content.selectedAccounts.toMutableList()
+            val item = updatedList[index]
+            if (item.isContact) {
+                addressToUpdate = item.accountDisplayName.accountAddress
             }
-            currentState.copy(selectedAccounts = updatedList)
+            val updatedDisplayName = item.accountDisplayName.copy(primaryDisplayName = name)
+            updatedList[index] = item.copy(accountDisplayName = updatedDisplayName)
+            content.copy(selectedAccounts = updatedList)
+        }
+        addressToUpdate?.let { address ->
+            viewModelScope.launch {
+                val contact = contactRepository.getContactByAddress(address) ?: return@launch
+                contactRepository.updateContact(contact.copy(name = name))
+            }
+        }
+        editingAccountIndex = null
+    }
+
+    fun removeEditingAccount() {
+        val index = editingAccountIndex ?: return
+        removeSelectedAccount(index)
+        editingAccountIndex = null
+    }
+
+    fun removeSelectedAccount(index: Int) {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountRemoveAddressPress() }
+        stateDelegate.updateState { currentState ->
+            val content = currentState as? ViewState.Content ?: return@updateState currentState
+            val updatedList = content.selectedAccounts.toMutableList().apply {
+                removeAt(index)
+            }
+            content.copy(selectedAccounts = updatedList)
         }
     }
 
-    fun removeSelectedAccount(address: String) {
-        stateDelegate.updateState { currentState ->
-            val updatedList = currentState.selectedAccounts.filterNot {
-                it.accountDisplayName.accountAddress == address
+    fun logAddAccountClick() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountAddAccountPress() }
+    }
+
+    fun logEditAccountClick() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountEditAccountPress() }
+    }
+
+    fun onContinueClick() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountAddAccountContinuePress() }
+        val hasSeenDisclaimer = disclaimerSeenCache.get() == true
+        if (hasSeenDisclaimer) {
+            eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToSetThreshold)
+        } else {
+            stateDelegate.updateState { currentState ->
+                val content = currentState as? ViewState.Content ?: return@updateState currentState
+                content.copy(showDisclaimer = true)
             }
-            currentState.copy(selectedAccounts = updatedList)
         }
     }
 
-    fun getParticipantAddresses(): Array<String> = state.value.selectedAccounts
-        .map { it.accountDisplayName.accountAddress }
-        .toTypedArray()
-
-    data class ViewState(
-        val selectedAccounts: List<SelectedJointAccountItem> = emptyList()
-    ) {
-        val isContinueEnabled: Boolean
-            get() = selectedAccounts.size >= MIN_PARTICIPANTS_COUNT
+    fun onDisclaimerProceed() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountInfoScreenProceedPress() }
+        disclaimerSeenCache.put(true)
+        stateDelegate.updateState { currentState ->
+            val content = currentState as? ViewState.Content ?: return@updateState currentState
+            content.copy(showDisclaimer = false)
+        }
+        eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToSetThreshold)
     }
 
-    companion object {
-        private const val MIN_PARTICIPANTS_COUNT = 2
+    fun onDisclaimerGoBack() {
+        viewModelScope.launch { jointAccountCreationEventTracker.logOnbJointAccountInfoScreenGoBackPress() }
+        stateDelegate.updateState { currentState ->
+            val content = currentState as? ViewState.Content ?: return@updateState currentState
+            content.copy(showDisclaimer = false)
+        }
+    }
+
+    fun getParticipantAddresses(): Array<String> {
+        val content = state.value as? ViewState.Content ?: return emptyArray()
+        return content.selectedAccounts.map {
+            it.accountDisplayName.accountAddress
+        }.toTypedArray()
+    }
+
+    sealed interface ViewState {
+        data class Content(
+            val selectedAccounts: List<SelectedJointAccountItem> = emptyList(),
+            val showDisclaimer: Boolean = false
+        ) : ViewState {
+            val isContinueEnabled: Boolean
+                get() = selectedAccounts.size >= JointAccountValidationException.MIN_PARTICIPANTS
+
+            val canAddMoreAccounts: Boolean
+                get() = selectedAccounts.size < JointAccountValidationException.MAX_PARTICIPANTS
+        }
+    }
+
+    sealed interface ViewEvent {
+        data object NavigateToSetThreshold : ViewEvent
+    }
+
+    private companion object {
+        const val DISCLAIMER_SEEN_KEY = "joint_account_disclaimer_seen"
+        const val EDITING_ACCOUNT_INDEX_KEY = "editingAccountIndex"
     }
 }

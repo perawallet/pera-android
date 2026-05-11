@@ -19,7 +19,6 @@ import android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.util.Log
-import com.algorand.android.BuildConfig
 import com.algorand.android.R
 import com.algorand.android.utils.getAccountIndexAsByteArray
 import com.algorand.android.utils.recordException
@@ -62,6 +61,9 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                 } ?: gatt.getService(STAX_SERVICE_UUID)?.run {
                     characteristicWrite = getCharacteristic(STAX_WRITE_CHARACTERISTIC_UUID)
                     characteristicNotify = getCharacteristic(STAX_NOTIFY_CHARACTERISTIC_UUID)
+                } ?: gatt.getService(NANO_GEN5_SERVICE_UUID)?.run {
+                    characteristicWrite = getCharacteristic(NANO_GEN5_WRITE_CHARACTERISTIC_UUID)
+                    characteristicNotify = getCharacteristic(NANO_GEN5_NOTIFY_CHARACTERISTIC_UUID)
                 }
 
                 return characteristicWrite != null && characteristicNotify != null
@@ -92,9 +94,6 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
 
     override fun log(priority: Int, message: String) {
         super.log(priority, message)
-        if (BuildConfig.DEBUG) {
-            Log.println(priority, TAG, message)
-        }
     }
 
     inner class ReceivedDataHandler : DataReceivedCallback {
@@ -367,6 +366,10 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
         private const val FLEX_WRITE_CHARACTERISTIC_KEY = "13d63400-2c97-3004-0002-4c6564676572"
         private const val FLEX_NOTIFY_CHARACTERISTIC_KEY = "13d63400-2c97-3004-0001-4c6564676572"
 
+        private const val NANO_GEN5_SERVICE_KEY = "13d63400-2c97-8004-0000-4c6564676572"
+        private const val NANO_GEN5_WRITE_CHARACTERISTIC_KEY = "13d63400-2c97-8004-0002-4c6564676572"
+        private const val NANO_GEN5_NOTIFY_CHARACTERISTIC_KEY = "13d63400-2c97-8004-0001-4c6564676572"
+
         val NANOX_SERVICE_UUID: UUID = UUID.fromString(NANOX_SERVICE_KEY)
         private val NANOX_WRITE_CHARACTERISTIC_UUID = UUID.fromString(NANOX_WRITE_CHARACTERISTIC_KEY)
         private val NANOX_NOTIFY_CHARACTERISTIC_UUID = UUID.fromString(NANOX_NOTIFY_CHARACTERISTIC_KEY)
@@ -378,6 +381,10 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
         val FLEX_SERVICE_UUID: UUID = UUID.fromString(FLEX_SERVICE_KEY)
         private val FLEX_WRITE_CHARACTERISTIC_UUID = UUID.fromString(FLEX_WRITE_CHARACTERISTIC_KEY)
         private val FLEX_NOTIFY_CHARACTERISTIC_UUID = UUID.fromString(FLEX_NOTIFY_CHARACTERISTIC_KEY)
+
+        val NANO_GEN5_SERVICE_UUID: UUID = UUID.fromString(NANO_GEN5_SERVICE_KEY)
+        private val NANO_GEN5_WRITE_CHARACTERISTIC_UUID = UUID.fromString(NANO_GEN5_WRITE_CHARACTERISTIC_KEY)
+        private val NANO_GEN5_NOTIFY_CHARACTERISTIC_UUID = UUID.fromString(NANO_GEN5_NOTIFY_CHARACTERISTIC_KEY)
 
         private const val GATT_MAX_MTU_SIZE = 517
         private const val CONNECTION_TIMEOUT = 18000L
@@ -438,7 +445,5 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
             byteArrayOf(0x69, 0x86.toByte())
         )
         private val NEXT_PAGE_CODE = byteArrayOf(0x90.toByte(), 0x00.toByte())
-
-        private const val TAG = "LedgerBleManager"
     }
 }

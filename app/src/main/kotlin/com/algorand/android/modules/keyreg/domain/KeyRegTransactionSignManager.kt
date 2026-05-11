@@ -14,6 +14,7 @@ package com.algorand.android.modules.keyreg.domain
 
 import com.algorand.android.R
 import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
+import com.algorand.android.core.transaction.sync.JointAccountSyncSignDependencies
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
@@ -39,7 +40,8 @@ class KeyRegTransactionSignManager @Inject constructor(
     getAlgo25SecretKey: GetAlgo25SecretKey,
     getHdSeed: GetHdSeed,
     getLocalAccount: GetLocalAccount,
-    signHdKeyTransaction: SignHdKeyTransaction
+    signHdKeyTransaction: SignHdKeyTransaction,
+    syncSignDependencies: JointAccountSyncSignDependencies
 ) : ExternalTransactionSignManager<KeyRegTransaction>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
@@ -48,7 +50,8 @@ class KeyRegTransactionSignManager @Inject constructor(
     getAlgo25SecretKey,
     getHdSeed,
     getLocalAccount,
-    signHdKeyTransaction
+    signHdKeyTransaction,
+    syncSignDependencies
 ) {
 
     private var unsignedTransaction: KeyRegTransaction? = null
@@ -69,10 +72,10 @@ class KeyRegTransactionSignManager @Inject constructor(
         transaction: KeyRegTransaction?,
         signedTransactions: List<ByteArray?>?
     ): ExternalTransactionSignResult {
-        if (transaction == null) return Error.Defined(AnnotatedString(R.string.an_error_occurred))
+        if (transaction == null) return Error.Defined(AnnotatedString(R.string.key_reg_signing_failed))
         val signedTransaction = signedTransactions?.firstOrNull()
         return if (signedTransaction == null) {
-            Error.Defined(AnnotatedString(R.string.an_error_occurred))
+            Error.Defined(AnnotatedString(R.string.key_reg_signing_failed))
         } else {
             Success(listOf(signedTransaction))
         }

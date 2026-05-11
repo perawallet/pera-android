@@ -15,7 +15,6 @@ package com.algorand.android.utils
 
 import android.content.res.Resources
 import android.text.format.DateUtils
-import android.util.Log
 import com.algorand.android.R
 import com.algorand.android.models.DateRange
 import java.time.DayOfWeek
@@ -27,8 +26,6 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.TemporalAdjusters
-
-private const val DATE_UTILS_TAG = "DateUtils"
 
 const val MONTH_DAY_YEAR_PATTERN: String = "MMMM dd, yyyy"
 const val MONTH_DAY_YEAR_WITH_DOT_PATTERN: String = "MM.dd.yyyy"
@@ -112,8 +109,7 @@ fun String?.parseFormattedDate(dateTimeFormatter: DateTimeFormatter): ZonedDateT
         } else {
             OffsetDateTime.parse(this, dateTimeFormatter).toZonedDateTime()
         }
-    } catch (e: Exception) {
-        Log.e(DATE_UTILS_TAG, "Failed to parse date: '$this' with formatter pattern. Error: ${e.message}")
+    } catch (_: Exception) {
         null
     }
 }

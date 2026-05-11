@@ -42,6 +42,7 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalSta
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreviewUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetWalletIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetWalletIconDrawablePreviewUseCase
+import com.algorand.android.modules.contact.base.domain.usecase.GetContactByAddress
 import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
@@ -129,4 +130,9 @@ internal object AccountCoreUiModule {
     fun provideGetWalletIconDrawablePreview(
         useCase: GetWalletIconDrawablePreviewUseCase
     ): GetWalletIconDrawablePreview = useCase
+
+    @Provides
+    fun provideGetContactByAddress(
+        contactRepository: ContactRepository
+    ): GetContactByAddress = GetContactByAddress(contactRepository::getContactByAddress)
 }

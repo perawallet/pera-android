@@ -40,7 +40,6 @@ fun PeraToolbar(
     modifier: Modifier = Modifier,
     text: String = "",
     secondaryText: String? = null,
-    textStyle: PeraToolbarTextStyle = PeraToolbarTextStyle.Default,
     startContainer: @Composable RowScope.() -> Unit = {},
     centerContainer: (@Composable () -> Unit)? = null,
     endContainer: @Composable RowScope.() -> Unit = {}
@@ -62,8 +61,7 @@ fun PeraToolbar(
             ToolbarText(
                 modifier = Modifier.align(Alignment.Center),
                 text = text,
-                secondaryText = secondaryText,
-                textStyle = textStyle
+                secondaryText = secondaryText
             )
         }
 
@@ -99,7 +97,7 @@ fun PeraToolbarIcon(
             .padding(8.dp),
         painter = painterResource(iconResId),
         tint = PeraTheme.colors.text.main,
-contentDescription = contentDescription
+        contentDescription = contentDescription
     )
 }
 
@@ -120,49 +118,6 @@ fun PeraToolbarTextButton(
 }
 
 @Composable
-private fun ToolbarText(
-    modifier: Modifier = Modifier,
-    text: String,
-    secondaryText: String? = null,
-    textStyle: PeraToolbarTextStyle = PeraToolbarTextStyle.Default
-) {
-    val primaryTextStyle = when (textStyle) {
-        PeraToolbarTextStyle.Default -> PeraTheme.typography.body.regular.sansMedium
-        PeraToolbarTextStyle.Large -> PeraTheme.typography.title.large.sansMedium
-    }
-
-    if (secondaryText != null) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = text,
-                style = primaryTextStyle,
-                color = PeraTheme.colors.text.main
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = secondaryText,
-                style = PeraTheme.typography.footnote.sans,
-                color = PeraTheme.colors.text.gray
-            )
-        }
-    } else {
-        Text(
-            modifier = modifier,
-            text = text,
-            style = primaryTextStyle,
-            color = PeraTheme.colors.text.main
-        )
-    }
-}
-
-/**
- * Composable for toolbar title text with default style.
- * Use this in centerContainer slot of PeraToolbar.
- */
-@Composable
 fun PeraToolbarTitle(
     modifier: Modifier = Modifier,
     text: String
@@ -175,10 +130,6 @@ fun PeraToolbarTitle(
     )
 }
 
-/**
- * Composable for toolbar title text with large style.
- * Use this in centerContainer slot of PeraToolbar.
- */
 @Composable
 fun PeraToolbarLargeTitle(
     modifier: Modifier = Modifier,
@@ -192,30 +143,35 @@ fun PeraToolbarLargeTitle(
     )
 }
 
-/**
- * Composable for toolbar title with secondary text.
- * Use this in centerContainer slot of PeraToolbar.
- */
 @Composable
-fun PeraToolbarTitleWithSubtitle(
+private fun ToolbarText(
     modifier: Modifier = Modifier,
-    title: String,
-    subtitle: String
+    text: String,
+    secondaryText: String? = null
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    if (secondaryText != null) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = text,
+                style = PeraTheme.typography.body.regular.sansMedium,
+                color = PeraTheme.colors.text.main
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = secondaryText,
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray
+            )
+        }
+    } else {
         Text(
-            text = title,
+            modifier = modifier,
+            text = text,
             style = PeraTheme.typography.body.regular.sansMedium,
             color = PeraTheme.colors.text.main
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = subtitle,
-            style = PeraTheme.typography.footnote.sans,
-            color = PeraTheme.colors.text.gray
         )
     }
 }

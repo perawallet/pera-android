@@ -1,3 +1,4 @@
+@file:Suppress("TooManyFunctions")
 /*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -245,7 +246,7 @@ private fun ApplicationCallItem(item: ApplicationCall, onClick: () -> Unit) {
             .padding(vertical = 16.dp, horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TxnIcon(R.drawable.ic_buy_sell_small)
+        TxnIcon(R.drawable.ic_app_call)
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -253,14 +254,16 @@ private fun ApplicationCallItem(item: ApplicationCall, onClick: () -> Unit) {
             verticalArrangement = Arrangement.Center
         ) {
             PrimaryText(stringResource(R.string.app_call))
-            SecondaryText(stringResource(R.string.formatted_application_id, item.appId))
             if (item.txnCount > 0) {
                 Text(
-                    text = pluralStringResource(R.plurals.count_inner_transactions, item.txnCount, item.txnCount),
+                    text = pluralStringResource(R.plurals.count_inner_txns, item.txnCount, item.txnCount),
                     style = PeraTheme.typography.footnote.sans,
-                    color = PeraTheme.colors.link.primary
+                    color = PeraTheme.colors.text.grayLighter
                 )
             }
+        }
+        if (item.formattedBalanceImpact != null) {
+            AmountText(item.formattedBalanceImpact, item.balanceImpactColor())
         }
     }
 }
@@ -407,6 +410,16 @@ private fun SecondaryText(text: String) {
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
     )
+}
+
+@Composable
+private fun ApplicationCall.balanceImpactColor(): Color {
+    val amount = balanceImpactAmount ?: return PeraTheme.colors.text.main
+    return when {
+        amount < ZERO -> PeraTheme.colors.helper.negative
+        amount > ZERO -> PeraTheme.colors.helper.positive
+        else -> PeraTheme.colors.text.main
+    }
 }
 
 @Composable

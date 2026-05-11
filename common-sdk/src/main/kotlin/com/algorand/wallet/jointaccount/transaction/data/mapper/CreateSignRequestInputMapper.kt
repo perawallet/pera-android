@@ -33,7 +33,7 @@ internal class CreateSignRequestInputMapper @Inject constructor() {
         return ProposeJointSignRequestRequest(
             jointAccountAddress = dto.jointAccountAddress,
             proposerAddress = dto.proposerAddress,
-            type = dto.type,
+            type = dto.type.value,
             rawTransactionLists = dto.rawTransactionLists,
             responses = responses
         )

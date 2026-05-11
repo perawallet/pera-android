@@ -16,6 +16,7 @@ import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveJointAccount
+import com.algorand.wallet.foundation.PeraResult
 import io.mockk.Ordering
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -92,12 +93,10 @@ internal class AddJointAccountUseCaseTest {
         val expectedException = RuntimeException("Database error")
         coEvery { saveJointAccount(any()) } throws expectedException
 
-        val result = runCatching {
-            sut(TEST_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_NAME, TEST_ORDER)
-        }
+        val result = sut(TEST_ADDRESS, TEST_PARTICIPANTS, TEST_THRESHOLD, TEST_VERSION, TEST_NAME, TEST_ORDER)
 
-        assertTrue(result.isFailure)
-        assertEquals(expectedException, result.exceptionOrNull())
+        assertTrue(result is PeraResult.Error)
+        assertEquals(expectedException, (result as PeraResult.Error).exception)
         coVerify(exactly = 0) { setAccountCustomInfo(any()) }
     }
 

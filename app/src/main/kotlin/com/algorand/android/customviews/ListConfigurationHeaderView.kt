@@ -13,11 +13,13 @@
 package com.algorand.android.customviews
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -71,7 +73,9 @@ class ListConfigurationHeaderView(context: Context, attrs: AttributeSet? = null)
             val primaryButtonIcon = it.getDrawable(R.styleable.ListConfigurationHeaderView_primaryButtonIcon)
             val isPrimaryButtonActive =
                 it.getBoolean(R.styleable.ListConfigurationHeaderView_primaryButtonActive, false)
-            initPrimaryButton(primaryButtonText, primaryButtonIcon, isPrimaryButtonActive)
+            val isPrimaryButtonIconOnly =
+                it.getBoolean(R.styleable.ListConfigurationHeaderView_primaryButtonIconOnly, false)
+            initPrimaryButton(primaryButtonText, primaryButtonIcon, isPrimaryButtonActive, isPrimaryButtonIconOnly)
 
             val secondaryButtonText = it.getString(R.styleable.ListConfigurationHeaderView_secondaryButtonText)
             val secondaryButtonIcon = it.getDrawable(R.styleable.ListConfigurationHeaderView_secondaryButtonIcon)
@@ -86,14 +90,32 @@ class ListConfigurationHeaderView(context: Context, attrs: AttributeSet? = null)
     private fun initPrimaryButton(
         primaryButtonText: String?,
         primaryButtonIcon: Drawable?,
-        isPrimaryButtonActive: Boolean?
+        isPrimaryButtonActive: Boolean?,
+        isIconOnly: Boolean
     ) {
         with(binding.primaryButton) {
             isVisible = !primaryButtonText.isNullOrBlank() || primaryButtonIcon != null
-            if (!primaryButtonText.isNullOrBlank()) text = primaryButtonText
+            if (!primaryButtonText.isNullOrBlank() && !isIconOnly) text = primaryButtonText
             if (primaryButtonIcon != null) icon = primaryButtonIcon
             if (isPrimaryButtonActive != null) isActivated = isPrimaryButtonActive
-            setIconTintResource(PRIMARY_BUTTON_ICON_DEFAULT_TINT)
+            if (isIconOnly) {
+                applySquareIconStyle()
+            } else {
+                setIconTintResource(PRIMARY_BUTTON_ICON_DEFAULT_TINT)
+            }
+        }
+    }
+
+    private fun applySquareIconStyle() {
+        with(binding.primaryButton) {
+            updateLayoutParams {
+                width = resources.getDimensionPixelSize(R.dimen.square_button_size)
+                height = resources.getDimensionPixelSize(R.dimen.square_button_size)
+            }
+            iconPadding = 0
+            backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.button_square_bg))
+            cornerRadius = resources.getDimensionPixelSize(R.dimen.action_button_corner_radius)
+            iconTint = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.button_square_icon))
         }
     }
 

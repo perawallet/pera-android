@@ -16,6 +16,5 @@ data class HdWalletSummary(
     val seedId: Int,
     val accountCount: Int,
     val maxAccountIndex: Int,
-    val primaryValue: String,
-    val secondaryValue: String
+    val addresses: List<String>
 )

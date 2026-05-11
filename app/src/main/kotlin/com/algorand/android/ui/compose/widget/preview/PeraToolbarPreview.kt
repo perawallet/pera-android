@@ -27,14 +27,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import com.algorand.android.ui.compose.preview.PeraPreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.usecase.AccountIconDrawablePreviews
+import com.algorand.android.ui.compose.preview.PeraPreviewLightDark
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AccountIcon
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.compose.widget.PeraToolbarLargeTitle
 import com.algorand.android.ui.compose.widget.PeraToolbarLinkText
 import com.algorand.android.ui.compose.widget.modifier.clickableNoRipple
 
@@ -189,8 +190,9 @@ fun PeraToolbarLargeTextPreview() {
     PeraTheme {
         Column {
             PeraToolbar(
-                text = "Title",
-                textStyle = com.algorand.android.ui.compose.widget.PeraToolbarTextStyle.Large,
+                centerContainer = {
+                    PeraToolbarLargeTitle(text = "Title")
+                },
                 startContainer = {
                     PeraToolbarIcon(
                         iconResId = R.drawable.ic_plus,

@@ -12,15 +12,17 @@
 
 package com.algorand.android.ui.swap.usecase
 
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.swap.domain.usecase.GetLastUsedSwapAddress
 import com.algorand.wallet.swap.domain.usecase.SetLastUsedSwapAddress
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 internal class GetPreselectedSwapAddressUseCase @Inject constructor(
     private val getLastUsedSwapAddress: GetLastUsedSwapAddress,
-    private val getAccountLiteCacheData: GetAccountLiteCacheData,
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val setLastUsedSwapAddress: SetLastUsedSwapAddress
 ) : GetPreselectedSwapAddress {
 
@@ -37,12 +39,16 @@ internal class GetPreselectedSwapAddressUseCase @Inject constructor(
         }
     }
 
-    private fun getSortedAuthAddresses(): List<String> {
-        return getAccountLiteCacheData()?.accountLites?.mapNotNull { (address, accountLite) ->
+    private suspend fun getSortedAuthAddresses(): List<String> {
+        val cacheStatus = getAccountLiteCacheFlow().first {
+            it !is AccountLiteCacheStatus.Idle && it !is AccountLiteCacheStatus.Loading
+        }
+        val data = cacheStatus as? AccountLiteCacheStatus.Data ?: return emptyList()
+        return data.accountLites.mapNotNull { (address, accountLite) ->
             address.takeIf {
                 val accountType = accountLite.cachedInfo?.type ?: return@takeIf false
                 accountType.canSignTransaction() && accountType !is AccountType.Joint
             }
-        }.orEmpty()
+        }
     }
 }

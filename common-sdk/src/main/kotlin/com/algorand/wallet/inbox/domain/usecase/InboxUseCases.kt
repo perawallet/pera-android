@@ -14,6 +14,7 @@ package com.algorand.wallet.inbox.domain.usecase
 
 import com.algorand.wallet.inbox.domain.model.InboxMessages
 import kotlinx.coroutines.flow.Flow
+import java.time.ZonedDateTime
 
 fun interface CacheInboxMessages {
     suspend operator fun invoke(inboxMessages: InboxMessages)
@@ -41,4 +42,16 @@ fun interface HasInboxItemsForAddress {
 
 fun interface RefreshInboxCache {
     suspend operator fun invoke()
+}
+
+fun interface GetJointAccountInboxCountFlow {
+    operator fun invoke(): Flow<Int>
+}
+
+fun interface SetInboxLastOpenedTime {
+    operator fun invoke(time: ZonedDateTime)
+}
+
+fun interface GetInboxLastOpenedTime {
+    operator fun invoke(): ZonedDateTime?
 }

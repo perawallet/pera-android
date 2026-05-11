@@ -41,15 +41,6 @@ internal class AddSignatureInputMapperTest {
     }
 
     @Test
-    fun `EXPECT rejected response type WHEN response is REJECTED`() {
-        val input = createTestInput(response = SignRequestResponseType.REJECTED)
-
-        val result = mapper.mapToSignRequestTransactionListResponseRequest(input)
-
-        assertEquals("rejected", result.response)
-    }
-
-    @Test
     fun `EXPECT address signatures and device id to be mapped correctly`() {
         val input = createTestInput()
 

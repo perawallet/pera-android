@@ -28,22 +28,25 @@ import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRen
 import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoDisplayString
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.inbox.domain.usecase.GetInboxMessagesFlow
 import com.algorand.wallet.inbox.domain.usecase.HasInboxItemsForAddress
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccountParticipantCount
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import java.math.BigDecimal
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import java.math.BigDecimal
+import javax.inject.Inject
 
 internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getPrivacyModeFlow: GetPrivacyModeFlow,
+    private val getInboxMessagesFlow: GetInboxMessagesFlow,
     private val amountRendererTypeMapper: AmountRendererTypeMapper,
     private val hasInboxItemsForAddress: HasInboxItemsForAddress,
     private val accountDetailAssetItemMapper: AccountDetailAssetItemMapper,
@@ -54,7 +57,11 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
 ) : AccountDetailAccountsItemProcessor {
 
     override fun getAccountDetailsItemsFlow(address: String, query: String?): Flow<List<AccountDetailAccountsItem>> {
-        return combine(getAccountLiteCacheFlow(), getPrivacyModeFlow()) { accountLiteCacheStatus, privacyMode ->
+        return combine(
+            getAccountLiteCacheFlow(),
+            getPrivacyModeFlow(),
+            getInboxMessagesFlow()
+        ) { accountLiteCacheStatus, privacyMode, _ ->
             val accountLite = (accountLiteCacheStatus as? AccountLiteCacheStatus.Data)
                 ?.accountLites
                 ?.get(address)
@@ -70,7 +77,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
         privacyMode: PrivacyMode
     ): List<AccountDetailAccountsItem> {
         return mutableListOf<AccountDetailAccountsItem>().apply {
-            if (cachedInfo.type is AccountType.Joint) {
+            if (accountLite.registrationType is AccountRegistrationType.Joint) {
                 val participantCount = getJointAccountParticipantCount(accountLite.address)
                 add(AccountDetailAccountsItem.JointAccountBadgeItem(participantCount))
             }
@@ -120,9 +127,7 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
 
     private suspend fun getAuthAccountQuickActionItem(accountLite: AccountLite): List<AccountDetailQuickActionItem> {
         return mutableListOf<AccountDetailQuickActionItem>().apply {
-            if (accountLite.cachedInfo?.type !is AccountType.Joint) {
-                add(AccountDetailQuickActionItem.SwapButton)
-            }
+            add(AccountDetailQuickActionItem.SwapButton)
             if (isFeatureToggleEnabled(FeatureToggle.XO_SWAP.key)) {
                 add(AccountDetailQuickActionItem.FundButton)
             } else {

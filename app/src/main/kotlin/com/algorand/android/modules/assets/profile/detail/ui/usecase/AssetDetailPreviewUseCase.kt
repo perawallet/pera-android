@@ -39,11 +39,11 @@ import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AssetDetailPreviewUseCase @Inject constructor(
@@ -155,7 +155,8 @@ class AssetDetailPreviewUseCase @Inject constructor(
         assetId: Long,
         isQuickActionButtonsVisible: Boolean
     ): List<AssetDetailQuickActionItem> {
-        val isWatchAccount = getAccountType(address) == AccountType.NoAuth
+        val accountType = getAccountType(address)
+        val isWatchAccount = accountType == AccountType.NoAuth
         val safeIsQuickActionButtonsVisible = isQuickActionButtonsVisible && !isWatchAccount
         if (!safeIsQuickActionButtonsVisible) return emptyList()
 

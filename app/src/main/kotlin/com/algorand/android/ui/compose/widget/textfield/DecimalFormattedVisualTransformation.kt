@@ -28,10 +28,18 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
         }
 
         val symbols = DecimalFormatSymbols.getInstance()
-        val decimalSeparator = symbols.decimalSeparator.toString()
-        val parts = original.split(decimalSeparator)
+        val decimalSeparator = symbols.decimalSeparator
 
-        val integerPart = parts.getOrNull(0)?.filter { it.isDigit() }.orEmpty()
+        // Formatting assumes the input contains only digits and at most the decimal
+        // separator. Anything else (e.g. grouping separators from pasted text) would
+        // break the offset mapping below, so pass such input through unchanged.
+        if (original.any { !it.isDigit() && it != decimalSeparator }) {
+            return TransformedText(text, OffsetMapping.Identity)
+        }
+
+        val decimalSeparatorString = decimalSeparator.toString()
+        val parts = original.split(decimalSeparatorString, limit = 2)
+        val integerPart = parts[0]
         val decimalPart = parts.getOrNull(1)
 
         val formattedInteger = try {
@@ -41,14 +49,46 @@ class DecimalFormattedVisualTransformation : VisualTransformation {
         }
 
         val result = if (!decimalPart.isNullOrEmpty()) {
-            "$formattedInteger$decimalSeparator$decimalPart"
+            "$formattedInteger$decimalSeparatorString$decimalPart"
         } else {
-            "$formattedInteger${decimalSeparator.takeIf { original.contains(it) }.orEmpty()}"
+            "$formattedInteger${decimalSeparatorString.takeIf { original.contains(it) }.orEmpty()}"
         }
 
+        val integerPartLength = integerPart.length
+        val formattedIntegerLength = formattedInteger.length
+        val groupingSeparator = symbols.groupingSeparator
+
+        val digitPositions = IntArray(integerPartLength + 1)
+        var digitIndex = 0
+        for (i in formattedInteger.indices) {
+            if (formattedInteger[i] != groupingSeparator) {
+                digitPositions[digitIndex++] = i
+            }
+        }
+        digitPositions[integerPartLength] = formattedIntegerLength
+
         val offsetMapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int = result.length
-            override fun transformedToOriginal(offset: Int): Int = original.length
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset <= 0) return 0
+                if (offset >= original.length) return result.length
+                if (offset <= integerPartLength) return digitPositions[offset]
+                return formattedIntegerLength + (offset - integerPartLength)
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset <= 0) return 0
+                if (offset >= result.length) return original.length
+                if (offset <= formattedIntegerLength) {
+                    var lo = 0
+                    var hi = integerPartLength
+                    while (lo < hi) {
+                        val mid = (lo + hi + 1) / 2
+                        if (digitPositions[mid] <= offset) lo = mid else hi = mid - 1
+                    }
+                    return lo
+                }
+                return integerPartLength + (offset - formattedIntegerLength)
+            }
         }
 
         return TransformedText(AnnotatedString(result), offsetMapping)

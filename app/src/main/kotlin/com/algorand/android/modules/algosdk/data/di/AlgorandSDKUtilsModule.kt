@@ -18,15 +18,16 @@ import com.algorand.android.modules.algosdk.data.mapper.PendingTransactionRespon
 import com.algorand.android.modules.algosdk.data.mapper.rawtransaction.RawTransactionDTOMapper
 import com.algorand.android.modules.algosdk.data.repository.AlgorandSDKUtilsImpl
 import com.algorand.android.modules.algosdk.data.service.AlgorandSDKUtils
+import com.algorand.wallet.logger.PeraErrorLogger
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object AlgorandSDKUtilsModule {
 
     @Provides
@@ -36,14 +37,16 @@ object AlgorandSDKUtilsModule {
         algodClient: AlgodClient?,
         rawTransactionDTOMapper: RawTransactionDTOMapper,
         algorandAddressDTOMapper: AlgorandAddressDTOMapper,
-        gson: Gson
+        gson: Gson,
+        errorLogger: PeraErrorLogger
     ): AlgorandSDKUtils {
         return AlgorandSDKUtilsImpl(
             pendingTransactionResponseDTOMapper = pendingTransactionResponseDTOMapper,
             rawTransactionDTOMapper = rawTransactionDTOMapper,
             algorandAddressDTOMapper = algorandAddressDTOMapper,
             algodClient = algodClient,
-            gson = gson
+            gson = gson,
+            errorLogger = errorLogger
         )
     }
 }

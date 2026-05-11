@@ -22,6 +22,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -29,12 +30,15 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionManagerResult
 import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
+import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesBottomSheet
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.LOCATION_PERMISSION_REQUEST_CODE
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.isBluetoothEnabled
+import com.algorand.android.utils.listenToNavigationResult
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showAlertDialog
 import com.algorand.android.utils.showSnackbar
@@ -102,7 +106,16 @@ abstract class TransactionSignBaseFragment(
     }
 
     protected open fun onJointAccountSignRequestCreated(signRequestId: String) {
-        nav(HomeNavigationDirections.actionGlobalToJointAccountSignRequestFragment(signRequestId))
+        listenToNavigationResult<PendingSignaturesDismissResult>(
+            PendingSignaturesBottomSheet.DISMISS_RESULT_KEY
+        ) {
+            nav(MainNavigationDirections.actionGlobalMainNavigation())
+        }
+        nav(
+            HomeNavigationDirections.actionGlobalToJointAccountSignRequestFragment(
+                signRequestId = signRequestId
+            )
+        )
     }
 
     private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener { shouldStopResources ->

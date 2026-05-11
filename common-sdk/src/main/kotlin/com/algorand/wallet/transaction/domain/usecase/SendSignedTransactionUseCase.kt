@@ -25,12 +25,8 @@ internal class SendSignedTransactionUseCase @Inject constructor(
         return transactionRepository.sendSignedTransaction(txn).use(
             onSuccess = { txnId ->
                 if (waitForConfirmation) {
-                    transactionRepository.waitForConfirmation(txnId, DEFAULT_MAX_ROUND_TO_WAIT).map {
-                        transactionRepository.trackTransaction(txnId)
-                        it
-                    }
+                    transactionRepository.waitForConfirmation(txnId, DEFAULT_MAX_ROUND_TO_WAIT)
                 } else {
-                    transactionRepository.trackTransaction(txnId)
                     PeraResult.Success(txnId)
                 }
             },

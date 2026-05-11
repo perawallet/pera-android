@@ -97,7 +97,7 @@ private fun ErrorState(onRetryClick: () -> Unit) {
             modifier = Modifier.padding(24.dp),
             iconResId = null,
             titleResId = null,
-            descriptionResId = R.string.an_error_occurred,
+            descriptionResId = R.string.swap_generic_error,
             buttonTextResId = R.string.retry,
             onClick = onRetryClick
         )

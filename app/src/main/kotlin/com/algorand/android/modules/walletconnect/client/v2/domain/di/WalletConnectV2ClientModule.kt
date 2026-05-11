@@ -26,6 +26,7 @@ import com.algorand.android.modules.walletconnect.client.v2.utils.WalletConnectV
 import com.algorand.android.modules.walletconnect.client.v2.utils.WalletConnectV2ErrorCodeProvider
 import com.algorand.android.modules.walletconnect.client.v2.walletdelegate.WalletConnectV2ClientWalletDelegate
 import com.algorand.android.modules.walletconnect.domain.WalletConnectClient
+import com.algorand.wallet.logger.PeraErrorLogger
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -58,7 +59,8 @@ object WalletConnectV2ClientModule {
         sessionExpirationManager: WalletConnectV2SessionExpirationManager,
         @Named(WalletConnectV2SessionServerStatusManager.INJECTION_NAME)
         sessionServerStatusManager: WalletConnectV2SessionServerStatusManager,
-        gson: Gson
+        gson: Gson,
+        errorLogger: PeraErrorLogger
     ): WalletConnectClient {
         return WalletConnectClientV2Impl(
             clientV2Mapper = clientV2Mapper,
@@ -73,7 +75,8 @@ object WalletConnectV2ClientModule {
             cachePairUriUseCase = cachePairUriUseCase,
             walletDelegate = walletDelegate,
             sessionExpirationManager = sessionExpirationManager,
-            sessionServerStatusManager = sessionServerStatusManager
+            sessionServerStatusManager = sessionServerStatusManager,
+            errorLogger = errorLogger
         )
     }
 }

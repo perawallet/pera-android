@@ -40,10 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.usecase.AccountIconDrawablePreviews
@@ -131,7 +128,7 @@ private fun ToolbarSectionPreview() {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Joint Account #1",
+                text = "Shared Account #1",
                 style = PeraTheme.typography.footnote.sans,
                 color = PeraTheme.colors.text.gray
             )
@@ -171,23 +168,14 @@ private fun TransferToSectionPreview() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = buildAnnotatedString {
-                withStyle(SpanStyle(color = PeraTheme.colors.text.gray)) { append("Transfer to ") }
-                withStyle(
-                    SpanStyle(
-                        color = PeraTheme.colors.text.main,
-                        fontWeight = PeraTheme.typography.body.regular.sansMedium.fontWeight
-                    )
-                ) { append("JDM35...XJD3M") }
-            },
-            style = PeraTheme.typography.body.regular.sans
+            text = stringResource(R.string.transfer_to_styled, "JDM35...XJD3M"),
+            style = PeraTheme.typography.body.regular.sans,
+            color = PeraTheme.colors.text.main
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(onClick = {}, modifier = Modifier.size(16.dp)) {
+        Spacer(modifier = Modifier.width(4.dp))
+        IconButton(onClick = {}) {
             Icon(
-                modifier = Modifier
-                    .size(16.dp)
-                    .padding(1.dp),
+                modifier = Modifier.size(16.dp),
                 painter = painterResource(R.drawable.ic_copy),
                 contentDescription = stringResource(R.string.copy),
                 tint = PeraTheme.colors.text.gray

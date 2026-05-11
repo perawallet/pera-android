@@ -228,7 +228,7 @@ abstract class BaseLedgerSearchFragment :
                     try {
                         runBlocking(Dispatchers.Main) { connectLedger(device) }
                     } catch (_: Exception) {
-                        showError(getString(R.string.an_error_occurred))
+                        showError(getString(R.string.ledger_reconnect_failed))
                     }
                 }
             },
@@ -241,7 +241,7 @@ abstract class BaseLedgerSearchFragment :
         ledgerBleOperationManager.startLedgerOperation(AccountFetchAllOperation(bluetoothDevice))
     }
 
-    private fun showError(errorMessage: String, @StringRes titleResId: Int = R.string.error_default_title) {
+    private fun showError(errorMessage: String, @StringRes titleResId: Int = R.string.error) {
         setLoadingVisibility(isVisible = false)
         showGlobalError(
             errorMessage = errorMessage,

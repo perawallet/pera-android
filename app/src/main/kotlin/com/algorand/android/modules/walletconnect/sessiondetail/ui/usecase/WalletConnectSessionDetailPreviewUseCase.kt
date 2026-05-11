@@ -181,7 +181,7 @@ class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
             getExtendSessionSuccessPreview(sessionIdentifier, previousPreview)
         } else {
             previousPreview.copy(
-                showErrorMessageEvent = Event(appContext.getString(R.string.an_error_occurred))
+                showErrorMessageEvent = Event(appContext.getString(R.string.wallet_connect_session_load_failed))
             )
         }
         emit(updatedPreview)
@@ -210,7 +210,7 @@ class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
             .isExtendExpirationDateButtonEnabled(sessionIdentifier)
         return if (sessionDetail == null) {
             previousPreview.copy(
-                showErrorMessageEvent = Event(appContext.getString(R.string.an_error_occurred)),
+                showErrorMessageEvent = Event(appContext.getString(R.string.wallet_connect_session_load_failed)),
                 isExtendExpirationDateButtonEnabled = isExtendExpirationDateButtonEnabled
             )
         } else {

@@ -21,6 +21,7 @@ import android.os.ParcelUuid
 import com.algorand.android.R
 import com.algorand.android.ledger.LedgerBleConnectionManager.Companion.FLEX_SERVICE_UUID
 import com.algorand.android.ledger.LedgerBleConnectionManager.Companion.NANOX_SERVICE_UUID
+import com.algorand.android.ledger.LedgerBleConnectionManager.Companion.NANO_GEN5_SERVICE_UUID
 import com.algorand.android.ledger.LedgerBleConnectionManager.Companion.STAX_SERVICE_UUID
 import com.algorand.android.utils.areBluetoothPermissionsGranted
 import com.algorand.android.utils.launchIO
@@ -66,7 +67,7 @@ class LedgerBleSearchManager(
             this.totalTransactionCount = totalTransactionCount
         }
 
-        val serviceUuids = listOf(NANOX_SERVICE_UUID, FLEX_SERVICE_UUID, STAX_SERVICE_UUID)
+        val serviceUuids = listOf(NANOX_SERVICE_UUID, FLEX_SERVICE_UUID, STAX_SERVICE_UUID, NANO_GEN5_SERVICE_UUID)
 
         val scanFilters = serviceUuids.map { uuid ->
             ScanFilter.Builder()

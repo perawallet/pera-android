@@ -17,6 +17,7 @@ import com.algorand.wallet.account.local.data.database.dao.JointParticipantDao
 import com.algorand.wallet.account.local.data.mapper.entity.JointEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.JointMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.repository.JointAccountPersistence
 import com.algorand.wallet.account.local.domain.repository.JointAccountRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ internal class JointAccountRepositoryImpl @Inject constructor(
     private val jointEntityMapper: JointEntityMapper,
     private val jointMapper: JointMapper,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : JointAccountRepository {
+) : JointAccountRepository, JointAccountPersistence {
 
     override fun getAllAsFlow(): Flow<List<LocalAccount.Joint>> {
         return jointDao.getAllWithParticipantsAsFlow().map { entityList ->

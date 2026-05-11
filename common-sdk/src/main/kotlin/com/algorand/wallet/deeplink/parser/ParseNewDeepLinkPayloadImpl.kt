@@ -49,7 +49,8 @@ internal class ParseNewDeepLinkPayloadImpl(
             path = peraUri.getQueryParam(PATH_KEY),
             host = peraUri.host,
             rawDeepLinkUri = url,
-            lastPathSegment = peraUri.lastPathSegment
+            lastPathSegment = peraUri.lastPathSegment,
+            signRequestId = peraUri.getQueryParam(SIGN_REQUEST_ID_QUERY_KEY)
         )
     }
 
@@ -80,5 +81,6 @@ internal class ParseNewDeepLinkPayloadImpl(
         const val VOTEKEY_QUERY_KEY = "votekey"
         const val FEE_QUERY_KEY = "fee"
         const val PATH_KEY = "path"
+        const val SIGN_REQUEST_ID_QUERY_KEY = "signRequestId"
     }
 }

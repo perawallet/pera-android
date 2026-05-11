@@ -17,7 +17,23 @@ sealed class JointAccountTransactionState {
 
     data object PendingSignatures : JointAccountTransactionState()
 
+    data object ReadyToSubmit : JointAccountTransactionState()
+
     data object Canceled : JointAccountTransactionState()
 
     data object Completed : JointAccountTransactionState()
+
+    data class Failed(val failReasonDisplay: String?) : JointAccountTransactionState()
+
+    data object Expired : JointAccountTransactionState()
+
+    data object Declined : JointAccountTransactionState()
+
+    fun isFinalized(): Boolean {
+        return this is Completed ||
+            this is Canceled ||
+            this is Failed ||
+            this is Expired ||
+            this is Declined
+    }
 }

@@ -36,7 +36,7 @@ internal class AssetDetailEntityMapperImpl @Inject constructor(
                 logoSvgUrl = logoSvgUri,
                 logoUrl = logoUri,
                 description = description,
-                totalSupply = totalSupply ?: "0",
+                totalSupply = totalSupply,
                 url = url,
                 telegramUrl = telegramUrl,
                 twitterUsername = twitterUsername,

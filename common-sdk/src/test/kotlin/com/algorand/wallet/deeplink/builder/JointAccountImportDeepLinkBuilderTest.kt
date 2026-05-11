@@ -67,7 +67,7 @@ internal class JointAccountImportDeepLinkBuilderTest {
     )
 
     private companion object {
-        const val VALID_HOST = "joint-account-import"
+        const val VALID_HOST = "joint-account-import/"
         const val TEST_ADDRESS = "JOINT_ACCOUNT_ADDRESS"
     }
 }

@@ -12,15 +12,10 @@
 
 package com.algorand.android.repository
 
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.models.SendTransactionResponse
-import com.algorand.android.models.TrackTransactionRequest
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.network.AlgodApi
-import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.getMessageAsResultError
-import com.algorand.android.network.request
 import com.algorand.android.network.safeApiCall
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -29,9 +24,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TransactionsRepository @Inject constructor(
-    private val mobileAlgorandApi: MobileAlgorandApi,
-    private val algodApi: AlgodApi,
-    private val peraApiErrorHandler: RetrofitErrorHandler
+    private val algodApi: AlgodApi
 ) {
 
     suspend fun getTransactionParams(): Result<TransactionParams> =
@@ -60,18 +53,6 @@ class TransactionsRepository @Inject constructor(
             }
         }
     }
-
-    suspend fun postTrackTransaction(trackTransactionRequest: TrackTransactionRequest): Result<Unit> =
-        safeApiCall { requestPostTrackTransaction(trackTransactionRequest) }
-
-    private suspend fun requestPostTrackTransaction(trackTransactionRequest: TrackTransactionRequest) = request(
-        doRequest = {
-            mobileAlgorandApi.trackTransaction(trackTransactionRequest)
-        },
-        onFailed = { errorResponse ->
-            peraApiErrorHandler.getMessageAsResultError(errorResponse)
-        }
-    )
 
     companion object {
         const val DEFAULT_TRANSACTION_COUNT: Int = 15

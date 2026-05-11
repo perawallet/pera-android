@@ -13,6 +13,7 @@ import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.wheneverBlocking
 
 class GetAccountTypeUseCaseTest {
 
@@ -120,6 +121,116 @@ class GetAccountTypeUseCaseTest {
         val result = sut("no_auth")
 
         assertEquals(AccountType.NoAuth, result)
+    }
+
+    @Test
+    fun `EXPECT Joint WHEN non-rekeyed Joint has local participant that can sign`(): TestResult = runTest {
+        val jointAddress = "joint_1"
+        val participantAddress = "algo_25"
+        val jointAccount = LocalAccount.Joint(
+            algoAddress = jointAddress,
+            participantAddresses = listOf(participantAddress),
+            threshold = 1,
+            version = 1
+        )
+        val localAccounts = listOf(
+            jointAccount,
+            ALGO_25_ACCOUNT.copy(algoAddress = participantAddress)
+        )
+        whenever(getLocalAccounts()).thenReturn(localAccounts)
+        wheneverBlocking { getAccountRekeyAdminAddress(jointAddress) } doReturn null
+        wheneverBlocking { getAccountRekeyAdminAddress(participantAddress) } doReturn null
+
+        val result = sut(jointAddress)
+
+        assertEquals(AccountType.Joint, result)
+    }
+
+    @Test
+    fun `EXPECT NoAuth WHEN non-rekeyed Joint has no local participant that can sign`(): TestResult = runTest {
+        val jointAddress = "joint_1"
+        val participantAddress = "no_auth_participant"
+        val jointAccount = LocalAccount.Joint(
+            algoAddress = jointAddress,
+            participantAddresses = listOf(participantAddress),
+            threshold = 1,
+            version = 1
+        )
+        val localAccounts = listOf(
+            jointAccount,
+            NO_AUTH_ACCOUNT.copy(algoAddress = participantAddress)
+        )
+        whenever(getLocalAccounts()).thenReturn(localAccounts)
+        wheneverBlocking { getAccountRekeyAdminAddress(jointAddress) } doReturn null
+        wheneverBlocking { getAccountRekeyAdminAddress(participantAddress) } doReturn null
+
+        val result = sut(jointAddress)
+
+        assertEquals(AccountType.NoAuth, result)
+    }
+
+    @Test
+    fun `EXPECT RekeyedAuth WHEN rekeyed Joint and auth Joint has local participant that can sign`(): TestResult = runTest {
+        val joint1Address = "joint_1"
+        val joint2Address = "joint_2"
+        val participantAddress = "algo_25"
+        val joint1 = LocalAccount.Joint(
+            algoAddress = joint1Address,
+            participantAddresses = listOf(),
+            threshold = 1,
+            version = 1
+        )
+        val joint2 = LocalAccount.Joint(
+            algoAddress = joint2Address,
+            participantAddresses = listOf(participantAddress),
+            threshold = 1,
+            version = 1
+        )
+        val localAccounts = listOf(
+            joint1,
+            joint2,
+            ALGO_25_ACCOUNT.copy(algoAddress = participantAddress)
+        )
+        whenever(getLocalAccounts()).thenReturn(localAccounts)
+        wheneverBlocking { getAccountRekeyAdminAddress(joint1Address) } doReturn joint2Address
+        wheneverBlocking { getAccountRekeyAdminAddress(joint2Address) } doReturn null
+        wheneverBlocking { getAccountRekeyAdminAddress(participantAddress) } doReturn null
+
+        val result = sut(joint1Address)
+
+        assertEquals(AccountType.RekeyedAuth, result)
+    }
+
+    @Test
+    fun `EXPECT Rekeyed WHEN rekeyed Joint and auth Joint has no local participant that can sign`(): TestResult = runTest {
+        val joint1Address = "joint_1"
+        val joint2Address = "joint_2"
+        val participantAddress = "no_auth_participant"
+        val joint1 = LocalAccount.Joint(
+            algoAddress = joint1Address,
+            participantAddresses = listOf(),
+            threshold = 1,
+            version = 1
+        )
+        val joint2 = LocalAccount.Joint(
+            algoAddress = joint2Address,
+            participantAddresses = listOf(participantAddress),
+            threshold = 1,
+            version = 1
+        )
+        val localAccounts = listOf(
+            joint1,
+            joint2,
+            NO_AUTH_ACCOUNT.copy(algoAddress = participantAddress)
+        )
+        whenever(getLocalAccounts()).thenReturn(localAccounts)
+        wheneverBlocking { getAccountRekeyAdminAddress(joint1Address) } doReturn joint2Address
+        wheneverBlocking { getAccountRekeyAdminAddress(joint2Address) } doReturn null
+        wheneverBlocking { getAccountRekeyAdminAddress(participantAddress) } doReturn null
+
+        val result = sut(joint1Address)
+
+        assertEquals(AccountType.Rekeyed, result)
     }
 
     private companion object {

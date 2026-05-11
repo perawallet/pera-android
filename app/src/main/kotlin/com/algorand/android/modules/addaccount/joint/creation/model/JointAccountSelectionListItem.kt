@@ -17,8 +17,10 @@ import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePrev
 
 sealed class JointAccountSelectionListItem {
 
+    abstract val address: String
+
     data class AccountItem(
-        val address: String,
+        override val address: String,
         val displayName: String,
         val secondaryDisplayName: String?,
         val iconDrawablePreview: AccountIconDrawablePreview,
@@ -27,19 +29,19 @@ sealed class JointAccountSelectionListItem {
     ) : JointAccountSelectionListItem()
 
     data class ContactItem(
-        val address: String,
+        override val address: String,
         val displayName: String,
         val imageUri: Uri?
     ) : JointAccountSelectionListItem()
 
     data class NfdItem(
-        val address: String,
+        override val address: String,
         val domainName: String,
         val serviceLogoUrl: String?
     ) : JointAccountSelectionListItem()
 
     data class ExternalAddressItem(
-        val address: String,
+        override val address: String,
         val shortenedAddress: String,
         val iconDrawablePreview: AccountIconDrawablePreview
     ) : JointAccountSelectionListItem()

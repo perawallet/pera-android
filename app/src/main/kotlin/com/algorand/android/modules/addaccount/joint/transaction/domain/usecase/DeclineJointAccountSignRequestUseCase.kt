@@ -27,14 +27,17 @@ internal class DeclineJointAccountSignRequestUseCase @Inject constructor(
 
     override suspend operator fun invoke(
         signRequestId: String,
-        participantAddress: String
+        participantAddresses: List<String>
     ): PeraResult<JointSignRequest> {
-        val declineRequest = AddSignatureInput(
-            address = participantAddress,
-            response = SignRequestResponseType.DECLINED,
-            signatures = null,
-            deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
-        )
-        return addJointAccountSignature(signRequestId, declineRequest)
+        val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
+        val declineRequests = participantAddresses.distinct().map { address ->
+            AddSignatureInput(
+                address = address,
+                response = SignRequestResponseType.DECLINED,
+                signatures = null,
+                deviceId = deviceId
+            )
+        }
+        return addJointAccountSignature(signRequestId, declineRequests)
     }
 }

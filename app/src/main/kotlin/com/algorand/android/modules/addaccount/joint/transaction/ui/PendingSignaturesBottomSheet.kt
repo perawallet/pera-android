@@ -10,517 +10,274 @@
  * limitations under the License
  */
 
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.algorand.android.modules.addaccount.joint.transaction.ui
 
-import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.algorand.android.MainActivity
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.models.AccountIconResource
-import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
+import com.algorand.android.core.BaseBottomSheet
+import com.algorand.android.customviews.LedgerLoadingDialog
+import com.algorand.android.models.ConfirmationBottomSheetParameters
+import com.algorand.android.models.ConfirmationBottomSheetResult
+import com.algorand.android.modules.addaccount.joint.transaction.domain.usecase.JointAccountLedgerSignHelper
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
-import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.AccountIcon
-import com.algorand.android.ui.compose.widget.ContactIcon
-import com.algorand.android.ui.compose.widget.bottomsheet.PeraBottomSheetDragIndicator
-import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
-import com.algorand.android.utils.toShortenedAddress
+import com.algorand.android.modules.addaccount.joint.transaction.model.PendingSignaturesDismissResult
+import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel
+import com.algorand.android.modules.addaccount.joint.transaction.viewmodel.JointAccountTransactionViewModel.ViewEvent
+import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.utils.BaseDoubleButtonBottomSheet.Companion.RESULT_KEY
+import com.algorand.android.utils.extensions.collectOnLifecycle
+import com.algorand.android.utils.setNavigationResult
+import com.algorand.android.utils.showWithStateCheck
+import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useSavedStateValue
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountTransactionEventTracker
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@Composable
-fun PendingSignaturesBottomSheet(
-    sheetState: SheetState,
-    transactionPreview: JointAccountTransactionPreview,
-    onDismiss: () -> Unit,
-    onCancel: () -> Unit,
-    onCloseForNow: () -> Unit,
-    onCloseCompleted: () -> Unit
-) {
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = PeraTheme.colors.background.primary,
-        dragHandle = null // Drag indicator is inside PendingSignaturesContent
-    ) {
-        PendingSignaturesContent(
-            transactionPreview = transactionPreview,
-            onCancel = onCancel,
-            onCloseForNow = onCloseForNow,
-            onCloseCompleted = onCloseCompleted
-        )
+@AndroidEntryPoint
+class PendingSignaturesBottomSheet : BaseBottomSheet(layoutResId = 0) {
+
+    private val viewModel: JointAccountTransactionViewModel by viewModels()
+
+    @Inject
+    lateinit var ledgerSignHelper: JointAccountLedgerSignHelper
+
+    @Inject
+    lateinit var jointAccountTransactionEventTracker: JointAccountTransactionEventTracker
+
+    private var ledgerLoadingDialog: LedgerLoadingDialog? = null
+
+    private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener { shouldStopResources ->
+        hideLedgerLoading()
+        if (shouldStopResources) {
+            ledgerSignHelper.cancel()
+        }
     }
-}
 
-@Composable
-fun PendingSignaturesContent(
-    transactionPreview: JointAccountTransactionPreview,
-    onCancel: () -> Unit,
-    onCloseForNow: () -> Unit,
-    onCloseCompleted: () -> Unit = onCloseForNow
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = PeraTheme.colors.background.primary,
-                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return createComposeView {
+            PendingSignaturesBottomSheetScreen(
+                viewModel = viewModel,
+                onClose = ::onClose,
+                onCloseCompleted = ::onCloseCompleted,
+                onCancel = ::onCancel,
+                onSignLedgerAccount = ::onSignLedgerAccount
             )
-            .padding(bottom = 16.dp)
-    ) {
-        PeraBottomSheetDragIndicator(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 12.dp, bottom = 8.dp)
-        )
-
-        TitleSection(title = stringResource(R.string.pending_signatures))
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        StatusBadgesSection(
-            signedCount = transactionPreview.signedCount,
-            requiredCount = transactionPreview.requiredSignatureCount,
-            timeRemaining = transactionPreview.timeRemaining,
-            transactionState = transactionPreview.transactionState
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        AccountsSectionHeader(threshold = transactionPreview.requiredSignatureCount)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SignersListSection(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            signers = transactionPreview.signerAccounts
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        ActionButtonsSection(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            transactionState = transactionPreview.transactionState,
-            hasProposerAddress = transactionPreview.hasProposerAddress,
-            onCancel = onCancel,
-            onCloseForNow = onCloseForNow,
-            onCloseCompleted = onCloseCompleted
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        }
     }
-}
 
-@Composable
-private fun TitleSection(title: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = title,
-        style = PeraTheme.typography.body.regular.sansMedium,
-        color = PeraTheme.colors.text.main,
-        textAlign = TextAlign.Center
-    )
-}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initCancelConfirmationResultListener()
+        setupDismissBehavior()
+        ledgerSignHelper.setup(viewLifecycleOwner.lifecycle)
+        observeViewEvents()
+        observeLedgerSignResult()
+    }
 
-@Composable
-private fun StatusBadgesSection(
-    signedCount: Int,
-    requiredCount: Int,
-    timeRemaining: String?,
-    transactionState: JointAccountTransactionState
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        when (transactionState) {
-            JointAccountTransactionState.Canceled -> {
-                ErrorBadge(message = stringResource(R.string.transaction_canceled))
+    private fun initCancelConfirmationResultListener() {
+        startSavedStateListener(R.id.pendingSignaturesBottomSheet) {
+            useSavedStateValue<ConfirmationBottomSheetResult>(RESULT_KEY) { result ->
+                if (result.confirmationIdentifier == CANCEL_TRANSACTION_REQUEST_CONFIRMATION_ID && result.isAccepted) {
+                    viewModel.declineSignRequest()
+                }
             }
+        }
+    }
 
-            JointAccountTransactionState.Completed -> {
-                SuccessBadge(message = stringResource(R.string.transaction_successfully_completed))
-            }
+    private fun onSignLedgerAccount(signer: JointAccountSignerItem) {
+        viewModel.onSignLedgerAccount(signer)
+    }
 
-            else -> {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SignedCountBadge(
-                        signedCount = signedCount,
-                        requiredCount = requiredCount
-                    )
-                    if (timeRemaining != null) {
-                        TimeRemainingBadge(timeRemaining = timeRemaining)
+    private fun setupDismissBehavior() {
+        setDraggableEnabled(false)
+        isCancelable = false
+    }
+
+    private fun observeViewEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.viewEvent.collect { event ->
+                    when (event) {
+                        is ViewEvent.ShowError -> {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(event.messageResId),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        is ViewEvent.ShowSuccessAndNavigateBack -> {
+                            (activity as? MainActivity)?.showAlertSuccess(
+                                title = getString(event.messageResId),
+                                description = null,
+                                tag = TAG
+                            )
+                            dismissWithResult(PendingSignaturesDismissResult.CANCELED)
+                        }
+
+                        is ViewEvent.NavigateBack -> dismissWithResult(PendingSignaturesDismissResult.DISMISSED)
+
+                        is ViewEvent.StartLedgerSigning -> {
+                            ledgerSignHelper.signWithLedger(
+                                signRequestId = event.data.signRequestId,
+                                accountAddress = event.data.accountAddress,
+                                rawTransactionsBase64 = event.data.rawTransactions,
+                                ledgerBluetoothAddress = event.data.ledgerBluetoothAddress,
+                                ledgerAccountIndex = event.data.ledgerAccountIndex,
+                                accountAuthAddress = event.data.accountAuthAddress,
+                                isRekeyedToAnotherAccount = event.data.isRekeyedToAnotherAccount,
+                                jointAccountAddress = event.data.jointAccountAddress
+                            )
+                        }
+
+                        is ViewEvent.ShowPendingSignaturesBottomSheet -> Unit
+                        is ViewEvent.CopyAddress -> Unit
                     }
                 }
             }
         }
     }
-}
 
-@Composable
-private fun SignedCountBadge(
-    signedCount: Int,
-    requiredCount: Int
-) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(PeraTheme.colors.layer.grayLighter)
-            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(AccountIconResource.CONTACT.iconResId),
-            contentDescription = null,
-            tint = PeraTheme.colors.text.main
-        )
-        Text(
-            text = stringResource(R.string.of_signed, signedCount, requiredCount),
-            style = PeraTheme.typography.footnote.sansMedium,
-            color = PeraTheme.colors.text.main
+    private fun observeLedgerSignResult() {
+        viewLifecycleOwner.collectOnLifecycle(
+            flow = ledgerSignHelper.signResultFlow,
+            collection = ::handleLedgerSignResult,
+            state = Lifecycle.State.STARTED
         )
     }
-}
 
-@Composable
-private fun TimeRemainingBadge(timeRemaining: String) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(PeraTheme.colors.layer.grayLighter)
-            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(R.drawable.ic_clock),
-            contentDescription = null,
-            tint = PeraTheme.colors.text.main
-        )
-        Text(
-            text = stringResource(R.string.time_left, timeRemaining),
-            style = PeraTheme.typography.footnote.sansMedium,
-            color = PeraTheme.colors.text.main
-        )
-    }
-}
-
-@Composable
-private fun ErrorBadge(message: String) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(PeraTheme.colors.helper.negativeLighter)
-            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(R.drawable.ic_error),
-            contentDescription = null,
-            tint = PeraTheme.colors.helper.negative
-        )
-        Text(
-            text = message,
-            style = PeraTheme.typography.footnote.sansMedium,
-            color = PeraTheme.colors.helper.negative
-        )
-    }
-}
-
-@Composable
-private fun SuccessBadge(message: String) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(PeraTheme.colors.helper.positiveLighter)
-            .padding(start = 8.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(R.drawable.ic_check),
-            contentDescription = null,
-            tint = PeraTheme.colors.helper.positive
-        )
-        Text(
-            text = message,
-            style = PeraTheme.typography.footnote.sansMedium,
-            color = PeraTheme.colors.helper.positive
-        )
-    }
-}
-
-@Composable
-private fun AccountsSectionHeader(threshold: Int) {
-    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-        Text(
-            text = stringResource(R.string.accounts),
-            style = PeraTheme.typography.body.regular.sansMedium,
-            color = PeraTheme.colors.text.main
-        )
-        Text(
-            text = stringResource(R.string.you_need_at_least_accounts_to_sign, threshold),
-            style = PeraTheme.typography.footnote.sans,
-            color = PeraTheme.colors.text.gray
-        )
-    }
-}
-
-@Composable
-private fun SignersListSection(
-    modifier: Modifier = Modifier,
-    signers: List<JointAccountSignerItem>
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        signers.forEach { signer ->
-            SignerItem(signer = signer)
-        }
-    }
-}
-
-@Composable
-private fun SignerItem(signer: JointAccountSignerItem) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .border(
-                width = 1.dp,
-                color = PeraTheme.colors.layer.gray,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .background(PeraTheme.colors.background.primary)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SignerIcon(
-                iconDrawablePreview = signer.accountIconDrawablePreview,
-                imageUri = signer.imageUri
-            )
-            SignerInfo(
-                displayName = signer.accountDisplayName,
-                signatureStatus = signer.signatureStatus
-            )
-        }
-
-        SignerStatusIcon(signatureStatus = signer.signatureStatus)
-    }
-}
-
-@Composable
-private fun SignerIcon(
-    iconDrawablePreview: AccountIconDrawablePreview,
-    imageUri: Uri?
-) {
-    if (imageUri != null) {
-        ContactIcon(imageUri = imageUri, size = 20.dp)
-    } else {
-        AccountIcon(
-            modifier = Modifier.size(20.dp),
-            iconDrawablePreview = iconDrawablePreview
-        )
-    }
-}
-
-@Composable
-private fun SignerInfo(
-    displayName: AccountDisplayName,
-    signatureStatus: JointAccountSignatureStatus
-) {
-    val primaryName = displayName.primaryDisplayName
-    val secondaryName = displayName.secondaryDisplayName
-        ?: displayName.accountAddress.toShortenedAddress()
-
-    Column {
-        Text(
-            text = primaryName,
-            style = PeraTheme.typography.body.regular.sans,
-            color = when (signatureStatus) {
-                JointAccountSignatureStatus.Rejected -> PeraTheme.colors.helper.negative
-                else -> PeraTheme.colors.text.main
+    private fun handleLedgerSignResult(result: JointAccountLedgerSignHelper.LedgerSignResult) {
+        when (result) {
+            is JointAccountLedgerSignHelper.LedgerSignResult.Scanning -> {
+                showLedgerLoading(getString(R.string.searching_for_ledger))
             }
-        )
-        if (primaryName != secondaryName) {
-            Text(
-                text = secondaryName,
-                style = PeraTheme.typography.footnote.sans,
-                color = PeraTheme.colors.text.grayLighter
-            )
+
+            is JointAccountLedgerSignHelper.LedgerSignResult.WaitingForApproval -> {
+                showLedgerLoading(
+                    result.bluetoothName ?: getString(R.string.ledger),
+                    result.currentTransactionIndex,
+                    result.totalTransactionCount
+                )
+            }
+
+            is JointAccountLedgerSignHelper.LedgerSignResult.Submitting -> Unit
+            is JointAccountLedgerSignHelper.LedgerSignResult.Success -> {
+                hideLedgerLoading()
+                ledgerSignHelper.resetState()
+                viewModel.onLedgerSignSuccess()
+                Toast.makeText(
+                    requireContext(),
+                    R.string.signature_submitted_successfully,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            is JointAccountLedgerSignHelper.LedgerSignResult.Error -> {
+                hideLedgerLoading()
+                ledgerSignHelper.resetState()
+                viewModel.onLedgerSignError(result.errorMessageResId)
+            }
+
+            is JointAccountLedgerSignHelper.LedgerSignResult.Cancelled -> {
+                hideLedgerLoading()
+                ledgerSignHelper.resetState()
+            }
+
+            is JointAccountLedgerSignHelper.LedgerSignResult.RejectedOnDevice -> {
+                hideLedgerLoading()
+                ledgerSignHelper.resetState()
+                viewModel.declineLedgerAccount(result.signRequestId, result.accountAddress)
+            }
+
+            is JointAccountLedgerSignHelper.LedgerSignResult.Idle -> Unit
         }
     }
-}
 
-@Composable
-private fun SignerStatusIcon(signatureStatus: JointAccountSignatureStatus) {
-    when (signatureStatus) {
-        JointAccountSignatureStatus.Signed -> {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(R.drawable.ic_check),
-                contentDescription = stringResource(R.string.signed),
-                tint = PeraTheme.colors.helper.positive
-            )
-        }
-
-        JointAccountSignatureStatus.Rejected -> {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(R.drawable.ic_close),
-                contentDescription = stringResource(R.string.rejected),
-                tint = PeraTheme.colors.helper.negative
-            )
-        }
-
-        JointAccountSignatureStatus.Pending -> {
-            PeraCircularProgressIndicator(
-                modifier = Modifier.size(20.dp),
-                strokeWidth = 2.dp
-            )
-        }
-    }
-}
-
-@Composable
-private fun ActionButtonsSection(
-    modifier: Modifier = Modifier,
-    transactionState: JointAccountTransactionState,
-    hasProposerAddress: Boolean,
-    onCancel: () -> Unit,
-    onCloseForNow: () -> Unit,
-    onCloseCompleted: () -> Unit
-) {
-    val isCompleted = transactionState == JointAccountTransactionState.Completed ||
-            transactionState == JointAccountTransactionState.Canceled
-    val showSingleCloseButton = isCompleted || !hasProposerAddress
-
-    if (showSingleCloseButton) {
-        SingleCloseButton(
-            modifier = modifier,
-            onClick = if (isCompleted) onCloseCompleted else onCloseForNow
-        )
-    } else {
-        ProposerActionButtons(
-            modifier = modifier,
-            onCancel = onCancel,
-            onCloseForNow = onCloseForNow
-        )
-    }
-}
-
-@Composable
-private fun SingleCloseButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Button(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(52.dp),
-        onClick = onClick,
-        shape = RoundedCornerShape(4.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = PeraTheme.colors.layer.grayLighter,
-            contentColor = PeraTheme.colors.text.main
-        ),
-        contentPadding = PaddingValues(16.dp)
+    private fun showLedgerLoading(
+        ledgerName: String,
+        currentTransactionIndex: Int? = null,
+        totalTransactionCount: Int? = null
     ) {
-        Text(
-            text = stringResource(R.string.close),
-            style = PeraTheme.typography.body.regular.sansMedium
-        )
+        val isTransactionIndicatorVisible =
+            currentTransactionIndex != null && totalTransactionCount != null
+
+        if (ledgerLoadingDialog == null) {
+            ledgerLoadingDialog = LedgerLoadingDialog.createLedgerLoadingDialog(
+                ledgerName = ledgerName,
+                listener = ledgerLoadingDialogListener,
+                currentTransactionIndex = currentTransactionIndex,
+                totalTransactionCount = totalTransactionCount,
+                isTransactionIndicatorVisible = isTransactionIndicatorVisible
+            )
+            ledgerLoadingDialog?.showWithStateCheck(childFragmentManager, LEDGER_LOADING_TAG)
+        } else {
+            currentTransactionIndex?.let {
+                ledgerLoadingDialog?.updateTransactionIndicator(it)
+            }
+        }
     }
-}
 
-@Composable
-private fun ProposerActionButtons(
-    modifier: Modifier = Modifier,
-    onCancel: () -> Unit,
-    onCloseForNow: () -> Unit
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Button(
-            modifier = Modifier
-                .weight(1f)
-                .height(52.dp),
-            onClick = onCancel,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PeraTheme.colors.layer.grayLighter,
-                contentColor = PeraTheme.colors.text.main
-            ),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.cancel),
-                style = PeraTheme.typography.body.regular.sansMedium
-            )
-        }
+    private fun hideLedgerLoading() {
+        ledgerLoadingDialog?.dismissAllowingStateLoss()
+        ledgerLoadingDialog = null
+    }
 
-        Button(
-            modifier = Modifier
-                .weight(1f)
-                .height(52.dp),
-            onClick = onCloseForNow,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PeraTheme.colors.button.primary.background,
-                contentColor = PeraTheme.colors.button.primary.text
-            ),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.close_for_now),
-                style = PeraTheme.typography.body.regular.sansMedium
-            )
-        }
+    private fun onClose() {
+        lifecycleScope.launch { jointAccountTransactionEventTracker.logJointAccountCloseForNowPress() }
+        dismissWithResult(PendingSignaturesDismissResult.DISMISSED)
+    }
+
+    private fun onCloseCompleted() {
+        lifecycleScope.launch { jointAccountTransactionEventTracker.logInboxJointAccountPendingTxClosePress() }
+        dismissWithResult(viewModel.getPendingSignaturesCloseDismissResult())
+    }
+
+    private fun onCancel() {
+        lifecycleScope.launch { jointAccountTransactionEventTracker.logJointAccountCancelTxPress() }
+        showCancelConfirmationDialog()
+    }
+
+    private fun showCancelConfirmationDialog() {
+        val parameters = ConfirmationBottomSheetParameters(
+            confirmationIdentifier = CANCEL_TRANSACTION_REQUEST_CONFIRMATION_ID,
+            titleResId = R.string.cancel_transaction_request,
+            descriptionText = getString(R.string.cancel_transaction_request_description),
+            confirmButtonTextResId = R.string.yes_cancel,
+            rejectButtonTextResId = R.string.keep_waiting
+        )
+        nav(MainNavigationDirections.actionGlobalConfirmationBottomSheet(parameters))
+    }
+
+    private fun dismissWithResult(result: PendingSignaturesDismissResult) {
+        setNavigationResult(DISMISS_RESULT_KEY, result)
+        navBack()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideLedgerLoading()
+    }
+
+    companion object {
+        const val TAG = "PendingSignaturesBottomSheet"
+        const val DISMISS_RESULT_KEY = "pending_signatures_dismiss_result"
+        private const val CANCEL_TRANSACTION_REQUEST_CONFIRMATION_ID = 8792L
+        private const val LEDGER_LOADING_TAG = "ledger_loading"
     }
 }

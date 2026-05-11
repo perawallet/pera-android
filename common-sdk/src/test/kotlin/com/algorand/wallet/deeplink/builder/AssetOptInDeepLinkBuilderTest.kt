@@ -46,10 +46,10 @@ class AssetOptInDeepLinkBuilderTest {
     }
 
     @Test
-    fun `EXPECT false WHEN amount is null`() {
+    fun `EXPECT true WHEN amount is null`() {
         val payload = VALID_DEEP_LINK_PAYLOAD.copy(amount = null)
         val result = sut.doesDeeplinkMeetTheRequirements(payload)
-        assertFalse(result)
+        assertTrue(result)
     }
 
     @Test

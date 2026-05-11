@@ -86,7 +86,7 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
     private val csvViewEventCollector: suspend (CsvViewModel.ViewEvent) -> Unit = {
         when (it) {
             is CsvViewModel.ViewEvent.ShareFile -> shareFile(it.file, CSV_FILE_MIME_TYPE, shareResultLauncher)
-            CsvViewModel.ViewEvent.ShowErrorMessage -> showGlobalError(getString(R.string.an_error_occurred))
+            CsvViewModel.ViewEvent.ShowErrorMessage -> showGlobalError(getString(R.string.csv_export_failed))
         }
     }
 
@@ -124,6 +124,14 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
 
     override fun onNavBackClick() {
         navBack()
+    }
+
+    override fun onAccountIconClick() {
+        if (assetDetailV2ViewModel.isJointAccount()) {
+            navToJointAccountDetail(arg.accountAddress)
+        } else {
+            navToAccountStatusDetail(arg.accountAddress)
+        }
     }
 
     override fun onUrlClick(url: String) {
@@ -181,6 +189,16 @@ class AssetDetailV2Fragment : BaseFragment(0), AssetDetailScreenListener {
                 )
             )
         }
+    }
+
+    private fun navToAccountStatusDetail(address: String) {
+        nav(
+            AssetDetailV2FragmentDirections.actionAssetDetailV2FragmentToAccountStatusDetailNavigation(address)
+        )
+    }
+
+    private fun navToJointAccountDetail(address: String) {
+        nav(HomeNavigationDirections.actionGlobalToJointAccountDetailFragment(accountAddress = address))
     }
 
     private fun navToShowQRBottomSheet(address: String) {

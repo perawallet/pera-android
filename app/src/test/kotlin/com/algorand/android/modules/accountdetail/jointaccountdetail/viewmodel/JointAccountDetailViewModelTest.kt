@@ -18,6 +18,7 @@ import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.J
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ViewEvent
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ViewState
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountDetailEventTracker
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -36,6 +37,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -46,6 +48,7 @@ internal class JointAccountDetailViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val getJointAccount: GetJointAccount = mockk()
     private val processor: JointAccountDetailProcessor = mockk()
+    private val jointAccountDetailEventTracker: JointAccountDetailEventTracker = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -132,10 +135,12 @@ internal class JointAccountDetailViewModelTest {
     // region Error State Tests
 
     @Test
-    fun `EXPECT Error INVITATION_NOT_FOUND WHEN inbox returns NotFound`() = runTest {
+    fun `EXPECT Error INVITATION_NOT_FOUND WHEN inbox and api both return NotFound`() = runTest {
         coEvery { getJointAccount(TEST_ADDRESS) } returns null
         coEvery { processor.fetchInvitationFromInbox(TEST_ADDRESS) } returns
-            JointAccountDetailProcessor.InvitationResult.NotFound
+                JointAccountDetailProcessor.InvitationResult.NotFound
+        coEvery { processor.fetchJointAccountFromApi(TEST_ADDRESS) } returns
+                JointAccountDetailProcessor.InvitationResult.NotFound
         val savedStateHandle = createSavedStateHandle()
 
         val viewModel = createViewModel(savedStateHandle)
@@ -146,10 +151,12 @@ internal class JointAccountDetailViewModelTest {
     }
 
     @Test
-    fun `EXPECT Error NETWORK_ERROR WHEN inbox returns NetworkError`() = runTest {
+    fun `EXPECT Error NETWORK_ERROR WHEN inbox and api both fail`() = runTest {
         coEvery { getJointAccount(TEST_ADDRESS) } returns null
         coEvery { processor.fetchInvitationFromInbox(TEST_ADDRESS) } returns
-            JointAccountDetailProcessor.InvitationResult.NetworkError
+                JointAccountDetailProcessor.InvitationResult.NetworkError
+        coEvery { processor.fetchJointAccountFromApi(TEST_ADDRESS) } returns
+                JointAccountDetailProcessor.InvitationResult.NetworkError
         val savedStateHandle = createSavedStateHandle()
 
         val viewModel = createViewModel(savedStateHandle)
@@ -160,10 +167,37 @@ internal class JointAccountDetailViewModelTest {
     }
 
     @Test
-    fun `EXPECT createContentStateFromInvitation not called WHEN error occurs`() = runTest {
+    fun `EXPECT Content WHEN inbox returns NotFound but api returns Success`() = runTest {
         coEvery { getJointAccount(TEST_ADDRESS) } returns null
         coEvery { processor.fetchInvitationFromInbox(TEST_ADDRESS) } returns
-            JointAccountDetailProcessor.InvitationResult.NotFound
+                JointAccountDetailProcessor.InvitationResult.NotFound
+        coEvery { processor.fetchJointAccountFromApi(TEST_ADDRESS) } returns
+                JointAccountDetailProcessor.InvitationResult.Success(
+                    JointAccountDetailProcessor.InvitationData(
+                        threshold = DEFAULT_THRESHOLD,
+                        participantAddresses = DEFAULT_PARTICIPANTS
+                    )
+                )
+        coEvery {
+            processor.createContentStateFromInvitation(DEFAULT_PARTICIPANTS, DEFAULT_THRESHOLD, TEST_ADDRESS)
+        } returns createContentState(showActions = true)
+        val savedStateHandle = createSavedStateHandle()
+
+        val viewModel = createViewModel(savedStateHandle)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value as ViewState.Content
+        assertTrue(state.showActions)
+        assertEquals(DEFAULT_THRESHOLD, state.threshold)
+    }
+
+    @Test
+    fun `EXPECT createContentStateFromInvitation not called WHEN both inbox and api fail`() = runTest {
+        coEvery { getJointAccount(TEST_ADDRESS) } returns null
+        coEvery { processor.fetchInvitationFromInbox(TEST_ADDRESS) } returns
+                JointAccountDetailProcessor.InvitationResult.NotFound
+        coEvery { processor.fetchJointAccountFromApi(TEST_ADDRESS) } returns
+                JointAccountDetailProcessor.InvitationResult.NotFound
         val savedStateHandle = createSavedStateHandle()
 
         createViewModel(savedStateHandle)
@@ -177,7 +211,7 @@ internal class JointAccountDetailViewModelTest {
     // region onIgnoreClick Tests
 
     @Test
-    fun `EXPECT NavigateBack event WHEN onIgnoreClick called`() = runTest {
+    fun `EXPECT InvitationIgnored event WHEN onIgnoreClick called`() = runTest {
         val jointAccount = createJointAccount()
         setupLocalAccountMocks(jointAccount, showActions = false)
         coEvery { processor.deleteInboxNotification(TEST_ADDRESS) } returns Unit
@@ -193,7 +227,7 @@ internal class JointAccountDetailViewModelTest {
         job.cancel()
 
         coVerify { processor.deleteInboxNotification(TEST_ADDRESS) }
-        assertTrue(events.contains(ViewEvent.NavigateBack))
+        assertTrue(events.contains(ViewEvent.InvitationIgnored))
     }
 
     // endregion
@@ -224,7 +258,7 @@ internal class JointAccountDetailViewModelTest {
         advanceUntilIdle()
         job.cancel()
 
-        coVerify { processor.deleteInboxNotification(TEST_ADDRESS) }
+        coVerify(exactly = 0) { processor.deleteInboxNotification(any()) }
         coVerify { processor.isJointAccountExists(TEST_ADDRESS) }
 
         val navEvent = events.filterIsInstance<ViewEvent.NavigateToNameJointAccount>().firstOrNull()
@@ -256,6 +290,7 @@ internal class JointAccountDetailViewModelTest {
         advanceUntilIdle()
         job.cancel()
 
+        coVerify(exactly = 1) { processor.deleteInboxNotification(TEST_ADDRESS) }
         assertTrue(events.contains(ViewEvent.NavigateBack))
     }
 
@@ -331,16 +366,9 @@ internal class JointAccountDetailViewModelTest {
     }
 
     @Test
-    fun `EXPECT NavigateToEditContact WHEN onEditContactClick called and contact exists`() = runTest {
+    fun `EXPECT NavigateToEditAddress WHEN onEditParticipantClick called`() = runTest {
         val jointAccount = createJointAccount()
         setupLocalAccountMocks(jointAccount, showActions = false)
-        val contactInfo = JointAccountDetailProcessor.ContactEditInfo(
-            contactName = "Test Contact",
-            contactPublicKey = TEST_ADDRESS,
-            contactDatabaseId = 1,
-            contactProfileImageUri = "uri"
-        )
-        coEvery { processor.getContactEditInfo(TEST_ADDRESS) } returns contactInfo
         val eventDelegate = EventDelegate<ViewEvent>()
         val viewModel = createViewModelWithEventDelegate(createSavedStateHandle(), eventDelegate)
         advanceUntilIdle()
@@ -348,13 +376,13 @@ internal class JointAccountDetailViewModelTest {
         val events = mutableListOf<ViewEvent>()
         val job = launch { eventDelegate.viewEvent.toList(events) }
 
-        viewModel.onEditContactClick(TEST_ADDRESS)
+        viewModel.onEditParticipantClick(TEST_ADDRESS)
         advanceUntilIdle()
         job.cancel()
 
-        val event = events.filterIsInstance<ViewEvent.NavigateToEditContact>().firstOrNull()
-        assertEquals("Test Contact", event?.contactName)
-        assertEquals(TEST_ADDRESS, event?.contactPublicKey)
+        val event = events.filterIsInstance<ViewEvent.NavigateToEditAddress>().firstOrNull()
+        assertNotNull(event)
+        assertEquals(TEST_ADDRESS, event?.address)
     }
 
     // endregion
@@ -367,7 +395,8 @@ internal class JointAccountDetailViewModelTest {
             stateDelegate = StateDelegate(),
             eventDelegate = EventDelegate(),
             getJointAccount = getJointAccount,
-            processor = processor
+            processor = processor,
+            jointAccountDetailEventTracker = jointAccountDetailEventTracker
         )
     }
 
@@ -380,7 +409,8 @@ internal class JointAccountDetailViewModelTest {
             stateDelegate = StateDelegate(),
             eventDelegate = eventDelegate,
             getJointAccount = getJointAccount,
-            processor = processor
+            processor = processor,
+            jointAccountDetailEventTracker = jointAccountDetailEventTracker
         )
     }
 
@@ -391,7 +421,8 @@ internal class JointAccountDetailViewModelTest {
     ): SavedStateHandle {
         val map = mutableMapOf<String, Any>(JointAccountDetailViewModel.ACCOUNT_ADDRESS_KEY to accountAddress)
         if (threshold > 0) map[JointAccountDetailViewModel.THRESHOLD_KEY] = threshold
-        if (participantAddresses != null) map[JointAccountDetailViewModel.PARTICIPANT_ADDRESSES_KEY] = participantAddresses
+        if (participantAddresses != null) map[JointAccountDetailViewModel.PARTICIPANT_ADDRESSES_KEY] =
+            participantAddresses
         return SavedStateHandle(map)
     }
 

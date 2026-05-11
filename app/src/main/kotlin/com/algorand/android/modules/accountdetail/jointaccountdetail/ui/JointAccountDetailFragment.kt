@@ -20,20 +20,25 @@ import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel
 import com.algorand.android.modules.accountdetail.jointaccountdetail.viewmodel.JointAccountDetailViewModel.ViewEvent
+import com.algorand.android.modules.addaccount.joint.creation.ui.editname.EditAccountNameFragment.Companion.RESULT_UPDATED_NAME
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailListener {
+class JointAccountDetailFragment : DaggerBaseFragment(0) {
 
     private val viewModel: JointAccountDetailViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration = FragmentConfiguration(
+        firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,41 +50,15 @@ class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailList
 
             JointAccountDetailScreen(
                 viewState = viewState,
-                accountAddress = viewModel.accountAddress,
-                listener = this@JointAccountDetailFragment
+                viewModel = viewModel
             )
         }
-    }
-
-    override fun onBackClick() {
-        navBack()
-    }
-
-    override fun onEditAddressClick(address: String) {
-        viewModel.onEditContactClick(address)
-    }
-
-    override fun onCopyAddressClick(address: String) {
-        onAccountAddressCopied(address)
-    }
-
-    override fun onIgnoreClick() {
-        viewModel.onIgnoreClick()
-    }
-
-    override fun onAddClick() {
-        viewModel.onAddClick()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Refresh participants list to reflect any changes made in EditContactFragment
-        viewModel.refreshParticipants()
+        initResultListeners()
     }
 
     private fun initObservers() {
@@ -87,12 +66,23 @@ class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailList
             flow = viewModel.viewEvent,
             collection = { event ->
                 when (event) {
+                    is ViewEvent.InvitationIgnored -> {
+                        showAlertSuccess(title = getString(R.string.invitation_ignored), tag = baseActivityTag)
+                        navBack()
+                    }
                     is ViewEvent.NavigateBack -> navBack()
                     is ViewEvent.NavigateToNameJointAccount -> navigateToNameJointAccount(event)
-                    is ViewEvent.NavigateToEditContact -> navigateToEditContact(event)
+                    is ViewEvent.NavigateToEditAddress -> navigateToEditAddress(event)
+                    is ViewEvent.ShowAddressCopied -> onAccountAddressCopied(event.address)
                 }
             }
         )
+    }
+
+    private fun initResultListeners() {
+        useFragmentResultListenerValue<String>(RESULT_UPDATED_NAME) { newName ->
+            viewModel.onParticipantNameUpdated(newName)
+        }
     }
 
     private fun navigateToNameJointAccount(event: ViewEvent.NavigateToNameJointAccount) {
@@ -104,14 +94,14 @@ class JointAccountDetailFragment : DaggerBaseFragment(0), JointAccountDetailList
         )
     }
 
-    private fun navigateToEditContact(event: ViewEvent.NavigateToEditContact) {
+    private fun navigateToEditAddress(event: ViewEvent.NavigateToEditAddress) {
         nav(
-            HomeNavigationDirections.actionGlobalEditContactFragment(
-                contactName = event.contactName,
-                contactPublicKey = event.contactPublicKey,
-                contactDatabaseId = event.contactDatabaseId,
-                contactProfileImageUri = event.contactProfileImageUri
-            )
+            JointAccountDetailFragmentDirections
+                .actionJointAccountDetailFragmentToEditParticipantNameFragment(event.address)
         )
+    }
+
+    companion object {
+        private const val FIREBASE_EVENT_SCREEN_ID = "accountscr_jointAccount_detail_press"
     }
 }

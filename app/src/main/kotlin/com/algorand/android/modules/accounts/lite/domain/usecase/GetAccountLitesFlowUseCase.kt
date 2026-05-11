@@ -117,7 +117,7 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
         }
     }
 
-    private fun getCachedInfo(
+    private suspend fun getCachedInfo(
         localAccounts: List<LocalAccount>,
         address: String,
         accountPayload: AccountPayload
@@ -131,7 +131,7 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
                 getAccountRegistrationType(it)
             }
         }
-        val accountType = getAccountType(address, rekeyAuthAddress, localAccounts) ?: return null
+        val accountType = getAccountType(address) ?: return null
 
         val algoBalance = accountPayload.accountInfoLiteInformation.algoBalance
         val algoAmountValue = getAlgoAmountValue(algoBalance)

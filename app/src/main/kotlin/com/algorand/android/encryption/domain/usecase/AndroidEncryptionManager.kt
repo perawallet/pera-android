@@ -13,9 +13,11 @@
 package com.algorand.android.encryption.domain.usecase
 
 import com.algorand.wallet.foundation.PeraResult
+import com.google.crypto.tink.Aead
 import javax.crypto.SecretKey
 
 interface AndroidEncryptionManager {
+    fun getOrRecoverAead(): Aead
     fun getSecretKey(): SecretKey
     suspend fun initializeEncryptionManager()
     suspend fun shouldMigrateToStrongBox(): Boolean

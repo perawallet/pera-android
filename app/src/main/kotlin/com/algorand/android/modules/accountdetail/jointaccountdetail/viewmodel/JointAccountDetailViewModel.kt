@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountdetail.jointaccountdetail.ui.model.JointAccountParticipantItem
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountDetailEventTracker
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.jointaccount.domain.usecase.GetJointAccount
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -24,7 +25,9 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +36,8 @@ class JointAccountDetailViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val getJointAccount: GetJointAccount,
-    private val processor: JointAccountDetailProcessor
+    private val processor: JointAccountDetailProcessor,
+    private val jointAccountDetailEventTracker: JointAccountDetailEventTracker
 ) : ViewModel(),
     StateViewModel<JointAccountDetailViewModel.ViewState> by stateDelegate,
     EventViewModel<JointAccountDetailViewModel.ViewEvent> by eventDelegate {
@@ -51,32 +55,37 @@ class JointAccountDetailViewModel @Inject constructor(
 
     fun refreshParticipants() {
         stateDelegate.onState<ViewState.Content> { contentState ->
-            if (contentState.participants.isNotEmpty()) {
-                viewModelScope.launch {
-                    val participantAddresses = contentState.participants.map { it.address }
-                    val updatedParticipants = processor.createParticipantItems(participantAddresses)
-                    stateDelegate.updateState {
-                        contentState.copy(participants = updatedParticipants)
-                    }
+            if (contentState.participants.isEmpty()) return@onState
+            viewModelScope.launch {
+                val participantAddresses = contentState.participants.map { it.address }
+                val updatedParticipants = processor.createParticipantItems(participantAddresses)
+                stateDelegate.updateState {
+                    contentState.copy(participants = updatedParticipants)
                 }
             }
         }
     }
 
+    private val editingParticipantAddress = AtomicReference<String?>(null)
+    private var actionJob: Job? = null
+
     fun onIgnoreClick() {
-        viewModelScope.launch {
+        if (actionJob?.isActive == true) return
+        actionJob = viewModelScope.launch {
+            jointAccountDetailEventTracker.logInboxJointAccountInviteIgnorePress()
             processor.deleteInboxNotification(accountAddress)
-            eventDelegate.sendEvent(ViewEvent.NavigateBack)
+            eventDelegate.sendEvent(ViewEvent.InvitationIgnored)
         }
     }
 
     fun onAddClick() {
+        if (actionJob?.isActive == true) return
         stateDelegate.onState<ViewState.Content> { contentState ->
             if (contentState.threshold > 0 && contentState.participants.isNotEmpty()) {
-                viewModelScope.launch {
-                    processor.deleteInboxNotification(accountAddress)
-
+                actionJob = viewModelScope.launch {
+                    jointAccountDetailEventTracker.logInboxJointAccountInviteAddPress()
                     if (processor.isJointAccountExists(accountAddress)) {
+                        processor.deleteInboxNotification(accountAddress)
                         eventDelegate.sendEvent(ViewEvent.NavigateBack)
                     } else {
                         val participantAddresses = contentState.participants.map { it.address }
@@ -92,17 +101,31 @@ class JointAccountDetailViewModel @Inject constructor(
         }
     }
 
-    fun onEditContactClick(address: String) {
+    fun onBackClick() {
         viewModelScope.launch {
-            val contactInfo = processor.getContactEditInfo(address) ?: return@launch
-            eventDelegate.sendEvent(
-                ViewEvent.NavigateToEditContact(
-                    contactName = contactInfo.contactName,
-                    contactPublicKey = contactInfo.contactPublicKey,
-                    contactDatabaseId = contactInfo.contactDatabaseId,
-                    contactProfileImageUri = contactInfo.contactProfileImageUri
-                )
-            )
+            eventDelegate.sendEvent(ViewEvent.NavigateBack)
+        }
+    }
+
+    fun onCopyAddressClick(address: String) {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(ViewEvent.ShowAddressCopied(address))
+        }
+    }
+
+    fun onEditParticipantClick(address: String) {
+        editingParticipantAddress.set(address)
+        viewModelScope.launch {
+            jointAccountDetailEventTracker.logInboxJointAccountNameAccountPress()
+            eventDelegate.sendEvent(ViewEvent.NavigateToEditAddress(address))
+        }
+    }
+
+    fun onParticipantNameUpdated(newName: String) {
+        val address = editingParticipantAddress.getAndSet(null) ?: return
+        viewModelScope.launch {
+            processor.updateContactName(address, newName)
+            refreshParticipants()
         }
     }
 
@@ -112,46 +135,69 @@ class JointAccountDetailViewModel @Inject constructor(
 
             when {
                 localJointAccount != null && !isFromInvitation -> {
-                    loadLocalAccountWithoutActions(localJointAccount)
+                    setLocalAccountStateWithoutActions(localJointAccount)
                 }
+
                 localJointAccount != null && isFromInvitation -> {
-                    loadLocalAccountWithActions(localJointAccount)
+                    setLocalAccountStateWithActions(localJointAccount)
                 }
+
                 else -> {
-                    loadInvitationInfo()
+                    loadAndSetInvitationState()
                 }
             }
         }
     }
 
-    private suspend fun loadLocalAccountWithoutActions(jointAccount: LocalAccount.Joint) {
+    private suspend fun setLocalAccountStateWithoutActions(jointAccount: LocalAccount.Joint) {
         val contentState = processor.createContentState(jointAccount, accountAddress, showActions = false)
         stateDelegate.updateState { contentState }
     }
 
-    private suspend fun loadLocalAccountWithActions(jointAccount: LocalAccount.Joint) {
+    private suspend fun setLocalAccountStateWithActions(jointAccount: LocalAccount.Joint) {
         val contentState = processor.createContentState(jointAccount, accountAddress, showActions = true)
         stateDelegate.updateState { contentState }
     }
 
-    private suspend fun loadInvitationInfo() {
+    private suspend fun loadAndSetInvitationState() {
         when (val result = getInvitationData()) {
             is JointAccountDetailProcessor.InvitationResult.Success -> {
-                val invitation = result.data
-                val contentState = processor.createContentStateFromInvitation(
-                    participantAddresses = invitation.participantAddresses,
-                    threshold = invitation.threshold,
-                    accountAddress = accountAddress
-                )
-                stateDelegate.updateState { contentState }
+                setInvitationContentState(result.data)
             }
+
+            is JointAccountDetailProcessor.InvitationResult.NotFound -> {
+                loadFromApi()
+            }
+
+            is JointAccountDetailProcessor.InvitationResult.NetworkError -> {
+                loadFromApi()
+            }
+        }
+    }
+
+    private suspend fun loadFromApi() {
+        when (val apiResult = processor.fetchJointAccountFromApi(accountAddress)) {
+            is JointAccountDetailProcessor.InvitationResult.Success -> {
+                setInvitationContentState(apiResult.data)
+            }
+
             is JointAccountDetailProcessor.InvitationResult.NotFound -> {
                 stateDelegate.updateState { ViewState.Error(ErrorType.INVITATION_NOT_FOUND) }
             }
+
             is JointAccountDetailProcessor.InvitationResult.NetworkError -> {
                 stateDelegate.updateState { ViewState.Error(ErrorType.NETWORK_ERROR) }
             }
         }
+    }
+
+    private suspend fun setInvitationContentState(invitation: JointAccountDetailProcessor.InvitationData) {
+        val contentState = processor.createContentStateFromInvitation(
+            participantAddresses = invitation.participantAddresses,
+            threshold = invitation.threshold,
+            accountAddress = accountAddress
+        )
+        stateDelegate.updateState { contentState }
     }
 
     private suspend fun getInvitationData(): JointAccountDetailProcessor.InvitationResult {
@@ -188,18 +234,16 @@ class JointAccountDetailViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
+        data object InvitationIgnored : ViewEvent
         data object NavigateBack : ViewEvent
         data class NavigateToNameJointAccount(
             val threshold: Int,
             val participantAddresses: List<String>
         ) : ViewEvent
 
-        data class NavigateToEditContact(
-            val contactName: String?,
-            val contactPublicKey: String?,
-            val contactDatabaseId: Int,
-            val contactProfileImageUri: String?
-        ) : ViewEvent
+        data class NavigateToEditAddress(val address: String) : ViewEvent
+
+        data class ShowAddressCopied(val address: String) : ViewEvent
     }
 
     companion object {

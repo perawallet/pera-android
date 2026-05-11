@@ -20,7 +20,7 @@ import com.algorand.android.models.AssetSupportRequest
 import com.algorand.android.models.NotificationFilterRequest
 import com.algorand.android.models.Pagination
 import com.algorand.android.models.PushTokenDeleteRequest
-import com.algorand.android.models.TrackTransactionRequest
+
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel.Companion.SEARCH_RESULT_LIMIT
 import com.algorand.android.modules.currency.data.model.CurrencyOptionResponse
 import com.algorand.android.modules.nftdomain.data.model.NftDomainSearchResponse
@@ -61,9 +61,6 @@ interface MobileAlgorandApi {
     suspend fun deletePushToken(
         @Body pushTokenDeleteRequest: PushTokenDeleteRequest
     ): Response<Unit>
-
-    @POST("v1/transactions/")
-    suspend fun trackTransaction(@Body trackTransactionRequest: TrackTransactionRequest): Response<Unit>
 
     @POST("v1/asset-requests/")
     suspend fun postAssetSupportRequest(@Body assetSupportRequest: AssetSupportRequest): Response<Unit>

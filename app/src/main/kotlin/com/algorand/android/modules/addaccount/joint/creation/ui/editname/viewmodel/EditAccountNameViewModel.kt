@@ -12,15 +12,13 @@
 
 package com.algorand.android.modules.addaccount.joint.creation.ui.editname.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.addaccount.joint.creation.mapper.SelectedJointAccountMapper
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
-import com.algorand.android.repository.ContactRepository
-import com.algorand.android.utils.toShortenedAddress
+import com.algorand.android.modules.contact.base.domain.usecase.GetContactByAddress
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,12 +29,14 @@ import javax.inject.Inject
 class EditAccountNameViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val stateDelegate: StateDelegate<ViewState>,
-    private val contactRepository: ContactRepository,
-    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
+    private val getContactByAddress: GetContactByAddress,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val selectedJointAccountMapper: SelectedJointAccountMapper
 ) : ViewModel(),
     StateViewModel<EditAccountNameViewModel.ViewState> by stateDelegate {
 
     private val accountAddress: String = savedStateHandle.get<String>(ACCOUNT_ADDRESS_KEY).orEmpty()
+    private val showRemoveButton: Boolean = savedStateHandle.get<Boolean>(SHOW_REMOVE_BUTTON_KEY) ?: true
 
     init {
         stateDelegate.setDefaultState(ViewState.Loading)
@@ -45,30 +45,28 @@ class EditAccountNameViewModel @Inject constructor(
 
     private fun loadAccountInfo() {
         viewModelScope.launch {
-            val contact = contactRepository.getContactByAddress(accountAddress)
-            val imageUri = contact?.imageUriAsString?.let { Uri.parse(it) }
+            val contact = getContactByAddress(accountAddress)
             val iconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
 
-            val account = SelectedJointAccountItem(
-                accountDisplayName = AccountDisplayName(
-                    accountAddress = accountAddress,
-                    primaryDisplayName = contact?.name ?: accountAddress.toShortenedAddress(),
-                    secondaryDisplayName = accountAddress.toShortenedAddress()
-                ),
-                iconDrawablePreview = iconDrawablePreview,
-                imageUri = imageUri,
-                isContact = contact != null
+            val account = selectedJointAccountMapper.mapFromDetail(
+                address = accountAddress,
+                user = contact,
+                iconDrawablePreview = iconDrawablePreview
             )
-            stateDelegate.updateState { ViewState.Content(account) }
+            stateDelegate.updateState { ViewState.Content(account, showRemoveButton) }
         }
     }
 
     sealed interface ViewState {
         data object Loading : ViewState
-        data class Content(val account: SelectedJointAccountItem) : ViewState
+        data class Content(
+            val account: SelectedJointAccountItem,
+            val showRemoveButton: Boolean
+        ) : ViewState
     }
 
     companion object {
         private const val ACCOUNT_ADDRESS_KEY = "accountAddress"
+        private const val SHOW_REMOVE_BUTTON_KEY = "showRemoveButton"
     }
 }

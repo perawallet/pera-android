@@ -23,10 +23,10 @@ import com.algorand.wallet.swap.data.mapper.SwapQuoteTransactionMapper
 import com.algorand.wallet.swap.data.mapper.SwapUpdateStatusRequestBodyMapper
 import com.algorand.wallet.swap.data.mapper.TopSwapPairsMapper
 import com.algorand.wallet.swap.data.model.CreateSwapQuoteTransactionsRequestBody
-import com.algorand.wallet.swap.data.model.SwapPeraFeeRequestBody
+import com.algorand.wallet.swap.data.model.SwapCalculateAmountRequestBody
 import com.algorand.wallet.swap.data.service.SwapApiService
 import com.algorand.wallet.swap.domain.model.AvailableSwapAsset
-import com.algorand.wallet.swap.domain.model.SwapPeraFee
+import com.algorand.wallet.swap.domain.model.SwapAmountByPercentagePayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteProvider
 import com.algorand.wallet.swap.domain.model.SwapQuoteRequestPayload
 import com.algorand.wallet.swap.domain.model.SwapQuoteTransaction
@@ -64,10 +64,16 @@ internal class DefaultSwapRepository @Inject constructor(
         }
     }
 
-    override suspend fun getPeraFee(assetInId: Long, amount: BigInteger): PeraResult<SwapPeraFee> {
+    override suspend fun calculateSwapAmount(
+        payload: SwapAmountByPercentagePayload,
+        percentage: String?
+    ): PeraResult<BigInteger> {
         return try {
-            val response = swapApiService.getPeraFee(SwapPeraFeeRequestBody(assetInId, amount))
-            PeraResult.Success(SwapPeraFee(response.peraFeeAmount))
+            val requestBody = with(payload) {
+                SwapCalculateAmountRequestBody(address, assetInId, assetOutId, null, percentage)
+            }
+            val response = swapApiService.calculateSwapAmount(requestBody)
+            PeraResult.Success(response.amount ?: BigInteger.ZERO)
         } catch (exception: Exception) {
             PeraResult.Error(exception)
         }

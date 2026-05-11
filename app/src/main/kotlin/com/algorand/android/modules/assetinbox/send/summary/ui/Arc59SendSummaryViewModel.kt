@@ -19,44 +19,46 @@ import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSu
 import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryPreview
 import com.algorand.android.modules.assetinbox.send.summary.ui.usecase.Arc59SendSummaryPreviewUseCase
 import com.algorand.android.modules.assetinbox.send.warning.ui.model.Arc59SendSummaryWarningNavArgs
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.ASSET_INBOX_SUPPORT_URL
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class Arc59SendSummaryViewModel @Inject constructor(
+    private val stateDelegate: StateDelegate<Arc59SendSummaryPreview>,
     private val arc59SendSummaryPreviewUseCase: Arc59SendSummaryPreviewUseCase,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
-
-    private val _viewStateFlow = MutableStateFlow(arc59SendSummaryPreviewUseCase.getInitialPreview())
-    val viewStateFlow: StateFlow<Arc59SendSummaryPreview> = _viewStateFlow.asStateFlow()
+) : ViewModel(), StateViewModel<Arc59SendSummaryPreview> by stateDelegate {
 
     private val args = savedStateHandle.getOrThrow<Arc59SendSummaryNavArgs>(ARC_59_SEND_SUMMARY_NAV_ARGS_KEY)
+
+    init {
+        stateDelegate.setDefaultState(arc59SendSummaryPreviewUseCase.getInitialPreview())
+    }
 
     fun initializePreview() {
         viewModelScope.launchIO {
             arc59SendSummaryPreviewUseCase.getArc59SendSummaryPreview(
-                _viewStateFlow.value,
+                state.value,
                 args.receiverPublicKey,
                 args.assetId,
                 args.assetAmount
             ).collectLatest { preview ->
-                _viewStateFlow.value = preview
+                stateDelegate.updateState { preview }
             }
         }
     }
 
     fun createTransactionData() {
         viewModelScope.launchIO {
-            arc59SendSummaryPreviewUseCase.createArc59SendTransactionData(args, _viewStateFlow.value).collectLatest {
-                _viewStateFlow.value = it
+            arc59SendSummaryPreviewUseCase.createArc59SendTransactionData(args, state.value).collectLatest { preview ->
+                stateDelegate.updateState { preview }
             }
         }
     }
@@ -64,23 +66,35 @@ class Arc59SendSummaryViewModel @Inject constructor(
     fun sendSignedTransaction(signedTransactions: List<Any?>) {
         viewModelScope.launchIO {
             arc59SendSummaryPreviewUseCase.sendSignedTransaction(
-                _viewStateFlow.value,
+                state.value,
                 signedTransactions
-            ).collectLatest {
-                _viewStateFlow.value = it
+            ).collectLatest { preview ->
+                stateDelegate.updateState { preview }
+            }
+        }
+    }
+
+    fun onAlgodSubmitAlreadyCompleted(transactionId: String) {
+        viewModelScope.launchIO {
+            stateDelegate.updateState { current ->
+                current.copy(
+                    isLoading = false,
+                    showError = null,
+                    onTxnSendSuccessfully = Event(transactionId)
+                )
             }
         }
     }
 
     fun getWarningMessage(): Arc59SendSummaryWarningNavArgs? {
-        _viewStateFlow.value.summary?.warningMessage?.let {
+        state.value.summary?.warningMessage?.let {
             return Arc59SendSummaryWarningNavArgs(it.title.orEmpty(), it.detail.orEmpty())
         }
         return null
     }
 
     fun getReadMoreUrl(): String {
-        _viewStateFlow.value.summary?.warningMessage?.let {
+        state.value.summary?.warningMessage?.let {
             return it.readMoreUrl ?: ASSET_INBOX_SUPPORT_URL
         }
         return ASSET_INBOX_SUPPORT_URL

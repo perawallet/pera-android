@@ -18,8 +18,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.addaccount.joint.creation.model.SelectedJointAccountItem
@@ -27,6 +25,9 @@ import com.algorand.android.modules.addaccount.joint.creation.ui.addaccount.AddJ
 import com.algorand.android.modules.addaccount.joint.creation.ui.createaccount.viewmodel.CreateJointAccountViewModel
 import com.algorand.android.modules.addaccount.joint.creation.ui.editname.EditAccountNameFragment
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.utils.browser.openJointAccountLearnMoreUrl
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -62,36 +63,31 @@ class CreateJointAccountFragment : DaggerBaseFragment(0), CreateJointAccountScre
     }
 
     private fun observeResults() {
-        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+        useFragmentResultListenerValue<SelectedJointAccountItem>(
+            key = AddJointAccountFragment.RESULT_SELECTED_ACCOUNT
+        ) { selectedAccount ->
+            viewModel.addSelectedAccount(selectedAccount)
+        }
 
-        savedStateHandle?.getLiveData<SelectedJointAccountItem>(AddJointAccountFragment.RESULT_SELECTED_ACCOUNT)
-            ?.observe(viewLifecycleOwner) { selectedAccount ->
-                selectedAccount?.let {
-                    val wasAdded = viewModel.addSelectedAccount(it)
-                    if (!wasAdded) {
-                        showGlobalError(getString(R.string.this_account_already_exists))
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            flow = viewModel.viewEvent,
+            collection = { event ->
+                when (event) {
+                    is CreateJointAccountViewModel.ViewEvent.NavigateToSetThreshold -> {
+                        navToSetThresholdFragment()
                     }
-                    savedStateHandle.remove<SelectedJointAccountItem>(AddJointAccountFragment.RESULT_SELECTED_ACCOUNT)
                 }
             }
+        )
 
-        savedStateHandle?.getLiveData<String>(EditAccountNameFragment.RESULT_UPDATED_NAME)
-            ?.observe(viewLifecycleOwner) { updatedName ->
-                val address = savedStateHandle.get<String>(EditAccountNameFragment.RESULT_ADDRESS)
-                if (updatedName != null && address != null) {
-                    viewModel.updateAccountName(address, updatedName)
-                    savedStateHandle.remove<String>(EditAccountNameFragment.RESULT_UPDATED_NAME)
-                    savedStateHandle.remove<String>(EditAccountNameFragment.RESULT_ADDRESS)
-                }
-            }
+        useFragmentResultListenerValue<String>(EditAccountNameFragment.RESULT_UPDATED_NAME) { updatedName ->
+            // Note: Address should be passed along with the name
+            viewModel.updateAccountNameFromResult(updatedName)
+        }
 
-        savedStateHandle?.getLiveData<String>(EditAccountNameFragment.RESULT_REMOVED_ADDRESS)
-            ?.observe(viewLifecycleOwner) { removedAddress ->
-                removedAddress?.let {
-                    viewModel.removeSelectedAccount(it)
-                    savedStateHandle.remove<String>(EditAccountNameFragment.RESULT_REMOVED_ADDRESS)
-                }
-            }
+        useFragmentResultListenerValue<String>(EditAccountNameFragment.RESULT_REMOVED_ADDRESS) { _ ->
+            viewModel.removeEditingAccount()
+        }
     }
 
     override fun onBackClick() {
@@ -103,15 +99,18 @@ class CreateJointAccountFragment : DaggerBaseFragment(0), CreateJointAccountScre
     }
 
     override fun onAddAccountClick() {
+        viewModel.logAddAccountClick()
         navToAddJointAccountFragment()
     }
 
-    override fun onEditAccountClick(address: String) {
+    override fun onEditAccountClick(index: Int, address: String) {
+        viewModel.logEditAccountClick()
+        viewModel.setEditingAccountIndex(index)
         navToEditAccountNameFragment(address)
     }
 
-    override fun onContinueClick() {
-        navToSetThresholdFragment()
+    override fun onLearnMoreClick() {
+        context?.openJointAccountLearnMoreUrl()
     }
 
     private fun navToAddJointAccountFragment() {

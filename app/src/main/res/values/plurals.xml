@@ -16,16 +16,6 @@
         <item quantity="other">%1$d apps connected</item>
     </plurals>
 
-    <plurals name="requested_permission">
-        <item quantity="one">Requested permissions</item>
-        <item quantity="other">Requested permissions</item>
-    </plurals>
-
-    <plurals name="networks">
-        <item quantity="one">Network</item>
-        <item quantity="other">Networks</item>
-    </plurals>
-
     <plurals name="account_found">
         <item quantity="one">1 Account Found</item>
         <item quantity="other">%1$d Accounts Found</item>
@@ -128,11 +118,6 @@
         <item quantity="other">Assets</item>
     </plurals>
 
-    <plurals name="asset_requests">
-        <item quantity="one">%1$d Asset Request</item>
-        <item quantity="other">%1$d Asset Requests</item>
-    </plurals>
-
     <plurals name="incoming_assets">
         <item quantity="one">1 incoming asset</item>
         <item quantity="other">%1$d incoming assets</item>
@@ -141,11 +126,6 @@
     <plurals name="nft_count">
         <item quantity="one">%1$d NFT</item>
         <item quantity="other">%1$d NFTs</item>
-    </plurals>
-
-    <plurals name="walletconnect_events">
-        <item quantity="one">WalletConnect event</item>
-        <item quantity="other">WalletConnect events</item>
     </plurals>
 
     <plurals name="rekeyed_accounts_found">

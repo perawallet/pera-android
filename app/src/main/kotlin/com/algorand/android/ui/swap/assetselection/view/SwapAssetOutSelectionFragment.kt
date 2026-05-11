@@ -40,7 +40,7 @@ class SwapAssetOutSelectionFragment : BaseFragment(0), SwapAssetOutSelectionScre
 
     private val viewEventObserver: suspend (ViewEvent) -> Unit = { viewEvent ->
         when (viewEvent) {
-            ViewEvent.ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred))
+            ViewEvent.ShowGenericError -> showGlobalError(getString(R.string.swap_asset_load_failed))
         }
     }
 

@@ -51,7 +51,7 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/assetInboxAllAccountsButton"
+            android:id="@id/inboxButton"
             app:visibilityMode="ignore">
             <Layout
                 android:layout_width="wrap_content"
@@ -168,6 +168,17 @@
         </Constraint>
 
         <Constraint
+            android:id="@id/confettiAnimationLottieView"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="210dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </Constraint>
+
+        <Constraint
             android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
             <Layout
@@ -225,14 +236,14 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/assetInboxAllAccountsButton"
+            android:id="@id/inboxButton"
             app:visibilityMode="ignore">
             <Layout
-                android:layout_width="32dp"
+                android:layout_width="wrap_content"
                 android:layout_height="28dp"
                 android:layout_marginStart="@dimen/spacing_large"
                 android:layout_marginTop="@dimen/spacing_small"
-                android:background="@drawable/bg_asset_inbox_rectangle"
+                android:background="@drawable/bg_asset_inbox_oval"
                 android:drawablePadding="6dp"
                 android:paddingHorizontal="@dimen/spacing_xsmall"
                 app:layout_constraintStart_toStartOf="parent"
@@ -281,6 +292,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8" />
         </ConstraintOverride>
+
         <ConstraintOverride
             android:id="@id/portfolioPercentageText"
             app:visibilityMode="ignore">
@@ -335,6 +347,17 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_large"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </Constraint>
+
+        <Constraint
+            android:id="@id/confettiAnimationLottieView"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="210dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

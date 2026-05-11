@@ -72,13 +72,18 @@ class TransactionSignManager @Inject constructor(
     private val accountBalanceProvider: AccountBalanceProvider,
     private val localAccountSigningHelper: LocalAccountSigningHelper,
     private val jointAccountTransactionSignHelper: JointAccountTransactionSignHelper,
-    private val getLocalAccount: GetLocalAccount
+    private val getLocalAccount: GetLocalAccount,
+    private val jointAccountLedgerSignDelegate: JointAccountLedgerSignDelegate
 ) : LifecycleScopedCoroutineOwner() {
 
     val transactionManagerResultLiveData: MutableLiveData<Event<TransactionManagerResult>?> = MutableLiveData()
 
     private var transactionParams: TransactionParams? = null
     var transactionDataList: List<TransactionSignData>? = null
+
+    private val jointAccountLedgerScanCallback = jointAccountLedgerSignDelegate.createScanCallback(
+        onError = ::setSignFailed
+    )
 
     private val scanCallback = object : CustomScanCallback() {
         override fun onLedgerScanned(
@@ -110,19 +115,42 @@ class TransactionSignManager @Inject constructor(
                     postResult(TransactionManagerResult.LedgerWaitingForApproval(bluetoothName))
                 }
 
-                is LedgerBleResult.SignedTransactionResult -> checkAndCacheSignedTransaction(transactionByteArray)
+                is LedgerBleResult.SignedTransactionResult -> {
+                    if (jointAccountLedgerSignDelegate.hasPendingSign) {
+                        jointAccountLedgerSignDelegate.handleSignResult(
+                            signedTransactionData = transactionByteArray,
+                            scanCallback = jointAccountLedgerScanCallback,
+                            onResult = ::postResult,
+                            onError = ::postJointAccountError
+                        )
+                    } else {
+                        checkAndCacheSignedTransaction(transactionByteArray)
+                    }
+                }
+
                 is LedgerBleResult.LedgerErrorResult -> {
+                    jointAccountLedgerSignDelegate.clear()
                     setSignFailed(TransactionManagerResult.Error.GlobalWarningError.Api(errorMessage))
                 }
 
-                is LedgerBleResult.AppErrorResult -> setSignFailed(Defined(AnnotatedString(errorMessageId), titleResId))
-                is LedgerBleResult.OperationCancelledResult -> setSignFailed(
-                    Defined(AnnotatedString(R.string.error_cancelled_message), R.string.error_cancelled_title)
-                )
+                is LedgerBleResult.AppErrorResult -> {
+                    jointAccountLedgerSignDelegate.clear()
+                    setSignFailed(Defined(AnnotatedString(errorMessageId), titleResId))
+                }
 
-                is LedgerBleResult.OnMissingBytes -> setSignFailed(
-                    Defined(AnnotatedString(R.string.error_sending_message), R.string.error_bluetooth_title)
-                )
+                is LedgerBleResult.OperationCancelledResult -> {
+                    jointAccountLedgerSignDelegate.clear()
+                    setSignFailed(
+                        Defined(AnnotatedString(R.string.error_cancelled_message), R.string.error_cancelled_title)
+                    )
+                }
+
+                is LedgerBleResult.OnMissingBytes -> {
+                    jointAccountLedgerSignDelegate.clear()
+                    setSignFailed(
+                        Defined(AnnotatedString(R.string.error_sending_message), R.string.error_bluetooth_title)
+                    )
+                }
 
                 else -> sendErrorLog("Unhandled else case in operationManagerCollectorAction")
             }
@@ -132,12 +160,12 @@ class TransactionSignManager @Inject constructor(
     private val signHelperListener = object : ListQueuingHelper.Listener<TransactionSignData, ByteArray> {
         override fun onAllItemsDequeued(dequeuedItemList: List<ByteArray?>) {
             if (dequeuedItemList.isEmpty() || dequeuedItemList.any { it == null }) {
-                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                 return
             }
             val safeSignedTransactions = dequeuedItemList.mapToNotNullableListOrNull { it }
             if (safeSignedTransactions == null) {
-                postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                postResult(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                 return
             }
             transactionDataList?.let { postSignResult(safeSignedTransactions, it) }
@@ -206,7 +234,7 @@ class TransactionSignManager @Inject constructor(
         currentScope.launch {
             postResult(TransactionManagerResult.Loading)
             transactionData.toList().ifEmpty {
-                setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                 return@launch
             }.let { transactionList ->
                 processTransactionDataList(transactionList, isGroupTransaction)?.let {
@@ -241,7 +269,7 @@ class TransactionSignManager @Inject constructor(
                 val transactionBytes = transactionByteArray ?: return handleSignError()
                 val signedTx = localAccountSigningHelper.signWithAlgo25Account(transactionBytes, signer.address)
                 if (signedTx == null) {
-                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
                     return
                 }
                 checkAndCacheSignedTransaction(signedTx)
@@ -267,15 +295,11 @@ class TransactionSignManager @Inject constructor(
             is TransactionSigner.SignerNotFound -> {
                 postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
             }
-
-            is TransactionSigner.Joint -> {
-                TODO("Handle Joint Account")
-            }
         }
     }
 
     private fun handleSignError() {
-        setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+        setSignFailed(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
     }
 
     private suspend fun handleJointAccountTransaction(signer: TransactionSigner.Joint) {
@@ -287,14 +311,33 @@ class TransactionSignManager @Inject constructor(
             is JointAccountTransactionSignHelper.JointSignResult.Success -> {
                 postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
             }
+
+            is JointAccountTransactionSignHelper.JointSignResult.NeedsLedgerSign -> {
+                jointAccountLedgerSignDelegate.startLedgerSign(
+                    proposal = result.pendingProposal,
+                    scanCallback = jointAccountLedgerScanCallback,
+                    coroutineScope = currentScope,
+                    operationManager = ledgerBleOperationManager,
+                    onError = ::postJointAccountError
+                )
+            }
+
+            is JointAccountTransactionSignHelper.JointSignResult.SyncPending -> {
+                postResult(TransactionManagerResult.Success.TransactionRequestSigned(result.signRequestId))
+            }
+
+            is JointAccountTransactionSignHelper.JointSignResult.SyncNeedsLedgerSign -> {
+                postJointAccountError()
+            }
+
             is JointAccountTransactionSignHelper.JointSignResult.Error -> {
                 postJointAccountError()
             }
         }
     }
 
-    private fun postJointAccountError() {
-        postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+    private fun postJointAccountError(messageResId: Int = R.string.transaction_signing_failed) {
+        postResult(Defined(AnnotatedString(stringResId = messageResId)))
     }
 
     private suspend fun TransactionSignData.createArc59SendTransactions(): List<Arc59TransactionData>? {
@@ -590,6 +633,7 @@ class TransactionSignManager @Inject constructor(
         ledgerBleSearchManager.stop()
         transactionManagerResultLiveData.value = null
         transactionDataList = null
+        jointAccountLedgerSignDelegate.clear()
     }
 
     private suspend fun processTransactionDataList(
@@ -617,7 +661,7 @@ class TransactionSignManager @Inject constructor(
         if (signedBytesArrayList.isEmpty() || transactionDataList.isEmpty() ||
             signedBytesArrayList.size != transactionDataList.size
         ) {
-            postResult(Defined(AnnotatedString(stringResId = R.string.an_error_occurred)))
+            postResult(Defined(AnnotatedString(stringResId = R.string.transaction_signing_failed)))
             return
         }
 

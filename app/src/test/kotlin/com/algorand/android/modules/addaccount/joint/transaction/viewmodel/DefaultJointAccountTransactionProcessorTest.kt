@@ -16,8 +16,9 @@ import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignatureStatus
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignerItem
-import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionPreview
 import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionState
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountSignRequestCenterPreview
+import com.algorand.android.modules.addaccount.joint.transaction.model.JointAccountTransactionViewState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -95,7 +96,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 0,
-            requiredSignatureCount = 2,
+            threshold = 2,
             signerAccounts = signerAccounts
         )
 
@@ -108,17 +109,42 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
-    fun `EXPECT Completed state WHEN all signatures are collected`() {
-        val signerAccounts = listOf(
-            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Pending)
-        )
+    fun `EXPECT unsigned local list to keep not signed addresses`() {
         val preview = createTestPreview(
-            signedCount = 1,
-            requiredSignatureCount = 2,
-            signerAccounts = signerAccounts
+            unsignedLocalParticipantAddresses = listOf("ADDR1", "ADDR2")
         )
 
         val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR1"))
+
+        assertEquals(listOf("ADDR2"), result.unsignedLocalParticipantAddresses)
+    }
+
+    @Test
+    fun `EXPECT unsigned local list unchanged WHEN signing fails`() {
+        val preview = createTestPreview(
+            signedCount = 0,
+            unsignedLocalParticipantAddresses = listOf("ADDR1", "ADDR2")
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, emptyList())
+
+        assertEquals(listOf("ADDR1", "ADDR2"), result.unsignedLocalParticipantAddresses)
+        assertEquals(0, result.signedCount)
+    }
+
+    @Test
+    fun `EXPECT Completed state WHEN all signatures are collected`() {
+        val signerAccounts = listOf(
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Signed),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending)
+        )
+        val preview = createTestPreview(
+            signedCount = 1,
+            threshold = 2,
+            signerAccounts = signerAccounts
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR2"))
 
         assertEquals(JointAccountTransactionState.Completed, result.transactionState)
     }
@@ -130,7 +156,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 0,
-            requiredSignatureCount = 3,
+            threshold = 3,
             signerAccounts = signerAccounts
         )
 
@@ -140,39 +166,53 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
-    fun `EXPECT first local address WHEN finding decline participant`() {
+    fun `EXPECT all addresses WHEN finding decline participants`() {
         val preview = createTestPreview(
             unsignedLocalParticipantAddresses = listOf("LOCAL_ADDR"),
             unsignedLedgerParticipantAddresses = listOf("LEDGER_ADDR")
         )
 
-        val result = processor.findDeclineParticipantAddress(preview)
+        val result = processor.findDeclineParticipantAddresses(preview)
 
-        assertEquals("LOCAL_ADDR", result)
+        assertEquals(listOf("LOCAL_ADDR", "LEDGER_ADDR"), result)
     }
 
     @Test
-    fun `EXPECT first ledger address WHEN no local addresses for decline`() {
+    fun `EXPECT ledger addresses WHEN no local addresses for decline`() {
         val preview = createTestPreview(
             unsignedLocalParticipantAddresses = emptyList(),
             unsignedLedgerParticipantAddresses = listOf("LEDGER_ADDR")
         )
 
-        val result = processor.findDeclineParticipantAddress(preview)
+        val result = processor.findDeclineParticipantAddresses(preview)
 
-        assertEquals("LEDGER_ADDR", result)
+        assertEquals(listOf("LEDGER_ADDR"), result)
     }
 
     @Test
-    fun `EXPECT null WHEN no addresses available for decline`() {
+    fun `EXPECT empty list WHEN no addresses available for decline`() {
         val preview = createTestPreview(
             unsignedLocalParticipantAddresses = emptyList(),
             unsignedLedgerParticipantAddresses = emptyList()
         )
 
-        val result = processor.findDeclineParticipantAddress(preview)
+        val result = processor.findDeclineParticipantAddresses(preview)
 
-        assertNull(result)
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `EXPECT all local participants WHEN proposer cancels transaction`() {
+        val preview = createTestPreview(
+            allLocalParticipantAddresses = listOf("PROPOSER_ADDR"),
+            unsignedLocalParticipantAddresses = emptyList(),
+            unsignedLedgerParticipantAddresses = emptyList(),
+            hasProposerAddress = true
+        )
+
+        val result = processor.findDeclineParticipantAddresses(preview)
+
+        assertEquals(listOf("PROPOSER_ADDR"), result)
     }
 
     @Test
@@ -213,8 +253,76 @@ internal class DefaultJointAccountTransactionProcessorTest {
     fun `EXPECT Completed state WHEN processing loaded preview with enough signatures`() {
         val preview = createTestPreview(
             signedCount = 2,
-            requiredSignatureCount = 2,
+            threshold = 2,
             transactionState = JointAccountTransactionState.PendingSignatures
+        )
+
+        val result = processor.processLoadedPreview(preview)
+
+        assertEquals(JointAccountTransactionState.Completed, result.transactionState)
+    }
+
+    @Test
+    fun `EXPECT showProgress false on pending signers WHEN processLoadedPreview completes transaction`() {
+        val signerAccounts = listOf(
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Signed),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending)
+        )
+        val preview = createTestPreview(
+            signedCount = 2,
+            threshold = 2,
+            signerAccounts = signerAccounts,
+            transactionState = JointAccountTransactionState.PendingSignatures
+        )
+
+        val result = processor.processLoadedPreview(preview)
+
+        assertEquals(false, result.signerAccounts[1].showProgress)
+    }
+
+    @Test
+    fun `EXPECT showProgress false on pending signers WHEN all signatures collected after signing`() {
+        val signerAccounts = listOf(
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Signed),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending),
+            createTestSignerItem("ADDR3", JointAccountSignatureStatus.Pending)
+        )
+        val preview = createTestPreview(
+            signedCount = 1,
+            threshold = 2,
+            signerAccounts = signerAccounts
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR2"))
+
+        assertEquals(JointAccountTransactionState.Completed, result.transactionState)
+        assertEquals(false, result.signerAccounts[2].showProgress)
+    }
+
+    @Test
+    fun `EXPECT showProgress true on pending signers WHEN transaction not completed after signing`() {
+        val signerAccounts = listOf(
+            createTestSignerItem("ADDR1", JointAccountSignatureStatus.Pending),
+            createTestSignerItem("ADDR2", JointAccountSignatureStatus.Pending)
+        )
+        val preview = createTestPreview(
+            signedCount = 0,
+            threshold = 3,
+            signerAccounts = signerAccounts
+        )
+
+        val result = processor.createUpdatedPreviewAfterSigning(preview, listOf("ADDR1"))
+
+        assertEquals(JointAccountTransactionState.PendingSignatures, result.transactionState)
+        assertEquals(true, result.signerAccounts[1].showProgress)
+    }
+
+    @Test
+    fun `EXPECT Completed state WHEN processing loaded preview with AwaitingConfirmation and enough signatures`() {
+        val preview = createTestPreview(
+            signedCount = 2,
+            threshold = 2,
+            transactionState = JointAccountTransactionState.AwaitingConfirmation
         )
 
         val result = processor.processLoadedPreview(preview)
@@ -226,7 +334,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
     fun `EXPECT same state WHEN processing loaded preview without enough signatures`() {
         val preview = createTestPreview(
             signedCount = 1,
-            requiredSignatureCount = 2,
+            threshold = 2,
             transactionState = JointAccountTransactionState.PendingSignatures
         )
 
@@ -237,7 +345,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
 
     @Test
     fun `EXPECT ShowPendingSignatures WHEN transaction completed in post signing action`() {
-        val preview = createTestPreview(signedCount = 2, requiredSignatureCount = 2)
+        val preview = createTestPreview(signedCount = 2, threshold = 2)
         val data = JointAccountTransactionProcessor.ConfirmTransactionData(
             requestId = "request_id",
             preview = preview,
@@ -251,7 +359,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
     }
 
     @Test
-    fun `EXPECT TriggerLedgerSigning WHEN ledger accounts available and not completed`() {
+    fun `EXPECT ShowPendingSignatures WHEN ledger accounts available and not completed`() {
         val signerAccounts = listOf(
             createTestSignerItem(
                 address = "LEDGER_ADDR",
@@ -263,7 +371,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
         )
         val preview = createTestPreview(
             signedCount = 1,
-            requiredSignatureCount = 3,
+            threshold = 3,
             signerAccounts = signerAccounts
         )
         val data = JointAccountTransactionProcessor.ConfirmTransactionData(
@@ -275,25 +383,33 @@ internal class DefaultJointAccountTransactionProcessorTest {
 
         val result = processor.determinePostSigningAction(data, preview, "request_id")
 
-        assertTrue(result is JointAccountTransactionProcessor.PostSigningAction.TriggerLedgerSigning)
+        assertTrue(result is JointAccountTransactionProcessor.PostSigningAction.ShowPendingSignatures)
     }
 
     private fun createTestPreview(
         rawTransactions: List<String> = listOf("raw_tx_1"),
         signedCount: Int = 1,
-        requiredSignatureCount: Int = 2,
+        threshold: Int = 2,
+        allLocalParticipantAddresses: List<String> = emptyList(),
         unsignedLocalParticipantAddresses: List<String> = listOf("ADDR1"),
         unsignedLedgerParticipantAddresses: List<String> = emptyList(),
         signerAccounts: List<JointAccountSignerItem> = emptyList(),
-        transactionState: JointAccountTransactionState = JointAccountTransactionState.PendingSignatures
-    ): JointAccountTransactionPreview {
-        return JointAccountTransactionPreview(
+        transactionState: JointAccountTransactionState = JointAccountTransactionState.PendingSignatures,
+        hasProposerAddress: Boolean = false
+    ): JointAccountTransactionViewState {
+        return JointAccountTransactionViewState(
             jointAccountDisplayName = AccountDisplayName(
                 accountAddress = "JOINT_ADDR",
                 primaryDisplayName = "Joint Account",
                 secondaryDisplayName = null
             ),
             jointAccountIconPreview = createMockIconDrawablePreview(),
+            centerPreview = JointAccountSignRequestCenterPreview.Transfer(
+                recipientShortAddress = "RECIP...ADDR",
+                amount = "10.00",
+                convertedAmount = "$100.00"
+            ),
+            addressForClipboard = "RECIPIENT_ADDR",
             recipientAddress = "RECIPIENT_ADDR",
             recipientShortAddress = "RECIP...ADDR",
             amount = "10.00",
@@ -302,12 +418,14 @@ internal class DefaultJointAccountTransactionProcessorTest {
             transactionState = transactionState,
             signerAccounts = signerAccounts,
             signedCount = signedCount,
-            requiredSignatureCount = requiredSignatureCount,
+            threshold = threshold,
             hasCurrentUserAlreadySigned = false,
             shouldShowPendingSignaturesDirectly = false,
             rawTransactions = rawTransactions,
+            allLocalParticipantAddresses = allLocalParticipantAddresses,
             unsignedLocalParticipantAddresses = unsignedLocalParticipantAddresses,
-            unsignedLedgerParticipantAddresses = unsignedLedgerParticipantAddresses
+            unsignedLedgerParticipantAddresses = unsignedLedgerParticipantAddresses,
+            hasProposerAddress = hasProposerAddress
         )
     }
 
@@ -328,6 +446,7 @@ internal class DefaultJointAccountTransactionProcessorTest {
             accountIconDrawablePreview = createMockIconDrawablePreview(),
             imageUri = null,
             signatureStatus = status,
+            showProgress = status == JointAccountSignatureStatus.Pending,
             isLedgerAccount = isLedger,
             ledgerBluetoothAddress = ledgerBluetoothAddress,
             ledgerAccountIndex = ledgerAccountIndex

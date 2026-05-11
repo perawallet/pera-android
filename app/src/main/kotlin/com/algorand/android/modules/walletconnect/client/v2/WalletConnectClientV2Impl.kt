@@ -13,7 +13,6 @@
 package com.algorand.android.modules.walletconnect.client.v2
 
 import android.app.Application
-import android.util.Log
 import app.perawallet.walletconnectv2.Core
 import app.perawallet.walletconnectv2.CoreClient
 import com.algorand.android.modules.walletconnect.client.utils.WalletConnectClientErrorMessageUtils.createDappErrorMessage
@@ -41,6 +40,7 @@ import com.algorand.android.modules.walletconnect.domain.model.WalletConnectBloc
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectClientListener
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectError
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.logger.PeraErrorLogger
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +62,8 @@ class WalletConnectClientV2Impl(
     private val cachePairUriUseCase: CacheWalletConnectV2PairUriUseCase,
     private val sessionExpirationManager: WalletConnectV2SessionExpirationManager,
     private val sessionServerStatusManager: WalletConnectV2SessionServerStatusManager,
-    private val gson: Gson // TODO Use wrapper after merging this branch with ASB
+    private val gson: Gson, // TODO Use wrapper after merging this branch with ASB
+    private val errorLogger: PeraErrorLogger
 ) : WalletConnectClient,
     WalletConnectSessionExpirationManager by sessionExpirationManager,
     WalletConnectSessionServerStatusManager by sessionServerStatusManager {
@@ -120,9 +121,10 @@ class WalletConnectClientV2Impl(
     }
 
     override suspend fun initializeClient(application: Application) {
-        initializeClientUseCase(application)
         walletDelegate.setListener(walletDelegateListener)
-        signClient.setWalletDelegate(walletDelegate)
+        initializeClientUseCase(application) {
+            signClient.setWalletDelegate(walletDelegate)
+        }
     }
 
     override fun setListener(listener: WalletConnectClientListener) {
@@ -261,11 +263,15 @@ class WalletConnectClientV2Impl(
     }
 
     override suspend fun connectToDisconnectedSessions() {
-        CoreClient.Relay.connect { error: Core.Model.Error -> logError(error.throwable.stackTraceToString()) }
+        CoreClient.Relay.connect { error: Core.Model.Error ->
+            errorLogger.logError(error.throwable)
+        }
     }
 
     override suspend fun disconnectFromAllSessions() {
-        CoreClient.Relay.disconnect { error: Core.Model.Error -> logError(error.throwable.stackTraceToString()) }
+        CoreClient.Relay.disconnect { error: Core.Model.Error ->
+            errorLogger.logError(error.throwable)
+        }
     }
 
     private fun insertSettledSessionToDb(settle: WalletConnect.Session.Settle.Result) {
@@ -280,10 +286,6 @@ class WalletConnectClientV2Impl(
         }
     }
 
-    private fun logError(message: String) {
-        Log.e(logTag, message)
-    }
-
     // region Unused functions
     override suspend fun connect(sessionIdentifier: WalletConnect.SessionIdentifier) {
         return
@@ -295,7 +297,6 @@ class WalletConnectClientV2Impl(
     // endregion
 
     companion object {
-        private val logTag = WalletConnectClientV2Impl::class.simpleName
         const val INJECTION_NAME: String = "walletConnectClientV2InjectionName"
     }
 }

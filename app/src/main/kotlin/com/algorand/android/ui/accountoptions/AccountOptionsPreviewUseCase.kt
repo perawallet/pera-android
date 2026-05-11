@@ -18,6 +18,7 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.Algo25
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.HdKey
 import javax.inject.Inject
@@ -30,7 +31,8 @@ class AccountOptionsPreviewUseCase @Inject constructor(
 
     suspend fun getPreview(address: String): AccountOptionsPreview? {
         return getAccountLite(address)?.run {
-            val canSignTransaction = cachedInfo?.type?.canSignTransaction() == true
+            val accountType = cachedInfo?.type
+            val canSignTransaction = accountType?.canSignTransaction() == true
             val isRekeyed = cachedInfo?.isRekeyed == true
             AccountOptionsPreview(
                 accountAddress = address,
@@ -42,6 +44,7 @@ class AccountOptionsPreviewUseCase @Inject constructor(
                 isPassphraseButtonVisible = registrationType == Algo25 || registrationType == HdKey,
                 isUndoRekeyButtonVisible = isRekeyed && canSignTransaction,
                 canSignTransaction = canSignTransaction,
+                isJointAccount = registrationType is AccountRegistrationType.Joint,
                 registrationType = registrationType
             )
         }

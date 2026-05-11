@@ -38,8 +38,8 @@ class Arc59SendSummaryWarningBottomSheet : BaseDoubleButtonBottomSheet() {
         materialButton.apply {
             setText(R.string.i_understand)
             setOnClickListener {
-                navBack()
                 setFragmentNavigationResult(ARC59_SEND_CONFIRMATION, true)
+                navBack()
             }
         }
     }

@@ -54,6 +54,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.theme.PeraTheme.typography
 import com.algorand.android.ui.compose.widget.button.PeraTertiaryButton
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.icon.rememberSafePainterResource
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
@@ -113,12 +114,14 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
                         .weight(1f, fill = true),
                     contentAlignment = Alignment.TopEnd
                 ) {
-                    PeraIcon(
-                        modifier = Modifier.fillMaxWidth(),
-                        painter = painterResource(R.drawable.pera_icon_3d),
-                        contentDescription = stringResource(id = R.string.welcome_to_pera),
-                        contentScale = ContentScale.FillWidth
-                    )
+                    rememberSafePainterResource(R.drawable.pera_icon_3d)?.let { painter ->
+                        PeraIcon(
+                            modifier = Modifier.fillMaxWidth(),
+                            painter = painter,
+                            contentDescription = stringResource(id = R.string.welcome_to_pera),
+                            contentScale = ContentScale.FillWidth
+                        )
+                    }
                 }
             }
 

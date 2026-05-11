@@ -17,27 +17,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.Result
-import com.algorand.android.modules.addaccount.intro.domain.model.AddAccountIntroPreview
 import com.algorand.android.modules.addaccount.intro.domain.usecase.CreateAlgo25Account
 import com.algorand.android.modules.addaccount.intro.domain.usecase.CreateHdKeyAccount
-import com.algorand.android.modules.addaccount.intro.domain.usecase.GetAddAccountIntroPreview
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tracking.onboarding.register.registerintro.RegisterIntroFragmentEventTracker
 import com.algorand.android.usecase.RegistrationUseCase
 import com.algorand.android.utils.getOrElse
+import com.algorand.wallet.account.local.domain.usecase.GetHasAnyHdSeedId
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.remoteconfig.domain.model.FeatureToggle
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
+@Suppress("LongParameterList")
 class AddAccountIntroViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
-    private val getAddAccountIntroPreview: GetAddAccountIntroPreview,
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val hasAnyHdSeedId: GetHasAnyHdSeedId,
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val registrationUseCase: RegistrationUseCase,
     private val createHdKeyAccount: CreateHdKeyAccount,
     private val createAlgo25Account: CreateAlgo25Account,
@@ -45,26 +50,44 @@ class AddAccountIntroViewModel @Inject constructor(
     private val peraEventTracker: PeraEventTracker,
     private val registerIntroFragmentEventTracker: RegisterIntroFragmentEventTracker,
     savedStateHandle: SavedStateHandle
-) : ViewModel(), StateViewModel<AddAccountIntroViewModel.ViewState> by stateDelegate {
+) : ViewModel(),
+    StateViewModel<AddAccountIntroViewModel.ViewState> by stateDelegate,
+    EventViewModel<AddAccountIntroViewModel.ViewEvent> by eventDelegate {
 
     private val isShowingCloseButton = savedStateHandle.getOrElse(IS_SHOWING_CLOSE_BUTTON_KEY, false)
 
     init {
-        stateDelegate.setDefaultState(ViewState.Idle)
-        initializePreview()
+        stateDelegate.setDefaultState(ViewState.Loading)
+        initializeState()
     }
 
-    private fun initializePreview() {
+    private fun initializeState() {
         viewModelScope.launch {
-            getAddAccountIntroPreview(isShowingCloseButton).collectLatest { preview ->
-                stateDelegate.updateState {
-                    ViewState.Content(preview)
-                }
+            val hasHdWallet = hasAnyHdSeedId()
+            val hasLocalAccount = isThereAnyLocalAccount()
+            val isSkipButtonVisible = !hasLocalAccount
+            val isJointAccountFeatureEnabled = isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
+
+            stateDelegate.updateState {
+                ViewState.Content(
+                    isSkipButtonVisible = isSkipButtonVisible,
+                    isCloseButtonVisible = isShowingCloseButton,
+                    primaryAccountOption = if (hasHdWallet) {
+                        PrimaryAccountOption.AddAccount
+                    } else {
+                        PrimaryAccountOption.CreateUniversalWallet
+                    },
+                    jointAccountOption = if (isJointAccountFeatureEnabled) {
+                        JointAccountOption.Visible
+                    } else {
+                        JointAccountOption.Hidden
+                    }
+                )
             }
         }
     }
 
-    fun setRegisterSkip() {
+    private fun setRegisterSkip() {
         registrationUseCase.setRegistrationSkipPreferenceAsSkipped()
     }
 
@@ -82,11 +105,22 @@ class AddAccountIntroViewModel @Inject constructor(
 
     fun createHdKeyAccount(): Result<AccountCreation> = createHdKeyAccount.invoke()
 
-    suspend fun createAlgo25Account(): Result<AccountCreation> = createAlgo25Account.invoke()
+    fun onCreateAlgo25AccountClicked() {
+        logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_WALLET)
+        viewModelScope.launch {
+            when (val result = createAlgo25Account()) {
+                is Result.Success -> {
+                    eventDelegate.sendEvent(ViewEvent.NavigateToNameRegistration(result.data))
+                }
 
-    fun isJointAccountFeatureEnabled(): Boolean {
-        return isFeatureToggleEnabled(FeatureToggle.JOINT_ACCOUNT.key)
+                is Result.Error -> {
+                    eventDelegate.sendEvent(ViewEvent.ShowError)
+                }
+            }
+        }
     }
+
+    private suspend fun createAlgo25Account(): Result<AccountCreation> = createAlgo25Account.invoke()
 
     fun logEvent(eventName: String) {
         viewModelScope.launch {
@@ -95,10 +129,37 @@ class AddAccountIntroViewModel @Inject constructor(
     }
 
     sealed interface ViewState {
-        data object Idle : ViewState
+        data object Loading : ViewState
         data class Content(
-            val preview: AddAccountIntroPreview
+            val isSkipButtonVisible: Boolean,
+            val isCloseButtonVisible: Boolean,
+            val primaryAccountOption: PrimaryAccountOption,
+            val jointAccountOption: JointAccountOption
         ) : ViewState
+    }
+
+    sealed interface PrimaryAccountOption {
+        data object AddAccount : PrimaryAccountOption
+        data object CreateUniversalWallet : PrimaryAccountOption
+    }
+
+    sealed interface JointAccountOption {
+        data object Visible : JointAccountOption
+        data object Hidden : JointAccountOption
+    }
+
+    fun onSkipClicked() {
+        viewModelScope.launch {
+            peraEventTracker.logEvent(PeraClickEvent.TAP_ONBOARDING_WELCOME_SKIP)
+            setRegisterSkip()
+            eventDelegate.sendEvent(ViewEvent.NavigateToHome)
+        }
+    }
+
+    sealed interface ViewEvent {
+        data object NavigateToHome : ViewEvent
+        data class NavigateToNameRegistration(val accountCreation: AccountCreation) : ViewEvent
+        data object ShowError : ViewEvent
     }
 
     companion object {

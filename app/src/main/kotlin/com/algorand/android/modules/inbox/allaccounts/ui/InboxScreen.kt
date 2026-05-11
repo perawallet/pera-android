@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,9 +51,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.runtime.remember
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
@@ -60,7 +58,6 @@ import com.algorand.android.models.AccountIconResource
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.inbox.allaccounts.domain.model.InboxWithAccount
 import com.algorand.android.modules.inbox.allaccounts.domain.model.SignatureRequestInboxItem
-import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxPreview
 import com.algorand.android.modules.inbox.allaccounts.ui.model.InboxViewState
 import com.algorand.android.modules.inbox.jointaccountinvitation.ui.model.JointAccountInvitationInboxItem
 import com.algorand.android.ui.compose.theme.ColorPalette
@@ -72,19 +69,15 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun InboxScreen(
     modifier: Modifier = Modifier,
-    viewModel: InboxViewModel,
+    state: StateFlow<InboxViewState>,
     listener: InboxScreenListener
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val viewState by state.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.fillMaxSize()) {
         when (viewState) {
             is InboxViewState.Loading -> {
                 LoadingState()
-            }
-
-            is InboxViewState.Empty -> {
-                EmptyState()
             }
 
             is InboxViewState.Content -> {
@@ -99,41 +92,9 @@ fun InboxScreen(
                 )
             }
 
-            is InboxViewState.Error -> {
-                EmptyState()
-            }
-        }
-    }
-}
+            is InboxViewState.Empty -> EmptyState()
 
-@Composable
-fun InboxScreen(
-    modifier: Modifier = Modifier,
-    viewStateFlow: StateFlow<InboxPreview>,
-    listener: InboxScreenListener
-) {
-    val preview by viewStateFlow.collectAsStateWithLifecycle()
-
-    Box(modifier = modifier.fillMaxSize()) {
-        when {
-            preview.isLoading -> {
-                LoadingState()
-            }
-
-            preview.isEmptyStateVisible -> {
-                EmptyState()
-            }
-
-            else -> {
-                ContentState(
-                    accounts = preview.inboxWithAccountList,
-                    signatureRequests = preview.signatureRequestList,
-                    jointAccountInvitations = preview.jointAccountInvitationList,
-                    onAccountClick = listener::onAccountClick,
-                    onSignatureRequestClick = listener::onSignatureRequestClick,
-                    onJointAccountInvitationClick = listener::onJointAccountInvitationClick
-                )
-            }
+            is InboxViewState.Error -> EmptyState()
         }
     }
 }
@@ -185,21 +146,21 @@ private fun ContentState(
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         items(
-            items = signatureRequests,
-            key = { it.signRequestId }
-        ) { signatureRequest ->
-            SignatureRequestInboxItem(
-                signatureRequest = signatureRequest,
-                onClick = { onSignatureRequestClick(signatureRequest.signRequestId, signatureRequest.canUserSign) }
-            )
-        }
-        items(
             items = jointAccountInvitations,
             key = { it.id }
         ) { invitation ->
             JointAccountInvitationInboxItem(
                 invitation = invitation,
                 onClick = { onJointAccountInvitationClick(invitation) }
+            )
+        }
+        items(
+            items = signatureRequests,
+            key = { it.signRequestId }
+        ) { signatureRequest ->
+            SignatureRequestInboxItem(
+                signatureRequest = signatureRequest,
+                onClick = { onSignatureRequestClick(signatureRequest.signRequestId, signatureRequest.canUserSign) }
             )
         }
         items(
@@ -293,7 +254,9 @@ private fun SignatureRequestInboxItem(
             )
             Spacer(modifier = Modifier.height(8.dp))
             StatusLine(
-                timeAgo = signatureRequest.timeAgo
+                timeAgo = signatureRequest.timeAgo,
+                statusLineText = signatureRequest.statusLineText,
+                statusLineIsError = signatureRequest.statusLineIsError
             )
             Spacer(modifier = Modifier.height(12.dp))
             StatusPillsRow(
@@ -307,68 +270,54 @@ private fun SignatureRequestInboxItem(
 
 @Composable
 private fun buildSignatureRequestTitle(addressShortened: String): AnnotatedString {
-    val signatureRequestText = stringResource(R.string.signature_request)
-    val toSignForText = stringResource(R.string.to_sign_for_format, addressShortened)
-    val boldWeight = PeraTheme.typography.body.regular.sansMedium.fontWeight
-    val regularStyle = SpanStyle(
-        color = PeraTheme.colors.text.main,
-        fontStyle = PeraTheme.typography.body.regular.sans.fontStyle
-    )
-    val boldStyle = SpanStyle(
-        color = PeraTheme.colors.text.main,
-        fontWeight = boldWeight,
-        fontStyle = PeraTheme.typography.body.regular.sansMedium.fontStyle
-    )
-
-    return buildAnnotatedString {
-        withStyle(style = boldStyle) {
-            append(signatureRequestText)
-        }
-        withStyle(style = regularStyle) {
-            append(toSignForText)
-        }
-    }
+    return AnnotatedString(stringResource(R.string.signature_request_description, addressShortened))
 }
 
 @Composable
-private fun StatusLine(timeAgo: String) {
+private fun StatusLine(
+    timeAgo: String,
+    statusLineText: String,
+    statusLineIsError: Boolean
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
+            modifier = Modifier.weight(1f, fill = false),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 modifier = Modifier.size(16.dp),
-                painter = painterResource(R.drawable.ic_pending),
-                contentDescription = stringResource(R.string.pending_transaction),
-                tint = ColorPalette.Yellow.V600
+                painter = painterResource(
+                    if (statusLineIsError) R.drawable.ic_error else R.drawable.ic_pending
+                ),
+                contentDescription = statusLineText,
+                tint = if (statusLineIsError) PeraTheme.colors.helper.negative else ColorPalette.Yellow.V600
             )
             Text(
-                text = stringResource(R.string.pending_transaction),
+                text = statusLineText,
                 style = PeraTheme.typography.footnote.sansMedium,
-                color = ColorPalette.Yellow.V600
+                color = if (statusLineIsError) PeraTheme.colors.helper.negative else PeraTheme.colors.text.main,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
-
+        Spacer(modifier = Modifier.width(8.dp))
         Box(
             modifier = Modifier
                 .size(2.dp)
                 .background(
-                    color = PeraTheme.colors.layer.grayLighter,
+                    color = PeraTheme.colors.text.grayLighter,
                     shape = CircleShape
                 )
         )
-
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = timeAgo,
             style = PeraTheme.typography.footnote.sans,
             color = PeraTheme.colors.text.grayLighter,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            maxLines = 1
         )
     }
 }
@@ -482,16 +431,10 @@ private fun JointAccountInvitationInboxItem(
 
 @Composable
 private fun UnreadIndicator(isRead: Boolean) {
-    val unreadDescription = stringResource(R.string.unread)
     Box(
         modifier = Modifier
             .height(40.dp)
-            .width(4.dp)
-            .semantics {
-                if (!isRead) {
-                    contentDescription = unreadDescription
-                }
-            },
+            .width(4.dp),
         contentAlignment = Alignment.Center
     ) {
         if (!isRead) {

@@ -19,10 +19,13 @@ import com.algorand.wallet.inbox.domain.repository.InboxApiRepository
 import javax.inject.Inject
 
 internal class FetchInboxMessagesUseCase @Inject constructor(
-    private val inboxApiRepository: InboxApiRepository
+    private val repository: InboxApiRepository
 ) : FetchInboxMessages {
 
-    override suspend fun invoke(deviceId: Long, addresses: List<String>): PeraResult<InboxMessages> {
-        return inboxApiRepository.getInboxMessages(deviceId, InboxSearchInput(addresses))
+    override suspend fun invoke(
+        deviceId: Long,
+        addresses: List<String>
+    ): PeraResult<InboxMessages> {
+        return repository.getInboxMessages(deviceId, InboxSearchInput(addresses = addresses))
     }
 }

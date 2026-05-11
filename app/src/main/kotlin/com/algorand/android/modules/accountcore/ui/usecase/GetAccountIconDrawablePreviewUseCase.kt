@@ -34,11 +34,21 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
 
     override suspend fun invoke(address: String): AccountIconDrawablePreview {
         val accountDetail = getAccountDetail(address)
-        return getAccountIconDrawablePreview(address, accountDetail.accountType, rekeyAuthAddress = null)
+        return getAccountIconDrawablePreview(
+            address = address,
+            accountType = accountDetail.accountType,
+            rekeyAuthAddress = null,
+            rekeyAuthRegistrationType = null
+        )
     }
 
     override suspend fun invoke(accountDetail: AccountDetail): AccountIconDrawablePreview {
-        return getAccountIconDrawablePreview(accountDetail.address, accountDetail.accountType, rekeyAuthAddress = null)
+        return getAccountIconDrawablePreview(
+            address = accountDetail.address,
+            accountType = accountDetail.accountType,
+            rekeyAuthAddress = null,
+            rekeyAuthRegistrationType = null
+        )
     }
 
     override suspend fun invoke(accountLite: AccountLite): AccountIconDrawablePreview {
@@ -46,7 +56,12 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
             if (cachedInfo == null) {
                 getAccountIconDrawablePreviewByType(registrationType)
             } else {
-                getAccountIconDrawablePreview(address, cachedInfo.type, cachedInfo.rekeyAuthAddress)
+                getAccountIconDrawablePreview(
+                    address = address,
+                    accountType = cachedInfo.type,
+                    rekeyAuthAddress = cachedInfo.rekeyAuthAddress,
+                    rekeyAuthRegistrationType = cachedInfo.rekeyAuthRegistrationType
+                )
             }
         }
     }
@@ -54,7 +69,8 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
     private suspend fun getAccountIconDrawablePreview(
         address: String,
         accountType: AccountType?,
-        rekeyAuthAddress: String?
+        rekeyAuthAddress: String?,
+        rekeyAuthRegistrationType: AccountRegistrationType?
     ): AccountIconDrawablePreview {
         return when (accountType) {
             AccountType.Algo25 -> AccountIconDrawablePreviews.getAlgo25Drawable()
@@ -62,25 +78,39 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
             AccountType.LedgerBle -> AccountIconDrawablePreviews.getLedgerBleDrawable()
             AccountType.NoAuth -> AccountIconDrawablePreviews.getNoAuthDrawable()
             AccountType.Rekeyed -> getRekeyedDrawable()
-            AccountType.RekeyedAuth -> getRekeyedAuthDrawable(address, rekeyAuthAddress)
+            AccountType.RekeyedAuth -> getRekeyedAuthDrawable(
+                rekeyAuthAddress = rekeyAuthAddress,
+                rekeyAuthRegistrationType = rekeyAuthRegistrationType,
+                address = address
+            )
             AccountType.Joint -> AccountIconDrawablePreviews.getJointDrawable()
             null -> AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
-            AccountType.Joint -> {
-                TODO("Handle Joint Account")
-                AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
-            }
         }
     }
 
-    private suspend fun getRekeyedAuthDrawable(address: String, rekeyAuthAddress: String?): AccountIconDrawablePreview {
-        val rekeyAdminAddress = rekeyAuthAddress ?: getAccountRekeyAdminAddress(address) ?: return getRekeyedDrawable()
-        val rekeyAdminType = getAccountRegistrationType(rekeyAdminAddress)
+    private suspend fun getRekeyedAuthDrawable(
+        rekeyAuthAddress: String?,
+        rekeyAuthRegistrationType: AccountRegistrationType?,
+        address: String
+    ): AccountIconDrawablePreview {
+        val rekeyAdminType = when {
+            rekeyAuthRegistrationType != null -> rekeyAuthRegistrationType
+            rekeyAuthAddress != null -> getAccountRegistrationType(rekeyAuthAddress)
+            else -> {
+                val adminAddr = getAccountRekeyAdminAddress(address)
+                if (adminAddr != null) getAccountRegistrationType(adminAddr) else null
+            }
+        } ?: return getRekeyedDrawable()
         val backgroundColorResId = when (rekeyAdminType) {
-            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.backgroundColorResId
+            AccountRegistrationType.Algo25,
+            AccountRegistrationType.HdKey -> AccountIconResource.STANDARD.backgroundColorResId
+            AccountRegistrationType.Joint -> AccountIconResource.JOINT.backgroundColorResId
             else -> AccountIconResource.REKEYED_AUTH.backgroundColorResId
         }
         val iconTintResId = when (rekeyAdminType) {
-            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.iconTintResId
+            AccountRegistrationType.Algo25,
+            AccountRegistrationType.HdKey -> AccountIconResource.STANDARD.iconTintResId
+            AccountRegistrationType.Joint -> AccountIconResource.JOINT.iconTintResId
             else -> AccountIconResource.LEDGER.iconTintResId
         }
         return AccountIconDrawablePreview(

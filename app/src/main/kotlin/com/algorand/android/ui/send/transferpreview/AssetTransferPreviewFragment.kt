@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.SendAlgoNavigationDirections
 import com.algorand.android.core.transaction.TransactionSignBaseFragment
@@ -33,7 +34,6 @@ import com.algorand.android.models.TargetUser
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.addaccount.joint.transaction.ui.PendingSignaturesDialogFragment
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
@@ -45,6 +45,7 @@ import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.navigateToPendingSignaturesBottomSheet
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.toAlgoDisplayValue
@@ -168,7 +169,6 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     private fun initSavedStateListener() {
-        // TODO use a better way to return the navigation results
         startSavedStateListener(R.id.assetTransferPreviewFragment) {
             useSavedStateValue<String>(AddNoteBottomSheet.ADD_NOTE_RESULT_KEY) {
                 assetTransferPreviewViewModel.onNoteUpdate(it)
@@ -397,9 +397,11 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
     }
 
     override fun onJointAccountSignRequestCreated(signRequestId: String) {
-        // Show pending signatures bottom sheet directly instead of navigating to full screen
-        val dialog = PendingSignaturesDialogFragment.newInstance(signRequestId)
-        dialog.show(childFragmentManager, PendingSignaturesDialogFragment.TAG)
+        navigateToPendingSignaturesBottomSheet(signRequestId) { _ -> navigateToHome() }
+    }
+
+    private fun navigateToHome() {
+        nav(MainNavigationDirections.actionGlobalMainNavigation())
     }
 
     companion object {

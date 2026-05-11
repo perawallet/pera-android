@@ -16,5 +16,8 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.jointaccount.transaction.domain.model.JointSignRequest
 
 fun interface DeclineJointAccountSignRequest {
-    suspend operator fun invoke(signRequestId: String, participantAddress: String): PeraResult<JointSignRequest>
+    suspend operator fun invoke(
+        signRequestId: String,
+        participantAddresses: List<String>
+    ): PeraResult<JointSignRequest>
 }

@@ -26,6 +26,6 @@ internal class JointAccountImportDeepLinkBuilder : DeepLinkBuilder {
     }
 
     private companion object {
-        const val JOINT_ACCOUNT_IMPORT_HOST = "joint-account-import"
+        const val JOINT_ACCOUNT_IMPORT_HOST = "joint-account-import/"
     }
 }

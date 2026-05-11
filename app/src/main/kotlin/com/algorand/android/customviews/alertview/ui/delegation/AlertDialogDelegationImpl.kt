@@ -74,7 +74,7 @@ class AlertDialogDelegationImpl : AlertDialogDelegation, DefaultLifecycleObserve
     }
 
     override fun showGlobalError(errorMessage: CharSequence?, title: String?, tag: String) {
-        val safeTitle = title ?: appCompatActivity?.getString(R.string.error_default_title) ?: emptyString()
+        val safeTitle = title ?: appCompatActivity?.getString(R.string.error) ?: emptyString()
         val safeErrorMessage =
             errorMessage?.toString() ?: appCompatActivity?.getString(R.string.unknown_error) ?: emptyString()
         alertDialogQueueManager?.addAlertError(

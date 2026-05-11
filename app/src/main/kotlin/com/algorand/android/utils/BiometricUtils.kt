@@ -95,6 +95,5 @@ fun FragmentActivity.showBiometricAuthentication(
         }
     } catch (exception: Exception) {
         recordException(exception)
-        exception.printStackTrace()
     }
 }

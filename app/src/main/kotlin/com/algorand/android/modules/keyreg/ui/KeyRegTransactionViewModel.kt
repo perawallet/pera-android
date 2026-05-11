@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.keyreg.ui
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +22,7 @@ import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionPreview
 import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.Event
+import com.algorand.wallet.logger.PeraErrorLogger
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +37,7 @@ class KeyRegTransactionViewModel @Inject constructor(
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val createKeyRegTransaction: CreateKeyRegTransaction,
     private val previewMapper: KeyRegTransactionPreviewMapper,
+    private val errorLogger: PeraErrorLogger,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -63,7 +64,7 @@ class KeyRegTransactionViewModel @Inject constructor(
                     _previewState.value = _previewState.value?.copy(signTransactionEvent = Event(transaction))
                 },
                 onFailed = { exception, _ ->
-                    Log.e(TAG, exception.message.toString())
+                    errorLogger.logError(exception)
                     _previewState.value = _previewState.value?.copy(showErrorEvent = Event(Unit))
                 }
             )
@@ -79,8 +80,13 @@ class KeyRegTransactionViewModel @Inject constructor(
                     onSuccess = {
                         _confirmedTransactionIdState.value = it
                     },
-                    onFailed = {
-                        Log.d(TAG, it.exception.toString())
+                    onFailed = { error ->
+                        val cause = error.exception
+                        if (cause != null) {
+                            errorLogger.logError(cause)
+                        } else {
+                            errorLogger.logError("KeyRegTransactionViewModel: sendSignedTransaction failed")
+                        }
                         _confirmedTransactionIdState.value = TRANSACTION_ERROR
                     }
                 )
@@ -96,7 +102,6 @@ class KeyRegTransactionViewModel @Inject constructor(
 
     companion object {
         const val KEY_REG_DETAIL: String = "keyRegTransactionDetail"
-        const val TAG: String = "KeyRegTransactionViewModel"
         const val TRANSACTION_ERROR: String = "transaction_error"
     }
 }

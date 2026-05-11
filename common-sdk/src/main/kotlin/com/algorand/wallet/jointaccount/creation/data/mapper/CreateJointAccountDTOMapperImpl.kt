@@ -22,7 +22,8 @@ internal class CreateJointAccountDTOMapperImpl @Inject constructor() : CreateJoi
         return CreateJointAccountRequest(
             participantAddresses = dto.participantAddresses,
             threshold = dto.threshold,
-            version = dto.version
+            version = dto.version,
+            deviceId = dto.deviceId
         )
     }
 }

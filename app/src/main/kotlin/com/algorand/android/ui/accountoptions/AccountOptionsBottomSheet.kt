@@ -35,8 +35,12 @@ import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.android.modules.addaccount.joint.tracking.JointAccountOptionsEventTracker
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
@@ -49,6 +53,9 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
 
     private val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
 
+    @Inject
+    lateinit var jointAccountOptionsEventTracker: JointAccountOptionsEventTracker
+
     private val fetchingRekeyedAccountsDialogDelegate by lazy {
         FetchingRekeyedAccountsDialogDelegate(accountOptionsViewModel::stopFetchingRekeyedAccounts)
     }
@@ -59,7 +66,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(viewEvent)
             HideFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.dismiss()
             ShowFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.show(requireContext())
-            ShowGenericError -> showGlobalError(getString(R.string.an_error_occurred))
+            ShowGenericError -> showGlobalError(getString(R.string.asset_operation_failed))
         }
     }
 
@@ -75,7 +82,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             setupCopyButton(accountAddress)
             setupShowQrButton(accountAddress)
             setupUndoRekeyOptionButton(isUndoRekeyButtonVisible, authAccountDisplayName)
-            setupRekeyToOptions(canSignTransaction)
+            setupRekeyToOptions(canSignTransaction, isJointAccount)
             setupRescanRekeyedAccountsButton(registrationType)
             setupExportShareAccountButton(registrationType)
         }
@@ -133,14 +140,18 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         }
     }
 
-    private fun setupRekeyToOptions(canSignTransaction: Boolean) {
+    private fun setupRekeyToOptions(canSignTransaction: Boolean, isJointAccount: Boolean) {
         binding.rekeyToLedgerAccountButton.apply {
-            isVisible = canSignTransaction
+            isVisible = canSignTransaction && !isJointAccount
             setOnClickListener { navToRekeyToLedgerAccountFragment() }
         }
         binding.rekeyToStandardAccountButton.apply {
-            isVisible = canSignTransaction
+            isVisible = canSignTransaction && !isJointAccount
             setOnClickListener { navToRekeyToStandardAccountFragment() }
+        }
+        binding.rekeyToJointAccountButton.apply {
+            isVisible = canSignTransaction && isJointAccount
+            setOnClickListener { navToRekeyToJointAccountFragment() }
         }
         binding.rekeyDivider.isVisible = canSignTransaction
     }
@@ -182,6 +193,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun onExportShareAccountClick() {
+        lifecycleScope.launch { jointAccountOptionsEventTracker.logAccountScrTapmenuMoreJointAccountExportTap() }
         nav(
             AccountOptionsBottomSheetDirections
                 .actionAccountOptionsBottomSheetToExportShareAccountNavigation(
@@ -207,6 +219,15 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     private fun navToRekeyToStandardAccountFragment() {
         nav(
             AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyToStandardAccountNavigation(
+                accountOptionsViewModel.accountAddress
+            )
+        )
+    }
+
+    private fun navToRekeyToJointAccountFragment() {
+        lifecycleScope.launch { jointAccountOptionsEventTracker.logAccountScrTapmenuMoreRekeyJointTap() }
+        nav(
+            AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyToJointAccountNavigation(
                 accountOptionsViewModel.accountAddress
             )
         )

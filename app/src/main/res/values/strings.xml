@@ -1344,7 +1344,6 @@
     <string name="backup_credentials">Backup Credentials</string>
     <string name="store_your_credentials">Store your Credentials</string>
     <string name="backup_credentials_load_error">Could not load your credentials. Please try again.</string>
-    <string name="proceed">Proceed</string>
     <string name="verify_passphrase">Verify Passphrase</string>
     <string name="verify_passphrase_description">Choose the correct words to confirm you\'ve stored your 12-word key securely.</string>
     <string name="select_word_number">Select word #%d</string>

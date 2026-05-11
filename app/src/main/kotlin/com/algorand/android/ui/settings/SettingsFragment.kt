@@ -104,6 +104,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
         initObservers()
         initUi()
         settingsViewModel.initSettingsPreviewFlow()
+        settingsViewModel.refreshCloudBackupState()
     }
 
     private fun initUi() {

@@ -32,12 +32,8 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -56,10 +52,20 @@ class SettingsViewModel @Inject constructor(
     private val _settingsPreviewFlow = MutableStateFlow<SettingsPreview?>(null)
     val settingsPreviewFlow: StateFlow<SettingsPreview?> get() = _settingsPreviewFlow
 
-    val isCloudBackupEnabledFlow: StateFlow<Boolean> = backupSyncManager.syncStatus
-        .map { hasBackup() }
-        .distinctUntilChanged()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, hasBackup())
+    private val _isCloudBackupEnabled = MutableStateFlow(hasBackup())
+    val isCloudBackupEnabledFlow: StateFlow<Boolean> get() = _isCloudBackupEnabled
+
+    init {
+        viewModelScope.launch {
+            backupSyncManager.syncStatus.collect {
+                _isCloudBackupEnabled.value = hasBackup()
+            }
+        }
+    }
+
+    fun refreshCloudBackupState() {
+        _isCloudBackupEnabled.value = hasBackup()
+    }
 
     private val devOptionsClickCounter = ClickCounter(onClick = ::processDevOptionsClick)
 

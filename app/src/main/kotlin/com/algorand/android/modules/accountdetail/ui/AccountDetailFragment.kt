@@ -209,7 +209,7 @@ class AccountDetailFragment :
     }
 
     override fun onFundClick() {
-        navigateToXoSwap()
+        navigateToXoSwap(accountDetailViewModel.accountAddress)
     }
 
     override fun onMoreClick() {
@@ -572,6 +572,6 @@ class AccountDetailFragment :
     }
 
     private fun navToBuySellActionsBottomSheet() {
-        nav(HomeNavigationDirections.actionGlobalBuySellActionsBottomSheet())
+        nav(HomeNavigationDirections.actionGlobalBuySellActionsBottomSheet(accountDetailViewModel.accountAddress))
     }
 }

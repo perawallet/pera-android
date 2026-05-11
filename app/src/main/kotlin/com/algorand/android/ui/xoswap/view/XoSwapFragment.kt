@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.xoswap.view
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -151,13 +152,11 @@ class XoSwapFragment : BaseFragment(R.layout.fragment_xo_swap),
 
     private fun getInitialUrl(): String {
         val isTestPageEnabled = isFeatureToggleEnabled.invoke(FeatureToggle.XO_SWAP_TEST_PAGE.key)
-        return StringBuilder(BuildConfig.ONRAMP_URL).apply {
-            if (isTestPageEnabled) append("/test")
-            if (args.path.isNotBlank()) {
-                if (!args.path.startsWith("/")) append("/")
-                append(args.path)
-            }
-        }.toString()
+        return Uri.parse(BuildConfig.ONRAMP_URL).buildUpon().apply {
+            if (isTestPageEnabled) appendPath("test")
+            if (args.path.isNotBlank()) appendEncodedPath(args.path)
+            if (!args.address.isNullOrBlank()) appendQueryParameter("address", args.address)
+        }.build().toString()
     }
 
     private companion object {

@@ -179,7 +179,7 @@ internal object BackupModule {
     private const val AUTH_CREDENTIALS_CACHE_KEY = "backup_auth_credentials"
     private const val SNAPSHOT_CACHE_KEY = "backup_snapshot"
     private const val TIMEOUT_SECONDS = 60L
-    private const val BACKUP_BASE_URL = "http://10.0.2.2:3011/api/v3/"
+    private const val BACKUP_BASE_URL = "https://unsulfonated-unadversely-sook.ngrok-free.dev/api/v3/"
 
     @Provides
     @Singleton

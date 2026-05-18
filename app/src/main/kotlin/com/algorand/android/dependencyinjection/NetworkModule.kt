@@ -237,4 +237,9 @@ object NetworkModule {
     ): MobileAlgorandApi {
         return mobileAlgorandRetrofitInterface.create(MobileAlgorandApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    @Named("backupBaseUrl")
+    internal fun provideBackupBaseUrl(): String = BuildConfig.BACKUP_BASE_URL
 }

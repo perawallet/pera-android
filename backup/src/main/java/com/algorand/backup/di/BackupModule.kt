@@ -160,6 +160,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Provider
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -179,7 +180,6 @@ internal object BackupModule {
     private const val AUTH_CREDENTIALS_CACHE_KEY = "backup_auth_credentials"
     private const val SNAPSHOT_CACHE_KEY = "backup_snapshot"
     private const val TIMEOUT_SECONDS = 60L
-    private const val BACKUP_BASE_URL = "https://unsulfonated-unadversely-sook.ngrok-free.dev/api/v3/"
 
     @Provides
     @Singleton
@@ -252,9 +252,13 @@ internal object BackupModule {
 
     @Provides
     @Singleton
-    fun provideBackupApiService(backupHttpClient: OkHttpClient, gson: Gson): BackupApiService {
+    fun provideBackupApiService(
+        backupHttpClient: OkHttpClient,
+        gson: Gson,
+        @Named("backupBaseUrl") backupBaseUrl: String
+    ): BackupApiService {
         return Retrofit.Builder()
-            .baseUrl(BACKUP_BASE_URL)
+            .baseUrl(backupBaseUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(backupHttpClient)
             .build()
@@ -263,7 +267,10 @@ internal object BackupModule {
 
     @Provides
     @Singleton
-    fun provideBackupRegistrationApiService(gson: Gson): BackupRegistrationApiService {
+    fun provideBackupRegistrationApiService(
+        gson: Gson,
+        @Named("backupBaseUrl") backupBaseUrl: String
+    ): BackupRegistrationApiService {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
@@ -274,7 +281,7 @@ internal object BackupModule {
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
         return Retrofit.Builder()
-            .baseUrl(BACKUP_BASE_URL)
+            .baseUrl(backupBaseUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
@@ -545,12 +552,13 @@ internal object BackupModule {
     @Singleton
     fun provideBackupWebSocketUrlBuilder(
         backupSessionRepository: BackupSessionRepository,
-        requestSigner: BackupRequestSigner
+        requestSigner: BackupRequestSigner,
+        @Named("backupBaseUrl") backupBaseUrl: String
     ): BackupWebSocketUrlBuilder {
         return DefaultBackupWebSocketUrlBuilder(
             backupSessionRepository = backupSessionRepository,
             requestSigner = requestSigner,
-            baseUrl = BACKUP_BASE_URL
+            baseUrl = backupBaseUrl
         )
     }
 

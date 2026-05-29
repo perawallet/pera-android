@@ -53,16 +53,16 @@ class AssetTransferTransactionMapper @Inject constructor(
                     createAssetTransferTransactionWithRekeyAndClose(peerMeta, transactionRequest, rawTxn)
                 }
 
+                rekeyAddress != null -> {
+                    createAssetTransferTransactionWithRekey(peerMeta, transactionRequest, rawTxn)
+                }
+
                 assetCloseToAddress != null -> {
                     createAssetTransferTransactionWithClose(peerMeta, transactionRequest, rawTxn)
                 }
 
                 (assetAmount == null || assetAmount == ZERO) && senderAddress == assetReceiverAddress -> {
                     createAssetOptInTransaction(peerMeta, transactionRequest, rawTxn)
-                }
-
-                rekeyAddress != null -> {
-                    createAssetTransferTransactionWithRekey(peerMeta, transactionRequest, rawTxn)
                 }
 
                 else -> {

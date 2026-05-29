@@ -145,6 +145,9 @@ class AppCallTransactionMapper @Inject constructor(
                 senderWalletConnectAddress,
                 errorProvider
             )
+            val isLocalAccountSigner = signer.address?.decodedAddress?.mapNotBlank { safeAddress ->
+                isThereAnyAccountWithAddress(safeAddress)
+            } ?: false
             BaseAppCallTransaction.AppCallCreationTransaction(
                 rawTransactionPayload = rawTransaction,
                 walletConnectTransactionParams = createTransactionParams(transactionRequest),
@@ -164,7 +167,9 @@ class AppCallTransactionMapper @Inject constructor(
                 groupId = groupId,
                 transactionSigner = getWalletConnectTransactionSigner(signer),
                 rejectVersion = rejectVersion,
-                accessListSize = accessList?.size
+                accessListSize = accessList?.size,
+                rekeyToAddress = createWalletConnectAddress(rekeyAddress),
+                warningCount = if (isLocalAccountSigner) 1 else null,
             )
         }
     }

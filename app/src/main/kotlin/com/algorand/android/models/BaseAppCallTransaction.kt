@@ -98,13 +98,17 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val transactionSigner: TransactionSigner?,
         override val rejectVersion: Long?,
         override val accessListSize: Int?,
+        override val warningCount: Int?,
         val appGlobalSchema: ApplicationCallStateSchema?,
         val appLocalSchema: ApplicationCallStateSchema?,
-        val appExtraPages: Int?
+        val appExtraPages: Int?,
+        val rekeyToAddress: WalletConnectAddress?
     ) : BaseAppCallTransaction() {
 
         override val fee: Long
             get() = walletConnectTransactionParams.fee
+
+        override fun getRekeyToAccountAddress(): WalletConnectAddress? = rekeyToAddress
 
         override fun getAllAddressPublicKeysTxnIncludes(): List<WalletConnectAddress> {
             return listOf(senderAddress) + signerAddressList.orEmpty()

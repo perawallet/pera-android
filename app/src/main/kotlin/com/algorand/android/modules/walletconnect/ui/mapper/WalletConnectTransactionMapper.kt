@@ -95,7 +95,7 @@ class WalletConnectTransactionMapper @Inject constructor(
 
         transaction?.isRekeyTransaction = isRekeyTransaction(
             transaction.senderAddress.decodedAddress,
-            transaction.formattedRekeyToAccountAddress
+            transactionRequest.rekeyAddress.orEmpty()
         )
         return transaction
     }

@@ -20,7 +20,7 @@ import retrofit2.http.POST
 
 internal interface BackupRegistrationApiService {
 
-    @POST("backup/register")
+    @POST("api/v3/backup/register")
     suspend fun register(
         @Body request: BackupRegistrationProofRequest
     ): Response<BackupRegistrationProofResponse>

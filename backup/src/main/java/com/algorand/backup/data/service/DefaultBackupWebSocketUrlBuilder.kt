@@ -39,7 +39,7 @@ internal class DefaultBackupWebSocketUrlBuilder @Inject constructor(
             .replace("https://", "wss://")
             .removeSuffix("/")
 
-        val url = "$wsBaseUrl/backup/${backupId.value}?device_id=${deviceId.value}&ts=$timestamp&signature=$signature"
+        val url = "$wsBaseUrl/api/v3/backup/${backupId.value}?device_id=${deviceId.value}&ts=$timestamp&signature=$signature"
         return PeraResult.Success(url)
     }
 }

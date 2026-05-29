@@ -33,50 +33,50 @@ import retrofit2.http.Query
 
 internal interface BackupApiService {
 
-    @GET("backup/{backupId}/manifest")
+    @GET("api/v3/backup/{backupId}/manifest")
     suspend fun getManifest(
         @Path("backupId") backupId: String
     ): Response<BackupManifestResponse>
 
-    @GET("backup/{backupId}/delta")
+    @GET("api/v3/backup/{backupId}/delta")
     suspend fun getDeltas(
         @Path("backupId") backupId: String,
         @Query("from_seq") fromSeq: Long,
         @Query("types") types: String? = null
     ): Response<BackupDeltaResponse>
 
-    @GET("backup/{backupId}/{key}")
+    @GET("api/v3/backup/{backupId}/{key}")
     suspend fun getItem(
         @Path("backupId") backupId: String,
         @Path("key", encoded = true) key: String
     ): Response<String>
 
-    @POST("backup/{backupId}/items/read")
+    @POST("api/v3/backup/{backupId}/items/read")
     suspend fun batchReadItems(
         @Path("backupId") backupId: String,
         @Body request: BackupBatchReadRequest
     ): Response<BackupBatchReadResponse>
 
-    @PUT("backup/{backupId}/{key}")
+    @PUT("api/v3/backup/{backupId}/{key}")
     suspend fun upsertItem(
         @Path("backupId") backupId: String,
         @Path("key", encoded = true) key: String,
         @Body request: BackupUpsertItemRequest
     ): Response<BackupUpsertItemResponse>
 
-    @POST("backup/{backupId}/items/upsert")
+    @POST("api/v3/backup/{backupId}/items/upsert")
     suspend fun batchUpsertItems(
         @Path("backupId") backupId: String,
         @Body request: BackupBatchUpsertRequest
     ): Response<BackupBatchUpsertResponse>
 
-    @DELETE("backup/{backupId}/{key}")
+    @DELETE("api/v3/backup/{backupId}/{key}")
     suspend fun deleteItem(
         @Path("backupId") backupId: String,
         @Path("key", encoded = true) key: String
     ): Response<BackupDeleteItemResponse>
 
-    @DELETE("backup/{backupId}")
+    @DELETE("api/v3/backup/{backupId}")
     suspend fun deleteBackup(
         @Path("backupId") backupId: String
     ): Response<BackupDeleteResponse>

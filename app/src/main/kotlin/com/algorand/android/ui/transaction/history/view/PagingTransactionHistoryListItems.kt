@@ -263,7 +263,13 @@ private fun ApplicationCallItem(item: ApplicationCall, onClick: () -> Unit) {
             }
         }
         if (item.formattedBalanceImpact != null) {
-            AmountText(item.formattedBalanceImpact, item.balanceImpactColor())
+            Text(
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.End,
+                text = item.formattedBalanceImpact,
+                style = PeraTheme.typography.body.regular.sansMedium,
+                color = item.balanceImpactColor()
+            )
         }
     }
 }

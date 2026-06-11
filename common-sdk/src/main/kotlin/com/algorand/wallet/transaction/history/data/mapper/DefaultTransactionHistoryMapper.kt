@@ -13,6 +13,7 @@
 package com.algorand.wallet.transaction.history.data.mapper
 
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryBalanceImpactListItemResponse
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryDetailResponse
 import com.algorand.wallet.transaction.history.data.model.TransactionHistoryInterpretedMeaning
@@ -108,10 +109,11 @@ internal class DefaultTransactionHistoryMapper @Inject constructor(
         balanceImpacts: List<TransactionHistoryBalanceImpactListItemResponse>? = null
     ): Type? {
         val firstImpact = balanceImpacts?.firstOrNull()
+        val fractionDecimals = if (firstImpact?.assetId == ALGO_ID) ALGO_DECIMALS else firstImpact?.fractionDecimals
         return Type.ApplicationCall(
             applicationId = appId ?: return null,
             txnCount = innerTxnCount ?: DEFAULT_INNER_TXN_COUNT,
-            amount = firstImpact?.amount.formatToBigDecimal(firstImpact?.fractionDecimals),
+            amount = firstImpact?.amount.formatToBigDecimal(fractionDecimals),
             formattedAmount = firstImpact?.amountDisplay,
             assetId = firstImpact?.assetId,
             assetUnitName = firstImpact?.assetUnitName
